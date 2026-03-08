@@ -3,14 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
 
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
+const item = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
 
 const PublicHome = () => {
   const { user, isAdmin } = useAuth();
@@ -44,9 +43,9 @@ const PublicHome = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-hidden noise-bg">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-surface border-b border-border/30">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-premium">
         <div className="container max-w-6xl mx-auto flex items-center justify-between h-16 px-4">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
@@ -59,13 +58,13 @@ const PublicHome = () => {
             <LanguageToggle />
             {user ? (
               <Link to={isAdmin ? "/admin" : "/dashboard"}>
-                <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent">
+                <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent font-semibold">
                   {L.dashboard} <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             ) : (
               <Link to="/login">
-                <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent">
+                <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent font-semibold">
                   {L.login} <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -75,56 +74,65 @@ const PublicHome = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center px-4 pt-16">
+      <section className="relative min-h-[95vh] flex items-center justify-center px-4 pt-16">
         {/* Background effects */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
-          <div className="absolute top-1/3 right-0 w-[300px] h-[300px] bg-primary/8 rounded-full blur-[80px]" />
-          {/* Grid pattern */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[700px] bg-primary/8 rounded-full blur-[160px]" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-primary/6 rounded-full blur-[100px]" />
+          {/* Subtle grid */}
           <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(hsl(0 0% 20% / 0.15) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 20% / 0.15) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
+            backgroundImage: `linear-gradient(hsl(0 0% 15% / 0.08) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 15% / 0.08) 1px, transparent 1px)`,
+            backgroundSize: '80px 80px',
           }} />
+          {/* Diagonal red line accent */}
+          <div className="absolute top-0 right-[20%] w-[2px] h-[40vh] bg-gradient-to-b from-primary/30 to-transparent rotate-12 origin-top" />
+          <div className="absolute bottom-0 left-[15%] w-[2px] h-[30vh] bg-gradient-to-t from-primary/20 to-transparent -rotate-12 origin-bottom" />
         </div>
 
         <div className="relative z-10 text-center max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="mb-8"
+            transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+            className="mb-10"
           >
             <div className="relative inline-block">
-              <img src="/favicon.png" alt="KM Production House" className="h-28 w-28 md:h-36 md:w-36 object-contain mx-auto relative z-10" />
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl scale-150" />
+              <img src="/favicon.png" alt="KM Production House" className="h-28 w-28 md:h-40 md:w-40 object-contain mx-auto relative z-10 drop-shadow-2xl" />
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl scale-[2]" />
+              <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl scale-150 animate-pulse" />
             </div>
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="font-display text-6xl md:text-8xl lg:text-9xl tracking-wider text-shadow-glow"
+            transition={{ delay: 0.2, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+            className="font-display text-7xl md:text-[9rem] lg:text-[11rem] tracking-wider leading-none text-shadow-glow"
           >
-            <span className="gradient-text">KM</span>{" "}
-            <span className="text-foreground">PRODUCTION</span>
+            <span className="gradient-text">KM</span>
           </motion.h1>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-2"
+            transition={{ delay: 0.35, duration: 0.6 }}
           >
-            <span className="font-display text-3xl md:text-4xl tracking-[0.3em] text-primary/80">HOUSE</span>
+            <h2 className="font-display text-3xl md:text-5xl lg:text-6xl tracking-[0.4em] text-foreground/90 -mt-2">
+              PRODUCTION
+            </h2>
+            <div className="flex items-center justify-center gap-4 mt-3">
+              <div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent to-primary/60" />
+              <span className="font-display text-xl md:text-2xl tracking-[0.5em] text-primary/70">HOUSE</span>
+              <div className="h-[1px] w-16 md:w-24 bg-gradient-to-l from-transparent to-primary/60" />
+            </div>
           </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-muted-foreground text-lg md:text-xl mt-8 max-w-2xl mx-auto leading-relaxed"
+            className="text-muted-foreground text-base md:text-lg mt-10 max-w-xl mx-auto leading-relaxed font-light"
           >
             {settings?.site_description || L.description}
           </motion.p>
@@ -136,66 +144,68 @@ const PublicHome = () => {
             className="mt-10 flex flex-wrap items-center justify-center gap-4"
           >
             <a href="#projects">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 glow-accent text-lg px-8 h-12 gap-2">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 glow-accent text-base px-8 h-12 gap-2 font-semibold">
                 <Play className="h-5 w-5" /> {L.seeWork}
               </Button>
             </a>
             <a href="#team">
-              <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 text-lg px-8 h-12 gap-2">
+              <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 hover:border-primary/50 text-base px-8 h-12 gap-2">
                 <Users className="h-5 w-5" /> {L.seeTeam}
               </Button>
             </a>
           </motion.div>
 
-          {/* Stats bar */}
+          {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="mt-16 flex items-center justify-center gap-8 md:gap-16"
+            className="mt-20 flex items-center justify-center gap-12 md:gap-20"
           >
             {[
               { value: members?.length || 0, label: L.teamMembers },
               { value: shootings?.length || 0, label: L.projects },
             ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="font-display text-4xl md:text-5xl gradient-text">{stat.value}+</div>
-                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+              <div key={i} className="text-center relative">
+                <div className="font-display text-5xl md:text-6xl gradient-text">{stat.value}+</div>
+                <div className="text-xs text-muted-foreground mt-1 uppercase tracking-widest">{stat.label}</div>
               </div>
             ))}
           </motion.div>
         </div>
 
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* Team Members */}
-      <section className="py-24 px-4 relative" id="team">
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px]" />
+      {/* Team */}
+      <section className="py-28 px-4 relative" id="team">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
         <div className="container max-w-6xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12"
+            className="mb-14"
           >
-            <span className="text-primary text-sm font-semibold tracking-widest uppercase">Our Team</span>
-            <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.ourTeam}</h2>
-            <div className="h-1 w-16 bg-primary rounded-full mt-4" />
+            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Team</span>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{L.ourTeam}</h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
           </motion.div>
 
           <motion.div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5" variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {members?.map((member) => (
               <motion.div key={member.id} variants={item}>
                 <Link to={`/member/${member.member_id}`}>
-                  <div className="card-3d group">
-                    <Card className="p-5 bg-card border-border/30 hover:border-primary/40 transition-all text-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="group">
+                    <div className="premium-card rounded-2xl p-5 text-center relative overflow-hidden">
+                      {/* Hover glow */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                      
                       <div className="relative z-10">
-                        <div className="h-18 w-18 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-4 border-2 border-primary/20 group-hover:border-primary/50 transition-all">
+                        <div className="h-[4.5rem] w-[4.5rem] rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-4 border-2 border-border/40 group-hover:border-primary/50 transition-all duration-300 overflow-hidden">
                           {member.photo_url ? (
-                            <img src={member.photo_url} alt={member.full_name} className="h-[4.5rem] w-[4.5rem] rounded-full object-cover" />
+                            <img src={member.photo_url} alt={member.full_name} className="h-full w-full rounded-full object-cover" />
                           ) : (
                             <span className="text-primary font-bold text-2xl">{member.full_name.charAt(0)}</span>
                           )}
@@ -204,13 +214,13 @@ const PublicHome = () => {
                           <h3 className="text-sm font-semibold text-foreground truncate">
                             {lang === "en" && (member as any).full_name_en ? (member as any).full_name_en : member.full_name}
                           </h3>
-                          {(member as any).is_verified && <svg className="h-4 w-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
+                          {(member as any).is_verified && <svg className="h-4 w-4 text-primary shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
                         </div>
-                        <p className="text-xs text-muted-foreground truncate mt-1">
+                        <p className="text-[11px] text-muted-foreground truncate mt-1">
                           {lang === "en" && (member as any).designation_en ? (member as any).designation_en : (member.designation || L.member)}
                         </p>
                       </div>
-                    </Card>
+                    </div>
                   </div>
                 </Link>
               </motion.div>
@@ -221,57 +231,59 @@ const PublicHome = () => {
 
       {/* Recent Projects */}
       {shootings && shootings.length > 0 && (
-        <section className="py-24 px-4 relative" id="projects">
-          <div className="absolute inset-0 bg-gradient-to-b from-card/50 to-background" />
-          <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]" />
+        <section className="py-28 px-4 relative" id="projects">
+          <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background" />
+          <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary/4 rounded-full blur-[140px]" />
           <div className="container max-w-6xl mx-auto relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mb-12"
+              className="mb-14"
             >
-              <span className="text-primary text-sm font-semibold tracking-widest uppercase">Our Work</span>
-              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.recentProjects}</h2>
-              <div className="h-1 w-16 bg-primary rounded-full mt-4" />
+              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Work</span>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{L.recentProjects}</h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
             </motion.div>
 
             <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
               {shootings.map((s) => (
                 <motion.div key={s.id} variants={item}>
-                  <div className="card-3d">
-                    <Card className="p-6 bg-card border-border/30 hover:border-primary/30 relative overflow-hidden group">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary/30" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2 mb-3">
+                  <div className="premium-card rounded-2xl p-6 relative overflow-hidden group">
+                    {/* Top accent line */}
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                           <Film className="h-4 w-4 text-primary" />
-                          <span className="text-xs text-primary font-medium">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</span>
                         </div>
-                        <h3 className="font-bold text-foreground text-lg">{s.name}</h3>
-                        {s.description && <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{s.description}</p>}
-                        {s.location && (
-                          <div className="flex items-center gap-1.5 mt-4 pt-3 border-t border-border/20">
-                            <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">{s.location}</span>
-                          </div>
-                        )}
-                        {(s as any).video_url && (
-                          <a
-                            href={(s as any).video_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 transition-all group/link"
-                          >
-                            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center group-hover/link:bg-primary/30 transition-colors">
-                              <Play className="h-4 w-4 text-primary fill-primary" />
-                            </div>
-                            <span className="text-sm font-medium text-primary flex-1">নাটক দেখুন</span>
-                            <ExternalLink className="h-3.5 w-3.5 text-primary/60" />
-                          </a>
-                        )}
+                        <span className="text-xs text-primary/80 font-medium">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</span>
                       </div>
-                    </Card>
+                      <h3 className="font-bold text-foreground text-lg leading-tight">{s.name}</h3>
+                      {s.description && <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{s.description}</p>}
+                      {s.location && (
+                        <div className="flex items-center gap-1.5 mt-4 pt-3 border-t border-border/20">
+                          <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">{s.location}</span>
+                        </div>
+                      )}
+                      {(s as any).video_url && (
+                        <a
+                          href={(s as any).video_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-4 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 transition-all group/link"
+                        >
+                          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center group-hover/link:bg-primary/30 transition-colors">
+                            <Play className="h-4 w-4 text-primary fill-primary" />
+                          </div>
+                          <span className="text-sm font-medium text-primary flex-1">নাটক দেখুন</span>
+                          <ExternalLink className="h-3.5 w-3.5 text-primary/60" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -280,19 +292,19 @@ const PublicHome = () => {
         </section>
       )}
 
-      {/* Contact & Social */}
-      <section className="py-24 px-4 relative" id="contact">
-        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[100px]" />
+      {/* Contact */}
+      <section className="py-28 px-4 relative" id="contact">
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
         <div className="container max-w-4xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12"
+            className="mb-14"
           >
-              <span className="text-primary text-sm font-semibold tracking-widest uppercase">Contact Us</span>
-              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.contact}</h2>
-              <div className="h-1 w-16 bg-primary rounded-full mt-4" />
+            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{L.contact}</h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -300,30 +312,30 @@ const PublicHome = () => {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="space-y-5"
+              className="space-y-4"
             >
               {settings?.contact_email && (
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border/30 hover:border-primary/30 transition-colors group">
+                <div className="premium-card rounded-xl flex items-center gap-4 p-4 group">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-foreground/80">{settings.contact_email}</span>
+                  <span className="text-foreground/80 text-sm">{settings.contact_email}</span>
                 </div>
               )}
               {settings?.contact_phone && (
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border/30 hover:border-primary/30 transition-colors group">
+                <div className="premium-card rounded-xl flex items-center gap-4 p-4 group">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-foreground/80">{settings.contact_phone}</span>
+                  <span className="text-foreground/80 text-sm">{settings.contact_phone}</span>
                 </div>
               )}
               {settings?.contact_address && (
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border/30 hover:border-primary/30 transition-colors group">
+                <div className="premium-card rounded-xl flex items-center gap-4 p-4 group">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-foreground/80">{settings.contact_address}</span>
+                  <span className="text-foreground/80 text-sm">{settings.contact_address}</span>
                 </div>
               )}
             </motion.div>
@@ -333,20 +345,20 @@ const PublicHome = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-lg font-semibold text-foreground mb-4">{L.socialMedia}</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-5">{L.socialMedia}</h3>
               <div className="flex gap-4">
                 {settings?.facebook_url && (
-                  <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-xl bg-card border border-border/30 flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all card-3d">
+                  <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
                     <Facebook className="h-5 w-5 text-primary" />
                   </a>
                 )}
                 {settings?.youtube_url && (
-                  <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-xl bg-card border border-border/30 flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all card-3d">
+                  <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
                     <Youtube className="h-5 w-5 text-primary" />
                   </a>
                 )}
                 {settings?.instagram_url && (
-                  <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-xl bg-card border border-border/30 flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all card-3d">
+                  <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
                     <Instagram className="h-5 w-5 text-primary" />
                   </a>
                 )}
@@ -357,8 +369,9 @@ const PublicHome = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/30 py-8 px-4">
-        <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-border/20 py-10 px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-muted/20 to-transparent" />
+        <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3">
             <img src="/favicon.png" alt="KM Production House" className="h-8 w-8 object-contain" />
             <span className="font-semibold text-foreground">{settings?.site_name || "KM Production House"}</span>

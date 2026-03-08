@@ -1,7 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
-import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
@@ -12,8 +11,8 @@ import { ScriptEditor } from "@/components/ScriptEditor";
 import { NoticeBoard } from "@/components/NoticeBoard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
-const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
+const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
@@ -68,67 +67,62 @@ const MemberDashboard = () => {
 
   const [viewScriptData, setViewScriptData] = useState<any>(null);
 
-
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (isAdmin) return <Navigate to="/admin" replace />;
 
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
+  const balanceCards = [
+    { label: "বর্তমান ব্যালেন্স", value: balance?.balance, icon: Wallet, gradient: "from-primary/20 to-primary/5", iconColor: "text-primary" },
+    { label: "মোট বোনাস", value: balance?.totalBonus, icon: Gift, gradient: "from-success/20 to-success/5", iconColor: "text-success" },
+    { label: "মোট গাড়ি ভাড়া", value: balance?.totalTransport, icon: Car, gradient: "from-info/20 to-info/5", iconColor: "text-info" },
+    { label: "মাসিক বেতন", value: balance?.totalSalaryCredits, icon: Banknote, gradient: "from-warning/20 to-warning/5", iconColor: "text-warning" },
+  ];
+
   return (
     <AppLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        {/* Notice Board - Prominent at top */}
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Notice Board */}
         <NoticeBoard />
 
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
-          <p className="text-muted-foreground text-sm">আইডি: {profile?.member_id}</p>
-        </div>
+        {/* Greeting */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-end justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">স্বাগতম, {profile?.full_name}</h1>
+            <p className="text-muted-foreground text-xs mt-1">আইডি: {profile?.member_id}</p>
+          </div>
+          <div className="h-1 w-12 bg-gradient-to-r from-primary to-primary/30 rounded-full mb-1 hidden md:block" />
+        </motion.div>
 
         {/* Balance Cards */}
-        <motion.div className="grid grid-cols-2 sm:grid-cols-3 gap-4" variants={container} initial="hidden" animate="show">
-          <motion.div variants={item}>
-            <Card className="p-5 bg-card border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center"><Wallet className="h-5 w-5 text-warning" /></div>
-                <div><p className="text-xs text-muted-foreground">বর্তমান ব্যালেন্স</p><p className="text-2xl font-bold text-foreground">৳{balance?.balance?.toLocaleString("bn-BD") || "০"}</p></div>
+        <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
+          {balanceCards.map((card) => (
+            <motion.div key={card.label} variants={item}>
+              <div className="premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-50`} />
+                <div className="relative z-10">
+                  <div className={`h-9 w-9 rounded-xl bg-background/50 flex items-center justify-center mb-3`}>
+                    <card.icon className={`h-4 w-4 ${card.iconColor}`} />
+                  </div>
+                  <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">{card.label}</p>
+                  <p className="text-xl md:text-2xl font-bold text-foreground mt-1">৳{card.value?.toLocaleString("bn-BD") || "০"}</p>
+                </div>
               </div>
-            </Card>
-          </motion.div>
-          <motion.div variants={item}>
-            <Card className="p-5 bg-card border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center"><Gift className="h-5 w-5 text-emerald-500" /></div>
-                <div><p className="text-xs text-muted-foreground">মোট বোনাস</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalBonus?.toLocaleString("bn-BD") || "০"}</p></div>
-              </div>
-            </Card>
-          </motion.div>
-          <motion.div variants={item}>
-            <Card className="p-5 bg-card border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center"><Car className="h-5 w-5 text-blue-500" /></div>
-                <div><p className="text-xs text-muted-foreground">মোট গাড়ি ভাড়া</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalTransport?.toLocaleString("bn-BD") || "০"}</p></div>
-              </div>
-            </Card>
-          </motion.div>
-          <motion.div variants={item}>
-            <Card className="p-5 bg-card border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-violet-500/10 flex items-center justify-center"><Banknote className="h-5 w-5 text-violet-500" /></div>
-                <div><p className="text-xs text-muted-foreground">মাসিক বেতন</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalSalaryCredits?.toLocaleString("bn-BD") || "০"}</p></div>
-              </div>
-            </Card>
-          </motion.div>
+            </motion.div>
+          ))}
         </motion.div>
 
         {/* Shootings */}
-        <Card className="bg-card border-border/50">
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground flex items-center gap-2"><Film className="h-4 w-4 text-primary" /> শুটিং তালিকা</h2>
+        <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Film className="h-4 w-4 text-primary" />
+            </div>
+            <h2 className="font-semibold text-foreground text-sm md:text-base">শুটিং তালিকা</h2>
           </div>
-          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-            {shootings?.length === 0 && <div className="p-4 text-sm text-muted-foreground text-center">কোনো শুটিং নেই</div>}
+          <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+            {shootings?.length === 0 && <div className="p-6 text-sm text-muted-foreground text-center">কোনো শুটিং নেই</div>}
             {shootings?.map((s: any) => {
               const statusMap: Record<string, { label: string; color: string }> = {
                 plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
@@ -141,7 +135,7 @@ const MemberDashboard = () => {
               };
               const info = statusMap[s.status] || statusMap.upcoming;
               return (
-                <div key={s.id} className="p-3 flex items-center justify-between">
+                <div key={s.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
                   <div>
                     <p className="text-sm text-foreground font-medium">{s.name}</p>
                     <p className="text-xs text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}{s.location && ` • ${s.location}`}</p>
@@ -155,17 +149,20 @@ const MemberDashboard = () => {
               );
             })}
           </div>
-        </Card>
+        </div>
 
-        {/* Permitted Scripts */}
-        <Card className="bg-card border-border/50">
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground flex items-center gap-2"><ScrollText className="h-4 w-4 text-primary" /> স্ক্রিপ্ট সমূহ</h2>
+        {/* Scripts */}
+        <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <ScrollText className="h-4 w-4 text-primary" />
+            </div>
+            <h2 className="font-semibold text-foreground text-sm md:text-base">স্ক্রিপ্ট সমূহ</h2>
           </div>
-          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-            {(!permittedScripts || permittedScripts.length === 0) && <div className="p-4 text-sm text-muted-foreground text-center">কোনো স্ক্রিপ্ট অ্যাক্সেস নেই</div>}
+          <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+            {(!permittedScripts || permittedScripts.length === 0) && <div className="p-6 text-sm text-muted-foreground text-center">কোনো স্ক্রিপ্ট অ্যাক্সেস নেই</div>}
             {permittedScripts?.map((script: any) => (
-              <div key={script.id} className="p-3 flex items-center justify-between hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => setViewScriptData(script)}>
+              <div key={script.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors cursor-pointer" onClick={() => setViewScriptData(script)}>
                 <div>
                   <p className="text-sm text-foreground font-medium">{script.title}</p>
                   <p className="text-xs text-muted-foreground">{script.updated_at ? new Date(script.updated_at).toLocaleDateString("bn-BD") : ""}</p>
@@ -174,19 +171,24 @@ const MemberDashboard = () => {
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
-        {/* Bonus & Transport History */}
-        <Card className="bg-card border-border/50">
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground flex items-center gap-2"><Gift className="h-4 w-4 text-primary" /> বোনাস ও গাড়ি ভাড়া</h2>
+        {/* Bonus & Transport */}
+        <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Gift className="h-4 w-4 text-primary" />
+            </div>
+            <h2 className="font-semibold text-foreground text-sm md:text-base">বোনাস ও গাড়ি ভাড়া</h2>
           </div>
-          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-            {(!myBonuses || myBonuses.length === 0) && <div className="p-4 text-sm text-muted-foreground text-center">কোনো বোনাস/গাড়ি ভাড়া নেই</div>}
+          <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+            {(!myBonuses || myBonuses.length === 0) && <div className="p-6 text-sm text-muted-foreground text-center">কোনো বোনাস/গাড়ি ভাড়া নেই</div>}
             {myBonuses?.map((b: any) => (
-              <div key={b.id} className="p-3 flex items-center justify-between">
+              <div key={b.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
                 <div className="flex items-center gap-3">
-                  {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  <div className={`h-8 w-8 rounded-lg ${b.type === "bonus" ? "bg-success/10" : "bg-primary/10"} flex items-center justify-center`}>
+                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  </div>
                   <div>
                     <p className="text-sm text-foreground font-medium">{b.type === "bonus" ? "বোনাস" : "গাড়ি ভাড়া"}</p>
                     <p className="text-xs text-muted-foreground">{new Date(b.bonus_date).toLocaleDateString("bn-BD")}{b.notes && ` • ${b.notes}`}</p>
@@ -196,33 +198,44 @@ const MemberDashboard = () => {
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-card border-border/50">
-            <div className="p-4 border-b border-border/30"><h2 className="font-semibold text-foreground flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /> পেমেন্ট হিস্ট্রি</h2></div>
-            <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-              {recentPayments?.length === 0 && <div className="p-4 text-sm text-muted-foreground text-center">কোনো পেমেন্ট নেই</div>}
+        {/* Payment & Attendance History */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="premium-card rounded-2xl overflow-hidden">
+            <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <CreditCard className="h-4 w-4 text-primary" />
+              </div>
+              <h2 className="font-semibold text-foreground text-sm md:text-base">পেমেন্ট হিস্ট্রি</h2>
+            </div>
+            <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+              {recentPayments?.length === 0 && <div className="p-6 text-sm text-muted-foreground text-center">কোনো পেমেন্ট নেই</div>}
               {recentPayments?.map((p) => (
-                <div key={p.id} className="p-3 flex items-center justify-between">
+                <div key={p.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
                   <div>
-                    <p className="text-sm text-foreground">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
+                    <p className="text-sm text-foreground font-medium">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
                     <p className="text-xs text-muted-foreground">{paymentMethodLabel[p.payment_method] || p.payment_method} • {new Date(p.payment_date).toLocaleDateString("bn-BD")}</p>
                   </div>
                   {p.transaction_id && <span className="text-xs text-muted-foreground">#{p.transaction_id}</span>}
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
 
-          <Card className="bg-card border-border/50">
-            <div className="p-4 border-b border-border/30"><h2 className="font-semibold text-foreground flex items-center gap-2"><Calendar className="h-4 w-4 text-primary" /> হাজিরা হিস্ট্রি</h2></div>
-            <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-              {recentAttendance?.length === 0 && <div className="p-4 text-sm text-muted-foreground text-center">কোনো হাজিরা নেই</div>}
+          <div className="premium-card rounded-2xl overflow-hidden">
+            <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-primary" />
+              </div>
+              <h2 className="font-semibold text-foreground text-sm md:text-base">হাজিরা হিস্ট্রি</h2>
+            </div>
+            <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+              {recentAttendance?.length === 0 && <div className="p-6 text-sm text-muted-foreground text-center">কোনো হাজিরা নেই</div>}
               {recentAttendance?.map((a: any) => (
-                <div key={a.id} className="p-3 flex items-center justify-between">
+                <div key={a.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
                   <div>
-                    <p className="text-sm text-foreground">{a.shootings?.name || "শুটিং"}</p>
+                    <p className="text-sm text-foreground font-medium">{a.shootings?.name || "শুটিং"}</p>
                     <p className="text-xs text-muted-foreground">{a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : ""}</p>
                   </div>
                   <div className="text-right">
@@ -232,7 +245,7 @@ const MemberDashboard = () => {
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
         </div>
       </div>
 
@@ -247,7 +260,7 @@ const MemberDashboard = () => {
         />
       )}
 
-      {/* Script View Dialog — A4 style */}
+      {/* Script View Dialog */}
       <Dialog open={!!viewScriptData} onOpenChange={(open) => !open && setViewScriptData(null)}>
         <DialogContent className="bg-muted/50 border-none max-w-[900px] w-[95vw] max-h-[95vh] p-0 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border/20 bg-card/80 backdrop-blur">
@@ -257,7 +270,6 @@ const MemberDashboard = () => {
             </h2>
           </div>
           <div className="overflow-y-auto p-4 md:p-8 flex justify-center" style={{ maxHeight: "calc(95vh - 56px)" }}>
-            {/* A4 Page */}
             <div
               className="bg-white shadow-2xl rounded-sm w-full"
               style={{
@@ -270,11 +282,9 @@ const MemberDashboard = () => {
                 fontSize: "14px",
               }}
             >
-              {/* Title */}
               <h1 style={{ fontSize: "22px", fontWeight: 700, textAlign: "center", marginBottom: "24px", color: "#000", borderBottom: "2px solid #e5e5e5", paddingBottom: "16px" }}>
                 {viewScriptData?.title}
               </h1>
-
               {(() => {
                 const content = viewScriptData?.content;
                 if (!content) return <p style={{ color: "#999", textAlign: "center" }}>কোনো কন্টেন্ট নেই</p>;
@@ -306,7 +316,6 @@ const MemberDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
-
     </AppLayout>
   );
 };
