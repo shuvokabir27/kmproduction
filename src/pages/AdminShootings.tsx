@@ -36,6 +36,7 @@ const AdminShootings = () => {
   const [location, setLocation] = useState("");
   const [shootDate, setShootDate] = useState("");
   const [status, setStatus] = useState("plan");
+  const [scriptUrl, setScriptUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const { data: shootings } = useQuery({
@@ -55,13 +56,13 @@ const AdminShootings = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("shootings").insert({
-        name, description, location, shoot_date: shootDate, status
-      });
+        name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+      } as any);
       if (error) throw error;
       toast.success("শুটিং যোগ হয়েছে!");
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
       setOpen(false);
-      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan");
+      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -124,6 +125,10 @@ const AdminShootings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label className="text-foreground">স্ক্রিপ্ট লিংক (অপশনাল)</Label>
+                  <Input value={scriptUrl} onChange={(e) => setScriptUrl(e.target.value)} placeholder="https://drive.google.com/..." className="bg-secondary border-border/50" />
+                </div>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : "সেভ করুন"}
                 </Button>
@@ -140,6 +145,7 @@ const AdminShootings = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">লোকেশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
+                  <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">স্ক্রিপ্ট</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                 </tr>
               </thead>
@@ -154,6 +160,11 @@ const AdminShootings = () => {
                       </td>
                       <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
                       <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
+                      <td className="p-3 hidden md:table-cell">
+                        {(s as any).script_url ? (
+                          <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">স্ক্রিপ্ট দেখুন</a>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      </td>
                       <td className="p-3">
                         <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
                           <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">

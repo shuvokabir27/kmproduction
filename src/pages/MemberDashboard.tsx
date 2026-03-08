@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -40,6 +40,18 @@ const MemberDashboard = () => {
         .eq("member_id", profile!.id)
         .order("created_at", { ascending: false })
         .limit(10);
+      return data ?? [];
+    },
+  });
+
+  const { data: shootings } = useQuery({
+    queryKey: ["member-shootings"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("shootings")
+        .select("*")
+        .order("shoot_date", { ascending: false })
+        .limit(20);
       return data ?? [];
     },
   });
@@ -105,6 +117,51 @@ const MemberDashboard = () => {
             </Card>
           </motion.div>
         </motion.div>
+
+        {/* Shootings */}
+        <Card className="bg-card border-border/50">
+          <div className="p-4 border-b border-border/30">
+            <h2 className="font-semibold text-foreground flex items-center gap-2">
+              <Film className="h-4 w-4 text-primary" /> শুটিং তালিকা
+            </h2>
+          </div>
+          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
+            {shootings?.length === 0 && (
+              <div className="p-4 text-sm text-muted-foreground text-center">কোনো শুটিং নেই</div>
+            )}
+            {shootings?.map((s: any) => {
+              const statusMap: Record<string, { label: string; color: string }> = {
+                plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
+                upcoming: { label: "আসন্ন", color: "bg-warning/10 text-warning" },
+                ongoing: { label: "চলছে", color: "bg-primary/10 text-primary" },
+                completed: { label: "শুটিং শেষ", color: "bg-success/10 text-success" },
+                editing: { label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
+                editing_done: { label: "এডিটিং শেষ", color: "bg-success/15 text-success" },
+                published: { label: "পাবলিশ হয়েছে", color: "bg-success/10 text-success" },
+              };
+              const info = statusMap[s.status] || statusMap.upcoming;
+              return (
+                <div key={s.id} className="p-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-foreground font-medium">{s.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(s.shoot_date).toLocaleDateString("bn-BD")}
+                      {s.location && ` • ${s.location}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {s.script_url && (
+                      <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Payment History */}
