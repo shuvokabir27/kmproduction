@@ -41,7 +41,9 @@ const Login = () => {
       return "এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি।";
     if (msg.includes("rate limit") || msg.includes("too many"))
       return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
-    return err?.message || "লগইন করা যায়নি। আবার চেষ্টা করুন।";
+    // Pass through Bengali messages from edge function as-is
+    if (/[\u0980-\u09FF]/.test(err?.message || "")) return err.message;
+    return "লগইন করা যায়নি। আবার চেষ্টা করুন।";
   };
 
   const handleAdminLogin = async (e: React.FormEvent) => {

@@ -5,6 +5,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const MAX_ATTEMPTS = 3;
+const LOCKOUT_MINUTES = 30;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -25,6 +28,30 @@ Deno.serve(async (req) => {
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
+    const identifier = `member_${member_id}`;
+
+    // Check lockout status
+    const { data: attempt } = await adminClient
+      .from("login_attempts")
+      .select("*")
+      .eq("identifier", identifier)
+      .maybeSingle();
+
+    if (attempt?.locked_until) {
+      const lockedUntil = new Date(attempt.locked_until);
+      if (lockedUntil > new Date()) {
+        const remaining = Math.ceil((lockedUntil.getTime() - Date.now()) / 60000);
+        return new Response(
+          JSON.stringify({
+            error: `অনেকবার ভুল পাসওয়ার্ড দেওয়া হয়েছে। ${remaining} মিনিট পর আবার চেষ্টা করুন।`,
+            locked: true,
+            locked_until: attempt.locked_until,
+            remaining_minutes: remaining,
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
 
     // Look up profile by member_id to get email
     const { data: profile, error: profileError } = await adminClient
@@ -55,10 +82,48 @@ Deno.serve(async (req) => {
     });
 
     if (authError) {
+      // Track failed attempt
+      const newCount = (attempt?.attempt_count || 0) + 1;
+      const lockData: any = {
+        identifier,
+        attempt_count: newCount,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (newCount >= MAX_ATTEMPTS) {
+        lockData.locked_until = new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000).toISOString();
+      }
+
+      if (attempt) {
+        await adminClient.from("login_attempts").update(lockData).eq("identifier", identifier);
+      } else {
+        await adminClient.from("login_attempts").insert(lockData);
+      }
+
+      const remainingAttempts = MAX_ATTEMPTS - newCount;
+      if (newCount >= MAX_ATTEMPTS) {
+        return new Response(
+          JSON.stringify({
+            error: `৩ বার ভুল পাসওয়ার্ড দেওয়া হয়েছে। ${LOCKOUT_MINUTES} মিনিটের জন্য সাসপেন্ড করা হয়েছে।`,
+            locked: true,
+            remaining_minutes: LOCKOUT_MINUTES,
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       return new Response(
-        JSON.stringify({ error: "পাসওয়ার্ড সঠিক নয়" }),
+        JSON.stringify({
+          error: `পাসওয়ার্ড সঠিক নয়। আর ${remainingAttempts} বার চেষ্টা করতে পারবেন।`,
+          remaining_attempts: remainingAttempts,
+        }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Successful login — reset attempts
+    if (attempt) {
+      await adminClient.from("login_attempts").delete().eq("identifier", identifier);
     }
 
     return new Response(

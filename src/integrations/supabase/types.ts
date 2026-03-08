@@ -127,6 +127,30 @@ export type Database = {
           },
         ]
       }
+      login_attempts: {
+        Row: {
+          attempt_count: number
+          id: string
+          identifier: string
+          locked_until: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempt_count?: number
+          id?: string
+          identifier: string
+          locked_until?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempt_count?: number
+          id?: string
+          identifier?: string
+          locked_until?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
