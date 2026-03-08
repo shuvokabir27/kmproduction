@@ -58,7 +58,9 @@ const AdminDashboard = () => {
       const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
       const { data: payments } = await supabase.from("payments").select("amount");
       const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
-      return { totalEarned, totalPaid, due: totalEarned - totalPaid };
+      const { data: bonuses } = await (supabase as any).from("bonuses").select("amount");
+      const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
+      return { totalEarned, totalPaid, due: totalEarned + totalBonuses - totalPaid };
     },
   });
 
