@@ -106,8 +106,8 @@ export function MobileBottomNav() {
               className="absolute bottom-20 left-3 right-3 z-[61] pb-safe-bottom"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl shadow-2xl shadow-black/30 p-3 space-y-1">
-                <div className="flex items-center justify-between px-2 pb-2 border-b border-border/20">
+              <div className="bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl shadow-2xl shadow-black/30 p-3">
+                <div className="flex items-center justify-between px-2 pb-2 border-b border-border/20 mb-2">
                   <span className="text-xs font-semibold text-foreground">আরো অপশন</span>
                   <button
                     onClick={() => setMoreOpen(false)}
@@ -116,55 +116,72 @@ export function MobileBottomNav() {
                     <X className="h-3.5 w-3.5 text-muted-foreground" />
                   </button>
                 </div>
-                {currentMoreItems.map((item, index) => {
-                  const isDivider = item.path.startsWith("__divider");
-                  const isLogout = item.path === "__logout__";
+                {(() => {
+                  // Group items by dividers
+                  const groups: { label?: string; items: typeof currentMoreItems }[] = [];
+                  let currentGroup: typeof currentMoreItems = [];
+                  let currentLabel: string | undefined;
+                  currentMoreItems.forEach((item) => {
+                    if (item.path.startsWith("__divider")) {
+                      if (currentGroup.length > 0) groups.push({ label: currentLabel, items: currentGroup });
+                      currentLabel = item.label.replace(/—/g, "").trim();
+                      currentGroup = [];
+                    } else {
+                      currentGroup.push(item);
+                    }
+                  });
+                  if (currentGroup.length > 0) groups.push({ label: currentLabel, items: currentGroup });
 
-                  if (isDivider) {
-                    return (
-                      <div key={item.path} className="px-3 pt-3 pb-1">
-                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{item.label.replace(/—/g, "").trim()}</span>
+                  return groups.map((group, gi) => (
+                    <div key={gi} className="mb-2">
+                      {group.label && (
+                        <div className="px-2 pt-1 pb-1.5">
+                          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{group.label}</span>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {group.items.map((item, index) => {
+                          const isLogout = item.path === "__logout__";
+                          const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
+                          return (
+                            <motion.button
+                              key={item.path}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: index * 0.04 }}
+                              onClick={async () => {
+                                if (isLogout) {
+                                  await signOut();
+                                  navigate("/login");
+                                } else {
+                                  navigate(item.path);
+                                }
+                                setMoreOpen(false);
+                              }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`flex flex-col items-center gap-1.5 px-2 py-3 rounded-xl transition-all ${
+                                isLogout
+                                  ? "hover:bg-destructive/10 active:bg-destructive/20"
+                                  : active
+                                    ? "bg-secondary/80 border border-border/30"
+                                    : "hover:bg-secondary/50 active:bg-secondary"
+                              }`}
+                            >
+                              <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                                isLogout ? "bg-destructive/10" : item.bg
+                              }`}>
+                                {item.icon && <item.icon className={`h-5 w-5 ${item.color}`} />}
+                              </div>
+                              <span className={`text-[11px] font-medium text-center leading-tight ${item.color}`}>
+                                {item.label}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
                       </div>
-                    );
-                  }
-
-                  const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
-                  return (
-                    <motion.button
-                      key={item.path}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={async () => {
-                        if (isLogout) {
-                          await signOut();
-                          navigate("/login");
-                        } else {
-                          navigate(item.path);
-                        }
-                        setMoreOpen(false);
-                      }}
-                      whileTap={{ scale: 0.97, rotateX: 3 }}
-                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
-                        isLogout
-                          ? "hover:bg-destructive/10 active:bg-destructive/20 border border-transparent"
-                          : active
-                            ? "bg-primary/10 border border-primary/20"
-                            : "hover:bg-secondary/50 active:bg-secondary border border-transparent"
-                      }`}
-                      style={{ perspective: "600px", transformStyle: "preserve-3d" }}
-                    >
-                      <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                        isLogout ? "bg-destructive/10" : item.bg
-                      }`}>
-                        {item.icon && <item.icon className={`h-4.5 w-4.5 ${item.color}`} />}
-                      </div>
-                      <span className={`text-sm font-medium ${item.color}`}>
-                        {item.label}
-                      </span>
-                    </motion.button>
-                  );
-                })}
+                    </div>
+                  ));
+                })()}
               </div>
             </motion.div>
           </motion.div>
