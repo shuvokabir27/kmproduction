@@ -22,6 +22,7 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const mentionListRef = useRef<HTMLDivElement>(null);
   const commentsEndRef = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
 
   const queryKey = ["notice-comments", noticeId];
 
@@ -80,6 +81,22 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
   useEffect(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [comments?.length]);
+
+  // Keep input visible above mobile keyboard
+  useEffect(() => {
+    const handleResize = () => {
+      if (document.activeElement === inputRef.current) {
+        setTimeout(() => {
+          inputWrapperRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        }, 100);
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleResize);
+      return () => window.visualViewport?.removeEventListener("resize", handleResize);
+    }
+  }, []);
 
   const filteredMembers = members?.filter((m: any) =>
     m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase())
@@ -203,7 +220,7 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
       </div>
 
       {/* Comment input with mention */}
-      <div className="relative pt-2 border-t border-border/30 mt-3">
+      <div ref={inputWrapperRef} className="relative pt-2 border-t border-border/30 mt-3 sticky bottom-0 bg-card z-10">
         {showMentions && filteredMembers.length > 0 && (
           <div
             ref={mentionListRef}
@@ -238,6 +255,11 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
             value={commentText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => {
+              setTimeout(() => {
+                inputWrapperRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+              }, 300);
+            }}
             placeholder="মন্তব্য লিখুন... (@দিয়ে মেনশন)"
             rows={1}
             className="flex-1 bg-secondary border border-border/30 rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
