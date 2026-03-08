@@ -358,6 +358,30 @@ export type Database = {
         }
         Relationships: []
       }
+      news_ticker: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          sort_order: number | null
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number | null
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number | null
+          text?: string
+        }
+        Relationships: []
+      }
       notice_comments: {
         Row: {
           content: string
@@ -1000,6 +1024,8 @@ export type Database = {
           logo_url: string | null
           site_description: string | null
           site_name: string | null
+          ticker_enabled: boolean | null
+          ticker_speed: number | null
           tiktok_url: string | null
           updated_at: string
           whatsapp_no: string | null
@@ -1016,6 +1042,8 @@ export type Database = {
           logo_url?: string | null
           site_description?: string | null
           site_name?: string | null
+          ticker_enabled?: boolean | null
+          ticker_speed?: number | null
           tiktok_url?: string | null
           updated_at?: string
           whatsapp_no?: string | null
@@ -1032,6 +1060,8 @@ export type Database = {
           logo_url?: string | null
           site_description?: string | null
           site_name?: string | null
+          ticker_enabled?: boolean | null
+          ticker_speed?: number | null
           tiktok_url?: string | null
           updated_at?: string
           whatsapp_no?: string | null

@@ -14,7 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check, Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, List, ListOrdered, AlignLeft, AlignCenter, Link2, Video, ZoomIn, ZoomOut } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check, Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, List, ListOrdered, AlignLeft, AlignCenter, Link2, Video, ZoomIn, ZoomOut, Zap } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminTicker from "@/components/AdminTicker";
 import { format } from "date-fns";
 import ReactCrop, { type Crop as CropType, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
@@ -346,6 +348,22 @@ export default function AdminNews() {
             <Plus className="h-4 w-4" /> নতুন নিউজ
           </Button>
         </div>
+
+        <Tabs defaultValue="news">
+          <TabsList className="mb-4">
+            <TabsTrigger value="news" className="gap-1.5">
+              <Newspaper className="h-3.5 w-3.5" /> নিউজ
+            </TabsTrigger>
+            <TabsTrigger value="ticker" className="gap-1.5">
+              <Zap className="h-3.5 w-3.5" /> টিকার
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="ticker">
+            <AdminTicker />
+          </TabsContent>
+
+          <TabsContent value="news">
 
         {isLoading ? (
           <div className="grid gap-4">
@@ -749,6 +767,8 @@ export default function AdminNews() {
             </div>
           </DialogContent>
         </Dialog>
+          </TabsContent>
+        </Tabs>
       </div>
     </AppLayout>
   );

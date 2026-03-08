@@ -148,6 +148,40 @@ export default function News() {
     },
   });
 
+  const { data: tickerItems } = useQuery({
+    queryKey: ["public-ticker"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_ticker")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as { id: string; text: string }[];
+    },
+  });
+
+  const { data: tickerSettings } = useQuery({
+    queryKey: ["ticker-settings-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("ticker_speed, ticker_enabled")
+        .limit(1)
+        .single();
+      if (error) return { ticker_speed: 30, ticker_enabled: true };
+      return data;
+    },
+  });
+
+  const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
+  const tickerSpeed = tickerSettings?.ticker_speed || 30;
+
+  // Use custom ticker items if available, otherwise use news titles
+  const tickerTexts = tickerItems && tickerItems.length > 0
+    ? tickerItems.map((t) => ({ id: t.id, text: t.text, newsItem: null as NewsItem | null }))
+    : (newsList || []).map((n) => ({ id: n.id, text: n.title, newsItem: n }));
+
   const filtered = activeCategory === "all"
     ? newsList
     : newsList?.filter((n) => n.category === activeCategory);
@@ -322,35 +356,38 @@ export default function News() {
         </div>
 
         {/* Breaking News Ticker */}
-        {newsList && newsList.length > 0 && (
+        {tickerEnabled && tickerTexts.length > 0 && (
           <div className="mb-6 rounded-xl border border-border/30 overflow-hidden bg-secondary/30">
             <div className="flex items-stretch">
               <div className="bg-destructive text-destructive-foreground px-3 py-2 flex items-center gap-1.5 font-bold text-xs whitespace-nowrap z-10 shrink-0">
                 <span className="animate-pulse">🔴</span> ব্রেকিং
               </div>
               <div className="overflow-hidden flex-1 relative">
-                <div className="flex items-center h-full ticker-scroll">
+                <div
+                  className="flex items-center h-full ticker-scroll"
+                  style={{ animationDuration: `${tickerSpeed}s` }}
+                >
                   <div className="flex items-center gap-8 whitespace-nowrap px-4 ticker-content">
-                    {newsList.map((news, i) => (
+                    {tickerTexts.map((item) => (
                       <button
-                        key={news.id}
-                        onClick={() => setSelectedNews(news)}
+                        key={item.id}
+                        onClick={() => item.newsItem && setSelectedNews(item.newsItem)}
                         className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
                       >
                         <span className="text-primary/60">●</span>
-                        {news.title}
+                        {item.text}
                       </button>
                     ))}
                   </div>
                   <div className="flex items-center gap-8 whitespace-nowrap px-4 ticker-content" aria-hidden="true">
-                    {newsList.map((news, i) => (
+                    {tickerTexts.map((item) => (
                       <button
-                        key={`dup-${news.id}`}
-                        onClick={() => setSelectedNews(news)}
+                        key={`dup-${item.id}`}
+                        onClick={() => item.newsItem && setSelectedNews(item.newsItem)}
                         className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
                       >
                         <span className="text-primary/60">●</span>
-                        {news.title}
+                        {item.text}
                       </button>
                     ))}
                   </div>
