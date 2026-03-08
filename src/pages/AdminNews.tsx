@@ -54,6 +54,58 @@ export default function AdminNews() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState<CropType>();
+  const [completedCrop, setCompletedCrop] = useState<CropType>();
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { width, height } = e.currentTarget;
+    const c = centerCrop(
+      makeAspectCrop({ unit: "%", width: 90 }, 16 / 9, width, height),
+      width, height
+    );
+    setCrop(c);
+  }, []);
+
+  const getCroppedBlob = useCallback((): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const image = imgRef.current;
+      if (!image || !completedCrop) return reject("No crop");
+      const canvas = document.createElement("canvas");
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+      const pixelCrop = {
+        x: (completedCrop.x || 0) * scaleX,
+        y: (completedCrop.y || 0) * scaleY,
+        width: (completedCrop.width || 0) * scaleX,
+        height: (completedCrop.height || 0) * scaleY,
+      };
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return reject("No canvas context");
+      ctx.drawImage(image, pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height, 0, 0, pixelCrop.width, pixelCrop.height);
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject("Failed to create blob");
+      }, "image/jpeg", 0.92);
+    });
+  }, [completedCrop]);
+
+  const handleCropConfirm = async () => {
+    try {
+      const blob = await getCroppedBlob();
+      const file = new File([blob], `cropped-${Date.now()}.jpg`, { type: "image/jpeg" });
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(blob));
+      setCropDialogOpen(false);
+      setRawImageSrc(null);
+    } catch {
+      toast({ title: "ক্রপ ব্যর্থ", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate("/login");
