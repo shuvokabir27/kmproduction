@@ -74,7 +74,7 @@ const AdminAttendance = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("attendance")
-        .select("*, profiles(full_name, member_id, photo_url), shootings(name, shoot_date)")
+        .select("*, profiles(full_name, member_id, photo_url, salary_type), shootings(name, shoot_date)")
         .order("created_at", { ascending: false });
       return data ?? [];
     },
@@ -245,7 +245,7 @@ const AdminAttendance = () => {
                            <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
                            <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                            <th className="text-center p-3 text-muted-foreground font-medium">উপস্থিত</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">দৈনিক রেট (৳)</th>
+                           <th className="text-left p-3 text-muted-foreground font-medium">রেট</th>
                          </tr>
                        </thead>
                        <tbody className="divide-y divide-border/20">
@@ -268,14 +268,18 @@ const AdminAttendance = () => {
                                  onCheckedChange={() => togglePresent(m.id)}
                                />
                              </td>
-                             <td className="p-3">
-                               <Input
-                                 type="number"
-                                 value={attendanceData[m.id]?.rate || "0"}
-                                 onChange={(e) => setRate(m.id, e.target.value)}
-                                 className="w-28 bg-secondary border-border/30 h-8"
-                               />
-                             </td>
+                              <td className="p-3">
+                                {m.salary_type === "monthly" ? (
+                                  <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">মাসিক</span>
+                                ) : (
+                                  <Input
+                                    type="number"
+                                    value={attendanceData[m.id]?.rate || "0"}
+                                    onChange={(e) => setRate(m.id, e.target.value)}
+                                    className="w-28 bg-secondary border-border/30 h-8"
+                                  />
+                                )}
+                              </td>
                            </tr>
                          ))}
                        </tbody>
@@ -349,7 +353,13 @@ const AdminAttendance = () => {
                                   {a.is_present ? "উপস্থিত" : "অনুপস্থিত"}
                                 </span>
                               </td>
-                              <td className="p-3 text-right text-foreground">৳{Number(a.daily_rate || 0).toLocaleString("bn-BD")}</td>
+                               <td className="p-3 text-right text-foreground">
+                                 {a.profiles?.salary_type === "monthly" ? (
+                                   <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">মাসিক</span>
+                                 ) : (
+                                   <>৳{Number(a.daily_rate || 0).toLocaleString("bn-BD")}</>
+                                 )}
+                               </td>
                             </tr>
                           ))}
                         </tbody>
