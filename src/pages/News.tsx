@@ -6,7 +6,7 @@ import { Newspaper, Calendar, Star, ArrowLeft, Image as ImageIcon, Share2, Faceb
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const categories = [
@@ -130,6 +130,7 @@ const formatInline = (text: string) => {
 export default function News() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { shortId } = useParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
@@ -154,21 +155,35 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
-  // Auto-open news from shared link query param
+  // Auto-open news from shared link (query param or short ID route)
   useEffect(() => {
+    if (!newsList) return;
+    
+    // Check query param first
     const newsId = searchParams.get("id");
-    if (newsId && newsList) {
+    if (newsId) {
       const found = newsList.find((n) => n.id === newsId);
       if (found) {
         setSelectedNews(found);
         setSearchParams({}, { replace: true });
       }
+      return;
     }
-  }, [newsList, searchParams]);
+    
+    // Check short ID from route (UUID without dashes)
+    if (shortId) {
+      const fullId = shortId.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
+      const found = newsList.find((n) => n.id === fullId);
+      if (found) {
+        setSelectedNews(found);
+      }
+    }
+  }, [newsList, searchParams, shortId]);
 
   const getShareUrl = (news: NewsItem) => {
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    return `https://${projectId}.supabase.co/functions/v1/og-news?id=${news.id}`;
+    // Short ID: remove dashes from UUID for cleaner URL
+    const shortId = news.id.replace(/-/g, "");
+    return `https://kmproduction.lovable.app/news/${shortId}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
