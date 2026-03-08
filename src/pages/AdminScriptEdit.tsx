@@ -36,7 +36,7 @@ const parseContent = (content: string): Sequence[] => {
   } catch {}
   
   // Legacy: single content block
-  return [{ id: generateId(), title: "সিকুয়েন্স ১", content, collapsed: false }];
+  return [{ id: generateId(), title: "দৃশ্য ১", content, collapsed: false }];
 };
 
 const AdminScriptEdit = () => {
