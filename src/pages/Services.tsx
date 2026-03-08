@@ -124,7 +124,7 @@ const Services = () => {
               className="mb-12 text-center"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Featured</span>
-              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">জনপ্রিয় প্যাকেজ</h2>
+              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">{t("জনপ্রিয় প্যাকেজ", "Popular Packages")}</h2>
             </motion.div>
 
             <motion.div
