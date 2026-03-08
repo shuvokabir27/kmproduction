@@ -249,7 +249,7 @@ const Services = () => {
                           </div>
                         ))}
                         {features.length > 3 && (
-                          <span className="text-xs text-muted-foreground">+{features.length - 3} আরো</span>
+                          <span className="text-xs text-muted-foreground">+{features.length - 3} {t("আরো", "more")}</span>
                         )}
                       </div>
 
