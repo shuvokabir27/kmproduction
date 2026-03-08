@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Save, Plus, Trash2, GripVertical, ChevronDown, ChevronRight, Download, FileText, Edit, Eye } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, GripVertical, ChevronDown, ChevronRight, Download, FileText, Edit, Eye, Users, X, UserPlus } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Type } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface Sequence {
   id: string;
@@ -47,6 +49,7 @@ const AdminScriptEdit = () => {
   const [sequences, setSequences] = useState<Sequence[]>([]);
   const [saving, setSaving] = useState(false);
   const [activeSeqId, setActiveSeqId] = useState<string | null>(null);
+  const [permDialogOpen, setPermDialogOpen] = useState(false);
   const editorRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { data: script, isLoading: scriptLoading } = useQuery({
@@ -64,6 +67,34 @@ const AdminScriptEdit = () => {
       setSequences(parseContent(script.content));
     }
   }, [script]);
+
+  const { data: members } = useQuery({
+    queryKey: ["all-members-for-perms"],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("id, full_name, member_id, photo_url").eq("is_active", true).order("member_id");
+      return data ?? [];
+    },
+  });
+
+  const { data: permissions, refetch: refetchPerms } = useQuery({
+    queryKey: ["script-permissions", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data } = await supabase.from("script_permissions" as any).select("*, profiles(full_name, member_id, photo_url)").eq("script_id", id);
+      return (data ?? []) as any[];
+    },
+  });
+
+  const togglePermission = async (memberId: string) => {
+    const existing = permissions?.find((p: any) => p.member_id === memberId);
+    if (existing) {
+      await supabase.from("script_permissions" as any).delete().eq("id", existing.id);
+    } else {
+      await supabase.from("script_permissions" as any).insert({ script_id: id, member_id: memberId } as any);
+    }
+    refetchPerms();
+    queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
+  };
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -229,6 +260,9 @@ const AdminScriptEdit = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setPermDialogOpen(true)}>
+              <Users className="h-3.5 w-3.5" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
+            </Button>
             <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadPDF}>
               <Download className="h-3.5 w-3.5" /> PDF
             </Button>
@@ -322,6 +356,71 @@ const AdminScriptEdit = () => {
           </Button>
         )}
       </div>
+
+      {/* Permission Dialog */}
+      <Dialog open={permDialogOpen} onOpenChange={setPermDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-md max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" /> স্ক্রিপ্ট পারমিশন
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-xs text-muted-foreground">কোন কোন সদস্য এই স্ক্রিপ্ট দেখতে পারবে তা সিলেক্ট করুন:</p>
+
+          {/* Permitted members */}
+          {permissions && permissions.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">অনুমোদিত সদস্য</p>
+              <div className="space-y-1.5">
+                {permissions.map((p: any) => (
+                  <div key={p.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-success/5 border border-success/20">
+                    <div className="flex items-center gap-2">
+                      <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+                        {p.profiles?.photo_url ? (
+                          <img src={p.profiles.photo_url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-primary text-[9px] font-medium">{p.profiles?.full_name?.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm text-foreground">{p.profiles?.full_name}</p>
+                        <p className="text-[10px] text-muted-foreground">ID: {p.profiles?.member_id}</p>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => togglePermission(p.member_id)}>
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* All members list */}
+          <div className="flex-1 overflow-y-auto space-y-1 border-t border-border/20 pt-3">
+            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">সকল সদস্য</p>
+            {members?.map((m) => {
+              const hasAccess = permissions?.some((p: any) => p.member_id === m.id);
+              return (
+                <label key={m.id} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary/30 cursor-pointer transition-colors">
+                  <Checkbox checked={hasAccess} onCheckedChange={() => togglePermission(m.id)} />
+                  <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                    {m.photo_url ? (
+                      <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-primary text-[9px] font-medium">{m.full_name?.charAt(0)}</span>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm text-foreground truncate">{m.full_name}</p>
+                    <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
