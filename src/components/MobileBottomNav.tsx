@@ -143,22 +143,22 @@ export function MobileBottomNav() {
                   if (currentGroup.length > 0) groups.push({ label: currentLabel, items: currentGroup });
 
                   return groups.map((group, gi) => (
-                    <div key={gi} className="mb-2">
+                    <div key={gi} className="relative z-10 mb-2">
                       {group.label && (
                         <div className="px-2 pt-1 pb-1.5">
-                          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{group.label}</span>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{group.label}</span>
                         </div>
                       )}
-                      <div className="grid grid-cols-2 gap-1.5">
+                      <div className="grid grid-cols-2 gap-2">
                         {group.items.map((item, index) => {
                           const isLogout = item.path === "__logout__";
                           const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
                           return (
                             <motion.button
                               key={item.path}
-                              initial={{ opacity: 0, scale: 0.9 }}
+                              initial={{ opacity: 0, scale: 0.85 }}
                               animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: index * 0.04 }}
+                              transition={{ delay: index * 0.04, type: "spring", stiffness: 400, damping: 25 }}
                               onClick={async () => {
                                 if (isLogout) {
                                   await signOut();
@@ -168,21 +168,21 @@ export function MobileBottomNav() {
                                 }
                                 setMoreOpen(false);
                               }}
-                              whileTap={{ scale: 0.95 }}
-                              className={`flex flex-col items-center gap-1.5 px-2 py-3 rounded-xl transition-all ${
+                              whileTap={{ scale: 0.92 }}
+                              className={`flex flex-col items-center gap-2 px-2 py-3.5 rounded-xl transition-all border ${
                                 isLogout
-                                  ? "hover:bg-destructive/10 active:bg-destructive/20"
+                                  ? "border-destructive/20 bg-destructive/5"
                                   : active
-                                    ? "bg-secondary/80 border border-border/30"
-                                    : "hover:bg-secondary/50 active:bg-secondary"
+                                    ? "border-border/40 bg-secondary/60"
+                                    : "border-transparent hover:bg-secondary/30"
                               }`}
                             >
-                              <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
+                              <div className={`h-11 w-11 rounded-xl flex items-center justify-center shadow-sm ${
                                 isLogout ? "bg-destructive/10" : item.bg
                               }`}>
                                 {item.icon && <item.icon className={`h-5 w-5 ${item.color}`} />}
                               </div>
-                              <span className={`text-[11px] font-medium text-center leading-tight ${item.color}`}>
+                              <span className={`text-[11px] font-semibold text-center leading-tight ${item.color}`}>
                                 {item.label}
                               </span>
                             </motion.button>
