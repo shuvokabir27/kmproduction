@@ -463,6 +463,44 @@ const AdminShootings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog with Timer */}
+      <Dialog open={deleteDialogOpen} onOpenChange={(v) => { if (!v) { setDeleteTimerActive(false); } setDeleteDialogOpen(v); }}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive flex items-center gap-2">
+              <Trash2 className="h-5 w-5" /> শুটিং ডিলিট করুন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              আপনি কি <span className="font-semibold text-foreground">"{deleteShootingName}"</span> শুটিংটি ডিলিট করতে চান? এই শুটিংয়ের সকল হাজিরা ডেটাও মুছে যাবে।
+            </p>
+            <p className="text-xs text-destructive/80">⚠️ এই কাজটি অপরিবর্তনীয়!</p>
+
+            {deleteTimer > 0 && (
+              <div className="flex items-center justify-center">
+                <div className="relative h-16 w-16">
+                  <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="16" fill="none" className="stroke-border/30" strokeWidth="2" />
+                    <circle cx="18" cy="18" r="16" fill="none" className="stroke-destructive" strokeWidth="2" strokeDasharray={`${(deleteTimer / 5) * 100.53} 100.53`} strokeLinecap="round" style={{ transition: "stroke-dasharray 1s linear" }} />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-destructive">{deleteTimer}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1 border-border/30" onClick={() => { setDeleteDialogOpen(false); setDeleteTimerActive(false); }}>
+                ক্যানসেল
+              </Button>
+              <Button variant="destructive" className="flex-1" disabled={deleteTimer > 0} onClick={handleDelete}>
+                {deleteTimer > 0 ? `অপেক্ষা করুন (${deleteTimer}স)` : "ডিলিট করুন"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
