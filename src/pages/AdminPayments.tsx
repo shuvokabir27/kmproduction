@@ -210,14 +210,23 @@ const AdminPayments = () => {
 
                 {/* Member Info Card */}
                 {selectedProfile && (
-                  <Card className="p-4 bg-secondary/50 border-border/30 space-y-2">
+                   <Card className="p-4 bg-secondary/50 border-border/30 space-y-2">
+                    {/* বকেয়া ব্যালেন্স - Highlighted */}
+                    <div className="rounded-xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-red-500/15 border border-amber-500/30 p-3 flex items-center justify-between">
+                      <span className="text-sm font-medium text-amber-300">💰 বকেয়া ব্যালেন্স</span>
+                      <span className="text-xl font-extrabold text-amber-400 tracking-tight">৳{memberBalance?.balance?.toLocaleString() || "0"}</span>
+                    </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">আইডি</span>
                       <span className="text-sm text-foreground font-mono">{selectedProfile.member_id}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">বকেয়া ব্যালেন্স</span>
-                      <span className="text-sm font-bold text-warning">৳{memberBalance?.balance?.toLocaleString() || "0"}</span>
+                      <span className="text-xs text-muted-foreground">মোট আয়</span>
+                      <span className="text-xs font-semibold text-emerald-400">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">মোট প্রদান</span>
+                      <span className="text-xs font-semibold text-cyan-400">৳{memberBalance?.totalPaid?.toLocaleString() || "0"}</span>
                     </div>
                     {selectedProfile.bank_name && (
                       <div className="flex items-center justify-between">
@@ -237,14 +246,6 @@ const AdminPayments = () => {
                         <span className="text-xs text-foreground">{selectedProfile.nagad_no}</span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">মোট আয়</span>
-                      <span className="text-xs text-success">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">মোট প্রদান</span>
-                      <span className="text-xs text-primary">৳{memberBalance?.totalPaid?.toLocaleString() || "0"}</span>
-                    </div>
                   </Card>
                 )}
 
