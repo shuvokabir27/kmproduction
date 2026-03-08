@@ -40,6 +40,10 @@ const MemberSettings = () => {
   const [confirmPw, setConfirmPw] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
 
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailSaving, setEmailSaving] = useState(false);
+
   const [extraFields, setExtraFields] = useState({
     address: "", education: "", achievements: "", short_bio: "",
     favorite_actor: "", favorite_actress: "", favorite_color: "",
