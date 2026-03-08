@@ -6,12 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Globe, GripVertical, ArrowUp, ArrowDown } from "lucide-react";
+import { Globe, GripVertical } from "lucide-react";
 import { toast } from "sonner";
+import { useRef, useState, useEffect } from "react";
 
 const AdminPublicProfiles = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
+  const [localMembers, setLocalMembers] = useState<any[]>([]);
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
 
   const { data: members } = useQuery({
     queryKey: ["admin-public-profiles"],
@@ -25,6 +30,10 @@ const AdminPublicProfiles = () => {
     },
   });
 
+  useEffect(() => {
+    if (members) setLocalMembers(members);
+  }, [members]);
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
@@ -36,27 +45,62 @@ const AdminPublicProfiles = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-public-profiles"] });
   };
 
-  const moveOrder = async (id: string, direction: "up" | "down") => {
-    if (!members) return;
-    const idx = members.findIndex((m: any) => m.id === id);
-    if (idx < 0) return;
-    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= members.length) return;
-
-    const current = members[idx];
-    const swap = members[swapIdx];
-
-    await Promise.all([
-      supabase.from("profiles").update({ public_display_order: swap.public_display_order } as any).eq("id", current.id),
-      supabase.from("profiles").update({ public_display_order: current.public_display_order } as any).eq("id", swap.id),
-    ]);
-
+  const saveOrder = async (reordered: any[]) => {
+    const updates = reordered.map((m: any, i: number) =>
+      supabase.from("profiles").update({ public_display_order: i } as any).eq("id", m.id)
+    );
+    await Promise.all(updates);
     queryClient.invalidateQueries({ queryKey: ["admin-public-profiles"] });
   };
 
+  const handleDragStart = (idx: number) => {
+    dragItem.current = idx;
+    setDraggingIdx(idx);
+  };
+
+  const handleDragEnter = (idx: number) => {
+    dragOverItem.current = idx;
+  };
+
+  const handleDragEnd = async () => {
+    if (dragItem.current === null || dragOverItem.current === null || dragItem.current === dragOverItem.current) {
+      setDraggingIdx(null);
+      return;
+    }
+    const reordered = [...localMembers];
+    const [removed] = reordered.splice(dragItem.current, 1);
+    reordered.splice(dragOverItem.current, 0, removed);
+    setLocalMembers(reordered);
+    setDraggingIdx(null);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    await saveOrder(reordered);
+    toast.success("ক্রম আপডেট হয়েছে");
+  };
+
+  const handleTouchStart = (idx: number, e: React.TouchEvent) => {
+    dragItem.current = idx;
+    setDraggingIdx(idx);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const currentY = e.touches[0].clientY;
+    const elements = document.querySelectorAll("[data-drag-idx]");
+    elements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (currentY >= rect.top && currentY <= rect.bottom) {
+        dragOverItem.current = Number(el.getAttribute("data-drag-idx"));
+      }
+    });
+  };
+
+  const handleTouchEnd = async () => {
+    await handleDragEnd();
+  };
+
   const reorderAll = async () => {
-    if (!members) return;
-    const updates = members.map((m: any, i: number) =>
+    if (!localMembers.length) return;
+    const updates = localMembers.map((m: any, i: number) =>
       supabase.from("profiles").update({ public_display_order: i } as any).eq("id", m.id)
     );
     await Promise.all(updates);
@@ -73,7 +117,7 @@ const AdminPublicProfiles = () => {
               <Globe className="h-5 w-5 md:h-6 md:w-6 text-primary" /> পাবলিক প্রোফাইল সাজানো
             </h1>
             <p className="text-muted-foreground text-xs">
-              কার প্রোফাইল পাবলিক সাইটে দেখাবে এবং কোন ক্রমে দেখাবে সেটা নির্ধারণ করুন
+              ড্র্যাগ করে প্রোফাইলের ক্রম সাজান · সুইচ দিয়ে দৃশ্যমানতা নিয়ন্ত্রণ করুন
             </p>
           </div>
           <Button size="sm" variant="outline" onClick={reorderAll} className="text-xs">
@@ -82,35 +126,27 @@ const AdminPublicProfiles = () => {
         </div>
 
         <div className="space-y-2">
-          {members?.map((m: any, idx: number) => (
+          {localMembers.map((m: any, idx: number) => (
             <Card
               key={m.id}
-              className={`p-3 flex items-center gap-3 transition-all ${
-                m.show_on_public !== false
-                  ? "bg-card border-border/30"
-                  : "bg-muted/30 border-border/10 opacity-60"
+              data-drag-idx={idx}
+              draggable
+              onDragStart={() => handleDragStart(idx)}
+              onDragEnter={() => handleDragEnter(idx)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => e.preventDefault()}
+              onTouchStart={(e) => handleTouchStart(idx, e)}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`p-3 flex items-center gap-3 transition-all cursor-grab active:cursor-grabbing select-none ${
+                draggingIdx === idx
+                  ? "opacity-50 scale-95 border-primary/50"
+                  : m.show_on_public !== false
+                    ? "bg-card border-border/30"
+                    : "bg-muted/30 border-border/10 opacity-60"
               }`}
             >
-              <div className="flex flex-col gap-0.5">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0"
-                  disabled={idx === 0}
-                  onClick={() => moveOrder(m.id, "up")}
-                >
-                  <ArrowUp className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0"
-                  disabled={idx === (members?.length ?? 0) - 1}
-                  onClick={() => moveOrder(m.id, "down")}
-                >
-                  <ArrowDown className="h-3.5 w-3.5" />
-                </Button>
-              </div>
+              <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
 
               <span className="text-xs text-muted-foreground font-mono w-6 text-center">{idx + 1}</span>
 
