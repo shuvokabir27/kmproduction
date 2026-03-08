@@ -87,10 +87,14 @@ const PublicHome = () => {
     { label: "যোগাযোগ", href: "#contact" },
   ];
 
-  const scrollToSection = (href: string) => {
+  const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
     setMobileMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (nav.isPage) {
+      navigate(nav.href);
+    } else {
+      const el = document.querySelector(nav.href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
