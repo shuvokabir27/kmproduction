@@ -160,6 +160,11 @@ const AdminShootings = () => {
                       </td>
                       <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
                       <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
+                      <td className="p-3 hidden md:table-cell">
+                        {(s as any).script_url ? (
+                          <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">স্ক্রিপ্ট দেখুন</a>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      </td>
                       <td className="p-3">
                         <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
                           <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
