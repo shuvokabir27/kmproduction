@@ -309,6 +309,42 @@ export type Database = {
         }
         Relationships: []
       }
+      script_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          script_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          script_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          script_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "script_permissions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "script_permissions_script_id_fkey"
+            columns: ["script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scripts: {
         Row: {
           content: string | null
