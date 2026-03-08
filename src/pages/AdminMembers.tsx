@@ -141,9 +141,14 @@ const AdminMembers = () => {
     if (!form.full_name.trim()) { toast.error("নাম দিতে হবে"); return; }
     setSubmitting(true);
     try {
+      let photoUrl: string | undefined;
+      let coverUrl: string | undefined;
+
       if (editId) {
-        // Update existing
-        const { error } = await supabase.from("profiles").update({
+        if (photoFile) photoUrl = await uploadFile(photoFile, 'profiles', editId);
+        if (coverFile) coverUrl = await uploadFile(coverFile, 'covers', editId);
+
+        const updateData: any = {
           full_name: form.full_name,
           email: form.email || null,
           phone: form.phone || null,
@@ -156,7 +161,11 @@ const AdminMembers = () => {
           address: form.address || null,
           salary_type: form.salary_type as any,
           monthly_salary: Number(form.monthly_salary) || 0,
-        }).eq("id", editId);
+        };
+        if (photoUrl) updateData.photo_url = photoUrl;
+        if (coverUrl) updateData.cover_url = coverUrl;
+
+        const { error } = await supabase.from("profiles").update(updateData).eq("id", editId);
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
       } else {
