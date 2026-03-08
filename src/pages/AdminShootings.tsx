@@ -199,6 +199,13 @@ const AdminShootings = () => {
     setDeleteDialogOpen(true);
   };
 
+  const togglePublicVisibility = async (shootingId: string, current: boolean) => {
+    const { error } = await supabase.from("shootings").update({ show_on_public: !current } as any).eq("id", shootingId);
+    if (error) { toast.error(error.message); return; }
+    toast.success(!current ? "পাবলিক সাইটে দেখানো হবে" : "পাবলিক সাইট থেকে লুকানো হবে");
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
 
 
   const handleDelete = async () => {
