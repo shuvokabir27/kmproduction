@@ -27,6 +27,59 @@ const AdminPayments = () => {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
+  const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Delete timer countdown
+  useEffect(() => {
+    const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
+    if (activeTimers.length === 0) return;
+    const interval = setInterval(() => {
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        for (const [id, val] of Object.entries(next)) {
+          if (val > 0) next[id] = val - 1;
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [deleteTimers]);
+
+  const startDeleteTimer = (id: string) => {
+    setDeleteTimers((prev) => ({ ...prev, [id]: 5 }));
+  };
+
+  const cancelDelete = (id: string) => {
+    setDeleteTimers((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
+
+  const handleDeletePayment = async (paymentId: string) => {
+    if (deleteTimers[paymentId] !== 0) return;
+    setDeletingId(paymentId);
+    try {
+      const { error } = await supabase.from("payments").delete().eq("id", paymentId);
+      if (error) throw error;
+      toast.success("পেমেন্ট ডিলিট হয়েছে এবং ব্যালেন্স আপডেট হয়েছে!");
+      queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
+      queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-member-balances"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-dashboard-stats"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setDeletingId(null);
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        delete next[paymentId];
+        return next;
+      });
+    }
+  };
 
   const { data: members } = useQuery({
     queryKey: ["admin-members-pay"],
