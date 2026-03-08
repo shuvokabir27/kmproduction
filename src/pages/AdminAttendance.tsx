@@ -192,23 +192,8 @@ const AdminAttendance = () => {
     });
   };
 
-  // Countdown effect
-  useEffect(() => {
-    const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
-    if (activeTimers.length === 0) return;
 
-    const interval = setInterval(() => {
-      setDeleteTimers((prev) => {
-        const next = { ...prev };
-        for (const key in next) {
-          if (next[key] > 0) next[key]--;
-        }
-        return next;
-      });
-    }, 1000);
 
-    return () => clearInterval(interval);
-  }, [Object.keys(deleteTimers).length]);
 
   const handleDeleteAttendance = async (shootingId: string) => {
     if (deleteTimers[shootingId] !== 0) return;
