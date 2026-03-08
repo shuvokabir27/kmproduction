@@ -412,6 +412,26 @@ const MemberSettings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Email Change Dialog */}
+      <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" /> ইমেইল পরিবর্তন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন ইমেইল</Label>
+              <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="নতুন ইমেইল দিন" />
+            </div>
+            <Button onClick={handleChangeEmail} disabled={emailSaving || !newEmail.trim()} className="w-full gap-2">
+              <Mail className="h-4 w-4" /> {emailSaving ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
