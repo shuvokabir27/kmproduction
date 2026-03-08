@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
+const sb = supabase as any;
+
 interface ChatMessagesProps {
   conversationId: string;
   onBack?: () => void;
@@ -19,22 +21,21 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Get conversation info
   const { data: conversation } = useQuery({
     queryKey: ["conversation-info", conversationId],
     queryFn: async () => {
-      const { data: conv } = await supabase
+      const { data: conv } = await sb
         .from("conversations")
         .select("*")
         .eq("id", conversationId)
         .single();
 
-      const { data: members } = await supabase
+      const { data: members } = await sb
         .from("conversation_members")
         .select("user_id")
         .eq("conversation_id", conversationId);
 
-      const memberUserIds = members?.map((m) => m.user_id) ?? [];
+      const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
       const { data: profiles } = await supabase
         .from("profiles")
         .select("full_name, photo_url, user_id")
@@ -55,11 +56,10 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
     },
   });
 
-  // Get messages
   const { data: messages } = useQuery({
     queryKey: ["messages", conversationId],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await sb
         .from("messages")
         .select("*")
         .eq("conversation_id", conversationId)
@@ -69,7 +69,6 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
     refetchInterval: 3000,
   });
 
-  // Realtime subscription
   useEffect(() => {
     const channel = supabase
       .channel(`messages-${conversationId}`)
@@ -92,7 +91,6 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
     };
   }, [conversationId, queryClient]);
 
-  // Scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -101,14 +99,13 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
   const sendMessage = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("messages").insert({
+      const { error } = await sb.from("messages").insert({
         conversation_id: conversationId,
         sender_id: user!.id,
         content: newMessage.trim(),
       });
       if (error) throw error;
-      // Update conversation updated_at
-      await supabase
+      await sb
         .from("conversations")
         .update({ updated_at: new Date().toISOString() })
         .eq("id", conversationId);
@@ -122,7 +119,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
   const deleteMessage = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("messages").delete().eq("id", id);
+      const { error } = await sb.from("messages").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -141,7 +138,6 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className="p-3 border-b border-border/30 flex items-center gap-3 bg-card/80 backdrop-blur">
         {onBack && (
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onBack}>
@@ -158,7 +154,6 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         </div>
       </div>
 
-      {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {(!messages || messages.length === 0) && (
           <div className="text-center text-sm text-muted-foreground py-10">
@@ -212,7 +207,6 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         })}
       </div>
 
-      {/* Input */}
       <form onSubmit={handleSubmit} className="p-3 border-t border-border/30 flex gap-2">
         <Input
           value={newMessage}

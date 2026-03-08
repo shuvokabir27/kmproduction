@@ -1,10 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { Users, User, Plus, MessageCircle } from "lucide-react";
+import { Users, User, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+
+const sb = supabase as any;
 
 interface ConversationListProps {
   selectedId: string | null;
@@ -20,36 +22,34 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
     queryKey: ["conversations", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data: memberConvos } = await supabase
+      const { data: memberConvos } = await sb
         .from("conversation_members")
         .select("conversation_id")
         .eq("user_id", user!.id);
 
       if (!memberConvos || memberConvos.length === 0) return [];
 
-      const convIds = memberConvos.map((c) => c.conversation_id);
-      const { data: convos } = await supabase
+      const convIds = memberConvos.map((c: any) => c.conversation_id);
+      const { data: convos } = await sb
         .from("conversations")
         .select("*")
         .in("id", convIds)
         .order("updated_at", { ascending: false });
 
-      // For each conversation, get members with profile info
       const enriched = await Promise.all(
-        (convos ?? []).map(async (conv) => {
-          const { data: members } = await supabase
+        (convos ?? []).map(async (conv: any) => {
+          const { data: members } = await sb
             .from("conversation_members")
             .select("user_id")
             .eq("conversation_id", conv.id);
 
-          const memberUserIds = members?.map((m) => m.user_id) ?? [];
+          const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
           const { data: profiles } = await supabase
             .from("profiles")
             .select("full_name, photo_url, user_id")
             .in("user_id", memberUserIds);
 
-          // Get last message
-          const { data: lastMsg } = await supabase
+          const { data: lastMsg } = await sb
             .from("messages")
             .select("content, created_at, sender_id")
             .eq("conversation_id", conv.id)
