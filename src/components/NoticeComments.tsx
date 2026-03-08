@@ -22,6 +22,7 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const mentionListRef = useRef<HTMLDivElement>(null);
   const commentsEndRef = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
 
   const queryKey = ["notice-comments", noticeId];
 
