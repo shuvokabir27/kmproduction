@@ -236,7 +236,7 @@ const AdminMembers = () => {
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> সদস্য যোগ করুন</Button>
+              <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> সদস্য যোগ</Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
               <DialogHeader>
