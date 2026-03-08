@@ -235,6 +235,9 @@ const AdminShootings = () => {
                       <td className="p-3">
                         <p className="text-foreground font-medium">{s.name}</p>
                         {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
+                        {s.channels && (
+                          <p className="text-xs text-primary mt-0.5">📺 {(s as any).channels.name}</p>
+                        )}
                       </td>
                       <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
                       <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
