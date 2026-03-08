@@ -146,7 +146,7 @@ const Services = () => {
                     }`}>
                       {index === 1 && (
                         <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center py-1.5 text-xs font-bold tracking-wider uppercase">
-                          ★ সবচেয়ে জনপ্রিয়
+                          ★ {t("সবচেয়ে জনপ্রিয়", "Most Popular")}
                         </div>
                       )}
                       <div className={`p-6 ${index === 1 ? "pt-10" : ""}`}>
