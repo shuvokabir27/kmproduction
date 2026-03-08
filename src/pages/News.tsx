@@ -301,12 +301,19 @@ export default function News() {
                         {featured.excerpt}
                       </p>
                     )}
-                    {featured.published_at && (
-                      <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {getPublisherName(featured.publisher_id) && (
+                        <span className="text-[10px] font-semibold text-foreground/70">
+                          ✍️ {getPublisherName(featured.publisher_id)}
+                        </span>
+                      )}
+                      {featured.published_at && (
+                        <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-4 border-t-[2px] border-foreground/10" />
