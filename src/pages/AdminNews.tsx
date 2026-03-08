@@ -168,6 +168,7 @@ export default function AdminNews() {
     setIsPublished(news.is_published);
     setIsFeatured(news.is_featured);
     setImagePreview(news.featured_image_url);
+    setVideoUrl(news.video_url || "");
     setImageFile(null);
     setDialogOpen(true);
   };
