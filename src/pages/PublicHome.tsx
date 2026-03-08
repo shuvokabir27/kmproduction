@@ -502,6 +502,90 @@ const PublicHome = () => {
         </section>
       )}
 
+      {/* Channels */}
+      {channels && channels.length > 0 && (
+        <section className="py-28 px-4 relative" id="channels">
+          <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background" />
+          <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
+          <div className="container max-w-6xl mx-auto relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-14"
+            >
+              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Channels</span>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">আমাদের চ্যানেল সমূহ</h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {channels.map((ch) => (
+                <motion.div key={ch.id} variants={item}>
+                  <a
+                    href={ch.url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="premium-card rounded-2xl p-6 flex items-center gap-4 group hover:border-primary/30 transition-all"
+                  >
+                    <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                      {ch.platform?.toLowerCase() === "youtube" ? (
+                        <Youtube className="h-7 w-7 text-primary" />
+                      ) : ch.platform?.toLowerCase() === "facebook" ? (
+                        <Facebook className="h-7 w-7 text-primary" />
+                      ) : (
+                        <Tv className="h-7 w-7 text-primary" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground truncate">{ch.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{ch.platform || "Channel"}</p>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                  </a>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Gallery */}
+      <section className="py-28 px-4 relative" id="gallery">
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
+        <div className="container max-w-6xl mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-14"
+          >
+            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">ছবি গ্যালারী</h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="premium-card rounded-2xl p-12 text-center"
+          >
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <Image className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">শীঘ্রই আসছে</h3>
+            <p className="text-sm text-muted-foreground">আমাদের ছবি গ্যালারী শীঘ্রই যুক্ত করা হবে।</p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Contact */}
       <section className="py-28 px-4 relative" id="contact">
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
