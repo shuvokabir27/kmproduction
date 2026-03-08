@@ -5,6 +5,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { usePresenceTracker } from "@/hooks/usePresence";
 import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
