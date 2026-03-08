@@ -8,6 +8,11 @@ import {
   Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 const iconMap: Record<string, any> = {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
