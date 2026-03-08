@@ -309,6 +309,25 @@ const MemberDashboard = () => {
           </div>
         </Card>
 
+        {/* Permitted Scripts */}
+        <Card className="bg-card border-border/50">
+          <div className="p-4 border-b border-border/30">
+            <h2 className="font-semibold text-foreground flex items-center gap-2"><ScrollText className="h-4 w-4 text-primary" /> স্ক্রিপ্ট সমূহ</h2>
+          </div>
+          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
+            {(!permittedScripts || permittedScripts.length === 0) && <div className="p-4 text-sm text-muted-foreground text-center">কোনো স্ক্রিপ্ট অ্যাক্সেস নেই</div>}
+            {permittedScripts?.map((script: any) => (
+              <div key={script.id} className="p-3 flex items-center justify-between hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => setViewScriptData(script)}>
+                <div>
+                  <p className="text-sm text-foreground font-medium">{script.title}</p>
+                  <p className="text-xs text-muted-foreground">{script.updated_at ? new Date(script.updated_at).toLocaleDateString("bn-BD") : ""}</p>
+                </div>
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              </div>
+            ))}
+          </div>
+        </Card>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="bg-card border-border/50">
             <div className="p-4 border-b border-border/30"><h2 className="font-semibold text-foreground flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /> পেমেন্ট হিস্ট্রি</h2></div>
