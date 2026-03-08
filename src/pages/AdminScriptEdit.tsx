@@ -129,7 +129,7 @@ const AdminScriptEdit = () => {
 
   const addSequence = () => {
     const num = sequences.length + 1;
-    const newSeq: Sequence = { id: generateId(), title: `সিকুয়েন্স ${num}`, content: "", collapsed: false };
+    const newSeq: Sequence = { id: generateId(), title: `দৃশ্য ${num}`, content: "", collapsed: false };
     setSequences([...sequences, newSeq]);
     setActiveSeqId(newSeq.id);
   };
