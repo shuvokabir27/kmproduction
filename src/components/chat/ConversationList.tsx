@@ -82,6 +82,8 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
             ...conv,
             displayName,
             photoUrl,
+            otherUserId: conv.type === "personal" ? otherMembers[0]?.user_id : null,
+            memberUserIds,
             memberCount: memberUserIds.length,
             lastMessage: lastMsg?.[0] || null,
             unreadCount: unreadCount || 0,
