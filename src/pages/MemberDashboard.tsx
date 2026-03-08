@@ -152,6 +152,11 @@ const MemberDashboard = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
+                    {s.script_content && (
+                      <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-primary hover:text-primary/80">
+                        <FileText className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     {s.script_url && (
                       <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
                         <ExternalLink className="h-3.5 w-3.5" />
