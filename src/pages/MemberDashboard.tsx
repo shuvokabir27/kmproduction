@@ -475,6 +475,32 @@ const MemberDashboard = () => {
                   <Label className="text-foreground text-xs">Achievements (English)</Label>
                   <Textarea value={extraFields.achievements_en} onChange={e => setExtra("achievements_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Your notable achievements..." />
                 </div>
+
+                <div className="border-t border-border/30 pt-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">Favorites</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Actor</Label>
+                      <Input value={extraFields.favorite_actor_en} onChange={e => setExtra("favorite_actor_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Actress</Label>
+                      <Input value={extraFields.favorite_actress_en} onChange={e => setExtra("favorite_actress_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Color</Label>
+                      <Input value={extraFields.favorite_color_en} onChange={e => setExtra("favorite_color_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Dress</Label>
+                      <Input value={extraFields.favorite_dress_en} onChange={e => setExtra("favorite_dress_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-foreground text-xs">Favorite Food</Label>
+                      <Input value={extraFields.favorite_food_en} onChange={e => setExtra("favorite_food_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                  </div>
+                </div>
               </>
             )}
 
