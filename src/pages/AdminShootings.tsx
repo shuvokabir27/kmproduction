@@ -47,6 +47,11 @@ const AdminShootings = () => {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [publishShootingId, setPublishShootingId] = useState<string>("");
   const [publishChannelId, setPublishChannelId] = useState<string>("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteShootingId, setDeleteShootingId] = useState<string>("");
+  const [deleteShootingName, setDeleteShootingName] = useState<string>("");
+  const [deleteTimer, setDeleteTimer] = useState(5);
+  const [deleteTimerActive, setDeleteTimerActive] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
