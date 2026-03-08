@@ -671,6 +671,34 @@ const MemberDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Password Change Dialog */}
+      <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-primary" /> পাসওয়ার্ড পরিবর্তন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-muted-foreground text-xs">বর্তমান পাসওয়ার্ড</Label>
+              <Input type="password" value={currentPw} onChange={e => setCurrentPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="বর্তমান পাসওয়ার্ড দিন" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড</Label>
+              <Input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড নিশ্চিত করুন</Label>
+              <Input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="আবার নতুন পাসওয়ার্ড দিন" />
+            </div>
+            <Button onClick={handleChangePassword} disabled={pwSaving} className="w-full gap-2">
+              <KeyRound className="h-4 w-4" /> {pwSaving ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
