@@ -376,6 +376,12 @@ const AdminMembers = () => {
                     </td>
                     <td className="p-3">
                       <Switch
+                        checked={(m as any).is_verified ?? false}
+                        onCheckedChange={() => toggleVerified(m.id, (m as any).is_verified ?? false)}
+                      />
+                    </td>
+                    <td className="p-3">
+                      <Switch
                         checked={m.is_active ?? true}
                         onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)}
                       />
