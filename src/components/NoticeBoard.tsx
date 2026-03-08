@@ -26,6 +26,7 @@ export function NoticeBoard() {
       const { data } = await supabase
         .from("notices")
         .select("*")
+        .eq("is_active", true)
         .order("is_pinned", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(10);

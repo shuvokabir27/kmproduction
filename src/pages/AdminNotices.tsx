@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pin, Trash2, MessageSquare, Clock } from "lucide-react";
+import { Plus, Pin, Trash2, MessageSquare, Clock, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -111,6 +111,15 @@ const AdminNotices = () => {
     else queryClient.invalidateQueries({ queryKey: ["admin-notices"] });
   };
 
+  const toggleActive = async (id: string, current: boolean) => {
+    const { error } = await supabase.from("notices").update({ is_active: !current }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(!current ? "নোটিশ চালু করা হয়েছে" : "নোটিশ বন্ধ করা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-notices"] });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -134,13 +143,14 @@ const AdminNotices = () => {
           {notices?.map((notice: any) => (
             <motion.div key={notice.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <Card
-                className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""}`}
+                className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""} ${!notice.is_active ? "opacity-50" : ""}`}
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       {notice.is_pinned && <Pin className="h-3.5 w-3.5 text-primary shrink-0" />}
+                      {!notice.is_active && <EyeOff className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
                       <h3 className="font-semibold text-foreground truncate">{notice.title}</h3>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">{notice.content}</p>
@@ -153,9 +163,19 @@ const AdminNotices = () => {
                         <MessageSquare className="h-3 w-3" />
                         {commentCounts?.[notice.id] ?? 0}
                       </span>
+                      {!notice.is_active && (
+                        <span className="text-xs text-destructive font-medium">বন্ধ</span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    <Button
+                      variant="ghost" size="icon" className="h-8 w-8"
+                      title={notice.is_active ? "নোটিশ বন্ধ করুন" : "নোটিশ চালু করুন"}
+                      onClick={(e) => { e.stopPropagation(); toggleActive(notice.id, notice.is_active); }}
+                    >
+                      {notice.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                    </Button>
                     <Button
                       variant="ghost" size="icon" className="h-8 w-8"
                       onClick={(e) => { e.stopPropagation(); togglePin(notice.id, notice.is_pinned); }}
