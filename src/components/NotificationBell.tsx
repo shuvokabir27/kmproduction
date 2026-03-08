@@ -14,6 +14,7 @@ const typeIcons: Record<string, typeof Film> = {
   payment: CreditCard,
   attendance: Calendar,
   script: ScrollText,
+  notice: Megaphone,
 };
 
 const typeColors: Record<string, string> = {
