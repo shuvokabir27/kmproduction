@@ -115,10 +115,27 @@ const AdminShootings = () => {
   };
 
   const changeStatus = async (shootingId: string, newStatus: string) => {
+    if (newStatus === "published") {
+      setPublishShootingId(shootingId);
+      setPublishChannelId("");
+      setPublishDialogOpen(true);
+      return;
+    }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
     if (error) { toast.error(error.message); return; }
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
+  const confirmPublish = async () => {
+    if (!publishChannelId) { toast.error("চ্যানেল নির্বাচন করুন"); return; }
+    const { error } = await supabase.from("shootings").update({
+      status: "published", channel_id: publishChannelId
+    } as any).eq("id", publishShootingId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("পাবলিশ হয়েছে!");
+    setPublishDialogOpen(false);
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
