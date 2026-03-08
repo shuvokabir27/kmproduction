@@ -314,6 +314,45 @@ const MemberDashboard = () => {
             <DialogTitle className="text-foreground">প্রোফাইল তথ্য আপডেট</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Photo & Cover Upload */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">প্রোফাইল ছবি</Label>
+                <input type="file" accept="image/*" ref={photoRef} className="hidden" onChange={e => {
+                  const f = e.target.files?.[0];
+                  if (f) { setPhotoFile(f); setPhotoPreview(URL.createObjectURL(f)); }
+                }} />
+                <button
+                  type="button"
+                  onClick={() => photoRef.current?.click()}
+                  className="w-full h-24 rounded-lg border-2 border-dashed border-border/50 bg-secondary/50 flex flex-col items-center justify-center gap-1 hover:border-primary/50 transition-colors overflow-hidden"
+                >
+                  {photoPreview || (profile as any)?.photo_url ? (
+                    <img src={photoPreview || (profile as any)?.photo_url} alt="photo" className="w-full h-full object-cover" />
+                  ) : (
+                    <><Camera className="h-5 w-5 text-muted-foreground" /><span className="text-[10px] text-muted-foreground">ছবি আপলোড</span></>
+                  )}
+                </button>
+              </div>
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">কভার ফটো</Label>
+                <input type="file" accept="image/*" ref={coverRef} className="hidden" onChange={e => {
+                  const f = e.target.files?.[0];
+                  if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)); }
+                }} />
+                <button
+                  type="button"
+                  onClick={() => coverRef.current?.click()}
+                  className="w-full h-24 rounded-lg border-2 border-dashed border-border/50 bg-secondary/50 flex flex-col items-center justify-center gap-1 hover:border-primary/50 transition-colors overflow-hidden"
+                >
+                  {coverPreview || (profile as any)?.cover_url ? (
+                    <img src={coverPreview || (profile as any)?.cover_url} alt="cover" className="w-full h-full object-cover" />
+                  ) : (
+                    <><ImageIcon className="h-5 w-5 text-muted-foreground" /><span className="text-[10px] text-muted-foreground">কভার আপলোড</span></>
+                  )}
+                </button>
+              </div>
+            </div>
             <div>
               <Label className="text-foreground text-xs">শর্ট বিবরণ</Label>
               <Textarea value={extraFields.short_bio} onChange={e => setExtra("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="নিজের সম্পর্কে সংক্ষেপে লিখুন..." />
