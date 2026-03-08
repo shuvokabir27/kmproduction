@@ -61,7 +61,7 @@ const MemberDashboard = () => {
     queryKey: ["my-bonuses", profile?.id],
     enabled: !!profile?.id,
     queryFn: async () => {
-      const { data } = await supabase.from("bonuses").select("*").eq("member_id", profile!.id).order("bonus_date", { ascending: false });
+      const { data } = await (supabase as any).from("bonuses").select("*").eq("member_id", profile!.id).order("bonus_date", { ascending: false });
       return data ?? [];
     },
   });
