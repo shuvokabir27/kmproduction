@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Save, History, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Save, History, ChevronDown, ChevronRight, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -20,8 +20,7 @@ const AdminAttendance = () => {
   const [selectedShooting, setSelectedShooting] = useState<string>("");
   const [attendanceData, setAttendanceData] = useState<Record<string, { present: boolean; rate: string }>>({});
   const [saving, setSaving] = useState(false);
-  const [historyShootingFilter, setHistoryShootingFilter] = useState<string>("all");
-  const [historyMemberFilter, setHistoryMemberFilter] = useState<string>("all");
+  const [expandedShootings, setExpandedShootings] = useState<Set<string>>(new Set());
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-list"],
@@ -122,11 +121,28 @@ const AdminAttendance = () => {
     }
   };
 
-  const filteredHistory = (allAttendance ?? []).filter((a: any) => {
-    if (historyShootingFilter !== "all" && a.shooting_id !== historyShootingFilter) return false;
-    if (historyMemberFilter !== "all" && a.member_id !== historyMemberFilter) return false;
-    return true;
+  // Group attendance by shooting
+  const groupedByShooting = (allAttendance ?? []).reduce((acc: Record<string, { shooting: any; records: any[] }>, a: any) => {
+    if (!acc[a.shooting_id]) {
+      acc[a.shooting_id] = { shooting: a.shootings, records: [] };
+    }
+    acc[a.shooting_id].records.push(a);
+    return acc;
+  }, {});
+
+  const shootingGroups = Object.entries(groupedByShooting).sort((a, b) => {
+    const dateA = a[1].shooting?.shoot_date || "";
+    const dateB = b[1].shooting?.shoot_date || "";
+    return dateB.localeCompare(dateA);
   });
+
+  const toggleExpand = (id: string) => {
+    setExpandedShootings((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <AppLayout>
@@ -203,76 +219,69 @@ const AdminAttendance = () => {
             )}
           </TabsContent>
 
-          <TabsContent value="history" className="space-y-4 mt-4">
-            <div className="flex flex-wrap gap-3">
-              <div className="w-48">
-                <Label className="text-foreground mb-1 block text-xs">শুটিং ফিল্টার</Label>
-                <Select value={historyShootingFilter} onValueChange={setHistoryShootingFilter}>
-                  <SelectTrigger className="bg-secondary border-border/50 h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border/50">
-                    <SelectItem value="all">সব শুটিং</SelectItem>
-                    {shootings?.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="w-48">
-                <Label className="text-foreground mb-1 block text-xs">সদস্য ফিল্টার</Label>
-                <Select value={historyMemberFilter} onValueChange={setHistoryMemberFilter}>
-                  <SelectTrigger className="bg-secondary border-border/50 h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border/50">
-                    <SelectItem value="all">সব সদস্য</SelectItem>
-                    {members?.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>{m.full_name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          <TabsContent value="history" className="space-y-3 mt-4">
+            {shootingGroups.length === 0 && (
+              <Card className="bg-card border-border/50 p-8 text-center text-muted-foreground">কোনো হাজিরা রেকর্ড নেই</Card>
+            )}
+            {shootingGroups.map(([shootingId, group]) => {
+              const isExpanded = expandedShootings.has(shootingId);
+              const presentCount = group.records.filter((r: any) => r.is_present).length;
+              const totalRate = group.records.reduce((sum: number, r: any) => sum + (r.is_present ? Number(r.daily_rate || 0) : 0), 0);
 
-            <Card className="bg-card border-border/50 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border/30">
-                      <th className="text-left p-3 text-muted-foreground font-medium">সদস্য</th>
-                      <th className="text-left p-3 text-muted-foreground font-medium">শুটিং</th>
-                      <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">তারিখ</th>
-                      <th className="text-center p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
-                      <th className="text-right p-3 text-muted-foreground font-medium">রেট (৳)</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/20">
-                    {filteredHistory.length === 0 && (
-                      <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">কোনো হাজিরা রেকর্ড নেই</td></tr>
-                    )}
-                    {filteredHistory.map((a: any) => (
-                      <tr key={a.id} className="hover:bg-secondary/30 transition-colors">
-                        <td className="p-3">
-                          <p className="text-foreground">{a.profiles?.full_name || "—"}</p>
-                          <p className="text-xs text-muted-foreground font-mono">#{a.profiles?.member_id}</p>
-                        </td>
-                        <td className="p-3 text-foreground">{a.shootings?.name || "—"}</td>
-                        <td className="p-3 text-muted-foreground hidden sm:table-cell">
-                          {a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : "—"}
-                        </td>
-                        <td className="p-3 text-center">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
-                            {a.is_present ? "উপস্থিত" : "অনুপস্থিত"}
-                          </span>
-                        </td>
-                        <td className="p-3 text-right text-foreground">৳{Number(a.daily_rate || 0).toLocaleString("bn-BD")}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+              return (
+                <Card key={shootingId} className="bg-card border-border/50 overflow-hidden">
+                  <button
+                    onClick={() => toggleExpand(shootingId)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-secondary/30 transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-3">
+                      {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                      <div>
+                        <p className="font-medium text-foreground">{group.shooting?.name || "শুটিং"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {group.shooting?.shoot_date ? new Date(group.shooting.shoot_date).toLocaleDateString("bn-BD") : ""}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <Users className="h-3.5 w-3.5" /> {presentCount}/{group.records.length}
+                      </span>
+                      <span className="text-foreground font-medium">৳{totalRate.toLocaleString("bn-BD")}</span>
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="border-t border-border/30">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border/20">
+                            <th className="text-left p-3 text-muted-foreground font-medium text-xs">আইডি</th>
+                            <th className="text-left p-3 text-muted-foreground font-medium text-xs">সদস্য</th>
+                            <th className="text-center p-3 text-muted-foreground font-medium text-xs">স্ট্যাটাস</th>
+                            <th className="text-right p-3 text-muted-foreground font-medium text-xs">রেট (৳)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/10">
+                          {group.records.map((a: any) => (
+                            <tr key={a.id} className="hover:bg-secondary/20 transition-colors">
+                              <td className="p-3 text-muted-foreground font-mono text-xs">#{a.profiles?.member_id}</td>
+                              <td className="p-3 text-foreground">{a.profiles?.full_name || "—"}</td>
+                              <td className="p-3 text-center">
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
+                                  {a.is_present ? "উপস্থিত" : "অনুপস্থিত"}
+                                </span>
+                              </td>
+                              <td className="p-3 text-right text-foreground">৳{Number(a.daily_rate || 0).toLocaleString("bn-BD")}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </Card>
+              );
+            })}
           </TabsContent>
         </Tabs>
       </div>
