@@ -50,7 +50,7 @@ const AdminAttendance = () => {
   const { data: members } = useQuery({
     queryKey: ["admin-members-list"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").eq("is_active", true).order("member_id");
+      const { data } = await (supabase as any).from("profiles").select("*").eq("is_active", true).order("member_id");
       return data ?? [];
     },
   });
