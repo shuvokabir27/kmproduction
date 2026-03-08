@@ -438,6 +438,11 @@ const AdminShootings = () => {
                                   </SelectContent>
                                 </Select>
                               </td>
+                              <td className="p-3 text-center">
+                                <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)}>
+                                  {(s as any).show_on_public ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                                </Button>
+                              </td>
                               <td className="p-3 text-right">
                                  <div className="flex items-center justify-end gap-1">
                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
