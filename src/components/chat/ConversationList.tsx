@@ -50,9 +50,9 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
             .eq("conversation_id", conv.id);
 
           const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
-          const { data: profiles } = await supabase
+          const { data: profiles } = await (supabase as any)
             .from("profiles")
-            .select("full_name, photo_url, user_id, last_seen_at" as any)
+            .select("full_name, photo_url, user_id, last_seen_at")
             .in("user_id", memberUserIds);
 
           const { data: lastMsg } = await sb
