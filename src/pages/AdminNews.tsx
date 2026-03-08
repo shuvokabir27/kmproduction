@@ -349,6 +349,22 @@ export default function AdminNews() {
           </Button>
         </div>
 
+        <Tabs defaultValue="news">
+          <TabsList className="mb-4">
+            <TabsTrigger value="news" className="gap-1.5">
+              <Newspaper className="h-3.5 w-3.5" /> নিউজ
+            </TabsTrigger>
+            <TabsTrigger value="ticker" className="gap-1.5">
+              <Zap className="h-3.5 w-3.5" /> টিকার
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="ticker">
+            <AdminTicker />
+          </TabsContent>
+
+          <TabsContent value="news">
+
         {isLoading ? (
           <div className="grid gap-4">
             {[1, 2, 3].map(i => (
