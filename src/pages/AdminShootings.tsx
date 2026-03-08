@@ -12,6 +12,19 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const statusOptions = [
+  { value: "plan", label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
+  { value: "upcoming", label: "আসন্ন", color: "bg-warning/10 text-warning" },
+  { value: "ongoing", label: "চলছে", color: "bg-primary/10 text-primary" },
+  { value: "completed", label: "শুটিং শেষ", color: "bg-success/10 text-success" },
+  { value: "editing", label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
+  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-success/10 text-success" },
+];
+
+const getStatusInfo = (status: string | null) =>
+  statusOptions.find((s) => s.value === status) || statusOptions[1];
 
 const AdminShootings = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -21,6 +34,7 @@ const AdminShootings = () => {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [shootDate, setShootDate] = useState("");
+  const [status, setStatus] = useState("plan");
   const [submitting, setSubmitting] = useState(false);
 
   const { data: shootings } = useQuery({
@@ -40,18 +54,26 @@ const AdminShootings = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("shootings").insert({
-        name, description, location, shoot_date: shootDate
+        name, description, location, shoot_date: shootDate, status
       });
       if (error) throw error;
       toast.success("শুটিং যোগ হয়েছে!");
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
       setOpen(false);
-      setName(""); setDescription(""); setLocation(""); setShootDate("");
+      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const changeStatus = async (shootingId: string, newStatus: string) => {
+    const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
+    if (error) { toast.error(error.message); return; }
+    const info = getStatusInfo(newStatus);
+    toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
   return (
@@ -78,13 +100,28 @@ const AdminShootings = () => {
                   <Label className="text-foreground">বিবরণ</Label>
                   <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-secondary border-border/50" />
                 </div>
-                <div>
-                  <Label className="text-foreground">লোকেশন</Label>
-                  <Input value={location} onChange={(e) => setLocation(e.target.value)} className="bg-secondary border-border/50" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-foreground">লোকেশন</Label>
+                    <Input value={location} onChange={(e) => setLocation(e.target.value)} className="bg-secondary border-border/50" />
+                  </div>
+                  <div>
+                    <Label className="text-foreground">তারিখ</Label>
+                    <Input type="date" value={shootDate} onChange={(e) => setShootDate(e.target.value)} required className="bg-secondary border-border/50" />
+                  </div>
                 </div>
                 <div>
-                  <Label className="text-foreground">তারিখ</Label>
-                  <Input type="date" value={shootDate} onChange={(e) => setShootDate(e.target.value)} required className="bg-secondary border-border/50" />
+                  <Label className="text-foreground">স্ট্যাটাস</Label>
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="bg-secondary border-border/50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/50">
+                      {statusOptions.map((s) => (
+                        <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : "সেভ করুন"}
@@ -106,23 +143,33 @@ const AdminShootings = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
-                {shootings?.map((s) => (
-                  <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
-                    <td className="p-3">
-                      <p className="text-foreground font-medium">{s.name}</p>
-                      {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
-                    </td>
-                    <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
-                    <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
-                    <td className="p-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        s.status === "completed" ? "bg-success/10 text-success"
-                        : s.status === "ongoing" ? "bg-primary/10 text-primary"
-                        : "bg-warning/10 text-warning"
-                      }`}>{s.status === "completed" ? "সম্পন্ন" : s.status === "ongoing" ? "চলমান" : "আসন্ন"}</span>
-                    </td>
-                  </tr>
-                ))}
+                {shootings?.map((s) => {
+                  const info = getStatusInfo(s.status);
+                  return (
+                    <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
+                      <td className="p-3">
+                        <p className="text-foreground font-medium">{s.name}</p>
+                        {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
+                      </td>
+                      <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
+                      <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
+                      <td className="p-3">
+                        <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
+                          <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-border/50">
+                            {statusOptions.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
