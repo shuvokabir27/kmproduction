@@ -135,11 +135,8 @@ const AdminDashboard = () => {
           {stats.map((stat) => (
             <motion.div key={stat.label} variants={item}>
               <Card
-                className={cn(
-                  "p-3 md:p-5 bg-card border-border/30 transition-all active:scale-[0.98]",
-                  stat.clickable && "cursor-pointer hover:border-primary/30"
-                )}
-                onClick={stat.clickable ? () => setDueDialogOpen(true) : undefined}
+                className="p-3 md:p-5 bg-card border-border/30 transition-all active:scale-[0.98] cursor-pointer hover:border-primary/30"
+                onClick={stat.onClick}
               >
                 <div className="flex items-start gap-2.5">
                   <div className={`h-9 w-9 md:h-10 md:w-10 rounded-xl ${stat.bgColor} flex items-center justify-center shrink-0`}>
