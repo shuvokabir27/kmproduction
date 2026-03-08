@@ -13,6 +13,7 @@ import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText,
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
+import { NoticeBoard } from "@/components/NoticeBoard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
