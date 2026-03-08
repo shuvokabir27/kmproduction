@@ -487,6 +487,7 @@ export default function AdminNews() {
                 {videoUrl && (
                   <p className="text-[10px] text-muted-foreground mt-1">নিউজের শেষে ভিডিও এম্বেড হবে</p>
                 )}
+              </div>
 
               {/* Category */}
               <div>
