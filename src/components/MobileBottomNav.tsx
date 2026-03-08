@@ -159,7 +159,7 @@ export function MobileBottomNav() {
                       }`}>
                         {item.icon && <item.icon className={`h-4.5 w-4.5 ${item.color}`} />}
                       </div>
-                      <span className={`text-sm font-medium ${isLogout ? "text-destructive" : item.color}`}>
+                      <span className={`text-sm font-medium ${item.color}`}>
                         {item.label}
                       </span>
                     </motion.button>
