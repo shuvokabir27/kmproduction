@@ -124,9 +124,16 @@ const PublicProfile = () => {
 
                 {/* Name & Title */}
                 <div className="pt-2 sm:pt-8">
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-                    {profile.full_name}
-                  </h1>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+                      {profile.full_name}
+                    </h1>
+                    {p.is_verified && (
+                      <span title="ভেরিফাইড সদস্য" className="shrink-0">
+                        <BadgeCheck className="h-6 w-6 text-blue-500 drop-shadow-[0_0_6px_rgba(59,130,246,0.5)]" />
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                     <p className="text-primary font-medium text-sm tracking-wide uppercase">
