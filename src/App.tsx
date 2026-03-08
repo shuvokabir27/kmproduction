@@ -9,6 +9,7 @@ import PublicHome from "./pages/PublicHome";
 import PublicProfile from "./pages/PublicProfile";
 import Login from "./pages/Login";
 import MemberDashboard from "./pages/MemberDashboard";
+import MemberScripts from "./pages/MemberScripts";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminMembers from "./pages/AdminMembers";
 import AdminAttendance from "./pages/AdminAttendance";
