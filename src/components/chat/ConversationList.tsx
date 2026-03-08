@@ -52,7 +52,7 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
           const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
           const { data: profiles } = await supabase
             .from("profiles")
-            .select("full_name, photo_url, user_id")
+            .select("full_name, photo_url, user_id, last_seen_at" as any)
             .in("user_id", memberUserIds);
 
           const { data: lastMsg } = await sb
