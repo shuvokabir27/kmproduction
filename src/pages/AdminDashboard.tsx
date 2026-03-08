@@ -185,10 +185,10 @@ const AdminDashboard = () => {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 text-xs md:text-sm w-full md:w-auto"
+          className="gap-2 border-cyan-500/20 hover:border-cyan-500/40 hover:bg-cyan-500/5 text-xs md:text-sm w-full md:w-auto"
           onClick={() => setBalanceDialogOpen(true)}
         >
-          <List className="h-4 w-4 text-primary" /> সদস্য ব্যালেন্স তালিকা
+          <List className="h-4 w-4 text-cyan-400" /> সদস্য ব্যালেন্স তালিকা
         </Button>
 
         {/* Recent Payments */}
