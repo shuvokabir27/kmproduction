@@ -250,6 +250,14 @@ const AdminPayments = () => {
             </table>
           </div>
         </Card>
+
+        {/* Payment Receipt */}
+        {receiptData && (
+          <PaymentReceipt
+            receiptData={receiptData}
+            onClose={() => setReceiptData(null)}
+          />
+        )}
       </div>
     </AppLayout>
   );
