@@ -42,12 +42,15 @@ const AdminShootings = () => {
   const [submitting, setSubmitting] = useState(false);
   const [scriptEditorOpen, setScriptEditorOpen] = useState(false);
   const [scriptEditShooting, setScriptEditShooting] = useState<any>(null);
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [publishShootingId, setPublishShootingId] = useState<string>("");
+  const [publishChannelId, setPublishChannelId] = useState<string>("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*").order("shoot_date", { ascending: false });
-      return data ?? [];
+      const { data } = await supabase.from("shootings").select("*, channels(name, platform)" as any).order("shoot_date", { ascending: false });
+      return (data ?? []) as any[];
     },
   });
 
