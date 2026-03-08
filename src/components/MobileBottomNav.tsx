@@ -155,11 +155,11 @@ export function MobileBottomNav() {
                       style={{ perspective: "600px", transformStyle: "preserve-3d" }}
                     >
                       <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                        isLogout ? "bg-destructive/10" : active ? "bg-primary/20" : "bg-secondary"
+                        isLogout ? "bg-destructive/10" : `${item.color.replace('text-', 'bg-').replace('-400', '-500/10')}`
                       }`}>
-                        {item.icon && <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : active ? "text-primary" : "text-muted-foreground"}`} />}
+                        {item.icon && <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : item.color}`} />}
                       </div>
-                      <span className={`text-sm font-medium ${isLogout ? "text-destructive" : active ? "text-primary" : "text-foreground"}`}>
+                      <span className={`text-sm font-medium ${isLogout ? "text-destructive" : item.color}`}>
                         {item.label}
                       </span>
                     </motion.button>
