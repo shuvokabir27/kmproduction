@@ -44,14 +44,28 @@ const getEmbedUrl = (url: string): string | null => {
 
 const renderFormattedContent = (text: string) => {
   return text.split("\n").map((line, i) => {
-    // Inline image: ![caption](url)
+    // Inline image: ![caption|size](url) or ![caption](url)
     const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
     if (imgMatch) {
+      const meta = imgMatch[1];
+      const url = imgMatch[2];
+      let caption = meta;
+      let size = 100;
+      if (meta.includes("|")) {
+        const parts = meta.split("|");
+        caption = parts[0];
+        size = parseInt(parts[1]) || 100;
+      }
       return (
-        <figure key={i} className="my-4">
-          <img src={imgMatch[2]} alt={imgMatch[1]} className="w-full rounded-xl border border-border/30" />
-          {imgMatch[1] && (
-            <figcaption className="text-xs text-muted-foreground text-center mt-2 italic">{imgMatch[1]}</figcaption>
+        <figure key={i} className="my-4 flex flex-col items-center">
+          <img
+            src={url}
+            alt={caption}
+            className="rounded-xl border border-border/30 object-contain"
+            style={{ width: `${Math.min(size, 100)}%`, maxWidth: "100%" }}
+          />
+          {caption && (
+            <figcaption className="text-xs text-muted-foreground text-center mt-2 italic">{caption}</figcaption>
           )}
         </figure>
       );
