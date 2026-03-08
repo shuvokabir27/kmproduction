@@ -23,10 +23,23 @@ export function useMemberBalance(profileId: string | undefined) {
 
       const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
 
+      // Total bonuses (bonus + transport)
+      const { data: bonuses } = await supabase
+        .from("bonuses")
+        .select("amount, type")
+        .eq("member_id", profileId!);
+
+      const totalBonus = bonuses?.filter(b => b.type === "bonus").reduce((sum, b) => sum + Number(b.amount || 0), 0) ?? 0;
+      const totalTransport = bonuses?.filter(b => b.type === "transport").reduce((sum, b) => sum + Number(b.amount || 0), 0) ?? 0;
+      const totalBonuses = totalBonus + totalTransport;
+
       return {
         totalEarned,
         totalPaid,
-        balance: totalEarned - totalPaid,
+        totalBonus,
+        totalTransport,
+        totalBonuses,
+        balance: totalEarned + totalBonuses - totalPaid,
       };
     },
   });

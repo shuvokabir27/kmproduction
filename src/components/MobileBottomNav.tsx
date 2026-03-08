@@ -15,6 +15,7 @@ import {
   ScrollText,
   Megaphone,
   Settings,
+  Gift,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -31,6 +32,7 @@ const moreItems = [
   { icon: Users, label: "সদস্য", path: "/admin/members" },
   { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts" },
   { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
+  { icon: Gift, label: "বোনাস", path: "/admin/bonuses" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices" },
   { icon: Home, label: "পাবলিক সাইট", path: "/" },
 ];

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye, Gift, Car } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
@@ -57,6 +57,15 @@ const MemberDashboard = () => {
     },
   });
 
+  const { data: myBonuses } = useQuery({
+    queryKey: ["my-bonuses", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("bonuses").select("*").eq("member_id", profile!.id).order("bonus_date", { ascending: false });
+      return data ?? [];
+    },
+  });
+
   const [viewScriptData, setViewScriptData] = useState<any>(null);
 
 
@@ -78,7 +87,7 @@ const MemberDashboard = () => {
         </div>
 
         {/* Balance Cards */}
-        <motion.div className="grid grid-cols-1 sm:grid-cols-3 gap-4" variants={container} initial="hidden" animate="show">
+        <motion.div className="grid grid-cols-2 sm:grid-cols-3 gap-4" variants={container} initial="hidden" animate="show">
           <motion.div variants={item}>
             <Card className="p-5 bg-card border-border/50">
               <div className="flex items-center gap-3">
@@ -100,6 +109,22 @@ const MemberDashboard = () => {
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center"><Wallet className="h-5 w-5 text-warning" /></div>
                 <div><p className="text-xs text-muted-foreground">বকেয়া ব্যালেন্স</p><p className="text-2xl font-bold text-foreground">৳{balance?.balance?.toLocaleString("bn-BD") || "০"}</p></div>
+              </div>
+            </Card>
+          </motion.div>
+          <motion.div variants={item}>
+            <Card className="p-5 bg-card border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center"><Gift className="h-5 w-5 text-emerald-500" /></div>
+                <div><p className="text-xs text-muted-foreground">মোট বোনাস</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalBonus?.toLocaleString("bn-BD") || "০"}</p></div>
+              </div>
+            </Card>
+          </motion.div>
+          <motion.div variants={item}>
+            <Card className="p-5 bg-card border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center"><Car className="h-5 w-5 text-blue-500" /></div>
+                <div><p className="text-xs text-muted-foreground">মোট গাড়ি ভাড়া</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalTransport?.toLocaleString("bn-BD") || "০"}</p></div>
               </div>
             </Card>
           </motion.div>
@@ -154,6 +179,28 @@ const MemberDashboard = () => {
                   <p className="text-xs text-muted-foreground">{script.updated_at ? new Date(script.updated_at).toLocaleDateString("bn-BD") : ""}</p>
                 </div>
                 <Eye className="h-4 w-4 text-muted-foreground" />
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Bonus & Transport History */}
+        <Card className="bg-card border-border/50">
+          <div className="p-4 border-b border-border/30">
+            <h2 className="font-semibold text-foreground flex items-center gap-2"><Gift className="h-4 w-4 text-primary" /> বোনাস ও গাড়ি ভাড়া</h2>
+          </div>
+          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
+            {(!myBonuses || myBonuses.length === 0) && <div className="p-4 text-sm text-muted-foreground text-center">কোনো বোনাস/গাড়ি ভাড়া নেই</div>}
+            {myBonuses?.map((b: any) => (
+              <div key={b.id} className="p-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  <div>
+                    <p className="text-sm text-foreground font-medium">{b.type === "bonus" ? "বোনাস" : "গাড়ি ভাড়া"}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(b.bonus_date).toLocaleDateString("bn-BD")}{b.notes && ` • ${b.notes}`}</p>
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-foreground">৳{Number(b.amount).toLocaleString("bn-BD")}</span>
               </div>
             ))}
           </div>

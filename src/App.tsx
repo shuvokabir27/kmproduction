@@ -19,6 +19,7 @@ import AdminChannels from "./pages/AdminChannels";
 import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
+import AdminBonuses from "./pages/AdminBonuses";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/admin/channels" element={<AdminChannels />} />
             <Route path="/admin/scripts" element={<AdminScripts />} />
             <Route path="/admin/scripts/:id" element={<AdminScriptEdit />} />
+            <Route path="/admin/bonuses" element={<AdminBonuses />} />
             <Route path="/admin/notices" element={<AdminNotices />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
