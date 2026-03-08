@@ -101,6 +101,25 @@ const AdminMembers = () => {
     },
   });
 
+  const { data: lockedAccounts, refetch: refetchLocked } = useQuery({
+    queryKey: ["locked-accounts"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("login_attempts")
+        .select("*")
+        .not("locked_until", "is", null)
+        .gt("locked_until", new Date().toISOString());
+      return data ?? [];
+    },
+  });
+
+  const resetLockout = async (identifier: string) => {
+    const { error } = await supabase.from("login_attempts").delete().eq("identifier", identifier);
+    if (error) { toast.error(error.message); return; }
+    toast.success("সাসপেনশন রিসেট হয়েছে!");
+    refetchLocked();
+  };
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
