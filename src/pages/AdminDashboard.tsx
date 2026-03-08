@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { List } from "lucide-react";
 import { format, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
 import { bn } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
