@@ -52,6 +52,7 @@ const MemberSettings = () => {
     address_en: "", education_en: "", achievements_en: "",
     favorite_actor_en: "", favorite_actress_en: "", favorite_color_en: "",
     favorite_dress_en: "", favorite_food_en: "",
+    joining_date: "",
   });
   const [editTab, setEditTab] = useState<"bn" | "en">("bn");
   const [works, setWorks] = useState<FavoriteWork[]>([]);
