@@ -67,7 +67,7 @@ const ResetPassword = () => {
         <Card className="p-5 bg-card border-border/30 shadow-xl shadow-primary/5">
           {done ? (
             <div className="text-center py-4 space-y-3">
-              <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
+              <CheckCircle className="h-12 w-12 text-primary mx-auto" />
               <p className="text-foreground font-medium">পাসওয়ার্ড পরিবর্তন সফল!</p>
               <p className="text-muted-foreground text-sm">লগইন পেজে নিয়ে যাচ্ছে...</p>
             </div>
