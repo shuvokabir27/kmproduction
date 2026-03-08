@@ -138,11 +138,17 @@ const AdminBonuses = () => {
         {/* Filter */}
         <div className="flex gap-2">
           {[
-            { value: "all", label: "সব" },
-            { value: "bonus", label: "বোনাস" },
-            { value: "transport", label: "গাড়ি ভাড়া" },
+            { value: "all", label: "সব", color: "text-blue-400 border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20", activeColor: "bg-blue-500/25 text-blue-300 border-blue-500/40" },
+            { value: "bonus", label: "বোনাস", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20", activeColor: "bg-emerald-500/25 text-emerald-300 border-emerald-500/40" },
+            { value: "transport", label: "গাড়ি ভাড়া", color: "text-amber-400 border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20", activeColor: "bg-amber-500/25 text-amber-300 border-amber-500/40" },
           ].map((f) => (
-            <Button key={f.value} variant={filterType === f.value ? "default" : "outline"} size="sm" onClick={() => setFilterType(f.value)}>
+            <Button
+              key={f.value}
+              variant="outline"
+              size="sm"
+              className={`border ${filterType === f.value ? f.activeColor : f.color}`}
+              onClick={() => setFilterType(f.value)}
+            >
               {f.value === "bonus" && <Gift className="h-3.5 w-3.5 mr-1" />}
               {f.value === "transport" && <Car className="h-3.5 w-3.5 mr-1" />}
               {f.label}
@@ -157,8 +163,8 @@ const AdminBonuses = () => {
             {bonuses?.map((b: any) => (
               <div key={b.id} className="p-4 flex items-center justify-between hover:bg-secondary/30 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${b.type === "bonus" ? "bg-success/10" : "bg-primary/10"}`}>
-                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${b.type === "bonus" ? "bg-emerald-500/15" : "bg-amber-500/15"}`}>
+                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-emerald-400" /> : <Car className="h-4 w-4 text-amber-400" />}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{b.profiles?.full_name} <span className="text-muted-foreground">#{b.profiles?.member_id}</span></p>

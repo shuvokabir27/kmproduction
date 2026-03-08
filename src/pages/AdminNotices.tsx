@@ -125,10 +125,10 @@ const AdminNotices = () => {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">নোটিশ বোর্ড</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 via-pink-400 to-violet-400 bg-clip-text text-transparent">নোটিশ বোর্ড</h1>
             <p className="text-sm text-muted-foreground">সকল সদস্যদের জন্য নোটিশ প্রকাশ করুন</p>
           </div>
-          <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Button onClick={() => setCreateOpen(true)} className="gap-2 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white border-0">
             <Plus className="h-4 w-4" /> নতুন নোটিশ
           </Button>
         </div>
@@ -143,13 +143,13 @@ const AdminNotices = () => {
           {notices?.map((notice: any) => (
             <motion.div key={notice.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <Card
-                className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""} ${!notice.is_active ? "opacity-50" : ""}`}
+                className={`p-4 bg-card cursor-pointer hover:border-violet-500/30 transition-all ${notice.is_pinned ? "border-l-4 border-l-amber-400 border-amber-500/30" : "border-border/50"} ${!notice.is_active ? "opacity-50" : ""}`}
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      {notice.is_pinned && <Pin className="h-3.5 w-3.5 text-primary shrink-0" />}
+                      {notice.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-400 shrink-0" />}
                       {!notice.is_active && <EyeOff className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
                       <h3 className="font-semibold text-foreground truncate">{notice.title}</h3>
                     </div>
@@ -159,7 +159,7 @@ const AdminNotices = () => {
                         <Clock className="h-3 w-3" />
                         {formatDistanceToNow(new Date(notice.created_at), { addSuffix: true, locale: bn })}
                       </span>
-                      <span className="text-xs text-primary flex items-center gap-1 font-medium">
+                      <span className="text-xs text-cyan-400 flex items-center gap-1 font-medium">
                         <MessageSquare className="h-3 w-3" />
                         {commentCounts?.[notice.id] ?? 0}
                       </span>
