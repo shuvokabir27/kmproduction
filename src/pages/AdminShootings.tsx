@@ -94,6 +94,7 @@ const AdminShootings = () => {
     setShootDate(s.shoot_date || "");
     setStatus(s.status || "plan");
     setScriptUrl((s as any).script_url || "");
+    setSelectedScriptId((s as any).script_id || "");
     setOpen(true);
   };
 
