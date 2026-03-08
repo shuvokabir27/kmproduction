@@ -147,7 +147,7 @@ export function MobileBottomNav() {
                   if (currentGroup.length > 0) groups.push({ label: currentLabel, items: currentGroup });
 
                   return groups.map((group, gi) => (
-                    <div key={gi} className="relative z-10 mb-2">
+                    <div key={gi} className="relative z-10 mb-1">
                       {group.label && (
                         <div className="px-2 pt-1 pb-1.5">
                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{group.label}</span>
