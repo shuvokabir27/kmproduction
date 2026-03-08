@@ -14,6 +14,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MemberForm {
   full_name: string;
@@ -26,11 +27,14 @@ interface MemberForm {
   bkash_no: string;
   nagad_no: string;
   address: string;
+  salary_type: string;
+  monthly_salary: string;
 }
 
 const emptyForm: MemberForm = {
   full_name: "", email: "", phone: "", designation: "", bio: "",
   bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "", address: "",
+  salary_type: "daily", monthly_salary: "0",
 };
 
 const AdminMembers = () => {
