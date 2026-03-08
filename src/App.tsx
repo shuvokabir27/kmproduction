@@ -23,6 +23,7 @@ import AdminBonuses from "./pages/AdminBonuses";
 import AdminPublicProfiles from "./pages/AdminPublicProfiles";
 import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
+import AdminContactSettings from "./pages/AdminContactSettings";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
