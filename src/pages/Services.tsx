@@ -241,18 +241,17 @@ const Services = () => {
                       </div>
 
                       {(settings as any)?.whatsapp_no ? (
-                        <a
-                          href={`https://wa.me/${(settings as any).whatsapp_no.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`আমি \\"${service.title}\\" সেবা সম্পর্কে জানতে চাই।`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
                         >
-                          <Button variant="outline" size="sm" className="w-full">
-                            <MessageCircle className="h-4 w-4 mr-1" /> যোগাযোগ করুন
-                          </Button>
-                        </a>
+                          <MessageCircle className="h-4 w-4 mr-1" /> বুকিং করুন
+                        </Button>
                       ) : (
                         <Button variant="outline" size="sm" className="w-full" disabled>
-                          যোগাযোগ করুন
+                          বুকিং করুন
                         </Button>
                       )}
                     </div>
