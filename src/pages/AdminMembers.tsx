@@ -30,12 +30,13 @@ interface MemberForm {
   address: string;
   salary_type: string;
   monthly_salary: string;
+  previous_balance: string;
 }
 
 const emptyForm: MemberForm = {
   full_name: "", email: "", phone: "", designation: "", bio: "",
   bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "", address: "",
-  salary_type: "daily", monthly_salary: "0",
+  salary_type: "daily", monthly_salary: "0", previous_balance: "0",
 };
 
 const AdminMembers = () => {
