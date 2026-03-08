@@ -173,7 +173,7 @@ export function MobileBottomNav() {
                                 setMoreOpen(false);
                               }}
                               whileTap={{ scale: 0.92 }}
-                              className={`flex flex-col items-center gap-2 px-2 py-3.5 rounded-xl transition-all border ${
+                              className={`flex flex-col items-center gap-1 px-1 py-2 rounded-xl transition-all border ${
                                 isLogout
                                   ? "border-destructive/20 bg-destructive/5"
                                   : active
@@ -181,12 +181,12 @@ export function MobileBottomNav() {
                                     : "border-transparent hover:bg-secondary/30"
                               }`}
                             >
-                              <div className={`h-11 w-11 rounded-xl flex items-center justify-center shadow-sm ${
+                              <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
                                 isLogout ? "bg-destructive/10" : item.bg
                               }`}>
-                                {item.icon && <item.icon className={`h-5 w-5 ${item.color}`} />}
+                                {item.icon && <item.icon className={`h-4 w-4 ${item.color}`} />}
                               </div>
-                              <span className={`text-[11px] font-semibold text-center leading-tight ${item.color}`}>
+                              <span className={`text-[10px] font-semibold text-center leading-tight ${item.color}`}>
                                 {item.label}
                               </span>
                             </motion.button>
