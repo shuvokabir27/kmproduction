@@ -316,7 +316,7 @@ const AdminShootings = () => {
 
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="bg-secondary/50 border border-border/20 flex-wrap h-auto gap-0.5 p-0.5 md:p-1 md:gap-1">
-            <TabsTrigger value="all" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">সব ({shootings?.length || 0})</TabsTrigger>
+            <TabsTrigger value="all" className="text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 data-[state=active]:bg-blue-500/25 data-[state=active]:text-blue-300">সব ({shootings?.length || 0})</TabsTrigger>
             {statusOptions.map((s) => {
               const count = shootings?.filter((sh) => (sh.status || "upcoming") === s.value).length || 0;
               return (
