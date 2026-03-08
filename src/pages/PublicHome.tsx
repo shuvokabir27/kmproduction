@@ -153,8 +153,8 @@ const PublicHome = () => {
             className="mt-16 flex items-center justify-center gap-8 md:gap-16"
           >
             {[
-              { value: members?.length || 0, label: "টিম মেম্বার" },
-              { value: shootings?.length || 0, label: "প্রজেক্ট" },
+              { value: members?.length || 0, label: L.teamMembers },
+              { value: shootings?.length || 0, label: L.projects },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="font-display text-4xl md:text-5xl gradient-text">{stat.value}+</div>
