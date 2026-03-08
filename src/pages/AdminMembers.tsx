@@ -102,6 +102,8 @@ const AdminMembers = () => {
           bkash_no: form.bkash_no || null,
           nagad_no: form.nagad_no || null,
           address: form.address || null,
+          salary_type: form.salary_type as any,
+          monthly_salary: Number(form.monthly_salary) || 0,
         }).eq("id", editId);
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
