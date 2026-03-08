@@ -128,13 +128,6 @@ const PublicHome = () => {
 
           <div className="flex items-center gap-2">
             <LanguageToggle />
-            {/* Mobile menu toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden h-9 w-9 rounded-lg bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
-            </button>
             {user ? (
               <Link to={isAdmin ? "/admin" : "/dashboard"}>
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent font-semibold">
@@ -151,32 +144,20 @@ const PublicHome = () => {
           </div>
         </div>
 
-        {/* Mobile Nav Dropdown */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="md:hidden overflow-hidden relative z-10"
-            >
-              <div className="bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-4 py-4">
-                <div className="flex flex-wrap justify-center gap-2">
-                  {navItems.map((nav) => (
-                    <button
-                      key={nav.href}
-                      onClick={() => handleNavClick(nav)}
-                      className="px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-border/30 hover:border-primary/40"
-                    >
-                      {nav.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Mobile Nav - always visible */}
+        <div className="md:hidden relative z-10 bg-background/70 backdrop-blur-2xl saturate-150 border-b border-border/20 px-3 py-2">
+          <div className="flex flex-wrap justify-center gap-1.5">
+            {navItems.map((nav) => (
+              <button
+                key={nav.href}
+                onClick={() => handleNavClick(nav)}
+                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-border/30 hover:border-primary/40"
+              >
+                {nav.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </header>
 
       {/* Hero Section */}
