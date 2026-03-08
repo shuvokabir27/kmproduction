@@ -87,9 +87,9 @@ const AdminContactSettings = () => {
   if (isLoading) return <AppLayout title="যোগাযোগ সেটিংস"><div className="p-8 text-center text-muted-foreground">লোড হচ্ছে...</div></AppLayout>;
 
   return (
-    <AppLayout title="যোগাযোগ সেটিংস">
+    <AppLayout>
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Contact Info */}
+        <h1 className="text-2xl font-bold text-foreground mb-6">যোগাযোগ সেটিংস</h1>
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
