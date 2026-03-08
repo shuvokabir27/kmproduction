@@ -219,15 +219,11 @@ export function MobileBottomNav() {
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
                 >
                   <tab.icon
-                    className={`h-5 w-5 transition-colors duration-150 ${
-                      active ? "text-primary" : "text-muted-foreground"
-                    }`}
+                    className={`h-5 w-5 transition-colors duration-150 ${tab.color}`}
                   />
                 </motion.div>
                 <span
-                  className={`text-[10px] mt-0.5 font-medium transition-colors duration-150 ${
-                    active ? "text-primary" : "text-muted-foreground"
-                  }`}
+                  className={`text-[10px] mt-0.5 font-medium transition-colors duration-150 ${tab.color}`}
                 >
                   {tab.label}
                 </span>
