@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { bn } from "date-fns/locale";
 export function NoticeBoard() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
   const [commentText, setCommentText] = useState("");
   const [commenting, setCommenting] = useState(false);
@@ -30,6 +32,27 @@ export function NoticeBoard() {
       return data ?? [];
     },
   });
+
+  // Auto-open notice from URL param (e.g., /dashboard?notice=<id>)
+  useEffect(() => {
+    const noticeId = searchParams.get("notice");
+    if (noticeId && notices && notices.length > 0) {
+      const found = notices.find((n: any) => n.id === noticeId);
+      if (found) {
+        setSelectedNotice(found);
+        // Clean up URL param
+        searchParams.delete("notice");
+        setSearchParams(searchParams, { replace: true });
+      } else {
+        // Notice not in current list, fetch it directly
+        supabase.from("notices").select("*").eq("id", noticeId).maybeSingle().then(({ data }) => {
+          if (data) setSelectedNotice(data);
+          searchParams.delete("notice");
+          setSearchParams(searchParams, { replace: true });
+        });
+      }
+    }
+  }, [notices, searchParams]);
 
   const { data: comments, refetch: refetchComments } = useQuery({
     queryKey: ["notice-comments-member", selectedNotice?.id],

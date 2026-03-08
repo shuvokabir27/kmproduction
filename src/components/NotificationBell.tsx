@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Film, CreditCard, Calendar, ScrollText, Check, CheckCheck } from "lucide-react";
+import { Bell, Film, CreditCard, Calendar, ScrollText, Check, CheckCheck, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,7 @@ const typeIcons: Record<string, typeof Film> = {
   payment: CreditCard,
   attendance: Calendar,
   script: ScrollText,
+  notice: Megaphone,
 };
 
 const typeColors: Record<string, string> = {
@@ -21,6 +22,7 @@ const typeColors: Record<string, string> = {
   payment: "bg-success/10 text-success",
   attendance: "bg-warning/10 text-warning",
   script: "bg-accent/50 text-accent-foreground",
+  notice: "bg-destructive/10 text-destructive",
 };
 
 export function NotificationBell() {
