@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
@@ -11,10 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pin, Trash2, MessageSquare, Send, Clock, User } from "lucide-react";
+import { Plus, Pin, Trash2, MessageSquare, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
+import { NoticeComments } from "@/components/NoticeComments";
 
 const AdminNotices = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -25,8 +26,6 @@ const AdminNotices = () => {
   const [isPinned, setIsPinned] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
-  const [replyText, setReplyText] = useState("");
-  const [replying, setReplying] = useState(false);
 
   const { data: notices } = useQuery({
     queryKey: ["admin-notices"],
@@ -40,26 +39,35 @@ const AdminNotices = () => {
     },
   });
 
-  const { data: comments, refetch: refetchComments } = useQuery({
-    queryKey: ["notice-comments", selectedNotice?.id],
-    enabled: !!selectedNotice?.id,
+  // Fetch comment counts
+  const { data: commentCounts } = useQuery({
+    queryKey: ["admin-notice-comment-counts"],
     queryFn: async () => {
+      if (!notices || notices.length === 0) return {};
+      const ids = notices.map((n: any) => n.id);
       const { data } = await supabase
         .from("notice_comments")
-        .select("*")
-        .eq("notice_id", selectedNotice!.id)
-        .order("created_at", { ascending: true });
-      if (!data) return [];
-      // Fetch profiles for comment authors
-      const userIds = [...new Set(data.map((c: any) => c.user_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, photo_url")
-        .in("user_id", userIds);
-      const profileMap = Object.fromEntries((profiles ?? []).map((p: any) => [p.user_id, p]));
-      return data.map((c: any) => ({ ...c, profile: profileMap[c.user_id] }));
+        .select("notice_id")
+        .in("notice_id", ids);
+      const counts: Record<string, number> = {};
+      (data ?? []).forEach((c: any) => {
+        counts[c.notice_id] = (counts[c.notice_id] || 0) + 1;
+      });
+      return counts;
     },
+    enabled: !!notices && notices.length > 0,
   });
+
+  // Realtime for comment counts
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-notice-comments-counts")
+      .on("postgres_changes", { event: "*", schema: "public", table: "notice_comments" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-notice-comment-counts"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>;
   if (!user || !isAdmin) return <Navigate to="/login" replace />;
@@ -103,25 +111,6 @@ const AdminNotices = () => {
     else queryClient.invalidateQueries({ queryKey: ["admin-notices"] });
   };
 
-  const handleReply = async () => {
-    if (!replyText.trim() || !selectedNotice) return;
-    setReplying(true);
-    try {
-      const { error } = await supabase.from("notice_comments").insert({
-        notice_id: selectedNotice.id,
-        user_id: user.id,
-        content: replyText.trim(),
-      });
-      if (error) throw error;
-      setReplyText("");
-      refetchComments();
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setReplying(false);
-    }
-  };
-
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -143,11 +132,7 @@ const AdminNotices = () => {
             </Card>
           )}
           {notices?.map((notice: any) => (
-            <motion.div
-              key={notice.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div key={notice.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <Card
                 className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""}`}
                 onClick={() => setSelectedNotice(notice)}
@@ -163,6 +148,10 @@ const AdminNotices = () => {
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {formatDistanceToNow(new Date(notice.created_at), { addSuffix: true, locale: bn })}
+                      </span>
+                      <span className="text-xs text-primary flex items-center gap-1 font-medium">
+                        <MessageSquare className="h-3 w-3" />
+                        {commentCounts?.[notice.id] ?? 0}
                       </span>
                     </div>
                   </div>
@@ -228,48 +217,12 @@ const AdminNotices = () => {
               <p className="text-xs text-muted-foreground">
                 {selectedNotice && formatDistanceToNow(new Date(selectedNotice.created_at), { addSuffix: true, locale: bn })}
               </p>
-
-              {/* Comments */}
               <div className="border-t border-border/30 pt-4">
                 <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
-                  <MessageSquare className="h-4 w-4 text-primary" /> মন্তব্য ({comments?.length || 0})
+                  <MessageSquare className="h-4 w-4 text-primary" /> মন্তব্য
                 </h4>
-                <div className="space-y-3 max-h-60 overflow-auto">
-                  {comments?.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">কোনো মন্তব্য নেই</p>}
-                  {comments?.map((c: any) => (
-                    <div key={c.id} className="flex gap-2.5">
-                      <div className="h-7 w-7 rounded-full bg-secondary flex items-center justify-center shrink-0 overflow-hidden">
-                        {c.profile?.photo_url ? (
-                          <img src={c.profile.photo_url} alt="" className="h-7 w-7 object-cover rounded-full" />
-                        ) : (
-                          <User className="h-3.5 w-3.5 text-muted-foreground" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-medium text-foreground">{c.profile?.full_name || "সদস্য"}</span>
-                          <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: bn })}</span>
-                        </div>
-                        <p className="text-sm text-foreground/80 mt-0.5">{c.content}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {selectedNotice && <NoticeComments noticeId={selectedNotice.id} />}
               </div>
-            </div>
-
-            {/* Reply input */}
-            <div className="flex gap-2 pt-2 border-t border-border/30">
-              <Input
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                placeholder="রিপ্লাই লিখুন..."
-                className="bg-secondary border-border/30 flex-1"
-                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleReply()}
-              />
-              <Button size="icon" onClick={handleReply} disabled={replying || !replyText.trim()}>
-                <Send className="h-4 w-4" />
-              </Button>
             </div>
           </DialogContent>
         </Dialog>
