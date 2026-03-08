@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useOnlineStatus, isUserOnline, getLastSeenText } from "@/hooks/usePresence";
+import { playMessageSound } from "@/lib/sounds";
 import { useEffect, useRef, useState } from "react";
 import { Send, ArrowLeft, Users, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
