@@ -483,6 +483,18 @@ export default function AdminNews() {
                     <button type="button" onClick={() => { const url = prompt("লিংক দিন:"); if (url) insertFormat("[", `](${url})`); }} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="লিংক">
                       <Link2 className="h-3.5 w-3.5" />
                     </button>
+                    <div className="w-px h-5 bg-border/50 mx-1" />
+                    <button
+                      type="button"
+                      onClick={() => inlineFileRef.current?.click()}
+                      disabled={inlineUploading}
+                      className="h-7 px-2 rounded flex items-center justify-center gap-1 hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors text-[11px]"
+                      title="কন্টেন্টে ছবি যোগ করুন"
+                    >
+                      <ImageIcon className="h-3.5 w-3.5" />
+                      {inlineUploading ? "আপলোড..." : "ছবি"}
+                    </button>
+                    <input ref={inlineFileRef} type="file" accept="image/*" className="hidden" onChange={handleInlineImage} />
                   </div>
                   <Textarea
                     ref={contentRef}
