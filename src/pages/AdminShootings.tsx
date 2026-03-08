@@ -104,7 +104,7 @@ const AdminShootings = () => {
     try {
       if (editId) {
         const { error } = await supabase.from("shootings").update({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: selectedScriptId || null
         } as any).eq("id", editId);
         if (error) throw error;
         toast.success("শুটিং আপডেট হয়েছে!");
