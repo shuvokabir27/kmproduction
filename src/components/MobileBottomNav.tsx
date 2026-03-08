@@ -37,7 +37,7 @@ const moreItems = [
 const memberTabs = [
   { icon: Home, label: "হোম", path: "/" },
   { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard" },
-  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/dashboard#scripts" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts" },
   { icon: MoreHorizontal, label: "আরো", path: "__more__" },
 ];
 

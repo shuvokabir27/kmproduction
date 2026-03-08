@@ -9,6 +9,7 @@ import PublicHome from "./pages/PublicHome";
 import PublicProfile from "./pages/PublicProfile";
 import Login from "./pages/Login";
 import MemberDashboard from "./pages/MemberDashboard";
+import MemberScripts from "./pages/MemberScripts";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminMembers from "./pages/AdminMembers";
 import AdminAttendance from "./pages/AdminAttendance";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<MemberDashboard />} />
+            <Route path="/scripts" element={<MemberScripts />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/members" element={<AdminMembers />} />
             <Route path="/admin/attendance" element={<AdminAttendance />} />
