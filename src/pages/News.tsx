@@ -44,6 +44,18 @@ const getEmbedUrl = (url: string): string | null => {
 
 const renderFormattedContent = (text: string) => {
   return text.split("\n").map((line, i) => {
+    // Inline image: ![caption](url)
+    const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imgMatch) {
+      return (
+        <figure key={i} className="my-4">
+          <img src={imgMatch[2]} alt={imgMatch[1]} className="w-full rounded-xl border border-border/30" />
+          {imgMatch[1] && (
+            <figcaption className="text-xs text-muted-foreground text-center mt-2 italic">{imgMatch[1]}</figcaption>
+          )}
+        </figure>
+      );
+    }
     if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-bold text-foreground mt-4 mb-2">{line.slice(2)}</h2>;
     if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-semibold text-foreground mt-3 mb-1.5">{line.slice(3)}</h3>;
     if (line === "---") return <hr key={i} className="border-border/30 my-4" />;
