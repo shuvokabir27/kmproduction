@@ -257,7 +257,7 @@ const AdminScriptEdit = () => {
                 <FileText className="h-5 w-5 text-primary shrink-0" />
                 {script.title}
               </h1>
-              <p className="text-[10px] text-muted-foreground">{sequences.length} দৃশ্য</p>
+              <p className="text-[10px] text-muted-foreground">{toBn(sequences.length)} দৃশ্য</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
