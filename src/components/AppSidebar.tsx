@@ -31,6 +31,7 @@ const adminItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard },
   { title: "সদস্য", url: "/admin/members", icon: Users },
   { title: "শুটিং", url: "/admin/shootings", icon: Film },
+  { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText },
   { title: "হাজিরা", url: "/admin/attendance", icon: Calendar },
   { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard },
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
