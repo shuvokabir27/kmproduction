@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Save, Plus, Trash2, GripVertical, ChevronDown, ChevronRight, Download, FileText, Edit, Eye } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, GripVertical, ChevronDown, ChevronRight, Download, FileText, Edit, Eye, Users, X, UserPlus } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Type } from "lucide-react";
