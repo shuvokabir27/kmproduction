@@ -269,19 +269,9 @@ const MemberDashboard = () => {
         {/* Notice Board - Prominent at top */}
         <NoticeBoard />
 
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
-            <p className="text-muted-foreground text-sm">আইডি: {profile?.member_id}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2 border-border/50" onClick={() => setPwDialogOpen(true)}>
-              <KeyRound className="h-4 w-4" /> পাসওয়ার্ড
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2 border-border/50" onClick={() => setProfileEditOpen(true)}>
-              <UserCog className="h-4 w-4" /> প্রোফাইল এডিট
-            </Button>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
+          <p className="text-muted-foreground text-sm">আইডি: {profile?.member_id}</p>
         </div>
 
         {/* Balance Cards */}
