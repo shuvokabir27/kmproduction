@@ -31,14 +31,16 @@ const adminTabs = [
 ];
 
 const moreItems = [
+  { icon: null, label: "— টিম ম্যানেজমেন্ট —", path: "__divider__" },
   { icon: Users, label: "সদস্য", path: "/admin/members" },
   { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts" },
-  { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
   { icon: Gift, label: "বোনাস", path: "/admin/bonuses" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices" },
-  { icon: Home, label: "পাবলিক সাইট", path: "/" },
-  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos" },
   { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
+  { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__" },
+  { icon: Home, label: "সাইট দেখুন", path: "/" },
+  { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
+  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos" },
 ];
 
 const memberTabs = [

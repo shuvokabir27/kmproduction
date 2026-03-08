@@ -33,19 +33,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const adminItems = [
+const teamItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard },
   { title: "সদস্য", url: "/admin/members", icon: Users },
   { title: "শুটিং", url: "/admin/shootings", icon: Film },
   { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText },
   { title: "হাজিরা", url: "/admin/attendance", icon: Calendar },
   { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard },
-  { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
+];
+
+const publicSiteItems = [
   { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe },
   { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
+  { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
 ];
 
 const memberItems = [
@@ -60,12 +63,30 @@ export function AppSidebar() {
   const { isAdmin, profile, signOut } = useAuth();
   const location = useLocation();
 
-  const items = isAdmin ? adminItems : memberItems;
-
   const isActive = (path: string) =>
     path === "/admin"
       ? location.pathname === "/admin"
       : location.pathname.startsWith(path);
+
+  const renderItems = (items: typeof teamItems) => (
+    <SidebarMenu>
+      {items.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <NavLink
+              to={item.url}
+              end={item.url === "/admin"}
+              className="hover:bg-secondary/80 transition-colors"
+              activeClassName="bg-secondary text-primary font-medium"
+            >
+              <item.icon className="mr-2 h-4 w-4" />
+              {!collapsed && <span>{item.title}</span>}
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/50">
@@ -79,38 +100,48 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
-            {isAdmin ? "এডমিন" : "মেনু"}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <NavLink to="/" className="hover:bg-secondary/80 transition-colors" activeClassName="">
-                    <Home className="mr-2 h-4 w-4" />
-                    {!collapsed && <span>পাবলিক সাইট</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/admin"}
-                      className="hover:bg-secondary/80 transition-colors"
-                      activeClassName="bg-secondary text-primary font-medium"
-                    >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {isAdmin ? (
+          <>
+            {/* Team Management */}
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+                টিম ম্যানেজমেন্ট
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                {renderItems(teamItems)}
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Public Site Management */}
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+                পাবলিক সাইট
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <NavLink to="/" className="hover:bg-secondary/80 transition-colors" activeClassName="">
+                        <Home className="mr-2 h-4 w-4" />
+                        {!collapsed && <span>সাইট দেখুন</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+                {renderItems(publicSiteItems)}
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        ) : (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+              মেনু
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              {renderItems(memberItems)}
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="p-3">
