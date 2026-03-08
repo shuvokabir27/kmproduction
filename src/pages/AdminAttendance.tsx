@@ -358,14 +358,16 @@ const AdminAttendance = () => {
               const isExpanded = expandedShootings.has(shootingId);
               const presentCount = group.records.filter((r: any) => r.is_present).length;
               const totalRate = group.records.reduce((sum: number, r: any) => sum + (r.is_present ? Number(r.daily_rate || 0) : 0), 0);
+              const timerActive = deleteTimers[shootingId] !== undefined;
+              const timerValue = deleteTimers[shootingId];
 
               return (
                 <Card key={shootingId} className="bg-card border-border/50 overflow-hidden">
-                  <button
-                    onClick={() => toggleExpand(shootingId)}
-                    className="w-full flex items-center justify-between p-4 hover:bg-secondary/30 transition-colors text-left"
-                  >
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between p-4">
+                    <button
+                      onClick={() => toggleExpand(shootingId)}
+                      className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
+                    >
                       {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
                       <div>
                         <p className="font-medium text-foreground">{group.shooting?.name || "শুটিং"}</p>
@@ -373,14 +375,47 @@ const AdminAttendance = () => {
                           {group.shooting?.shoot_date ? new Date(group.shooting.shoot_date).toLocaleDateString("bn-BD") : ""}
                         </p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm">
+                    </button>
+                    <div className="flex items-center gap-3 text-sm">
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <Users className="h-3.5 w-3.5" /> {presentCount}/{group.records.length}
                       </span>
                       <span className="text-foreground font-medium">৳{totalRate.toLocaleString("bn-BD")}</span>
+                      
+                      {/* Delete with timer */}
+                      {!timerActive ? (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                          onClick={(e) => { e.stopPropagation(); startDeleteTimer(shootingId); }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs text-muted-foreground"
+                            onClick={(e) => { e.stopPropagation(); cancelDeleteTimer(shootingId); }}
+                          >
+                            বাতিল
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-7 text-xs gap-1 min-w-[80px]"
+                            disabled={timerValue > 0 || deletingId === shootingId}
+                            onClick={(e) => { e.stopPropagation(); handleDeleteAttendance(shootingId); }}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            {deletingId === shootingId ? "ডিলিট হচ্ছে..." : timerValue > 0 ? `${timerValue}s` : "ডিলিট"}
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  </button>
+                  </div>
 
                   {isExpanded && (
                     <div className="border-t border-border/30">
