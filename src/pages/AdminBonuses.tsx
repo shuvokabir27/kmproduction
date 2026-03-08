@@ -34,7 +34,7 @@ const AdminBonuses = () => {
   const { data: bonuses, isLoading } = useQuery({
     queryKey: ["admin-bonuses", filterType],
     queryFn: async () => {
-      let q = supabase.from("bonuses").select("*, profiles!bonuses_member_id_fkey(full_name, member_id)").order("bonus_date", { ascending: false });
+      let q = (supabase as any).from("bonuses").select("*, profiles!bonuses_member_id_fkey(full_name, member_id)").order("bonus_date", { ascending: false });
       if (filterType === "bonus" || filterType === "transport") q = q.eq("type", filterType);
       const { data } = await q;
       return data ?? [];
