@@ -65,20 +65,6 @@ const AdminShootings = () => {
     },
   });
 
-  // Delete timer effect - must be before early returns
-  useEffect(() => {
-    if (!deleteTimerActive || deleteTimer <= 0) return;
-    const interval = setInterval(() => {
-      setDeleteTimer((t) => {
-        if (t <= 1) { setDeleteTimerActive(false); return 0; }
-        return t - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [deleteTimerActive, deleteTimer]);
-
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
-
   const { data: channels } = useQuery({
     queryKey: ["channels-list"],
     queryFn: async () => {
@@ -94,6 +80,20 @@ const AdminShootings = () => {
       return (data ?? []) as any[];
     },
   });
+
+  // Delete timer effect - must be before early returns
+  useEffect(() => {
+    if (!deleteTimerActive || deleteTimer <= 0) return;
+    const interval = setInterval(() => {
+      setDeleteTimer((t) => {
+        if (t <= 1) { setDeleteTimerActive(false); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [deleteTimerActive, deleteTimer]);
+
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
