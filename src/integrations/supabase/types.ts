@@ -573,6 +573,38 @@ export type Database = {
         }
         Relationships: []
       }
+      salary_credits: {
+        Row: {
+          amount: number
+          created_at: string
+          credit_month: string
+          id: string
+          member_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          credit_month: string
+          id?: string
+          member_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          credit_month?: string
+          id?: string
+          member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salary_credits_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       script_comments: {
         Row: {
           content: string

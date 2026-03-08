@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye, Gift, Car } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye, Gift, Car, Banknote } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
@@ -125,6 +125,14 @@ const MemberDashboard = () => {
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center"><Car className="h-5 w-5 text-blue-500" /></div>
                 <div><p className="text-xs text-muted-foreground">মোট গাড়ি ভাড়া</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalTransport?.toLocaleString("bn-BD") || "০"}</p></div>
+              </div>
+            </Card>
+          </motion.div>
+          <motion.div variants={item}>
+            <Card className="p-5 bg-card border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-violet-500/10 flex items-center justify-center"><Banknote className="h-5 w-5 text-violet-500" /></div>
+                <div><p className="text-xs text-muted-foreground">মাসিক বেতন</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalSalaryCredits?.toLocaleString("bn-BD") || "০"}</p></div>
               </div>
             </Card>
           </motion.div>
