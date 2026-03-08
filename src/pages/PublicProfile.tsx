@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeUp = (delay = 0) => ({
