@@ -17,7 +17,7 @@ interface ConversationListProps {
 }
 
 export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGroup }: ConversationListProps) {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [search, setSearch] = useState("");
 
   const { data: conversations, isLoading } = useQuery({
