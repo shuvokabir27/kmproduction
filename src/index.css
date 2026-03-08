@@ -60,26 +60,49 @@
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  /* Safe area padding for bottom nav */
+  .pb-safe-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--background));
+
+  /* Hide scrollbars on mobile for app feel */
+  @media (max-width: 767px) {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   }
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground));
+
+  /* Desktop scrollbar */
+  @media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: hsl(var(--background));
+    }
+    ::-webkit-scrollbar-thumb {
+      background: hsl(var(--border));
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: hsl(var(--muted-foreground));
+    }
   }
 }
 
