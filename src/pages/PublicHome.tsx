@@ -317,7 +317,7 @@ const PublicHome = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-lg font-semibold text-foreground mb-4">সোশ্যাল মিডিয়া</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">{L.socialMedia}</h3>
               <div className="flex gap-4">
                 {settings?.facebook_url && (
                   <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-xl bg-card border border-border/30 flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all card-3d">
