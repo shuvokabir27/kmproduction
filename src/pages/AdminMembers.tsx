@@ -391,7 +391,14 @@ const AdminMembers = () => {
                       <div>
                         <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
                         <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
+                  </div>
+                  {editId && (
+                    <div className="mt-2">
+                      <Label className="text-foreground text-xs">পূর্বের বাকি (৳)</Label>
+                      <Input type="number" value={form.previous_balance} onChange={(e) => setField("previous_balance" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="আগের পাওনা থাকলে লিখুন" />
+                      <p className="text-[10px] text-muted-foreground mt-1">সিস্টেম চালু হওয়ার আগের বকেয়া পরিমাণ</p>
+                    </div>
+                  )}
                     )}
                   </div>
                 </div>
