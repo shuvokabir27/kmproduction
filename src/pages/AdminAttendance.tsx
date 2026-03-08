@@ -353,7 +353,13 @@ const AdminAttendance = () => {
                                   {a.is_present ? "উপস্থিত" : "অনুপস্থিত"}
                                 </span>
                               </td>
-                              <td className="p-3 text-right text-foreground">৳{Number(a.daily_rate || 0).toLocaleString("bn-BD")}</td>
+                               <td className="p-3 text-right text-foreground">
+                                 {a.profiles?.salary_type === "monthly" ? (
+                                   <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">মাসিক</span>
+                                 ) : (
+                                   <>৳{Number(a.daily_rate || 0).toLocaleString("bn-BD")}</>
+                                 )}
+                               </td>
                             </tr>
                           ))}
                         </tbody>
