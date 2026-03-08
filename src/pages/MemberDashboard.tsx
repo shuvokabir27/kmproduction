@@ -44,7 +44,7 @@ const MemberDashboard = () => {
   const [extraFields, setExtraFields] = useState({
     address: "", education: "", achievements: "", short_bio: "",
     favorite_actor: "", favorite_actress: "", favorite_color: "",
-    favorite_dress: "", favorite_food: "",
+    favorite_dress: "", favorite_food: "", date_of_birth: "",
   });
 
   // Favorite works
