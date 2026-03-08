@@ -104,7 +104,7 @@ const AdminDashboard = () => {
   const { data: recentPayments } = useQuery({
     queryKey: ["admin-recent-payments"],
     queryFn: async () => {
-      const { data } = await supabase.from("payments").select("*, profiles(full_name, member_id)").order("payment_date", { ascending: false }).limit(5);
+      const { data } = await supabase.from("payments").select("*, profiles(full_name, member_id, photo_url)").order("payment_date", { ascending: false }).limit(5);
       return data ?? [];
     },
   });
