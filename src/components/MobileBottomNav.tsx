@@ -36,6 +36,7 @@ const moreItems = [
   { icon: Gift, label: "বোনাস", path: "/admin/bonuses" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices" },
   { icon: Home, label: "পাবলিক সাইট", path: "/" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
 ];
 
 const memberTabs = [
