@@ -184,6 +184,28 @@ const MemberDashboard = () => {
           </div>
         </Card>
 
+        {/* Bonus & Transport History */}
+        <Card className="bg-card border-border/50">
+          <div className="p-4 border-b border-border/30">
+            <h2 className="font-semibold text-foreground flex items-center gap-2"><Gift className="h-4 w-4 text-primary" /> বোনাস ও গাড়ি ভাড়া</h2>
+          </div>
+          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
+            {(!myBonuses || myBonuses.length === 0) && <div className="p-4 text-sm text-muted-foreground text-center">কোনো বোনাস/গাড়ি ভাড়া নেই</div>}
+            {myBonuses?.map((b: any) => (
+              <div key={b.id} className="p-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  <div>
+                    <p className="text-sm text-foreground font-medium">{b.type === "bonus" ? "বোনাস" : "গাড়ি ভাড়া"}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(b.bonus_date).toLocaleDateString("bn-BD")}{b.notes && ` • ${b.notes}`}</p>
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-foreground">৳{Number(b.amount).toLocaleString("bn-BD")}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="bg-card border-border/50">
             <div className="p-4 border-b border-border/30"><h2 className="font-semibold text-foreground flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /> পেমেন্ট হিস্ট্রি</h2></div>
