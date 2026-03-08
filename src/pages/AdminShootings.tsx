@@ -294,6 +294,35 @@ const AdminShootings = () => {
           onSave={saveScript}
         />
       )}
+
+      <Dialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">পাবলিশ — চ্যানেল নির্বাচন</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-foreground mb-1 block">চ্যানেল নির্বাচন করুন *</Label>
+              <Select value={publishChannelId} onValueChange={setPublishChannelId}>
+                <SelectTrigger className="bg-secondary border-border/50">
+                  <SelectValue placeholder="চ্যানেল নির্বাচন করুন" />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border/50">
+                  {channels?.map((c: any) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name} ({c.platform})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {channels?.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">কোনো চ্যানেল নেই। আগে চ্যানেল যোগ করুন।</p>
+              )}
+            </div>
+            <Button onClick={confirmPublish} className="w-full" disabled={!publishChannelId}>
+              পাবলিশ করুন
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
