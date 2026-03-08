@@ -2,8 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 Deno.serve(async (req) => {
@@ -39,6 +38,22 @@ Deno.serve(async (req) => {
   const description = news.excerpt || news.content?.substring(0, 160) || "বাংলা ভাইরাল নিউজ";
   const image = news.featured_image_url || `${siteUrl}/favicon.png`;
 
+  // Check if request is from a social media crawler
+  const userAgent = req.headers.get("user-agent") || "";
+  const isCrawler = /facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|TelegramBot|Pinterest|Discordbot/i.test(userAgent);
+
+  if (!isCrawler) {
+    // Regular user - redirect immediately
+    return new Response(null, {
+      status: 302,
+      headers: {
+        "Location": redirectUrl,
+        ...corsHeaders,
+      },
+    });
+  }
+
+  // Crawler - serve OG meta tags
   const html = `<!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -47,6 +62,8 @@ Deno.serve(async (req) => {
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:image" content="${escapeHtml(image)}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:url" content="${escapeHtml(redirectUrl)}" />
   <meta property="og:site_name" content="দৈনিক ইন্তেকাল" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -54,10 +71,9 @@ Deno.serve(async (req) => {
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${escapeHtml(image)}" />
   <title>${escapeHtml(title)}</title>
-  <meta http-equiv="refresh" content="0;url=${escapeHtml(redirectUrl)}" />
 </head>
 <body>
-  <p>Redirecting to <a href="${escapeHtml(redirectUrl)}">${escapeHtml(title)}</a>...</p>
+  <p>${escapeHtml(title)}</p>
 </body>
 </html>`;
 
