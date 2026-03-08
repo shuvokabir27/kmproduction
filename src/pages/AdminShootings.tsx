@@ -55,6 +55,14 @@ const AdminShootings = () => {
   });
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
+
+  const { data: channels } = useQuery({
+    queryKey: ["channels-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("channels" as any).select("*").order("name");
+      return (data ?? []) as any[];
+    },
+  });
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
