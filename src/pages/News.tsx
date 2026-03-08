@@ -167,7 +167,8 @@ export default function News() {
   }, [newsList, searchParams]);
 
   const getShareUrl = (news: NewsItem) => {
-    return `${window.location.origin}/news?id=${news.id}`;
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    return `https://${projectId}.supabase.co/functions/v1/og-news?id=${news.id}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
