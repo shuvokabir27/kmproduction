@@ -450,9 +450,9 @@ const PublicHome = () => {
               viewport={{ once: true }}
               className="mb-14"
             >
-              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Popular Work</span>
+              <span className="text-rose-400 text-xs font-bold tracking-[0.3em] uppercase">Popular Work</span>
               <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("জনপ্রিয় কাজ", "Popular Work")}</h2>
-              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+              <div className="h-1 w-20 bg-gradient-to-r from-rose-500 to-rose-500/30 rounded-full mt-5" />
             </motion.div>
 
             <motion.div
