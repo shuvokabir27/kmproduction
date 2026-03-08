@@ -33,6 +33,12 @@ const MemberDashboard = () => {
   const [viewShooting, setViewShooting] = useState<any>(null);
   const [profileEditOpen, setProfileEditOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const coverRef = useRef<HTMLInputElement>(null);
 
   // Profile extra fields
   const [extraFields, setExtraFields] = useState({
