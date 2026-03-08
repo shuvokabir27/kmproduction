@@ -74,7 +74,7 @@ const AdminAttendance = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("attendance")
-        .select("*, profiles(full_name, member_id, photo_url), shootings(name, shoot_date)")
+        .select("*, profiles(full_name, member_id, photo_url, salary_type), shootings(name, shoot_date)")
         .order("created_at", { ascending: false });
       return data ?? [];
     },
