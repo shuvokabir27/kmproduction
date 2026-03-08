@@ -299,6 +299,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">ট্রানজেকশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                   <th className="text-center p-3 text-muted-foreground font-medium">রিসিট</th>
+                  <th className="text-center p-3 text-muted-foreground font-medium">ডিলিট</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
