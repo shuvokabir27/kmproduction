@@ -507,6 +507,7 @@ const AdminMembers = () => {
                       <div className="flex items-center justify-end gap-1">
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}><Edit className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}><KeyRound className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}><Mail className="h-4 w-4" /></Button>
                         <Link to={`/member/${m.member_id}`}><Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary"><Eye className="h-4 w-4" /></Button></Link>
                       </div>
                     </td>
