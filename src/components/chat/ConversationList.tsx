@@ -163,6 +163,19 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
                   {conv.type === "group" ? <Users className="h-5 w-5" /> : conv.displayName?.[0] || "?"}
                 </AvatarFallback>
               </Avatar>
+              {conv.type === "personal" && conv.otherUserId && onlineMap && isUserOnline(onlineMap.get(conv.otherUserId)) && (
+                <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-card" />
+              )}
+              {conv.type === "group" && (
+                (() => {
+                  const onlineCount = conv.memberUserIds?.filter((uid: string) => uid !== user?.id && onlineMap && isUserOnline(onlineMap.get(uid))).length || 0;
+                  return onlineCount > 0 ? (
+                    <span className="absolute -bottom-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-green-500 border-2 border-card text-white text-[8px] font-bold flex items-center justify-center">
+                      {onlineCount}
+                    </span>
+                  ) : null;
+                })()
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
