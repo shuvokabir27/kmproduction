@@ -124,7 +124,7 @@ const PublicHome = () => {
             transition={{ delay: 0.5 }}
             className="text-muted-foreground text-lg md:text-xl mt-8 max-w-2xl mx-auto leading-relaxed"
           >
-            {settings?.site_description || "প্রফেশনাল মিডিয়া প্রোডাকশন হাউস"}
+            {settings?.site_description || L.description}
           </motion.p>
 
           <motion.div
