@@ -22,6 +22,7 @@ interface Sequence {
 }
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
+const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 // Parse existing content into sequences
 const parseContent = (content: string): Sequence[] => {
