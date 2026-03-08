@@ -195,8 +195,8 @@ const AdminDashboard = () => {
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/20 flex items-center justify-between">
             <h2 className="font-semibold text-foreground text-sm md:text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <TrendingUp className="h-4 w-4 text-primary" />
+              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-amber-400" />
               </div>
               সাম্প্রতিক পেমেন্ট
             </h2>
