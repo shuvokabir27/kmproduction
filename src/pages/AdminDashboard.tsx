@@ -67,7 +67,7 @@ const AdminDashboard = () => {
     queryFn: async () => {
       const from = filterFrom ? startOfDay(filterFrom).toISOString() : undefined;
       const to = filterTo ? endOfDay(filterTo).toISOString() : undefined;
-      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id").eq("is_active", true);
+      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id, photo_url").eq("is_active", true);
       let attQ = supabase.from("attendance").select("member_id, daily_rate, shooting_id, shootings(shoot_date)").eq("is_present", true);
       if (from) attQ = attQ.gte("created_at", from);
       if (to) attQ = attQ.lte("created_at", to);
