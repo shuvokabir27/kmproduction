@@ -111,7 +111,17 @@ export function MobileBottomNav() {
                   </button>
                 </div>
                 {currentMoreItems.map((item, index) => {
+                  const isDivider = item.path.startsWith("__divider");
                   const isLogout = item.path === "__logout__";
+
+                  if (isDivider) {
+                    return (
+                      <div key={item.path} className="px-3 pt-3 pb-1">
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{item.label.replace(/—/g, "").trim()}</span>
+                      </div>
+                    );
+                  }
+
                   const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
                   return (
                     <motion.button
@@ -141,7 +151,7 @@ export function MobileBottomNav() {
                       <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
                         isLogout ? "bg-destructive/10" : active ? "bg-primary/20" : "bg-secondary"
                       }`}>
-                        <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : active ? "text-primary" : "text-muted-foreground"}`} />
+                        {item.icon && <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : active ? "text-primary" : "text-muted-foreground"}`} />}
                       </div>
                       <span className={`text-sm font-medium ${isLogout ? "text-destructive" : active ? "text-primary" : "text-foreground"}`}>
                         {item.label}
