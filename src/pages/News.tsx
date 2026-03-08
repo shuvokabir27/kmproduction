@@ -129,6 +129,7 @@ const formatInline = (text: string) => {
 
 export default function News() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
