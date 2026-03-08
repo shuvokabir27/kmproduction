@@ -577,6 +577,22 @@ const MemberDashboard = () => {
           readOnly
         />
       )}
+
+      {/* Script View Dialog */}
+      <Dialog open={!!viewScriptData} onOpenChange={(open) => !open && setViewScriptData(null)}>
+        <DialogContent className="bg-card border-border/50 max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <ScrollText className="h-5 w-5 text-primary" />
+              {viewScriptData?.title}
+            </DialogTitle>
+          </DialogHeader>
+          <div
+            className="prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: viewScriptData?.content || "<p class='text-muted-foreground'>কোনো কন্টেন্ট নেই</p>" }}
+          />
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
