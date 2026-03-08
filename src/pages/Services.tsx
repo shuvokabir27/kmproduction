@@ -206,7 +206,7 @@ const Services = () => {
               className="mb-12 text-center"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">More Services</span>
-              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">আরো সেবাসমূহ</h2>
+              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">{t("আরো সেবাসমূহ", "More Services")}</h2>
             </motion.div>
 
             <motion.div
