@@ -73,6 +73,17 @@ export default function News() {
     },
   });
 
+  const { data: publishers } = useQuery({
+    queryKey: ["news-publishers-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_publishers")
+        .select("*");
+      if (error) throw error;
+      return data as Publisher[];
+    },
+  });
+
   const { data: tickerSettings } = useQuery({
     queryKey: ["ticker-settings-public"],
     queryFn: async () => {
