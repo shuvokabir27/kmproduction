@@ -106,12 +106,22 @@ export function MobileBottomNav() {
               className="absolute bottom-20 left-3 right-3 z-[61] pb-safe-bottom"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl shadow-2xl shadow-black/30 p-3">
-                <div className="flex items-center justify-between px-2 pb-2 border-b border-border/20 mb-2">
-                  <span className="text-xs font-semibold text-foreground">আরো অপশন</span>
+              <div className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-secondary/30 backdrop-blur-xl border border-border/40 rounded-2xl shadow-2xl shadow-black/40 p-3">
+                {/* Dot pattern background */}
+                <div className="absolute inset-0 opacity-[0.06]" style={{
+                  backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
+                  backgroundSize: '16px 16px',
+                }} />
+                {/* Colorful corner accents */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-violet-500/15 rounded-full blur-2xl" />
+                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-rose-500/15 rounded-full blur-2xl" />
+                <div className="absolute top-1/2 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl" />
+                
+                <div className="relative z-10 flex items-center justify-between px-2 pb-2 border-b border-border/20 mb-2">
+                  <span className="text-xs font-bold text-foreground tracking-wide">✨ আরো অপশন</span>
                   <button
                     onClick={() => setMoreOpen(false)}
-                    className="h-6 w-6 rounded-full bg-secondary flex items-center justify-center active:scale-90 transition-transform"
+                    className="h-7 w-7 rounded-full bg-secondary/80 border border-border/30 flex items-center justify-center active:scale-90 transition-transform"
                   >
                     <X className="h-3.5 w-3.5 text-muted-foreground" />
                   </button>
