@@ -42,9 +42,9 @@ export function useMemberBalance(profileId: string | undefined) {
       const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
 
       // Previous balance (prior dues)
-      const { data: profile } = await supabase
+      const { data: profile } = await (supabase as any)
         .from("profiles")
-        .select("previous_balance" as any)
+        .select("previous_balance")
         .eq("id", profileId!)
         .maybeSingle();
 
