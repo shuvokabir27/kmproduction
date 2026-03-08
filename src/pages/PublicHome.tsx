@@ -315,9 +315,9 @@ const PublicHome = () => {
             viewport={{ once: true }}
             className="mb-14"
           >
-            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Team</span>
+            <span className="text-violet-400 text-xs font-bold tracking-[0.3em] uppercase">Our Team</span>
             <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{L.ourTeam}</h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            <div className="h-1 w-20 bg-gradient-to-r from-violet-500 to-violet-500/30 rounded-full mt-5" />
           </motion.div>
 
           <motion.div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5" variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -450,9 +450,9 @@ const PublicHome = () => {
               viewport={{ once: true }}
               className="mb-14"
             >
-              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Popular Work</span>
+              <span className="text-rose-400 text-xs font-bold tracking-[0.3em] uppercase">Popular Work</span>
               <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("জনপ্রিয় কাজ", "Popular Work")}</h2>
-              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+              <div className="h-1 w-20 bg-gradient-to-r from-rose-500 to-rose-500/30 rounded-full mt-5" />
             </motion.div>
 
             <motion.div
@@ -520,9 +520,9 @@ const PublicHome = () => {
               viewport={{ once: true }}
               className="mb-14"
             >
-              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Channels</span>
+              <span className="text-emerald-400 text-xs font-bold tracking-[0.3em] uppercase">Our Channels</span>
               <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("আমাদের চ্যানেল সমূহ", "Our Channels")}</h2>
-              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+              <div className="h-1 w-20 bg-gradient-to-r from-emerald-500 to-emerald-500/30 rounded-full mt-5" />
             </motion.div>
 
             <motion.div
@@ -573,9 +573,9 @@ const PublicHome = () => {
               viewport={{ once: true }}
               className="mb-14"
             >
-              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
+              <span className="text-cyan-400 text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
               <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("ছবি গ্যালারী", "Photo Gallery")}</h2>
-              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+              <div className="h-1 w-20 bg-gradient-to-r from-cyan-500 to-cyan-500/30 rounded-full mt-5" />
             </motion.div>
 
             <motion.div
@@ -623,13 +623,13 @@ const PublicHome = () => {
             viewport={{ once: true }}
             className="mb-14 text-center"
           >
-            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
+            <span className="text-fuchsia-400 text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
             <h2 className="font-display text-3xl md:text-5xl text-foreground mt-3 tracking-wider leading-tight">
               {t("বিজ্ঞাপন বা প্রোডাকশনের জন্য", "For Ads or Production")}
               <br />
-              <span className="gradient-text">{t("যোগাযোগ করুন", "Contact Us")}</span>
+              <span className="text-fuchsia-400">{t("যোগাযোগ করুন", "Contact Us")}</span>
             </h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5 mx-auto" />
+            <div className="h-1 w-20 bg-gradient-to-r from-fuchsia-500 to-fuchsia-500/30 rounded-full mt-5 mx-auto" />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
