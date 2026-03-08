@@ -79,12 +79,12 @@ const PublicHome = () => {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const navItems = [
-    { label: "আমাদের টিম", href: "#team" },
-    { label: "জনপ্রিয় কাজ", href: "#popular" },
-    { label: "সেবাসমূহ", href: "/services", isPage: true },
-    { label: "চ্যানেল সমূহ", href: "#channels" },
-    { label: "ছবি গ্যালারী", href: "#gallery" },
-    { label: "যোগাযোগ", href: "#contact" },
+    { label: t("আমাদের টিম", "Our Team"), href: "#team" },
+    { label: t("জনপ্রিয় কাজ", "Popular Work"), href: "#popular" },
+    { label: t("সেবাসমূহ", "Services"), href: "/services", isPage: true },
+    { label: t("চ্যানেল সমূহ", "Channels"), href: "#channels" },
+    { label: t("ছবি গ্যালারী", "Gallery"), href: "#gallery" },
+    { label: t("যোগাযোগ", "Contact"), href: "#contact" },
   ];
 
   const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
