@@ -57,11 +57,9 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/50">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-            <span className="text-primary-foreground font-bold text-sm">TF</span>
-          </div>
+          <img src="/favicon.png" alt="KM Production House" className="h-8 w-8 rounded-lg flex-shrink-0 object-contain" />
           {!collapsed && (
-            <span className="font-semibold text-foreground text-base tracking-tight">TeamFlow</span>
+            <span className="font-semibold text-foreground text-sm tracking-tight">KM Production</span>
           )}
         </div>
       </SidebarHeader>

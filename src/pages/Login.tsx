@@ -80,12 +80,10 @@ const Login = () => {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">TF</span>
-            </div>
+            <img src="/favicon.png" alt="KM Production House" className="h-10 w-10 rounded-lg object-contain" />
           </Link>
           <h1 className="text-2xl font-bold text-foreground">লগইন করুন</h1>
-          <p className="text-muted-foreground text-sm mt-1">TeamFlow-এ স্বাগতম</p>
+          <p className="text-muted-foreground text-sm mt-1">KM Production House-এ স্বাগতম</p>
         </div>
 
         <Card className="p-6 bg-card border-border/50">

@@ -43,10 +43,8 @@ const PublicHome = () => {
       <header className="border-b border-border/50 glass-surface sticky top-0 z-40">
         <div className="container max-w-6xl mx-auto flex items-center justify-between h-14 px-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">TF</span>
-            </div>
-            <span className="font-semibold text-foreground">{settings?.site_name || "TeamFlow"}</span>
+            <img src="/favicon.png" alt="KM Production House" className="h-8 w-8 rounded-lg object-contain" />
+            <span className="font-semibold text-foreground">{settings?.site_name || "KM Production House"}</span>
           </Link>
           <div className="flex items-center gap-3">
             {user ? (
