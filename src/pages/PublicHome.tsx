@@ -116,7 +116,7 @@ const PublicHome = () => {
             {navItems.map((nav) => (
               <button
                 key={nav.href}
-                onClick={() => scrollToSection(nav.href)}
+                onClick={() => handleNavClick(nav)}
                 className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all duration-200"
               >
                 {nav.label}
