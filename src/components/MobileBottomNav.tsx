@@ -50,11 +50,11 @@ const moreItems = [
 ];
 
 const memberTabs = [
-  { icon: Home, label: "হোম", path: "/", color: "text-emerald-400" },
-  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-violet-400" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400" },
-  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-fuchsia-400" },
-  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400" },
+  { icon: Home, label: "হোম", path: "/", color: "text-emerald-400", bg: "bg-emerald-500/15" },
+  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-violet-400", bg: "bg-violet-500/15" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/15" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/15" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400", bg: "bg-amber-500/15" },
 ];
 
 const memberMoreItems = [
