@@ -57,6 +57,15 @@ const MemberDashboard = () => {
     },
   });
 
+  const { data: myBonuses } = useQuery({
+    queryKey: ["my-bonuses", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("bonuses").select("*").eq("member_id", profile!.id).order("bonus_date", { ascending: false });
+      return data ?? [];
+    },
+  });
+
   const [viewScriptData, setViewScriptData] = useState<any>(null);
 
 
