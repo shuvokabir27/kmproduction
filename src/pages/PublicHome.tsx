@@ -50,13 +50,29 @@ const PublicHome = () => {
     },
   });
 
-  const { data: popularVideos } = useQuery({
-    queryKey: ["popular-videos"],
+  const { data: channels } = useQuery({
+    queryKey: ["public-channels"],
     queryFn: async () => {
-      const { data } = await supabase.from("popular_videos" as any).select("*").eq("is_active", true).order("sort_order", { ascending: true });
-      return (data ?? []) as any[];
+      const { data } = await supabase.from("channels").select("*").order("created_at", { ascending: true });
+      return data ?? [];
     },
   });
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { label: "আমাদের টিম", href: "#team" },
+    { label: "জনপ্রিয় কাজ", href: "#popular" },
+    { label: "চ্যানেল সমূহ", href: "#channels" },
+    { label: "ছবি গ্যালারী", href: "#gallery" },
+    { label: "যোগাযোগ", href: "#contact" },
+  ];
+
+  const scrollToSection = (href: string) => {
+    setMobileMenuOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen bg-background overflow-hidden noise-bg">
