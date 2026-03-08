@@ -62,6 +62,7 @@ export default function AdminNews() {
   const [inlineImageUrl, setInlineImageUrl] = useState<string | null>(null);
   const [inlineCaption, setInlineCaption] = useState("");
   const [inlineSize, setInlineSize] = useState(60); // percentage width
+  const [editingInlineImage, setEditingInlineImage] = useState<{ match: string; caption: string; size: number; url: string } | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropType>();
@@ -172,11 +173,40 @@ export default function AdminNews() {
 
   const confirmInlineImage = () => {
     if (!inlineImageUrl) return;
-    // Format: ![caption|size](url)
-    insertFormat(`\n![${inlineCaption}|${inlineSize}](${inlineImageUrl})\n`, "");
+    if (editingInlineImage) {
+      // Replace the old markdown with new one
+      const newMarkdown = `![${inlineCaption}|${inlineSize}](${inlineImageUrl})`;
+      setContent(content.replace(editingInlineImage.match, newMarkdown));
+      setEditingInlineImage(null);
+    } else {
+      // Insert new
+      insertFormat(`\n![${inlineCaption}|${inlineSize}](${inlineImageUrl})\n`, "");
+    }
     setInlineImageDialog(false);
     setInlineImageUrl(null);
   };
+
+  const openEditInlineImage = (match: string, caption: string, size: number, url: string) => {
+    setEditingInlineImage({ match, caption, size, url });
+    setInlineImageUrl(url);
+    setInlineCaption(caption);
+    setInlineSize(size);
+    setInlineImageDialog(true);
+  };
+
+  // Parse inline images from content
+  const inlineImages = Array.from(content.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)).map((m) => {
+    const meta = m[1];
+    const url = m[2];
+    let caption = meta;
+    let size = 100;
+    if (meta.includes("|")) {
+      const parts = meta.split("|");
+      caption = parts[0];
+      size = parseInt(parts[1]) || 100;
+    }
+    return { match: m[0], caption, size, url };
+  });
 
   const resetForm = () => {
     setTitle("");
@@ -519,6 +549,29 @@ export default function AdminNews() {
                     className="text-sm leading-relaxed border-0 rounded-none focus-visible:ring-0 resize-y"
                   />
                 </div>
+                {/* Inline Images Edit List */}
+                {inlineImages.length > 0 && (
+                  <div className="mt-2 space-y-1.5">
+                    <Label className="text-[11px] text-muted-foreground">কন্টেন্টের ছবি (ক্লিক করে এডিট করুন):</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {inlineImages.map((img, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => openEditInlineImage(img.match, img.caption, img.size, img.url)}
+                          className="relative group rounded-lg overflow-hidden border border-border/40 hover:border-primary/50 transition-all"
+                          style={{ width: "72px", height: "72px" }}
+                        >
+                          <img src={img.url} alt="" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                            <Pencil className="h-3.5 w-3.5 text-white" />
+                            <span className="text-[9px] text-white mt-0.5">{img.size}%</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Video URL */}
@@ -613,11 +666,11 @@ export default function AdminNews() {
         </Dialog>
 
         {/* Inline Image Size Dialog */}
-        <Dialog open={inlineImageDialog} onOpenChange={(open) => { setInlineImageDialog(open); if (!open) setInlineImageUrl(null); }}>
+        <Dialog open={inlineImageDialog} onOpenChange={(open) => { setInlineImageDialog(open); if (!open) { setInlineImageUrl(null); setEditingInlineImage(null); } }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <ImageIcon className="h-5 w-5 text-primary" /> ছবি সাইজ ও ক্যাপশন
+                <ImageIcon className="h-5 w-5 text-primary" /> {editingInlineImage ? "ছবি এডিট করুন" : "ছবি সাইজ ও ক্যাপশন"}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-2">
@@ -690,7 +743,7 @@ export default function AdminNews() {
                   বাতিল
                 </Button>
                 <Button className="flex-1 gap-1.5" onClick={confirmInlineImage}>
-                  <Check className="h-4 w-4" /> যোগ করুন
+                  <Check className="h-4 w-4" /> {editingInlineImage ? "আপডেট করুন" : "যোগ করুন"}
                 </Button>
               </div>
             </div>
