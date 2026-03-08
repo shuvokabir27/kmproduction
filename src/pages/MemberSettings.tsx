@@ -268,6 +268,19 @@ const MemberSettings = () => {
           </button>
 
           <button
+            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailDialogOpen(true); }}
+            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
+          >
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Mail className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">ইমেইল পরিবর্তন</p>
+              <p className="text-xs text-muted-foreground">{profile?.email || user?.email || "ইমেইল সেট করুন"}</p>
+            </div>
+          </button>
+
+          <button
             onClick={async () => { await signOut(); navigate("/login"); }}
             className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-destructive/5 transition-colors text-left"
           >
