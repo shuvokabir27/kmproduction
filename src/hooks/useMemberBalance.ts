@@ -33,13 +33,22 @@ export function useMemberBalance(profileId: string | undefined) {
       const totalTransport = bonuses?.filter(b => b.type === "transport").reduce((sum, b) => sum + Number(b.amount || 0), 0) ?? 0;
       const totalBonuses = totalBonus + totalTransport;
 
+      // Monthly salary credits
+      const { data: salaryCredits } = await (supabase as any)
+        .from("salary_credits")
+        .select("amount")
+        .eq("member_id", profileId!);
+
+      const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
+
       return {
         totalEarned,
         totalPaid,
         totalBonus,
         totalTransport,
         totalBonuses,
-        balance: totalEarned + totalBonuses - totalPaid,
+        totalSalaryCredits,
+        balance: totalEarned + totalBonuses + totalSalaryCredits - totalPaid,
       };
     },
   });
