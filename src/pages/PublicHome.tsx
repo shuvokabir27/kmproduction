@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
