@@ -24,6 +24,8 @@ const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { st
 const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
 
 const Services = () => {
+  const [bookingService, setBookingService] = useState<{ title: string; waUrl: string } | null>(null);
+
   const { data: services } = useQuery({
     queryKey: ["public-services"],
     queryFn: async () => {
@@ -39,6 +41,11 @@ const Services = () => {
       return data;
     },
   });
+
+  const getWaUrl = (serviceTitle: string) => {
+    const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
+    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।`)}`;
+  };
 
   const featured = services?.filter((s: any) => s.is_featured) ?? [];
   const others = services?.filter((s: any) => !s.is_featured) ?? [];
