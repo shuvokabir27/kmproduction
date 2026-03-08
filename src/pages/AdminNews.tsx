@@ -1,7 +1,7 @@
 import { AppLayout } from "@/components/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, StarOff, Calendar, Newspaper } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check } from "lucide-react";
 import { format } from "date-fns";
+import ReactCrop, { type Crop as CropType, centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 const categories = [
   { value: "entertainment", label: "🎬 এন্টারটেইনমেন্ট" },
