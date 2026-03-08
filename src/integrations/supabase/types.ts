@@ -89,6 +89,44 @@ export type Database = {
         }
         Relationships: []
       }
+      favorite_works: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          member_id: string
+          sort_order: number | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id: string
+          sort_order?: number | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id?: string
+          sort_order?: number | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorite_works_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -135,6 +173,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          achievements: string | null
           address: string | null
           bank_account_no: string | null
           bank_name: string | null
@@ -143,7 +182,13 @@ export type Database = {
           cover_url: string | null
           created_at: string
           designation: string | null
+          education: string | null
           email: string | null
+          favorite_actor: string | null
+          favorite_actress: string | null
+          favorite_color: string | null
+          favorite_dress: string | null
+          favorite_food: string | null
           full_name: string
           id: string
           is_active: boolean | null
@@ -154,10 +199,12 @@ export type Database = {
           phone: string | null
           photo_url: string | null
           salary_type: Database["public"]["Enums"]["salary_type"] | null
+          short_bio: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          achievements?: string | null
           address?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
@@ -166,7 +213,13 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           designation?: string | null
+          education?: string | null
           email?: string | null
+          favorite_actor?: string | null
+          favorite_actress?: string | null
+          favorite_color?: string | null
+          favorite_dress?: string | null
+          favorite_food?: string | null
           full_name: string
           id?: string
           is_active?: boolean | null
@@ -177,10 +230,12 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
+          short_bio?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          achievements?: string | null
           address?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
@@ -189,7 +244,13 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           designation?: string | null
+          education?: string | null
           email?: string | null
+          favorite_actor?: string | null
+          favorite_actress?: string | null
+          favorite_color?: string | null
+          favorite_dress?: string | null
+          favorite_food?: string | null
           full_name?: string
           id?: string
           is_active?: boolean | null
@@ -200,6 +261,7 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
+          short_bio?: string | null
           updated_at?: string
           user_id?: string
         }

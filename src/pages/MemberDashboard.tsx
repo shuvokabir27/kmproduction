@@ -2,21 +2,47 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
+interface FavoriteWork {
+  id?: string;
+  title: string;
+  video_url: string;
+  description: string;
+}
+
 const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
+  const queryClient = useQueryClient();
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
+  const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Profile extra fields
+  const [extraFields, setExtraFields] = useState({
+    address: "", education: "", achievements: "", short_bio: "",
+    favorite_actor: "", favorite_actress: "", favorite_color: "",
+    favorite_dress: "", favorite_food: "",
+  });
+
+  // Favorite works
+  const [works, setWorks] = useState<FavoriteWork[]>([]);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
@@ -24,12 +50,7 @@ const MemberDashboard = () => {
     queryKey: ["my-payments", profile?.id],
     enabled: !!profile?.id,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("payments")
-        .select("*")
-        .eq("member_id", profile!.id)
-        .order("payment_date", { ascending: false })
-        .limit(10);
+      const { data } = await supabase.from("payments").select("*").eq("member_id", profile!.id).order("payment_date", { ascending: false }).limit(10);
       return data ?? [];
     },
   });
@@ -38,12 +59,7 @@ const MemberDashboard = () => {
     queryKey: ["my-attendance", profile?.id],
     enabled: !!profile?.id,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("attendance")
-        .select("*, shootings(name, shoot_date)")
-        .eq("member_id", profile!.id)
-        .order("created_at", { ascending: false })
-        .limit(10);
+      const { data } = await supabase.from("attendance").select("*, shootings(name, shoot_date)").eq("member_id", profile!.id).order("created_at", { ascending: false }).limit(10);
       return data ?? [];
     },
   });
@@ -51,32 +67,118 @@ const MemberDashboard = () => {
   const { data: shootings } = useQuery({
     queryKey: ["member-shootings"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("shootings")
-        .select("*")
-        .order("shoot_date", { ascending: false })
-        .limit(20);
+      const { data } = await supabase.from("shootings").select("*").order("shoot_date", { ascending: false }).limit(20);
       return data ?? [];
     },
   });
+
+  const { data: favoriteWorks } = useQuery({
+    queryKey: ["my-favorite-works", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("favorite_works" as any).select("*").eq("member_id", profile!.id).order("sort_order");
+      return (data ?? []) as any[];
+    },
+  });
+
+  useEffect(() => {
+    if (profile) {
+      setExtraFields({
+        address: (profile as any).address || "",
+        education: (profile as any).education || "",
+        achievements: (profile as any).achievements || "",
+        short_bio: (profile as any).short_bio || "",
+        favorite_actor: (profile as any).favorite_actor || "",
+        favorite_actress: (profile as any).favorite_actress || "",
+        favorite_color: (profile as any).favorite_color || "",
+        favorite_dress: (profile as any).favorite_dress || "",
+        favorite_food: (profile as any).favorite_food || "",
+      });
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (favoriteWorks) {
+      setWorks(favoriteWorks.map((w: any) => ({ id: w.id, title: w.title, video_url: w.video_url || "", description: w.description || "" })));
+    }
+  }, [favoriteWorks]);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (isAdmin) return <Navigate to="/admin" replace />;
 
-  const paymentMethodLabel: Record<string, string> = {
-    bank: "ব্যাংক",
-    bkash: "বিকাশ",
-    nagad: "নগদ",
-    cash: "ক্যাশ",
+  const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
+
+  const setExtra = (key: string, value: string) => setExtraFields(f => ({ ...f, [key]: value }));
+
+  const addWork = () => {
+    if (works.length >= 5) { toast.error("সর্বোচ্চ ৫টি কাজ যোগ করা যায়"); return; }
+    setWorks([...works, { title: "", video_url: "", description: "" }]);
+  };
+
+  const updateWork = (idx: number, field: keyof FavoriteWork, value: string) => {
+    setWorks(ws => ws.map((w, i) => i === idx ? { ...w, [field]: value } : w));
+  };
+
+  const removeWork = (idx: number) => {
+    setWorks(ws => ws.filter((_, i) => i !== idx));
+  };
+
+  const handleSaveProfile = async () => {
+    if (!profile) return;
+    setSaving(true);
+    try {
+      // Update profile extra fields
+      const { error } = await supabase.from("profiles").update({
+        address: extraFields.address || null,
+        education: extraFields.education || null,
+        achievements: extraFields.achievements || null,
+        short_bio: extraFields.short_bio || null,
+        favorite_actor: extraFields.favorite_actor || null,
+        favorite_actress: extraFields.favorite_actress || null,
+        favorite_color: extraFields.favorite_color || null,
+        favorite_dress: extraFields.favorite_dress || null,
+        favorite_food: extraFields.favorite_food || null,
+      } as any).eq("id", profile.id);
+      if (error) throw error;
+
+      // Delete old works and insert new ones
+      await supabase.from("favorite_works" as any).delete().eq("member_id", profile.id);
+      const validWorks = works.filter(w => w.title.trim());
+      if (validWorks.length > 0) {
+        const { error: wErr } = await supabase.from("favorite_works" as any).insert(
+          validWorks.map((w, i) => ({
+            member_id: profile.id,
+            title: w.title,
+            video_url: w.video_url || null,
+            description: w.description || null,
+            sort_order: i,
+          }))
+        );
+        if (wErr) throw wErr;
+      }
+
+      toast.success("প্রোফাইল আপডেট হয়েছে!");
+      queryClient.invalidateQueries({ queryKey: ["my-favorite-works"] });
+      setProfileEditOpen(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
-          <p className="text-muted-foreground text-sm">আইডি: {profile?.member_id}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
+            <p className="text-muted-foreground text-sm">আইডি: {profile?.member_id}</p>
+          </div>
+          <Button variant="outline" className="gap-2 border-border/50" onClick={() => setProfileEditOpen(true)}>
+            <UserCog className="h-4 w-4" /> প্রোফাইল এডিট
+          </Button>
         </div>
 
         {/* Balance Cards */}
@@ -84,39 +186,24 @@ const MemberDashboard = () => {
           <motion.div variants={item}>
             <Card className="p-5 bg-card border-border/50">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-success" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">মোট আয়</p>
-                  <p className="text-2xl font-bold text-foreground">৳{balance?.totalEarned?.toLocaleString("bn-BD") || "০"}</p>
-                </div>
+                <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center"><TrendingUp className="h-5 w-5 text-success" /></div>
+                <div><p className="text-xs text-muted-foreground">মোট আয়</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalEarned?.toLocaleString("bn-BD") || "০"}</p></div>
               </div>
             </Card>
           </motion.div>
           <motion.div variants={item}>
             <Card className="p-5 bg-card border-border/50">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">মোট প্রদান</p>
-                  <p className="text-2xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p>
-                </div>
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center"><CreditCard className="h-5 w-5 text-primary" /></div>
+                <div><p className="text-xs text-muted-foreground">মোট প্রদান</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p></div>
               </div>
             </Card>
           </motion.div>
           <motion.div variants={item}>
             <Card className="p-5 bg-card border-border/50">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center">
-                  <Wallet className="h-5 w-5 text-warning" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">বকেয়া ব্যালেন্স</p>
-                  <p className="text-2xl font-bold text-foreground">৳{balance?.balance?.toLocaleString("bn-BD") || "০"}</p>
-                </div>
+                <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center"><Wallet className="h-5 w-5 text-warning" /></div>
+                <div><p className="text-xs text-muted-foreground">বকেয়া ব্যালেন্স</p><p className="text-2xl font-bold text-foreground">৳{balance?.balance?.toLocaleString("bn-BD") || "০"}</p></div>
               </div>
             </Card>
           </motion.div>
@@ -125,14 +212,10 @@ const MemberDashboard = () => {
         {/* Shootings */}
         <Card className="bg-card border-border/50">
           <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground flex items-center gap-2">
-              <Film className="h-4 w-4 text-primary" /> শুটিং তালিকা
-            </h2>
+            <h2 className="font-semibold text-foreground flex items-center gap-2"><Film className="h-4 w-4 text-primary" /> শুটিং তালিকা</h2>
           </div>
           <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-            {shootings?.length === 0 && (
-              <div className="p-4 text-sm text-muted-foreground text-center">কোনো শুটিং নেই</div>
-            )}
+            {shootings?.length === 0 && <div className="p-4 text-sm text-muted-foreground text-center">কোনো শুটিং নেই</div>}
             {shootings?.map((s: any) => {
               const statusMap: Record<string, { label: string; color: string }> = {
                 plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
@@ -148,22 +231,11 @@ const MemberDashboard = () => {
                 <div key={s.id} className="p-3 flex items-center justify-between">
                   <div>
                     <p className="text-sm text-foreground font-medium">{s.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(s.shoot_date).toLocaleDateString("bn-BD")}
-                      {s.location && ` • ${s.location}`}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}{s.location && ` • ${s.location}`}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {s.script_content && (
-                      <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-primary hover:text-primary/80">
-                        <FileText className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    {s.script_url && (
-                      <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    )}
+                    {s.script_content && <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-primary hover:text-primary/80"><FileText className="h-3.5 w-3.5" /></button>}
+                    {s.script_url && <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80"><ExternalLink className="h-3.5 w-3.5" /></a>}
                     <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
                   </div>
                 </div>
@@ -173,59 +245,35 @@ const MemberDashboard = () => {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Payment History */}
           <Card className="bg-card border-border/50">
-            <div className="p-4 border-b border-border/30">
-              <h2 className="font-semibold text-foreground flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-primary" /> পেমেন্ট হিস্ট্রি
-              </h2>
-            </div>
+            <div className="p-4 border-b border-border/30"><h2 className="font-semibold text-foreground flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /> পেমেন্ট হিস্ট্রি</h2></div>
             <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-              {recentPayments?.length === 0 && (
-                <div className="p-4 text-sm text-muted-foreground text-center">কোনো পেমেন্ট নেই</div>
-              )}
+              {recentPayments?.length === 0 && <div className="p-4 text-sm text-muted-foreground text-center">কোনো পেমেন্ট নেই</div>}
               {recentPayments?.map((p) => (
                 <div key={p.id} className="p-3 flex items-center justify-between">
                   <div>
                     <p className="text-sm text-foreground">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {paymentMethodLabel[p.payment_method] || p.payment_method} • {new Date(p.payment_date).toLocaleDateString("bn-BD")}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{paymentMethodLabel[p.payment_method] || p.payment_method} • {new Date(p.payment_date).toLocaleDateString("bn-BD")}</p>
                   </div>
-                  {p.transaction_id && (
-                    <span className="text-xs text-muted-foreground">#{p.transaction_id}</span>
-                  )}
+                  {p.transaction_id && <span className="text-xs text-muted-foreground">#{p.transaction_id}</span>}
                 </div>
               ))}
             </div>
           </Card>
 
-          {/* Attendance History */}
           <Card className="bg-card border-border/50">
-            <div className="p-4 border-b border-border/30">
-              <h2 className="font-semibold text-foreground flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" /> হাজিরা হিস্ট্রি
-              </h2>
-            </div>
+            <div className="p-4 border-b border-border/30"><h2 className="font-semibold text-foreground flex items-center gap-2"><Calendar className="h-4 w-4 text-primary" /> হাজিরা হিস্ট্রি</h2></div>
             <div className="divide-y divide-border/30 max-h-80 overflow-auto">
-              {recentAttendance?.length === 0 && (
-                <div className="p-4 text-sm text-muted-foreground text-center">কোনো হাজিরা নেই</div>
-              )}
+              {recentAttendance?.length === 0 && <div className="p-4 text-sm text-muted-foreground text-center">কোনো হাজিরা নেই</div>}
               {recentAttendance?.map((a: any) => (
                 <div key={a.id} className="p-3 flex items-center justify-between">
                   <div>
                     <p className="text-sm text-foreground">{a.shootings?.name || "শুটিং"}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : ""}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : ""}</p>
                   </div>
                   <div className="text-right">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
-                      {a.is_present ? "উপস্থিত" : "অনুপস্থিত"}
-                    </span>
-                    {a.daily_rate > 0 && (
-                      <p className="text-xs text-muted-foreground mt-0.5">৳{Number(a.daily_rate).toLocaleString("bn-BD")}</p>
-                    )}
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>{a.is_present ? "উপস্থিত" : "অনুপস্থিত"}</span>
+                    {a.daily_rate > 0 && <p className="text-xs text-muted-foreground mt-0.5">৳{Number(a.daily_rate).toLocaleString("bn-BD")}</p>}
                   </div>
                 </div>
               ))}
@@ -233,6 +281,89 @@ const MemberDashboard = () => {
           </Card>
         </div>
       </div>
+
+      {/* Profile Edit Dialog */}
+      <Dialog open={profileEditOpen} onOpenChange={setProfileEditOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">প্রোফাইল তথ্য আপডেট</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-foreground text-xs">শর্ট বিবরণ</Label>
+              <Textarea value={extraFields.short_bio} onChange={e => setExtra("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="নিজের সম্পর্কে সংক্ষেপে লিখুন..." />
+            </div>
+            <div>
+              <Label className="text-foreground text-xs">ঠিকানা</Label>
+              <Input value={extraFields.address} onChange={e => setExtra("address", e.target.value)} className="bg-secondary border-border/50" />
+            </div>
+            <div>
+              <Label className="text-foreground text-xs">শিক্ষাগত যোগ্যতা</Label>
+              <Input value={extraFields.education} onChange={e => setExtra("education", e.target.value)} className="bg-secondary border-border/50" placeholder="যেমন: বি.এ (অনার্স)" />
+            </div>
+            <div>
+              <Label className="text-foreground text-xs">অর্জন</Label>
+              <Textarea value={extraFields.achievements} onChange={e => setExtra("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="আপনার উল্লেখযোগ্য অর্জনসমূহ..." />
+            </div>
+
+            <div className="border-t border-border/30 pt-3">
+              <p className="text-xs text-muted-foreground mb-2 font-medium">পছন্দের তথ্য</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-foreground text-xs">পছন্দের নায়ক</Label>
+                  <Input value={extraFields.favorite_actor} onChange={e => setExtra("favorite_actor", e.target.value)} className="bg-secondary border-border/50" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">পছন্দের নায়িকা</Label>
+                  <Input value={extraFields.favorite_actress} onChange={e => setExtra("favorite_actress", e.target.value)} className="bg-secondary border-border/50" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">পছন্দের রং</Label>
+                  <Input value={extraFields.favorite_color} onChange={e => setExtra("favorite_color", e.target.value)} className="bg-secondary border-border/50" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">পছন্দের পোশাক</Label>
+                  <Input value={extraFields.favorite_dress} onChange={e => setExtra("favorite_dress", e.target.value)} className="bg-secondary border-border/50" />
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-foreground text-xs">পছন্দের খাবার</Label>
+                  <Input value={extraFields.favorite_food} onChange={e => setExtra("favorite_food", e.target.value)} className="bg-secondary border-border/50" />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-border/30 pt-3">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-muted-foreground font-medium">প্রিয় ৫টি কাজ (ভিডিও লিংকসহ)</p>
+                {works.length < 5 && (
+                  <Button type="button" variant="ghost" size="sm" className="h-7 text-xs gap-1 text-primary" onClick={addWork}>
+                    <Plus className="h-3.5 w-3.5" /> যোগ করুন
+                  </Button>
+                )}
+              </div>
+              <div className="space-y-3">
+                {works.map((w, i) => (
+                  <div key={i} className="p-3 rounded-lg bg-secondary/50 border border-border/30 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground font-medium">কাজ #{i + 1}</span>
+                      <Button type="button" variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => removeWork(i)}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    <Input value={w.title} onChange={e => updateWork(i, "title", e.target.value)} placeholder="কাজের নাম" className="bg-background border-border/50 h-8 text-sm" />
+                    <Input value={w.video_url} onChange={e => updateWork(i, "video_url", e.target.value)} placeholder="ভিডিও লিংক (YouTube/Facebook)" className="bg-background border-border/50 h-8 text-sm" />
+                    <Input value={w.description} onChange={e => updateWork(i, "description", e.target.value)} placeholder="সংক্ষিপ্ত বিবরণ" className="bg-background border-border/50 h-8 text-sm" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Button onClick={handleSaveProfile} className="w-full gap-2" disabled={saving}>
+              <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {viewShooting && (
         <ScriptEditor
