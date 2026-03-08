@@ -171,14 +171,27 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         )}
-        <Avatar className="h-9 w-9 flex-shrink-0">
-          {conversation?.photoUrl && <AvatarImage src={conversation.photoUrl} />}
-          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-            {conversation?.type === "group" ? <Users className="h-4 w-4" /> : conversation?.displayName?.[0] || "?"}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative">
+          <Avatar className="h-9 w-9 flex-shrink-0">
+            {conversation?.photoUrl && <AvatarImage src={conversation.photoUrl} />}
+            <AvatarFallback className="bg-primary/10 text-primary text-sm">
+              {conversation?.type === "group" ? <Users className="h-4 w-4" /> : conversation?.displayName?.[0] || "?"}
+            </AvatarFallback>
+          </Avatar>
+          {conversation?.type === "personal" && (() => {
+            const other = conversation?.profiles?.find((p: any) => p.user_id !== user?.id);
+            return other && onlineMap && isUserOnline(onlineMap.get(other.user_id)) ? (
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-card" />
+            ) : null;
+          })()}
+        </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{conversation?.displayName}</p>
+          {conversation?.type === "personal" && (() => {
+            const other = conversation?.profiles?.find((p: any) => p.user_id !== user?.id);
+            const lastSeen = other ? (onlineMap?.get(other.user_id) || other.last_seen_at) : null;
+            return <p className={cn("text-[10px]", isUserOnline(lastSeen) ? "text-green-500 font-medium" : "text-muted-foreground")}>{getLastSeenText(lastSeen)}</p>;
+          })()}
           {conversation?.type === "group" && (
             <p className="text-[10px] text-muted-foreground">{conversation?.memberCount} জন সদস্য</p>
           )}
