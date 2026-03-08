@@ -181,32 +181,39 @@ const AdminAttendance = () => {
 
             {selectedShooting && (
               <>
-                {/* Mobile card list */}
-                <div className="md:hidden space-y-2">
-                  {members?.map((m) => (
-                    <Card key={m.id} className="bg-card border-border/30 p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Checkbox
-                            checked={attendanceData[m.id]?.present || false}
-                            onCheckedChange={() => togglePresent(m.id)}
-                          />
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
-                            <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
-                          </div>
-                        </div>
-                        <Input
-                          type="number"
-                          value={attendanceData[m.id]?.rate || "0"}
-                          onChange={(e) => setRate(m.id, e.target.value)}
-                          className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
-                          placeholder="৳"
-                        />
-                      </div>
-                    </Card>
-                  ))}
-                </div>
+                 {/* Mobile card list */}
+                 <div className="md:hidden space-y-2">
+                   {members?.map((m) => (
+                     <Card key={m.id} className="bg-card border-border/30 p-3">
+                       <div className="flex items-center justify-between gap-3">
+                         <div className="flex items-center gap-2 min-w-0">
+                           <Checkbox
+                             checked={attendanceData[m.id]?.present || false}
+                             onCheckedChange={() => togglePresent(m.id)}
+                           />
+                           <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden flex-shrink-0">
+                             {m.photo_url ? (
+                               <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
+                             ) : (
+                               <span className="text-primary text-xs font-medium">{m.full_name?.charAt(0) || "M"}</span>
+                             )}
+                           </div>
+                           <div className="min-w-0">
+                             <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
+                             <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
+                           </div>
+                         </div>
+                         <Input
+                           type="number"
+                           value={attendanceData[m.id]?.rate || "0"}
+                           onChange={(e) => setRate(m.id, e.target.value)}
+                           className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                           placeholder="৳"
+                         />
+                       </div>
+                     </Card>
+                   ))}
+                 </div>
 
                 {/* Desktop table */}
                 <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
