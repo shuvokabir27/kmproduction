@@ -256,20 +256,25 @@ export default function News() {
   return (
     <div className="min-h-screen bg-background noise-bg">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="h-8 w-8">
+        {/* Masthead */}
+        <div className="text-center mb-6 pb-5 border-b border-border/30">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="absolute left-4 top-6 h-8 w-8 md:relative md:left-0 md:top-0 md:hidden">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="h-8 w-8 hidden md:flex">
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <Newspaper className="h-5 w-5 text-orange-400" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">নিউজ</h1>
-              <p className="text-xs text-muted-foreground">এন্টারটেইনমেন্ট ও ফানি নিউজ</p>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight" style={{ fontFamily: "'Noto Serif Bengali', serif" }}>
+              দৈনিক ইন্তেকাল
+            </h1>
           </div>
+          <p className="text-xs text-muted-foreground">
+            সম্পাদক: <span className="font-semibold text-foreground/80">শিরু খাঁ</span>
+          </p>
+          <p className="text-[11px] text-primary/80 mt-1.5 font-medium">
+            ✨ বাংলা ভাইরাল নিউজ দেখতে আমাদের ফলো করুন
+          </p>
         </div>
 
         {/* Category Filter */}
