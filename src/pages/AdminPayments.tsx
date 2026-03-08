@@ -336,6 +336,30 @@ const AdminPayments = () => {
                           <Download className="h-3.5 w-3.5 text-primary" />
                         </Button>
                       </td>
+                      <td className="p-3 text-center">
+                        {deleteTimers[p.id] === undefined ? (
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => startDeleteTimer(p.id)}>
+                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                          </Button>
+                        ) : deleteTimers[p.id] > 0 ? (
+                          <div className="flex items-center gap-1 justify-center">
+                            <span className="text-xs text-destructive font-bold">{deleteTimers[p.id]}s</span>
+                            <Button variant="ghost" size="sm" className="h-6 px-1.5 text-[10px] text-muted-foreground" onClick={() => cancelDelete(p.id)}>
+                              বাতিল
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-7 text-[10px] px-2"
+                            disabled={deletingId === p.id}
+                            onClick={() => handleDeletePayment(p.id)}
+                          >
+                            {deletingId === p.id ? "..." : "ডিলিট"}
+                          </Button>
+                        )}
+                      </td>
                     </tr>
                   );
                 })}
