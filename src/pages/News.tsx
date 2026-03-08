@@ -97,6 +97,11 @@ export default function News() {
     },
   });
 
+  const getPublisherName = (pubId: string | null) => {
+    if (!pubId || !publishers) return null;
+    return publishers.find(p => p.id === pubId)?.name || null;
+  };
+
   const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
   const tickerSpeed = tickerSettings?.ticker_speed || 30;
 
