@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
   ChevronRight, Check, Star, ArrowLeft, MessageCircle, Phone,
-  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb,
+  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
@@ -44,9 +44,43 @@ const Services = () => {
     },
   });
 
+  const { data: activeOffer } = useQuery({
+    queryKey: ["active-service-offer"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("service_offers")
+        .select("*")
+        .eq("is_active", true)
+        .gte("offer_end_date", new Date().toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  // Countdown timer
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  useEffect(() => {
+    if (!activeOffer?.offer_end_date) return;
+    const calc = () => {
+      const diff = new Date(activeOffer.offer_end_date).getTime() - Date.now();
+      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return {
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diff / (1000 * 60)) % 60),
+        seconds: Math.floor((diff / 1000) % 60),
+      };
+    };
+    setTimeLeft(calc());
+    const interval = setInterval(() => setTimeLeft(calc()), 1000);
+    return () => clearInterval(interval);
+  }, [activeOffer?.offer_end_date]);
+
   const getWaUrl = (serviceTitle: string) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
-    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।`)}`;
+    const offerText = activeOffer ? ` (${activeOffer.discount_percentage}% ডিসকাউন্ট অফার সহ)` : '';
+    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।${offerText}`)}`;
   };
 
   const featured = services?.filter((s: any) => s.is_featured) ?? [];
@@ -111,6 +145,72 @@ const Services = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Offer Countdown Banner */}
+      {activeOffer && (timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0) && (
+        <section className="px-4 -mt-6 mb-8 relative z-20">
+          <div className="container max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, type: "spring" }}
+              className="relative overflow-hidden rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-red-500/15 backdrop-blur-xl p-6 md:p-8"
+            >
+              {/* Animated bg dots */}
+              <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-amber-500/20 rounded-full blur-3xl" />
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-red-500/20 rounded-full blur-3xl" />
+
+              <div className="relative z-10 text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 mb-4">
+                  <Gift className="h-4 w-4 text-amber-400" />
+                  <span className="text-sm font-bold text-amber-300">{activeOffer.title}</span>
+                  <Percent className="h-4 w-4 text-amber-400" />
+                </div>
+
+                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">
+                  <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                    {activeOffer.discount_percentage}% ডিসকাউন্ট
+                  </span>
+                </h3>
+                {activeOffer.description && (
+                  <p className="text-sm text-muted-foreground mb-5 max-w-lg mx-auto">{activeOffer.description}</p>
+                )}
+
+                {/* Countdown */}
+                <div className="flex items-center justify-center gap-3 md:gap-5">
+                  {[
+                    { value: timeLeft.days, label: t("দিন", "Days"), color: "from-amber-500 to-amber-600" },
+                    { value: timeLeft.hours, label: t("ঘণ্টা", "Hours"), color: "from-orange-500 to-orange-600" },
+                    { value: timeLeft.minutes, label: t("মিনিট", "Min"), color: "from-red-500 to-red-600" },
+                    { value: timeLeft.seconds, label: t("সেকেন্ড", "Sec"), color: "from-pink-500 to-pink-600" },
+                  ].map((unit, i) => (
+                    <div key={i} className="flex flex-col items-center">
+                      <motion.div
+                        key={unit.value}
+                        initial={{ scale: 1.2, opacity: 0.5 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className={`h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-gradient-to-br ${unit.color} flex items-center justify-center shadow-lg shadow-amber-500/10`}
+                      >
+                        <span className="text-2xl md:text-3xl font-black text-white tabular-nums">
+                          {String(unit.value).padStart(2, '0')}
+                        </span>
+                      </motion.div>
+                      <span className="text-[10px] md:text-xs text-muted-foreground mt-1.5 font-medium">{unit.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1">
+                  <Timer className="h-3 w-3" />
+                  {t("সীমিত সময়ের অফার — এখনই বুকিং দিন!", "Limited time offer — Book now!")}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Services */}
       {featured.length > 0 && (
