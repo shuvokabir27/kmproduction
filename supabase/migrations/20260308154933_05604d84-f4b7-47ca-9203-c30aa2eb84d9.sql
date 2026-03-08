@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN previous_balance numeric DEFAULT 0;
