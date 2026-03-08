@@ -331,6 +331,7 @@ export default function AdminNews() {
         is_featured: isFeatured,
         published_at: isPublished ? new Date().toISOString() : null,
         video_url: videoUrl || null,
+        publisher_id: publisherId || null,
       };
 
       if (editingNews) {
