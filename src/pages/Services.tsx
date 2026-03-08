@@ -182,7 +182,7 @@ const Services = () => {
                           </Button>
                         ) : (
                           <Button className="w-full bg-secondary hover:bg-secondary/80 text-foreground" disabled>
-                            {service.price_label || "বুকিং করুন"}
+                            {service.price_label || t("বুকিং করুন", "Book Now")}
                           </Button>
                         )}
                       </div>
