@@ -113,6 +113,25 @@ const AdminDashboard = () => {
     },
   });
 
+  // Member balance list sorted by balance desc
+  const { data: memberBalances } = useQuery({
+    queryKey: ["admin-member-balances"],
+    queryFn: async () => {
+      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id, photo_url, designation").eq("is_active", true);
+      const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
+      const { data: payments } = await supabase.from("payments").select("member_id, amount");
+
+      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number }>();
+      members?.forEach(m => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0 }));
+      attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
+      payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
+
+      return Array.from(map.values())
+        .map(m => ({ ...m, balance: m.earned - m.paid }))
+        .sort((a, b) => b.balance - a.balance);
+    },
+  });
+
   const { data: recentPayments } = useQuery({
     queryKey: ["admin-recent-payments"],
     queryFn: async () => {
