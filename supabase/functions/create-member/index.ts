@@ -44,7 +44,10 @@ Deno.serve(async (req) => {
       user_metadata: { full_name },
     });
     if (createError) {
-      return new Response(JSON.stringify({ error: createError.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      const msg = createError.message.includes("already been registered")
+        ? "এই ইমেইল দিয়ে ইতিমধ্যে একজন সদস্য নিবন্ধিত আছে"
+        : createError.message;
+      return new Response(JSON.stringify({ error: msg }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // Wait for trigger to create profile
