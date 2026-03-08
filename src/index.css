@@ -201,6 +201,8 @@
 
   /* News Ticker Animation */
   .ticker-scroll {
+    display: flex;
+    width: max-content;
     animation: ticker-scroll 30s linear infinite;
   }
 
@@ -208,9 +210,13 @@
     animation-play-state: paused;
   }
 
+  .ticker-content {
+    flex-shrink: 0;
+  }
+
   @keyframes ticker-scroll {
     0% {
-      transform: translateX(0);
+      transform: translateX(0%);
     }
     100% {
       transform: translateX(-50%);
