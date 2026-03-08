@@ -13,6 +13,7 @@ import AdminMembers from "./pages/AdminMembers";
 import AdminAttendance from "./pages/AdminAttendance";
 import AdminPayments from "./pages/AdminPayments";
 import AdminShootings from "./pages/AdminShootings";
+import AdminChannels from "./pages/AdminChannels";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
