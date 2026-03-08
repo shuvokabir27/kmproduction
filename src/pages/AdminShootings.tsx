@@ -40,6 +40,7 @@ const AdminShootings = () => {
   const [shootDate, setShootDate] = useState("");
   const [status, setStatus] = useState("plan");
   const [scriptUrl, setScriptUrl] = useState("");
+  const [selectedScriptId, setSelectedScriptId] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [scriptEditorOpen, setScriptEditorOpen] = useState(false);
   const [scriptEditShooting, setScriptEditShooting] = useState<any>(null);
