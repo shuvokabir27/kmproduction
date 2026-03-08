@@ -28,18 +28,40 @@ const methodLabel: Record<string, string> = {
 
 const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
   ({ receiptData, onClose }, ref) => {
+    const receiptRef = useRef<HTMLDivElement>(null);
     const now = new Date();
     const receiptNo = `KMP-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
+
+    const handleDownload = useCallback(async () => {
+      if (!receiptRef.current) return;
+      try {
+        const dataUrl = await toJpeg(receiptRef.current, { quality: 0.95, backgroundColor: "#fafaf7" });
+        const link = document.createElement("a");
+        link.download = `receipt-${receiptNo}.jpg`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error("Download failed", err);
+      }
+    }, [receiptNo]);
 
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
         <div className="relative w-full max-w-sm">
-          <button
-            onClick={onClose}
-            className="absolute -top-3 -right-3 z-10 bg-destructive text-destructive-foreground rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="absolute -top-3 right-6 z-10 flex gap-2">
+            <button
+              onClick={handleDownload}
+              className="bg-primary text-primary-foreground rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+            <button
+              onClick={onClose}
+              className="bg-destructive text-destructive-foreground rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
 
           <div
             ref={ref}
