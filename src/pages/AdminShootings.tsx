@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Film, Plus, FileText, Edit } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -213,76 +214,95 @@ const AdminShootings = () => {
           </Dialog>
         </div>
 
-        <Card className="bg-card border-border/50 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/30">
-                  <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">লোকেশন</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
-                  <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/20">
-                {shootings?.map((s) => {
-                  const info = getStatusInfo(s.status);
-                  const hasScript = !!(s as any).script_content || !!(s as any).script_url;
-                  return (
-                    <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
-                      <td className="p-3">
-                        <p className="text-foreground font-medium">{s.name}</p>
-                        {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
-                        {s.channels && (
-                          <p className="text-xs text-primary mt-0.5">📺 {(s as any).channels.name}</p>
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="bg-secondary/50 border border-border/30 flex-wrap h-auto gap-1 p-1">
+            <TabsTrigger value="all" className="text-xs">সব ({shootings?.length || 0})</TabsTrigger>
+            {statusOptions.map((s) => {
+              const count = shootings?.filter((sh) => (sh.status || "upcoming") === s.value).length || 0;
+              return (
+                <TabsTrigger key={s.value} value={s.value} className="text-xs">
+                  {s.label} ({count})
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+
+          {["all", ...statusOptions.map((s) => s.value)].map((tab) => {
+            const filtered = tab === "all" ? shootings : shootings?.filter((sh) => (sh.status || "upcoming") === tab);
+            return (
+              <TabsContent key={tab} value={tab}>
+                <Card className="bg-card border-border/50 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border/30">
+                          <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">লোকেশন</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
+                          <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/20">
+                        {filtered?.length === 0 && (
+                          <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">কোনো শুটিং নেই</td></tr>
                         )}
-                      </td>
-                      <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
-                      <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={`h-7 text-xs gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`}
-                            onClick={() => openScriptEditor(s)}
-                          >
-                            <FileText className="h-3.5 w-3.5" />
-                            {hasScript ? "এডিট" : "লিখুন"}
-                          </Button>
-                          {(s as any).script_url && (
-                            <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">লিংক</a>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
-                          <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
-                          </SelectTrigger>
-                          <SelectContent className="bg-card border-border/50">
-                            {statusOptions.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="p-3 text-right">
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                        {filtered?.map((s) => {
+                          const info = getStatusInfo(s.status);
+                          const hasScript = !!(s as any).script_content || !!(s as any).script_url;
+                          return (
+                            <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
+                              <td className="p-3">
+                                <p className="text-foreground font-medium">{s.name}</p>
+                                {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
+                                {s.channels && (
+                                  <p className="text-xs text-primary mt-0.5">📺 {(s as any).channels.name}</p>
+                                )}
+                              </td>
+                              <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
+                              <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
+                              <td className="p-3">
+                                <div className="flex items-center gap-2">
+                                  <Button variant="ghost" size="sm" className={`h-7 text-xs gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
+                                    <FileText className="h-3.5 w-3.5" />
+                                    {hasScript ? "এডিট" : "লিখুন"}
+                                  </Button>
+                                  {(s as any).script_url && (
+                                    <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">লিংক</a>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
+                                  <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-card border-border/50">
+                                    {statusOptions.map((opt) => (
+                                      <SelectItem key={opt.value} value={opt.value}>
+                                        <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                              <td className="p-3 text-right">
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              </TabsContent>
+            );
+          })}
+        </Tabs>
       </div>
 
       {scriptEditShooting && (
