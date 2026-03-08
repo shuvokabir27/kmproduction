@@ -111,6 +111,11 @@ const MemberDashboard = () => {
         address_en: (profile as any).address_en || "",
         education_en: (profile as any).education_en || "",
         achievements_en: (profile as any).achievements_en || "",
+        favorite_actor_en: (profile as any).favorite_actor_en || "",
+        favorite_actress_en: (profile as any).favorite_actress_en || "",
+        favorite_color_en: (profile as any).favorite_color_en || "",
+        favorite_dress_en: (profile as any).favorite_dress_en || "",
+        favorite_food_en: (profile as any).favorite_food_en || "",
       });
     }
   }, [profile]);
