@@ -9,9 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -33,6 +33,12 @@ const MemberDashboard = () => {
   const [viewShooting, setViewShooting] = useState<any>(null);
   const [profileEditOpen, setProfileEditOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const coverRef = useRef<HTMLInputElement>(null);
 
   // Profile extra fields
   const [extraFields, setExtraFields] = useState({
@@ -124,12 +130,20 @@ const MemberDashboard = () => {
     setWorks(ws => ws.filter((_, i) => i !== idx));
   };
 
+  const uploadFile = async (file: File, folder: string) => {
+    const ext = file.name.split(".").pop();
+    const path = `${folder}/${profile!.id}_${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("member-photos").upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: pub } = supabase.storage.from("member-photos").getPublicUrl(path);
+    return pub.publicUrl;
+  };
+
   const handleSaveProfile = async () => {
     if (!profile) return;
     setSaving(true);
     try {
-      // Update profile extra fields
-      const { error } = await supabase.from("profiles").update({
+      const updates: any = {
         address: extraFields.address || null,
         education: extraFields.education || null,
         achievements: extraFields.achievements || null,
@@ -139,7 +153,16 @@ const MemberDashboard = () => {
         favorite_color: extraFields.favorite_color || null,
         favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null,
-      } as any).eq("id", profile.id);
+      };
+
+      if (photoFile) {
+        updates.photo_url = await uploadFile(photoFile, "profiles");
+      }
+      if (coverFile) {
+        updates.cover_url = await uploadFile(coverFile, "covers");
+      }
+
+      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
       if (error) throw error;
 
       // Delete old works and insert new ones
@@ -159,6 +182,8 @@ const MemberDashboard = () => {
       }
 
       toast.success("প্রোফাইল আপডেট হয়েছে!");
+      setPhotoFile(null); setCoverFile(null);
+      setPhotoPreview(null); setCoverPreview(null);
       queryClient.invalidateQueries({ queryKey: ["my-favorite-works"] });
       setProfileEditOpen(false);
     } catch (err: any) {
@@ -289,6 +314,45 @@ const MemberDashboard = () => {
             <DialogTitle className="text-foreground">প্রোফাইল তথ্য আপডেট</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Photo & Cover Upload */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">প্রোফাইল ছবি</Label>
+                <input type="file" accept="image/*" ref={photoRef} className="hidden" onChange={e => {
+                  const f = e.target.files?.[0];
+                  if (f) { setPhotoFile(f); setPhotoPreview(URL.createObjectURL(f)); }
+                }} />
+                <button
+                  type="button"
+                  onClick={() => photoRef.current?.click()}
+                  className="w-full h-24 rounded-lg border-2 border-dashed border-border/50 bg-secondary/50 flex flex-col items-center justify-center gap-1 hover:border-primary/50 transition-colors overflow-hidden"
+                >
+                  {photoPreview || (profile as any)?.photo_url ? (
+                    <img src={photoPreview || (profile as any)?.photo_url} alt="photo" className="w-full h-full object-cover" />
+                  ) : (
+                    <><Camera className="h-5 w-5 text-muted-foreground" /><span className="text-[10px] text-muted-foreground">ছবি আপলোড</span></>
+                  )}
+                </button>
+              </div>
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">কভার ফটো</Label>
+                <input type="file" accept="image/*" ref={coverRef} className="hidden" onChange={e => {
+                  const f = e.target.files?.[0];
+                  if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)); }
+                }} />
+                <button
+                  type="button"
+                  onClick={() => coverRef.current?.click()}
+                  className="w-full h-24 rounded-lg border-2 border-dashed border-border/50 bg-secondary/50 flex flex-col items-center justify-center gap-1 hover:border-primary/50 transition-colors overflow-hidden"
+                >
+                  {coverPreview || (profile as any)?.cover_url ? (
+                    <img src={coverPreview || (profile as any)?.cover_url} alt="cover" className="w-full h-full object-cover" />
+                  ) : (
+                    <><ImageIcon className="h-5 w-5 text-muted-foreground" /><span className="text-[10px] text-muted-foreground">কভার আপলোড</span></>
+                  )}
+                </button>
+              </div>
+            </div>
             <div>
               <Label className="text-foreground text-xs">শর্ট বিবরণ</Label>
               <Textarea value={extraFields.short_bio} onChange={e => setExtra("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="নিজের সম্পর্কে সংক্ষেপে লিখুন..." />
