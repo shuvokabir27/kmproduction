@@ -15,6 +15,8 @@ const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
 const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
+  const [viewScriptOpen, setViewScriptOpen] = useState(false);
+  const [viewShooting, setViewShooting] = useState<any>(null);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
