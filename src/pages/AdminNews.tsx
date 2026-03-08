@@ -1,7 +1,7 @@
 import { AppLayout } from "@/components/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, StarOff, Calendar, Newspaper } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check } from "lucide-react";
 import { format } from "date-fns";
+import ReactCrop, { type Crop as CropType, centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 const categories = [
   { value: "entertainment", label: "🎬 এন্টারটেইনমেন্ট" },
@@ -52,6 +54,58 @@ export default function AdminNews() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState<CropType>();
+  const [completedCrop, setCompletedCrop] = useState<CropType>();
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { width, height } = e.currentTarget;
+    const c = centerCrop(
+      makeAspectCrop({ unit: "%", width: 90 }, 16 / 9, width, height),
+      width, height
+    );
+    setCrop(c);
+  }, []);
+
+  const getCroppedBlob = useCallback((): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const image = imgRef.current;
+      if (!image || !completedCrop) return reject("No crop");
+      const canvas = document.createElement("canvas");
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+      const pixelCrop = {
+        x: (completedCrop.x || 0) * scaleX,
+        y: (completedCrop.y || 0) * scaleY,
+        width: (completedCrop.width || 0) * scaleX,
+        height: (completedCrop.height || 0) * scaleY,
+      };
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return reject("No canvas context");
+      ctx.drawImage(image, pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height, 0, 0, pixelCrop.width, pixelCrop.height);
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject("Failed to create blob");
+      }, "image/jpeg", 0.92);
+    });
+  }, [completedCrop]);
+
+  const handleCropConfirm = async () => {
+    try {
+      const blob = await getCroppedBlob();
+      const file = new File([blob], `cropped-${Date.now()}.jpg`, { type: "image/jpeg" });
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(blob));
+      setCropDialogOpen(false);
+      setRawImageSrc(null);
+    } catch {
+      toast({ title: "ক্রপ ব্যর্থ", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate("/login");
@@ -79,6 +133,9 @@ export default function AdminNews() {
     setImageFile(null);
     setImagePreview(null);
     setEditingNews(null);
+    setRawImageSrc(null);
+    setCrop(undefined);
+    setCompletedCrop(undefined);
   };
 
   const openEdit = (news: NewsItem) => {
@@ -102,8 +159,9 @@ export default function AdminNews() {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      const src = URL.createObjectURL(file);
+      setRawImageSrc(src);
+      setCropDialogOpen(true);
     }
   };
 
@@ -391,6 +449,44 @@ export default function AdminNews() {
               >
                 {uploading ? "আপলোড হচ্ছে..." : editingNews ? "আপডেট করুন" : "নিউজ প্রকাশ করুন"}
               </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Crop Dialog */}
+        <Dialog open={cropDialogOpen} onOpenChange={(open) => { setCropDialogOpen(open); if (!open) setRawImageSrc(null); }}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Crop className="h-5 w-5 text-primary" /> ছবি ক্রপ করুন
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-2">
+              {rawImageSrc && (
+                <ReactCrop
+                  crop={crop}
+                  onChange={(c) => setCrop(c)}
+                  onComplete={(c) => setCompletedCrop(c)}
+                  aspect={16 / 9}
+                  className="rounded-lg overflow-hidden max-h-[60vh]"
+                >
+                  <img
+                    ref={imgRef}
+                    src={rawImageSrc}
+                    alt="Crop"
+                    onLoad={onImageLoad}
+                    className="max-h-[60vh] w-full object-contain"
+                  />
+                </ReactCrop>
+              )}
+              <div className="flex gap-2 mt-4">
+                <Button variant="secondary" className="flex-1" onClick={() => { setCropDialogOpen(false); setRawImageSrc(null); }}>
+                  বাতিল
+                </Button>
+                <Button className="flex-1 gap-1.5" onClick={handleCropConfirm} disabled={!completedCrop}>
+                  <Check className="h-4 w-4" /> ক্রপ সম্পন্ন
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
