@@ -37,30 +37,30 @@ import {
 } from "@/components/ui/sidebar";
 
 const teamItems = [
-  { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard },
-  { title: "সদস্য", url: "/admin/members", icon: Users },
-  { title: "শুটিং", url: "/admin/shootings", icon: Film },
-  { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText },
-  { title: "হাজিরা", url: "/admin/attendance", icon: Calendar },
-  { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard },
-  { title: "বোনাস", url: "/admin/bonuses", icon: Gift },
-  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
+  { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
+  { title: "সদস্য", url: "/admin/members", icon: Users, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
+  { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
+  { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+  { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-amber-400", bg: "bg-amber-500/10" },
+  { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
+  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
 ];
 
 const publicSiteItems = [
-  { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe },
-  { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play },
-  { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles },
-  { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon },
-  { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
-  { title: "যোগাযোগ সেটিংস", url: "/admin/contact-settings", icon: Phone },
+  { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe, color: "text-teal-400", bg: "bg-teal-500/10" },
+  { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play, color: "text-pink-400", bg: "bg-pink-500/10" },
+  { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles, color: "text-yellow-400", bg: "bg-yellow-500/10" },
+  { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon, color: "text-indigo-400", bg: "bg-indigo-500/10" },
+  { title: "চ্যানেল", url: "/admin/channels", icon: Tv, color: "text-lime-400", bg: "bg-lime-500/10" },
+  { title: "যোগাযোগ সেটিংস", url: "/admin/contact-settings", icon: Phone, color: "text-purple-400", bg: "bg-purple-500/10" },
 ];
 
 const memberItems = [
-  { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
-  { title: "সেটিংস", url: "/settings", icon: Settings },
+  { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
+  { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
 ];
 
 export function AppSidebar() {
