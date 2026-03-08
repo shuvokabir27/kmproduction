@@ -400,6 +400,13 @@ const AdminMembers = () => {
                         <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
                       </div>
                     )}
+                    {form.salary_type === "daily" && (
+                      <div>
+                        <Label className="text-foreground text-xs">দৈনিক রেট (৳)</Label>
+                        <Input type="number" value={form.daily_rate} onChange={(e) => setField("daily_rate" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="ফিক্স দৈনিক বেতন" />
+                        <p className="text-[10px] text-muted-foreground mt-0.5">হাজিরায় স্বয়ংক্রিয়ভাবে যুক্ত হবে</p>
+                      </div>
+                    )}
                   </div>
                   {editId && (
                     <div className="mt-2">
