@@ -59,71 +59,12 @@ const MemberDashboard = () => {
 
   const [viewScriptData, setViewScriptData] = useState<any>(null);
 
-  const handleSaveProfile = async () => {
-    if (!profile) return;
-    setSaving(true);
-    try {
-      const updates: any = {
-        address: extraFields.address || null,
-        education: extraFields.education || null,
-        achievements: extraFields.achievements || null,
-        short_bio: extraFields.short_bio || null,
-        favorite_actor: extraFields.favorite_actor || null,
-        favorite_actress: extraFields.favorite_actress || null,
-        favorite_color: extraFields.favorite_color || null,
-        favorite_dress: extraFields.favorite_dress || null,
-        favorite_food: extraFields.favorite_food || null,
-        date_of_birth: extraFields.date_of_birth || null,
-        full_name_en: extraFields.full_name_en || null,
-        designation_en: extraFields.designation_en || null,
-        short_bio_en: extraFields.short_bio_en || null,
-        address_en: extraFields.address_en || null,
-        education_en: extraFields.education_en || null,
-        achievements_en: extraFields.achievements_en || null,
-        favorite_actor_en: extraFields.favorite_actor_en || null,
-        favorite_actress_en: extraFields.favorite_actress_en || null,
-        favorite_color_en: extraFields.favorite_color_en || null,
-        favorite_dress_en: extraFields.favorite_dress_en || null,
-        favorite_food_en: extraFields.favorite_food_en || null,
-      };
 
-      if (photoFile) {
-        updates.photo_url = await uploadFile(photoFile, "profiles");
-      }
-      if (coverFile) {
-        updates.cover_url = await uploadFile(coverFile, "covers");
-      }
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (isAdmin) return <Navigate to="/admin" replace />;
 
-      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
-      if (error) throw error;
-
-      // Delete old works and insert new ones
-      await supabase.from("favorite_works" as any).delete().eq("member_id", profile.id);
-      const validWorks = works.filter(w => w.title.trim());
-      if (validWorks.length > 0) {
-        const { error: wErr } = await supabase.from("favorite_works" as any).insert(
-          validWorks.map((w, i) => ({
-            member_id: profile.id,
-            title: w.title,
-            video_url: w.video_url || null,
-            description: w.description || null,
-            sort_order: i,
-          }))
-        );
-        if (wErr) throw wErr;
-      }
-
-      toast.success("প্রোফাইল আপডেট হয়েছে!");
-      setPhotoFile(null); setCoverFile(null);
-      setPhotoPreview(null); setCoverPreview(null);
-      queryClient.invalidateQueries({ queryKey: ["my-favorite-works"] });
-      setProfileEditOpen(false);
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
+  const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
   return (
     <AppLayout>
