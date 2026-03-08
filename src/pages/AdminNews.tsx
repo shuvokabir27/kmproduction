@@ -56,6 +56,8 @@ export default function AdminNews() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [inlineUploading, setInlineUploading] = useState(false);
+  const inlineFileRef = useRef<HTMLInputElement>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropType>();
