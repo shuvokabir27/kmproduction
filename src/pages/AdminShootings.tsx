@@ -178,7 +178,7 @@ const AdminShootings = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে শুটিং তৈরির পর টেবিলে "স্ক্রিপ্ট" বাটনে ক্লিক করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
-                  {submitting ? "সেভ হচ্ছে..." : "সেভ করুন"}
+                  {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সেভ করুন"}
                 </Button>
               </form>
             </DialogContent>
