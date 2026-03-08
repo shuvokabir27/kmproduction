@@ -271,6 +271,7 @@ export default function AdminNews() {
     setCrop(undefined);
     setCompletedCrop(undefined);
     setVideoUrl("");
+    setPublisherId(null);
   };
 
   const openEdit = (news: NewsItem) => {
