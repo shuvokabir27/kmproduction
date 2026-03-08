@@ -209,30 +209,30 @@ const AdminScriptEdit = () => {
   };
 
   const Toolbar = () => (
-    <div className="flex flex-wrap items-center gap-1 px-3 py-1.5 bg-secondary/50 border-b border-border/30 sticky top-0 z-10">
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("bold")}><Bold className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("italic")}><Italic className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("underline")}><Underline className="h-3.5 w-3.5" /></Button>
-      <Separator orientation="vertical" className="h-5 mx-0.5" />
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("formatBlock", "<h1>")}><Heading1 className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("formatBlock", "<h2>")}><Heading2 className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("formatBlock", "<p>")}><Type className="h-3.5 w-3.5" /></Button>
-      <Separator orientation="vertical" className="h-5 mx-0.5" />
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyLeft")}><AlignLeft className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyCenter")}><AlignCenter className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyRight")}><AlignRight className="h-3.5 w-3.5" /></Button>
-      <Separator orientation="vertical" className="h-5 mx-0.5" />
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("insertUnorderedList")}><List className="h-3.5 w-3.5" /></Button>
-      <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("insertOrderedList")}><span className="text-[10px] font-mono">1.</span></Button>
-      <Separator orientation="vertical" className="h-5 mx-0.5" />
-      <select className="h-7 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground" onChange={(e) => { if (e.target.value) execCmd("fontSize", e.target.value); }} defaultValue="">
+    <div className="flex flex-wrap items-center gap-0.5 md:gap-1 px-2 md:px-3 py-1.5 bg-secondary/50 border-b border-border/30 sticky top-0 z-10 overflow-x-auto">
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("bold")}><Bold className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("italic")}><Italic className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("underline")}><Underline className="h-3.5 w-3.5" /></Button>
+      <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("formatBlock", "<h1>")}><Heading1 className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("formatBlock", "<h2>")}><Heading2 className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("formatBlock", "<p>")}><Type className="h-3.5 w-3.5" /></Button>
+      <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("justifyLeft")}><AlignLeft className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("justifyCenter")}><AlignCenter className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("justifyRight")}><AlignRight className="h-3.5 w-3.5" /></Button>
+      <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("insertUnorderedList")}><List className="h-3.5 w-3.5" /></Button>
+      <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("insertOrderedList")}><span className="text-[10px] font-mono">1.</span></Button>
+      <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
+      <select className="h-7 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground shrink-0" onChange={(e) => { if (e.target.value) execCmd("fontSize", e.target.value); }} defaultValue="">
         <option value="" disabled>সাইজ</option>
         <option value="1">ছোট</option>
         <option value="3">সাধারণ</option>
         <option value="5">বড়</option>
         <option value="7">অনেক বড়</option>
       </select>
-      <select className="h-7 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground" onChange={(e) => { if (e.target.value) execCmd("foreColor", e.target.value); }} defaultValue="">
+      <select className="h-7 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground shrink-0" onChange={(e) => { if (e.target.value) execCmd("foreColor", e.target.value); }} defaultValue="">
         <option value="" disabled>রং</option>
         <option value="#ffffff">সাদা</option>
         <option value="#ef4444">লাল</option>
