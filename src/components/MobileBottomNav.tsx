@@ -97,32 +97,40 @@ export function MobileBottomNav() {
                     <X className="h-3.5 w-3.5 text-muted-foreground" />
                   </button>
                 </div>
-                {moreItems.map((item, index) => {
-                  const active = item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path));
+                {currentMoreItems.map((item, index) => {
+                  const isLogout = item.path === "__logout__";
+                  const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
                   return (
                     <motion.button
                       key={item.path}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      onClick={() => {
-                        navigate(item.path);
+                      onClick={async () => {
+                        if (isLogout) {
+                          await signOut();
+                          navigate("/login");
+                        } else {
+                          navigate(item.path);
+                        }
                         setMoreOpen(false);
                       }}
                       whileTap={{ scale: 0.97, rotateX: 3 }}
                       className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
-                        active
-                          ? "bg-primary/10 border border-primary/20"
-                          : "hover:bg-secondary/50 active:bg-secondary border border-transparent"
+                        isLogout
+                          ? "hover:bg-destructive/10 active:bg-destructive/20 border border-transparent"
+                          : active
+                            ? "bg-primary/10 border border-primary/20"
+                            : "hover:bg-secondary/50 active:bg-secondary border border-transparent"
                       }`}
                       style={{ perspective: "600px", transformStyle: "preserve-3d" }}
                     >
                       <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                        active ? "bg-primary/20" : "bg-secondary"
+                        isLogout ? "bg-destructive/10" : active ? "bg-primary/20" : "bg-secondary"
                       }`}>
-                        <item.icon className={`h-4.5 w-4.5 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                        <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : active ? "text-primary" : "text-muted-foreground"}`} />
                       </div>
-                      <span className={`text-sm font-medium ${active ? "text-primary" : "text-foreground"}`}>
+                      <span className={`text-sm font-medium ${isLogout ? "text-destructive" : active ? "text-primary" : "text-foreground"}`}>
                         {item.label}
                       </span>
                     </motion.button>
