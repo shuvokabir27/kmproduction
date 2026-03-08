@@ -112,14 +112,16 @@ const PublicHome = () => {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-0.5">
             {navItems.map((nav) => (
               <button
                 key={nav.href}
                 onClick={() => handleNavClick(nav)}
-                className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all duration-200"
+                className="relative px-4 py-2 text-sm text-muted-foreground hover:text-primary font-medium rounded-lg transition-all duration-300 group"
               >
-                {nav.label}
+                <span className="relative z-10">{nav.label}</span>
+                <span className="absolute inset-0 rounded-lg bg-primary/0 group-hover:bg-primary/10 transition-all duration-300" />
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary rounded-full group-hover:w-3/5 transition-all duration-300" />
               </button>
             ))}
           </nav>
