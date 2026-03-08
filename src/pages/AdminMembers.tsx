@@ -391,6 +391,8 @@ const AdminMembers = () => {
                       <div>
                         <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
                         <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    )}
                   </div>
                   {editId && (
                     <div className="mt-2">
@@ -399,8 +401,6 @@ const AdminMembers = () => {
                       <p className="text-[10px] text-muted-foreground mt-1">সিস্টেম চালু হওয়ার আগের বকেয়া পরিমাণ</p>
                     </div>
                   )}
-                    )}
-                  </div>
                 </div>
                 <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">পেমেন্ট তথ্য</p>
