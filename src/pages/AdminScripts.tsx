@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,18 +11,16 @@ import { FileText, Plus, Edit, Trash2, Search, Clock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScriptEditor } from "@/components/ScriptEditor";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const AdminScripts = () => {
   const { user, isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [titleDialogOpen, setTitleDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editorOpen, setEditorOpen] = useState(false);
-  const [currentScript, setCurrentScript] = useState<any>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -69,10 +67,9 @@ const AdminScripts = () => {
         const { data, error } = await supabase.from("scripts" as any).insert({ title: newTitle.trim() } as any).select().single();
         if (error) throw error;
         toast.success("স্ক্রিপ্ট তৈরি হয়েছে!");
-        // Open editor for new script
         setTitleDialogOpen(false);
-        setCurrentScript(data);
-        setEditorOpen(true);
+        navigate(`/admin/scripts/${(data as any).id}`);
+        return;
       }
       queryClient.invalidateQueries({ queryKey: ["admin-scripts"] });
       if (editingId) setTitleDialogOpen(false);
@@ -81,18 +78,6 @@ const AdminScripts = () => {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const openEditor = (script: any) => {
-    setCurrentScript(script);
-    setEditorOpen(true);
-  };
-
-  const saveScriptContent = async (content: string) => {
-    if (!currentScript) return;
-    const { error } = await supabase.from("scripts" as any).update({ content, updated_at: new Date().toISOString() } as any).eq("id", currentScript.id);
-    if (error) throw error;
-    queryClient.invalidateQueries({ queryKey: ["admin-scripts"] });
   };
 
   const handleDelete = async () => {
@@ -106,8 +91,24 @@ const AdminScripts = () => {
 
   const getPreview = (content: string) => {
     if (!content) return "খালি স্ক্রিপ্ট";
+    // Try parsing sequence format
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        const allText = parsed.map((s: any) => s.content?.replace(/<[^>]+>/g, "") || "").join(" ").trim();
+        return allText.length > 100 ? allText.substring(0, 100) + "..." : allText || "খালি স্ক্রিপ্ট";
+      }
+    } catch {}
     const text = content.replace(/<[^>]+>/g, "").trim();
     return text.length > 100 ? text.substring(0, 100) + "..." : text || "খালি স্ক্রিপ্ট";
+  };
+
+  const getSeqCount = (content: string) => {
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) return parsed.length;
+    } catch {}
+    return 1;
   };
 
   return (
@@ -122,18 +123,11 @@ const AdminScripts = () => {
           </Button>
         </div>
 
-        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="স্ক্রিপ্ট খুঁজুন..."
-            className="pl-9 bg-secondary border-border/50"
-          />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="স্ক্রিপ্ট খুঁজুন..." className="pl-9 bg-secondary border-border/50" />
         </div>
 
-        {/* Script List */}
         <div className="grid gap-3">
           {filtered.length === 0 && (
             <Card className="bg-card border-border/30 p-8 text-center text-muted-foreground">
@@ -144,7 +138,7 @@ const AdminScripts = () => {
             <Card
               key={script.id}
               className="bg-card border-border/30 p-4 hover:border-primary/30 transition-colors cursor-pointer group"
-              onClick={() => openEditor(script)}
+              onClick={() => navigate(`/admin/scripts/${script.id}`)}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
@@ -153,9 +147,9 @@ const AdminScripts = () => {
                     <h3 className="text-foreground font-semibold text-sm truncate">{script.title}</h3>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{getPreview(script.content)}</p>
-                  <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    {new Date(script.updated_at).toLocaleDateString("bn-BD")} {new Date(script.updated_at).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(script.updated_at).toLocaleDateString("bn-BD")}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{getSeqCount(script.content)} সিকুয়েন্স</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
@@ -172,7 +166,6 @@ const AdminScripts = () => {
         </div>
       </div>
 
-      {/* Title Dialog */}
       <Dialog open={titleDialogOpen} onOpenChange={setTitleDialogOpen}>
         <DialogContent className="bg-card border-border/50 max-w-sm">
           <DialogHeader>
@@ -190,18 +183,6 @@ const AdminScripts = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Script Editor */}
-      {currentScript && (
-        <ScriptEditor
-          open={editorOpen}
-          onOpenChange={setEditorOpen}
-          title={`স্ক্রিপ্ট — ${currentScript.title}`}
-          initialContent={currentScript.content || ""}
-          onSave={saveScriptContent}
-        />
-      )}
-
-      {/* Delete Confirm */}
       <AlertDialog open={!!deleteId} onOpenChange={(v) => { if (!v) setDeleteId(null); }}>
         <AlertDialogContent className="bg-card border-border/50">
           <AlertDialogHeader>
