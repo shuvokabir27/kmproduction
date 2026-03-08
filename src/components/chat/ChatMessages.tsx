@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useOnlineStatus, isUserOnline, getLastSeenText } from "@/hooks/usePresence";
 import { playMessageSound } from "@/lib/sounds";
-import { useEffect, useRef, useState } from "react";
-import { Send, ArrowLeft, Users, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Send, ArrowLeft, Users, Trash2, Check, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,50 @@ interface ChatMessagesProps {
   onBack?: () => void;
 }
 
+function useTypingIndicator(conversationId: string, userId: string | undefined) {
+  const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+  const channelRef = useRef<any>(null);
+  const timeoutsRef = useRef<Record<string, NodeJS.Timeout>>({});
+
+  useEffect(() => {
+    if (!userId || !conversationId) return;
+
+    const channel = supabase.channel(`typing-${conversationId}`)
+      .on("broadcast", { event: "typing" }, (payload: any) => {
+        const senderId = payload.payload?.user_id;
+        const senderName = payload.payload?.user_name;
+        if (senderId && senderId !== userId) {
+          setTypingUsers(prev => ({ ...prev, [senderId]: senderName || "..." }));
+          if (timeoutsRef.current[senderId]) clearTimeout(timeoutsRef.current[senderId]);
+          timeoutsRef.current[senderId] = setTimeout(() => {
+            setTypingUsers(prev => {
+              const next = { ...prev };
+              delete next[senderId];
+              return next;
+            });
+          }, 3000);
+        }
+      })
+      .subscribe();
+
+    channelRef.current = channel;
+    return () => {
+      Object.values(timeoutsRef.current).forEach(clearTimeout);
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId, userId]);
+
+  const sendTyping = useCallback((userName: string) => {
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "typing",
+      payload: { user_id: userId, user_name: userName },
+    });
+  }, [userId]);
+
+  return { typingUsers, sendTyping };
+}
+
 export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -23,6 +67,9 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { data: onlineMap } = useOnlineStatus();
+  const lastTypingSentRef = useRef(0);
+
+  const { typingUsers, sendTyping } = useTypingIndicator(conversationId, user?.id);
 
   // Mark as read when opening conversation
   useEffect(() => {
@@ -48,7 +95,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
       const { data: members } = await sb
         .from("conversation_members")
-        .select("user_id")
+        .select("user_id, last_read_at")
         .eq("conversation_id", conversationId);
 
       const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
@@ -57,12 +104,20 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         .select("full_name, photo_url, user_id, last_seen_at")
         .in("user_id", memberUserIds);
 
-      const otherMembers = profiles?.filter((p) => p.user_id !== user?.id) ?? [];
+      const otherMembers = profiles?.filter((p: any) => p.user_id !== user?.id) ?? [];
       const displayName =
         conv?.type === "group"
           ? conv?.name || "গ্রুপ চ্যাট"
           : otherMembers[0]?.full_name || "অজানা সদস্য";
       const photoUrl = conv?.type === "personal" ? otherMembers[0]?.photo_url : null;
+
+      // Build a map of user_id -> last_read_at for read receipts
+      const readMap: Record<string, string> = {};
+      members?.forEach((m: any) => {
+        if (m.user_id !== user?.id) {
+          readMap[m.user_id] = m.last_read_at;
+        }
+      });
 
       return {
         ...conv,
@@ -70,6 +125,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         photoUrl,
         memberCount: memberUserIds.length,
         profiles: profiles ?? [],
+        readMap,
       };
     },
   });
@@ -87,6 +143,14 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
     refetchInterval: 3000,
   });
 
+  // Refetch read status periodically
+  useEffect(() => {
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ["conversation-info", conversationId] });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [conversationId, queryClient]);
+
   useEffect(() => {
     const channel = supabase
       .channel(`messages-${conversationId}`)
@@ -99,12 +163,11 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload: any) => {
-          // Play sound for incoming messages from others
           if (payload.new?.sender_id !== user?.id) {
             playMessageSound();
           }
           queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
-          // Mark as read immediately
+          queryClient.invalidateQueries({ queryKey: ["conversation-info", conversationId] });
           sb.from("conversation_members")
             .update({ last_read_at: new Date().toISOString() })
             .eq("conversation_id", conversationId)
@@ -141,7 +204,6 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         .update({ updated_at: new Date().toISOString() })
         .eq("id", conversationId);
 
-      // Send push notification to other members (fire and forget)
       supabase.functions.invoke("send-push-notification", {
         body: {
           conversation_id: conversationId,
@@ -177,6 +239,26 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
     sendMessage.mutate();
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
+    const now = Date.now();
+    if (now - lastTypingSentRef.current > 2000) {
+      lastTypingSentRef.current = now;
+      const myProfile = conversation?.profiles?.find((p: any) => p.user_id === user?.id);
+      sendTyping(myProfile?.full_name || "সদস্য");
+    }
+  };
+
+  // Check if a message has been seen by at least one other member
+  const isMessageSeen = (msgCreatedAt: string) => {
+    if (!conversation?.readMap) return false;
+    return Object.values(conversation.readMap).some(
+      (lastRead: any) => lastRead && new Date(lastRead) >= new Date(msgCreatedAt)
+    );
+  };
+
+  const typingNames = Object.values(typingUsers);
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -202,13 +284,21 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground truncate">{conversation?.displayName}</p>
-          {conversation?.type === "personal" && (() => {
-            const other = conversation?.profiles?.find((p: any) => p.user_id !== user?.id);
-            const lastSeen = other ? (onlineMap?.get(other.user_id) || other.last_seen_at) : null;
-            return <p className={cn("text-[10px]", isUserOnline(lastSeen) ? "text-green-500 font-medium" : "text-muted-foreground")}>{getLastSeenText(lastSeen)}</p>;
-          })()}
-          {conversation?.type === "group" && (
-            <p className="text-[10px] text-muted-foreground">{conversation?.memberCount} জন সদস্য</p>
+          {typingNames.length > 0 ? (
+            <p className="text-[10px] text-primary font-medium animate-pulse">
+              {typingNames.join(", ")} টাইপ করছে...
+            </p>
+          ) : (
+            <>
+              {conversation?.type === "personal" && (() => {
+                const other = conversation?.profiles?.find((p: any) => p.user_id !== user?.id);
+                const lastSeen = other ? (onlineMap?.get(other.user_id) || other.last_seen_at) : null;
+                return <p className={cn("text-[10px]", isUserOnline(lastSeen) ? "text-green-500 font-medium" : "text-muted-foreground")}>{getLastSeenText(lastSeen)}</p>;
+              })()}
+              {conversation?.type === "group" && (
+                <p className="text-[10px] text-muted-foreground">{conversation?.memberCount} জন সদস্য</p>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -225,6 +315,8 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
           const profile = getProfile(msg.sender_id);
           const prevMsg = messages[i - 1];
           const showAvatar = !isMine && (!prevMsg || prevMsg.sender_id !== msg.sender_id);
+          const isLastMyMsg = isMine && (!messages[i + 1] || messages[i + 1].sender_id !== user?.id);
+          const seen = isMine && isMessageSeen(msg.created_at);
 
           return (
             <div
@@ -258,10 +350,15 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
                   >
                     {msg.content}
                     <span className={cn(
-                      "text-[9px] ml-2 inline-block align-bottom opacity-60",
+                      "text-[9px] ml-2 inline-flex items-center gap-0.5 align-bottom opacity-60",
                       isMine ? "text-primary-foreground" : "text-muted-foreground"
                     )}>
                       {new Date(msg.created_at).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
+                      {isMine && (
+                        seen
+                          ? <CheckCheck className="h-3 w-3 text-blue-400 opacity-100" />
+                          : <Check className="h-3 w-3" />
+                      )}
                     </span>
                   </div>
                   {isMine && (
@@ -284,7 +381,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         <input
           ref={inputRef}
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={handleInputChange}
           placeholder="মেসেজ লিখুন..."
           className="flex-1 bg-secondary/50 border border-border/30 rounded-full px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
           autoComplete="off"
