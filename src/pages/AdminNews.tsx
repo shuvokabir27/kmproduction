@@ -549,6 +549,29 @@ export default function AdminNews() {
                     className="text-sm leading-relaxed border-0 rounded-none focus-visible:ring-0 resize-y"
                   />
                 </div>
+                {/* Inline Images Edit List */}
+                {inlineImages.length > 0 && (
+                  <div className="mt-2 space-y-1.5">
+                    <Label className="text-[11px] text-muted-foreground">কন্টেন্টের ছবি (ক্লিক করে এডিট করুন):</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {inlineImages.map((img, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => openEditInlineImage(img.match, img.caption, img.size, img.url)}
+                          className="relative group rounded-lg overflow-hidden border border-border/40 hover:border-primary/50 transition-all"
+                          style={{ width: "72px", height: "72px" }}
+                        >
+                          <img src={img.url} alt="" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                            <Pencil className="h-3.5 w-3.5 text-white" />
+                            <span className="text-[9px] text-white mt-0.5">{img.size}%</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Video URL */}
