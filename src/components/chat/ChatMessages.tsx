@@ -21,6 +21,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { data: onlineMap } = useOnlineStatus();
 
   // Mark as read when opening conversation
   useEffect(() => {
