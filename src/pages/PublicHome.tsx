@@ -189,7 +189,7 @@ const PublicHome = () => {
       {/* Footer */}
       <footer className="border-t border-border/50 py-6 px-4">
         <div className="container max-w-6xl mx-auto text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} {settings?.site_name || "TeamFlow"}. সর্বস্বত্ব সংরক্ষিত।
+          © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. সর্বস্বত্ব সংরক্ষিত।
         </div>
       </footer>
     </div>
