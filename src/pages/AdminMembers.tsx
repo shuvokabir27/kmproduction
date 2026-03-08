@@ -219,7 +219,7 @@ const AdminMembers = () => {
         if (photoUrl) updateData.photo_url = photoUrl;
         if (coverUrl) updateData.cover_url = coverUrl;
 
-        const { error } = await supabase.from("profiles").update(updateData).eq("id", editId);
+        const { error } = await (supabase as any).from("profiles").update(updateData).eq("id", editId);
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
       } else {
