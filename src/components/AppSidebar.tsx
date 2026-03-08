@@ -41,6 +41,7 @@ const adminItems = [
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
 ];
 
 const memberItems = [
