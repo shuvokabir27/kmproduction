@@ -264,7 +264,16 @@ const AdminDashboard = () => {
           <div className="space-y-2 md:hidden">
             {filteredData?.list.map((m, i) => (
               <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-border/20">
-                <p className="text-sm font-medium text-foreground truncate flex-1">{m.name}</p>
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                    {m.photo ? (
+                      <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-primary text-[10px] font-medium">{m.name.charAt(0)}</span>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+                </div>
                 <span className={`text-sm font-bold ml-2 ${m.due > 0 ? "text-destructive" : "text-success"}`}>
                   ৳{m.due.toLocaleString("bn-BD")}
                 </span>
