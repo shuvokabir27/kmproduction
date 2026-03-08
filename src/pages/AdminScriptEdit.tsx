@@ -232,14 +232,25 @@ const AdminScriptEdit = () => {
             <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadPDF}>
               <Download className="h-3.5 w-3.5" /> PDF
             </Button>
-            <Button size="sm" className="gap-1.5 text-xs" onClick={handleSave} disabled={saving}>
-              <Save className="h-3.5 w-3.5" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
-            </Button>
+            {isEditMode ? (
+              <>
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setSearchParams({})}>
+                  <Eye className="h-3.5 w-3.5" /> প্রিভিউ
+                </Button>
+                <Button size="sm" className="gap-1.5 text-xs" onClick={handleSave} disabled={saving}>
+                  <Save className="h-3.5 w-3.5" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+                </Button>
+              </>
+            ) : (
+              <Button size="sm" className="gap-1.5 text-xs" onClick={() => setSearchParams({ mode: "edit" })}>
+                <Edit className="h-3.5 w-3.5" /> এডিট করুন
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Toolbar */}
-        <Toolbar />
+        {/* Toolbar - only in edit mode */}
+        {isEditMode && <Toolbar />}
 
         {/* Sequences */}
         <div className="space-y-3">
