@@ -58,7 +58,9 @@ const AdminDashboard = () => {
       const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
       const { data: payments } = await supabase.from("payments").select("amount");
       const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
-      return { totalEarned, totalPaid, due: totalEarned - totalPaid };
+      const { data: bonuses } = await (supabase as any).from("bonuses").select("amount");
+      const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
+      return { totalEarned, totalPaid, due: totalEarned + totalBonuses - totalPaid };
     },
   });
 
@@ -77,14 +79,20 @@ const AdminDashboard = () => {
       if (from) payQ = payQ.gte("payment_date", from);
       if (to) payQ = payQ.lte("payment_date", to);
       const { data: payments } = await payQ;
-      const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number }>();
-      members?.forEach(m => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0 }));
+      let bonQ = (supabase as any).from("bonuses").select("member_id, amount");
+      if (from) bonQ = bonQ.gte("bonus_date", from);
+      if (to) bonQ = bonQ.lte("bonus_date", to);
+      const { data: bonuses } = await bonQ;
+      const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number; bonus: number }>();
+      members?.forEach(m => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0, bonus: 0 }));
       attendance?.forEach((a: any) => { const entry = memberMap.get(a.member_id); if (entry) entry.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
-      const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned - m.paid })).filter(m => m.earned > 0 || m.paid > 0).sort((a, b) => b.due - a.due);
+      bonuses?.forEach((b: any) => { const entry = memberMap.get(b.member_id); if (entry) entry.bonus += Number(b.amount || 0); });
+      const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned + m.bonus - m.paid })).filter(m => m.earned > 0 || m.paid > 0 || m.bonus > 0).sort((a, b) => b.due - a.due);
       const totalEarned = list.reduce((s, m) => s + m.earned, 0);
       const totalPaid = list.reduce((s, m) => s + m.paid, 0);
-      return { list, totalEarned, totalPaid, totalDue: totalEarned - totalPaid };
+      const totalBonus = list.reduce((s, m) => s + m.bonus, 0);
+      return { list, totalEarned, totalPaid, totalDue: totalEarned + totalBonus - totalPaid };
     },
   });
 
@@ -94,11 +102,13 @@ const AdminDashboard = () => {
       const { data: members } = await supabase.from("profiles").select("id, full_name, member_id, photo_url, designation").eq("is_active", true);
       const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
       const { data: payments } = await supabase.from("payments").select("member_id, amount");
-      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number }>();
-      members?.forEach(m => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0 }));
+      const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
+      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number }>();
+      members?.forEach(m => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0 }));
       attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
-      return Array.from(map.values()).map(m => ({ ...m, balance: m.earned - m.paid })).sort((a, b) => b.balance - a.balance);
+      bonuses?.forEach((b: any) => { const e = map.get(b.member_id); if (e) e.bonus += Number(b.amount || 0); });
+      return Array.from(map.values()).map(m => ({ ...m, balance: m.earned + m.bonus - m.paid })).sort((a, b) => b.balance - a.balance);
     },
   });
 

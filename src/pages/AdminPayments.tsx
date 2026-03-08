@@ -102,6 +102,8 @@ const AdminPayments = () => {
     const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
     const { data: allPayments } = await supabase.from("payments").select("amount").eq("member_id", payment.member_id);
     const totalPaid = allPayments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
+    const { data: bonuses } = await (supabase as any).from("bonuses").select("amount").eq("member_id", payment.member_id);
+    const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
 
     setReceiptData({
       memberName: payment.profiles?.full_name || "",
@@ -113,7 +115,7 @@ const AdminPayments = () => {
       date: payment.payment_date,
       totalEarned,
       totalPaid,
-      balance: totalEarned - totalPaid,
+      balance: totalEarned + totalBonuses - totalPaid,
     });
   };
 
