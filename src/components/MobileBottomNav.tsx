@@ -26,11 +26,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 const adminTabs = [
-  { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-violet-400" },
-  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance", color: "text-cyan-400" },
-  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-amber-400" },
-  { icon: Film, label: "শুটিং", path: "/admin/shootings", color: "text-rose-400" },
-  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-sky-400" },
+  { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-violet-400", bg: "bg-violet-500/15" },
+  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance", color: "text-cyan-400", bg: "bg-cyan-500/15" },
+  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-amber-400", bg: "bg-amber-500/15" },
+  { icon: Film, label: "শুটিং", path: "/admin/shootings", color: "text-rose-400", bg: "bg-rose-500/15" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-sky-400", bg: "bg-sky-500/15" },
 ];
 
 const moreItems = [
