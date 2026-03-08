@@ -113,6 +113,25 @@ const AdminDashboard = () => {
     },
   });
 
+  // Member balance list sorted by balance desc
+  const { data: memberBalances } = useQuery({
+    queryKey: ["admin-member-balances"],
+    queryFn: async () => {
+      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id, photo_url, designation").eq("is_active", true);
+      const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
+      const { data: payments } = await supabase.from("payments").select("member_id, amount");
+
+      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number }>();
+      members?.forEach(m => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0 }));
+      attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
+      payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
+
+      return Array.from(map.values())
+        .map(m => ({ ...m, balance: m.earned - m.paid }))
+        .sort((a, b) => b.balance - a.balance);
+    },
+  });
+
   const { data: recentPayments } = useQuery({
     queryKey: ["admin-recent-payments"],
     queryFn: async () => {
@@ -171,7 +190,51 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 {stat.clickable && <p className="text-[10px] text-muted-foreground mt-2">ক্লিক করে বিস্তারিত দেখুন →</p>}
-              </Card>
+        </Card>
+
+        {/* Member Balance List */}
+        <Card className="bg-card border-border/50">
+          <div className="p-4 border-b border-border/30">
+            <h2 className="font-semibold text-foreground flex items-center gap-2">
+              <Wallet className="h-4 w-4 text-primary" /> সদস্য ব্যালেন্স (বকেয়া অনুযায়ী)
+            </h2>
+          </div>
+          <div className="divide-y divide-border/30">
+            {memberBalances?.map((m, i) => (
+              <div key={i} className="p-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative flex-shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center overflow-hidden text-xs font-bold text-muted-foreground">
+                      {m.photo ? (
+                        <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                      ) : (
+                        m.name.charAt(0)
+                      )}
+                    </div>
+                    <span className="absolute -top-1 -left-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full h-4 w-4 flex items-center justify-center">
+                      {i + 1}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {m.designation || `ID: ${m.memberId}`} • আয় ৳{m.earned.toLocaleString("bn-BD")} • প্রদান ৳{m.paid.toLocaleString("bn-BD")}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className={cn("text-sm font-bold", m.balance > 0 ? "text-destructive" : "text-success")}>
+                    ৳{m.balance.toLocaleString("bn-BD")}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">{m.balance > 0 ? "বকেয়া" : "পরিশোধিত"}</p>
+                </div>
+              </div>
+            ))}
+            {memberBalances?.length === 0 && (
+              <div className="p-4 text-sm text-muted-foreground text-center">কোনো সদস্য নেই</div>
+            )}
+          </div>
+        </Card>
             </motion.div>
           ))}
         </motion.div>
