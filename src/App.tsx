@@ -25,6 +25,8 @@ import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
 import AdminContactSettings from "./pages/AdminContactSettings";
 import AdminGallery from "./pages/AdminGallery";
+import Services from "./pages/Services";
+import AdminServices from "./pages/AdminServices";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
@@ -44,6 +46,7 @@ const App = () => (
             <Route path="/" element={<PublicHome />} />
             <Route path="/member/:memberId" element={<PublicProfile />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/services" element={<Services />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<MemberDashboard />} />
             <Route path="/scripts" element={<MemberScripts />} />
@@ -64,6 +67,7 @@ const App = () => (
             <Route path="/admin/popular-videos" element={<AdminPopularVideos />} />
             <Route path="/admin/contact-settings" element={<AdminContactSettings />} />
             <Route path="/admin/gallery" element={<AdminGallery />} />
+            <Route path="/admin/services" element={<AdminServices />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

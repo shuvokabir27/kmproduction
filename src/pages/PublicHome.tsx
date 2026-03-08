@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image } from "lucide-react";
@@ -22,6 +22,7 @@ const item = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transiti
 const PublicHome = () => {
   const { user, isAdmin } = useAuth();
   const { lang, t } = useLanguage();
+  const navigate = useNavigate();
   const L = labels[lang];
 
   const { data: members } = useQuery({
@@ -80,15 +81,20 @@ const PublicHome = () => {
   const navItems = [
     { label: "আমাদের টিম", href: "#team" },
     { label: "জনপ্রিয় কাজ", href: "#popular" },
+    { label: "সেবাসমূহ", href: "/services", isPage: true },
     { label: "চ্যানেল সমূহ", href: "#channels" },
     { label: "ছবি গ্যালারী", href: "#gallery" },
     { label: "যোগাযোগ", href: "#contact" },
   ];
 
-  const scrollToSection = (href: string) => {
+  const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
     setMobileMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (nav.isPage) {
+      navigate(nav.href);
+    } else {
+      const el = document.querySelector(nav.href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -110,7 +116,7 @@ const PublicHome = () => {
             {navItems.map((nav) => (
               <button
                 key={nav.href}
-                onClick={() => scrollToSection(nav.href)}
+                onClick={() => handleNavClick(nav)}
                 className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all duration-200"
               >
                 {nav.label}
@@ -157,7 +163,7 @@ const PublicHome = () => {
                 {navItems.map((nav) => (
                   <button
                     key={nav.href}
-                    onClick={() => scrollToSection(nav.href)}
+                    onClick={() => handleNavClick(nav)}
                     className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all"
                   >
                     {nav.label}

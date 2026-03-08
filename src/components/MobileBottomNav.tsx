@@ -20,6 +20,7 @@ import {
   Play,
   Phone,
   Image as ImageIcon,
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -41,6 +42,7 @@ const moreItems = [
   { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
   { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__" },
   { icon: Home, label: "সাইট দেখুন", path: "/" },
+  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services" },
   { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
   { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos" },
   { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery" },

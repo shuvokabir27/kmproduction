@@ -16,6 +16,7 @@ import {
   Play,
   Phone,
   Image as ImageIcon,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -50,6 +51,7 @@ const teamItems = [
 const publicSiteItems = [
   { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe },
   { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play },
+  { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles },
   { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon },
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
   { title: "যোগাযোগ সেটিংস", url: "/admin/contact-settings", icon: Phone },
