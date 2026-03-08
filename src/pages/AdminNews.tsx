@@ -58,6 +58,10 @@ export default function AdminNews() {
   const [videoUrl, setVideoUrl] = useState("");
   const [inlineUploading, setInlineUploading] = useState(false);
   const inlineFileRef = useRef<HTMLInputElement>(null);
+  const [inlineImageDialog, setInlineImageDialog] = useState(false);
+  const [inlineImageUrl, setInlineImageUrl] = useState<string | null>(null);
+  const [inlineCaption, setInlineCaption] = useState("");
+  const [inlineSize, setInlineSize] = useState(60); // percentage width
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropType>();
