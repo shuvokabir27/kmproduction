@@ -43,7 +43,7 @@ const AdminBonuses = () => {
 
   const addBonus = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("bonuses").insert({
+      const { error } = await (supabase as any).from("bonuses").insert({
         member_id: memberId,
         type,
         amount: Number(amount),
