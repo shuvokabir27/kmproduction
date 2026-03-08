@@ -63,6 +63,7 @@ const App = () => (
             <Route path="/admin/public-profiles" element={<AdminPublicProfiles />} />
             <Route path="/admin/popular-videos" element={<AdminPopularVideos />} />
             <Route path="/admin/contact-settings" element={<AdminContactSettings />} />
+            <Route path="/admin/gallery" element={<AdminGallery />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

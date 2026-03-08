@@ -779,6 +779,41 @@ const PublicHome = () => {
           </div>
         </div>
       </footer>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 cursor-pointer"
+            onClick={() => setLightboxImage(null)}
+          >
+            <div className="absolute inset-0 bg-background/90 backdrop-blur-xl" />
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="relative z-10 max-w-[90vw] max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={lightboxImage}
+                alt="Gallery"
+                className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+              />
+              <button
+                onClick={() => setLightboxImage(null)}
+                className="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+              >
+                <X className="h-4 w-4 text-foreground" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
