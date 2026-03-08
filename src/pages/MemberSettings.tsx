@@ -90,6 +90,7 @@ const MemberSettings = () => {
         favorite_color_en: (profile as any).favorite_color_en || "",
         favorite_dress_en: (profile as any).favorite_dress_en || "",
         favorite_food_en: (profile as any).favorite_food_en || "",
+        joining_date: (profile as any).joining_date || "",
       });
     }
   }, [profile]);
