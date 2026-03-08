@@ -291,17 +291,17 @@ const AdminAttendance = () => {
                              <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
                            </div>
                          </div>
-                         <Input
-                           type="number"
-                           value={attendanceData[m.id]?.rate || "0"}
-                           onChange={(e) => setRate(m.id, e.target.value)}
-                           className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
-                           placeholder="৳"
-                         />
-                       </div>
-                     </Card>
-                   ))}
-                 </div>
+                          <Input
+                            type="number"
+                            value={attendanceData[m.id]?.rate || ((m as any).salary_type === "daily" && Number((m as any).daily_rate || 0) > 0 ? String((m as any).daily_rate) : "0")}
+                            onChange={(e) => setRate(m.id, e.target.value)}
+                            className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                            placeholder="৳"
+                          />
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
 
                  {/* Desktop table */}
                  <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
