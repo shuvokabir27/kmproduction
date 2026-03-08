@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus } from "lucide-react";
+import { Film, Plus, FileText } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScriptEditor } from "@/components/ScriptEditor";
 
 const statusOptions = [
   { value: "plan", label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
@@ -38,6 +39,8 @@ const AdminShootings = () => {
   const [status, setStatus] = useState("plan");
   const [scriptUrl, setScriptUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [scriptEditorOpen, setScriptEditorOpen] = useState(false);
+  const [scriptEditShooting, setScriptEditShooting] = useState<any>(null);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -75,6 +78,20 @@ const AdminShootings = () => {
     if (error) { toast.error(error.message); return; }
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
+  const openScriptEditor = (shooting: any) => {
+    setScriptEditShooting(shooting);
+    setScriptEditorOpen(true);
+  };
+
+  const saveScript = async (content: string) => {
+    if (!scriptEditShooting) return;
+    const { error } = await supabase.from("shootings").update({
+      script_content: content
+    } as any).eq("id", scriptEditShooting.id);
+    if (error) throw error;
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
@@ -129,6 +146,7 @@ const AdminShootings = () => {
                   <Label className="text-foreground">স্ক্রিপ্ট লিংক (অপশনাল)</Label>
                   <Input value={scriptUrl} onChange={(e) => setScriptUrl(e.target.value)} placeholder="https://drive.google.com/..." className="bg-secondary border-border/50" />
                 </div>
+                <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে শুটিং তৈরির পর টেবিলে "স্ক্রিপ্ট" বাটনে ক্লিক করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : "সেভ করুন"}
                 </Button>
@@ -145,13 +163,14 @@ const AdminShootings = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">লোকেশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">স্ক্রিপ্ট</th>
+                  <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
                 {shootings?.map((s) => {
                   const info = getStatusInfo(s.status);
+                  const hasScript = !!(s as any).script_content || !!(s as any).script_url;
                   return (
                     <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
                       <td className="p-3">
@@ -160,10 +179,21 @@ const AdminShootings = () => {
                       </td>
                       <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
                       <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
-                      <td className="p-3 hidden md:table-cell">
-                        {(s as any).script_url ? (
-                          <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">স্ক্রিপ্ট দেখুন</a>
-                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      <td className="p-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`h-7 text-xs gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`}
+                            onClick={() => openScriptEditor(s)}
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                            {hasScript ? "এডিট" : "লিখুন"}
+                          </Button>
+                          {(s as any).script_url && (
+                            <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">লিংক</a>
+                          )}
+                        </div>
                       </td>
                       <td className="p-3">
                         <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
@@ -187,6 +217,16 @@ const AdminShootings = () => {
           </div>
         </Card>
       </div>
+
+      {scriptEditShooting && (
+        <ScriptEditor
+          open={scriptEditorOpen}
+          onOpenChange={setScriptEditorOpen}
+          title={`স্ক্রিপ্ট — ${scriptEditShooting.name}`}
+          initialContent={(scriptEditShooting as any).script_content || ""}
+          onSave={saveScript}
+        />
+      )}
     </AppLayout>
   );
 };
