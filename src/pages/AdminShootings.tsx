@@ -18,13 +18,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScriptEditor } from "@/components/ScriptEditor";
 
 const statusOptions = [
-  { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "data-[state=active]:bg-violet-500/20 data-[state=active]:text-violet-300" },
-  { value: "upcoming", label: "আসন্ন", color: "bg-amber-500/15 text-amber-400", tabColor: "data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300" },
-  { value: "ongoing", label: "চলছে", color: "bg-cyan-500/15 text-cyan-400", tabColor: "data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300" },
-  { value: "completed", label: "শুটিং শেষ", color: "bg-emerald-500/15 text-emerald-400", tabColor: "data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-300" },
-  { value: "editing", label: "এডিটিং চলছে", color: "bg-pink-500/15 text-pink-400", tabColor: "data-[state=active]:bg-pink-500/20 data-[state=active]:text-pink-300" },
-  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-teal-500/15 text-teal-400", tabColor: "data-[state=active]:bg-teal-500/20 data-[state=active]:text-teal-300" },
-  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-green-500/15 text-green-400", tabColor: "data-[state=active]:bg-green-500/20 data-[state=active]:text-green-300" },
+  { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "text-violet-400 bg-violet-500/10 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300 border border-violet-500/20" },
+  { value: "upcoming", label: "আসন্ন", color: "bg-amber-500/15 text-amber-400", tabColor: "text-amber-400 bg-amber-500/10 data-[state=active]:bg-amber-500/25 data-[state=active]:text-amber-300 border border-amber-500/20" },
+  { value: "ongoing", label: "চলছে", color: "bg-cyan-500/15 text-cyan-400", tabColor: "text-cyan-400 bg-cyan-500/10 data-[state=active]:bg-cyan-500/25 data-[state=active]:text-cyan-300 border border-cyan-500/20" },
+  { value: "completed", label: "শুটিং শেষ", color: "bg-emerald-500/15 text-emerald-400", tabColor: "text-emerald-400 bg-emerald-500/10 data-[state=active]:bg-emerald-500/25 data-[state=active]:text-emerald-300 border border-emerald-500/20" },
+  { value: "editing", label: "এডিটিং চলছে", color: "bg-pink-500/15 text-pink-400", tabColor: "text-pink-400 bg-pink-500/10 data-[state=active]:bg-pink-500/25 data-[state=active]:text-pink-300 border border-pink-500/20" },
+  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-teal-500/15 text-teal-400", tabColor: "text-teal-400 bg-teal-500/10 data-[state=active]:bg-teal-500/25 data-[state=active]:text-teal-300 border border-teal-500/20" },
+  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-green-500/15 text-green-400", tabColor: "text-green-400 bg-green-500/10 data-[state=active]:bg-green-500/25 data-[state=active]:text-green-300 border border-green-500/20" },
 ];
 
 const getStatusInfo = (status: string | null) =>
