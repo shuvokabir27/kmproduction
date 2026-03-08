@@ -97,54 +97,58 @@ const PublicHome = () => {
         </div>
 
         <div className="relative z-10 text-center max-w-5xl mx-auto">
-          {/* Welcome to Kuakata Multimedia */}
+          {/* Logo */}
           <motion.div
-            initial={{ opacity: 0, letterSpacing: "0.5em" }}
-            animate={{ opacity: 1, letterSpacing: "0.25em" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
             className="mb-6"
           >
+            <div className="relative inline-block">
+              <img src="/favicon.png" alt="KM Production House" className="h-28 w-28 md:h-36 md:w-36 object-contain mx-auto relative z-10 drop-shadow-2xl" />
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl scale-[2]" />
+              <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl scale-150 animate-pulse" />
+            </div>
+          </motion.div>
+
+          {/* Welcome to Kuakata Multimedia */}
+          <motion.div
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.9, ease: "easeOut" }}
+            className="mb-8"
+          >
             <motion.p
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.8 }}
-              className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-muted-foreground"
+              initial={{ opacity: 0, letterSpacing: "0.8em" }}
+              animate={{ opacity: 1, letterSpacing: "0.35em" }}
+              transition={{ delay: 0.4, duration: 1 }}
+              className="text-[10px] md:text-xs uppercase tracking-[0.35em] text-muted-foreground"
+              style={{ fontFamily: "'Cinzel', serif" }}
             >
               Welcome to
             </motion.p>
             <motion.h2
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="font-display text-xl md:text-3xl tracking-[0.2em] gradient-text mt-1"
+              initial={{ opacity: 0, scale: 0.9, letterSpacing: "0.6em" }}
+              animate={{ opacity: 1, scale: 1, letterSpacing: "0.2em" }}
+              transition={{ delay: 0.5, duration: 1 }}
+              className="text-xl md:text-3xl tracking-[0.2em] gradient-text mt-1 font-bold"
+              style={{ fontFamily: "'Cinzel', serif" }}
             >
               KUAKATA MULTIMEDIA
             </motion.h2>
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="h-[1px] w-32 md:w-48 mx-auto mt-2 bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="h-[1px] w-32 md:w-48 mx-auto mt-3 bg-gradient-to-r from-transparent via-primary/50 to-transparent"
             />
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            className="mb-10"
-          >
-            <div className="relative inline-block">
-              <img src="/favicon.png" alt="KM Production House" className="h-28 w-28 md:h-40 md:w-40 object-contain mx-auto relative z-10 drop-shadow-2xl" />
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl scale-[2]" />
-              <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl scale-150 animate-pulse" />
-            </div>
-          </motion.div>
-
+          {/* KM PRODUCTION HOUSE */}
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ delay: 0.6, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
             className="font-display text-7xl md:text-[9rem] lg:text-[11rem] tracking-wider leading-none text-shadow-glow"
           >
             <span className="gradient-text">KM</span>
@@ -153,14 +157,14 @@ const PublicHome = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.6 }}
+            transition={{ delay: 0.75, duration: 0.6 }}
           >
-            <h2 className="font-display text-3xl md:text-5xl lg:text-6xl tracking-[0.4em] text-foreground/90 -mt-2">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.4em] text-foreground/90 -mt-2" style={{ fontFamily: "'Cinzel', serif", fontWeight: 600 }}>
               PRODUCTION
             </h2>
             <div className="flex items-center justify-center gap-4 mt-3">
               <div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent to-primary/60" />
-              <span className="font-display text-xl md:text-2xl tracking-[0.5em] text-primary/70">HOUSE</span>
+              <span className="text-xl md:text-2xl tracking-[0.5em] text-primary/70" style={{ fontFamily: "'Cinzel', serif", fontWeight: 500 }}>HOUSE</span>
               <div className="h-[1px] w-16 md:w-24 bg-gradient-to-l from-transparent to-primary/60" />
             </div>
           </motion.div>
