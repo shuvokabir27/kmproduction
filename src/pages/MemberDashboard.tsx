@@ -587,10 +587,34 @@ const MemberDashboard = () => {
               {viewScriptData?.title}
             </DialogTitle>
           </DialogHeader>
-          <div
-            className="prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: viewScriptData?.content || "<p class='text-muted-foreground'>কোনো কন্টেন্ট নেই</p>" }}
-          />
+          <div className="space-y-4">
+            {(() => {
+              const content = viewScriptData?.content;
+              if (!content) return <p className="text-muted-foreground text-sm">কোনো কন্টেন্ট নেই</p>;
+              try {
+                const parsed = JSON.parse(content);
+                if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].title !== undefined) {
+                  return parsed.map((seq: any, i: number) => (
+                    <div key={seq.id || i} className="border border-border/30 rounded-lg overflow-hidden">
+                      <div className="bg-secondary/30 px-4 py-2 border-b border-border/20">
+                        <h3 className="text-sm font-semibold text-foreground">{seq.title}</h3>
+                      </div>
+                      <div
+                        className="p-4 prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: seq.content || "" }}
+                      />
+                    </div>
+                  ));
+                }
+              } catch {}
+              return (
+                <div
+                  className="prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              );
+            })()}
+          </div>
         </DialogContent>
       </Dialog>
     </AppLayout>
