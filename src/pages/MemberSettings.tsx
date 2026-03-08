@@ -337,6 +337,7 @@ const MemberSettings = () => {
                 <div><Label className="text-foreground text-xs">ঠিকানা</Label><Input value={extraFields.address} onChange={e => setExtra("address", e.target.value)} className="bg-secondary border-border/50" /></div>
                 <div><Label className="text-foreground text-xs">শিক্ষাগত যোগ্যতা</Label><Input value={extraFields.education} onChange={e => setExtra("education", e.target.value)} className="bg-secondary border-border/50" placeholder="যেমন: বি.এ (অনার্স)" /></div>
                 <div><Label className="text-foreground text-xs">জন্ম তারিখ</Label><Input type="date" value={extraFields.date_of_birth} onChange={e => setExtra("date_of_birth", e.target.value)} className="bg-secondary border-border/50" /></div>
+                <div><Label className="text-foreground text-xs">যোগদানের তারিখ</Label><Input type="date" value={extraFields.joining_date} onChange={e => setExtra("joining_date", e.target.value)} className="bg-secondary border-border/50" /></div>
                 <div><Label className="text-foreground text-xs">অর্জন</Label><Textarea value={extraFields.achievements} onChange={e => setExtra("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="আপনার উল্লেখযোগ্য অর্জনসমূহ..." /></div>
                 <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">পছন্দের তথ্য</p>
