@@ -181,6 +181,7 @@ const MemberSettings = () => {
         favorite_actor: extraFields.favorite_actor || null, favorite_actress: extraFields.favorite_actress || null,
         favorite_color: extraFields.favorite_color || null, favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null, date_of_birth: extraFields.date_of_birth || null,
+        joining_date: extraFields.joining_date || null,
         full_name_en: extraFields.full_name_en || null, designation_en: extraFields.designation_en || null,
         short_bio_en: extraFields.short_bio_en || null, address_en: extraFields.address_en || null,
         education_en: extraFields.education_en || null, achievements_en: extraFields.achievements_en || null,
