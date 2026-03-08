@@ -20,6 +20,7 @@ import {
   Play,
   Phone,
   Image as ImageIcon,
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
