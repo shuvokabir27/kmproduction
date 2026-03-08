@@ -47,6 +47,8 @@ const MemberDashboard = () => {
     favorite_dress: "", favorite_food: "", date_of_birth: "",
     full_name_en: "", designation_en: "", short_bio_en: "",
     address_en: "", education_en: "", achievements_en: "",
+    favorite_actor_en: "", favorite_actress_en: "", favorite_color_en: "",
+    favorite_dress_en: "", favorite_food_en: "",
   });
   const [editTab, setEditTab] = useState<"bn" | "en">("bn");
 
@@ -109,6 +111,11 @@ const MemberDashboard = () => {
         address_en: (profile as any).address_en || "",
         education_en: (profile as any).education_en || "",
         achievements_en: (profile as any).achievements_en || "",
+        favorite_actor_en: (profile as any).favorite_actor_en || "",
+        favorite_actress_en: (profile as any).favorite_actress_en || "",
+        favorite_color_en: (profile as any).favorite_color_en || "",
+        favorite_dress_en: (profile as any).favorite_dress_en || "",
+        favorite_food_en: (profile as any).favorite_food_en || "",
       });
     }
   }, [profile]);
@@ -170,6 +177,11 @@ const MemberDashboard = () => {
         address_en: extraFields.address_en || null,
         education_en: extraFields.education_en || null,
         achievements_en: extraFields.achievements_en || null,
+        favorite_actor_en: extraFields.favorite_actor_en || null,
+        favorite_actress_en: extraFields.favorite_actress_en || null,
+        favorite_color_en: extraFields.favorite_color_en || null,
+        favorite_dress_en: extraFields.favorite_dress_en || null,
+        favorite_food_en: extraFields.favorite_food_en || null,
       };
 
       if (photoFile) {
@@ -462,6 +474,32 @@ const MemberDashboard = () => {
                 <div>
                   <Label className="text-foreground text-xs">Achievements (English)</Label>
                   <Textarea value={extraFields.achievements_en} onChange={e => setExtra("achievements_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Your notable achievements..." />
+                </div>
+
+                <div className="border-t border-border/30 pt-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">Favorites</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Actor</Label>
+                      <Input value={extraFields.favorite_actor_en} onChange={e => setExtra("favorite_actor_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Actress</Label>
+                      <Input value={extraFields.favorite_actress_en} onChange={e => setExtra("favorite_actress_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Color</Label>
+                      <Input value={extraFields.favorite_color_en} onChange={e => setExtra("favorite_color_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">Favorite Dress</Label>
+                      <Input value={extraFields.favorite_dress_en} onChange={e => setExtra("favorite_dress_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-foreground text-xs">Favorite Food</Label>
+                      <Input value={extraFields.favorite_food_en} onChange={e => setExtra("favorite_food_en", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                  </div>
                 </div>
               </>
             )}

@@ -68,11 +68,11 @@ const PublicProfile = () => {
   const displayAchievements = t(p.achievements || "", p.achievements_en);
 
   const favorites = [
-    { label: L.favActor, value: p.favorite_actor, icon: "🎬" },
-    { label: L.favActress, value: p.favorite_actress, icon: "🌟" },
-    { label: L.favColor, value: p.favorite_color, icon: "🎨" },
-    { label: L.favDress, value: p.favorite_dress, icon: "👔" },
-    { label: L.favFood, value: p.favorite_food, icon: "🍕" },
+    { label: L.favActor, value: t(p.favorite_actor || "", p.favorite_actor_en), icon: "🎬" },
+    { label: L.favActress, value: t(p.favorite_actress || "", p.favorite_actress_en), icon: "🌟" },
+    { label: L.favColor, value: t(p.favorite_color || "", p.favorite_color_en), icon: "🎨" },
+    { label: L.favDress, value: t(p.favorite_dress || "", p.favorite_dress_en), icon: "👔" },
+    { label: L.favFood, value: t(p.favorite_food || "", p.favorite_food_en), icon: "🍕" },
   ].filter(f => f.value);
 
   const age = p.date_of_birth ? differenceInYears(new Date(), new Date(p.date_of_birth)) : null;

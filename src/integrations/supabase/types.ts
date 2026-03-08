@@ -191,10 +191,15 @@ export type Database = {
           education_en: string | null
           email: string | null
           favorite_actor: string | null
+          favorite_actor_en: string | null
           favorite_actress: string | null
+          favorite_actress_en: string | null
           favorite_color: string | null
+          favorite_color_en: string | null
           favorite_dress: string | null
+          favorite_dress_en: string | null
           favorite_food: string | null
+          favorite_food_en: string | null
           full_name: string
           full_name_en: string | null
           id: string
@@ -231,10 +236,15 @@ export type Database = {
           education_en?: string | null
           email?: string | null
           favorite_actor?: string | null
+          favorite_actor_en?: string | null
           favorite_actress?: string | null
+          favorite_actress_en?: string | null
           favorite_color?: string | null
+          favorite_color_en?: string | null
           favorite_dress?: string | null
+          favorite_dress_en?: string | null
           favorite_food?: string | null
+          favorite_food_en?: string | null
           full_name: string
           full_name_en?: string | null
           id?: string
@@ -271,10 +281,15 @@ export type Database = {
           education_en?: string | null
           email?: string | null
           favorite_actor?: string | null
+          favorite_actor_en?: string | null
           favorite_actress?: string | null
+          favorite_actress_en?: string | null
           favorite_color?: string | null
+          favorite_color_en?: string | null
           favorite_dress?: string | null
+          favorite_dress_en?: string | null
           favorite_food?: string | null
+          favorite_food_en?: string | null
           full_name?: string
           full_name_en?: string | null
           id?: string
