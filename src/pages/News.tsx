@@ -331,6 +331,7 @@ export default function News() {
                     categories={categories}
                     isFirst={idx === 0}
                     onClick={() => setSelectedNews(news)}
+                    publisherName={getPublisherName(news.publisher_id)}
                   />
                 ))}
               </div>
