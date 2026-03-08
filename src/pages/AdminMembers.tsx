@@ -30,13 +30,14 @@ interface MemberForm {
   address: string;
   salary_type: string;
   monthly_salary: string;
+  daily_rate: string;
   previous_balance: string;
 }
 
 const emptyForm: MemberForm = {
   full_name: "", email: "", phone: "", designation: "", bio: "",
   bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "", address: "",
-  salary_type: "daily", monthly_salary: "0", previous_balance: "0",
+  salary_type: "daily", monthly_salary: "0", daily_rate: "0", previous_balance: "0",
 };
 
 const AdminMembers = () => {
@@ -182,6 +183,7 @@ const AdminMembers = () => {
       address: member.address || "",
       salary_type: member.salary_type || "daily",
       monthly_salary: String(member.monthly_salary || 0),
+      daily_rate: String((member as any).daily_rate || 0),
       previous_balance: String((member as any).previous_balance || 0),
     });
     setPhotoFile(null);
@@ -214,6 +216,7 @@ const AdminMembers = () => {
           address: form.address || null,
           salary_type: form.salary_type as any,
           monthly_salary: Number(form.monthly_salary) || 0,
+          daily_rate: Number(form.daily_rate) || 0,
           previous_balance: Number(form.previous_balance) || 0,
         };
         if (photoUrl) updateData.photo_url = photoUrl;
@@ -395,6 +398,13 @@ const AdminMembers = () => {
                       <div>
                         <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
                         <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    )}
+                    {form.salary_type === "daily" && (
+                      <div>
+                        <Label className="text-foreground text-xs">দৈনিক রেট (৳)</Label>
+                        <Input type="number" value={form.daily_rate} onChange={(e) => setField("daily_rate" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="ফিক্স দৈনিক বেতন" />
+                        <p className="text-[10px] text-muted-foreground mt-0.5">হাজিরায় স্বয়ংক্রিয়ভাবে যুক্ত হবে</p>
                       </div>
                     )}
                   </div>
