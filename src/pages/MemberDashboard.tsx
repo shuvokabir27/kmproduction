@@ -5,14 +5,18 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { ScriptEditor } from "@/components/ScriptEditor";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
 const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
+  const [viewScriptOpen, setViewScriptOpen] = useState(false);
+  const [viewShooting, setViewShooting] = useState<any>(null);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
@@ -150,6 +154,11 @@ const MemberDashboard = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
+                    {s.script_content && (
+                      <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-primary hover:text-primary/80">
+                        <FileText className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     {s.script_url && (
                       <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
                         <ExternalLink className="h-3.5 w-3.5" />
@@ -224,6 +233,17 @@ const MemberDashboard = () => {
           </Card>
         </div>
       </div>
+
+      {viewShooting && (
+        <ScriptEditor
+          open={viewScriptOpen}
+          onOpenChange={setViewScriptOpen}
+          title={`স্ক্রিপ্ট — ${viewShooting.name}`}
+          initialContent={viewShooting.script_content || ""}
+          onSave={async () => {}}
+          readOnly
+        />
+      )}
     </AppLayout>
   );
 };

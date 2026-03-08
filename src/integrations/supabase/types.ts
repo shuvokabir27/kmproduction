@@ -185,6 +185,7 @@ export type Database = {
           id: string
           location: string | null
           name: string
+          script_content: string | null
           script_url: string | null
           shoot_date: string
           status: string | null
@@ -196,6 +197,7 @@ export type Database = {
           id?: string
           location?: string | null
           name: string
+          script_content?: string | null
           script_url?: string | null
           shoot_date: string
           status?: string | null
@@ -207,6 +209,7 @@ export type Database = {
           id?: string
           location?: string | null
           name?: string
+          script_content?: string | null
           script_url?: string | null
           shoot_date?: string
           status?: string | null
