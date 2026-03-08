@@ -113,8 +113,12 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
       setGroupName("");
       setSearch("");
     },
-    onError: () => {
-      toast({ title: "ত্রুটি", description: "চ্যাট তৈরি করতে ব্যর্থ", variant: "destructive" });
+    onError: (error: any) => {
+      toast({
+        title: "ত্রুটি",
+        description: error?.message || "চ্যাট তৈরি করতে ব্যর্থ",
+        variant: "destructive",
+      });
     },
   });
 

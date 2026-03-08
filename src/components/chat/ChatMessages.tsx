@@ -28,7 +28,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         .from("conversations")
         .select("*")
         .eq("id", conversationId)
-        .single();
+        .maybeSingle();
 
       const { data: members } = await sb
         .from("conversation_members")
