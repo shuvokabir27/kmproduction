@@ -50,6 +50,11 @@ const AdminMembers = () => {
   const [newPassword, setNewPassword] = useState("");
   const [pwSubmitting, setPwSubmitting] = useState(false);
 
+  const [emailOpen, setEmailOpen] = useState(false);
+  const [emailMember, setEmailMember] = useState<any>(null);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
+
   const handleSetPassword = async () => {
     if (!pwMember || newPassword.length < 6) {
       toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
