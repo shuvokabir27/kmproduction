@@ -111,7 +111,7 @@ const Login = () => {
 
           {/* Login Card */}
           <Card className="p-5 bg-card border-border/30 shadow-xl shadow-primary/5">
-            <Tabs defaultValue="member" className="w-full">
+            <Tabs defaultValue="member" className="w-full" onValueChange={() => setErrorMsg("")}>
               <TabsList className="w-full bg-secondary/50 border border-border/20 mb-5 h-10">
                 <TabsTrigger value="member" className="flex-1 text-xs font-medium">সদস্য</TabsTrigger>
                 <TabsTrigger value="admin" className="flex-1 text-xs font-medium">এডমিন</TabsTrigger>
