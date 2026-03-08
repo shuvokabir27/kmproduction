@@ -163,13 +163,12 @@ const AdminDashboard = () => {
                 className="premium-card rounded-2xl p-4 md:p-5 cursor-pointer group relative overflow-hidden"
                 onClick={stat.onClick}
               >
-                {/* Subtle gradient bg */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`} />
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-60`} />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-3">
-                    <div className={`h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center`}>
+                    <div className={`h-10 w-10 rounded-xl ${stat.iconBg} flex items-center justify-center`}>
                       <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
                     </div>
                     <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
