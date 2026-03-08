@@ -14,6 +14,7 @@ import {
   LogOut,
   ScrollText,
   Megaphone,
+  Settings,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
