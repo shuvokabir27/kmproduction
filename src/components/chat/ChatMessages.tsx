@@ -129,16 +129,26 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
   const sendMessage = useMutation({
     mutationFn: async () => {
+      const msgContent = newMessage.trim();
       const { error } = await sb.from("messages").insert({
         conversation_id: conversationId,
         sender_id: user!.id,
-        content: newMessage.trim(),
+        content: msgContent,
       });
       if (error) throw error;
       await sb
         .from("conversations")
         .update({ updated_at: new Date().toISOString() })
         .eq("id", conversationId);
+
+      // Send push notification to other members (fire and forget)
+      supabase.functions.invoke("send-push-notification", {
+        body: {
+          conversation_id: conversationId,
+          sender_id: user!.id,
+          content: msgContent,
+        },
+      }).catch(() => {});
     },
     onSuccess: () => {
       setNewMessage("");

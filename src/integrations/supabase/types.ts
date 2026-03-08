@@ -576,6 +576,33 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string | null
+          endpoint: string
+          id: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       salary_credits: {
         Row: {
           amount: number
@@ -820,6 +847,27 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vapid_keys: {
+        Row: {
+          created_at: string | null
+          id: string
+          private_key: string
+          public_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          private_key: string
+          public_key: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          private_key?: string
+          public_key?: string
         }
         Relationships: []
       }

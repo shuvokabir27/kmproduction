@@ -12,6 +12,7 @@ import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
@@ -23,6 +24,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: unreadCount } = useUnreadMessages();
   const prevUnreadRef = useRef<number | undefined>(undefined);
   usePresenceTracker();
+  usePushNotifications();
+
+  // Update tab title with unread count
+  useEffect(() => {
+    const base = "KM Production House";
+    if (unreadCount && unreadCount > 0) {
+      document.title = `(${unreadCount > 99 ? "99+" : unreadCount}) ${base}`;
+    } else {
+      document.title = base;
+    }
+  }, [unreadCount]);
 
   // Play sound when unread count increases (user not on chat page)
   useEffect(() => {
