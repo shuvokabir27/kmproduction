@@ -76,8 +76,8 @@ const AdminDashboard = () => {
       if (from) payQ = payQ.gte("payment_date", from);
       if (to) payQ = payQ.lte("payment_date", to);
       const { data: payments } = await payQ;
-      const memberMap = new Map<string, { name: string; memberId: number; earned: number; paid: number }>();
-      members?.forEach(m => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, earned: 0, paid: 0 }));
+      const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number }>();
+      members?.forEach(m => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0 }));
       attendance?.forEach((a: any) => { const entry = memberMap.get(a.member_id); if (entry) entry.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
       const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned - m.paid })).filter(m => m.earned > 0 || m.paid > 0).sort((a, b) => b.due - a.due);
