@@ -177,6 +177,11 @@ const MemberDashboard = () => {
         address_en: extraFields.address_en || null,
         education_en: extraFields.education_en || null,
         achievements_en: extraFields.achievements_en || null,
+        favorite_actor_en: extraFields.favorite_actor_en || null,
+        favorite_actress_en: extraFields.favorite_actress_en || null,
+        favorite_color_en: extraFields.favorite_color_en || null,
+        favorite_dress_en: extraFields.favorite_dress_en || null,
+        favorite_food_en: extraFields.favorite_food_en || null,
       };
 
       if (photoFile) {
