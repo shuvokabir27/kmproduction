@@ -1,5 +1,6 @@
-import { forwardRef } from "react";
-import { X } from "lucide-react";
+import { forwardRef, useRef, useCallback } from "react";
+import { X, Download } from "lucide-react";
+import { toJpeg } from "html-to-image";
 
 interface PaymentReceiptProps {
   receiptData: {
