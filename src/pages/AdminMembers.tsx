@@ -253,6 +253,37 @@ const AdminMembers = () => {
             </h1>
             <p className="text-muted-foreground text-xs">{members?.length || 0} জন সদস্য</p>
           </div>
+
+          {/* Suspended accounts */}
+          {lockedAccounts && lockedAccounts.length > 0 && (
+            <Card className="p-4 bg-destructive/5 border-destructive/20">
+              <h3 className="text-sm font-semibold text-destructive flex items-center gap-2 mb-3">
+                <ShieldAlert className="h-4 w-4" /> সাসপেন্ডেড অ্যাকাউন্ট ({lockedAccounts.length})
+              </h3>
+              <div className="space-y-2">
+                {lockedAccounts.map((la: any) => {
+                  const memberId = la.identifier?.replace("member_", "");
+                  const member = members?.find((m: any) => String(m.member_id) === memberId);
+                  const remaining = Math.ceil((new Date(la.locked_until).getTime() - Date.now()) / 60000);
+                  return (
+                    <div key={la.id} className="flex items-center justify-between bg-card/50 rounded-lg px-3 py-2 border border-border/20">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {member?.full_name || `আইডি: ${memberId}`}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          বাকি সময়: {remaining > 0 ? `${remaining} মিনিট` : "মেয়াদ শেষ"}
+                        </p>
+                      </div>
+                      <Button size="sm" variant="outline" className="text-xs border-destructive/30 text-destructive hover:bg-destructive/10" onClick={() => resetLockout(la.identifier)}>
+                        রিসেট
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> সদস্য যোগ</Button>
