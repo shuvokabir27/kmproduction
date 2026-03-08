@@ -254,6 +254,10 @@ const AdminMembers = () => {
         toast.success(`সদস্য যোগ হয়েছে! ডিফল্ট পাসওয়ার্ড: 000000`, { duration: 10000 });
       }
       queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+      queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-member-balances"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-total-due"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-filtered-due"] });
       setOpen(false);
       setForm(emptyForm);
       setEditId(null);
