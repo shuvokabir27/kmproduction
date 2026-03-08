@@ -8,6 +8,11 @@ import {
   Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 const iconMap: Record<string, any> = {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
@@ -19,6 +24,8 @@ const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { st
 const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
 
 const Services = () => {
+  const [bookingService, setBookingService] = useState<{ title: string; waUrl: string } | null>(null);
+
   const { data: services } = useQuery({
     queryKey: ["public-services"],
     queryFn: async () => {
@@ -34,6 +41,11 @@ const Services = () => {
       return data;
     },
   });
+
+  const getWaUrl = (serviceTitle: string) => {
+    const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
+    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।`)}`;
+  };
 
   const featured = services?.filter((s: any) => s.is_featured) ?? [];
   const others = services?.filter((s: any) => !s.is_featured) ?? [];
@@ -156,20 +168,16 @@ const Services = () => {
                         </div>
 
                         {(settings as any)?.whatsapp_no ? (
-                          <a
-                            href={`https://wa.me/${(settings as any).whatsapp_no.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`আমি \\"${service.title}\\" প্যাকেজ সম্পর্কে জানতে চাই।`)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block"
+                          <Button
+                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
+                            className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
-                            <Button className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}>
-                              <MessageCircle className="h-4 w-4 mr-1" />
-                              {service.price_label || "যোগাযোগ করুন"}
-                            </Button>
-                          </a>
+                            <MessageCircle className="h-4 w-4 mr-1" />
+                            {service.price_label || "বুকিং করুন"}
+                          </Button>
                         ) : (
                           <Button className="w-full bg-secondary hover:bg-secondary/80 text-foreground" disabled>
-                            {service.price_label || "যোগাযোগ করুন"}
+                            {service.price_label || "বুকিং করুন"}
                           </Button>
                         )}
                       </div>
@@ -233,18 +241,17 @@ const Services = () => {
                       </div>
 
                       {(settings as any)?.whatsapp_no ? (
-                        <a
-                          href={`https://wa.me/${(settings as any).whatsapp_no.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`আমি \\"${service.title}\\" সেবা সম্পর্কে জানতে চাই।`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
                         >
-                          <Button variant="outline" size="sm" className="w-full">
-                            <MessageCircle className="h-4 w-4 mr-1" /> যোগাযোগ করুন
-                          </Button>
-                        </a>
+                          <MessageCircle className="h-4 w-4 mr-1" /> বুকিং করুন
+                        </Button>
                       ) : (
                         <Button variant="outline" size="sm" className="w-full" disabled>
-                          যোগাযোগ করুন
+                          বুকিং করুন
                         </Button>
                       )}
                     </div>
@@ -309,6 +316,27 @@ const Services = () => {
           </p>
         </div>
       </footer>
+      {/* Booking Confirmation Dialog */}
+      <AlertDialog open={!!bookingService} onOpenChange={(open) => !open && setBookingService(null)}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-lg">
+              📩 বুকিং ও মূল্য জানতে
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-sm leading-relaxed">
+              <strong className="text-foreground">"{bookingService?.title}"</strong> প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-2">
+            <AlertDialogCancel className="w-full sm:w-auto">বাতিল</AlertDialogCancel>
+            <AlertDialogAction asChild className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
+              <a href={bookingService?.waUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
+                <MessageCircle className="h-4 w-4" /> WhatsApp এ মেসেজ করুন
+              </a>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
