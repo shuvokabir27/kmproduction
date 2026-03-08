@@ -284,6 +284,7 @@ export default function AdminNews() {
     setIsFeatured(news.is_featured);
     setImagePreview(news.featured_image_url);
     setVideoUrl(news.video_url || "");
+    setPublisherId(news.publisher_id || null);
     setImageFile(null);
     setDialogOpen(true);
   };
