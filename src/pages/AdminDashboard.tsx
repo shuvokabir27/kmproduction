@@ -115,10 +115,10 @@ const AdminDashboard = () => {
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
   const stats = [
-    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, color: "text-primary", bgColor: "bg-primary/10" },
-    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, color: "text-success", bgColor: "bg-success/10" },
-    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, color: "text-warning", bgColor: "bg-warning/10" },
-    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, color: "text-destructive", bgColor: "bg-destructive/10", clickable: true },
+    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, color: "text-primary", bgColor: "bg-primary/10", onClick: () => navigate("/admin/members") },
+    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, color: "text-success", bgColor: "bg-success/10", onClick: () => navigate("/admin/shootings") },
+    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, color: "text-warning", bgColor: "bg-warning/10", onClick: () => navigate("/admin/payments") },
+    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, color: "text-destructive", bgColor: "bg-destructive/10", onClick: () => setDueDialogOpen(true) },
   ];
 
   return (
