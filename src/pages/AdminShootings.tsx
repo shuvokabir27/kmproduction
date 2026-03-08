@@ -261,7 +261,13 @@ const AdminShootings = () => {
                 </div>
                 <div>
                   <Label className="text-foreground">সেভ করা স্ক্রিপ্ট যুক্ত করুন (অপশনাল)</Label>
-                  <Select value={selectedScriptId} onValueChange={setSelectedScriptId}>
+                  <Select value={selectedScriptId} onValueChange={(val) => {
+                    setSelectedScriptId(val);
+                    const script = savedScripts?.find((s: any) => s.id === val);
+                    if (script && !name.trim()) {
+                      setName(script.title);
+                    }
+                  }}>
                     <SelectTrigger className="bg-secondary border-border/50">
                       <SelectValue placeholder="স্ক্রিপ্ট নির্বাচন করুন" />
                     </SelectTrigger>
