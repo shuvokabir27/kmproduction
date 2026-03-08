@@ -194,16 +194,23 @@ export default function AllNotifications() {
                           <span>{format(new Date(n.created_at), "dd MMM yyyy, hh:mm a", { locale: bn })}</span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          {n.link && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs h-7 gap-1"
-                              onClick={(e) => { e.stopPropagation(); navigate(n.link); }}
-                            >
-                              <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
-                            </Button>
-                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7 gap-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const popupTypes = ["payment", "attendance", "shooting"];
+                              if (popupTypes.includes(n.type)) {
+                                setDetailNotification(n);
+                              } else {
+                                const route = n.link || "/dashboard";
+                                navigate(route);
+                              }
+                            }}
+                          >
+                            <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
