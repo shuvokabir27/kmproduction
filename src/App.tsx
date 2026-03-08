@@ -20,6 +20,7 @@ import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
 import ResetPassword from "./pages/ResetPassword";
+import AllNotifications from "./pages/AllNotifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<MemberDashboard />} />
             <Route path="/scripts" element={<MemberScripts />} />
+            <Route path="/notifications" element={<AllNotifications />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/members" element={<AdminMembers />} />
             <Route path="/admin/attendance" element={<AdminAttendance />} />
