@@ -128,14 +128,14 @@ const AdminShootings = () => {
       if (editId) {
         const scriptId = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").update({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId, video_url: videoUrl || null, show_on_public: showOnPublic
         } as any).eq("id", editId);
         if (error) throw error;
         toast.success("শুটিং আপডেট হয়েছে!");
       } else {
         const scriptId2 = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").insert({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId2
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId2, video_url: videoUrl || null, show_on_public: showOnPublic
         } as any);
         if (error) throw error;
         toast.success("শুটিং যোগ হয়েছে!");
