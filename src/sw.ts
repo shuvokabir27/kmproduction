@@ -10,12 +10,11 @@ precacheAndRoute(self.__WB_MANIFEST);
 self.addEventListener('push', (event) => {
   const data = event.data?.json() ?? { title: 'নতুন মেসেজ', body: '' };
   event.waitUntil(
-    self.registration.showNotification(data.title, {
+    (self.registration as any).showNotification(data.title, {
       body: data.body,
       icon: '/favicon.png',
       badge: '/favicon.png',
       tag: 'chat-message',
-      renotify: true,
       data: { url: data.url || '/chat' },
     })
   );
