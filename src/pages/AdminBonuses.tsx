@@ -163,8 +163,8 @@ const AdminBonuses = () => {
             {bonuses?.map((b: any) => (
               <div key={b.id} className="p-4 flex items-center justify-between hover:bg-secondary/30 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${b.type === "bonus" ? "bg-success/10" : "bg-primary/10"}`}>
-                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${b.type === "bonus" ? "bg-emerald-500/15" : "bg-amber-500/15"}`}>
+                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-emerald-400" /> : <Car className="h-4 w-4 text-amber-400" />}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{b.profiles?.full_name} <span className="text-muted-foreground">#{b.profiles?.member_id}</span></p>

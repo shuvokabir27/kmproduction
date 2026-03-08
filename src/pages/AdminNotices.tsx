@@ -125,10 +125,10 @@ const AdminNotices = () => {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">নোটিশ বোর্ড</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 via-pink-400 to-violet-400 bg-clip-text text-transparent">নোটিশ বোর্ড</h1>
             <p className="text-sm text-muted-foreground">সকল সদস্যদের জন্য নোটিশ প্রকাশ করুন</p>
           </div>
-          <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Button onClick={() => setCreateOpen(true)} className="gap-2 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white border-0">
             <Plus className="h-4 w-4" /> নতুন নোটিশ
           </Button>
         </div>
