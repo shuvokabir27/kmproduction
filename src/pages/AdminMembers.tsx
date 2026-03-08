@@ -348,9 +348,30 @@ const AdminMembers = () => {
             </table>
           </div>
         </Card>
+
+        {/* Password Dialog */}
+        <Dialog open={pwOpen} onOpenChange={setPwOpen}>
+          <DialogContent className="bg-card border-border/50 max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="text-foreground">পাসওয়ার্ড সেট করুন</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">{pwMember?.full_name} এর জন্য নতুন পাসওয়ার্ড দিন</p>
+            <Input
+              type="text"
+              placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="bg-secondary border-border/50"
+            />
+            <Button onClick={handleSetPassword} disabled={pwSubmitting || newPassword.length < 6} className="w-full">
+              {pwSubmitting ? "সেট হচ্ছে..." : "পাসওয়ার্ড সেট করুন"}
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
+};
 };
 
 export default AdminMembers;
