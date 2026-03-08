@@ -99,6 +99,7 @@ const MemberDashboard = () => {
         favorite_color: (profile as any).favorite_color || "",
         favorite_dress: (profile as any).favorite_dress || "",
         favorite_food: (profile as any).favorite_food || "",
+        date_of_birth: (profile as any).date_of_birth || "",
       });
     }
   }, [profile]);
