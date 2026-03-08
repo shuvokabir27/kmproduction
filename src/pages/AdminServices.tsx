@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Pencil, X, Star, Eye, EyeOff } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Star, Eye, EyeOff, Timer, Percent, Gift } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface ServiceForm {
@@ -41,11 +41,28 @@ const AdminServices = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<ServiceForm>(defaultForm);
 
+  // Offer states
+  const [offerDialogOpen, setOfferDialogOpen] = useState(false);
+  const [offerEditId, setOfferEditId] = useState<string | null>(null);
+  const [offerTitle, setOfferTitle] = useState("বিশেষ অফার");
+  const [offerDesc, setOfferDesc] = useState("");
+  const [offerDiscount, setOfferDiscount] = useState("");
+  const [offerEndDate, setOfferEndDate] = useState("");
+  const [offerActive, setOfferActive] = useState(true);
+
   const { data: services, isLoading } = useQuery({
     queryKey: ["admin-services"],
     queryFn: async () => {
       const { data, error } = await supabase.from("services" as any).select("*").order("sort_order", { ascending: true });
       if (error) throw error;
+      return (data ?? []) as any[];
+    },
+  });
+
+  const { data: offers } = useQuery({
+    queryKey: ["admin-service-offers"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("service_offers").select("*").order("created_at", { ascending: false });
       return (data ?? []) as any[];
     },
   });
@@ -92,6 +109,54 @@ const AdminServices = () => {
     },
   });
 
+  const saveOffer = async () => {
+    if (!offerDiscount || !offerEndDate) return;
+    const payload = {
+      title: offerTitle,
+      description: offerDesc || null,
+      discount_percentage: Number(offerDiscount),
+      offer_end_date: new Date(offerEndDate).toISOString(),
+      is_active: offerActive,
+    };
+    if (offerEditId) {
+      const { error } = await (supabase as any).from("service_offers").update(payload).eq("id", offerEditId);
+      if (error) { toast({ title: "সমস্যা", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "অফার আপডেট হয়েছে" });
+    } else {
+      const { error } = await (supabase as any).from("service_offers").insert(payload);
+      if (error) { toast({ title: "সমস্যা", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "অফার যুক্ত হয়েছে" });
+    }
+    queryClient.invalidateQueries({ queryKey: ["admin-service-offers"] });
+    setOfferDialogOpen(false);
+    resetOfferForm();
+  };
+
+  const deleteOffer = async (id: string) => {
+    await (supabase as any).from("service_offers").delete().eq("id", id);
+    queryClient.invalidateQueries({ queryKey: ["admin-service-offers"] });
+    toast({ title: "অফার মুছে ফেলা হয়েছে" });
+  };
+
+  const resetOfferForm = () => {
+    setOfferEditId(null);
+    setOfferTitle("বিশেষ অফার");
+    setOfferDesc("");
+    setOfferDiscount("");
+    setOfferEndDate("");
+    setOfferActive(true);
+  };
+
+  const openEditOffer = (offer: any) => {
+    setOfferEditId(offer.id);
+    setOfferTitle(offer.title || "");
+    setOfferDesc(offer.description || "");
+    setOfferDiscount(String(offer.discount_percentage));
+    setOfferEndDate(new Date(offer.offer_end_date).toISOString().slice(0, 16));
+    setOfferActive(offer.is_active);
+    setOfferDialogOpen(true);
+  };
+
   const openEdit = (service: any) => {
     setEditingId(service.id);
     setForm({
@@ -118,6 +183,53 @@ const AdminServices = () => {
           </Button>
         </div>
 
+        {/* Offer Management Section */}
+        <Card className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-red-500/10 border-amber-500/30">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2 text-amber-400">
+                <Gift className="h-5 w-5" /> অফার ম্যানেজমেন্ট
+              </CardTitle>
+              <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-white" onClick={() => { resetOfferForm(); setOfferDialogOpen(true); }}>
+                <Plus className="h-4 w-4 mr-1" /> নতুন অফার
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {!offers?.length && <p className="text-sm text-muted-foreground text-center py-3">কোনো অফার নেই। নতুন অফার যোগ করুন।</p>}
+            {offers?.map((offer: any) => {
+              const isExpired = new Date(offer.offer_end_date) < new Date();
+              return (
+                <div key={offer.id} className={`flex items-center justify-between p-3 rounded-xl border ${isExpired ? "border-red-500/20 bg-red-500/5 opacity-60" : "border-amber-500/20 bg-amber-500/5"}`}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Percent className="h-4 w-4 text-amber-400 shrink-0" />
+                      <span className="font-semibold text-foreground">{offer.title}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">{offer.discount_percentage}% ছাড়</span>
+                      {isExpired && <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">মেয়াদ শেষ</span>}
+                      {!offer.is_active && <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">নিষ্ক্রিয়</span>}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                      <Timer className="h-3 w-3" />
+                      শেষ: {new Date(offer.offer_end_date).toLocaleString("bn-BD")}
+                      {offer.description && ` • ${offer.description}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditOffer(offer)}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteOffer(offer.id)}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Services List */}
         {isLoading ? (
           <p className="text-center text-muted-foreground py-8">লোড হচ্ছে...</p>
         ) : !services?.length ? (
@@ -148,6 +260,7 @@ const AdminServices = () => {
           </div>
         )}
 
+        {/* Service Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -213,6 +326,44 @@ const AdminServices = () => {
               </div>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !form.title.trim()} className="w-full">
                 {saveMutation.isPending ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Offer Dialog */}
+        <Dialog open={offerDialogOpen} onOpenChange={setOfferDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-amber-400">
+                <Gift className="h-5 w-5" /> {offerEditId ? "অফার সম্পাদনা" : "নতুন অফার যোগ করুন"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-2">
+              <div>
+                <Label>অফারের শিরোনাম</Label>
+                <Input value={offerTitle} onChange={(e) => setOfferTitle(e.target.value)} placeholder="বিশেষ অফার" />
+              </div>
+              <div>
+                <Label>বিবরণ (ঐচ্ছিক)</Label>
+                <Textarea value={offerDesc} onChange={(e) => setOfferDesc(e.target.value)} placeholder="অফার সম্পর্কে বিস্তারিত..." rows={2} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>ডিসকাউন্ট (%)</Label>
+                  <Input type="number" value={offerDiscount} onChange={(e) => setOfferDiscount(e.target.value)} placeholder="15" min="1" max="100" />
+                </div>
+                <div>
+                  <Label>অফার শেষ তারিখ ও সময়</Label>
+                  <Input type="datetime-local" value={offerEndDate} onChange={(e) => setOfferEndDate(e.target.value)} />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch checked={offerActive} onCheckedChange={setOfferActive} />
+                <Label>সক্রিয়</Label>
+              </div>
+              <Button onClick={saveOffer} disabled={!offerDiscount || !offerEndDate} className="w-full bg-amber-500 hover:bg-amber-600 text-white">
+                {offerEditId ? "আপডেট করুন" : "অফার যোগ করুন"}
               </Button>
             </div>
           </DialogContent>
