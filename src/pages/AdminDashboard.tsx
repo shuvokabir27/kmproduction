@@ -152,7 +152,7 @@ const AdminDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">এডমিন ড্যাশবোর্ড</h1>
             <p className="text-muted-foreground text-xs md:text-sm mt-1">সকল কার্যক্রমের সারসংক্ষেপ</p>
           </div>
-          <div className="h-1 w-12 bg-gradient-to-r from-primary to-primary/30 rounded-full mb-1 hidden md:block" />
+          <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-rose-500 rounded-full mb-1 hidden md:block" />
         </motion.div>
 
         {/* Stats Grid */}
