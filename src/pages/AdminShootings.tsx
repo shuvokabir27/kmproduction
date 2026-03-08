@@ -215,7 +215,21 @@ const AdminShootings = () => {
                   <Label className="text-foreground">স্ক্রিপ্ট লিংক (অপশনাল)</Label>
                   <Input value={scriptUrl} onChange={(e) => setScriptUrl(e.target.value)} placeholder="https://drive.google.com/..." className="bg-secondary border-border/50" />
                 </div>
-                <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে শুটিং তৈরির পর টেবিলে "স্ক্রিপ্ট" বাটনে ক্লিক করুন</p>
+                <div>
+                  <Label className="text-foreground">সেভ করা স্ক্রিপ্ট যুক্ত করুন (অপশনাল)</Label>
+                  <Select value={selectedScriptId} onValueChange={setSelectedScriptId}>
+                    <SelectTrigger className="bg-secondary border-border/50">
+                      <SelectValue placeholder="স্ক্রিপ্ট নির্বাচন করুন" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/50">
+                      <SelectItem value="none">কোনো স্ক্রিপ্ট নেই</SelectItem>
+                      {savedScripts?.map((s: any) => (
+                        <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে সাইডবারে "স্ক্রিপ্ট" মেনু থেকে নতুন স্ক্রিপ্ট তৈরি করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সেভ করুন"}
                 </Button>
