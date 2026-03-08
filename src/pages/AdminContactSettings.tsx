@@ -84,7 +84,7 @@ const AdminContactSettings = () => {
     setPages(updated);
   };
 
-  if (isLoading) return <AppLayout title="যোগাযোগ সেটিংস"><div className="p-8 text-center text-muted-foreground">লোড হচ্ছে...</div></AppLayout>;
+  if (isLoading) return <AppLayout><div className="p-8 text-center text-muted-foreground">লোড হচ্ছে...</div></AppLayout>;
 
   return (
     <AppLayout>

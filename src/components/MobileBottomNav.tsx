@@ -41,6 +41,7 @@ const moreItems = [
   { icon: Home, label: "সাইট দেখুন", path: "/" },
   { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
   { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos" },
+  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings" },
 ];
 
 const memberTabs = [
