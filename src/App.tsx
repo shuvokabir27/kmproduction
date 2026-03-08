@@ -57,6 +57,7 @@ const App = () => (
             <Route path="/admin/scripts/:id" element={<AdminScriptEdit />} />
             <Route path="/admin/bonuses" element={<AdminBonuses />} />
             <Route path="/admin/notices" element={<AdminNotices />} />
+            <Route path="/admin/public-profiles" element={<AdminPublicProfiles />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
