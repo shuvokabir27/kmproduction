@@ -49,6 +49,7 @@ const AdminScriptEdit = () => {
   const [sequences, setSequences] = useState<Sequence[]>([]);
   const [saving, setSaving] = useState(false);
   const [activeSeqId, setActiveSeqId] = useState<string | null>(null);
+  const [permDialogOpen, setPermDialogOpen] = useState(false);
   const editorRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { data: script, isLoading: scriptLoading } = useQuery({
