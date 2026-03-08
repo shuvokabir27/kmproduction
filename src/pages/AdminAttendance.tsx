@@ -20,8 +20,7 @@ const AdminAttendance = () => {
   const [selectedShooting, setSelectedShooting] = useState<string>("");
   const [attendanceData, setAttendanceData] = useState<Record<string, { present: boolean; rate: string }>>({});
   const [saving, setSaving] = useState(false);
-  const [historyShootingFilter, setHistoryShootingFilter] = useState<string>("all");
-  const [historyMemberFilter, setHistoryMemberFilter] = useState<string>("all");
+  const [expandedShootings, setExpandedShootings] = useState<Set<string>>(new Set());
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-list"],
