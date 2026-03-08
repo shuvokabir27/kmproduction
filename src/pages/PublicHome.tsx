@@ -315,9 +315,9 @@ const PublicHome = () => {
             viewport={{ once: true }}
             className="mb-14"
           >
-            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Team</span>
+            <span className="text-violet-400 text-xs font-bold tracking-[0.3em] uppercase">Our Team</span>
             <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{L.ourTeam}</h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            <div className="h-1 w-20 bg-gradient-to-r from-violet-500 to-violet-500/30 rounded-full mt-5" />
           </motion.div>
 
           <motion.div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5" variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
