@@ -263,6 +263,40 @@ export default function AllNotifications() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Detail Popup for payment/attendance/shooting */}
+      <Dialog open={!!detailNotification} onOpenChange={(o) => !o && setDetailNotification(null)}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          {detailNotification && (() => {
+            const n = detailNotification;
+            const Icon = typeIcons[n.type] || Bell;
+            const colorClass = typeColors[n.type] || "bg-secondary text-muted-foreground";
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-foreground flex items-center gap-2 text-base">
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${colorClass}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    {typeLabels[n.type] || "নটিফিকেশন"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 pt-1">
+                  <div className="rounded-lg bg-secondary/50 border border-border/30 p-3 space-y-2">
+                    <p className="text-sm font-semibold text-foreground">{n.title}</p>
+                    {n.message && (
+                      <p className="text-sm text-foreground/80">{n.message}</p>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(n.created_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                  </p>
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 }
