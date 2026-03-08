@@ -1,10 +1,15 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] },
+});
 
 const PublicProfile = () => {
   const { memberId } = useParams();
@@ -27,7 +32,14 @@ const PublicProfile = () => {
   });
 
   if (isLoading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-muted-foreground">লোড হচ্ছে...</div></div>;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+        </motion.div>
+      </div>
+    );
   }
 
   if (!profile) {
@@ -43,118 +55,206 @@ const PublicProfile = () => {
 
   const p = profile as any;
   const favorites = [
-    { label: "পছন্দের নায়ক", value: p.favorite_actor },
-    { label: "পছন্দের নায়িকা", value: p.favorite_actress },
-    { label: "পছন্দের রং", value: p.favorite_color },
-    { label: "পছন্দের পোশাক", value: p.favorite_dress },
-    { label: "পছন্দের খাবার", value: p.favorite_food },
+    { label: "পছন্দের নায়ক", value: p.favorite_actor, icon: "🎬" },
+    { label: "পছন্দের নায়িকা", value: p.favorite_actress, icon: "🌟" },
+    { label: "পছন্দের রং", value: p.favorite_color, icon: "🎨" },
+    { label: "পছন্দের পোশাক", value: p.favorite_dress, icon: "👔" },
+    { label: "পছন্দের খাবার", value: p.favorite_food, icon: "🍕" },
   ].filter(f => f.value);
 
+  const infoItems = [
+    p.address && { icon: MapPin, text: p.address },
+    profile.designation && { icon: Briefcase, text: profile.designation },
+    p.education && { icon: GraduationCap, text: p.education },
+    profile.joining_date && { icon: Calendar, text: `যোগদান: ${new Date(profile.joining_date).toLocaleDateString("bn-BD")}` },
+  ].filter(Boolean) as { icon: any; text: string }[];
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 glass-surface sticky top-0 z-40">
+    <div className="min-h-screen bg-background relative">
+      {/* Ambient glow */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Header */}
+      <header className="border-b border-border/30 backdrop-blur-xl bg-background/80 sticky top-0 z-40">
         <div className="container max-w-4xl mx-auto flex items-center h-14 px-4">
-          <Link to="/"><Button variant="ghost" size="sm" className="gap-1"><ArrowLeft className="h-4 w-4" /> ফিরে যান</Button></Link>
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" /> ফিরে যান
+            </Button>
+          </Link>
         </div>
       </header>
 
-      <div className="container max-w-4xl mx-auto px-4 py-10 space-y-6">
-        {/* Profile Header */}
-        <Card className="bg-card border-border/50 overflow-hidden">
-          <div className="h-48 bg-gradient-to-r from-primary/20 to-primary/5 relative overflow-hidden">
-            {p.cover_url && <img src={p.cover_url} alt="cover" className="w-full h-full object-cover absolute inset-0" />}
-          </div>
-          <div className="px-6 pb-6 -mt-16">
-            <div className="flex flex-col sm:flex-row items-start gap-4">
-              <div className="h-28 w-28 rounded-xl bg-primary/15 flex items-center justify-center border-4 border-card overflow-hidden">
-                {profile.photo_url ? (
-                  <img src={profile.photo_url} alt={profile.full_name} className="h-28 w-28 rounded-xl object-cover" />
-                ) : (
-                  <span className="text-primary font-bold text-3xl">{profile.full_name.charAt(0)}</span>
-                )}
-              </div>
-              <div className="pt-4">
-                <h1 className="text-2xl font-bold text-foreground">{profile.full_name}</h1>
-                <p className="text-muted-foreground">{profile.designation || "সদস্য"}</p>
-              </div>
+      <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8 relative z-10">
+
+        {/* ── Hero Card ── */}
+        <motion.div {...fadeUp(0)}>
+          <div className="rounded-2xl overflow-hidden border border-border/30 bg-card shadow-2xl shadow-primary/5">
+            {/* Cover */}
+            <div className="h-56 sm:h-64 relative overflow-hidden">
+              {p.cover_url ? (
+                <img src={p.cover_url} alt="cover" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-primary/30 via-primary/10 to-background relative">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.2),transparent_70%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,hsl(var(--primary)/0.15),transparent_60%)]" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
             </div>
 
-            {p.short_bio && (
-              <p className="text-muted-foreground mt-6 text-sm leading-relaxed italic">"{p.short_bio}"</p>
-            )}
-            {profile.bio && !p.short_bio && (
-              <p className="text-muted-foreground mt-6 text-sm leading-relaxed">{profile.bio}</p>
-            )}
+            {/* Profile Info */}
+            <div className="px-6 sm:px-8 pb-8 -mt-20 relative">
+              <div className="flex flex-col sm:flex-row items-start gap-5">
+                {/* Avatar */}
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-br from-primary to-primary/50 rounded-2xl blur-sm opacity-60 group-hover:opacity-80 transition-opacity" />
+                  <div className="h-32 w-32 rounded-2xl bg-card flex items-center justify-center border-2 border-primary/30 overflow-hidden relative shadow-xl">
+                    {profile.photo_url ? (
+                      <img src={profile.photo_url} alt={profile.full_name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                        <span className="text-primary font-bold text-4xl">{profile.full_name.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              {p.address && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" /> {p.address}</div>
+                {/* Name & Title */}
+                <div className="pt-2 sm:pt-8">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+                    {profile.full_name}
+                  </h1>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                    <p className="text-primary font-medium text-sm tracking-wide uppercase">
+                      {profile.designation || "সদস্য"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Short Bio */}
+              {(p.short_bio || profile.bio) && (
+                <motion.div {...fadeUp(0.15)} className="mt-8 relative">
+                  <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary to-transparent rounded-full" />
+                  <div className="pl-5">
+                    <Quote className="h-4 w-4 text-primary/40 mb-2" />
+                    <p className="text-muted-foreground text-sm leading-relaxed italic">
+                      {p.short_bio || profile.bio}
+                    </p>
+                  </div>
+                </motion.div>
               )}
-              {profile.designation && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Briefcase className="h-4 w-4 text-primary" /> {profile.designation}</div>
-              )}
-              {p.education && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><GraduationCap className="h-4 w-4 text-primary" /> {p.education}</div>
-              )}
-              {profile.joining_date && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Calendar className="h-4 w-4 text-primary" /> যোগদান: {new Date(profile.joining_date).toLocaleDateString("bn-BD")}</div>
+
+              {/* Info Grid */}
+              {infoItems.length > 0 && (
+                <motion.div {...fadeUp(0.2)} className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {infoItems.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/40 border border-border/20 hover:border-primary/20 transition-colors">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <item.icon className="h-4 w-4 text-primary" />
+                      </div>
+                      <span className="text-sm text-foreground/80">{item.text}</span>
+                    </div>
+                  ))}
+                </motion.div>
               )}
             </div>
           </div>
-        </Card>
+        </motion.div>
 
-        {/* Achievements */}
+        {/* ── Achievements ── */}
         {p.achievements && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="bg-card border-border/50 p-6">
-              <h2 className="font-semibold text-foreground flex items-center gap-2 mb-3"><Award className="h-5 w-5 text-primary" /> অর্জন</h2>
-              <p className="text-sm text-muted-foreground whitespace-pre-line">{p.achievements}</p>
-            </Card>
+          <motion.div {...fadeUp(0.25)}>
+            <div className="rounded-2xl border border-border/30 bg-card p-6 sm:p-8 shadow-lg shadow-primary/3">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <Award className="h-5 w-5 text-primary" />
+                </div>
+                <h2 className="text-lg font-bold text-foreground tracking-tight">অর্জন</h2>
+              </div>
+              <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed pl-1">{p.achievements}</p>
+            </div>
           </motion.div>
         )}
 
-        {/* Favorites */}
+        {/* ── Favorites ── */}
         {favorites.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="bg-card border-border/50 p-6">
-              <h2 className="font-semibold text-foreground flex items-center gap-2 mb-4"><Heart className="h-5 w-5 text-primary" /> পছন্দের তথ্য</h2>
+          <motion.div {...fadeUp(0.3)}>
+            <div className="rounded-2xl border border-border/30 bg-card p-6 sm:p-8 shadow-lg shadow-primary/3">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <Heart className="h-5 w-5 text-primary" />
+                </div>
+                <h2 className="text-lg font-bold text-foreground tracking-tight">পছন্দের তথ্য</h2>
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {favorites.map((f, i) => (
-                  <div key={i} className="p-3 rounded-lg bg-secondary/50 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{f.label}</p>
-                    <p className="text-sm text-foreground font-medium mt-1">{f.value}</p>
-                  </div>
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.35 + i * 0.05 }}
+                    className="group relative p-4 rounded-xl bg-gradient-to-br from-secondary/60 to-secondary/30 border border-border/20 hover:border-primary/30 transition-all hover:shadow-md hover:shadow-primary/5"
+                  >
+                    <span className="text-lg mb-1 block">{f.icon}</span>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">{f.label}</p>
+                    <p className="text-sm text-foreground font-semibold mt-1">{f.value}</p>
+                  </motion.div>
                 ))}
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
 
-        {/* Favorite Works */}
+        {/* ── Favorite Works ── */}
         {favoriteWorks && favoriteWorks.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="bg-card border-border/50 p-6">
-              <h2 className="font-semibold text-foreground flex items-center gap-2 mb-4"><Play className="h-5 w-5 text-primary" /> প্রিয় কাজসমূহ</h2>
+          <motion.div {...fadeUp(0.35)}>
+            <div className="rounded-2xl border border-border/30 bg-card p-6 sm:p-8 shadow-lg shadow-primary/3">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                </div>
+                <h2 className="text-lg font-bold text-foreground tracking-tight">প্রিয় কাজসমূহ</h2>
+              </div>
               <div className="space-y-3">
                 {favoriteWorks.map((w: any, i: number) => (
-                  <div key={w.id} className="p-4 rounded-lg bg-secondary/50 border border-border/30 hover:border-primary/30 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-foreground font-medium">{i + 1}. {w.title}</p>
-                        {w.description && <p className="text-xs text-muted-foreground mt-1">{w.description}</p>}
-                      </div>
-                      {w.video_url && (
-                        <a href={w.video_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 shrink-0 ml-2">
-                          <Play className="h-4 w-4" />
-                        </a>
-                      )}
+                  <motion.div
+                    key={w.id}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + i * 0.07 }}
+                    className="group flex items-center gap-4 p-4 rounded-xl bg-secondary/40 border border-border/20 hover:border-primary/30 hover:bg-secondary/60 transition-all"
+                  >
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <span className="text-primary font-bold text-sm">{String(i + 1).padStart(2, "0")}</span>
                     </div>
-                  </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-foreground font-semibold text-sm truncate">{w.title}</p>
+                      {w.description && <p className="text-xs text-muted-foreground mt-0.5 truncate">{w.description}</p>}
+                    </div>
+                    {w.video_url && (
+                      <a
+                        href={w.video_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 h-9 w-9 rounded-lg bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+                      >
+                        <Play className="h-4 w-4 text-primary" />
+                      </a>
+                    )}
+                  </motion.div>
                 ))}
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
+
+        {/* Footer spacer */}
+        <div className="h-8" />
       </div>
     </div>
   );
