@@ -143,13 +143,14 @@ const AdminNotices = () => {
           {notices?.map((notice: any) => (
             <motion.div key={notice.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <Card
-                className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""}`}
+                className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""} ${!notice.is_active ? "opacity-50" : ""}`}
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       {notice.is_pinned && <Pin className="h-3.5 w-3.5 text-primary shrink-0" />}
+                      {!notice.is_active && <EyeOff className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
                       <h3 className="font-semibold text-foreground truncate">{notice.title}</h3>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">{notice.content}</p>
@@ -162,9 +163,19 @@ const AdminNotices = () => {
                         <MessageSquare className="h-3 w-3" />
                         {commentCounts?.[notice.id] ?? 0}
                       </span>
+                      {!notice.is_active && (
+                        <span className="text-xs text-destructive font-medium">বন্ধ</span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    <Button
+                      variant="ghost" size="icon" className="h-8 w-8"
+                      title={notice.is_active ? "নোটিশ বন্ধ করুন" : "নোটিশ চালু করুন"}
+                      onClick={(e) => { e.stopPropagation(); toggleActive(notice.id, notice.is_active); }}
+                    >
+                      {notice.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                    </Button>
                     <Button
                       variant="ghost" size="icon" className="h-8 w-8"
                       onClick={(e) => { e.stopPropagation(); togglePin(notice.id, notice.is_pinned); }}
