@@ -25,6 +25,8 @@ import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
 import AdminContactSettings from "./pages/AdminContactSettings";
 import AdminGallery from "./pages/AdminGallery";
+import Services from "./pages/Services";
+import AdminServices from "./pages/AdminServices";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
