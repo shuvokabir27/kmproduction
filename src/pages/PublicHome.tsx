@@ -714,7 +714,7 @@ const PublicHome = () => {
                 const pages = (settings as any)?.facebook_pages as any[] | null;
                 return pages && pages.length > 0 ? (
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-4">আমাদের পেইজ সমূহ</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">{t("আমাদের পেইজ সমূহ", "Our Pages")}</h3>
                     <div className="space-y-3">
                       {pages.map((page: any, i: number) => (
                         <a
