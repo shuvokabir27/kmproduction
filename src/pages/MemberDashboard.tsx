@@ -233,6 +233,17 @@ const MemberDashboard = () => {
           </Card>
         </div>
       </div>
+
+      {viewShooting && (
+        <ScriptEditor
+          open={viewScriptOpen}
+          onOpenChange={setViewScriptOpen}
+          title={`স্ক্রিপ্ট — ${viewShooting.name}`}
+          initialContent={viewShooting.script_content || ""}
+          onSave={async () => {}}
+          readOnly
+        />
+      )}
     </AppLayout>
   );
 };
