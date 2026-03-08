@@ -37,6 +37,7 @@ const moreItems = [
   { icon: Gift, label: "বোনাস", path: "/admin/bonuses" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices" },
   { icon: Home, label: "পাবলিক সাইট", path: "/" },
+  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos" },
   { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
 ];
 
