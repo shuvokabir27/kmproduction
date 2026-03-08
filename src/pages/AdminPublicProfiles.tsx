@@ -8,12 +8,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Globe, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const AdminPublicProfiles = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
-  const [localMembers, setLocalMembers] = useState<any[] | null>(null);
+  const [localMembers, setLocalMembers] = useState<any[]>([]);
   const dragItem = useRef<number | null>(null);
   const dragOverItem = useRef<number | null>(null);
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
@@ -28,14 +28,11 @@ const AdminPublicProfiles = () => {
         .order("public_display_order" as any);
       return (data as any[]) ?? [];
     },
-    onSuccess: (data: any[]) => {
-      setLocalMembers(data);
-    },
-  } as any);
-
   });
 
-  const displayMembers: any[] = localMembers ?? members ?? [];
+  useEffect(() => {
+    if (members) setLocalMembers(members);
+  }, [members]);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -70,49 +67,40 @@ const AdminPublicProfiles = () => {
       setDraggingIdx(null);
       return;
     }
-    const reordered = [...displayMembers];
+    const reordered = [...localMembers];
     const [removed] = reordered.splice(dragItem.current, 1);
     reordered.splice(dragOverItem.current, 0, removed);
     setLocalMembers(reordered);
     setDraggingIdx(null);
     dragItem.current = null;
     dragOverItem.current = null;
-    toast.success("ক্রম আপডেট হচ্ছে...");
     await saveOrder(reordered);
+    toast.success("ক্রম আপডেট হয়েছে");
   };
 
-  // Touch drag support
-  const touchStartY = useRef<number>(0);
-  const touchItemIdx = useRef<number | null>(null);
-
   const handleTouchStart = (idx: number, e: React.TouchEvent) => {
-    touchItemIdx.current = idx;
-    touchStartY.current = e.touches[0].clientY;
     dragItem.current = idx;
     setDraggingIdx(idx);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchItemIdx.current === null) return;
     const currentY = e.touches[0].clientY;
     const elements = document.querySelectorAll("[data-drag-idx]");
     elements.forEach((el) => {
       const rect = el.getBoundingClientRect();
       if (currentY >= rect.top && currentY <= rect.bottom) {
-        const idx = Number(el.getAttribute("data-drag-idx"));
-        dragOverItem.current = idx;
+        dragOverItem.current = Number(el.getAttribute("data-drag-idx"));
       }
     });
   };
 
   const handleTouchEnd = async () => {
     await handleDragEnd();
-    touchItemIdx.current = null;
   };
 
   const reorderAll = async () => {
-    if (!displayMembers.length) return;
-    const updates = displayMembers.map((m: any, i: number) =>
+    if (!localMembers.length) return;
+    const updates = localMembers.map((m: any, i: number) =>
       supabase.from("profiles").update({ public_display_order: i } as any).eq("id", m.id)
     );
     await Promise.all(updates);
@@ -138,7 +126,7 @@ const AdminPublicProfiles = () => {
         </div>
 
         <div className="space-y-2">
-          {displayMembers.map((m: any, idx: number) => (
+          {localMembers.map((m: any, idx: number) => (
             <Card
               key={m.id}
               data-drag-idx={idx}
