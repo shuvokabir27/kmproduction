@@ -24,7 +24,7 @@ export function useMemberBalance(profileId: string | undefined) {
       const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
 
       // Total bonuses (bonus + transport)
-      const { data: bonuses } = await supabase
+      const { data: bonuses } = await (supabase as any)
         .from("bonuses")
         .select("amount, type")
         .eq("member_id", profileId!);
