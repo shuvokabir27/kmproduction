@@ -47,6 +47,8 @@ const MemberDashboard = () => {
     favorite_dress: "", favorite_food: "", date_of_birth: "",
     full_name_en: "", designation_en: "", short_bio_en: "",
     address_en: "", education_en: "", achievements_en: "",
+    favorite_actor_en: "", favorite_actress_en: "", favorite_color_en: "",
+    favorite_dress_en: "", favorite_food_en: "",
   });
   const [editTab, setEditTab] = useState<"bn" | "en">("bn");
 
