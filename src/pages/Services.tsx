@@ -68,7 +68,7 @@ const Services = () => {
           <div className="flex items-center gap-3">
             <Link to="/">
               <Button variant="ghost" size="sm" className="text-muted-foreground">
-                <ArrowLeft className="h-4 w-4 mr-1" /> হোম
+                <ArrowLeft className="h-4 w-4 mr-1" /> {t("হোম", "Home")}
               </Button>
             </Link>
             {(settings as any)?.whatsapp_no && (
