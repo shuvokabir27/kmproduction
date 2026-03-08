@@ -44,9 +44,43 @@ const Services = () => {
     },
   });
 
+  const { data: activeOffer } = useQuery({
+    queryKey: ["active-service-offer"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("service_offers")
+        .select("*")
+        .eq("is_active", true)
+        .gte("offer_end_date", new Date().toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  // Countdown timer
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  useEffect(() => {
+    if (!activeOffer?.offer_end_date) return;
+    const calc = () => {
+      const diff = new Date(activeOffer.offer_end_date).getTime() - Date.now();
+      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return {
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diff / (1000 * 60)) % 60),
+        seconds: Math.floor((diff / 1000) % 60),
+      };
+    };
+    setTimeLeft(calc());
+    const interval = setInterval(() => setTimeLeft(calc()), 1000);
+    return () => clearInterval(interval);
+  }, [activeOffer?.offer_end_date]);
+
   const getWaUrl = (serviceTitle: string) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
-    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।`)}`;
+    const offerText = activeOffer ? ` (${activeOffer.discount_percentage}% ডিসকাউন্ট অফার সহ)` : '';
+    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।${offerText}`)}`;
   };
 
   const featured = services?.filter((s: any) => s.is_featured) ?? [];
