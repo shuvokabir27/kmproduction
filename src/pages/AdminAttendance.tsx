@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Save, History, ChevronDown, ChevronRight, Users } from "lucide-react";
-import { useState } from "react";
+import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,6 +21,8 @@ const AdminAttendance = () => {
   const [attendanceData, setAttendanceData] = useState<Record<string, { present: boolean; rate: string }>>({});
   const [saving, setSaving] = useState(false);
   const [expandedShootings, setExpandedShootings] = useState<Set<string>>(new Set());
+  const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-for-attendance"],
@@ -79,6 +81,24 @@ const AdminAttendance = () => {
       return data ?? [];
     },
   });
+
+  // Countdown effect for delete timers
+  useEffect(() => {
+    const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
+    if (activeTimers.length === 0) return;
+
+    const interval = setInterval(() => {
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        for (const key in next) {
+          if (next[key] > 0) next[key]--;
+        }
+        return next;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [deleteTimers]);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -157,6 +177,46 @@ const AdminAttendance = () => {
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
+  };
+
+  // Start 5-second countdown for delete
+  const startDeleteTimer = (shootingId: string) => {
+    setDeleteTimers((prev) => ({ ...prev, [shootingId]: 5 }));
+  };
+
+  const cancelDeleteTimer = (shootingId: string) => {
+    setDeleteTimers((prev) => {
+      const next = { ...prev };
+      delete next[shootingId];
+      return next;
+    });
+  };
+
+
+
+
+  const handleDeleteAttendance = async (shootingId: string) => {
+    if (deleteTimers[shootingId] !== 0) return;
+    setDeletingId(shootingId);
+    try {
+      const { error } = await supabase
+        .from("attendance")
+        .delete()
+        .eq("shooting_id", shootingId);
+      if (error) throw error;
+      toast.success("হাজিরা ডিলিট হয়েছে! দৈনিক রেটভুক্ত সদস্যদের ব্যালেন্স আপডেট হবে।");
+      cancelDeleteTimer(shootingId);
+      queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
+      queryClient.invalidateQueries({ queryKey: ["existing-attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["shootings-with-attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-total-due"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-member-balances"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -298,14 +358,16 @@ const AdminAttendance = () => {
               const isExpanded = expandedShootings.has(shootingId);
               const presentCount = group.records.filter((r: any) => r.is_present).length;
               const totalRate = group.records.reduce((sum: number, r: any) => sum + (r.is_present ? Number(r.daily_rate || 0) : 0), 0);
+              const timerActive = deleteTimers[shootingId] !== undefined;
+              const timerValue = deleteTimers[shootingId];
 
               return (
                 <Card key={shootingId} className="bg-card border-border/50 overflow-hidden">
-                  <button
-                    onClick={() => toggleExpand(shootingId)}
-                    className="w-full flex items-center justify-between p-4 hover:bg-secondary/30 transition-colors text-left"
-                  >
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between p-4">
+                    <button
+                      onClick={() => toggleExpand(shootingId)}
+                      className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
+                    >
                       {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
                       <div>
                         <p className="font-medium text-foreground">{group.shooting?.name || "শুটিং"}</p>
@@ -313,14 +375,47 @@ const AdminAttendance = () => {
                           {group.shooting?.shoot_date ? new Date(group.shooting.shoot_date).toLocaleDateString("bn-BD") : ""}
                         </p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm">
+                    </button>
+                    <div className="flex items-center gap-3 text-sm">
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <Users className="h-3.5 w-3.5" /> {presentCount}/{group.records.length}
                       </span>
                       <span className="text-foreground font-medium">৳{totalRate.toLocaleString("bn-BD")}</span>
+                      
+                      {/* Delete with timer */}
+                      {!timerActive ? (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                          onClick={(e) => { e.stopPropagation(); startDeleteTimer(shootingId); }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs text-muted-foreground"
+                            onClick={(e) => { e.stopPropagation(); cancelDeleteTimer(shootingId); }}
+                          >
+                            বাতিল
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-7 text-xs gap-1 min-w-[80px]"
+                            disabled={timerValue > 0 || deletingId === shootingId}
+                            onClick={(e) => { e.stopPropagation(); handleDeleteAttendance(shootingId); }}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            {deletingId === shootingId ? "ডিলিট হচ্ছে..." : timerValue > 0 ? `${timerValue}s` : "ডিলিট"}
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  </button>
+                  </div>
 
                   {isExpanded && (
                     <div className="border-t border-border/30">
