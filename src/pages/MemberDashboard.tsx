@@ -91,14 +91,6 @@ const MemberDashboard = () => {
           <motion.div variants={item}>
             <Card className="p-5 bg-card border-border/50">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center"><TrendingUp className="h-5 w-5 text-success" /></div>
-                <div><p className="text-xs text-muted-foreground">মোট আয়</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalEarned?.toLocaleString("bn-BD") || "০"}</p></div>
-              </div>
-            </Card>
-          </motion.div>
-          <motion.div variants={item}>
-            <Card className="p-5 bg-card border-border/50">
-              <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center"><CreditCard className="h-5 w-5 text-primary" /></div>
                 <div><p className="text-xs text-muted-foreground">মোট প্রদান</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p></div>
               </div>
