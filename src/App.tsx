@@ -20,6 +20,7 @@ import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
 import ResetPassword from "./pages/ResetPassword";
+import AllNotifications from "./pages/AllNotifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
