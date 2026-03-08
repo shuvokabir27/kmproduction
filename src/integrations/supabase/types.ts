@@ -322,6 +322,7 @@ export type Database = {
           is_featured: boolean
           is_published: boolean
           published_at: string | null
+          publisher_id: string | null
           title: string
           updated_at: string
           video_url: string | null
@@ -337,6 +338,7 @@ export type Database = {
           is_featured?: boolean
           is_published?: boolean
           published_at?: string | null
+          publisher_id?: string | null
           title: string
           updated_at?: string
           video_url?: string | null
@@ -352,9 +354,39 @@ export type Database = {
           is_featured?: boolean
           is_published?: boolean
           published_at?: string | null
+          publisher_id?: string | null
           title?: string
           updated_at?: string
           video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_publisher_id_fkey"
+            columns: ["publisher_id"]
+            isOneToOne: false
+            referencedRelation: "news_publishers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_publishers: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          photo_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
         }
         Relationships: []
       }

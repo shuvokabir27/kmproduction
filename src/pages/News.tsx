@@ -30,6 +30,13 @@ export interface NewsItem {
   created_at: string;
   published_at: string | null;
   video_url: string | null;
+  publisher_id: string | null;
+}
+
+export interface Publisher {
+  id: string;
+  name: string;
+  photo_url: string | null;
 }
 
 export default function News() {
@@ -66,6 +73,17 @@ export default function News() {
     },
   });
 
+  const { data: publishers } = useQuery({
+    queryKey: ["news-publishers-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_publishers")
+        .select("*");
+      if (error) throw error;
+      return data as Publisher[];
+    },
+  });
+
   const { data: tickerSettings } = useQuery({
     queryKey: ["ticker-settings-public"],
     queryFn: async () => {
@@ -78,6 +96,11 @@ export default function News() {
       return data;
     },
   });
+
+  const getPublisherName = (pubId: string | null) => {
+    if (!pubId || !publishers) return null;
+    return publishers.find(p => p.id === pubId)?.name || null;
+  };
 
   const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
   const tickerSpeed = tickerSettings?.ticker_speed || 30;
@@ -143,6 +166,7 @@ export default function News() {
         categories={categories}
         onBack={() => setSelectedNews(null)}
         onShare={handleShare}
+        publisherName={getPublisherName(selectedNews.publisher_id)}
       />
     );
   }
@@ -277,12 +301,19 @@ export default function News() {
                         {featured.excerpt}
                       </p>
                     )}
-                    {featured.published_at && (
-                      <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {getPublisherName(featured.publisher_id) && (
+                        <span className="text-[10px] font-semibold text-foreground/70">
+                          ✍️ {getPublisherName(featured.publisher_id)}
+                        </span>
+                      )}
+                      {featured.published_at && (
+                        <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-4 border-t-[2px] border-foreground/10" />
@@ -300,6 +331,7 @@ export default function News() {
                     categories={categories}
                     isFirst={idx === 0}
                     onClick={() => setSelectedNews(news)}
+                    publisherName={getPublisherName(news.publisher_id)}
                   />
                 ))}
               </div>
@@ -312,6 +344,7 @@ export default function News() {
                     categories={categories}
                     isFirst={idx === 0}
                     onClick={() => setSelectedNews(news)}
+                    publisherName={getPublisherName(news.publisher_id)}
                   />
                 ))}
               </div>
@@ -336,11 +369,13 @@ function NewsCard({
   categories,
   isFirst,
   onClick,
+  publisherName,
 }: {
   news: NewsItem;
   categories: { value: string; label: string }[];
   isFirst: boolean;
   onClick: () => void;
+  publisherName: string | null;
 }) {
   return (
     <article
@@ -374,12 +409,17 @@ function NewsCard({
               {news.excerpt}
             </p>
           )}
-          {news.published_at && (
-            <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1 mt-1">
-              <Clock className="h-2.5 w-2.5" />
-              {format(new Date(news.published_at), "dd MMM yyyy")}
-            </span>
-          )}
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            {publisherName && (
+              <span className="text-[10px] font-medium text-foreground/60">✍️ {publisherName}</span>
+            )}
+            {news.published_at && (
+              <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
+                <Clock className="h-2.5 w-2.5" />
+                {format(new Date(news.published_at), "dd MMM yyyy")}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </article>

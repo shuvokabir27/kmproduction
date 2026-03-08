@@ -40,6 +40,14 @@ interface NewsItem {
   created_at: string;
   published_at: string | null;
   video_url: string | null;
+  publisher_id: string | null;
+}
+
+interface Publisher {
+  id: string;
+  name: string;
+  photo_url: string | null;
+  created_at: string;
 }
 
 export default function AdminNews() {
@@ -58,6 +66,9 @@ export default function AdminNews() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [publisherId, setPublisherId] = useState<string | null>(null);
+  const [publisherDialogOpen, setPublisherDialogOpen] = useState(false);
+  const [newPublisherName, setNewPublisherName] = useState("");
   const [inlineUploading, setInlineUploading] = useState(false);
   const inlineFileRef = useRef<HTMLInputElement>(null);
   const [inlineImageDialog, setInlineImageDialog] = useState(false);
@@ -131,6 +142,42 @@ export default function AdminNews() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as NewsItem[];
+    },
+  });
+
+  const { data: publishers } = useQuery({
+    queryKey: ["news-publishers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_publishers")
+        .select("*")
+        .order("name");
+      if (error) throw error;
+      return data as Publisher[];
+    },
+  });
+
+  const addPublisherMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const { error } = await supabase.from("news_publishers").insert({ name });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+      setNewPublisherName("");
+      setPublisherDialogOpen(false);
+      toast({ title: "প্রকাশক যোগ হয়েছে" });
+    },
+  });
+
+  const deletePublisherMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("news_publishers").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+      toast({ title: "প্রকাশক মুছে ফেলা হয়েছে" });
     },
   });
 
@@ -224,6 +271,7 @@ export default function AdminNews() {
     setCrop(undefined);
     setCompletedCrop(undefined);
     setVideoUrl("");
+    setPublisherId(null);
   };
 
   const openEdit = (news: NewsItem) => {
@@ -236,6 +284,7 @@ export default function AdminNews() {
     setIsFeatured(news.is_featured);
     setImagePreview(news.featured_image_url);
     setVideoUrl(news.video_url || "");
+    setPublisherId(news.publisher_id || null);
     setImageFile(null);
     setDialogOpen(true);
   };
@@ -282,6 +331,7 @@ export default function AdminNews() {
         is_featured: isFeatured,
         published_at: isPublished ? new Date().toISOString() : null,
         video_url: videoUrl || null,
+        publisher_id: publisherId || null,
       };
 
       if (editingNews) {
@@ -357,10 +407,57 @@ export default function AdminNews() {
             <TabsTrigger value="ticker" className="gap-1.5">
               <Zap className="h-3.5 w-3.5" /> টিকার
             </TabsTrigger>
+            <TabsTrigger value="publishers" className="gap-1.5">
+              📝 প্রকাশক
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ticker">
             <AdminTicker />
+          </TabsContent>
+
+          <TabsContent value="publishers">
+            <Card>
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={newPublisherName}
+                    onChange={(e) => setNewPublisherName(e.target.value)}
+                    placeholder="নতুন প্রকাশকের নাম..."
+                    className="flex-1"
+                  />
+                  <Button
+                    size="sm"
+                    disabled={!newPublisherName.trim()}
+                    onClick={() => addPublisherMutation.mutate(newPublisherName.trim())}
+                    className="gap-1"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> যোগ করুন
+                  </Button>
+                </div>
+                {publishers?.length ? (
+                  <div className="space-y-2">
+                    {publishers.map((pub) => (
+                      <div key={pub.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-secondary/40 border border-border/30">
+                        <span className="text-sm font-medium">{pub.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-destructive"
+                          onClick={() => {
+                            if (confirm("এই প্রকাশক মুছে ফেলতে চান?")) deletePublisherMutation.mutate(pub.id);
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">কোনো প্রকাশক যোগ করা হয়নি</p>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="news">
@@ -617,6 +714,22 @@ export default function AdminNews() {
                   <SelectContent>
                     {categories.map((c) => (
                       <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Publisher */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">প্রকাশক</Label>
+                <Select value={publisherId || "none"} onValueChange={(v) => setPublisherId(v === "none" ? null : v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="প্রকাশক নির্বাচন করুন..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— কোনো প্রকাশক নেই —</SelectItem>
+                    {publishers?.map((pub) => (
+                      <SelectItem key={pub.id} value={pub.id}>{pub.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
