@@ -159,7 +159,7 @@ const AdminNotices = () => {
                         <Clock className="h-3 w-3" />
                         {formatDistanceToNow(new Date(notice.created_at), { addSuffix: true, locale: bn })}
                       </span>
-                      <span className="text-xs text-primary flex items-center gap-1 font-medium">
+                      <span className="text-xs text-cyan-400 flex items-center gap-1 font-medium">
                         <MessageSquare className="h-3 w-3" />
                         {commentCounts?.[notice.id] ?? 0}
                       </span>
