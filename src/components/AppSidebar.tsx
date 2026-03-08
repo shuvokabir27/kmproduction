@@ -4,6 +4,7 @@ import {
   Calendar,
   CreditCard,
   Film,
+  FileText,
   Settings,
   LogOut,
   Home,
