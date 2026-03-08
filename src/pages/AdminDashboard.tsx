@@ -316,10 +316,10 @@ const AdminDashboard = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/30 bg-secondary/30">
-                  <th className="text-left p-3 text-muted-foreground font-medium text-xs">সদস্য</th>
-                  <th className="text-right p-3 text-muted-foreground font-medium text-xs">আয়</th>
-                  <th className="text-right p-3 text-muted-foreground font-medium text-xs">প্রদান</th>
-                  <th className="text-right p-3 text-muted-foreground font-medium text-xs">বকেয়া</th>
+                  <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
+                  <th className="text-right p-3 text-emerald-400 font-medium text-xs">আয়</th>
+                  <th className="text-right p-3 text-amber-400 font-medium text-xs">প্রদান</th>
+                  <th className="text-right p-3 text-pink-400 font-medium text-xs">বকেয়া</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
