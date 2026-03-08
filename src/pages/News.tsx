@@ -6,7 +6,7 @@ import { Newspaper, Calendar, Star, ArrowLeft, Image as ImageIcon, Share2, Faceb
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const categories = [
