@@ -260,6 +260,9 @@ const AdminScriptEdit = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setPermDialogOpen(true)}>
+              <Users className="h-3.5 w-3.5" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
+            </Button>
             <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadPDF}>
               <Download className="h-3.5 w-3.5" /> PDF
             </Button>
