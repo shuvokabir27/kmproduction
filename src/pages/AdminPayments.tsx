@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone } from "lucide-react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -95,6 +95,27 @@ const AdminPayments = () => {
 
   const methodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
   const methodIcon: Record<string, any> = { bank: Building, bkash: Smartphone, nagad: Smartphone, cash: Wallet };
+
+  const showReceiptForPayment = async (payment: any) => {
+    // Fetch member balance info
+    const { data: attendance } = await supabase.from("attendance").select("daily_rate").eq("member_id", payment.member_id).eq("is_present", true);
+    const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
+    const { data: allPayments } = await supabase.from("payments").select("amount").eq("member_id", payment.member_id);
+    const totalPaid = allPayments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
+
+    setReceiptData({
+      memberName: payment.profiles?.full_name || "",
+      memberId: payment.profiles?.member_id || 0,
+      amount: Number(payment.amount),
+      method: payment.payment_method,
+      transactionId: payment.transaction_id || null,
+      notes: payment.notes || null,
+      date: payment.payment_date,
+      totalEarned,
+      totalPaid,
+      balance: totalEarned - totalPaid,
+    });
+  };
 
   return (
     <AppLayout>
@@ -220,6 +241,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">মাধ্যম</th>
                   <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">ট্রানজেকশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
+                  <th className="text-center p-3 text-muted-foreground font-medium">রিসিট</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -251,11 +273,16 @@ const AdminPayments = () => {
                       </td>
                       <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{p.transaction_id || "—"}</td>
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
+                      <td className="p-3 text-center">
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => showReceiptForPayment(p)}>
+                          <Download className="h-3.5 w-3.5 text-primary" />
+                        </Button>
+                      </td>
                     </tr>
                   );
                 })}
                 {payments?.length === 0 && (
-                  <tr><td colSpan={5} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
+                  <tr><td colSpan={6} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
                 )}
               </tbody>
             </table>
