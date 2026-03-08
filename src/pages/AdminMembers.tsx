@@ -202,6 +202,29 @@ const AdminMembers = () => {
                   <Textarea value={form.bio} onChange={(e) => setField("bio", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                 </div>
                 <div className="border-t border-border/30 pt-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">বেতন তথ্য</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">বেতনের ধরন</Label>
+                      <Select value={form.salary_type} onValueChange={(v) => setField("salary_type" as any, v)}>
+                        <SelectTrigger className="bg-secondary border-border/50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border/50">
+                          <SelectItem value="daily">দৈনিক</SelectItem>
+                          <SelectItem value="monthly">মাসিক</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {form.salary_type === "monthly" && (
+                      <div>
+                        <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
+                        <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">পেমেন্ট তথ্য</p>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
