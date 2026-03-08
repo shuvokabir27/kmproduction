@@ -135,12 +135,12 @@ const PublicHome = () => {
           >
             <a href="#projects">
               <Button size="lg" className="bg-primary hover:bg-primary/90 glow-accent text-lg px-8 h-12 gap-2">
-                <Play className="h-5 w-5" /> আমাদের কাজ দেখুন
+                <Play className="h-5 w-5" /> {L.seeWork}
               </Button>
             </a>
             <a href="#team">
               <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 text-lg px-8 h-12 gap-2">
-                <Users className="h-5 w-5" /> টিম দেখুন
+                <Users className="h-5 w-5" /> {L.seeTeam}
               </Button>
             </a>
           </motion.div>
