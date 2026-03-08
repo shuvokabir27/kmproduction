@@ -153,12 +153,17 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
                 {type === "group" && (
                   <Checkbox checked={selectedUsers.includes(m.user_id)} />
                 )}
-                <Avatar className="h-8 w-8">
-                  {m.photo_url && <AvatarImage src={m.photo_url} />}
-                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                    {m.full_name?.[0]}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-8 w-8">
+                    {m.photo_url && <AvatarImage src={m.photo_url} />}
+                    <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                      {m.full_name?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  {onlineMap && isUserOnline(onlineMap.get(m.user_id)) && (
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+                  )}
+                </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">{m.full_name}</p>
                   <p className="text-[10px] text-muted-foreground">#{m.member_id}</p>
