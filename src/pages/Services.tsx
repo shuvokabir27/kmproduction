@@ -308,7 +308,7 @@ const Services = () => {
               {settings?.contact_phone && (
                 <a href={`tel:${settings.contact_phone}`}>
                   <Button size="lg" variant="outline" className="font-semibold px-8">
-                    <Phone className="h-5 w-5 mr-2" /> কল করুন
+                    <Phone className="h-5 w-5 mr-2" /> {t("কল করুন", "Call Us")}
                   </Button>
                 </a>
               )}
