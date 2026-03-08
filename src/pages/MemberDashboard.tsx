@@ -87,7 +87,7 @@ const MemberDashboard = () => {
         </div>
 
         {/* Balance Cards */}
-        <motion.div className="grid grid-cols-1 sm:grid-cols-3 gap-4" variants={container} initial="hidden" animate="show">
+        <motion.div className="grid grid-cols-2 sm:grid-cols-3 gap-4" variants={container} initial="hidden" animate="show">
           <motion.div variants={item}>
             <Card className="p-5 bg-card border-border/50">
               <div className="flex items-center gap-3">
