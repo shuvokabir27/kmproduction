@@ -19,6 +19,7 @@ import {
   MessageCircle,
   Play,
   Phone,
+  Image as ImageIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
