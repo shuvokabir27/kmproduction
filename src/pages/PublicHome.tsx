@@ -371,14 +371,23 @@ const PublicHome = () => {
       {/* Footer */}
       <footer className="border-t border-border/20 py-10 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-t from-muted/20 to-transparent" />
-        <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-3">
-            <img src="/favicon.png" alt="KM Production House" className="h-8 w-8 object-contain" />
-            <span className="font-semibold text-foreground">{settings?.site_name || "KM Production House"}</span>
+        <div className="container max-w-6xl mx-auto relative z-10">
+          {/* Mother company highlight */}
+          <div className="flex flex-col items-center mb-8 text-center">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-1">A Sister Concern of</p>
+            <h3 className="font-display text-2xl md:text-3xl tracking-wider gradient-text">KUAKATA MULTIMEDIA</h3>
+            <div className="h-[1px] w-20 bg-gradient-to-r from-transparent via-primary/40 to-transparent mt-3" />
           </div>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. সর্বস্বত্ব সংরক্ষিত।
-          </p>
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <img src="/favicon.png" alt="KM Production House" className="h-8 w-8 object-contain" />
+              <span className="font-semibold text-foreground">{settings?.site_name || "KM Production House"}</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. সর্বস্বত্ব সংরক্ষিত।
+            </p>
+          </div>
         </div>
       </footer>
     </div>
