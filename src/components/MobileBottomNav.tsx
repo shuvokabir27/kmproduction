@@ -153,7 +153,7 @@ export function MobileBottomNav() {
                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{group.label}</span>
                         </div>
                       )}
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-3 gap-1.5">
                         {group.items.map((item, index) => {
                           const isLogout = item.path === "__logout__";
                           const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
