@@ -673,7 +673,7 @@ const PublicHome = () => {
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">ফোন</p>
+                    <p className="text-xs text-muted-foreground">{t("ফোন", "Phone")}</p>
                     <span className="text-foreground/80 text-sm">{settings.contact_phone}</span>
                   </div>
                 </a>
