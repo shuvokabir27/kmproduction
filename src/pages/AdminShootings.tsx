@@ -287,6 +287,17 @@ const AdminShootings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label className="text-foreground">ভিডিও লিংক (YouTube/Facebook)</Label>
+                  <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtu.be/... বা https://fb.watch/..." className="bg-secondary border-border/50" />
+                </div>
+                <div className="flex items-center justify-between rounded-lg border border-border/30 bg-secondary/30 p-3">
+                  <div>
+                    <Label className="text-foreground text-sm">পাবলিক সাইটে দেখান</Label>
+                    <p className="text-xs text-muted-foreground">হোম পেজে এই শুটিং প্রদর্শিত হবে</p>
+                  </div>
+                  <Switch checked={showOnPublic} onCheckedChange={setShowOnPublic} />
+                </div>
                 <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে সাইডবারে "স্ক্রিপ্ট" মেনু থেকে নতুন স্ক্রিপ্ট তৈরি করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সেভ করুন"}
