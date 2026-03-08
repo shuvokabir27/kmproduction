@@ -623,13 +623,13 @@ const PublicHome = () => {
             viewport={{ once: true }}
             className="mb-14 text-center"
           >
-            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
+            <span className="text-fuchsia-400 text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
             <h2 className="font-display text-3xl md:text-5xl text-foreground mt-3 tracking-wider leading-tight">
               {t("বিজ্ঞাপন বা প্রোডাকশনের জন্য", "For Ads or Production")}
               <br />
-              <span className="gradient-text">{t("যোগাযোগ করুন", "Contact Us")}</span>
+              <span className="text-fuchsia-400">{t("যোগাযোগ করুন", "Contact Us")}</span>
             </h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5 mx-auto" />
+            <div className="h-1 w-20 bg-gradient-to-r from-fuchsia-500 to-fuchsia-500/30 rounded-full mt-5 mx-auto" />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
