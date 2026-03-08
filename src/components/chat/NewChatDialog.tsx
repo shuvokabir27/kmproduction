@@ -25,6 +25,7 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
   const [groupName, setGroupName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const { data: onlineMap } = useOnlineStatus();
 
   const { data: members } = useQuery({
     queryKey: ["all-profiles-for-chat"],
