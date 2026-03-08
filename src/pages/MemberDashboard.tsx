@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon, ScrollText, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
@@ -91,6 +91,17 @@ const MemberDashboard = () => {
       return (data ?? []) as any[];
     },
   });
+
+  const { data: permittedScripts } = useQuery({
+    queryKey: ["my-scripts", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("scripts").select("*").order("updated_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const [viewScriptData, setViewScriptData] = useState<any>(null);
 
   useEffect(() => {
     if (profile) {
@@ -295,6 +306,25 @@ const MemberDashboard = () => {
                 </div>
               );
             })}
+          </div>
+        </Card>
+
+        {/* Permitted Scripts */}
+        <Card className="bg-card border-border/50">
+          <div className="p-4 border-b border-border/30">
+            <h2 className="font-semibold text-foreground flex items-center gap-2"><ScrollText className="h-4 w-4 text-primary" /> স্ক্রিপ্ট সমূহ</h2>
+          </div>
+          <div className="divide-y divide-border/30 max-h-80 overflow-auto">
+            {(!permittedScripts || permittedScripts.length === 0) && <div className="p-4 text-sm text-muted-foreground text-center">কোনো স্ক্রিপ্ট অ্যাক্সেস নেই</div>}
+            {permittedScripts?.map((script: any) => (
+              <div key={script.id} className="p-3 flex items-center justify-between hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => setViewScriptData(script)}>
+                <div>
+                  <p className="text-sm text-foreground font-medium">{script.title}</p>
+                  <p className="text-xs text-muted-foreground">{script.updated_at ? new Date(script.updated_at).toLocaleDateString("bn-BD") : ""}</p>
+                </div>
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              </div>
+            ))}
           </div>
         </Card>
 
@@ -547,6 +577,22 @@ const MemberDashboard = () => {
           readOnly
         />
       )}
+
+      {/* Script View Dialog */}
+      <Dialog open={!!viewScriptData} onOpenChange={(open) => !open && setViewScriptData(null)}>
+        <DialogContent className="bg-card border-border/50 max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <ScrollText className="h-5 w-5 text-primary" />
+              {viewScriptData?.title}
+            </DialogTitle>
+          </DialogHeader>
+          <div
+            className="prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: viewScriptData?.content || "<p class='text-muted-foreground'>কোনো কন্টেন্ট নেই</p>" }}
+          />
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
