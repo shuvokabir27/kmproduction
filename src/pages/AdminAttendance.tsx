@@ -60,13 +60,21 @@ const AdminAttendance = () => {
     enabled: !!selectedShooting,
     queryFn: async () => {
       const { data } = await supabase.from("attendance").select("*").eq("shooting_id", selectedShooting);
-      if (data) {
-        const map: Record<string, { present: boolean; rate: string }> = {};
+      const map: Record<string, { present: boolean; rate: string }> = {};
+      if (data && data.length > 0) {
+        // Existing attendance — load saved values
         data.forEach((a) => {
           map[a.member_id] = { present: a.is_present ?? false, rate: String(a.daily_rate || 0) };
         });
-        setAttendanceData(map);
+      } else {
+        // New attendance — pre-fill daily_rate from profile for daily members
+        members?.forEach((m: any) => {
+          if (m.salary_type === "daily" && Number(m.daily_rate || 0) > 0) {
+            map[m.id] = { present: false, rate: String(m.daily_rate) };
+          }
+        });
       }
+      setAttendanceData(map);
       return data ?? [];
     },
   });
