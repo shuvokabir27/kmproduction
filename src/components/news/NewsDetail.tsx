@@ -109,7 +109,14 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
         </h1>
 
         {/* Divider */}
-        <div className="border-t border-border/30 mb-5" />
+        <div className="border-t border-border/30 mb-4" />
+
+        {/* Publisher byline */}
+        {publisherName && (
+          <p className="text-sm text-foreground/70 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+            ✍️ <span className="font-semibold">{publisherName}</span>
+          </p>
+        )}
 
         {/* Share bar */}
         <div className="flex items-center gap-3 mb-6">
