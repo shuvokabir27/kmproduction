@@ -223,44 +223,47 @@ export function MobileBottomNav() {
                 }}
                 animate={{
                   scale: isPressed ? 0.85 : 1,
-                  rotateX: isPressed ? 15 : 0,
                   y: isPressed ? 2 : 0,
                 }}
                 transition={{ type: "spring", stiffness: 600, damping: 20 }}
-                className="relative flex flex-col items-center pt-2 pb-1.5 px-3 min-w-[56px]"
-                style={{ perspective: "400px", transformStyle: "preserve-3d" }}
+                className="relative flex flex-col items-center pt-2 pb-1.5 px-2 min-w-[60px]"
               >
                 {active && (
                   <motion.div
                     layoutId="mobile-tab-indicator"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 h-[2.5px] w-8 bg-primary rounded-full"
+                    className={`absolute top-0 left-1/2 -translate-x-1/2 h-[3px] w-10 rounded-full`}
                     transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                    style={{ boxShadow: "0 0 8px hsl(var(--primary) / 0.5)" }}
-                  />
+                    style={{
+                      background: `var(--tw-gradient-stops, currentColor)`,
+                      backgroundColor: 'currentColor',
+                    }}
+                  >
+                    <div className={`h-full w-full rounded-full ${tab.bg}`} style={{ opacity: 1, background: 'inherit' }} />
+                  </motion.div>
                 )}
                 <motion.div
                   animate={{
-                    scale: isPressed ? 1.15 : 1,
-                    y: active ? -1 : 0,
+                    scale: isPressed ? 1.2 : active ? 1.1 : 1,
+                    y: active ? -2 : 0,
                   }}
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                  className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? tab.bg : ''}`}
                 >
                   <tab.icon
-                    className={`h-5 w-5 transition-colors duration-150 ${tab.color}`}
+                    className={`h-[22px] w-[22px] transition-colors duration-150 ${tab.color}`}
                   />
                 </motion.div>
                 <span
-                  className={`text-[10px] mt-0.5 font-medium transition-colors duration-150 ${tab.color}`}
+                  className={`text-[11px] mt-0.5 font-semibold transition-colors duration-150 ${tab.color}`}
                 >
                   {tab.label}
                 </span>
 
-                {/* 3D press shadow effect */}
                 {isPressed && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 0.15, scale: 1.5 }}
-                    className="absolute inset-0 rounded-xl bg-primary"
+                    animate={{ opacity: 0.12, scale: 1.5 }}
+                    className={`absolute inset-0 rounded-xl ${tab.bg}`}
                     style={{ filter: "blur(8px)" }}
                   />
                 )}
