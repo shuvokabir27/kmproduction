@@ -301,7 +301,7 @@ const Services = () => {
                   rel="noopener noreferrer"
                 >
                   <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8">
-                    <MessageCircle className="h-5 w-5 mr-2" /> WhatsApp এ মেসেজ করুন
+                    <MessageCircle className="h-5 w-5 mr-2" /> {t("WhatsApp এ মেসেজ করুন", "Message on WhatsApp")}
                   </Button>
                 </a>
               )}
