@@ -11,6 +11,8 @@ import {
   Tv,
   MoreHorizontal,
   X,
+  LogOut,
+  ScrollText,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -33,22 +35,29 @@ const moreItems = [
 const memberTabs = [
   { icon: Home, label: "হোম", path: "/" },
   { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/dashboard#scripts" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__" },
+];
+
+const memberMoreItems = [
+  { icon: LogOut, label: "লগআউট", path: "__logout__" },
 ];
 
 export function MobileBottomNav() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
   const [pressedTab, setPressedTab] = useState<string | null>(null);
   const tabs = isAdmin ? adminTabs : memberTabs;
+  const currentMoreItems = isAdmin ? moreItems : memberMoreItems;
 
   const isActive = (path: string) => {
     if (path === "__more__") {
-      return moreOpen || moreItems.some(
+      return moreOpen || currentMoreItems.some(
         (m) =>
           m.path === location.pathname ||
-          (m.path !== "/" && location.pathname.startsWith(m.path))
+          (m.path !== "/" && m.path !== "__logout__" && location.pathname.startsWith(m.path))
       );
     }
     if (path === "/admin") return location.pathname === "/admin";
@@ -88,32 +97,40 @@ export function MobileBottomNav() {
                     <X className="h-3.5 w-3.5 text-muted-foreground" />
                   </button>
                 </div>
-                {moreItems.map((item, index) => {
-                  const active = item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path));
+                {currentMoreItems.map((item, index) => {
+                  const isLogout = item.path === "__logout__";
+                  const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
                   return (
                     <motion.button
                       key={item.path}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      onClick={() => {
-                        navigate(item.path);
+                      onClick={async () => {
+                        if (isLogout) {
+                          await signOut();
+                          navigate("/login");
+                        } else {
+                          navigate(item.path);
+                        }
                         setMoreOpen(false);
                       }}
                       whileTap={{ scale: 0.97, rotateX: 3 }}
                       className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
-                        active
-                          ? "bg-primary/10 border border-primary/20"
-                          : "hover:bg-secondary/50 active:bg-secondary border border-transparent"
+                        isLogout
+                          ? "hover:bg-destructive/10 active:bg-destructive/20 border border-transparent"
+                          : active
+                            ? "bg-primary/10 border border-primary/20"
+                            : "hover:bg-secondary/50 active:bg-secondary border border-transparent"
                       }`}
                       style={{ perspective: "600px", transformStyle: "preserve-3d" }}
                     >
                       <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                        active ? "bg-primary/20" : "bg-secondary"
+                        isLogout ? "bg-destructive/10" : active ? "bg-primary/20" : "bg-secondary"
                       }`}>
-                        <item.icon className={`h-4.5 w-4.5 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                        <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : active ? "text-primary" : "text-muted-foreground"}`} />
                       </div>
-                      <span className={`text-sm font-medium ${active ? "text-primary" : "text-foreground"}`}>
+                      <span className={`text-sm font-medium ${isLogout ? "text-destructive" : active ? "text-primary" : "text-foreground"}`}>
                         {item.label}
                       </span>
                     </motion.button>
