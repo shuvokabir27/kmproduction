@@ -216,6 +216,7 @@ const AdminMembers = () => {
           address: form.address || null,
           salary_type: form.salary_type as any,
           monthly_salary: Number(form.monthly_salary) || 0,
+          daily_rate: Number(form.daily_rate) || 0,
           previous_balance: Number(form.previous_balance) || 0,
         };
         if (photoUrl) updateData.photo_url = photoUrl;
