@@ -121,11 +121,28 @@ const AdminAttendance = () => {
     }
   };
 
-  const filteredHistory = (allAttendance ?? []).filter((a: any) => {
-    if (historyShootingFilter !== "all" && a.shooting_id !== historyShootingFilter) return false;
-    if (historyMemberFilter !== "all" && a.member_id !== historyMemberFilter) return false;
-    return true;
+  // Group attendance by shooting
+  const groupedByShooting = (allAttendance ?? []).reduce((acc: Record<string, { shooting: any; records: any[] }>, a: any) => {
+    if (!acc[a.shooting_id]) {
+      acc[a.shooting_id] = { shooting: a.shootings, records: [] };
+    }
+    acc[a.shooting_id].records.push(a);
+    return acc;
+  }, {});
+
+  const shootingGroups = Object.entries(groupedByShooting).sort((a, b) => {
+    const dateA = a[1].shooting?.shoot_date || "";
+    const dateB = b[1].shooting?.shoot_date || "";
+    return dateB.localeCompare(dateA);
   });
+
+  const toggleExpand = (id: string) => {
+    setExpandedShootings((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <AppLayout>
