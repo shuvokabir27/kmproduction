@@ -135,7 +135,7 @@ const AdminScriptEdit = () => {
   };
 
   const removeSequence = (seqId: string) => {
-    if (sequences.length <= 1) { toast.error("অন্তত একটি সিকুয়েন্স থাকতে হবে"); return; }
+    if (sequences.length <= 1) { toast.error("অন্তত একটি দৃশ্য থাকতে হবে"); return; }
     setSequences(sequences.filter(s => s.id !== seqId));
   };
 
