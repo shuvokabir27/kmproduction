@@ -40,6 +40,14 @@ interface NewsItem {
   created_at: string;
   published_at: string | null;
   video_url: string | null;
+  publisher_id: string | null;
+}
+
+interface Publisher {
+  id: string;
+  name: string;
+  photo_url: string | null;
+  created_at: string;
 }
 
 export default function AdminNews() {
