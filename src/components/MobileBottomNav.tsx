@@ -43,6 +43,7 @@ const memberTabs = [
 ];
 
 const memberMoreItems = [
+  { icon: Settings, label: "সেটিংস", path: "/settings" },
   { icon: LogOut, label: "লগআউট", path: "__logout__" },
 ];
 
