@@ -20,8 +20,8 @@ const PublicHome = () => {
   const { data: members } = useQuery({
     queryKey: ["public-members"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,full_name_en,member_id,photo_url,cover_url,designation,designation_en,bio,short_bio,address,is_active,is_verified").eq("is_active", true);
-      const filtered = (data ?? []).filter((m: any) => m.show_on_public !== false);
+      const { data } = await supabase.from("profiles").select("*").eq("is_active", true);
+      const filtered = (data as any[] ?? []).filter((m: any) => m.show_on_public !== false);
       filtered.sort((a: any, b: any) => (a.public_display_order ?? 0) - (b.public_display_order ?? 0));
       return filtered;
     },
