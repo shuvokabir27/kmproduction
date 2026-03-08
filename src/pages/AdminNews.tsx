@@ -407,10 +407,57 @@ export default function AdminNews() {
             <TabsTrigger value="ticker" className="gap-1.5">
               <Zap className="h-3.5 w-3.5" /> টিকার
             </TabsTrigger>
+            <TabsTrigger value="publishers" className="gap-1.5">
+              📝 প্রকাশক
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ticker">
             <AdminTicker />
+          </TabsContent>
+
+          <TabsContent value="publishers">
+            <Card>
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={newPublisherName}
+                    onChange={(e) => setNewPublisherName(e.target.value)}
+                    placeholder="নতুন প্রকাশকের নাম..."
+                    className="flex-1"
+                  />
+                  <Button
+                    size="sm"
+                    disabled={!newPublisherName.trim()}
+                    onClick={() => addPublisherMutation.mutate(newPublisherName.trim())}
+                    className="gap-1"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> যোগ করুন
+                  </Button>
+                </div>
+                {publishers?.length ? (
+                  <div className="space-y-2">
+                    {publishers.map((pub) => (
+                      <div key={pub.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-secondary/40 border border-border/30">
+                        <span className="text-sm font-medium">{pub.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-destructive"
+                          onClick={() => {
+                            if (confirm("এই প্রকাশক মুছে ফেলতে চান?")) deletePublisherMutation.mutate(pub.id);
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">কোনো প্রকাশক যোগ করা হয়নি</p>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="news">
