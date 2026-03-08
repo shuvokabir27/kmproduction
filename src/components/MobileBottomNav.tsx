@@ -110,7 +110,7 @@ export function MobileBottomNav() {
               className="relative z-[61] w-[calc(100%-24px)] max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-secondary/30 backdrop-blur-xl border border-border/40 rounded-2xl shadow-2xl shadow-black/40 p-3">
+              <div className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-secondary/30 backdrop-blur-xl border border-border/40 rounded-2xl shadow-2xl shadow-black/40 p-2">
                 {/* Dot pattern background */}
                 <div className="absolute inset-0 opacity-[0.06]" style={{
                   backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
@@ -147,13 +147,13 @@ export function MobileBottomNav() {
                   if (currentGroup.length > 0) groups.push({ label: currentLabel, items: currentGroup });
 
                   return groups.map((group, gi) => (
-                    <div key={gi} className="relative z-10 mb-2">
+                    <div key={gi} className="relative z-10 mb-1">
                       {group.label && (
                         <div className="px-2 pt-1 pb-1.5">
                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{group.label}</span>
                         </div>
                       )}
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-3 gap-1.5">
                         {group.items.map((item, index) => {
                           const isLogout = item.path === "__logout__";
                           const active = !isLogout && (item.path === location.pathname || (item.path !== "/" && location.pathname.startsWith(item.path)));
@@ -173,7 +173,7 @@ export function MobileBottomNav() {
                                 setMoreOpen(false);
                               }}
                               whileTap={{ scale: 0.92 }}
-                              className={`flex flex-col items-center gap-2 px-2 py-3.5 rounded-xl transition-all border ${
+                              className={`flex flex-col items-center gap-1 px-1 py-2 rounded-xl transition-all border ${
                                 isLogout
                                   ? "border-destructive/20 bg-destructive/5"
                                   : active
@@ -181,12 +181,12 @@ export function MobileBottomNav() {
                                     : "border-transparent hover:bg-secondary/30"
                               }`}
                             >
-                              <div className={`h-11 w-11 rounded-xl flex items-center justify-center shadow-sm ${
+                              <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
                                 isLogout ? "bg-destructive/10" : item.bg
                               }`}>
-                                {item.icon && <item.icon className={`h-5 w-5 ${item.color}`} />}
+                                {item.icon && <item.icon className={`h-4 w-4 ${item.color}`} />}
                               </div>
-                              <span className={`text-[11px] font-semibold text-center leading-tight ${item.color}`}>
+                              <span className={`text-[10px] font-semibold text-center leading-tight ${item.color}`}>
                                 {item.label}
                               </span>
                             </motion.button>
