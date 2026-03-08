@@ -195,6 +195,19 @@ const Login = () => {
                       className="bg-secondary border-border/30 h-11 text-base"
                     />
                   </div>
+                  <AnimatePresence>
+                    {errorMsg && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
+                      >
+                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
                     {submitting ? (
                       <span className="flex items-center gap-2">
