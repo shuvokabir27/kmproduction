@@ -68,7 +68,7 @@ const PublicHome = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-5xl font-bold text-foreground leading-tight"
           >
-            {settings?.site_name || "TeamFlow"}
+            {settings?.site_name || "KM Production House"}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
