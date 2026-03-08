@@ -16,6 +16,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export function NoticeBoard() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
 
