@@ -274,9 +274,9 @@ const PublicHome = () => {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <span className="text-primary text-sm font-semibold tracking-widest uppercase">Contact Us</span>
-            <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">যোগাযোগ</h2>
-            <div className="h-1 w-16 bg-primary rounded-full mt-4" />
+              <span className="text-primary text-sm font-semibold tracking-widest uppercase">Contact Us</span>
+              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.contact}</h2>
+              <div className="h-1 w-16 bg-primary rounded-full mt-4" />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
