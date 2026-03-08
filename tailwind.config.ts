@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         bangla: ["'Tiro Bangla'", "serif"],
+        display: ["'Hind Siliguri'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
