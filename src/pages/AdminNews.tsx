@@ -56,6 +56,8 @@ export default function AdminNews() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [inlineUploading, setInlineUploading] = useState(false);
+  const inlineFileRef = useRef<HTMLInputElement>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropType>();
@@ -141,6 +143,25 @@ export default function AdminNews() {
       ta.focus();
       ta.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
     }, 0);
+  };
+
+  const handleInlineImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setInlineUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `inline-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from("news-images").upload(fileName, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+      const caption = prompt("ছবির ক্যাপশন লিখুন (ঐচ্ছিক):") || "";
+      insertFormat(`\n![${caption}](${data.publicUrl})\n`, "");
+    } catch (err: any) {
+      toast({ title: "ছবি আপলোড ব্যর্থ", description: err.message, variant: "destructive" });
+    }
+    setInlineUploading(false);
+    if (inlineFileRef.current) inlineFileRef.current.value = "";
   };
 
   const resetForm = () => {
@@ -462,6 +483,18 @@ export default function AdminNews() {
                     <button type="button" onClick={() => { const url = prompt("লিংক দিন:"); if (url) insertFormat("[", `](${url})`); }} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="লিংক">
                       <Link2 className="h-3.5 w-3.5" />
                     </button>
+                    <div className="w-px h-5 bg-border/50 mx-1" />
+                    <button
+                      type="button"
+                      onClick={() => inlineFileRef.current?.click()}
+                      disabled={inlineUploading}
+                      className="h-7 px-2 rounded flex items-center justify-center gap-1 hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors text-[11px]"
+                      title="কন্টেন্টে ছবি যোগ করুন"
+                    >
+                      <ImageIcon className="h-3.5 w-3.5" />
+                      {inlineUploading ? "আপলোড..." : "ছবি"}
+                    </button>
+                    <input ref={inlineFileRef} type="file" accept="image/*" className="hidden" onChange={handleInlineImage} />
                   </div>
                   <Textarea
                     ref={contentRef}
