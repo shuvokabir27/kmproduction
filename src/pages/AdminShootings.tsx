@@ -246,7 +246,7 @@ const AdminShootings = () => {
             {statusOptions.map((s) => {
               const count = shootings?.filter((sh) => (sh.status || "upcoming") === s.value).length || 0;
               return (
-                <TabsTrigger key={s.value} value={s.value} className="text-xs">
+                <TabsTrigger key={s.value} value={s.value} className="text-[10px] md:text-xs px-2">
                   {s.label} ({count})
                 </TabsTrigger>
               );
