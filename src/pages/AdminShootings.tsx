@@ -397,6 +397,7 @@ const AdminShootings = () => {
                           <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">পাবলিক</th>
                           <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                         </tr>
                       </thead>
