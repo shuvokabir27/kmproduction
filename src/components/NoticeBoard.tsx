@@ -15,6 +15,7 @@ import { bn } from "date-fns/locale";
 export function NoticeBoard() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
   const [commentText, setCommentText] = useState("");
   const [commenting, setCommenting] = useState(false);
