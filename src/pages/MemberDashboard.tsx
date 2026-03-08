@@ -74,10 +74,10 @@ const MemberDashboard = () => {
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
   const balanceCards = [
-    { label: "বর্তমান ব্যালেন্স", value: balance?.balance, icon: Wallet, gradient: "from-primary/20 to-primary/5", iconColor: "text-primary" },
-    { label: "মোট বোনাস", value: balance?.totalBonus, icon: Gift, gradient: "from-success/20 to-success/5", iconColor: "text-success" },
-    { label: "মোট গাড়ি ভাড়া", value: balance?.totalTransport, icon: Car, gradient: "from-info/20 to-info/5", iconColor: "text-info" },
-    { label: "মাসিক বেতন", value: balance?.totalSalaryCredits, icon: Banknote, gradient: "from-warning/20 to-warning/5", iconColor: "text-warning" },
+    { label: "বর্তমান ব্যালেন্স", value: balance?.balance, icon: Wallet, gradient: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400", iconBg: "bg-violet-500/10" },
+    { label: "মোট বোনাস", value: balance?.totalBonus, icon: Gift, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10" },
+    { label: "মোট গাড়ি ভাড়া", value: balance?.totalTransport, icon: Car, gradient: "from-cyan-500/20 to-cyan-500/5", iconColor: "text-cyan-400", iconBg: "bg-cyan-500/10" },
+    { label: "মাসিক বেতন", value: balance?.totalSalaryCredits, icon: Banknote, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10" },
   ];
 
   return (
@@ -92,7 +92,7 @@ const MemberDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">স্বাগতম, {profile?.full_name}</h1>
             <p className="text-muted-foreground text-xs mt-1">আইডি: {profile?.member_id}</p>
           </div>
-          <div className="h-1 w-12 bg-gradient-to-r from-primary to-primary/30 rounded-full mb-1 hidden md:block" />
+          <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-amber-500 rounded-full mb-1 hidden md:block" />
         </motion.div>
 
         {/* Balance Cards */}
@@ -100,9 +100,9 @@ const MemberDashboard = () => {
           {balanceCards.map((card) => (
             <motion.div key={card.label} variants={item}>
               <div className="premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-50`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
                 <div className="relative z-10">
-                  <div className={`h-9 w-9 rounded-xl bg-background/50 flex items-center justify-center mb-3`}>
+                  <div className={`h-9 w-9 rounded-xl ${card.iconBg} flex items-center justify-center mb-3`}>
                     <card.icon className={`h-4 w-4 ${card.iconColor}`} />
                   </div>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">{card.label}</p>
@@ -116,8 +116,8 @@ const MemberDashboard = () => {
         {/* Shootings */}
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Film className="h-4 w-4 text-primary" />
+            <div className="h-8 w-8 rounded-lg bg-rose-500/10 flex items-center justify-center">
+              <Film className="h-4 w-4 text-rose-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">শুটিং তালিকা</h2>
           </div>
@@ -154,8 +154,8 @@ const MemberDashboard = () => {
         {/* Scripts */}
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <ScrollText className="h-4 w-4 text-primary" />
+            <div className="h-8 w-8 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
+              <ScrollText className="h-4 w-4 text-fuchsia-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">স্ক্রিপ্ট সমূহ</h2>
           </div>
@@ -176,8 +176,8 @@ const MemberDashboard = () => {
         {/* Bonus & Transport */}
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Gift className="h-4 w-4 text-primary" />
+            <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+              <Gift className="h-4 w-4 text-emerald-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">বোনাস ও গাড়ি ভাড়া</h2>
           </div>
@@ -204,8 +204,8 @@ const MemberDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="premium-card rounded-2xl overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <CreditCard className="h-4 w-4 text-primary" />
+              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <CreditCard className="h-4 w-4 text-amber-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">পেমেন্ট হিস্ট্রি</h2>
             </div>
@@ -225,8 +225,8 @@ const MemberDashboard = () => {
 
           <div className="premium-card rounded-2xl overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-primary" />
+              <div className="h-8 w-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-cyan-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">হাজিরা হিস্ট্রি</h2>
             </div>

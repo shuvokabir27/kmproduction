@@ -137,10 +137,10 @@ const AdminDashboard = () => {
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
   const stats = [
-    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, gradient: "from-primary/20 to-primary/5", iconColor: "text-primary", onClick: () => navigate("/admin/members") },
-    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-success/20 to-success/5", iconColor: "text-success", onClick: () => navigate("/admin/shootings") },
-    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-warning/20 to-warning/5", iconColor: "text-warning", onClick: () => navigate("/admin/payments") },
-    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-destructive/20 to-destructive/5", iconColor: "text-destructive", onClick: () => setDueDialogOpen(true) },
+    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, gradient: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400", iconBg: "bg-violet-500/10", onClick: () => navigate("/admin/members") },
+    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: () => navigate("/admin/shootings") },
+    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10", onClick: () => navigate("/admin/payments") },
+    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setDueDialogOpen(true) },
   ];
 
   return (
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">এডমিন ড্যাশবোর্ড</h1>
             <p className="text-muted-foreground text-xs md:text-sm mt-1">সকল কার্যক্রমের সারসংক্ষেপ</p>
           </div>
-          <div className="h-1 w-12 bg-gradient-to-r from-primary to-primary/30 rounded-full mb-1 hidden md:block" />
+          <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-rose-500 rounded-full mb-1 hidden md:block" />
         </motion.div>
 
         {/* Stats Grid */}
@@ -163,13 +163,12 @@ const AdminDashboard = () => {
                 className="premium-card rounded-2xl p-4 md:p-5 cursor-pointer group relative overflow-hidden"
                 onClick={stat.onClick}
               >
-                {/* Subtle gradient bg */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`} />
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-60`} />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-3">
-                    <div className={`h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center`}>
+                    <div className={`h-10 w-10 rounded-xl ${stat.iconBg} flex items-center justify-center`}>
                       <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
                     </div>
                     <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -186,18 +185,18 @@ const AdminDashboard = () => {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 text-xs md:text-sm w-full md:w-auto"
+          className="gap-2 border-cyan-500/20 hover:border-cyan-500/40 hover:bg-cyan-500/5 text-xs md:text-sm w-full md:w-auto"
           onClick={() => setBalanceDialogOpen(true)}
         >
-          <List className="h-4 w-4 text-primary" /> সদস্য ব্যালেন্স তালিকা
+          <List className="h-4 w-4 text-cyan-400" /> সদস্য ব্যালেন্স তালিকা
         </Button>
 
         {/* Recent Payments */}
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/20 flex items-center justify-between">
             <h2 className="font-semibold text-foreground text-sm md:text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <TrendingUp className="h-4 w-4 text-primary" />
+              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-amber-400" />
               </div>
               সাম্প্রতিক পেমেন্ট
             </h2>
