@@ -268,14 +268,18 @@ const AdminAttendance = () => {
                                  onCheckedChange={() => togglePresent(m.id)}
                                />
                              </td>
-                             <td className="p-3">
-                               <Input
-                                 type="number"
-                                 value={attendanceData[m.id]?.rate || "0"}
-                                 onChange={(e) => setRate(m.id, e.target.value)}
-                                 className="w-28 bg-secondary border-border/30 h-8"
-                               />
-                             </td>
+                              <td className="p-3">
+                                {m.salary_type === "monthly" ? (
+                                  <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">মাসিক</span>
+                                ) : (
+                                  <Input
+                                    type="number"
+                                    value={attendanceData[m.id]?.rate || "0"}
+                                    onChange={(e) => setRate(m.id, e.target.value)}
+                                    className="w-28 bg-secondary border-border/30 h-8"
+                                  />
+                                )}
+                              </td>
                            </tr>
                          ))}
                        </tbody>
