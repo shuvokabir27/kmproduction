@@ -98,7 +98,11 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
-        () => {
+        (payload: any) => {
+          // Play sound for incoming messages from others
+          if (payload.new?.sender_id !== user?.id) {
+            playMessageSound();
+          }
           queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
           // Mark as read immediately
           sb.from("conversation_members")
