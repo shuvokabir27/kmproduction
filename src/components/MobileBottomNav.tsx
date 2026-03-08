@@ -26,40 +26,40 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 const adminTabs = [
-  { icon: LayoutDashboard, label: "হোম", path: "/admin" },
-  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance" },
-  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments" },
-  { icon: Film, label: "শুটিং", path: "/admin/shootings" },
-  { icon: MoreHorizontal, label: "আরো", path: "__more__" },
+  { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-violet-400" },
+  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance", color: "text-cyan-400" },
+  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-amber-400" },
+  { icon: Film, label: "শুটিং", path: "/admin/shootings", color: "text-rose-400" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-sky-400" },
 ];
 
 const moreItems = [
-  { icon: null, label: "— টিম ম্যানেজমেন্ট —", path: "__divider__" },
-  { icon: Users, label: "সদস্য", path: "/admin/members" },
-  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts" },
-  { icon: Gift, label: "বোনাস", path: "/admin/bonuses" },
-  { icon: Megaphone, label: "নোটিশ", path: "/admin/notices" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
-  { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__" },
-  { icon: Home, label: "সাইট দেখুন", path: "/" },
-  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services" },
-  { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
-  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos" },
-  { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery" },
-  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings" },
+  { icon: null, label: "— টিম ম্যানেজমেন্ট —", path: "__divider__", color: "" },
+  { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-emerald-400" },
+  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400" },
+  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400" },
+  { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400" },
+  { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__", color: "" },
+  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400" },
+  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services", color: "text-yellow-400" },
+  { icon: Tv, label: "চ্যানেল", path: "/admin/channels", color: "text-lime-400" },
+  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos", color: "text-pink-400" },
+  { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery", color: "text-indigo-400" },
+  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-purple-400" },
 ];
 
 const memberTabs = [
-  { icon: Home, label: "হোম", path: "/" },
-  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
-  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts" },
-  { icon: MoreHorizontal, label: "আরো", path: "__more__" },
+  { icon: Home, label: "হোম", path: "/", color: "text-emerald-400" },
+  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-violet-400" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-fuchsia-400" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400" },
 ];
 
 const memberMoreItems = [
-  { icon: Settings, label: "সেটিংস", path: "/settings" },
-  { icon: LogOut, label: "লগআউট", path: "__logout__" },
+  { icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400" },
+  { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive" },
 ];
 
 export function MobileBottomNav() {
