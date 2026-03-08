@@ -167,8 +167,9 @@ export default function News() {
   }, [newsList, searchParams]);
 
   const getShareUrl = (news: NewsItem) => {
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-    return `https://${projectId}.supabase.co/functions/v1/og-news?id=${news.id}`;
+    // Short ID: remove dashes from UUID for cleaner URL
+    const shortId = news.id.replace(/-/g, "");
+    return `https://kmproduction.lovable.app/news/${shortId}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
