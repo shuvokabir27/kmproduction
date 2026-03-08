@@ -448,6 +448,7 @@ export type Database = {
           bkash_no: string | null
           cover_url: string | null
           created_at: string
+          daily_rate: number | null
           date_of_birth: string | null
           designation: string | null
           designation_en: string | null
@@ -497,6 +498,7 @@ export type Database = {
           bkash_no?: string | null
           cover_url?: string | null
           created_at?: string
+          daily_rate?: number | null
           date_of_birth?: string | null
           designation?: string | null
           designation_en?: string | null
@@ -546,6 +548,7 @@ export type Database = {
           bkash_no?: string | null
           cover_url?: string | null
           created_at?: string
+          daily_rate?: number | null
           date_of_birth?: string | null
           designation?: string | null
           designation_en?: string | null

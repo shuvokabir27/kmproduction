@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN daily_rate numeric DEFAULT 0;
