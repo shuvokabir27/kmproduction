@@ -221,27 +221,29 @@ const Login = () => {
                       </span>
                     ) : "লগইন"}
                   </Button>
-                  <button
-                    type="button"
-                    className="w-full text-center text-xs text-primary hover:underline mt-3"
-                    onClick={async () => {
-                      if (!email) {
-                        toast.error("প্রথমে ইমেইল লিখুন।");
-                        return;
-                      }
-                      try {
-                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                          redirectTo: `${window.location.origin}/reset-password`,
-                        });
-                        if (error) throw error;
-                        toast.success("পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে!");
-                      } catch (err: any) {
-                        toast.error("রিসেট লিংক পাঠানো যায়নি। আবার চেষ্টা করুন।");
-                      }
-                    }}
-                  >
-                    পাসওয়ার্ড ভুলে গেছেন?
-                  </button>
+                  <div className="text-center mt-4 pt-3 border-t border-border/20">
+                    <button
+                      type="button"
+                      className="text-sm text-primary hover:underline font-medium"
+                      onClick={async () => {
+                        if (!email) {
+                          toast.error("প্রথমে ইমেইল লিখুন।");
+                          return;
+                        }
+                        try {
+                          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                            redirectTo: `${window.location.origin}/reset-password`,
+                          });
+                          if (error) throw error;
+                          toast.success("পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে!");
+                        } catch (err: any) {
+                          toast.error("রিসেট লিংক পাঠানো যায়নি। আবার চেষ্টা করুন।");
+                        }
+                      }}
+                    >
+                      পাসওয়ার্ড ভুলে গেছেন?
+                    </button>
+                  </div>
                 </form>
               </TabsContent>
             </Tabs>
