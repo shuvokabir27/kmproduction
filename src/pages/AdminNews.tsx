@@ -159,13 +159,23 @@ export default function AdminNews() {
       const { error } = await supabase.storage.from("news-images").upload(fileName, file);
       if (error) throw error;
       const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
-      const caption = prompt("ছবির ক্যাপশন লিখুন (ঐচ্ছিক):") || "";
-      insertFormat(`\n![${caption}](${data.publicUrl})\n`, "");
+      setInlineImageUrl(data.publicUrl);
+      setInlineCaption("");
+      setInlineSize(60);
+      setInlineImageDialog(true);
     } catch (err: any) {
       toast({ title: "ছবি আপলোড ব্যর্থ", description: err.message, variant: "destructive" });
     }
     setInlineUploading(false);
     if (inlineFileRef.current) inlineFileRef.current.value = "";
+  };
+
+  const confirmInlineImage = () => {
+    if (!inlineImageUrl) return;
+    // Format: ![caption|size](url)
+    insertFormat(`\n![${inlineCaption}|${inlineSize}](${inlineImageUrl})\n`, "");
+    setInlineImageDialog(false);
+    setInlineImageUrl(null);
   };
 
   const resetForm = () => {
