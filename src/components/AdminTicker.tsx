@@ -20,6 +20,7 @@ interface TickerItem {
 export default function AdminTicker() {
   const queryClient = useQueryClient();
   const [newText, setNewText] = useState("");
+  const [localSpeed, setLocalSpeed] = useState<number | null>(null);
 
   const { data: tickerItems, isLoading } = useQuery({
     queryKey: ["admin-ticker-items"],
@@ -121,16 +122,18 @@ export default function AdminTicker() {
 
           <div className="space-y-2">
             <Label className="text-xs text-muted-foreground">
-              স্ক্রল স্পিড: {siteSettings?.ticker_speed || 30}s (কম = দ্রুত)
+              স্ক্রল স্পিড: {localSpeed ?? siteSettings?.ticker_speed ?? 30}s (কম = দ্রুত)
             </Label>
             <Slider
-              value={[siteSettings?.ticker_speed || 30]}
+              value={[localSpeed ?? siteSettings?.ticker_speed ?? 30]}
               min={5}
               max={60}
               step={5}
-              onValueCommit={(val) =>
-                updateSettings.mutate({ ticker_speed: val[0] })
-              }
+              onValueChange={(val) => setLocalSpeed(val[0])}
+              onValueCommit={(val) => {
+                updateSettings.mutate({ ticker_speed: val[0] });
+                setLocalSpeed(null);
+              }}
             />
             <div className="flex justify-between text-[10px] text-muted-foreground">
               <span>দ্রুত (5s)</span>
