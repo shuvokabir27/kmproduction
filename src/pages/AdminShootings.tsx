@@ -40,6 +40,7 @@ const AdminShootings = () => {
   const [shootDate, setShootDate] = useState("");
   const [status, setStatus] = useState("plan");
   const [scriptUrl, setScriptUrl] = useState("");
+  const [selectedScriptId, setSelectedScriptId] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [scriptEditorOpen, setScriptEditorOpen] = useState(false);
   const [scriptEditShooting, setScriptEditShooting] = useState<any>(null);
@@ -64,12 +65,20 @@ const AdminShootings = () => {
       return (data ?? []) as any[];
     },
   });
+
+  const { data: savedScripts } = useQuery({
+    queryKey: ["scripts-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("scripts" as any).select("id, title").order("updated_at", { ascending: false });
+      return (data ?? []) as any[];
+    },
+  });
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
   const resetForm = () => {
     setEditId(null);
-    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
+    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl(""); setSelectedScriptId("");
   };
 
   const openAdd = () => {
@@ -85,6 +94,7 @@ const AdminShootings = () => {
     setShootDate(s.shoot_date || "");
     setStatus(s.status || "plan");
     setScriptUrl((s as any).script_url || "");
+    setSelectedScriptId((s as any).script_id || "");
     setOpen(true);
   };
 
@@ -93,14 +103,16 @@ const AdminShootings = () => {
     setSubmitting(true);
     try {
       if (editId) {
+        const scriptId = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").update({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId
         } as any).eq("id", editId);
         if (error) throw error;
         toast.success("শুটিং আপডেট হয়েছে!");
       } else {
+        const scriptId2 = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").insert({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId2
         } as any);
         if (error) throw error;
         toast.success("শুটিং যোগ হয়েছে!");
@@ -205,7 +217,21 @@ const AdminShootings = () => {
                   <Label className="text-foreground">স্ক্রিপ্ট লিংক (অপশনাল)</Label>
                   <Input value={scriptUrl} onChange={(e) => setScriptUrl(e.target.value)} placeholder="https://drive.google.com/..." className="bg-secondary border-border/50" />
                 </div>
-                <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে শুটিং তৈরির পর টেবিলে "স্ক্রিপ্ট" বাটনে ক্লিক করুন</p>
+                <div>
+                  <Label className="text-foreground">সেভ করা স্ক্রিপ্ট যুক্ত করুন (অপশনাল)</Label>
+                  <Select value={selectedScriptId} onValueChange={setSelectedScriptId}>
+                    <SelectTrigger className="bg-secondary border-border/50">
+                      <SelectValue placeholder="স্ক্রিপ্ট নির্বাচন করুন" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/50">
+                      <SelectItem value="none">কোনো স্ক্রিপ্ট নেই</SelectItem>
+                      {savedScripts?.map((s: any) => (
+                        <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে সাইডবারে "স্ক্রিপ্ট" মেনু থেকে নতুন স্ক্রিপ্ট তৈরি করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সেভ করুন"}
                 </Button>

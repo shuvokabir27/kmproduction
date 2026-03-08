@@ -309,6 +309,30 @@ export type Database = {
         }
         Relationships: []
       }
+      scripts: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       shootings: {
         Row: {
           channel_id: string | null
@@ -318,6 +342,7 @@ export type Database = {
           location: string | null
           name: string
           script_content: string | null
+          script_id: string | null
           script_url: string | null
           shoot_date: string
           status: string | null
@@ -331,6 +356,7 @@ export type Database = {
           location?: string | null
           name: string
           script_content?: string | null
+          script_id?: string | null
           script_url?: string | null
           shoot_date: string
           status?: string | null
@@ -344,6 +370,7 @@ export type Database = {
           location?: string | null
           name?: string
           script_content?: string | null
+          script_id?: string | null
           script_url?: string | null
           shoot_date?: string
           status?: string | null
@@ -355,6 +382,13 @@ export type Database = {
             columns: ["channel_id"]
             isOneToOne: false
             referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shootings_script_id_fkey"
+            columns: ["script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
             referencedColumns: ["id"]
           },
         ]
