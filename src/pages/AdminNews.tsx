@@ -125,6 +125,24 @@ export default function AdminNews() {
     },
   });
 
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const insertFormat = (prefix: string, suffix: string = "") => {
+    const ta = contentRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const selected = content.substring(start, end);
+    const before = content.substring(0, start);
+    const after = content.substring(end);
+    const newText = `${before}${prefix}${selected}${suffix}${after}`;
+    setContent(newText);
+    setTimeout(() => {
+      ta.focus();
+      ta.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
+    }, 0);
+  };
+
   const resetForm = () => {
     setTitle("");
     setContent("");
@@ -138,6 +156,7 @@ export default function AdminNews() {
     setRawImageSrc(null);
     setCrop(undefined);
     setCompletedCrop(undefined);
+    setVideoUrl("");
   };
 
   const openEdit = (news: NewsItem) => {
