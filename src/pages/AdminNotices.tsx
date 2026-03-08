@@ -111,6 +111,15 @@ const AdminNotices = () => {
     else queryClient.invalidateQueries({ queryKey: ["admin-notices"] });
   };
 
+  const toggleActive = async (id: string, current: boolean) => {
+    const { error } = await supabase.from("notices").update({ is_active: !current }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(!current ? "নোটিশ চালু করা হয়েছে" : "নোটিশ বন্ধ করা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-notices"] });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
