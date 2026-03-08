@@ -80,6 +80,7 @@ const PublicHome = () => {
   const navItems = [
     { label: "আমাদের টিম", href: "#team" },
     { label: "জনপ্রিয় কাজ", href: "#popular" },
+    { label: "সেবাসমূহ", href: "/services", isPage: true },
     { label: "চ্যানেল সমূহ", href: "#channels" },
     { label: "ছবি গ্যালারী", href: "#gallery" },
     { label: "যোগাযোগ", href: "#contact" },
