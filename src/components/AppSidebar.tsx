@@ -16,6 +16,7 @@ import {
   Play,
   Phone,
   Image as ImageIcon,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
