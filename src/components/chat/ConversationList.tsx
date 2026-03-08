@@ -135,9 +135,11 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
               <Button size="sm" variant="outline" onClick={onNewPersonal}>
                 <User className="h-3.5 w-3.5 mr-1" /> ব্যক্তিগত
               </Button>
-              <Button size="sm" variant="outline" onClick={onNewGroup}>
-                <Users className="h-3.5 w-3.5 mr-1" /> গ্রুপ
-              </Button>
+              {isAdmin && (
+                <Button size="sm" variant="outline" onClick={onNewGroup}>
+                  <Users className="h-3.5 w-3.5 mr-1" /> গ্রুপ
+                </Button>
+              )}
             </div>
           </div>
         )}
