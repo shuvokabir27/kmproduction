@@ -34,19 +34,19 @@ const adminTabs = [
 ];
 
 const moreItems = [
-  { icon: null, label: "— টিম ম্যানেজমেন্ট —", path: "__divider__", color: "" },
-  { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-emerald-400" },
-  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400" },
-  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400" },
-  { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400" },
-  { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__", color: "" },
-  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400" },
-  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services", color: "text-yellow-400" },
-  { icon: Tv, label: "চ্যানেল", path: "/admin/channels", color: "text-lime-400" },
-  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos", color: "text-pink-400" },
-  { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery", color: "text-indigo-400" },
-  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-purple-400" },
+  { icon: null, label: "— টিম ম্যানেজমেন্ট —", path: "__divider__", color: "", bg: "" },
+  { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
+  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400", bg: "bg-green-500/10" },
+  { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400", bg: "bg-orange-500/10" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/10" },
+  { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__", color: "", bg: "" },
+  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" },
+  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services", color: "text-yellow-400", bg: "bg-yellow-500/10" },
+  { icon: Tv, label: "চ্যানেল", path: "/admin/channels", color: "text-lime-400", bg: "bg-lime-500/10" },
+  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos", color: "text-pink-400", bg: "bg-pink-500/10" },
+  { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery", color: "text-indigo-400", bg: "bg-indigo-500/10" },
+  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-purple-400", bg: "bg-purple-500/10" },
 ];
 
 const memberTabs = [
@@ -58,8 +58,8 @@ const memberTabs = [
 ];
 
 const memberMoreItems = [
-  { icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400" },
-  { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive" },
+  { icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400", bg: "bg-amber-500/10" },
+  { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
 ];
 
 export function MobileBottomNav() {
@@ -155,11 +155,11 @@ export function MobileBottomNav() {
                       style={{ perspective: "600px", transformStyle: "preserve-3d" }}
                     >
                       <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                        isLogout ? "bg-destructive/10" : `${item.color.replace('text-', 'bg-').replace('-400', '-500/10')}`
+                        isLogout ? "bg-destructive/10" : item.bg
                       }`}>
-                        {item.icon && <item.icon className={`h-4.5 w-4.5 ${isLogout ? "text-destructive" : item.color}`} />}
+                        {item.icon && <item.icon className={`h-4.5 w-4.5 ${item.color}`} />}
                       </div>
-                      <span className={`text-sm font-medium ${isLogout ? "text-destructive" : item.color}`}>
+                      <span className={`text-sm font-medium ${item.color}`}>
                         {item.label}
                       </span>
                     </motion.button>
