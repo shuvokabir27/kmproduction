@@ -18,13 +18,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScriptEditor } from "@/components/ScriptEditor";
 
 const statusOptions = [
-  { value: "plan", label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
-  { value: "upcoming", label: "আসন্ন", color: "bg-warning/10 text-warning" },
-  { value: "ongoing", label: "চলছে", color: "bg-primary/10 text-primary" },
-  { value: "completed", label: "শুটিং শেষ", color: "bg-success/10 text-success" },
-  { value: "editing", label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
-  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-success/15 text-success" },
-  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-success/10 text-success" },
+  { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "data-[state=active]:bg-violet-500/20 data-[state=active]:text-violet-300" },
+  { value: "upcoming", label: "আসন্ন", color: "bg-amber-500/15 text-amber-400", tabColor: "data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-300" },
+  { value: "ongoing", label: "চলছে", color: "bg-cyan-500/15 text-cyan-400", tabColor: "data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300" },
+  { value: "completed", label: "শুটিং শেষ", color: "bg-emerald-500/15 text-emerald-400", tabColor: "data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-300" },
+  { value: "editing", label: "এডিটিং চলছে", color: "bg-pink-500/15 text-pink-400", tabColor: "data-[state=active]:bg-pink-500/20 data-[state=active]:text-pink-300" },
+  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-teal-500/15 text-teal-400", tabColor: "data-[state=active]:bg-teal-500/20 data-[state=active]:text-teal-300" },
+  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-green-500/15 text-green-400", tabColor: "data-[state=active]:bg-green-500/20 data-[state=active]:text-green-300" },
 ];
 
 const getStatusInfo = (status: string | null) =>
@@ -316,11 +316,11 @@ const AdminShootings = () => {
 
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="bg-secondary/50 border border-border/20 flex-wrap h-auto gap-0.5 p-0.5 md:p-1 md:gap-1">
-            <TabsTrigger value="all" className="text-xs">সব ({shootings?.length || 0})</TabsTrigger>
+            <TabsTrigger value="all" className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-300">সব ({shootings?.length || 0})</TabsTrigger>
             {statusOptions.map((s) => {
               const count = shootings?.filter((sh) => (sh.status || "upcoming") === s.value).length || 0;
               return (
-                <TabsTrigger key={s.value} value={s.value} className="text-[10px] md:text-xs px-2">
+                <TabsTrigger key={s.value} value={s.value} className={`text-[10px] md:text-xs px-2 ${s.tabColor}`}>
                   {s.label} ({count})
                 </TabsTrigger>
               );
