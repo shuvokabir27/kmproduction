@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Users, Eye, Plus, Edit, Trash2, Camera, Image } from "lucide-react";
+import { Users, Eye, Plus, Edit, Trash2, Camera, Image, ShieldAlert } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
