@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import { useOnlineStatus, isUserOnline, getLastSeenText } from "@/hooks/usePresence";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
   const [groupName, setGroupName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const { data: onlineMap } = useOnlineStatus();
 
   const { data: members } = useQuery({
     queryKey: ["all-profiles-for-chat"],
@@ -151,15 +153,22 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
                 {type === "group" && (
                   <Checkbox checked={selectedUsers.includes(m.user_id)} />
                 )}
-                <Avatar className="h-8 w-8">
-                  {m.photo_url && <AvatarImage src={m.photo_url} />}
-                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                    {m.full_name?.[0]}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-8 w-8">
+                    {m.photo_url && <AvatarImage src={m.photo_url} />}
+                    <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                      {m.full_name?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  {onlineMap && isUserOnline(onlineMap.get(m.user_id)) && (
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+                  )}
+                </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">{m.full_name}</p>
-                  <p className="text-[10px] text-muted-foreground">#{m.member_id}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    #{m.member_id} • {onlineMap && isUserOnline(onlineMap.get(m.user_id)) ? <span className="text-green-500">অনলাইন</span> : getLastSeenText(onlineMap?.get(m.user_id))}
+                  </p>
                 </div>
                 {type === "personal" && selectedUsers.includes(m.user_id) && (
                   <span className="ml-auto text-xs text-primary">নির্বাচিত</span>

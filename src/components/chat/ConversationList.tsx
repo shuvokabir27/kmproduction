@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import { useOnlineStatus, isUserOnline } from "@/hooks/usePresence";
 import { Users, User, MessageCircle, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +20,7 @@ interface ConversationListProps {
 export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGroup }: ConversationListProps) {
   const { user, isAdmin } = useAuth();
   const [search, setSearch] = useState("");
+  const { data: onlineMap } = useOnlineStatus();
 
   const { data: conversations, isLoading } = useQuery({
     queryKey: ["conversations", user?.id],
@@ -48,9 +50,9 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
             .eq("conversation_id", conv.id);
 
           const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
-          const { data: profiles } = await supabase
+          const { data: profiles } = await (supabase as any)
             .from("profiles")
-            .select("full_name, photo_url, user_id")
+            .select("full_name, photo_url, user_id, last_seen_at")
             .in("user_id", memberUserIds);
 
           const { data: lastMsg } = await sb
@@ -80,6 +82,8 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
             ...conv,
             displayName,
             photoUrl,
+            otherUserId: conv.type === "personal" ? otherMembers[0]?.user_id : null,
+            memberUserIds,
             memberCount: memberUserIds.length,
             lastMessage: lastMsg?.[0] || null,
             unreadCount: unreadCount || 0,
@@ -159,6 +163,19 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
                   {conv.type === "group" ? <Users className="h-5 w-5" /> : conv.displayName?.[0] || "?"}
                 </AvatarFallback>
               </Avatar>
+              {conv.type === "personal" && conv.otherUserId && onlineMap && isUserOnline(onlineMap.get(conv.otherUserId)) && (
+                <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-card" />
+              )}
+              {conv.type === "group" && (
+                (() => {
+                  const onlineCount = conv.memberUserIds?.filter((uid: string) => uid !== user?.id && onlineMap && isUserOnline(onlineMap.get(uid))).length || 0;
+                  return onlineCount > 0 ? (
+                    <span className="absolute -bottom-0.5 -right-0.5 h-4 min-w-4 px-0.5 rounded-full bg-green-500 border-2 border-card text-white text-[8px] font-bold flex items-center justify-center">
+                      {onlineCount}
+                    </span>
+                  ) : null;
+                })()
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
