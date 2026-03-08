@@ -16,7 +16,7 @@ const PublicHome = () => {
   const { data: members } = useQuery({
     queryKey: ["public-members"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,short_bio,address,is_active").eq("is_active", true).order("member_id");
+      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,short_bio,address,is_active,is_verified").eq("is_active", true).order("member_id");
       return data ?? [];
     },
   });
@@ -193,7 +193,10 @@ const PublicHome = () => {
                             <span className="text-primary font-bold text-2xl">{member.full_name.charAt(0)}</span>
                           )}
                         </div>
-                        <h3 className="text-sm font-semibold text-foreground truncate">{member.full_name}</h3>
+                        <div className="flex items-center justify-center gap-1">
+                          <h3 className="text-sm font-semibold text-foreground truncate">{member.full_name}</h3>
+                          {(member as any).is_verified && <svg className="h-4 w-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
+                        </div>
                         <p className="text-xs text-muted-foreground truncate mt-1">{member.designation || "সদস্য"}</p>
                       </div>
                     </Card>

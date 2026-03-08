@@ -217,6 +217,13 @@ const AdminMembers = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-members"] });
   };
 
+  const toggleVerified = async (memberId: string, currentStatus: boolean) => {
+    const { error } = await supabase.from("profiles").update({ is_verified: !currentStatus } as any).eq("id", memberId);
+    if (error) { toast.error(error.message); return; }
+    toast.success(!currentStatus ? "ভেরিফাইড করা হয়েছে ✓" : "ভেরিফাইড সরানো হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+  };
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
@@ -341,6 +348,7 @@ const AdminMembers = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                    <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">পদবী</th>
                    <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">বেতন ধরন</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium">ভেরিফাইড</th>
                    <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                   <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                 </tr>
@@ -365,6 +373,12 @@ const AdminMembers = () => {
                       <span className={`text-xs px-2 py-0.5 rounded-full ${(m as any).salary_type === "monthly" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"}`}>
                         {(m as any).salary_type === "monthly" ? `মাসিক ৳${Number((m as any).monthly_salary || 0).toLocaleString("bn-BD")}` : "দৈনিক"}
                       </span>
+                    </td>
+                    <td className="p-3">
+                      <Switch
+                        checked={(m as any).is_verified ?? false}
+                        onCheckedChange={() => toggleVerified(m.id, (m as any).is_verified ?? false)}
+                      />
                     </td>
                     <td className="p-3">
                       <Switch

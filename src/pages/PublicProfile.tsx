@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeUp = (delay = 0) => ({
@@ -17,7 +17,7 @@ const PublicProfile = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active").eq("member_id", Number(memberId)).single();
+      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active,is_verified").eq("member_id", Number(memberId)).single();
       return data;
     },
   });
@@ -124,9 +124,16 @@ const PublicProfile = () => {
 
                 {/* Name & Title */}
                 <div className="pt-2 sm:pt-8">
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-                    {profile.full_name}
-                  </h1>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+                      {profile.full_name}
+                    </h1>
+                    {p.is_verified && (
+                      <span title="ভেরিফাইড সদস্য" className="shrink-0">
+                        <BadgeCheck className="h-6 w-6 text-blue-500 drop-shadow-[0_0_6px_rgba(59,130,246,0.5)]" />
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                     <p className="text-primary font-medium text-sm tracking-wide uppercase">

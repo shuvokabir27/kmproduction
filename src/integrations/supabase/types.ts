@@ -192,6 +192,7 @@ export type Database = {
           full_name: string
           id: string
           is_active: boolean | null
+          is_verified: boolean | null
           joining_date: string | null
           member_id: number
           monthly_salary: number | null
@@ -223,6 +224,7 @@ export type Database = {
           full_name: string
           id?: string
           is_active?: boolean | null
+          is_verified?: boolean | null
           joining_date?: string | null
           member_id?: number
           monthly_salary?: number | null
@@ -254,6 +256,7 @@ export type Database = {
           full_name?: string
           id?: string
           is_active?: boolean | null
+          is_verified?: boolean | null
           joining_date?: string | null
           member_id?: number
           monthly_salary?: number | null
