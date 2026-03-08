@@ -62,7 +62,9 @@ const AdminDashboard = () => {
       const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount");
       const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
-      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits - totalPaid };
+      const { data: profiles } = await (supabase as any).from("profiles").select("previous_balance");
+      const totalPreviousBalance = profiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
+      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalPreviousBalance - totalPaid };
     },
   });
 
