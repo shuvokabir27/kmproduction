@@ -16,6 +16,7 @@ import {
   Megaphone,
   Settings,
   Gift,
+  MessageCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
