@@ -143,7 +143,7 @@ const AdminNotices = () => {
           {notices?.map((notice: any) => (
             <motion.div key={notice.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
               <Card
-                className={`p-4 bg-card border-border/50 cursor-pointer hover:border-primary/30 transition-colors ${notice.is_pinned ? "border-l-4 border-l-primary" : ""} ${!notice.is_active ? "opacity-50" : ""}`}
+                className={`p-4 bg-card cursor-pointer hover:border-violet-500/30 transition-all ${notice.is_pinned ? "border-l-4 border-l-amber-400 border-amber-500/30" : "border-border/50"} ${!notice.is_active ? "opacity-50" : ""}`}
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start justify-between gap-3">
