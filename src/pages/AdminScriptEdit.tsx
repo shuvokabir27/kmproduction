@@ -261,43 +261,66 @@ const AdminScriptEdit = () => {
                 <button onClick={() => toggleCollapse(seq.id)} className="text-muted-foreground hover:text-foreground">
                   {seq.collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
-                <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50" />
-                <Input
-                  value={seq.title}
-                  onChange={(e) => updateSeqTitle(seq.id, e.target.value)}
-                  className="h-7 text-sm font-semibold bg-transparent border-none shadow-none focus-visible:ring-0 p-0 text-foreground"
-                />
-                <span className="text-[10px] text-muted-foreground shrink-0">#{index + 1}</span>
-                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeSequence(seq.id)}>
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                {isEditMode ? (
+                  <>
+                    <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50" />
+                    <Input
+                      value={seq.title}
+                      onChange={(e) => updateSeqTitle(seq.id, e.target.value)}
+                      className="h-7 text-sm font-semibold bg-transparent border-none shadow-none focus-visible:ring-0 p-0 text-foreground"
+                    />
+                  </>
+                ) : (
+                  <span className="text-sm font-semibold text-foreground">{seq.title}</span>
+                )}
+                <span className="text-[10px] text-muted-foreground shrink-0 ml-auto">#{index + 1}</span>
+                {isEditMode && (
+                  <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeSequence(seq.id)}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                )}
               </div>
 
               {/* Sequence Content */}
               {!seq.collapsed && (
-                <div
-                  ref={(el) => { editorRefs.current[seq.id] = el; }}
-                  contentEditable
-                  className="min-h-[150px] p-4 text-foreground focus:outline-none focus:bg-secondary/10 prose prose-invert max-w-none text-sm
-                    [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-2 [&_h1]:text-foreground
-                    [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2 [&_h2]:text-foreground
-                    [&_p]:mb-2 [&_p]:leading-relaxed
-                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-2
-                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-2
-                    [&_li]:mb-1"
-                  dangerouslySetInnerHTML={{ __html: seq.content || '<p>এখানে লিখুন...</p>' }}
-                  suppressContentEditableWarning
-                  onFocus={() => setActiveSeqId(seq.id)}
-                />
+                isEditMode ? (
+                  <div
+                    ref={(el) => { editorRefs.current[seq.id] = el; }}
+                    contentEditable
+                    className="min-h-[150px] p-4 text-foreground focus:outline-none focus:bg-secondary/10 prose prose-invert max-w-none text-sm
+                      [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-2 [&_h1]:text-foreground
+                      [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2 [&_h2]:text-foreground
+                      [&_p]:mb-2 [&_p]:leading-relaxed
+                      [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-2
+                      [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-2
+                      [&_li]:mb-1"
+                    dangerouslySetInnerHTML={{ __html: seq.content || '<p>এখানে লিখুন...</p>' }}
+                    suppressContentEditableWarning
+                    onFocus={() => setActiveSeqId(seq.id)}
+                  />
+                ) : (
+                  <div
+                    className="p-4 text-foreground prose prose-invert max-w-none text-sm
+                      [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-2 [&_h1]:text-foreground
+                      [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2 [&_h2]:text-foreground
+                      [&_p]:mb-2 [&_p]:leading-relaxed
+                      [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-2
+                      [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-2
+                      [&_li]:mb-1"
+                    dangerouslySetInnerHTML={{ __html: seq.content || '<p class="text-muted-foreground">খালি</p>' }}
+                  />
+                )
               )}
             </Card>
           ))}
         </div>
 
-        {/* Add Sequence Button */}
-        <Button variant="outline" className="w-full gap-2 border-dashed border-border/50 text-muted-foreground hover:text-foreground" onClick={addSequence}>
-          <Plus className="h-4 w-4" /> নতুন সিকুয়েন্স যোগ করুন
-        </Button>
+        {/* Add Sequence Button - only in edit mode */}
+        {isEditMode && (
+          <Button variant="outline" className="w-full gap-2 border-dashed border-border/50 text-muted-foreground hover:text-foreground" onClick={addSequence}>
+            <Plus className="h-4 w-4" /> নতুন সিকুয়েন্স যোগ করুন
+          </Button>
+        )}
       </div>
     </AppLayout>
   );
