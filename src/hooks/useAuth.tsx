@@ -30,39 +30,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+    let isMounted = true;
 
-        if (session?.user) {
-          // Fetch profile
-          const { data: profileData } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("user_id", session.user.id)
-            .single();
-          setProfile(profileData);
+    const hydrateAuth = async (session: Session | null) => {
+      if (!isMounted) return;
 
-          // Check admin role
-          const { data: roleData } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id);
-          setIsAdmin(roleData?.some((r) => r.role === "admin") ?? false);
-        } else {
-          setProfile(null);
-          setIsAdmin(false);
-        }
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (!session?.user) {
+        setProfile(null);
+        setIsAdmin(false);
         setLoading(false);
+        return;
       }
-    );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) setLoading(false);
+      const [profileRes, roleRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .maybeSingle(),
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id),
+      ]);
+
+      if (!isMounted) return;
+
+      setProfile(profileRes.data ?? null);
+      setIsAdmin(roleRes.data?.some((r) => r.role === "admin") ?? false);
+      setLoading(false);
+    };
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      void hydrateAuth(session);
     });
 
-    return () => subscription.unsubscribe();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      void hydrateAuth(session);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
