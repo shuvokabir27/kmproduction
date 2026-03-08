@@ -266,6 +266,9 @@ const MemberDashboard = () => {
   return (
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-8">
+        {/* Notice Board - Prominent at top */}
+        <NoticeBoard />
+
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
