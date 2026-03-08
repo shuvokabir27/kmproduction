@@ -40,7 +40,8 @@ export default function AllNotifications() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [expandedId, setExpandedId] = useState<string | null>(searchParams.get("open"));
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [clearing, setClearing] = useState(false);
 
