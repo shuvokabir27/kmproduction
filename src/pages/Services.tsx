@@ -204,17 +204,25 @@ const Services = () => {
             </motion.div>
 
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center"
               variants={container}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}
             >
-              {others.map((service: any) => {
+              {others.map((service: any, index: number) => {
                 const IconComp = iconMap[service.icon] || Camera;
                 const features = (service.features as string[]) || [];
+                const totalOthers = others.length;
+                const remainder = totalOthers % 3;
+                const isLastRow = index >= totalOthers - remainder;
+                const shouldCenter = remainder === 1 && isLastRow;
                 return (
-                  <motion.div key={service.id} variants={item}>
+                  <motion.div
+                    key={service.id}
+                    variants={item}
+                    className={`w-full ${shouldCenter ? "sm:col-span-2 lg:col-span-1 lg:col-start-2" : ""}`}
+                  >
                     <div className="premium-card rounded-2xl p-6 h-full flex flex-col">
                       <div className="flex items-start gap-4 mb-4">
                         <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
