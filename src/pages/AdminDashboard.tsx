@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { st
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const { user, isAdmin, loading } = useAuth();
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
   const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
@@ -114,10 +115,10 @@ const AdminDashboard = () => {
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
   const stats = [
-    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, color: "text-primary", bgColor: "bg-primary/10" },
-    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, color: "text-success", bgColor: "bg-success/10" },
-    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, color: "text-warning", bgColor: "bg-warning/10" },
-    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, color: "text-destructive", bgColor: "bg-destructive/10", clickable: true },
+    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, color: "text-primary", bgColor: "bg-primary/10", onClick: () => navigate("/admin/members") },
+    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, color: "text-success", bgColor: "bg-success/10", onClick: () => navigate("/admin/shootings") },
+    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, color: "text-warning", bgColor: "bg-warning/10", onClick: () => navigate("/admin/payments") },
+    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, color: "text-destructive", bgColor: "bg-destructive/10", onClick: () => setDueDialogOpen(true) },
   ];
 
   return (
@@ -134,11 +135,8 @@ const AdminDashboard = () => {
           {stats.map((stat) => (
             <motion.div key={stat.label} variants={item}>
               <Card
-                className={cn(
-                  "p-3 md:p-5 bg-card border-border/30 transition-all active:scale-[0.98]",
-                  stat.clickable && "cursor-pointer hover:border-primary/30"
-                )}
-                onClick={stat.clickable ? () => setDueDialogOpen(true) : undefined}
+                className="p-3 md:p-5 bg-card border-border/30 transition-all active:scale-[0.98] cursor-pointer hover:border-primary/30"
+                onClick={stat.onClick}
               >
                 <div className="flex items-start gap-2.5">
                   <div className={`h-9 w-9 md:h-10 md:w-10 rounded-xl ${stat.bgColor} flex items-center justify-center shrink-0`}>
