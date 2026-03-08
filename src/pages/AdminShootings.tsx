@@ -42,16 +42,27 @@ const AdminShootings = () => {
   const [submitting, setSubmitting] = useState(false);
   const [scriptEditorOpen, setScriptEditorOpen] = useState(false);
   const [scriptEditShooting, setScriptEditShooting] = useState<any>(null);
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [publishShootingId, setPublishShootingId] = useState<string>("");
+  const [publishChannelId, setPublishChannelId] = useState<string>("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*").order("shoot_date", { ascending: false });
-      return data ?? [];
+      const { data } = await supabase.from("shootings").select("*, channels(name, platform)" as any).order("shoot_date", { ascending: false });
+      return (data ?? []) as any[];
     },
   });
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
+
+  const { data: channels } = useQuery({
+    queryKey: ["channels-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("channels" as any).select("*").order("name");
+      return (data ?? []) as any[];
+    },
+  });
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
@@ -104,10 +115,27 @@ const AdminShootings = () => {
   };
 
   const changeStatus = async (shootingId: string, newStatus: string) => {
+    if (newStatus === "published") {
+      setPublishShootingId(shootingId);
+      setPublishChannelId("");
+      setPublishDialogOpen(true);
+      return;
+    }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
     if (error) { toast.error(error.message); return; }
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
+  const confirmPublish = async () => {
+    if (!publishChannelId) { toast.error("চ্যানেল নির্বাচন করুন"); return; }
+    const { error } = await supabase.from("shootings").update({
+      status: "published", channel_id: publishChannelId
+    } as any).eq("id", publishShootingId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("পাবলিশ হয়েছে!");
+    setPublishDialogOpen(false);
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
@@ -207,6 +235,9 @@ const AdminShootings = () => {
                       <td className="p-3">
                         <p className="text-foreground font-medium">{s.name}</p>
                         {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
+                        {s.channels && (
+                          <p className="text-xs text-primary mt-0.5">📺 {(s as any).channels.name}</p>
+                        )}
                       </td>
                       <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
                       <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
@@ -263,6 +294,35 @@ const AdminShootings = () => {
           onSave={saveScript}
         />
       )}
+
+      <Dialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">পাবলিশ — চ্যানেল নির্বাচন</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-foreground mb-1 block">চ্যানেল নির্বাচন করুন *</Label>
+              <Select value={publishChannelId} onValueChange={setPublishChannelId}>
+                <SelectTrigger className="bg-secondary border-border/50">
+                  <SelectValue placeholder="চ্যানেল নির্বাচন করুন" />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border/50">
+                  {channels?.map((c: any) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name} ({c.platform})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {channels?.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">কোনো চ্যানেল নেই। আগে চ্যানেল যোগ করুন।</p>
+              )}
+            </div>
+            <Button onClick={confirmPublish} className="w-full" disabled={!publishChannelId}>
+              পাবলিশ করুন
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };

@@ -65,6 +65,30 @@ export type Database = {
           },
         ]
       }
+      channels: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          platform: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          platform?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          platform?: string | null
+          url?: string | null
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -180,6 +204,7 @@ export type Database = {
       }
       shootings: {
         Row: {
+          channel_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -192,6 +217,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          channel_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -204,6 +230,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          channel_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -215,7 +242,15 @@ export type Database = {
           status?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shootings_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
