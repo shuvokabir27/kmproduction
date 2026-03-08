@@ -195,6 +195,7 @@ const AdminShootings = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
+                  <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -238,6 +239,11 @@ const AdminShootings = () => {
                             ))}
                           </SelectContent>
                         </Select>
+                      </td>
+                      <td className="p-3 text-right">
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
                       </td>
                     </tr>
                   );
