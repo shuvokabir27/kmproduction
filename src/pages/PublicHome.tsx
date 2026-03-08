@@ -14,6 +14,8 @@ const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transiti
 
 const PublicHome = () => {
   const { user, isAdmin } = useAuth();
+  const { lang, t } = useLanguage();
+  const L = labels[lang];
 
   const { data: members } = useQuery({
     queryKey: ["public-members"],
