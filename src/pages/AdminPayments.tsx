@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import PaymentReceipt from "@/components/PaymentReceipt";
 
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -25,6 +26,7 @@ const AdminPayments = () => {
   const [transactionId, setTransactionId] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
 
   const { data: members } = useQuery({
     queryKey: ["admin-members-pay"],
