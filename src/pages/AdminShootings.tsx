@@ -403,7 +403,7 @@ const AdminShootings = () => {
                       </thead>
                       <tbody className="divide-y divide-border/20">
                         {filtered?.length === 0 && (
-                          <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">কোনো শুটিং নেই</td></tr>
+                          <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">কোনো শুটিং নেই</td></tr>
                         )}
                         {filtered?.map((s) => {
                           const info = getStatusInfo(s.status);
