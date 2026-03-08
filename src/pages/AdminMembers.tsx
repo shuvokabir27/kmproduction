@@ -339,15 +339,53 @@ const AdminMembers = () => {
           </Dialog>
         </div>
 
-        <Card className="bg-card border-border/50 overflow-hidden">
+        {/* Mobile card list */}
+        <div className="md:hidden space-y-2">
+          {members?.map((m) => (
+            <Card key={m.id} className="bg-card border-border/30 p-3 active:scale-[0.99] transition-transform">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0 overflow-hidden">
+                  {m.photo_url ? (
+                    <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-primary text-sm font-semibold">{m.full_name.charAt(0)}</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-semibold text-foreground truncate">{m.full_name}</p>
+                    {(m as any).is_verified && <span className="text-blue-500 text-xs">✓</span>}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{m.designation || "সদস্য"} · ID: {m.member_id}</p>
+                </div>
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
+                    <Edit className="h-3.5 w-3.5 text-muted-foreground" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
+                    <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
+                  </Button>
+                  <Link to={`/member/${m.member_id}`}>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/30">
                   <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">পদবী</th>
-                   <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">বেতন ধরন</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium">পদবী</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium">বেতন ধরন</th>
                    <th className="text-left p-3 text-muted-foreground font-medium">ভেরিফাইড</th>
                    <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                   <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
@@ -359,8 +397,8 @@ const AdminMembers = () => {
                     <td className="p-3 text-foreground font-mono text-xs">{m.member_id}</td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center">
-                          <span className="text-primary text-xs font-medium">{m.full_name.charAt(0)}</span>
+                        <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center overflow-hidden">
+                          {m.photo_url ? <img src={m.photo_url} alt="" className="h-full w-full object-cover" /> : <span className="text-primary text-xs font-medium">{m.full_name.charAt(0)}</span>}
                         </div>
                         <div>
                           <span className="text-foreground">{m.full_name}</span>
@@ -368,37 +406,23 @@ const AdminMembers = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="p-3 text-muted-foreground hidden sm:table-cell">{m.designation || "—"}</td>
-                    <td className="p-3 text-muted-foreground hidden md:table-cell">
+                    <td className="p-3 text-muted-foreground">{m.designation || "—"}</td>
+                    <td className="p-3 text-muted-foreground">
                       <span className={`text-xs px-2 py-0.5 rounded-full ${(m as any).salary_type === "monthly" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"}`}>
                         {(m as any).salary_type === "monthly" ? `মাসিক ৳${Number((m as any).monthly_salary || 0).toLocaleString("bn-BD")}` : "দৈনিক"}
                       </span>
                     </td>
                     <td className="p-3">
-                      <Switch
-                        checked={(m as any).is_verified ?? false}
-                        onCheckedChange={() => toggleVerified(m.id, (m as any).is_verified ?? false)}
-                      />
+                      <Switch checked={(m as any).is_verified ?? false} onCheckedChange={() => toggleVerified(m.id, (m as any).is_verified ?? false)} />
                     </td>
                     <td className="p-3">
-                      <Switch
-                        checked={m.is_active ?? true}
-                        onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)}
-                      />
+                      <Switch checked={m.is_active ?? true} onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)} />
                     </td>
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
-                          <KeyRound className="h-4 w-4" />
-                        </Button>
-                        <Link to={`/member/${m.member_id}`}>
-                          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </Link>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}><Edit className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}><KeyRound className="h-4 w-4" /></Button>
+                        <Link to={`/member/${m.member_id}`}><Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary"><Eye className="h-4 w-4" /></Button></Link>
                       </div>
                     </td>
                   </tr>
