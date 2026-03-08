@@ -341,10 +341,10 @@ const Services = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-2">
-            <AlertDialogCancel className="w-full sm:w-auto">বাতিল</AlertDialogCancel>
+            <AlertDialogCancel className="w-full sm:w-auto">{t("বাতিল", "Cancel")}</AlertDialogCancel>
             <AlertDialogAction asChild className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
               <a href={bookingService?.waUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
-                <MessageCircle className="h-4 w-4" /> WhatsApp এ মেসেজ করুন
+                <MessageCircle className="h-4 w-4" /> {t("WhatsApp এ মেসেজ করুন", "Message on WhatsApp")}
               </a>
             </AlertDialogAction>
           </AlertDialogFooter>
