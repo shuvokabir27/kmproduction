@@ -245,7 +245,7 @@ const AdminAttendance = () => {
                            <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
                            <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                            <th className="text-center p-3 text-muted-foreground font-medium">উপস্থিত</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">দৈনিক রেট (৳)</th>
+                           <th className="text-left p-3 text-muted-foreground font-medium">রেট</th>
                          </tr>
                        </thead>
                        <tbody className="divide-y divide-border/20">
