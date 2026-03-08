@@ -148,6 +148,40 @@ export default function News() {
     },
   });
 
+  const { data: tickerItems } = useQuery({
+    queryKey: ["public-ticker"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_ticker")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as { id: string; text: string }[];
+    },
+  });
+
+  const { data: tickerSettings } = useQuery({
+    queryKey: ["ticker-settings-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("ticker_speed, ticker_enabled")
+        .limit(1)
+        .single();
+      if (error) return { ticker_speed: 30, ticker_enabled: true };
+      return data;
+    },
+  });
+
+  const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
+  const tickerSpeed = tickerSettings?.ticker_speed || 30;
+
+  // Use custom ticker items if available, otherwise use news titles
+  const tickerTexts = tickerItems && tickerItems.length > 0
+    ? tickerItems.map((t) => ({ id: t.id, text: t.text, newsItem: null as NewsItem | null }))
+    : (newsList || []).map((n) => ({ id: n.id, text: n.title, newsItem: n }));
+
   const filtered = activeCategory === "all"
     ? newsList
     : newsList?.filter((n) => n.category === activeCategory);
