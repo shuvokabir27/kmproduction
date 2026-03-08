@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle } from "lucide-react";
 
 const Login = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -18,6 +19,7 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [memberPassword, setMemberPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   if (loading) {
     return (
@@ -29,15 +31,29 @@ const Login = () => {
 
   if (user) return <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />;
 
+  const getErrorMessage = (err: any): string => {
+    const msg = err?.message?.toLowerCase() || "";
+    if (msg.includes("invalid login") || msg.includes("invalid credentials") || msg.includes("wrong password"))
+      return "ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে। আবার চেষ্টা করুন।";
+    if (msg.includes("email not confirmed"))
+      return "আপনার ইমেইল ভেরিফাই করা হয়নি।";
+    if (msg.includes("user not found") || msg.includes("no user"))
+      return "এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি।";
+    if (msg.includes("rate limit") || msg.includes("too many"))
+      return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
+    return err?.message || "লগইন করা যায়নি। আবার চেষ্টা করুন।";
+  };
+
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setErrorMsg("");
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("সফলভাবে লগইন হয়েছে!");
     } catch (err: any) {
-      toast.error(err.message);
+      setErrorMsg(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -46,6 +62,7 @@ const Login = () => {
   const handleMemberLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setErrorMsg("");
     try {
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/member-login`, {
         method: "POST",
@@ -58,7 +75,7 @@ const Login = () => {
       if (error) throw error;
       toast.success("সফলভাবে লগইন হয়েছে!");
     } catch (err: any) {
-      toast.error(err.message);
+      setErrorMsg(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -94,7 +111,7 @@ const Login = () => {
 
           {/* Login Card */}
           <Card className="p-5 bg-card border-border/30 shadow-xl shadow-primary/5">
-            <Tabs defaultValue="member" className="w-full">
+            <Tabs defaultValue="member" className="w-full" onValueChange={() => setErrorMsg("")}>
               <TabsList className="w-full bg-secondary/50 border border-border/20 mb-5 h-10">
                 <TabsTrigger value="member" className="flex-1 text-xs font-medium">সদস্য</TabsTrigger>
                 <TabsTrigger value="admin" className="flex-1 text-xs font-medium">এডমিন</TabsTrigger>
@@ -127,6 +144,19 @@ const Login = () => {
                       className="bg-secondary border-border/30 h-11 text-base"
                     />
                   </div>
+                  <AnimatePresence>
+                    {errorMsg && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
+                      >
+                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
                     {submitting ? (
                       <span className="flex items-center gap-2">
@@ -165,6 +195,19 @@ const Login = () => {
                       className="bg-secondary border-border/30 h-11 text-base"
                     />
                   </div>
+                  <AnimatePresence>
+                    {errorMsg && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
+                      >
+                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
                     {submitting ? (
                       <span className="flex items-center gap-2">
