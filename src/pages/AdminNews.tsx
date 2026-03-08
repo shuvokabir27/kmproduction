@@ -670,7 +670,7 @@ export default function AdminNews() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <ImageIcon className="h-5 w-5 text-primary" /> ছবি সাইজ ও ক্যাপশন
+                <ImageIcon className="h-5 w-5 text-primary" /> {editingInlineImage ? "ছবি এডিট করুন" : "ছবি সাইজ ও ক্যাপশন"}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-2">
