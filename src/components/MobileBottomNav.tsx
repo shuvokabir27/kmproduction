@@ -17,15 +17,15 @@ import { useState } from "react";
 
 const adminTabs = [
   { icon: LayoutDashboard, label: "হোম", path: "/admin" },
-  { icon: Film, label: "শুটিং", path: "/admin/shootings" },
-  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts" },
+  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance" },
   { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments" },
+  { icon: Film, label: "শুটিং", path: "/admin/shootings" },
   { icon: MoreHorizontal, label: "আরো", path: "__more__" },
 ];
 
 const moreItems = [
   { icon: Users, label: "সদস্য", path: "/admin/members" },
-  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance" },
+  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts" },
   { icon: Tv, label: "চ্যানেল", path: "/admin/channels" },
   { icon: Home, label: "পাবলিক সাইট", path: "/" },
 ];
