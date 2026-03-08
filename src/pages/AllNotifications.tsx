@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, Film, CreditCard, Calendar, ScrollText, Megaphone, CheckCheck, ArrowLeft, ExternalLink } from "lucide-react";
+import { Bell, Film, CreditCard, Calendar, ScrollText, Megaphone, CheckCheck, ArrowLeft, ExternalLink, Trash2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,8 @@ import { format, formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { AppLayout } from "@/components/AppLayout";
 import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const typeIcons: Record<string, typeof Film> = {
   shooting: Film,
@@ -39,6 +41,8 @@ export default function AllNotifications() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [clearing, setClearing] = useState(false);
 
   const { data: notifications } = useQuery({
     queryKey: ["all-notifications", user?.id],
@@ -59,17 +63,43 @@ export default function AllNotifications() {
 
   const unreadCount = notifications?.filter((n: any) => !n.is_read).length || 0;
 
-  const markAsRead = async (id: string) => {
-    await supabase.from("notifications").update({ is_read: true } as any).eq("id", id);
+  const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["all-notifications", user?.id] });
     queryClient.invalidateQueries({ queryKey: ["notifications", user?.id] });
+  };
+
+  const markAsRead = async (id: string) => {
+    await supabase.from("notifications").update({ is_read: true } as any).eq("id", id);
+    invalidate();
   };
 
   const markAllRead = async () => {
     if (!user) return;
     await supabase.from("notifications").update({ is_read: true } as any).eq("user_id", user.id).eq("is_read", false);
-    queryClient.invalidateQueries({ queryKey: ["all-notifications", user?.id] });
-    queryClient.invalidateQueries({ queryKey: ["notifications", user?.id] });
+    invalidate();
+  };
+
+  const deleteOne = async (id: string) => {
+    await supabase.from("notifications").delete().eq("id", id);
+    if (expandedId === id) setExpandedId(null);
+    invalidate();
+    toast.success("নটিফিকেশন মুছে ফেলা হয়েছে");
+  };
+
+  const clearAll = async () => {
+    if (!user) return;
+    setClearing(true);
+    try {
+      await supabase.from("notifications").delete().eq("user_id", user.id);
+      invalidate();
+      toast.success("সকল নটিফিকেশন মুছে ফেলা হয়েছে");
+      setClearDialogOpen(false);
+      setExpandedId(null);
+    } catch {
+      toast.error("কিছু ভুল হয়েছে");
+    } finally {
+      setClearing(false);
+    }
   };
 
   const handleClick = (n: any) => {
@@ -87,11 +117,18 @@ export default function AllNotifications() {
             </Button>
             <h1 className="text-lg font-semibold text-foreground">সকল নটিফিকেশন</h1>
           </div>
-          {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs gap-1">
-              <CheckCheck className="h-3.5 w-3.5" /> সব পড়া হয়েছে
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs gap-1">
+                <CheckCheck className="h-3.5 w-3.5" /> পড়া হয়েছে
+              </Button>
+            )}
+            {notifications && notifications.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={() => setClearDialogOpen(true)} className="text-xs gap-1 text-destructive hover:text-destructive">
+                <Trash2 className="h-3.5 w-3.5" /> সব মুছুন
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="bg-card border border-border/30 rounded-xl overflow-hidden divide-y divide-border/10">
@@ -154,16 +191,26 @@ export default function AllNotifications() {
                           </span>
                           <span>{format(new Date(n.created_at), "dd MMM yyyy, hh:mm a", { locale: bn })}</span>
                         </div>
-                        {n.link && (
+                        <div className="flex items-center gap-2 mt-1">
+                          {n.link && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs h-7 gap-1"
+                              onClick={(e) => { e.stopPropagation(); navigate(n.link); }}
+                            >
+                              <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
+                            </Button>
+                          )}
                           <Button
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
-                            className="text-xs h-7 gap-1 mt-1"
-                            onClick={(e) => { e.stopPropagation(); navigate(n.link); }}
+                            className="text-xs h-7 gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={(e) => { e.stopPropagation(); deleteOne(n.id); }}
                           >
-                            <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
+                            <Trash2 className="h-3 w-3" /> মুছুন
                           </Button>
-                        )}
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -173,6 +220,40 @@ export default function AllNotifications() {
           })}
         </div>
       </div>
+
+      {/* Clear All Confirmation Dialog */}
+      <Dialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" /> সতর্কতা
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground pt-2">
+              আপনি কি সকল নটিফিকেশন মুছে ফেলতে চান?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-lg bg-destructive/5 border border-destructive/20 p-3 mt-1">
+            <p className="text-xs text-destructive font-medium flex items-center gap-1.5">
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              একবার মুছে ফেললে নটিফিকেশনগুলো আর ফিরে পাওয়া যাবে না।
+            </p>
+          </div>
+          <div className="flex items-center gap-2 mt-3">
+            <Button variant="outline" className="flex-1" onClick={() => setClearDialogOpen(false)}>
+              বাতিল
+            </Button>
+            <Button
+              variant="destructive"
+              className="flex-1 gap-1.5"
+              onClick={clearAll}
+              disabled={clearing}
+            >
+              <Trash2 className="h-4 w-4" />
+              {clearing ? "মুছছে..." : "হ্যাঁ, সব মুছুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 }
