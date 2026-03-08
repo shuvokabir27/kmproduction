@@ -2,7 +2,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake } from "lucide-react";
+import { differenceInYears } from "date-fns";
 import { motion } from "framer-motion";
 
 const fadeUp = (delay = 0) => ({
@@ -17,7 +18,7 @@ const PublicProfile = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active,is_verified").eq("member_id", Number(memberId)).single();
+      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active,is_verified,date_of_birth").eq("member_id", Number(memberId)).single();
       return data;
     },
   });
@@ -62,7 +63,10 @@ const PublicProfile = () => {
     { label: "পছন্দের খাবার", value: p.favorite_food, icon: "🍕" },
   ].filter(f => f.value);
 
+  const age = p.date_of_birth ? differenceInYears(new Date(), new Date(p.date_of_birth)) : null;
+
   const infoItems = [
+    p.date_of_birth && { icon: Cake, text: `বয়স: ${age} বছর` },
     p.address && { icon: MapPin, text: p.address },
     profile.designation && { icon: Briefcase, text: profile.designation },
     p.education && { icon: GraduationCap, text: p.education },

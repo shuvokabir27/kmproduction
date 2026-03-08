@@ -44,7 +44,7 @@ const MemberDashboard = () => {
   const [extraFields, setExtraFields] = useState({
     address: "", education: "", achievements: "", short_bio: "",
     favorite_actor: "", favorite_actress: "", favorite_color: "",
-    favorite_dress: "", favorite_food: "",
+    favorite_dress: "", favorite_food: "", date_of_birth: "",
   });
 
   // Favorite works
@@ -99,6 +99,7 @@ const MemberDashboard = () => {
         favorite_color: (profile as any).favorite_color || "",
         favorite_dress: (profile as any).favorite_dress || "",
         favorite_food: (profile as any).favorite_food || "",
+        date_of_birth: (profile as any).date_of_birth || "",
       });
     }
   }, [profile]);
@@ -153,6 +154,7 @@ const MemberDashboard = () => {
         favorite_color: extraFields.favorite_color || null,
         favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null,
+        date_of_birth: extraFields.date_of_birth || null,
       };
 
       if (photoFile) {
@@ -364,6 +366,10 @@ const MemberDashboard = () => {
             <div>
               <Label className="text-foreground text-xs">শিক্ষাগত যোগ্যতা</Label>
               <Input value={extraFields.education} onChange={e => setExtra("education", e.target.value)} className="bg-secondary border-border/50" placeholder="যেমন: বি.এ (অনার্স)" />
+            </div>
+            <div>
+              <Label className="text-foreground text-xs">জন্ম তারিখ</Label>
+              <Input type="date" value={extraFields.date_of_birth} onChange={e => setExtra("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
             </div>
             <div>
               <Label className="text-foreground text-xs">অর্জন</Label>
