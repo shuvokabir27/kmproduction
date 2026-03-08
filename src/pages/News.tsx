@@ -154,6 +154,18 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
+  // Auto-open news from shared link query param
+  useEffect(() => {
+    const newsId = searchParams.get("id");
+    if (newsId && newsList) {
+      const found = newsList.find((n) => n.id === newsId);
+      if (found) {
+        setSelectedNews(found);
+        setSearchParams({}, { replace: true });
+      }
+    }
+  }, [newsList, searchParams]);
+
   const getShareUrl = (news: NewsItem) => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     return `${supabaseUrl}/functions/v1/og-news?id=${news.id}`;
