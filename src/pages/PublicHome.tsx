@@ -163,7 +163,7 @@ const PublicHome = () => {
                 {navItems.map((nav) => (
                   <button
                     key={nav.href}
-                    onClick={() => scrollToSection(nav.href)}
+                    onClick={() => handleNavClick(nav)}
                     className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all"
                   >
                     {nav.label}
