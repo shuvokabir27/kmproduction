@@ -167,6 +167,9 @@ const Login = () => {
                       </span>
                     ) : "লগইন"}
                   </Button>
+                  <p className="text-center text-xs text-muted-foreground mt-3">
+                    পাসওয়ার্ড ভুলে গেছেন? <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
+                  </p>
                 </form>
               </TabsContent>
 
@@ -218,6 +221,27 @@ const Login = () => {
                       </span>
                     ) : "লগইন"}
                   </Button>
+                  <button
+                    type="button"
+                    className="w-full text-center text-xs text-primary hover:underline mt-3"
+                    onClick={async () => {
+                      if (!email) {
+                        toast.error("প্রথমে ইমেইল লিখুন।");
+                        return;
+                      }
+                      try {
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                          redirectTo: `${window.location.origin}/reset-password`,
+                        });
+                        if (error) throw error;
+                        toast.success("পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে!");
+                      } catch (err: any) {
+                        toast.error("রিসেট লিংক পাঠানো যায়নি। আবার চেষ্টা করুন।");
+                      }
+                    }}
+                  >
+                    পাসওয়ার্ড ভুলে গেছেন?
+                  </button>
                 </form>
               </TabsContent>
             </Tabs>
