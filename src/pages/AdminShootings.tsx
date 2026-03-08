@@ -125,6 +125,10 @@ const AdminShootings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label className="text-foreground">স্ক্রিপ্ট লিংক (অপশনাল)</Label>
+                  <Input value={scriptUrl} onChange={(e) => setScriptUrl(e.target.value)} placeholder="https://drive.google.com/..." className="bg-secondary border-border/50" />
+                </div>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : "সেভ করুন"}
                 </Button>
