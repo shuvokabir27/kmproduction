@@ -147,8 +147,10 @@ const AdminShootings = () => {
 
   const changeStatus = async (shootingId: string, newStatus: string) => {
     if (newStatus === "published") {
+      const shooting = shootings?.find((s) => s.id === shootingId);
       setPublishShootingId(shootingId);
-      setPublishChannelId("");
+      setPublishChannelId((shooting as any)?.channel_id || "");
+      setPublishVideoUrl((shooting as any)?.video_url || "");
       setPublishDialogOpen(true);
       return;
     }
