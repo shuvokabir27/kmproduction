@@ -403,10 +403,15 @@ const AdminShootings = () => {
                                 </Select>
                               </td>
                               <td className="p-3 text-right">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </td>
+                                 <div className="flex items-center justify-end gap-1">
+                                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
+                                     <Edit className="h-4 w-4" />
+                                   </Button>
+                                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive" onClick={() => openDeleteDialog(s)}>
+                                     <Trash2 className="h-4 w-4" />
+                                   </Button>
+                                 </div>
+                               </td>
                             </tr>
                           );
                         })}
