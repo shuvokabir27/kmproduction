@@ -31,9 +31,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground h-8 w-8">
-                <Bell className="h-4 w-4" />
-              </Button>
+              <NotificationBell />
               <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
                 {profile?.photo_url ? (
                   <img src={profile.photo_url} alt="" className="h-full w-full object-cover" />
