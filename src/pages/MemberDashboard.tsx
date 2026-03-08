@@ -112,6 +112,22 @@ const MemberDashboard = () => {
               </div>
             </Card>
           </motion.div>
+          <motion.div variants={item}>
+            <Card className="p-5 bg-card border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center"><Gift className="h-5 w-5 text-emerald-500" /></div>
+                <div><p className="text-xs text-muted-foreground">মোট বোনাস</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalBonus?.toLocaleString("bn-BD") || "০"}</p></div>
+              </div>
+            </Card>
+          </motion.div>
+          <motion.div variants={item}>
+            <Card className="p-5 bg-card border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center"><Car className="h-5 w-5 text-blue-500" /></div>
+                <div><p className="text-xs text-muted-foreground">মোট গাড়ি ভাড়া</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalTransport?.toLocaleString("bn-BD") || "০"}</p></div>
+              </div>
+            </Card>
+          </motion.div>
         </motion.div>
 
         {/* Shootings */}
