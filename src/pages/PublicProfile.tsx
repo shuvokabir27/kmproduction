@@ -63,7 +63,10 @@ const PublicProfile = () => {
     { label: "পছন্দের খাবার", value: p.favorite_food, icon: "🍕" },
   ].filter(f => f.value);
 
+  const age = p.date_of_birth ? differenceInYears(new Date(), new Date(p.date_of_birth)) : null;
+
   const infoItems = [
+    p.date_of_birth && { icon: Cake, text: `বয়স: ${age} বছর` },
     p.address && { icon: MapPin, text: p.address },
     profile.designation && { icon: Briefcase, text: profile.designation },
     p.education && { icon: GraduationCap, text: p.education },
