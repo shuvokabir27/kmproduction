@@ -220,7 +220,7 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
       </div>
 
       {/* Comment input with mention */}
-      <div className="relative pt-2 border-t border-border/30 mt-3">
+      <div ref={inputWrapperRef} className="relative pt-2 border-t border-border/30 mt-3 sticky bottom-0 bg-card z-10">
         {showMentions && filteredMembers.length > 0 && (
           <div
             ref={mentionListRef}
