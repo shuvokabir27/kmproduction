@@ -372,6 +372,5 @@ const AdminMembers = () => {
     </AppLayout>
   );
 };
-};
 
 export default AdminMembers;
