@@ -58,6 +58,14 @@ const PublicHome = () => {
     },
   });
 
+  const { data: galleryImages } = useQuery({
+    queryKey: ["gallery-images"],
+    queryFn: async () => {
+      const { data } = await supabase.from("gallery_images" as any).select("*").eq("is_active", true).order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
+    },
+  });
+
   const { data: channels } = useQuery({
     queryKey: ["public-channels"],
     queryFn: async () => {
@@ -67,6 +75,7 @@ const PublicHome = () => {
   });
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const navItems = [
     { label: "আমাদের টিম", href: "#team" },
@@ -557,34 +566,55 @@ const PublicHome = () => {
       )}
 
       {/* Gallery */}
-      <section className="py-28 px-4 relative" id="gallery">
-        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
-        <div className="container max-w-6xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-14"
-          >
-            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
-            <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">ছবি গ্যালারী</h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
-          </motion.div>
+      {galleryImages && galleryImages.length > 0 && (
+        <section className="py-28 px-4 relative" id="gallery">
+          <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
+          <div className="container max-w-6xl mx-auto relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-14"
+            >
+              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">ছবি গ্যালারী</h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="premium-card rounded-2xl p-12 text-center"
-          >
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Image className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">শীঘ্রই আসছে</h3>
-            <p className="text-sm text-muted-foreground">আমাদের ছবি গ্যালারী শীঘ্রই যুক্ত করা হবে।</p>
-          </motion.div>
-        </div>
-      </section>
+            <motion.div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {galleryImages.map((img: any) => (
+                <motion.div key={img.id} variants={item}>
+                  <button
+                    onClick={() => setLightboxImage(img.image_url)}
+                    className="w-full premium-card rounded-xl overflow-hidden group relative"
+                  >
+                    <div className="aspect-[4/3] bg-muted">
+                      <img
+                        src={img.image_url}
+                        alt={img.title || "Gallery"}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-background/0 group-hover:bg-background/20 transition-colors duration-300" />
+                    {img.title && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <p className="text-xs text-foreground truncate">{img.title}</p>
+                      </div>
+                    )}
+                  </button>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Contact */}
       <section className="py-28 px-4 relative" id="contact">
@@ -749,6 +779,41 @@ const PublicHome = () => {
           </div>
         </div>
       </footer>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 cursor-pointer"
+            onClick={() => setLightboxImage(null)}
+          >
+            <div className="absolute inset-0 bg-background/90 backdrop-blur-xl" />
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="relative z-10 max-w-[90vw] max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={lightboxImage}
+                alt="Gallery"
+                className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+              />
+              <button
+                onClick={() => setLightboxImage(null)}
+                className="absolute -top-3 -right-3 h-8 w-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+              >
+                <X className="h-4 w-4 text-foreground" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
