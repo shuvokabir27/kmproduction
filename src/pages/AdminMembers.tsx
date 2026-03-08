@@ -14,6 +14,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MemberForm {
   full_name: string;
@@ -26,11 +27,14 @@ interface MemberForm {
   bkash_no: string;
   nagad_no: string;
   address: string;
+  salary_type: string;
+  monthly_salary: string;
 }
 
 const emptyForm: MemberForm = {
   full_name: "", email: "", phone: "", designation: "", bio: "",
   bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "", address: "",
+  salary_type: "daily", monthly_salary: "0",
 };
 
 const AdminMembers = () => {
@@ -74,6 +78,8 @@ const AdminMembers = () => {
       bkash_no: member.bkash_no || "",
       nagad_no: member.nagad_no || "",
       address: member.address || "",
+      salary_type: member.salary_type || "daily",
+      monthly_salary: String(member.monthly_salary || 0),
     });
     setOpen(true);
   };
@@ -96,6 +102,8 @@ const AdminMembers = () => {
           bkash_no: form.bkash_no || null,
           nagad_no: form.nagad_no || null,
           address: form.address || null,
+          salary_type: form.salary_type as any,
+          monthly_salary: Number(form.monthly_salary) || 0,
         }).eq("id", editId);
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
@@ -124,6 +132,8 @@ const AdminMembers = () => {
             bkash_no: form.bkash_no || null,
             nagad_no: form.nagad_no || null,
             address: form.address || null,
+            salary_type: form.salary_type as any,
+            monthly_salary: Number(form.monthly_salary) || 0,
           }).eq("user_id", authData.user.id);
         }
         toast.success(`সদস্য যোগ হয়েছে! টেম্প পাসওয়ার্ড: ${tempPassword}`, { duration: 10000 });
@@ -192,6 +202,29 @@ const AdminMembers = () => {
                   <Textarea value={form.bio} onChange={(e) => setField("bio", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                 </div>
                 <div className="border-t border-border/30 pt-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">বেতন তথ্য</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">বেতনের ধরন</Label>
+                      <Select value={form.salary_type} onValueChange={(v) => setField("salary_type" as any, v)}>
+                        <SelectTrigger className="bg-secondary border-border/50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border/50">
+                          <SelectItem value="daily">দৈনিক</SelectItem>
+                          <SelectItem value="monthly">মাসিক</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {form.salary_type === "monthly" && (
+                      <div>
+                        <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
+                        <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">পেমেন্ট তথ্য</p>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -227,9 +260,9 @@ const AdminMembers = () => {
                 <tr className="border-b border-border/30">
                   <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">পদবী</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">ফোন</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">পদবী</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">বেতন ধরন</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                   <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                 </tr>
               </thead>
@@ -249,7 +282,11 @@ const AdminMembers = () => {
                       </div>
                     </td>
                     <td className="p-3 text-muted-foreground hidden sm:table-cell">{m.designation || "—"}</td>
-                    <td className="p-3 text-muted-foreground hidden md:table-cell">{m.phone || "—"}</td>
+                    <td className="p-3 text-muted-foreground hidden md:table-cell">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${(m as any).salary_type === "monthly" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"}`}>
+                        {(m as any).salary_type === "monthly" ? `মাসিক ৳${Number((m as any).monthly_salary || 0).toLocaleString("bn-BD")}` : "দৈনিক"}
+                      </span>
+                    </td>
                     <td className="p-3">
                       <Switch
                         checked={m.is_active ?? true}

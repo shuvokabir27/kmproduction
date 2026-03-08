@@ -124,9 +124,11 @@ export type Database = {
           is_active: boolean | null
           joining_date: string | null
           member_id: number
+          monthly_salary: number | null
           nagad_no: string | null
           phone: string | null
           photo_url: string | null
+          salary_type: Database["public"]["Enums"]["salary_type"] | null
           updated_at: string
           user_id: string
         }
@@ -144,9 +146,11 @@ export type Database = {
           is_active?: boolean | null
           joining_date?: string | null
           member_id?: number
+          monthly_salary?: number | null
           nagad_no?: string | null
           phone?: string | null
           photo_url?: string | null
+          salary_type?: Database["public"]["Enums"]["salary_type"] | null
           updated_at?: string
           user_id: string
         }
@@ -164,9 +168,11 @@ export type Database = {
           is_active?: boolean | null
           joining_date?: string | null
           member_id?: number
+          monthly_salary?: number | null
           nagad_no?: string | null
           phone?: string | null
           photo_url?: string | null
+          salary_type?: Database["public"]["Enums"]["salary_type"] | null
           updated_at?: string
           user_id?: string
         }
@@ -284,6 +290,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "member"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
+      salary_type: "daily" | "monthly"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -413,6 +420,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "member"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
+      salary_type: ["daily", "monthly"],
     },
   },
 } as const
