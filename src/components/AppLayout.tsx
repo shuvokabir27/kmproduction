@@ -16,6 +16,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isOnChat = location.pathname === "/chat";
   const { data: unreadCount } = useUnreadMessages();
+  usePresenceTracker();
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>

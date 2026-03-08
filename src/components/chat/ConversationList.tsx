@@ -20,6 +20,7 @@ interface ConversationListProps {
 export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGroup }: ConversationListProps) {
   const { user, isAdmin } = useAuth();
   const [search, setSearch] = useState("");
+  const { data: onlineMap } = useOnlineStatus();
 
   const { data: conversations, isLoading } = useQuery({
     queryKey: ["conversations", user?.id],
