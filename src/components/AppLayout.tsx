@@ -23,6 +23,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: unreadCount } = useUnreadMessages();
   const prevUnreadRef = useRef<number | undefined>(undefined);
   usePresenceTracker();
+  usePushNotifications();
+
+  // Update tab title with unread count
+  useEffect(() => {
+    const base = "KM Production House";
+    if (unreadCount && unreadCount > 0) {
+      document.title = `(${unreadCount > 99 ? "99+" : unreadCount}) ${base}`;
+    } else {
+      document.title = base;
+    }
+  }, [unreadCount]);
 
   // Play sound when unread count increases (user not on chat page)
   useEffect(() => {
