@@ -52,6 +52,7 @@ const moreItems = [
   { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-purple-400", bg: "bg-purple-500/10" },
   { icon: Globe, label: "পাবলিক প্রোফাইল", path: "/admin/public-profiles", color: "text-cyan-400", bg: "bg-cyan-500/10" },
   { icon: null, label: "— অন্যান্য —", path: "__divider3__", color: "", bg: "" },
+  { icon: Settings, label: "সেটিংস", path: "/admin/settings", color: "text-amber-400", bg: "bg-amber-500/10" },
   { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
 ];
 
