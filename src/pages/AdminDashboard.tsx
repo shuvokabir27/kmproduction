@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { List } from "lucide-react";
 import { format, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
 import { bn } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -21,6 +22,7 @@ const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 const AdminDashboard = () => {
   const { user, isAdmin, loading } = useAuth();
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
+  const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
   const [filterFrom, setFilterFrom] = useState<Date | undefined>(startOfMonth(new Date()));
   const [filterTo, setFilterTo] = useState<Date | undefined>(new Date());
 
@@ -190,54 +192,19 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 {stat.clickable && <p className="text-[10px] text-muted-foreground mt-2">ক্লিক করে বিস্তারিত দেখুন →</p>}
-        </Card>
-
-        {/* Member Balance List */}
-        <Card className="bg-card border-border/50">
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground flex items-center gap-2">
-              <Wallet className="h-4 w-4 text-primary" /> সদস্য ব্যালেন্স (বকেয়া অনুযায়ী)
-            </h2>
-          </div>
-          <div className="divide-y divide-border/30">
-            {memberBalances?.map((m, i) => (
-              <div key={i} className="p-4 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative flex-shrink-0">
-                    <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center overflow-hidden text-xs font-bold text-muted-foreground">
-                      {m.photo ? (
-                        <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
-                      ) : (
-                        m.name.charAt(0)
-                      )}
-                    </div>
-                    <span className="absolute -top-1 -left-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full h-4 w-4 flex items-center justify-center">
-                      {i + 1}
-                    </span>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {m.designation || `ID: ${m.memberId}`} • আয় ৳{m.earned.toLocaleString("bn-BD")} • প্রদান ৳{m.paid.toLocaleString("bn-BD")}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className={cn("text-sm font-bold", m.balance > 0 ? "text-destructive" : "text-success")}>
-                    ৳{m.balance.toLocaleString("bn-BD")}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">{m.balance > 0 ? "বকেয়া" : "পরিশোধিত"}</p>
-                </div>
-              </div>
-            ))}
-            {memberBalances?.length === 0 && (
-              <div className="p-4 text-sm text-muted-foreground text-center">কোনো সদস্য নেই</div>
-            )}
-          </div>
-        </Card>
+              </Card>
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Member Balance Button */}
+        <Button
+          variant="outline"
+          className="gap-2 border-border/50"
+          onClick={() => setBalanceDialogOpen(true)}
+        >
+          <List className="h-4 w-4" /> সদস্য ব্যালেন্স তালিকা দেখুন
+        </Button>
 
         {/* Recent Payments */}
         <Card className="bg-card border-border/50">
@@ -366,6 +333,52 @@ const AdminDashboard = () => {
                 )}
               </tbody>
             </table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Member Balance Dialog */}
+      <Dialog open={balanceDialogOpen} onOpenChange={setBalanceDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <List className="h-5 w-5 text-primary" /> সদস্য ব্যালেন্স তালিকা
+            </DialogTitle>
+          </DialogHeader>
+          <div className="divide-y divide-border/30">
+            {memberBalances?.map((m, i) => (
+              <div key={i} className="py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative flex-shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center overflow-hidden text-xs font-bold text-muted-foreground">
+                      {m.photo ? (
+                        <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                      ) : (
+                        m.name.charAt(0)
+                      )}
+                    </div>
+                    <span className="absolute -top-1 -left-1 text-[10px] font-bold bg-primary text-primary-foreground rounded-full h-4 w-4 flex items-center justify-center">
+                      {i + 1}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      আয় ৳{m.earned.toLocaleString("bn-BD")} • প্রদান ৳{m.paid.toLocaleString("bn-BD")}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className={cn("text-sm font-bold", m.balance > 0 ? "text-destructive" : "text-success")}>
+                    ৳{m.balance.toLocaleString("bn-BD")}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">{m.balance > 0 ? "বকেয়া" : "পরিশোধিত"}</p>
+                </div>
+              </div>
+            ))}
+            {memberBalances?.length === 0 && (
+              <div className="py-4 text-sm text-muted-foreground text-center">কোনো সদস্য নেই</div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
