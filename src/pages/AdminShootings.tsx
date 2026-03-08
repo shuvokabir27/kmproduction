@@ -115,6 +115,8 @@ const AdminShootings = () => {
     setShootDate(s.shoot_date || "");
     setStatus(s.status || "plan");
     setScriptUrl((s as any).script_url || "");
+    setVideoUrl((s as any).video_url || "");
+    setShowOnPublic((s as any).show_on_public || false);
     setSelectedScriptId((s as any).script_id || "");
     setOpen(true);
   };
