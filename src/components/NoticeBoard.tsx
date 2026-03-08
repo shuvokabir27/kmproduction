@@ -5,11 +5,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Megaphone, Pin, Clock, MessageSquare } from "lucide-react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function NoticeBoard() {
   const { user } = useAuth();
