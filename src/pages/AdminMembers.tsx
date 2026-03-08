@@ -217,6 +217,13 @@ const AdminMembers = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-members"] });
   };
 
+  const toggleVerified = async (memberId: string, currentStatus: boolean) => {
+    const { error } = await supabase.from("profiles").update({ is_verified: !currentStatus } as any).eq("id", memberId);
+    if (error) { toast.error(error.message); return; }
+    toast.success(!currentStatus ? "ভেরিফাইড করা হয়েছে ✓" : "ভেরিফাইড সরানো হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+  };
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
