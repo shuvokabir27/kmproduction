@@ -332,6 +332,9 @@ const AdminMembers = () => {
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}>
                           <Edit className="h-4 w-4" />
                         </Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
+                          <KeyRound className="h-4 w-4" />
+                        </Button>
                         <Link to={`/member/${m.member_id}`}>
                           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
                             <Eye className="h-4 w-4" />
