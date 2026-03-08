@@ -11,6 +11,8 @@ import {
   Tv,
   MoreHorizontal,
   X,
+  LogOut,
+  ScrollText,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -33,6 +35,12 @@ const moreItems = [
 const memberTabs = [
   { icon: Home, label: "হোম", path: "/" },
   { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/dashboard#scripts" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__" },
+];
+
+const memberMoreItems = [
+  { icon: LogOut, label: "লগআউট", path: "__logout__" },
 ];
 
 export function MobileBottomNav() {
