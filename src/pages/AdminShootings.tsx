@@ -47,6 +47,7 @@ const AdminShootings = () => {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [publishShootingId, setPublishShootingId] = useState<string>("");
   const [publishChannelId, setPublishChannelId] = useState<string>("");
+  const [publishVideoUrl, setPublishVideoUrl] = useState<string>("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteShootingId, setDeleteShootingId] = useState<string>("");
   const [deleteShootingName, setDeleteShootingName] = useState<string>("");
@@ -146,8 +147,10 @@ const AdminShootings = () => {
 
   const changeStatus = async (shootingId: string, newStatus: string) => {
     if (newStatus === "published") {
+      const shooting = shootings?.find((s) => s.id === shootingId);
       setPublishShootingId(shootingId);
-      setPublishChannelId("");
+      setPublishChannelId((shooting as any)?.channel_id || "");
+      setPublishVideoUrl((shooting as any)?.video_url || "");
       setPublishDialogOpen(true);
       return;
     }
@@ -161,7 +164,7 @@ const AdminShootings = () => {
   const confirmPublish = async () => {
     if (!publishChannelId) { toast.error("চ্যানেল নির্বাচন করুন"); return; }
     const { error } = await supabase.from("shootings").update({
-      status: "published", channel_id: publishChannelId
+      status: "published", channel_id: publishChannelId, video_url: publishVideoUrl || null
     } as any).eq("id", publishShootingId);
     if (error) { toast.error(error.message); return; }
     toast.success("পাবলিশ হয়েছে!");
@@ -462,6 +465,16 @@ const AdminShootings = () => {
               {channels?.length === 0 && (
                 <p className="text-xs text-muted-foreground mt-1">কোনো চ্যানেল নেই। আগে চ্যানেল যোগ করুন।</p>
               )}
+            </div>
+            <div>
+              <Label className="text-foreground mb-1 block">নাটকের লিংক (YouTube/Facebook)</Label>
+              <Input
+                value={publishVideoUrl}
+                onChange={(e) => setPublishVideoUrl(e.target.value)}
+                placeholder="https://youtu.be/... বা https://fb.watch/..."
+                className="bg-secondary border-border/50"
+              />
+              <p className="text-xs text-muted-foreground mt-1">পাবলিক সাইটে এই লিংক দেখানো হবে</p>
             </div>
             <Button onClick={confirmPublish} className="w-full" disabled={!publishChannelId}>
               পাবলিশ করুন

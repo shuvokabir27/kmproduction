@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -255,6 +255,20 @@ const PublicHome = () => {
                             <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                             <span className="text-xs text-muted-foreground">{s.location}</span>
                           </div>
+                        )}
+                        {(s as any).video_url && (
+                          <a
+                            href={(s as any).video_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 transition-all group/link"
+                          >
+                            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center group-hover/link:bg-primary/30 transition-colors">
+                              <Play className="h-4 w-4 text-primary fill-primary" />
+                            </div>
+                            <span className="text-sm font-medium text-primary flex-1">নাটক দেখুন</span>
+                            <ExternalLink className="h-3.5 w-3.5 text-primary/60" />
+                          </a>
                         )}
                       </div>
                     </Card>

@@ -747,6 +747,7 @@ export type Database = {
           shoot_date: string
           status: string | null
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           channel_id?: string | null
@@ -761,6 +762,7 @@ export type Database = {
           shoot_date: string
           status?: string | null
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           channel_id?: string | null
@@ -775,6 +777,7 @@ export type Database = {
           shoot_date?: string
           status?: string | null
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: [
           {
