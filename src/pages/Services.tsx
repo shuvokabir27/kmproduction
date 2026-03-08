@@ -288,10 +288,10 @@ const Services = () => {
           >
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
             <h2 className="font-display text-3xl md:text-4xl text-foreground tracking-wider mb-4">
-              আপনার প্রজেক্ট নিয়ে কথা বলুন
+              {t("আপনার প্রজেক্ট নিয়ে কথা বলুন", "Let's Talk About Your Project")}
             </h2>
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              আমাদের টিম আপনার প্রয়োজন অনুযায়ী কাস্টম প্যাকেজ তৈরি করে দেবে। এখনই যোগাযোগ করুন।
+              {t("আমাদের টিম আপনার প্রয়োজন অনুযায়ী কাস্টম প্যাকেজ তৈরি করে দেবে। এখনই যোগাযোগ করুন।", "Our team will create a custom package tailored to your needs. Contact us now.")}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               {(settings as any)?.whatsapp_no && (
