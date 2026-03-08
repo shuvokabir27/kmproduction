@@ -97,10 +97,41 @@ const PublicHome = () => {
         </div>
 
         <div className="relative z-10 text-center max-w-5xl mx-auto">
+          {/* Welcome to Kuakata Multimedia */}
+          <motion.div
+            initial={{ opacity: 0, letterSpacing: "0.5em" }}
+            animate={{ opacity: 1, letterSpacing: "0.25em" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="mb-6"
+          >
+            <motion.p
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.8 }}
+              className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-muted-foreground"
+            >
+              Welcome to
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="font-display text-xl md:text-3xl tracking-[0.2em] gradient-text mt-1"
+            >
+              KUAKATA MULTIMEDIA
+            </motion.h2>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="h-[1px] w-32 md:w-48 mx-auto mt-2 bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+            />
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ delay: 0.5, duration: 0.7 }}
             className="mb-10"
           >
             <div className="relative inline-block">
