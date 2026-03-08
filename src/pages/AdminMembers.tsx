@@ -78,6 +78,8 @@ const AdminMembers = () => {
       bkash_no: member.bkash_no || "",
       nagad_no: member.nagad_no || "",
       address: member.address || "",
+      salary_type: member.salary_type || "daily",
+      monthly_salary: String(member.monthly_salary || 0),
     });
     setOpen(true);
   };
