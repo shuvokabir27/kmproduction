@@ -146,26 +146,26 @@ const AdminAttendance = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-6xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Calendar className="h-6 w-6 text-primary" /> হাজিরা ম্যানেজমেন্ট
+      <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
+        <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+          <Calendar className="h-5 w-5 md:h-6 md:w-6 text-primary" /> হাজিরা
         </h1>
 
         <Tabs defaultValue="manage" className="w-full">
-          <TabsList className="bg-secondary border border-border/30">
-            <TabsTrigger value="manage" className="gap-2"><Calendar className="h-4 w-4" /> হাজিরা দিন</TabsTrigger>
-            <TabsTrigger value="history" className="gap-2"><History className="h-4 w-4" /> হিস্ট্রি</TabsTrigger>
+          <TabsList className="bg-secondary border border-border/20 w-full md:w-auto">
+            <TabsTrigger value="manage" className="gap-1.5 text-xs flex-1 md:flex-none"><Calendar className="h-3.5 w-3.5" /> হাজিরা দিন</TabsTrigger>
+            <TabsTrigger value="history" className="gap-1.5 text-xs flex-1 md:flex-none"><History className="h-3.5 w-3.5" /> হিস্ট্রি</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="manage" className="space-y-4 mt-4">
-            <div className="flex items-end gap-4">
-              <div className="flex-1 max-w-xs">
-                <Label className="text-foreground mb-1 block">শুটিং নির্বাচন করুন</Label>
+          <TabsContent value="manage" className="space-y-3 mt-3">
+            <div className="flex flex-col md:flex-row md:items-end gap-3">
+              <div className="flex-1 md:max-w-xs">
+                <Label className="text-foreground text-xs mb-1 block">শুটিং নির্বাচন</Label>
                 <Select value={selectedShooting} onValueChange={setSelectedShooting}>
-                  <SelectTrigger className="bg-secondary border-border/50">
+                  <SelectTrigger className="bg-secondary border-border/30 h-10 md:h-9">
                     <SelectValue placeholder="শুটিং নির্বাচন করুন" />
                   </SelectTrigger>
-                  <SelectContent className="bg-card border-border/50">
+                  <SelectContent className="bg-card border-border/30">
                     {shootings?.map((s) => (
                       <SelectItem key={s.id} value={s.id}>{s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")})</SelectItem>
                     ))}
@@ -173,49 +173,79 @@ const AdminAttendance = () => {
                 </Select>
               </div>
               {selectedShooting && (
-                <Button onClick={handleSave} disabled={saving} className="gap-2">
+                <Button onClick={handleSave} disabled={saving} className="gap-2 h-10 md:h-9" size="sm">
                   <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
                 </Button>
               )}
             </div>
 
             {selectedShooting && (
-              <Card className="bg-card border-border/50 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border/30">
-                        <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                        <th className="text-center p-3 text-muted-foreground font-medium">উপস্থিত</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium">দৈনিক রেট (৳)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/20">
-                      {members?.map((m) => (
-                        <tr key={m.id} className="hover:bg-secondary/30 transition-colors">
-                          <td className="p-3 text-muted-foreground font-mono text-xs">{m.member_id}</td>
-                          <td className="p-3 text-foreground">{m.full_name}</td>
-                          <td className="p-3 text-center">
-                            <Checkbox
-                              checked={attendanceData[m.id]?.present || false}
-                              onCheckedChange={() => togglePresent(m.id)}
-                            />
-                          </td>
-                          <td className="p-3">
-                            <Input
-                              type="number"
-                              value={attendanceData[m.id]?.rate || "0"}
-                              onChange={(e) => setRate(m.id, e.target.value)}
-                              className="w-28 bg-secondary border-border/50 h-8"
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <>
+                {/* Mobile card list */}
+                <div className="md:hidden space-y-2">
+                  {members?.map((m) => (
+                    <Card key={m.id} className="bg-card border-border/30 p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Checkbox
+                            checked={attendanceData[m.id]?.present || false}
+                            onCheckedChange={() => togglePresent(m.id)}
+                          />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
+                            <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
+                          </div>
+                        </div>
+                        <Input
+                          type="number"
+                          value={attendanceData[m.id]?.rate || "0"}
+                          onChange={(e) => setRate(m.id, e.target.value)}
+                          className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                          placeholder="৳"
+                        />
+                      </div>
+                    </Card>
+                  ))}
                 </div>
-              </Card>
+
+                {/* Desktop table */}
+                <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border/30">
+                          <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">উপস্থিত</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">দৈনিক রেট (৳)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/20">
+                        {members?.map((m) => (
+                          <tr key={m.id} className="hover:bg-secondary/30 transition-colors">
+                            <td className="p-3 text-muted-foreground font-mono text-xs">{m.member_id}</td>
+                            <td className="p-3 text-foreground">{m.full_name}</td>
+                            <td className="p-3 text-center">
+                              <Checkbox
+                                checked={attendanceData[m.id]?.present || false}
+                                onCheckedChange={() => togglePresent(m.id)}
+                              />
+                            </td>
+                            <td className="p-3">
+                              <Input
+                                type="number"
+                                value={attendanceData[m.id]?.rate || "0"}
+                                onChange={(e) => setRate(m.id, e.target.value)}
+                                className="w-28 bg-secondary border-border/30 h-8"
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              </>
             )}
           </TabsContent>
 

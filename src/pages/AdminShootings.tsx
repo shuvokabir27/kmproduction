@@ -169,13 +169,13 @@ const AdminShootings = () => {
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Film className="h-6 w-6 text-primary" /> শুটিং ম্যানেজমেন্ট
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+            <Film className="h-5 w-5 md:h-6 md:w-6 text-primary" /> শুটিং
           </h1>
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
+              <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border/50">
               <DialogHeader>
@@ -241,12 +241,12 @@ const AdminShootings = () => {
         </div>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="bg-secondary/50 border border-border/30 flex-wrap h-auto gap-1 p-1">
+          <TabsList className="bg-secondary/50 border border-border/20 flex-wrap h-auto gap-0.5 p-0.5 md:p-1 md:gap-1">
             <TabsTrigger value="all" className="text-xs">সব ({shootings?.length || 0})</TabsTrigger>
             {statusOptions.map((s) => {
               const count = shootings?.filter((sh) => (sh.status || "upcoming") === s.value).length || 0;
               return (
-                <TabsTrigger key={s.value} value={s.value} className="text-xs">
+                <TabsTrigger key={s.value} value={s.value} className="text-[10px] md:text-xs px-2">
                   {s.label} ({count})
                 </TabsTrigger>
               );
@@ -257,13 +257,63 @@ const AdminShootings = () => {
             const filtered = tab === "all" ? shootings : shootings?.filter((sh) => (sh.status || "upcoming") === tab);
             return (
               <TabsContent key={tab} value={tab}>
-                <Card className="bg-card border-border/50 overflow-hidden">
+                {/* Mobile card list */}
+                <div className="md:hidden space-y-2 mt-3">
+                  {filtered?.length === 0 && (
+                    <Card className="bg-card border-border/30 p-6 text-center text-muted-foreground text-sm">কোনো শুটিং নেই</Card>
+                  )}
+                  {filtered?.map((s) => {
+                    const info = getStatusInfo(s.status);
+                    const hasScript = !!(s as any).script_content || !!(s as any).script_url;
+                    return (
+                      <Card key={s.id} className="bg-card border-border/30 p-3 active:scale-[0.99] transition-transform">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground truncate">{s.name}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
+                              <span className="text-[10px] text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</span>
+                            </div>
+                            {s.location && <p className="text-[10px] text-muted-foreground mt-1">📍 {s.location}</p>}
+                            {s.channels && <p className="text-[10px] text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
+                          </div>
+                          <div className="flex items-center gap-0.5 shrink-0">
+                            <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
+                              <FileText className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
+                              <Edit className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                        {/* Status changer */}
+                        <div className="mt-2 pt-2 border-t border-border/20">
+                          <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
+                            <SelectTrigger className="h-7 border-border/20 bg-secondary/30 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-card border-border/30">
+                              {statusOptions.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop table */}
+                <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-border/30">
                           <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                          <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">লোকেশন</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">লোকেশন</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
@@ -282,21 +332,15 @@ const AdminShootings = () => {
                               <td className="p-3">
                                 <p className="text-foreground font-medium">{s.name}</p>
                                 {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
-                                {s.channels && (
-                                  <p className="text-xs text-primary mt-0.5">📺 {(s as any).channels.name}</p>
-                                )}
+                                {s.channels && <p className="text-xs text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
                               </td>
-                              <td className="p-3 text-muted-foreground hidden sm:table-cell">{s.location || "—"}</td>
+                              <td className="p-3 text-muted-foreground">{s.location || "—"}</td>
                               <td className="p-3 text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</td>
                               <td className="p-3">
                                 <div className="flex items-center gap-2">
                                   <Button variant="ghost" size="sm" className={`h-7 text-xs gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
-                                    <FileText className="h-3.5 w-3.5" />
-                                    {hasScript ? "এডিট" : "লিখুন"}
+                                    <FileText className="h-3.5 w-3.5" /> {hasScript ? "এডিট" : "লিখুন"}
                                   </Button>
-                                  {(s as any).script_url && (
-                                    <a href={(s as any).script_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">লিংক</a>
-                                  )}
                                 </div>
                               </td>
                               <td className="p-3">
@@ -304,7 +348,7 @@ const AdminShootings = () => {
                                   <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
                                     <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
                                   </SelectTrigger>
-                                  <SelectContent className="bg-card border-border/50">
+                                  <SelectContent className="bg-card border-border/30">
                                     {statusOptions.map((opt) => (
                                       <SelectItem key={opt.value} value={opt.value}>
                                         <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
