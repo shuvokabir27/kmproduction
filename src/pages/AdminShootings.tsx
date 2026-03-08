@@ -164,7 +164,7 @@ const AdminShootings = () => {
   const confirmPublish = async () => {
     if (!publishChannelId) { toast.error("চ্যানেল নির্বাচন করুন"); return; }
     const { error } = await supabase.from("shootings").update({
-      status: "published", channel_id: publishChannelId
+      status: "published", channel_id: publishChannelId, video_url: publishVideoUrl || null
     } as any).eq("id", publishShootingId);
     if (error) { toast.error(error.message); return; }
     toast.success("পাবলিশ হয়েছে!");
