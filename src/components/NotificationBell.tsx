@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Film, CreditCard, Calendar, ScrollText, Check, CheckCheck } from "lucide-react";
+import { Bell, Film, CreditCard, Calendar, ScrollText, Check, CheckCheck, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
