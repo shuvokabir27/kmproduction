@@ -151,6 +151,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -527,6 +560,25 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      notify_all_members: {
+        Args: {
+          _link?: string
+          _message?: string
+          _title: string
+          _type: string
+        }
+        Returns: undefined
+      }
+      notify_member: {
+        Args: {
+          _link?: string
+          _member_profile_id: string
+          _message?: string
+          _title: string
+          _type: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
