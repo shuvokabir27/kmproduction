@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Save, History, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Save, History, ChevronDown, ChevronRight, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
