@@ -169,11 +169,11 @@ const AdminMembers = () => {
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
       } else {
-        // Create new — sign up a user with a random password, profile will auto-create via trigger
-        const tempPassword = crypto.randomUUID().slice(0, 16);
+        // Create new — sign up a user with default password "000000"
+        const defaultPassword = "000000";
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: form.email,
-          password: tempPassword,
+          password: defaultPassword,
           options: {
             data: { full_name: form.full_name },
           },
@@ -197,7 +197,7 @@ const AdminMembers = () => {
             monthly_salary: Number(form.monthly_salary) || 0,
           }).eq("user_id", authData.user.id);
         }
-        toast.success(`সদস্য যোগ হয়েছে! টেম্প পাসওয়ার্ড: ${tempPassword}`, { duration: 10000 });
+        toast.success(`সদস্য যোগ হয়েছে! ডিফল্ট পাসওয়ার্ড: 000000`, { duration: 10000 });
       }
       queryClient.invalidateQueries({ queryKey: ["admin-members"] });
       setOpen(false);

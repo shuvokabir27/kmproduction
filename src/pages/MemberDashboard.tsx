@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon, ScrollText, Eye } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon, ScrollText, Eye, KeyRound } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
@@ -39,6 +39,35 @@ const MemberDashboard = () => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const photoRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
+  const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [pwSaving, setPwSaving] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (newPw.length < 6) { toast.error("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে"); return; }
+    if (newPw !== confirmPw) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
+    setPwSaving(true);
+    try {
+      // Verify current password by re-signing in
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: profile?.email || user?.email || "",
+        password: currentPw,
+      });
+      if (signInErr) { toast.error("বর্তমান পাসওয়ার্ড ভুল"); setPwSaving(false); return; }
+
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) throw error;
+      toast.success("পাসওয়ার্ড পরিবর্তন হয়েছে!");
+      setPwDialogOpen(false);
+      setCurrentPw(""); setNewPw(""); setConfirmPw("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setPwSaving(false);
+    }
+  };
 
   // Profile extra fields
   const [extraFields, setExtraFields] = useState({
@@ -241,9 +270,14 @@ const MemberDashboard = () => {
             <h1 className="text-2xl font-bold text-foreground">স্বাগতম, {profile?.full_name}</h1>
             <p className="text-muted-foreground text-sm">আইডি: {profile?.member_id}</p>
           </div>
-          <Button variant="outline" className="gap-2 border-border/50" onClick={() => setProfileEditOpen(true)}>
-            <UserCog className="h-4 w-4" /> প্রোফাইল এডিট
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-2 border-border/50" onClick={() => setPwDialogOpen(true)}>
+              <KeyRound className="h-4 w-4" /> পাসওয়ার্ড
+            </Button>
+            <Button variant="outline" size="sm" className="gap-2 border-border/50" onClick={() => setProfileEditOpen(true)}>
+              <UserCog className="h-4 w-4" /> প্রোফাইল এডিট
+            </Button>
+          </div>
         </div>
 
         {/* Balance Cards */}
@@ -634,6 +668,34 @@ const MemberDashboard = () => {
                 );
               })()}
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Password Change Dialog */}
+      <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-primary" /> পাসওয়ার্ড পরিবর্তন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-muted-foreground text-xs">বর্তমান পাসওয়ার্ড</Label>
+              <Input type="password" value={currentPw} onChange={e => setCurrentPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="বর্তমান পাসওয়ার্ড দিন" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড</Label>
+              <Input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড নিশ্চিত করুন</Label>
+              <Input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="আবার নতুন পাসওয়ার্ড দিন" />
+            </div>
+            <Button onClick={handleChangePassword} disabled={pwSaving} className="w-full gap-2">
+              <KeyRound className="h-4 w-4" /> {pwSaving ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
