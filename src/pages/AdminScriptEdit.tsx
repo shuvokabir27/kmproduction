@@ -39,6 +39,8 @@ const parseContent = (content: string): Sequence[] => {
 
 const AdminScriptEdit = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isEditMode = searchParams.get("mode") === "edit";
   const navigate = useNavigate();
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
