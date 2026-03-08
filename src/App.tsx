@@ -31,6 +31,7 @@ import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
 import AdminNews from "./pages/AdminNews";
+import AdminSettings from "./pages/AdminSettings";
 import News from "./pages/News";
 import NotFound from "./pages/NotFound";
 
