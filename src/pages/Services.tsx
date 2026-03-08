@@ -264,7 +264,7 @@ const Services = () => {
                         </Button>
                       ) : (
                         <Button variant="outline" size="sm" className="w-full" disabled>
-                          বুকিং করুন
+                          {t("বুকিং করুন", "Book Now")}
                         </Button>
                       )}
                     </div>
