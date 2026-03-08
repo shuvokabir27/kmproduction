@@ -132,6 +132,8 @@ const AdminMembers = () => {
             bkash_no: form.bkash_no || null,
             nagad_no: form.nagad_no || null,
             address: form.address || null,
+            salary_type: form.salary_type as any,
+            monthly_salary: Number(form.monthly_salary) || 0,
           }).eq("user_id", authData.user.id);
         }
         toast.success(`সদস্য যোগ হয়েছে! টেম্প পাসওয়ার্ড: ${tempPassword}`, { duration: 10000 });
