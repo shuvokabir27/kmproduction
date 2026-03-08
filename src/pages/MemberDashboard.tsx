@@ -92,6 +92,17 @@ const MemberDashboard = () => {
     },
   });
 
+  const { data: permittedScripts } = useQuery({
+    queryKey: ["my-scripts", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("scripts").select("*").order("updated_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const [viewScriptData, setViewScriptData] = useState<any>(null);
+
   useEffect(() => {
     if (profile) {
       setExtraFields({
