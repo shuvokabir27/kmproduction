@@ -174,6 +174,16 @@ export function NotificationBell() {
                   );
                 })}
               </div>
+
+              {/* Footer */}
+              <div className="border-t border-border/20 px-4 py-2.5">
+                <button
+                  onClick={() => { navigate("/notifications"); setOpen(false); }}
+                  className="w-full text-center text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                >
+                  সকল নটিফিকেশন দেখুন
+                </button>
+              </div>
             </motion.div>
           </>
         )}
