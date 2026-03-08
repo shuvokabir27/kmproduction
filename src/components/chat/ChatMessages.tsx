@@ -50,9 +50,9 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         .eq("conversation_id", conversationId);
 
       const memberUserIds = members?.map((m: any) => m.user_id) ?? [];
-      const { data: profiles } = await supabase
+      const { data: profiles } = await (supabase as any)
         .from("profiles")
-        .select("full_name, photo_url, user_id")
+        .select("full_name, photo_url, user_id, last_seen_at")
         .in("user_id", memberUserIds);
 
       const otherMembers = profiles?.filter((p) => p.user_id !== user?.id) ?? [];
