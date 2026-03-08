@@ -144,6 +144,31 @@ const MemberSettings = () => {
     }
   };
 
+  const handleChangeEmail = async () => {
+    if (!newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      toast.error("সঠিক ইমেইল দিন"); return;
+    }
+    setEmailSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-member-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ user_id: user!.id, new_email: newEmail.trim() }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      toast.success("ইমেইল পরিবর্তন হয়েছে!");
+      setEmailDialogOpen(false);
+      setNewEmail("");
+      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEmailSaving(false);
+    }
+  };
+
   const handleSaveProfile = async () => {
     if (!profile) return;
     setSaving(true);
