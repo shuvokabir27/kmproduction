@@ -167,6 +167,9 @@ const Login = () => {
                       </span>
                     ) : "লগইন"}
                   </Button>
+                  <p className="text-center text-xs text-muted-foreground mt-3">
+                    পাসওয়ার্ড ভুলে গেছেন? <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
+                  </p>
                 </form>
               </TabsContent>
 
