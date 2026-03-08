@@ -110,8 +110,9 @@ const AdminShootings = () => {
         if (error) throw error;
         toast.success("শুটিং আপডেট হয়েছে!");
       } else {
+        const scriptId2 = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").insert({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: selectedScriptId || null
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId2
         } as any);
         if (error) throw error;
         toast.success("শুটিং যোগ হয়েছে!");
