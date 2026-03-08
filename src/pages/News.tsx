@@ -153,10 +153,13 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const getShareUrl = (news: NewsItem) => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    return `${supabaseUrl}/functions/v1/og-news?id=${news.id}`;
+  };
 
   const handleShare = (type: string, news: NewsItem) => {
-    const url = window.location.origin + "/news";
+    const url = getShareUrl(news);
     const text = news.title;
     switch (type) {
       case "facebook":
