@@ -25,33 +25,23 @@ const AdminAttendance = () => {
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-for-attendance"],
     queryFn: async () => {
-      // Get ongoing/completed shootings only
-      const { data: allShootings } = await supabase
+      const { data } = await supabase
         .from("shootings")
         .select("*")
         .in("status", ["ongoing", "completed"])
         .order("shoot_date", { ascending: false });
-      
-      if (!allShootings || allShootings.length === 0) return [];
+      return data ?? [];
+    },
+  });
 
-      // Check which completed shootings already have attendance
-      const completedIds = allShootings.filter(s => s.status === "completed").map(s => s.id);
-      
-      if (completedIds.length > 0) {
-        const { data: existingAtt } = await supabase
-          .from("attendance")
-          .select("shooting_id")
-          .in("shooting_id", completedIds);
-        
-        const shootingsWithAttendance = new Set((existingAtt ?? []).map(a => a.shooting_id));
-        
-        // Remove completed shootings that already have attendance
-        return allShootings.filter(s => 
-          s.status === "ongoing" || !shootingsWithAttendance.has(s.id)
-        );
-      }
-      
-      return allShootings;
+  // Check which shootings already have attendance
+  const { data: shootingsWithAttendance } = useQuery({
+    queryKey: ["shootings-with-attendance", shootings?.map(s => s.id)],
+    enabled: !!shootings && shootings.length > 0,
+    queryFn: async () => {
+      const ids = shootings!.map(s => s.id);
+      const { data } = await supabase.from("attendance").select("shooting_id").in("shooting_id", ids);
+      return new Set((data ?? []).map(a => a.shooting_id));
     },
   });
 
