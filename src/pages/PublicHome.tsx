@@ -684,7 +684,7 @@ const PublicHome = () => {
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">ইমেইল</p>
+                    <p className="text-xs text-muted-foreground">{t("ইমেইল", "Email")}</p>
                     <span className="text-foreground/80 text-sm">{settings.contact_email}</span>
                   </div>
                 </div>
