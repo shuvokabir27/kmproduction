@@ -92,7 +92,7 @@ const MemberDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">স্বাগতম, {profile?.full_name}</h1>
             <p className="text-muted-foreground text-xs mt-1">আইডি: {profile?.member_id}</p>
           </div>
-          <div className="h-1 w-12 bg-gradient-to-r from-primary to-primary/30 rounded-full mb-1 hidden md:block" />
+          <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-amber-500 rounded-full mb-1 hidden md:block" />
         </motion.div>
 
         {/* Balance Cards */}
