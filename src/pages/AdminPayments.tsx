@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download } from "lucide-react";
-import { useState, useEffect } from "react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -27,6 +27,59 @@ const AdminPayments = () => {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
+  const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Delete timer countdown
+  useEffect(() => {
+    const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
+    if (activeTimers.length === 0) return;
+    const interval = setInterval(() => {
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        for (const [id, val] of Object.entries(next)) {
+          if (val > 0) next[id] = val - 1;
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [deleteTimers]);
+
+  const startDeleteTimer = (id: string) => {
+    setDeleteTimers((prev) => ({ ...prev, [id]: 5 }));
+  };
+
+  const cancelDelete = (id: string) => {
+    setDeleteTimers((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
+
+  const handleDeletePayment = async (paymentId: string) => {
+    if (deleteTimers[paymentId] !== 0) return;
+    setDeletingId(paymentId);
+    try {
+      const { error } = await supabase.from("payments").delete().eq("id", paymentId);
+      if (error) throw error;
+      toast.success("পেমেন্ট ডিলিট হয়েছে এবং ব্যালেন্স আপডেট হয়েছে!");
+      queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
+      queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-member-balances"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-dashboard-stats"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setDeletingId(null);
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        delete next[paymentId];
+        return next;
+      });
+    }
+  };
 
   const { data: members } = useQuery({
     queryKey: ["admin-members-pay"],
@@ -246,6 +299,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">ট্রানজেকশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                   <th className="text-center p-3 text-muted-foreground font-medium">রিসিট</th>
+                  <th className="text-center p-3 text-muted-foreground font-medium">ডিলিট</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -282,11 +336,35 @@ const AdminPayments = () => {
                           <Download className="h-3.5 w-3.5 text-primary" />
                         </Button>
                       </td>
+                      <td className="p-3 text-center">
+                        {deleteTimers[p.id] === undefined ? (
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => startDeleteTimer(p.id)}>
+                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                          </Button>
+                        ) : deleteTimers[p.id] > 0 ? (
+                          <div className="flex items-center gap-1 justify-center">
+                            <span className="text-xs text-destructive font-bold">{deleteTimers[p.id]}s</span>
+                            <Button variant="ghost" size="sm" className="h-6 px-1.5 text-[10px] text-muted-foreground" onClick={() => cancelDelete(p.id)}>
+                              বাতিল
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-7 text-[10px] px-2"
+                            disabled={deletingId === p.id}
+                            onClick={() => handleDeletePayment(p.id)}
+                          >
+                            {deletingId === p.id ? "..." : "ডিলিট"}
+                          </Button>
+                        )}
+                      </td>
                     </tr>
                   );
                 })}
                 {payments?.length === 0 && (
-                  <tr><td colSpan={6} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
+                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
                 )}
               </tbody>
             </table>
