@@ -13,6 +13,7 @@ import {
   Gift,
   MessageCircle,
   Globe,
+  Play,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -43,6 +44,7 @@ const adminItems = [
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone },
   { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe },
+  { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play },
   { title: "চ্যাট", url: "/chat", icon: MessageCircle },
 ];
 

@@ -48,6 +48,14 @@ const PublicHome = () => {
     },
   });
 
+  const { data: popularVideos } = useQuery({
+    queryKey: ["popular-videos"],
+    queryFn: async () => {
+      const { data } = await supabase.from("popular_videos" as any).select("*").eq("is_active", true).order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background overflow-hidden noise-bg">
       {/* Header */}
@@ -341,6 +349,75 @@ const PublicHome = () => {
                               <ExternalLink className="h-3.5 w-3.5 text-primary/60" />
                             </a>
                           )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Popular Videos */}
+      {popularVideos && popularVideos.length > 0 && (
+        <section className="py-28 px-4 relative" id="popular">
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/4 rounded-full blur-[140px]" />
+          <div className="container max-w-6xl mx-auto relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-14"
+            >
+              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Popular Work</span>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">জনপ্রিয় কাজ</h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {popularVideos.map((v: any) => {
+                const youtubeId = extractYouTubeId(v.video_url);
+                return (
+                  <motion.div key={v.id} variants={item}>
+                    <div className="premium-card rounded-2xl overflow-hidden relative group">
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent z-20" />
+                      {youtubeId ? (
+                        <div className="relative w-full aspect-video bg-background">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${youtubeId}`}
+                            title={v.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute inset-0 w-full h-full"
+                          />
+                        </div>
+                      ) : (
+                        <a href={v.video_url} target="_blank" rel="noopener noreferrer" className="block relative w-full aspect-video bg-muted/30 flex items-center justify-center">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="h-14 w-14 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                              <Play className="h-6 w-6 text-primary fill-primary" />
+                            </div>
+                          </div>
+                        </a>
+                      )}
+                      <div className="p-5 relative z-10">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Film className="h-3.5 w-3.5 text-primary" />
+                            </div>
+                          </div>
+                          <h3 className="font-bold text-foreground text-base leading-tight">{v.title}</h3>
+                          {v.description && <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{v.description}</p>}
                         </div>
                       </div>
                     </div>
