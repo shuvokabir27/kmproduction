@@ -435,7 +435,7 @@ const PublicHome = () => {
                               <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center group-hover/link:bg-primary/30 transition-colors">
                                 <Play className="h-3.5 w-3.5 text-primary fill-primary" />
                               </div>
-                              <span className="text-sm font-medium text-primary flex-1">নাটক দেখুন</span>
+                              <span className="text-sm font-medium text-primary flex-1">{t("নাটক দেখুন", "Watch Now")}</span>
                               <ExternalLink className="h-3.5 w-3.5 text-primary/60" />
                             </a>
                           )}
