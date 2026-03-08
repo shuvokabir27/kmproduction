@@ -25,7 +25,7 @@ const AdminAttendance = () => {
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-list"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*").order("shoot_date", { ascending: false });
+      const { data } = await supabase.from("shootings").select("*").in("status", ["ongoing", "completed"]).order("shoot_date", { ascending: false });
       return data ?? [];
     },
   });
