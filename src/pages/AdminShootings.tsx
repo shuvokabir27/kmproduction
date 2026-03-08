@@ -55,18 +55,47 @@ const AdminShootings = () => {
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEditId(null);
+    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
+  };
+
+  const openAdd = () => {
+    resetForm();
+    setOpen(true);
+  };
+
+  const openEdit = (s: any) => {
+    setEditId(s.id);
+    setName(s.name || "");
+    setDescription(s.description || "");
+    setLocation(s.location || "");
+    setShootDate(s.shoot_date || "");
+    setStatus(s.status || "plan");
+    setScriptUrl((s as any).script_url || "");
+    setOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("shootings").insert({
-        name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
-      } as any);
-      if (error) throw error;
-      toast.success("শুটিং যোগ হয়েছে!");
+      if (editId) {
+        const { error } = await supabase.from("shootings").update({
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+        } as any).eq("id", editId);
+        if (error) throw error;
+        toast.success("শুটিং আপডেট হয়েছে!");
+      } else {
+        const { error } = await supabase.from("shootings").insert({
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+        } as any);
+        if (error) throw error;
+        toast.success("শুটিং যোগ হয়েছে!");
+      }
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
       setOpen(false);
-      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
+      resetForm();
     } catch (err: any) {
       toast.error(err.message);
     } finally {
