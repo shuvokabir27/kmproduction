@@ -36,7 +36,7 @@ const AdminShootings = () => {
   const [location, setLocation] = useState("");
   const [shootDate, setShootDate] = useState("");
   const [status, setStatus] = useState("plan");
-  const [submitting, setSubmitting] = useState(false);
+  const [scriptUrl, setScriptUrl] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
