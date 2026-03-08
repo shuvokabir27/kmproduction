@@ -220,34 +220,34 @@ const AdminMembers = () => {
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
       } else {
-        // Create new — sign up a user with default password "000000"
-        const defaultPassword = "000000";
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: form.email,
-          password: defaultPassword,
-          options: {
-            data: { full_name: form.full_name },
+        // Create new member via edge function (won't affect admin session)
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-member`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
           },
+          body: JSON.stringify({
+            email: form.email,
+            password: "000000",
+            full_name: form.full_name,
+            profile_data: {
+              phone: form.phone || null,
+              designation: form.designation || null,
+              bio: form.bio || null,
+              bank_name: form.bank_name || null,
+              bank_account_no: form.bank_account_no || null,
+              bkash_no: form.bkash_no || null,
+              nagad_no: form.nagad_no || null,
+              address: form.address || null,
+              salary_type: form.salary_type,
+              monthly_salary: Number(form.monthly_salary) || 0,
+            },
+          }),
         });
-        if (authError) throw authError;
-
-        // Wait a moment for the trigger to create the profile, then update it
-        await new Promise((r) => setTimeout(r, 1000));
-
-        if (authData.user) {
-          await supabase.from("profiles").update({
-            phone: form.phone || null,
-            designation: form.designation || null,
-            bio: form.bio || null,
-            bank_name: form.bank_name || null,
-            bank_account_no: form.bank_account_no || null,
-            bkash_no: form.bkash_no || null,
-            nagad_no: form.nagad_no || null,
-            address: form.address || null,
-            salary_type: form.salary_type as any,
-            monthly_salary: Number(form.monthly_salary) || 0,
-          }).eq("user_id", authData.user.id);
-        }
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error);
         toast.success(`সদস্য যোগ হয়েছে! ডিফল্ট পাসওয়ার্ড: 000000`, { duration: 10000 });
       }
       queryClient.invalidateQueries({ queryKey: ["admin-members"] });
