@@ -161,6 +161,61 @@ const AdminAttendance = () => {
     });
   };
 
+  // Start 5-second countdown for delete
+  const startDeleteTimer = (shootingId: string) => {
+    setDeleteTimers((prev) => ({ ...prev, [shootingId]: 5 }));
+  };
+
+  const cancelDeleteTimer = (shootingId: string) => {
+    setDeleteTimers((prev) => {
+      const next = { ...prev };
+      delete next[shootingId];
+      return next;
+    });
+  };
+
+  // Countdown effect
+  useEffect(() => {
+    const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
+    if (activeTimers.length === 0) return;
+
+    const interval = setInterval(() => {
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        for (const key in next) {
+          if (next[key] > 0) next[key]--;
+        }
+        return next;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [Object.keys(deleteTimers).length]);
+
+  const handleDeleteAttendance = async (shootingId: string) => {
+    if (deleteTimers[shootingId] !== 0) return;
+    setDeletingId(shootingId);
+    try {
+      const { error } = await supabase
+        .from("attendance")
+        .delete()
+        .eq("shooting_id", shootingId);
+      if (error) throw error;
+      toast.success("হাজিরা ডিলিট হয়েছে! দৈনিক রেটভুক্ত সদস্যদের ব্যালেন্স আপডেট হবে।");
+      cancelDeleteTimer(shootingId);
+      queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
+      queryClient.invalidateQueries({ queryKey: ["existing-attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["shootings-with-attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-total-due"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-member-balances"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
