@@ -78,7 +78,7 @@ const AdminShootings = () => {
 
   const resetForm = () => {
     setEditId(null);
-    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
+    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl(""); setSelectedScriptId("");
   };
 
   const openAdd = () => {
