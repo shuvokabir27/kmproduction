@@ -133,6 +133,9 @@ export default function AdminNews() {
     setImageFile(null);
     setImagePreview(null);
     setEditingNews(null);
+    setRawImageSrc(null);
+    setCrop(undefined);
+    setCompletedCrop(undefined);
   };
 
   const openEdit = (news: NewsItem) => {
