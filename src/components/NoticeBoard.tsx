@@ -5,15 +5,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Megaphone, Pin, Clock, MessageSquare } from "lucide-react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function NoticeBoard() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
 
@@ -130,31 +133,63 @@ export function NoticeBoard() {
         </div>
       </Card>
 
-      {/* Notice Detail Dialog */}
-      <Dialog open={!!selectedNotice} onOpenChange={(v) => !v && setSelectedNotice(null)}>
-        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[85vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-foreground flex items-center gap-2">
-              {selectedNotice?.is_pinned && <Pin className="h-4 w-4 text-primary" />}
-              {selectedNotice?.title}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 overflow-auto space-y-4">
-            <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-              {selectedNotice?.content}
+      {/* Notice Detail - Fullscreen Drawer on mobile, Dialog on desktop */}
+      {isMobile ? (
+        <Drawer open={!!selectedNotice} onOpenChange={(v) => !v && setSelectedNotice(null)}>
+          <DrawerContent className="bg-card border-border/50 h-[100dvh] max-h-[100dvh] rounded-none">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-border/30">
+                <button onClick={() => setSelectedNotice(null)} className="text-muted-foreground hover:text-foreground transition-colors">
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <DrawerTitle className="text-foreground flex items-center gap-2 text-base flex-1 min-w-0">
+                  {selectedNotice?.is_pinned && <Pin className="h-4 w-4 text-primary shrink-0" />}
+                  <span className="truncate">{selectedNotice?.title}</span>
+                </DrawerTitle>
+              </div>
+              <div className="flex-1 overflow-auto px-4 py-4 space-y-4">
+                <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                  {selectedNotice?.content}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {selectedNotice && formatDistanceToNow(new Date(selectedNotice.created_at), { addSuffix: true, locale: bn })}
+                </p>
+                <div className="border-t border-border/30 pt-4">
+                  <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <MessageSquare className="h-4 w-4 text-primary" /> মন্তব্য
+                  </h4>
+                  {selectedNotice && <NoticeComments noticeId={selectedNotice.id} />}
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {selectedNotice && formatDistanceToNow(new Date(selectedNotice.created_at), { addSuffix: true, locale: bn })}
-            </p>
-            <div className="border-t border-border/30 pt-4">
-              <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
-                <MessageSquare className="h-4 w-4 text-primary" /> মন্তব্য
-              </h4>
-              {selectedNotice && <NoticeComments noticeId={selectedNotice.id} />}
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={!!selectedNotice} onOpenChange={(v) => !v && setSelectedNotice(null)}>
+          <DialogContent className="bg-card border-border/50 max-w-lg max-h-[85vh] flex flex-col">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                {selectedNotice?.is_pinned && <Pin className="h-4 w-4 text-primary" />}
+                {selectedNotice?.title}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 overflow-auto space-y-4">
+              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                {selectedNotice?.content}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {selectedNotice && formatDistanceToNow(new Date(selectedNotice.created_at), { addSuffix: true, locale: bn })}
+              </p>
+              <div className="border-t border-border/30 pt-4">
+                <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                  <MessageSquare className="h-4 w-4 text-primary" /> মন্তব্য
+                </h4>
+                {selectedNotice && <NoticeComments noticeId={selectedNotice.id} />}
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }
