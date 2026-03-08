@@ -20,6 +20,7 @@ const statusOptions = [
   { value: "ongoing", label: "চলছে", color: "bg-primary/10 text-primary" },
   { value: "completed", label: "শুটিং শেষ", color: "bg-success/10 text-success" },
   { value: "editing", label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
+  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-success/15 text-success" },
   { value: "published", label: "পাবলিশ হয়েছে", color: "bg-success/10 text-success" },
 ];
 
