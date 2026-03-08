@@ -51,7 +51,7 @@ const Services = () => {
   const others = services?.filter((s: any) => !s.is_featured) ?? [];
 
   return (
-    <div className="min-h-screen bg-background noise-bg">
+    <div className="min-h-screen bg-background noise-bg font-bangla">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl saturate-150 border-b border-border/20" />
