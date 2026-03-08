@@ -415,7 +415,7 @@ const PublicHome = () => {
                             <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
                               <Film className="h-3.5 w-3.5 text-primary" />
                             </div>
-                            <span className="text-xs text-primary/80 font-medium">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</span>
+                            <span className="text-xs text-primary/80 font-medium">{new Date(s.shoot_date).toLocaleDateString(lang === "en" ? "en-US" : "bn-BD")}</span>
                           </div>
                           <h3 className="font-bold text-foreground text-base leading-tight">{s.name}</h3>
                           {s.description && <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{s.description}</p>}
