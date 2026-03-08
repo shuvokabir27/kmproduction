@@ -7,6 +7,8 @@ import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, C
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
