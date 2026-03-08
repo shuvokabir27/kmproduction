@@ -166,7 +166,7 @@ const PublicHome = () => {
                   <button
                     key={nav.href}
                     onClick={() => handleNavClick(nav)}
-                    className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all"
+                    className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border-l-2 border-transparent hover:border-primary"
                   >
                     {nav.label}
                   </button>
