@@ -17,6 +17,7 @@ import AdminShootings from "./pages/AdminShootings";
 import AdminChannels from "./pages/AdminChannels";
 import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
+import AdminNotices from "./pages/AdminNotices";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
