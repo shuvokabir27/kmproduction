@@ -70,9 +70,10 @@ interface Props {
   categories: { value: string; label: string }[];
   onBack: () => void;
   onShare: (type: string, news: NewsItem) => void;
+  publisherName?: string | null;
 }
 
-export default function NewsDetail({ news, categories, onBack, onShare }: Props) {
+export default function NewsDetail({ news, categories, onBack, onShare, publisherName }: Props) {
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
