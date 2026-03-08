@@ -8,8 +8,11 @@ import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isOnChat = location.pathname === "/chat";
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
