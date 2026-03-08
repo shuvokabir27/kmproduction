@@ -69,6 +69,19 @@ const AdminPayments = () => {
       });
       if (error) throw error;
       toast.success("পেমেন্ট সফল!");
+      // Show receipt
+      setReceiptData({
+        memberName: selectedProfile?.full_name || "",
+        memberId: selectedProfile?.member_id || 0,
+        amount: Number(amount),
+        method,
+        transactionId: transactionId || null,
+        notes: notes || null,
+        date: new Date().toISOString(),
+        totalEarned: memberBalance?.totalEarned || 0,
+        totalPaid: (memberBalance?.totalPaid || 0) + Number(amount),
+        balance: (memberBalance?.balance || 0) - Number(amount),
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
