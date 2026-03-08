@@ -82,6 +82,22 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [comments?.length]);
 
+  // Keep input visible above mobile keyboard
+  useEffect(() => {
+    const handleResize = () => {
+      if (document.activeElement === inputRef.current) {
+        setTimeout(() => {
+          inputWrapperRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        }, 100);
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleResize);
+      return () => window.visualViewport?.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
   const filteredMembers = members?.filter((m: any) =>
     m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase())
   ).slice(0, 5) ?? [];
