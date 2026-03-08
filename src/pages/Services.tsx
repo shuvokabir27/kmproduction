@@ -137,10 +137,7 @@ const Services = () => {
               <span className="gradient-text">{t("সম্পূর্ণ সমাধান", "Complete Solution")}</span>
             </h1>
             <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto leading-relaxed">
-              {t(
-                <>আমরা <span className="font-bold text-amber-400">কুয়াকাটা মাল্টিমিডিয়া টিম</span> — <span className="font-bold text-cyan-400">দীর্ঘ ৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।</>,
-                <>We are the <span className="font-bold text-amber-400">Kuakata Multimedia team</span> — working with an experienced and skilled team in this sector for over <span className="font-bold text-cyan-400">7 years</span>. From ads, weddings, drama production to video editing — we are by your side for everything.</>
-              )}
+              আমরা <span className="font-bold text-amber-400">কুয়াকাটা মাল্টিমিডিয়া টিম</span> — <span className="font-bold text-cyan-400">দীর্ঘ ৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।
             </p>
           </motion.div>
         </div>
