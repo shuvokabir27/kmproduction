@@ -103,12 +103,14 @@ export function ConversationList({ selectedId, onSelect, onNewPersonal, onNewGro
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-bold text-foreground text-lg">চ্যাট</h2>
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNewPersonal} title="ব্যক্তিগত চ্যাট">
+             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNewPersonal} title="ব্যক্তিগত চ্যাট">
               <User className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNewGroup} title="গ্রুপ চ্যাট">
-              <Users className="h-4 w-4" />
-            </Button>
+            {isAdmin && (
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNewGroup} title="গ্রুপ চ্যাট">
+                <Users className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
         <div className="relative">
