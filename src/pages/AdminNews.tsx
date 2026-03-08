@@ -145,6 +145,25 @@ export default function AdminNews() {
     }, 0);
   };
 
+  const handleInlineImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setInlineUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `inline-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from("news-images").upload(fileName, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+      const caption = prompt("ছবির ক্যাপশন লিখুন (ঐচ্ছিক):") || "";
+      insertFormat(`\n![${caption}](${data.publicUrl})\n`, "");
+    } catch (err: any) {
+      toast({ title: "ছবি আপলোড ব্যর্থ", description: err.message, variant: "destructive" });
+    }
+    setInlineUploading(false);
+    if (inlineFileRef.current) inlineFileRef.current.value = "";
+  };
+
   const resetForm = () => {
     setTitle("");
     setContent("");
