@@ -108,7 +108,6 @@ const Services = () => {
                 "We are the Kuakata Multimedia team — working with an experienced and skilled team in this sector for over 7 years. From ads, weddings, drama production to video editing — we are by your side for everything."
               )}
             </p>
-            </p>
           </motion.div>
         </div>
       </section>
