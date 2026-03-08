@@ -58,6 +58,14 @@ const PublicHome = () => {
     },
   });
 
+  const { data: galleryImages } = useQuery({
+    queryKey: ["gallery-images"],
+    queryFn: async () => {
+      const { data } = await supabase.from("gallery_images" as any).select("*").eq("is_active", true).order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
+    },
+  });
+
   const { data: channels } = useQuery({
     queryKey: ["public-channels"],
     queryFn: async () => {
