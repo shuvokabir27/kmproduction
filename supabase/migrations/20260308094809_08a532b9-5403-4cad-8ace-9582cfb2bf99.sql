@@ -1,0 +1,8 @@
+ALTER TABLE public.profiles 
+  ADD COLUMN IF NOT EXISTS full_name_en text DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS designation_en text DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS short_bio_en text DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS bio_en text DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS address_en text DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS education_en text DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS achievements_en text DEFAULT NULL;

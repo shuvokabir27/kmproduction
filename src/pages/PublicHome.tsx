@@ -6,17 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage, labels } from "@/hooks/useLanguage";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
 const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 
 const PublicHome = () => {
   const { user, isAdmin } = useAuth();
+  const { lang, t } = useLanguage();
+  const L = labels[lang];
 
   const { data: members } = useQuery({
     queryKey: ["public-members"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,short_bio,address,is_active,is_verified").eq("is_active", true).order("member_id");
+      const { data } = await supabase.from("profiles").select("id,full_name,full_name_en,member_id,photo_url,cover_url,designation,designation_en,bio,short_bio,address,is_active,is_verified").eq("is_active", true).order("member_id");
       return data ?? [];
     },
   });
@@ -50,16 +54,17 @@ const PublicHome = () => {
             <span className="font-bold text-foreground text-lg tracking-tight">{settings?.site_name || "KM Production House"}</span>
           </Link>
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             {user ? (
               <Link to={isAdmin ? "/admin" : "/dashboard"}>
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent">
-                  ড্যাশবোর্ড <ChevronRight className="h-4 w-4" />
+                  {L.dashboard} <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             ) : (
               <Link to="/login">
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent">
-                  লগইন <ChevronRight className="h-4 w-4" />
+                  {L.login} <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             )}
@@ -119,7 +124,7 @@ const PublicHome = () => {
             transition={{ delay: 0.5 }}
             className="text-muted-foreground text-lg md:text-xl mt-8 max-w-2xl mx-auto leading-relaxed"
           >
-            {settings?.site_description || "প্রফেশনাল মিডিয়া প্রোডাকশন হাউস"}
+            {settings?.site_description || L.description}
           </motion.p>
 
           <motion.div
@@ -130,12 +135,12 @@ const PublicHome = () => {
           >
             <a href="#projects">
               <Button size="lg" className="bg-primary hover:bg-primary/90 glow-accent text-lg px-8 h-12 gap-2">
-                <Play className="h-5 w-5" /> আমাদের কাজ দেখুন
+                <Play className="h-5 w-5" /> {L.seeWork}
               </Button>
             </a>
             <a href="#team">
               <Button size="lg" variant="outline" className="border-primary/30 hover:bg-primary/10 text-lg px-8 h-12 gap-2">
-                <Users className="h-5 w-5" /> টিম দেখুন
+                <Users className="h-5 w-5" /> {L.seeTeam}
               </Button>
             </a>
           </motion.div>
@@ -148,8 +153,8 @@ const PublicHome = () => {
             className="mt-16 flex items-center justify-center gap-8 md:gap-16"
           >
             {[
-              { value: members?.length || 0, label: "টিম মেম্বার" },
-              { value: shootings?.length || 0, label: "প্রজেক্ট" },
+              { value: members?.length || 0, label: L.teamMembers },
+              { value: shootings?.length || 0, label: L.projects },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="font-display text-4xl md:text-5xl gradient-text">{stat.value}+</div>
@@ -174,7 +179,7 @@ const PublicHome = () => {
             className="mb-12"
           >
             <span className="text-primary text-sm font-semibold tracking-widest uppercase">Our Team</span>
-            <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">আমাদের টিম</h2>
+            <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.ourTeam}</h2>
             <div className="h-1 w-16 bg-primary rounded-full mt-4" />
           </motion.div>
 
@@ -194,10 +199,14 @@ const PublicHome = () => {
                           )}
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <h3 className="text-sm font-semibold text-foreground truncate">{member.full_name}</h3>
+                          <h3 className="text-sm font-semibold text-foreground truncate">
+                            {lang === "en" && (member as any).full_name_en ? (member as any).full_name_en : member.full_name}
+                          </h3>
                           {(member as any).is_verified && <svg className="h-4 w-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
                         </div>
-                        <p className="text-xs text-muted-foreground truncate mt-1">{member.designation || "সদস্য"}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-1">
+                          {lang === "en" && (member as any).designation_en ? (member as any).designation_en : (member.designation || L.member)}
+                        </p>
                       </div>
                     </Card>
                   </div>
@@ -221,7 +230,7 @@ const PublicHome = () => {
               className="mb-12"
             >
               <span className="text-primary text-sm font-semibold tracking-widest uppercase">Our Work</span>
-              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">সাম্প্রতিক প্রজেক্ট</h2>
+              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.recentProjects}</h2>
               <div className="h-1 w-16 bg-primary rounded-full mt-4" />
             </motion.div>
 
@@ -265,9 +274,9 @@ const PublicHome = () => {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <span className="text-primary text-sm font-semibold tracking-widest uppercase">Contact Us</span>
-            <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">যোগাযোগ</h2>
-            <div className="h-1 w-16 bg-primary rounded-full mt-4" />
+              <span className="text-primary text-sm font-semibold tracking-widest uppercase">Contact Us</span>
+              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.contact}</h2>
+              <div className="h-1 w-16 bg-primary rounded-full mt-4" />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -308,7 +317,7 @@ const PublicHome = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-lg font-semibold text-foreground mb-4">সোশ্যাল মিডিয়া</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">{L.socialMedia}</h3>
               <div className="flex gap-4">
                 {settings?.facebook_url && (
                   <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-xl bg-card border border-border/30 flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all card-3d">
