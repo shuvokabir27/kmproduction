@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import PaymentReceipt from "@/components/PaymentReceipt";
 
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -25,6 +26,7 @@ const AdminPayments = () => {
   const [transactionId, setTransactionId] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
 
   const { data: members } = useQuery({
     queryKey: ["admin-members-pay"],
@@ -67,6 +69,19 @@ const AdminPayments = () => {
       });
       if (error) throw error;
       toast.success("পেমেন্ট সফল!");
+      // Show receipt
+      setReceiptData({
+        memberName: selectedProfile?.full_name || "",
+        memberId: selectedProfile?.member_id || 0,
+        amount: Number(amount),
+        method,
+        transactionId: transactionId || null,
+        notes: notes || null,
+        date: new Date().toISOString(),
+        totalEarned: memberBalance?.totalEarned || 0,
+        totalPaid: (memberBalance?.totalPaid || 0) + Number(amount),
+        balance: (memberBalance?.balance || 0) - Number(amount),
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
@@ -235,6 +250,14 @@ const AdminPayments = () => {
             </table>
           </div>
         </Card>
+
+        {/* Payment Receipt */}
+        {receiptData && (
+          <PaymentReceipt
+            receiptData={receiptData}
+            onClose={() => setReceiptData(null)}
+          />
+        )}
       </div>
     </AppLayout>
   );
