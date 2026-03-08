@@ -25,7 +25,7 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 
 // Parse existing content into sequences
 const parseContent = (content: string): Sequence[] => {
-  if (!content) return [{ id: generateId(), title: "সিকুয়েন্স ১", content: "", collapsed: false }];
+  if (!content) return [{ id: generateId(), title: "দৃশ্য ১", content: "", collapsed: false }];
   
   // Try to parse as JSON sequences format
   try {
