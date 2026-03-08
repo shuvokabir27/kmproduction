@@ -85,17 +85,39 @@ const PublicHome = () => {
   return (
     <div className="min-h-screen bg-background overflow-hidden noise-bg">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-premium">
-        <div className="container max-w-6xl mx-auto flex items-center justify-between h-16 px-4">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl saturate-150 border-b border-border/20" />
+        <div className="container max-w-6xl mx-auto relative z-10 flex items-center justify-between h-16 px-4">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <img src="/favicon.png" alt="KM Production House" className="h-10 w-10 rounded-xl object-contain relative z-10" />
               <div className="absolute inset-0 bg-primary/30 rounded-xl blur-lg group-hover:bg-primary/50 transition-colors" />
             </div>
-            <span className="font-bold text-foreground text-lg tracking-tight">{settings?.site_name || "KM Production House"}</span>
+            <span className="font-bold text-foreground text-lg tracking-tight hidden sm:inline">{settings?.site_name || "KM Production House"}</span>
           </Link>
-          <div className="flex items-center gap-3">
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((nav) => (
+              <button
+                key={nav.href}
+                onClick={() => scrollToSection(nav.href)}
+                className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all duration-200"
+              >
+                {nav.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
             <LanguageToggle />
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden h-9 w-9 rounded-lg bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
+            </button>
             {user ? (
               <Link to={isAdmin ? "/admin" : "/dashboard"}>
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent font-semibold">
@@ -111,6 +133,31 @@ const PublicHome = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Nav Dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden overflow-hidden relative z-10"
+            >
+              <div className="bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-4 py-3 space-y-1">
+                {navItems.map((nav) => (
+                  <button
+                    key={nav.href}
+                    onClick={() => scrollToSection(nav.href)}
+                    className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all"
+                  >
+                    {nav.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Hero Section */}
