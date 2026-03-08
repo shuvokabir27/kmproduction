@@ -100,9 +100,9 @@ const MemberDashboard = () => {
           {balanceCards.map((card) => (
             <motion.div key={card.label} variants={item}>
               <div className="premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-50`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
                 <div className="relative z-10">
-                  <div className={`h-9 w-9 rounded-xl bg-background/50 flex items-center justify-center mb-3`}>
+                  <div className={`h-9 w-9 rounded-xl ${card.iconBg} flex items-center justify-center mb-3`}>
                     <card.icon className={`h-4 w-4 ${card.iconColor}`} />
                   </div>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">{card.label}</p>
