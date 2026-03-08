@@ -2,73 +2,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon, ScrollText, Eye, KeyRound } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { NoticeBoard } from "@/components/NoticeBoard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "sonner";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
-interface FavoriteWork {
-  id?: string;
-  title: string;
-  video_url: string;
-  description: string;
-}
-
 const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
-  const queryClient = useQueryClient();
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
-  const [profileEditOpen, setProfileEditOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [coverPreview, setCoverPreview] = useState<string | null>(null);
-  const photoRef = useRef<HTMLInputElement>(null);
-  const coverRef = useRef<HTMLInputElement>(null);
-  const [pwDialogOpen, setPwDialogOpen] = useState(false);
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [pwSaving, setPwSaving] = useState(false);
-
-  const handleChangePassword = async () => {
-    if (newPw.length < 6) { toast.error("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে"); return; }
-    if (newPw !== confirmPw) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
-    setPwSaving(true);
-    try {
-      // Verify current password by re-signing in
-      const { error: signInErr } = await supabase.auth.signInWithPassword({
-        email: profile?.email || user?.email || "",
-        password: currentPw,
-      });
-      if (signInErr) { toast.error("বর্তমান পাসওয়ার্ড ভুল"); setPwSaving(false); return; }
-
-      const { error } = await supabase.auth.updateUser({ password: newPw });
-      if (error) throw error;
-      toast.success("পাসওয়ার্ড পরিবর্তন হয়েছে!");
-      setPwDialogOpen(false);
-      setCurrentPw(""); setNewPw(""); setConfirmPw("");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setPwSaving(false);
-    }
-  };
 
   // Profile extra fields
   const [extraFields, setExtraFields] = useState({
