@@ -369,13 +369,6 @@ const AdminShootings = () => {
                     </table>
                   </div>
                 </Card>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
               </TabsContent>
             );
           })}
