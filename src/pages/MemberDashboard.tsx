@@ -128,6 +128,14 @@ const MemberDashboard = () => {
               </div>
             </Card>
           </motion.div>
+          <motion.div variants={item}>
+            <Card className="p-5 bg-card border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-violet-500/10 flex items-center justify-center"><Banknote className="h-5 w-5 text-violet-500" /></div>
+                <div><p className="text-xs text-muted-foreground">মাসিক বেতন</p><p className="text-2xl font-bold text-foreground">৳{balance?.totalSalaryCredits?.toLocaleString("bn-BD") || "০"}</p></div>
+              </div>
+            </Card>
+          </motion.div>
         </motion.div>
 
         {/* Shootings */}
