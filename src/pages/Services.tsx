@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
   ChevronRight, Check, Star, ArrowLeft, MessageCircle, Phone,
-  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb,
+  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
