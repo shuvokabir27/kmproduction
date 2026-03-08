@@ -43,6 +43,7 @@ export default function AllNotifications() {
   const [searchParams] = useSearchParams();
   const [expandedId, setExpandedId] = useState<string | null>(searchParams.get("open"));
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [detailNotification, setDetailNotification] = useState<any>(null);
   const [clearing, setClearing] = useState(false);
 
   const { data: notifications } = useQuery({
@@ -193,16 +194,23 @@ export default function AllNotifications() {
                           <span>{format(new Date(n.created_at), "dd MMM yyyy, hh:mm a", { locale: bn })}</span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          {n.link && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs h-7 gap-1"
-                              onClick={(e) => { e.stopPropagation(); navigate(n.link); }}
-                            >
-                              <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
-                            </Button>
-                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7 gap-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const popupTypes = ["payment", "attendance", "shooting"];
+                              if (popupTypes.includes(n.type)) {
+                                setDetailNotification(n);
+                              } else {
+                                const route = n.link || "/dashboard";
+                                navigate(route);
+                              }
+                            }}
+                          >
+                            <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -253,6 +261,40 @@ export default function AllNotifications() {
               {clearing ? "মুছছে..." : "হ্যাঁ, সব মুছুন"}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Detail Popup for payment/attendance/shooting */}
+      <Dialog open={!!detailNotification} onOpenChange={(o) => !o && setDetailNotification(null)}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          {detailNotification && (() => {
+            const n = detailNotification;
+            const Icon = typeIcons[n.type] || Bell;
+            const colorClass = typeColors[n.type] || "bg-secondary text-muted-foreground";
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-foreground flex items-center gap-2 text-base">
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${colorClass}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    {typeLabels[n.type] || "নটিফিকেশন"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 pt-1">
+                  <div className="rounded-lg bg-secondary/50 border border-border/30 p-3 space-y-2">
+                    <p className="text-sm font-semibold text-foreground">{n.title}</p>
+                    {n.message && (
+                      <p className="text-sm text-foreground/80">{n.message}</p>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(n.created_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                  </p>
+                </div>
+              </>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </AppLayout>

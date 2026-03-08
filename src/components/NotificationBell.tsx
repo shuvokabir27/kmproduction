@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -49,6 +50,7 @@ export function NotificationBell() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [detailNotification, setDetailNotification] = useState<any>(null);
 
   const { data: notifications } = useQuery({
     queryKey: ["notifications", user?.id],
@@ -112,6 +114,13 @@ export function NotificationBell() {
   };
 
   const handleNavigate = (n: any) => {
+    // For payment, attendance, shooting — show popup detail
+    const popupTypes = ["payment", "attendance", "shooting"];
+    if (popupTypes.includes(n.type)) {
+      setDetailNotification(n);
+      return;
+    }
+    // For notice — use link; for script — go to scripts page
     const route = n.link || typeRoutes[n.type] || "/dashboard";
     setOpen(false);
     setExpandedId(null);
@@ -270,6 +279,40 @@ export function NotificationBell() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Detail Popup for payment/attendance/shooting */}
+      <Dialog open={!!detailNotification} onOpenChange={(o) => !o && setDetailNotification(null)}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          {detailNotification && (() => {
+            const n = detailNotification;
+            const Icon = typeIcons[n.type] || Bell;
+            const colorClass = typeColors[n.type] || "bg-secondary text-muted-foreground";
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-foreground flex items-center gap-2 text-base">
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${colorClass}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    {typeLabels[n.type] || "নটিফিকেশন"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 pt-1">
+                  <div className="rounded-lg bg-secondary/50 border border-border/30 p-3 space-y-2">
+                    <p className="text-sm font-semibold text-foreground">{n.title}</p>
+                    {n.message && (
+                      <p className="text-sm text-foreground/80">{n.message}</p>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(n.created_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                  </p>
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
