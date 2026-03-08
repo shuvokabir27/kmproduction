@@ -719,6 +719,22 @@ export default function AdminNews() {
                 </Select>
               </div>
 
+              {/* Publisher */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">প্রকাশক</Label>
+                <Select value={publisherId || "none"} onValueChange={(v) => setPublisherId(v === "none" ? null : v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="প্রকাশক নির্বাচন করুন..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— কোনো প্রকাশক নেই —</SelectItem>
+                    {publishers?.map((pub) => (
+                      <SelectItem key={pub.id} value={pub.id}>{pub.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Toggles */}
               <div className="flex flex-wrap gap-6">
                 <div className="flex items-center gap-2">
