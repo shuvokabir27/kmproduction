@@ -6,17 +6,31 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { usePresenceTracker } from "@/hooks/usePresence";
+import { playMessageSound } from "@/lib/sounds";
+import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const isOnChat = location.pathname === "/chat";
   const { data: unreadCount } = useUnreadMessages();
+  const prevUnreadRef = useRef<number | undefined>(undefined);
   usePresenceTracker();
+
+  // Play sound when unread count increases (user not on chat page)
+  useEffect(() => {
+    if (!isOnChat && prevUnreadRef.current !== undefined && unreadCount !== undefined && unreadCount > prevUnreadRef.current) {
+      playMessageSound();
+    }
+    prevUnreadRef.current = unreadCount;
+  }, [unreadCount, isOnChat]);
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>

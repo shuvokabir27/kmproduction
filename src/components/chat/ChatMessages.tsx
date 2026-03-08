@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useOnlineStatus, isUserOnline, getLastSeenText } from "@/hooks/usePresence";
+import { playMessageSound } from "@/lib/sounds";
 import { useEffect, useRef, useState } from "react";
 import { Send, ArrowLeft, Users, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -97,7 +98,11 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
-        () => {
+        (payload: any) => {
+          // Play sound for incoming messages from others
+          if (payload.new?.sender_id !== user?.id) {
+            playMessageSound();
+          }
           queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
           // Mark as read immediately
           sb.from("conversation_members")
