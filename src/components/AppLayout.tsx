@@ -1,8 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 
