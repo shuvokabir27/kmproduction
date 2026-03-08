@@ -352,7 +352,7 @@ const AdminScriptEdit = () => {
         {/* Add Sequence Button - only in edit mode */}
         {isEditMode && (
           <Button variant="outline" className="w-full gap-2 border-dashed border-border/50 text-muted-foreground hover:text-foreground" onClick={addSequence}>
-            <Plus className="h-4 w-4" /> নতুন সিকুয়েন্স যোগ করুন
+            <Plus className="h-4 w-4" /> নতুন দৃশ্য যোগ করুন
           </Button>
         )}
       </div>
