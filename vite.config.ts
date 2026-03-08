@@ -22,9 +22,9 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
       },
       manifest: {
-        name: "TeamFlow - টিম ম্যানেজমেন্ট",
-        short_name: "TeamFlow",
-        description: "টিম ম্যানেজমেন্ট অ্যাপ",
+        name: "KM Production House",
+        short_name: "KM Production",
+        description: "KM Production House - টিম ম্যানেজমেন্ট",
         theme_color: "#111318",
         background_color: "#111318",
         display: "standalone",
