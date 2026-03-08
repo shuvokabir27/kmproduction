@@ -282,7 +282,11 @@ const AdminMembers = () => {
                       </div>
                     </td>
                     <td className="p-3 text-muted-foreground hidden sm:table-cell">{m.designation || "—"}</td>
-                    <td className="p-3 text-muted-foreground hidden md:table-cell">{m.phone || "—"}</td>
+                    <td className="p-3 text-muted-foreground hidden md:table-cell">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${(m as any).salary_type === "monthly" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"}`}>
+                        {(m as any).salary_type === "monthly" ? `মাসিক ৳${Number((m as any).monthly_salary || 0).toLocaleString("bn-BD")}` : "দৈনিক"}
+                      </span>
+                    </td>
                     <td className="p-3">
                       <Switch
                         checked={m.is_active ?? true}
