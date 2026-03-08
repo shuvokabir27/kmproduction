@@ -68,7 +68,7 @@ const AdminScripts = () => {
         if (error) throw error;
         toast.success("স্ক্রিপ্ট তৈরি হয়েছে!");
         setTitleDialogOpen(false);
-        navigate(`/admin/scripts/${(data as any).id}`);
+        navigate(`/admin/scripts/${(data as any).id}?mode=edit`);
         return;
       }
       queryClient.invalidateQueries({ queryKey: ["admin-scripts"] });
