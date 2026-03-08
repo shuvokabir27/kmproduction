@@ -255,6 +255,11 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
             value={commentText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => {
+              setTimeout(() => {
+                inputWrapperRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+              }, 300);
+            }}
             placeholder="মন্তব্য লিখুন... (@দিয়ে মেনশন)"
             rows={1}
             className="flex-1 bg-secondary border border-border/30 rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
