@@ -21,6 +21,7 @@ import {
   Phone,
   Image as ImageIcon,
   Sparkles,
+  Newspaper,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
