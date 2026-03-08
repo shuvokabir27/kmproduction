@@ -66,6 +66,9 @@ export default function AdminNews() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [publisherId, setPublisherId] = useState<string | null>(null);
+  const [publisherDialogOpen, setPublisherDialogOpen] = useState(false);
+  const [newPublisherName, setNewPublisherName] = useState("");
   const [inlineUploading, setInlineUploading] = useState(false);
   const inlineFileRef = useRef<HTMLInputElement>(null);
   const [inlineImageDialog, setInlineImageDialog] = useState(false);
