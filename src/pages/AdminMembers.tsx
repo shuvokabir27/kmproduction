@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { KeyRound } from "lucide-react";
+import { KeyRound, Mail } from "lucide-react";
 
 interface MemberForm {
   full_name: string;
@@ -50,6 +50,11 @@ const AdminMembers = () => {
   const [newPassword, setNewPassword] = useState("");
   const [pwSubmitting, setPwSubmitting] = useState(false);
 
+  const [emailOpen, setEmailOpen] = useState(false);
+  const [emailMember, setEmailMember] = useState<any>(null);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
+
   const handleSetPassword = async () => {
     if (!pwMember || newPassword.length < 6) {
       toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
@@ -76,6 +81,33 @@ const AdminMembers = () => {
       toast.error(err.message);
     } finally {
       setPwSubmitting(false);
+    }
+  };
+
+  const handleChangeEmail = async () => {
+    if (!emailMember || !newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      toast.error("সঠিক ইমেইল দিন");
+      return;
+    }
+    setEmailSubmitting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-member-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ user_id: emailMember.user_id, new_email: newEmail.trim() }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      toast.success(`${emailMember.full_name} এর ইমেইল পরিবর্তন হয়েছে!`);
+      setEmailOpen(false);
+      setNewEmail("");
+      setEmailMember(null);
+      queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEmailSubmitting(false);
     }
   };
 
@@ -415,6 +447,9 @@ const AdminMembers = () => {
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
                     <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}>
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                  </Button>
                   <Link to={`/member/${m.member_id}`}>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                       <Eye className="h-3.5 w-3.5 text-muted-foreground" />
@@ -472,6 +507,7 @@ const AdminMembers = () => {
                       <div className="flex items-center justify-end gap-1">
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}><Edit className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}><KeyRound className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}><Mail className="h-4 w-4" /></Button>
                         <Link to={`/member/${m.member_id}`}><Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary"><Eye className="h-4 w-4" /></Button></Link>
                       </div>
                     </td>
@@ -498,6 +534,28 @@ const AdminMembers = () => {
             />
             <Button onClick={handleSetPassword} disabled={pwSubmitting || newPassword.length < 6} className="w-full">
               {pwSubmitting ? "সেট হচ্ছে..." : "পাসওয়ার্ড সেট করুন"}
+            </Button>
+          </DialogContent>
+        </Dialog>
+
+        {/* Email Change Dialog */}
+        <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
+          <DialogContent className="bg-card border-border/50 max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" /> ইমেইল পরিবর্তন
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">{emailMember?.full_name} এর ইমেইল পরিবর্তন করুন</p>
+            <Input
+              type="email"
+              placeholder="নতুন ইমেইল দিন"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              className="bg-secondary border-border/50"
+            />
+            <Button onClick={handleChangeEmail} disabled={emailSubmitting || !newEmail.trim()} className="w-full gap-2">
+              <Mail className="h-4 w-4" /> {emailSubmitting ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
             </Button>
           </DialogContent>
         </Dialog>

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut } from "lucide-react";
+import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -39,6 +39,10 @@ const MemberSettings = () => {
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
+
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailSaving, setEmailSaving] = useState(false);
 
   const [extraFields, setExtraFields] = useState({
     address: "", education: "", achievements: "", short_bio: "",
@@ -140,6 +144,31 @@ const MemberSettings = () => {
     }
   };
 
+  const handleChangeEmail = async () => {
+    if (!newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      toast.error("সঠিক ইমেইল দিন"); return;
+    }
+    setEmailSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-member-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ user_id: user!.id, new_email: newEmail.trim() }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      toast.success("ইমেইল পরিবর্তন হয়েছে!");
+      setEmailDialogOpen(false);
+      setNewEmail("");
+      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEmailSaving(false);
+    }
+  };
+
   const handleSaveProfile = async () => {
     if (!profile) return;
     setSaving(true);
@@ -235,6 +264,19 @@ const MemberSettings = () => {
             <div>
               <p className="text-sm font-medium text-foreground">পাসওয়ার্ড পরিবর্তন</p>
               <p className="text-xs text-muted-foreground">আপনার লগইন পাসওয়ার্ড পরিবর্তন করুন</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailDialogOpen(true); }}
+            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
+          >
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Mail className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">ইমেইল পরিবর্তন</p>
+              <p className="text-xs text-muted-foreground">{profile?.email || user?.email || "ইমেইল সেট করুন"}</p>
             </div>
           </button>
 
@@ -366,6 +408,26 @@ const MemberSettings = () => {
             <div><Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড নিশ্চিত করুন</Label><Input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="আবার নতুন পাসওয়ার্ড দিন" /></div>
             <Button onClick={handleChangePassword} disabled={pwSaving} className="w-full gap-2">
               <KeyRound className="h-4 w-4" /> {pwSaving ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Change Dialog */}
+      <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" /> ইমেইল পরিবর্তন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন ইমেইল</Label>
+              <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="নতুন ইমেইল দিন" />
+            </div>
+            <Button onClick={handleChangeEmail} disabled={emailSaving || !newEmail.trim()} className="w-full gap-2">
+              <Mail className="h-4 w-4" /> {emailSaving ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
             </Button>
           </div>
         </DialogContent>
