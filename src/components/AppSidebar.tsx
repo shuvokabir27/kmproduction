@@ -130,7 +130,9 @@ export function AppSidebar() {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <NavLink to="/" className="hover:bg-secondary/80 transition-colors" activeClassName="">
-                        <Home className="mr-2 h-4 w-4" />
+                        <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center mr-2 shrink-0">
+                          <Home className="h-3.5 w-3.5 text-emerald-400" />
+                        </div>
                         {!collapsed && <span>সাইট দেখুন</span>}
                       </NavLink>
                     </SidebarMenuButton>
