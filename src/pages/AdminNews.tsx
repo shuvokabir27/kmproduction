@@ -159,8 +159,9 @@ export default function AdminNews() {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      const src = URL.createObjectURL(file);
+      setRawImageSrc(src);
+      setCropDialogOpen(true);
     }
   };
 
