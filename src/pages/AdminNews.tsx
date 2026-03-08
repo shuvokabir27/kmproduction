@@ -611,6 +611,91 @@ export default function AdminNews() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Inline Image Size Dialog */}
+        <Dialog open={inlineImageDialog} onOpenChange={(open) => { setInlineImageDialog(open); if (!open) setInlineImageUrl(null); }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ImageIcon className="h-5 w-5 text-primary" /> ছবি সাইজ ও ক্যাপশন
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-2">
+              {inlineImageUrl && (
+                <div className="flex justify-center bg-secondary/30 rounded-xl p-4 border border-border/30">
+                  <img
+                    src={inlineImageUrl}
+                    alt="Preview"
+                    className="rounded-lg border border-border/30 object-contain"
+                    style={{ width: `${inlineSize}%`, maxHeight: "300px" }}
+                  />
+                </div>
+              )}
+
+              {/* Zoom Controls */}
+              <div>
+                <Label className="text-xs font-medium mb-2 block">সাইজ: {inlineSize}%</Label>
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setInlineSize(Math.max(20, inlineSize - 10))}
+                  >
+                    <ZoomOut className="h-4 w-4" />
+                  </Button>
+                  <input
+                    type="range"
+                    min={20}
+                    max={100}
+                    step={5}
+                    value={inlineSize}
+                    onChange={(e) => setInlineSize(Number(e.target.value))}
+                    className="flex-1 accent-primary"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setInlineSize(Math.min(100, inlineSize + 10))}
+                  >
+                    <ZoomIn className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-1.5 mt-2">
+                  {[30, 50, 70, 100].map(s => (
+                    <button
+                      key={s}
+                      onClick={() => setInlineSize(s)}
+                      className={`px-3 py-1 rounded-md text-xs border transition-colors ${inlineSize === s ? "bg-primary text-primary-foreground border-primary" : "bg-secondary/50 text-muted-foreground border-border/30"}`}
+                    >
+                      {s}%
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Caption */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">ক্যাপশন (ঐচ্ছিক)</Label>
+                <Input
+                  value={inlineCaption}
+                  onChange={(e) => setInlineCaption(e.target.value)}
+                  placeholder="ছবির ক্যাপশন লিখুন..."
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button variant="secondary" className="flex-1" onClick={() => { setInlineImageDialog(false); setInlineImageUrl(null); }}>
+                  বাতিল
+                </Button>
+                <Button className="flex-1 gap-1.5" onClick={confirmInlineImage}>
+                  <Check className="h-4 w-4" /> যোগ করুন
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
