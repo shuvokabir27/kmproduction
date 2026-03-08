@@ -131,6 +131,8 @@ const AdminMembers = () => {
       salary_type: member.salary_type || "daily",
       monthly_salary: String(member.monthly_salary || 0),
     });
+    setPhotoFile(null);
+    setCoverFile(null);
     setOpen(true);
   };
 
