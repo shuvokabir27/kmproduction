@@ -695,7 +695,7 @@ const PublicHome = () => {
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">ঠিকানা</p>
+                    <p className="text-xs text-muted-foreground">{t("ঠিকানা", "Address")}</p>
                     <span className="text-foreground/80 text-sm">{settings.contact_address}</span>
                   </div>
                 </div>
