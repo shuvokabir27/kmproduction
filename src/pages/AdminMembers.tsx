@@ -79,6 +79,20 @@ const AdminMembers = () => {
     }
   };
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const coverRef = useRef<HTMLInputElement>(null);
+
+  const uploadFile = async (file: File, folder: string, memberId: string) => {
+    const ext = file.name.split('.').pop();
+    const path = `${folder}/${memberId}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from('member-photos').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: { publicUrl } } = supabase.storage.from('member-photos').getPublicUrl(path);
+    return publicUrl;
+  };
+
   const { data: members } = useQuery({
     queryKey: ["admin-members"],
     queryFn: async () => {
@@ -96,6 +110,8 @@ const AdminMembers = () => {
   const openAdd = () => {
     setEditId(null);
     setForm(emptyForm);
+    setPhotoFile(null);
+    setCoverFile(null);
     setOpen(true);
   };
 
