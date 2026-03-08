@@ -43,6 +43,7 @@ export default function AllNotifications() {
   const [searchParams] = useSearchParams();
   const [expandedId, setExpandedId] = useState<string | null>(searchParams.get("open"));
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [detailNotification, setDetailNotification] = useState<any>(null);
   const [clearing, setClearing] = useState(false);
 
   const { data: notifications } = useQuery({
