@@ -164,6 +164,12 @@ const MemberDashboard = () => {
         favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null,
         date_of_birth: extraFields.date_of_birth || null,
+        full_name_en: extraFields.full_name_en || null,
+        designation_en: extraFields.designation_en || null,
+        short_bio_en: extraFields.short_bio_en || null,
+        address_en: extraFields.address_en || null,
+        education_en: extraFields.education_en || null,
+        achievements_en: extraFields.achievements_en || null,
       };
 
       if (photoFile) {
