@@ -1,0 +1,400 @@
+import { AppLayout } from "@/components/AppLayout";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, StarOff, Calendar, Newspaper } from "lucide-react";
+import { format } from "date-fns";
+
+const categories = [
+  { value: "entertainment", label: "🎬 এন্টারটেইনমেন্ট" },
+  { value: "funny", label: "😂 ফানি" },
+  { value: "behind-the-scenes", label: "🎭 বিহাইন্ড দ্য সিন" },
+  { value: "announcement", label: "📢 ঘোষণা" },
+];
+
+interface NewsItem {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string | null;
+  featured_image_url: string | null;
+  category: string;
+  is_published: boolean;
+  is_featured: boolean;
+  created_at: string;
+  published_at: string | null;
+}
+
+export default function AdminNews() {
+  const { isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [category, setCategory] = useState("entertainment");
+  const [isPublished, setIsPublished] = useState(false);
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !isAdmin) navigate("/login");
+  }, [loading, isAdmin, navigate]);
+
+  const { data: newsList, isLoading } = useQuery({
+    queryKey: ["admin-news"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as NewsItem[];
+    },
+  });
+
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+    setExcerpt("");
+    setCategory("entertainment");
+    setIsPublished(false);
+    setIsFeatured(false);
+    setImageFile(null);
+    setImagePreview(null);
+    setEditingNews(null);
+  };
+
+  const openEdit = (news: NewsItem) => {
+    setEditingNews(news);
+    setTitle(news.title);
+    setContent(news.content);
+    setExcerpt(news.excerpt || "");
+    setCategory(news.category);
+    setIsPublished(news.is_published);
+    setIsFeatured(news.is_featured);
+    setImagePreview(news.featured_image_url);
+    setImageFile(null);
+    setDialogOpen(true);
+  };
+
+  const openNew = () => {
+    resetForm();
+    setDialogOpen(true);
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const ext = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("news-images").upload(fileName, file);
+    if (error) throw error;
+    const { data } = supabase.storage.from("news-images").getPublicUrl(fileName);
+    return data.publicUrl;
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      setUploading(true);
+      let imageUrl = editingNews?.featured_image_url || null;
+
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
+      const payload = {
+        title,
+        content,
+        excerpt: excerpt || null,
+        featured_image_url: imageUrl,
+        category,
+        is_published: isPublished,
+        is_featured: isFeatured,
+        published_at: isPublished ? new Date().toISOString() : null,
+      };
+
+      if (editingNews) {
+        const { error } = await supabase.from("news").update(payload).eq("id", editingNews.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("news").insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-news"] });
+      setDialogOpen(false);
+      resetForm();
+      toast({ title: editingNews ? "নিউজ আপডেট হয়েছে" : "নিউজ তৈরি হয়েছে" });
+      setUploading(false);
+    },
+    onError: (err: any) => {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+      setUploading(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("news").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-news"] });
+      toast({ title: "নিউজ মুছে ফেলা হয়েছে" });
+    },
+  });
+
+  const togglePublish = useMutation({
+    mutationFn: async ({ id, published }: { id: string; published: boolean }) => {
+      const { error } = await supabase.from("news").update({
+        is_published: published,
+        published_at: published ? new Date().toISOString() : null,
+      }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-news"] });
+    },
+  });
+
+  if (loading || !isAdmin) return null;
+
+  return (
+    <AppLayout>
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
+              <Newspaper className="h-5 w-5 text-orange-400" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">নিউজ ম্যানেজমেন্ট</h1>
+              <p className="text-xs text-muted-foreground">এন্টারটেইনমেন্ট ও ফানি নিউজ</p>
+            </div>
+          </div>
+          <Button onClick={openNew} size="sm" className="gap-1.5">
+            <Plus className="h-4 w-4" /> নতুন নিউজ
+          </Button>
+        </div>
+
+        {isLoading ? (
+          <div className="grid gap-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-28 rounded-xl bg-secondary/50 animate-pulse" />
+            ))}
+          </div>
+        ) : !newsList?.length ? (
+          <Card className="border-dashed">
+            <CardContent className="py-12 text-center text-muted-foreground">
+              <Newspaper className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <p>কোনো নিউজ নেই। নতুন নিউজ যোগ করুন।</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-3">
+            {newsList.map((news) => (
+              <Card key={news.id} className="overflow-hidden hover:border-border/60 transition-colors">
+                <CardContent className="p-0">
+                  <div className="flex gap-4">
+                    {/* Thumbnail */}
+                    <div className="w-28 h-28 md:w-36 md:h-28 flex-shrink-0 bg-secondary/50 overflow-hidden">
+                      {news.featured_image_url ? (
+                        <img src={news.featured_image_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 py-3 pr-3 flex flex-col justify-between min-w-0">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <Badge variant={news.is_published ? "default" : "secondary"} className="text-[10px]">
+                            {news.is_published ? "প্রকাশিত" : "ড্রাফট"}
+                          </Badge>
+                          <Badge variant="outline" className="text-[10px]">
+                            {categories.find(c => c.value === news.category)?.label || news.category}
+                          </Badge>
+                          {news.is_featured && (
+                            <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-sm text-foreground truncate">{news.title}</h3>
+                        {news.excerpt && (
+                          <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{news.excerpt}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {format(new Date(news.created_at), "dd MMM yyyy")}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => togglePublish.mutate({ id: news.id, published: !news.is_published })}
+                          >
+                            {news.is_published ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(news)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive"
+                            onClick={() => {
+                              if (confirm("নিউজটি মুছে ফেলতে চান?")) deleteMutation.mutate(news.id);
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Create/Edit Dialog */}
+        <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Newspaper className="h-5 w-5 text-orange-400" />
+                {editingNews ? "নিউজ সম্পাদনা" : "নতুন নিউজ"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 mt-2">
+              {/* Featured Image */}
+              <div>
+                <Label className="text-xs font-medium mb-2 block">ফিচার ফটো</Label>
+                <div className="relative">
+                  {imagePreview ? (
+                    <div className="relative rounded-xl overflow-hidden border border-border/40">
+                      <img src={imagePreview} alt="" className="w-full h-48 object-cover" />
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="absolute bottom-2 right-2 gap-1"
+                        onClick={() => { setImageFile(null); setImagePreview(null); }}
+                      >
+                        <Trash2 className="h-3 w-3" /> সরান
+                      </Button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-border/50 bg-secondary/30 cursor-pointer hover:bg-secondary/50 transition-colors">
+                      <ImageIcon className="h-8 w-8 text-muted-foreground/40 mb-2" />
+                      <span className="text-xs text-muted-foreground">ছবি আপলোড করুন</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              {/* Title */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">শিরোনাম *</Label>
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="নিউজের শিরোনাম লিখুন..."
+                  className="text-base"
+                />
+              </div>
+
+              {/* Excerpt */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">সংক্ষিপ্ত বিবরণ</Label>
+                <Input
+                  value={excerpt}
+                  onChange={(e) => setExcerpt(e.target.value)}
+                  placeholder="সংক্ষেপে নিউজের বিষয়বস্তু..."
+                />
+              </div>
+
+              {/* Content */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">বিস্তারিত *</Label>
+                <Textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="নিউজের পুরো বিবরণ লিখুন..."
+                  rows={8}
+                  className="text-sm leading-relaxed"
+                />
+              </div>
+
+              {/* Category */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block">ক্যাটাগরি</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Toggles */}
+              <div className="flex flex-wrap gap-6">
+                <div className="flex items-center gap-2">
+                  <Switch id="published" checked={isPublished} onCheckedChange={setIsPublished} />
+                  <Label htmlFor="published" className="text-sm">প্রকাশ করুন</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch id="featured" checked={isFeatured} onCheckedChange={setIsFeatured} />
+                  <Label htmlFor="featured" className="text-sm">ফিচার্ড</Label>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => saveMutation.mutate()}
+                disabled={!title.trim() || !content.trim() || uploading}
+                className="w-full"
+              >
+                {uploading ? "আপলোড হচ্ছে..." : editingNews ? "আপডেট করুন" : "নিউজ প্রকাশ করুন"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </AppLayout>
+  );
+}
