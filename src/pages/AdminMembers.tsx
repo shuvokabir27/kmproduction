@@ -236,6 +236,24 @@ const AdminMembers = () => {
                 <DialogTitle className="text-foreground">{editId ? "সদস্যের তথ্য সম্পাদনা" : "নতুন সদস্য যোগ করুন"}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-3">
+                {editId && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">প্রোফাইল ছবি</Label>
+                      <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={(e) => setPhotoFile(e.target.files?.[0] || null)} />
+                      <Button type="button" variant="outline" size="sm" className="w-full gap-2 mt-1 border-border/50" onClick={() => photoRef.current?.click()}>
+                        <Camera className="h-4 w-4" /> {photoFile ? photoFile.name.slice(0, 15) + "..." : "ছবি আপলোড"}
+                      </Button>
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">কভার ছবি</Label>
+                      <input ref={coverRef} type="file" accept="image/*" className="hidden" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} />
+                      <Button type="button" variant="outline" size="sm" className="w-full gap-2 mt-1 border-border/50" onClick={() => coverRef.current?.click()}>
+                        <Image className="h-4 w-4" /> {coverFile ? coverFile.name.slice(0, 15) + "..." : "কভার আপলোড"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 <div>
                   <Label className="text-foreground">পূর্ণ নাম *</Label>
                   <Input value={form.full_name} onChange={(e) => setField("full_name", e.target.value)} required className="bg-secondary border-border/50" />
