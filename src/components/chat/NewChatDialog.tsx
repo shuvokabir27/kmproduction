@@ -166,7 +166,9 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">{m.full_name}</p>
-                  <p className="text-[10px] text-muted-foreground">#{m.member_id}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    #{m.member_id} • {onlineMap && isUserOnline(onlineMap.get(m.user_id)) ? <span className="text-green-500">অনলাইন</span> : getLastSeenText(onlineMap?.get(m.user_id))}
+                  </p>
                 </div>
                 {type === "personal" && selectedUsers.includes(m.user_id) && (
                   <span className="ml-auto text-xs text-primary">নির্বাচিত</span>
