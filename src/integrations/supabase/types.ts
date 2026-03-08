@@ -140,6 +140,7 @@ export type Database = {
           bank_name: string | null
           bio: string | null
           bkash_no: string | null
+          cover_url: string | null
           created_at: string
           designation: string | null
           email: string | null
@@ -162,6 +163,7 @@ export type Database = {
           bank_name?: string | null
           bio?: string | null
           bkash_no?: string | null
+          cover_url?: string | null
           created_at?: string
           designation?: string | null
           email?: string | null
@@ -184,6 +186,7 @@ export type Database = {
           bank_name?: string | null
           bio?: string | null
           bkash_no?: string | null
+          cover_url?: string | null
           created_at?: string
           designation?: string | null
           email?: string | null

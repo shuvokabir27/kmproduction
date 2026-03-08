@@ -8,9 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Users, Eye, Plus, Edit, Trash2 } from "lucide-react";
+import { Users, Eye, Plus, Edit, Trash2, Camera, Image } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
@@ -79,6 +79,20 @@ const AdminMembers = () => {
     }
   };
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const coverRef = useRef<HTMLInputElement>(null);
+
+  const uploadFile = async (file: File, folder: string, memberId: string) => {
+    const ext = file.name.split('.').pop();
+    const path = `${folder}/${memberId}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from('member-photos').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: { publicUrl } } = supabase.storage.from('member-photos').getPublicUrl(path);
+    return publicUrl;
+  };
+
   const { data: members } = useQuery({
     queryKey: ["admin-members"],
     queryFn: async () => {
@@ -96,6 +110,8 @@ const AdminMembers = () => {
   const openAdd = () => {
     setEditId(null);
     setForm(emptyForm);
+    setPhotoFile(null);
+    setCoverFile(null);
     setOpen(true);
   };
 
@@ -115,6 +131,8 @@ const AdminMembers = () => {
       salary_type: member.salary_type || "daily",
       monthly_salary: String(member.monthly_salary || 0),
     });
+    setPhotoFile(null);
+    setCoverFile(null);
     setOpen(true);
   };
 
@@ -123,9 +141,14 @@ const AdminMembers = () => {
     if (!form.full_name.trim()) { toast.error("নাম দিতে হবে"); return; }
     setSubmitting(true);
     try {
+      let photoUrl: string | undefined;
+      let coverUrl: string | undefined;
+
       if (editId) {
-        // Update existing
-        const { error } = await supabase.from("profiles").update({
+        if (photoFile) photoUrl = await uploadFile(photoFile, 'profiles', editId);
+        if (coverFile) coverUrl = await uploadFile(coverFile, 'covers', editId);
+
+        const updateData: any = {
           full_name: form.full_name,
           email: form.email || null,
           phone: form.phone || null,
@@ -138,7 +161,11 @@ const AdminMembers = () => {
           address: form.address || null,
           salary_type: form.salary_type as any,
           monthly_salary: Number(form.monthly_salary) || 0,
-        }).eq("id", editId);
+        };
+        if (photoUrl) updateData.photo_url = photoUrl;
+        if (coverUrl) updateData.cover_url = coverUrl;
+
+        const { error } = await supabase.from("profiles").update(updateData).eq("id", editId);
         if (error) throw error;
         toast.success("সদস্যের তথ্য আপডেট হয়েছে!");
       } else {
@@ -209,6 +236,24 @@ const AdminMembers = () => {
                 <DialogTitle className="text-foreground">{editId ? "সদস্যের তথ্য সম্পাদনা" : "নতুন সদস্য যোগ করুন"}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-3">
+                {editId && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">প্রোফাইল ছবি</Label>
+                      <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={(e) => setPhotoFile(e.target.files?.[0] || null)} />
+                      <Button type="button" variant="outline" size="sm" className="w-full gap-2 mt-1 border-border/50" onClick={() => photoRef.current?.click()}>
+                        <Camera className="h-4 w-4" /> {photoFile ? photoFile.name.slice(0, 15) + "..." : "ছবি আপলোড"}
+                      </Button>
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">কভার ছবি</Label>
+                      <input ref={coverRef} type="file" accept="image/*" className="hidden" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} />
+                      <Button type="button" variant="outline" size="sm" className="w-full gap-2 mt-1 border-border/50" onClick={() => coverRef.current?.click()}>
+                        <Image className="h-4 w-4" /> {coverFile ? coverFile.name.slice(0, 15) + "..." : "কভার আপলোড"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 <div>
                   <Label className="text-foreground">পূর্ণ নাম *</Label>
                   <Input value={form.full_name} onChange={(e) => setField("full_name", e.target.value)} required className="bg-secondary border-border/50" />
