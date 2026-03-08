@@ -1,13 +1,14 @@
-import { useEffect } from "react";
-import { Bell, Film, CreditCard, Calendar, ScrollText, Megaphone, CheckCheck, ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bell, Film, CreditCard, Calendar, ScrollText, Megaphone, CheckCheck, ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { AppLayout } from "@/components/AppLayout";
+import { motion, AnimatePresence } from "framer-motion";
 
 const typeIcons: Record<string, typeof Film> = {
   shooting: Film,
@@ -25,10 +26,19 @@ const typeColors: Record<string, string> = {
   notice: "bg-destructive/10 text-destructive",
 };
 
+const typeLabels: Record<string, string> = {
+  shooting: "শুটিং",
+  payment: "পেমেন্ট",
+  attendance: "হাজিরা",
+  script: "স্ক্রিপ্ট",
+  notice: "নোটিশ",
+};
+
 export default function AllNotifications() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { data: notifications } = useQuery({
     queryKey: ["all-notifications", user?.id],
@@ -64,7 +74,7 @@ export default function AllNotifications() {
 
   const handleClick = (n: any) => {
     markAsRead(n.id);
-    if (n.link) navigate(n.link);
+    setExpandedId(prev => prev === n.id ? null : n.id);
   };
 
   return (
@@ -94,32 +104,71 @@ export default function AllNotifications() {
           {notifications?.map((n: any) => {
             const Icon = typeIcons[n.type] || Bell;
             const colorClass = typeColors[n.type] || "bg-secondary text-muted-foreground";
+            const isExpanded = expandedId === n.id;
             return (
-              <button
-                key={n.id}
-                onClick={() => handleClick(n)}
-                className={`w-full text-left px-4 py-3 hover:bg-secondary/30 transition-colors flex items-start gap-3 ${
-                  !n.is_read ? "bg-primary/[0.03]" : ""
-                }`}
-              >
-                <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${colorClass}`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm leading-snug ${!n.is_read ? "font-semibold text-foreground" : "text-foreground/80"}`}>
-                    {n.title}
-                  </p>
-                  {n.message && (
-                    <p className="text-xs text-muted-foreground mt-0.5">{n.message}</p>
+              <div key={n.id}>
+                <button
+                  onClick={() => handleClick(n)}
+                  className={`w-full text-left px-4 py-3 hover:bg-secondary/30 transition-colors flex items-start gap-3 ${
+                    !n.is_read ? "bg-primary/[0.03]" : ""
+                  }`}
+                >
+                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${colorClass}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm leading-snug ${!n.is_read ? "font-semibold text-foreground" : "text-foreground/80"}`}>
+                      {n.title}
+                    </p>
+                    {!isExpanded && n.message && (
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{n.message}</p>
+                    )}
+                    {!isExpanded && (
+                      <p className="text-[11px] text-muted-foreground/60 mt-1">
+                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: bn })}
+                      </p>
+                    )}
+                  </div>
+                  {!n.is_read && (
+                    <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-2" />
                   )}
-                  <p className="text-[11px] text-muted-foreground/60 mt-1">
-                    {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: bn })}
-                  </p>
-                </div>
-                {!n.is_read && (
-                  <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-2" />
-                )}
-              </button>
+                </button>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 pb-3 pt-0 ml-12 space-y-2">
+                        {n.message && (
+                          <p className="text-sm text-foreground/80">{n.message}</p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                          <span className="inline-flex items-center gap-1">
+                            <span className={`inline-block h-2 w-2 rounded-full ${typeColors[n.type]?.split(" ")[0] || "bg-secondary"}`} />
+                            {typeLabels[n.type] || n.type}
+                          </span>
+                          <span>{format(new Date(n.created_at), "dd MMM yyyy, hh:mm a", { locale: bn })}</span>
+                        </div>
+                        {n.link && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7 gap-1 mt-1"
+                            onClick={(e) => { e.stopPropagation(); navigate(n.link); }}
+                          >
+                            <ExternalLink className="h-3 w-3" /> বিস্তারিত দেখুন
+                          </Button>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             );
           })}
         </div>
