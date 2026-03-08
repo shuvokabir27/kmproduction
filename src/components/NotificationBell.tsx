@@ -77,7 +77,7 @@ export function NotificationBell() {
 
   const handleClick = (n: any) => {
     markAsRead(n.id);
-    if (n.link) navigate(n.link);
+    navigate(`/notifications?open=${n.id}`);
     setOpen(false);
   };
 
