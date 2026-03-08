@@ -247,20 +247,20 @@ const AdminScriptEdit = () => {
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="space-y-3">
           <div className="flex items-center gap-3 min-w-0">
             <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => navigate("/admin/scripts")}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h1 className="text-lg md:text-xl font-bold text-foreground truncate flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary shrink-0" />
-                {script.title}
+                <span className="truncate">{script.title}</span>
               </h1>
               <p className="text-[10px] text-muted-foreground">{toBn(sequences.length)} দৃশ্য</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setPermDialogOpen(true)}>
               <Users className="h-3.5 w-3.5" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
             </Button>
