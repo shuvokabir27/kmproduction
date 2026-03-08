@@ -130,6 +130,7 @@ const formatInline = (text: string) => {
 export default function News() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { shortId } = useParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
@@ -154,17 +155,30 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
-  // Auto-open news from shared link query param
+  // Auto-open news from shared link (query param or short ID route)
   useEffect(() => {
+    if (!newsList) return;
+    
+    // Check query param first
     const newsId = searchParams.get("id");
-    if (newsId && newsList) {
+    if (newsId) {
       const found = newsList.find((n) => n.id === newsId);
       if (found) {
         setSelectedNews(found);
         setSearchParams({}, { replace: true });
       }
+      return;
     }
-  }, [newsList, searchParams]);
+    
+    // Check short ID from route (UUID without dashes)
+    if (shortId) {
+      const fullId = shortId.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
+      const found = newsList.find((n) => n.id === fullId);
+      if (found) {
+        setSelectedNews(found);
+      }
+    }
+  }, [newsList, searchParams, shortId]);
 
   const getShareUrl = (news: NewsItem) => {
     // Short ID: remove dashes from UUID for cleaner URL
