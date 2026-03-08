@@ -41,6 +41,15 @@ export function useMemberBalance(profileId: string | undefined) {
 
       const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
 
+      // Previous balance (prior dues)
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("previous_balance" as any)
+        .eq("id", profileId!)
+        .maybeSingle();
+
+      const previousBalance = Number((profile as any)?.previous_balance || 0);
+
       return {
         totalEarned,
         totalPaid,
@@ -48,7 +57,8 @@ export function useMemberBalance(profileId: string | undefined) {
         totalTransport,
         totalBonuses,
         totalSalaryCredits,
-        balance: totalEarned + totalBonuses + totalSalaryCredits - totalPaid,
+        previousBalance,
+        balance: totalEarned + totalBonuses + totalSalaryCredits + previousBalance - totalPaid,
       };
     },
   });
