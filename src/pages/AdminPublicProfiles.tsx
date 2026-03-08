@@ -33,7 +33,9 @@ const AdminPublicProfiles = () => {
     },
   } as any);
 
-  const displayMembers = localMembers ?? members ?? [];
+  });
+
+  const displayMembers: any[] = localMembers ?? members ?? [];
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
