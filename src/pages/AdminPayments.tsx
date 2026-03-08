@@ -364,7 +364,7 @@ const AdminPayments = () => {
                   );
                 })}
                 {payments?.length === 0 && (
-                  <tr><td colSpan={6} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
+                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
                 )}
               </tbody>
             </table>
