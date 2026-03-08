@@ -180,24 +180,31 @@ export default function News() {
     }
   }, [newsList, searchParams, shortId]);
 
-  const getShareUrl = (news: NewsItem) => {
-    // Short ID: remove dashes from UUID for cleaner URL
+  // Edge function URL for social media (OG tags work here)
+  const getOgUrl = (news: NewsItem) => {
+    return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/og-news?id=${news.id}`;
+  };
+
+  // Clean short URL for copy/display
+  const getShortUrl = (news: NewsItem) => {
     const shortId = news.id.replace(/-/g, "");
     return `https://kmproduction.lovable.app/news/${shortId}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
-    const url = getShareUrl(news);
     const text = news.title;
     switch (type) {
       case "facebook":
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, "_blank");
+        // Use OG URL so Facebook crawler sees the featured image
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getOgUrl(news))}&quote=${encodeURIComponent(text)}`, "_blank");
         break;
       case "whatsapp":
-        window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`, "_blank");
+        // Use OG URL so WhatsApp shows the preview image
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + getOgUrl(news))}`, "_blank");
         break;
       case "copy":
-        navigator.clipboard.writeText(url);
+        // Use short clean URL for copying
+        navigator.clipboard.writeText(getShortUrl(news));
         toast({ title: "লিংক কপি হয়েছে!" });
         break;
     }
