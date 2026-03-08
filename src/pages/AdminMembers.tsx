@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { KeyRound } from "lucide-react";
 
 interface MemberForm {
   full_name: string;
@@ -44,6 +45,39 @@ const AdminMembers = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<MemberForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwMember, setPwMember] = useState<any>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+
+  const handleSetPassword = async () => {
+    if (!pwMember || newPassword.length < 6) {
+      toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
+      return;
+    }
+    setPwSubmitting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/set-member-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ user_id: pwMember.user_id, new_password: newPassword }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      toast.success(`${pwMember.full_name} এর পাসওয়ার্ড সেট হয়েছে!`);
+      setPwOpen(false);
+      setNewPassword("");
+      setPwMember(null);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setPwSubmitting(false);
+    }
+  };
 
   const { data: members } = useQuery({
     queryKey: ["admin-members"],
@@ -298,6 +332,9 @@ const AdminMembers = () => {
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}>
                           <Edit className="h-4 w-4" />
                         </Button>
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
+                          <KeyRound className="h-4 w-4" />
+                        </Button>
                         <Link to={`/member/${m.member_id}`}>
                           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
                             <Eye className="h-4 w-4" />
@@ -311,6 +348,26 @@ const AdminMembers = () => {
             </table>
           </div>
         </Card>
+
+        {/* Password Dialog */}
+        <Dialog open={pwOpen} onOpenChange={setPwOpen}>
+          <DialogContent className="bg-card border-border/50 max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="text-foreground">পাসওয়ার্ড সেট করুন</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">{pwMember?.full_name} এর জন্য নতুন পাসওয়ার্ড দিন</p>
+            <Input
+              type="text"
+              placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="bg-secondary border-border/50"
+            />
+            <Button onClick={handleSetPassword} disabled={pwSubmitting || newPassword.length < 6} className="w-full">
+              {pwSubmitting ? "সেট হচ্ছে..." : "পাসওয়ার্ড সেট করুন"}
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
