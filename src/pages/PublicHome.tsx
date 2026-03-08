@@ -54,16 +54,17 @@ const PublicHome = () => {
             <span className="font-bold text-foreground text-lg tracking-tight">{settings?.site_name || "KM Production House"}</span>
           </Link>
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             {user ? (
               <Link to={isAdmin ? "/admin" : "/dashboard"}>
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent">
-                  ড্যাশবোর্ড <ChevronRight className="h-4 w-4" />
+                  {L.dashboard} <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             ) : (
               <Link to="/login">
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent">
-                  লগইন <ChevronRight className="h-4 w-4" />
+                  {L.login} <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             )}
