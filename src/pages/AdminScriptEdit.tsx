@@ -190,7 +190,7 @@ const AdminScriptEdit = () => {
 <body>
   <div class="header">
     <h1>${script.title}</h1>
-    <p>তারিখ: ${new Date().toLocaleDateString("bn-BD")} | মোট সিকুয়েন্স: ${updated.length}</p>
+    <p>তারিখ: ${new Date().toLocaleDateString("bn-BD")} | মোট দৃশ্য: ${updated.length}</p>
   </div>
   ${updated.map((seq, i) => `
     <div class="sequence">
