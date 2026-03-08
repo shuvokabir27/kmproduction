@@ -532,7 +532,7 @@ const PublicHome = () => {
               className="mb-14"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Channels</span>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">আমাদের চ্যানেল সমূহ</h2>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("আমাদের চ্যানেল সমূহ", "Our Channels")}</h2>
               <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
             </motion.div>
 
