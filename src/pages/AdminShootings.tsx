@@ -132,15 +132,15 @@ const AdminShootings = () => {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Film className="h-6 w-6 text-primary" /> শুটিং ম্যানেজমেন্ট
           </h1>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button className="gap-2"><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
+              <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border/50">
               <DialogHeader>
-                <DialogTitle className="text-foreground">নতুন শুটিং যোগ করুন</DialogTitle>
+                <DialogTitle className="text-foreground">{editId ? "শুটিং সম্পাদনা" : "নতুন শুটিং যোগ করুন"}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAdd} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label className="text-foreground">নাম</Label>
                   <Input value={name} onChange={(e) => setName(e.target.value)} required className="bg-secondary border-border/50" />
