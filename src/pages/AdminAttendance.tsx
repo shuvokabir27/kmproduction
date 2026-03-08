@@ -302,18 +302,28 @@ const AdminAttendance = () => {
                     <div className="border-t border-border/30">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border/20">
-                            <th className="text-left p-3 text-muted-foreground font-medium text-xs">আইডি</th>
-                            <th className="text-left p-3 text-muted-foreground font-medium text-xs">সদস্য</th>
-                            <th className="text-center p-3 text-muted-foreground font-medium text-xs">স্ট্যাটাস</th>
-                            <th className="text-right p-3 text-muted-foreground font-medium text-xs">রেট (৳)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border/10">
-                          {group.records.map((a: any) => (
-                            <tr key={a.id} className="hover:bg-secondary/20 transition-colors">
-                              <td className="p-3 text-muted-foreground font-mono text-xs">#{a.profiles?.member_id}</td>
-                              <td className="p-3 text-foreground">{a.profiles?.full_name || "—"}</td>
+                         <tr className="border-b border-border/20">
+                             <th className="text-left p-3 text-muted-foreground font-medium text-xs">ছবি</th>
+                             <th className="text-left p-3 text-muted-foreground font-medium text-xs">আইডি</th>
+                             <th className="text-left p-3 text-muted-foreground font-medium text-xs">সদস্য</th>
+                             <th className="text-center p-3 text-muted-foreground font-medium text-xs">স্ট্যাটাস</th>
+                             <th className="text-right p-3 text-muted-foreground font-medium text-xs">রেট (৳)</th>
+                           </tr>
+                         </thead>
+                         <tbody className="divide-y divide-border/10">
+                           {group.records.map((a: any) => (
+                             <tr key={a.id} className="hover:bg-secondary/20 transition-colors">
+                               <td className="p-3">
+                                 <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+                                   {a.profiles?.photo_url ? (
+                                     <img src={a.profiles.photo_url} alt={a.profiles?.full_name} className="h-full w-full object-cover" />
+                                   ) : (
+                                     <span className="text-primary text-[10px] font-medium">{a.profiles?.full_name?.charAt(0) || "M"}</span>
+                                   )}
+                                 </div>
+                               </td>
+                               <td className="p-3 text-muted-foreground font-mono text-xs">#{a.profiles?.member_id}</td>
+                               <td className="p-3 text-foreground">{a.profiles?.full_name || "—"}</td>
                               <td className="p-3 text-center">
                                 <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
                                   {a.is_present ? "উপস্থিত" : "অনুপস্থিত"}

@@ -174,10 +174,19 @@ const AdminDashboard = () => {
           <div className="divide-y divide-border/20">
             {recentPayments?.map((p: any) => (
               <div key={p.id} className="px-3 md:px-4 py-3 flex items-center justify-between">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{p.profiles?.full_name}</p>
-                  <p className="text-[10px] text-muted-foreground">ID: {p.profiles?.member_id}</p>
-                </div>
+                 <div className="flex items-center gap-2.5 min-w-0">
+                   <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                     {p.profiles?.photo_url ? (
+                       <img src={p.profiles.photo_url} alt={p.profiles?.full_name} className="h-full w-full object-cover" />
+                     ) : (
+                       <span className="text-primary text-[10px] font-medium">{p.profiles?.full_name?.charAt(0) || "M"}</span>
+                     )}
+                   </div>
+                   <div className="min-w-0">
+                     <p className="text-sm font-medium text-foreground truncate">{p.profiles?.full_name}</p>
+                     <p className="text-[10px] text-muted-foreground">ID: {p.profiles?.member_id}</p>
+                   </div>
+                 </div>
                 <div className="text-right shrink-0 ml-2">
                   <p className="text-sm font-semibold text-foreground">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
                   <p className="text-[10px] text-muted-foreground">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</p>

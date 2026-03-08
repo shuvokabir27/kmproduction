@@ -226,11 +226,22 @@ const AdminPayments = () => {
                 {payments?.map((p: any) => {
                   const MIcon = methodIcon[p.payment_method] || CreditCard;
                   return (
-                    <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
-                      <td className="p-3">
-                        <p className="text-foreground">{p.profiles?.full_name}</p>
-                        <p className="text-xs text-muted-foreground">ID: {p.profiles?.member_id}</p>
-                      </td>
+                     <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
+                       <td className="p-3">
+                         <div className="flex items-center gap-2">
+                           <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                             {p.profiles?.photo_url ? (
+                               <img src={p.profiles.photo_url} alt={p.profiles?.full_name} className="h-full w-full object-cover" />
+                             ) : (
+                               <span className="text-primary text-[10px] font-medium">{p.profiles?.full_name?.charAt(0) || "M"}</span>
+                             )}
+                           </div>
+                           <div>
+                             <p className="text-foreground">{p.profiles?.full_name}</p>
+                             <p className="text-xs text-muted-foreground">ID: {p.profiles?.member_id}</p>
+                           </div>
+                         </div>
+                       </td>
                       <td className="p-3 text-foreground font-medium">৳{Number(p.amount).toLocaleString()}</td>
                       <td className="p-3 hidden sm:table-cell">
                         <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground inline-flex items-center gap-1">
