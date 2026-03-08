@@ -79,12 +79,12 @@ const PublicHome = () => {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const navItems = [
-    { label: t("আমাদের টিম", "Our Team"), href: "#team" },
-    { label: t("জনপ্রিয় কাজ", "Popular Work"), href: "#popular" },
-    { label: t("সেবাসমূহ", "Services"), href: "/services", isPage: true },
-    { label: t("চ্যানেল সমূহ", "Channels"), href: "#channels" },
-    { label: t("ছবি গ্যালারী", "Gallery"), href: "#gallery" },
-    { label: t("যোগাযোগ", "Contact"), href: "#contact" },
+    { label: t("আমাদের টিম", "Our Team"), href: "#team", icon: Users, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
+    { label: t("জনপ্রিয় কাজ", "Popular Work"), href: "#popular", icon: Play, gradient: "from-rose-500 to-pink-600", bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
+    { label: t("সেবাসমূহ", "Services"), href: "/services", isPage: true, icon: Film, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
+    { label: t("চ্যানেল সমূহ", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
+    { label: t("ছবি গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
+    { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, gradient: "from-fuchsia-500 to-pink-600", bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
   ];
 
   const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
