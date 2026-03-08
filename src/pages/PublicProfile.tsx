@@ -17,7 +17,7 @@ const PublicProfile = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active,is_verified").eq("member_id", Number(memberId)).single();
+      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active,is_verified,date_of_birth").eq("member_id", Number(memberId)).single();
       return data;
     },
   });
