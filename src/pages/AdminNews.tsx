@@ -62,6 +62,7 @@ export default function AdminNews() {
   const [inlineImageUrl, setInlineImageUrl] = useState<string | null>(null);
   const [inlineCaption, setInlineCaption] = useState("");
   const [inlineSize, setInlineSize] = useState(60); // percentage width
+  const [editingInlineImage, setEditingInlineImage] = useState<{ match: string; caption: string; size: number; url: string } | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropType>();
