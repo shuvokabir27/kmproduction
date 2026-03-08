@@ -82,6 +82,24 @@ const AdminAttendance = () => {
     },
   });
 
+  // Countdown effect for delete timers
+  useEffect(() => {
+    const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
+    if (activeTimers.length === 0) return;
+
+    const interval = setInterval(() => {
+      setDeleteTimers((prev) => {
+        const next = { ...prev };
+        for (const key in next) {
+          if (next[key] > 0) next[key]--;
+        }
+        return next;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [deleteTimers]);
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
