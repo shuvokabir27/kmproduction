@@ -103,6 +103,12 @@ const MemberDashboard = () => {
         favorite_dress: (profile as any).favorite_dress || "",
         favorite_food: (profile as any).favorite_food || "",
         date_of_birth: (profile as any).date_of_birth || "",
+        full_name_en: (profile as any).full_name_en || "",
+        designation_en: (profile as any).designation_en || "",
+        short_bio_en: (profile as any).short_bio_en || "",
+        address_en: (profile as any).address_en || "",
+        education_en: (profile as any).education_en || "",
+        achievements_en: (profile as any).achievements_en || "",
       });
     }
   }, [profile]);
