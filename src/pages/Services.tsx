@@ -178,7 +178,7 @@ const Services = () => {
                             className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
                             <MessageCircle className="h-4 w-4 mr-1" />
-                            {service.price_label || "বুকিং করুন"}
+                            {service.price_label || t("বুকিং করুন", "Book Now")}
                           </Button>
                         ) : (
                           <Button className="w-full bg-secondary hover:bg-secondary/80 text-foreground" disabled>
