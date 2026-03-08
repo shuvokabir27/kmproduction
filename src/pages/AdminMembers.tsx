@@ -537,6 +537,28 @@ const AdminMembers = () => {
             </Button>
           </DialogContent>
         </Dialog>
+
+        {/* Email Change Dialog */}
+        <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
+          <DialogContent className="bg-card border-border/50 max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" /> ইমেইল পরিবর্তন
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">{emailMember?.full_name} এর ইমেইল পরিবর্তন করুন</p>
+            <Input
+              type="email"
+              placeholder="নতুন ইমেইল দিন"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              className="bg-secondary border-border/50"
+            />
+            <Button onClick={handleChangeEmail} disabled={emailSubmitting || !newEmail.trim()} className="w-full gap-2">
+              <Mail className="h-4 w-4" /> {emailSubmitting ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
