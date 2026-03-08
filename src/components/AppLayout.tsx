@@ -46,7 +46,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full bg-background noise-bg">
         {/* Desktop sidebar — hidden on mobile */}
         <div className="hidden md:block">
           <AppSidebar />
