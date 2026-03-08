@@ -43,7 +43,7 @@ const PublicHome = () => {
   const { data: shootings } = useQuery({
     queryKey: ["public-shootings"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*").order("shoot_date", { ascending: false }).limit(6);
+      const { data } = await supabase.from("shootings").select("*").eq("show_on_public", true).order("shoot_date", { ascending: false }).limit(6);
       return data ?? [];
     },
   });
