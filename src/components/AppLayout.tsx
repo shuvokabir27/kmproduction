@@ -4,6 +4,7 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { MessageCircle } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -13,6 +14,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isOnChat = location.pathname === "/chat";
+  const { data: unreadCount } = useUnreadMessages();
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
@@ -25,7 +27,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top header */}
           <header className="h-12 md:h-14 flex items-center justify-between border-b border-border/30 px-3 md:px-4 bg-card/80 backdrop-blur-xl sticky top-0 z-30">
-            {/* Desktop: sidebar trigger; Mobile: app title */}
             <div className="flex items-center gap-2">
               <div className="hidden md:block">
                 <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
@@ -49,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          {/* Main content — extra bottom padding on mobile for nav bar */}
+          {/* Main content */}
           <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto animate-fade-in">
             {children}
           </main>
@@ -59,9 +60,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {user && !isOnChat && (
           <button
             onClick={() => navigate("/chat")}
-            className="fixed bottom-20 md:bottom-6 right-4 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+            className="fixed bottom-20 md:bottom-6 right-4 z-50 h-13 w-13 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
           >
-            <MessageCircle className="h-5 w-5" />
+            <MessageCircle className="h-6 w-6" />
+            {(unreadCount ?? 0) > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
+                {unreadCount! > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
         )}
 

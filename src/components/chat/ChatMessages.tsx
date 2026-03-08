@@ -4,7 +4,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { Send, ArrowLeft, Users, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +19,20 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
   const queryClient = useQueryClient();
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Mark as read when opening conversation
+  useEffect(() => {
+    if (user?.id && conversationId) {
+      sb.from("conversation_members")
+        .update({ last_read_at: new Date().toISOString() })
+        .eq("conversation_id", conversationId)
+        .eq("user_id", user.id)
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: ["unread-messages"] });
+        });
+    }
+  }, [conversationId, user?.id, queryClient]);
 
   const { data: conversation } = useQuery({
     queryKey: ["conversation-info", conversationId],
@@ -46,10 +59,12 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         conv?.type === "group"
           ? conv?.name || "গ্রুপ চ্যাট"
           : otherMembers[0]?.full_name || "অজানা সদস্য";
+      const photoUrl = conv?.type === "personal" ? otherMembers[0]?.photo_url : null;
 
       return {
         ...conv,
         displayName,
+        photoUrl,
         memberCount: memberUserIds.length,
         profiles: profiles ?? [],
       };
@@ -82,6 +97,14 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+          // Mark as read immediately
+          sb.from("conversation_members")
+            .update({ last_read_at: new Date().toISOString() })
+            .eq("conversation_id", conversationId)
+            .eq("user_id", user!.id)
+            .then(() => {
+              queryClient.invalidateQueries({ queryKey: ["unread-messages"] });
+            });
         }
       )
       .subscribe();
@@ -89,7 +112,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [conversationId, queryClient]);
+  }, [conversationId, queryClient, user]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -114,6 +137,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
       setNewMessage("");
       queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      inputRef.current?.focus();
     },
   });
 
@@ -138,84 +162,109 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-3 border-b border-border/30 flex items-center gap-3 bg-card/80 backdrop-blur">
+      {/* Header */}
+      <div className="p-3 border-b border-border/30 flex items-center gap-3 bg-card/90 backdrop-blur sticky top-0 z-10">
         {onBack && (
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onBack}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={onBack}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
         )}
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">{conversation?.displayName}</p>
+        <Avatar className="h-9 w-9 flex-shrink-0">
+          {conversation?.photoUrl && <AvatarImage src={conversation.photoUrl} />}
+          <AvatarFallback className="bg-primary/10 text-primary text-sm">
+            {conversation?.type === "group" ? <Users className="h-4 w-4" /> : conversation?.displayName?.[0] || "?"}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground truncate">{conversation?.displayName}</p>
           {conversation?.type === "group" && (
-            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <Users className="h-3 w-3" /> {conversation?.memberCount} জন সদস্য
-            </p>
+            <p className="text-[10px] text-muted-foreground">{conversation?.memberCount} জন সদস্য</p>
           )}
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+      {/* Messages */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
         {(!messages || messages.length === 0) && (
           <div className="text-center text-sm text-muted-foreground py-10">
             কোনো মেসেজ নেই। কথোপকথন শুরু করুন!
           </div>
         )}
-        {messages?.map((msg: any) => {
+        {messages?.map((msg: any, i: number) => {
           const isMine = msg.sender_id === user?.id;
           const profile = getProfile(msg.sender_id);
+          const prevMsg = messages[i - 1];
+          const showAvatar = !isMine && (!prevMsg || prevMsg.sender_id !== msg.sender_id);
+
           return (
             <div
               key={msg.id}
-              className={cn("flex gap-2 group", isMine ? "justify-end" : "justify-start")}
+              className={cn("flex gap-1.5 group", isMine ? "justify-end" : "justify-start")}
             >
               {!isMine && (
-                <Avatar className="h-7 w-7 flex-shrink-0 mt-1">
-                  {profile?.photo_url && <AvatarImage src={profile.photo_url} />}
-                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
-                    {profile?.full_name?.[0] || "?"}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="w-7 flex-shrink-0">
+                  {showAvatar && (
+                    <Avatar className="h-7 w-7">
+                      {profile?.photo_url && <AvatarImage src={profile.photo_url} />}
+                      <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                        {profile?.full_name?.[0] || "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                </div>
               )}
-              <div className={cn("max-w-[75%]", isMine ? "items-end" : "items-start")}>
-                {!isMine && conversation?.type === "group" && (
+              <div className={cn("max-w-[78%]", isMine ? "items-end" : "items-start")}>
+                {showAvatar && conversation?.type === "group" && (
                   <p className="text-[10px] text-muted-foreground mb-0.5 ml-1">{profile?.full_name}</p>
                 )}
-                <div
-                  className={cn(
-                    "px-3 py-2 rounded-2xl text-sm relative",
-                    isMine
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-secondary text-secondary-foreground rounded-bl-sm"
-                  )}
-                >
-                  {msg.content}
+                <div className="relative">
+                  <div
+                    className={cn(
+                      "px-3 py-1.5 text-[13px] leading-relaxed",
+                      isMine
+                        ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md"
+                        : "bg-secondary text-secondary-foreground rounded-2xl rounded-bl-md"
+                    )}
+                  >
+                    {msg.content}
+                    <span className={cn(
+                      "text-[9px] ml-2 inline-block align-bottom opacity-60",
+                      isMine ? "text-primary-foreground" : "text-muted-foreground"
+                    )}>
+                      {new Date(msg.created_at).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </div>
                   {isMine && (
                     <button
                       onClick={() => deleteMessage.mutate(msg.id)}
-                      className="absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute -left-7 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                     >
                       <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
                     </button>
                   )}
                 </div>
-                <p className={cn("text-[10px] text-muted-foreground mt-0.5", isMine ? "text-right mr-1" : "ml-1")}>
-                  {new Date(msg.created_at).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
-                </p>
               </div>
             </div>
           );
         })}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-3 border-t border-border/30 flex gap-2">
-        <Input
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="p-2 border-t border-border/30 flex gap-2 bg-card/90 backdrop-blur">
+        <input
+          ref={inputRef}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="মেসেজ লিখুন..."
-          className="flex-1"
+          className="flex-1 bg-secondary/50 border border-border/30 rounded-full px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
           autoComplete="off"
         />
-        <Button type="submit" size="icon" disabled={!newMessage.trim() || sendMessage.isPending}>
+        <Button
+          type="submit"
+          size="icon"
+          disabled={!newMessage.trim() || sendMessage.isPending}
+          className="h-9 w-9 rounded-full flex-shrink-0"
+        >
           <Send className="h-4 w-4" />
         </Button>
       </form>
