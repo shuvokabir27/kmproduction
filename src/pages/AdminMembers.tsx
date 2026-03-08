@@ -183,6 +183,7 @@ const AdminMembers = () => {
       address: member.address || "",
       salary_type: member.salary_type || "daily",
       monthly_salary: String(member.monthly_salary || 0),
+      daily_rate: String((member as any).daily_rate || 0),
       previous_balance: String((member as any).previous_balance || 0),
     });
     setPhotoFile(null);
