@@ -260,7 +260,7 @@ const Services = () => {
                           className="w-full"
                           onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
                         >
-                          <MessageCircle className="h-4 w-4 mr-1" /> বুকিং করুন
+                          <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
                       ) : (
                         <Button variant="outline" size="sm" className="w-full" disabled>
