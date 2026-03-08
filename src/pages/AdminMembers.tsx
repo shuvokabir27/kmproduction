@@ -227,12 +227,12 @@ const AdminMembers = () => {
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Users className="h-6 w-6 text-primary" /> সদস্য ম্যানেজমেন্ট
+            <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+              <Users className="h-5 w-5 md:h-6 md:w-6 text-primary" /> সদস্য
             </h1>
-            <p className="text-muted-foreground text-sm">{members?.length || 0} জন সদস্য</p>
+            <p className="text-muted-foreground text-xs">{members?.length || 0} জন সদস্য</p>
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
