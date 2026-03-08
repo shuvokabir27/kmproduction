@@ -161,16 +161,18 @@ const PublicHome = () => {
               transition={{ duration: 0.25 }}
               className="md:hidden overflow-hidden relative z-10"
             >
-              <div className="bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-4 py-3 space-y-1">
-                {navItems.map((nav) => (
-                  <button
-                    key={nav.href}
-                    onClick={() => handleNavClick(nav)}
-                    className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border-l-2 border-transparent hover:border-primary"
-                  >
-                    {nav.label}
-                  </button>
-                ))}
+              <div className="bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-4 py-4">
+                <div className="flex flex-wrap justify-center gap-2">
+                  {navItems.map((nav) => (
+                    <button
+                      key={nav.href}
+                      onClick={() => handleNavClick(nav)}
+                      className="px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-border/30 hover:border-primary/40"
+                    >
+                      {nav.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}
