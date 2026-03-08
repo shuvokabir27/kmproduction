@@ -293,7 +293,18 @@ const AdminDashboard = () => {
               <tbody className="divide-y divide-border/20">
                 {filteredData?.list.map((m, i) => (
                   <tr key={i} className="hover:bg-secondary/20">
-                    <td className="p-3 text-foreground font-medium text-sm">{m.name}</td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                          {m.photo ? (
+                            <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-primary text-[10px] font-medium">{m.name.charAt(0)}</span>
+                          )}
+                        </div>
+                        <span className="text-foreground font-medium text-sm">{m.name}</span>
+                      </div>
+                    </td>
                     <td className="p-3 text-right text-success text-sm">৳{m.earned.toLocaleString("bn-BD")}</td>
                     <td className="p-3 text-right text-primary text-sm">৳{m.paid.toLocaleString("bn-BD")}</td>
                     <td className="p-3 text-right font-semibold text-sm">
