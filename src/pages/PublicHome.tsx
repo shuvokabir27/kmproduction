@@ -195,7 +195,6 @@ const PublicHome = () => {
                         </div>
                         <h3 className="text-sm font-semibold text-foreground truncate">{member.full_name}</h3>
                         <p className="text-xs text-muted-foreground truncate mt-1">{member.designation || "সদস্য"}</p>
-                        <p className="text-[10px] text-primary/70 mt-2 font-mono">ID: {member.member_id}</p>
                       </div>
                     </Card>
                   </div>

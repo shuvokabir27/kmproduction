@@ -53,22 +53,23 @@ const PublicProfile = () => {
 
       <div className="container max-w-4xl mx-auto px-4 py-10">
         <Card className="bg-card border-border/50 overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-primary/20 to-primary/5" />
-          <div className="px-6 pb-6 -mt-12">
+          <div className="h-48 bg-gradient-to-r from-primary/20 to-primary/5 relative overflow-hidden">
+            {(profile as any).cover_url && (
+              <img src={(profile as any).cover_url} alt="cover" className="w-full h-full object-cover absolute inset-0" />
+            )}
+          </div>
+          <div className="px-6 pb-6 -mt-16">
             <div className="flex flex-col sm:flex-row items-start gap-4">
-              <div className="h-24 w-24 rounded-xl bg-primary/15 flex items-center justify-center border-4 border-card">
+              <div className="h-28 w-28 rounded-xl bg-primary/15 flex items-center justify-center border-4 border-card overflow-hidden">
                 {profile.photo_url ? (
-                  <img src={profile.photo_url} alt={profile.full_name} className="h-24 w-24 rounded-xl object-cover" />
+                  <img src={profile.photo_url} alt={profile.full_name} className="h-28 w-28 rounded-xl object-cover" />
                 ) : (
                   <span className="text-primary font-bold text-3xl">{profile.full_name.charAt(0)}</span>
                 )}
               </div>
-              <div className="pt-2">
+              <div className="pt-4">
                 <h1 className="text-2xl font-bold text-foreground">{profile.full_name}</h1>
                 <p className="text-muted-foreground">{profile.designation || "সদস্য"}</p>
-                <span className="text-xs text-primary font-medium mt-1 inline-block bg-primary/10 px-2 py-0.5 rounded-full">
-                  ID: {profile.member_id}
-                </span>
               </div>
             </div>
 
