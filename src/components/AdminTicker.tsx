@@ -20,6 +20,7 @@ interface TickerItem {
 export default function AdminTicker() {
   const queryClient = useQueryClient();
   const [newText, setNewText] = useState("");
+  const [localSpeed, setLocalSpeed] = useState<number | null>(null);
 
   const { data: tickerItems, isLoading } = useQuery({
     queryKey: ["admin-ticker-items"],
