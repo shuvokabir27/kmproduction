@@ -319,14 +319,17 @@ const AdminShootings = () => {
                             {s.location && <p className="text-[10px] text-muted-foreground mt-1">📍 {s.location}</p>}
                             {s.channels && <p className="text-[10px] text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
                           </div>
-                          <div className="flex items-center gap-0.5 shrink-0">
-                            <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
-                              <FileText className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
-                              <Edit className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
+                           <div className="flex items-center gap-0.5 shrink-0">
+                             <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
+                               <FileText className="h-3.5 w-3.5" />
+                             </Button>
+                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
+                               <Edit className="h-3.5 w-3.5" />
+                             </Button>
+                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive/70" onClick={() => openDeleteDialog(s)}>
+                               <Trash2 className="h-3.5 w-3.5" />
+                             </Button>
+                           </div>
                         </div>
                         {/* Status changer */}
                         <div className="mt-2 pt-2 border-t border-border/20">
