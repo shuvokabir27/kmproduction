@@ -197,7 +197,7 @@ const Services = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mb-12"
+              className="mb-12 text-center"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">More Services</span>
               <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">আরো সেবাসমূহ</h2>
