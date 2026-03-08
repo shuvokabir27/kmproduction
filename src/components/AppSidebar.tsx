@@ -47,6 +47,7 @@ const teamItems = [
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
+  { title: "সেটিংস", url: "/admin/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
 ];
 
 const publicSiteItems = [
