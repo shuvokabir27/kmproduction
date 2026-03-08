@@ -199,10 +199,14 @@ const PublicHome = () => {
                           )}
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <h3 className="text-sm font-semibold text-foreground truncate">{member.full_name}</h3>
+                          <h3 className="text-sm font-semibold text-foreground truncate">
+                            {lang === "en" && (member as any).full_name_en ? (member as any).full_name_en : member.full_name}
+                          </h3>
                           {(member as any).is_verified && <svg className="h-4 w-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
                         </div>
-                        <p className="text-xs text-muted-foreground truncate mt-1">{member.designation || "সদস্য"}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-1">
+                          {lang === "en" && (member as any).designation_en ? (member as any).designation_en : (member.designation || L.member)}
+                        </p>
                       </div>
                     </Card>
                   </div>
