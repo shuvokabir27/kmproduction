@@ -65,6 +65,14 @@ const AdminShootings = () => {
       return (data ?? []) as any[];
     },
   });
+
+  const { data: savedScripts } = useQuery({
+    queryKey: ["scripts-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("scripts" as any).select("id, title").order("updated_at", { ascending: false });
+      return (data ?? []) as any[];
+    },
+  });
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
