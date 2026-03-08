@@ -64,7 +64,7 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
               {/* Header */}
               <div className="text-center border-b-2 border-dashed border-gray-400 pb-4 mb-4">
                 <p className="text-[10px] tracking-[0.3em] text-gray-500 uppercase mb-1">
-                  KM Production House
+                  Kuakata Multimedia
                 </p>
                 <h2 className="text-2xl font-black tracking-wider">
                   *** রিসিট ***
