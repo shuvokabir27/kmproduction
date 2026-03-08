@@ -21,6 +21,8 @@ const AdminAttendance = () => {
   const [attendanceData, setAttendanceData] = useState<Record<string, { present: boolean; rate: string }>>({});
   const [saving, setSaving] = useState(false);
   const [expandedShootings, setExpandedShootings] = useState<Set<string>>(new Set());
+  const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-for-attendance"],
