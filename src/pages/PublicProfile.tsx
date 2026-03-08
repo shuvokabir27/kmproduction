@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Phone, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play } from "lucide-react";
 import { motion } from "framer-motion";
 
 const PublicProfile = () => {
@@ -12,7 +12,7 @@ const PublicProfile = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").eq("member_id", Number(memberId)).single();
+      const { data } = await supabase.from("profiles").select("id,full_name,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active").eq("member_id", Number(memberId)).single();
       return data;
     },
   });
@@ -87,12 +87,6 @@ const PublicProfile = () => {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              {profile.email && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Mail className="h-4 w-4 text-primary" /> {profile.email}</div>
-              )}
-              {profile.phone && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Phone className="h-4 w-4 text-primary" /> {profile.phone}</div>
-              )}
               {p.address && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" /> {p.address}</div>
               )}
