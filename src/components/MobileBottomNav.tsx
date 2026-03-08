@@ -14,6 +14,7 @@ import {
   LogOut,
   ScrollText,
   Megaphone,
+  Settings,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -42,6 +43,7 @@ const memberTabs = [
 ];
 
 const memberMoreItems = [
+  { icon: Settings, label: "সেটিংস", path: "/settings" },
   { icon: LogOut, label: "লগআউট", path: "__logout__" },
 ];
 

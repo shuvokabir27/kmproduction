@@ -21,6 +21,7 @@ import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
+import MemberSettings from "./pages/MemberSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/dashboard" element={<MemberDashboard />} />
             <Route path="/scripts" element={<MemberScripts />} />
             <Route path="/notifications" element={<AllNotifications />} />
+            <Route path="/settings" element={<MemberSettings />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/members" element={<AdminMembers />} />
             <Route path="/admin/attendance" element={<AdminAttendance />} />
