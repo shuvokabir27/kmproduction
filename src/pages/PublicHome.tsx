@@ -3,10 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
@@ -56,20 +58,66 @@ const PublicHome = () => {
     },
   });
 
+  const { data: channels } = useQuery({
+    queryKey: ["public-channels"],
+    queryFn: async () => {
+      const { data } = await supabase.from("channels").select("*").order("created_at", { ascending: true });
+      return data ?? [];
+    },
+  });
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { label: "আমাদের টিম", href: "#team" },
+    { label: "জনপ্রিয় কাজ", href: "#popular" },
+    { label: "চ্যানেল সমূহ", href: "#channels" },
+    { label: "ছবি গ্যালারী", href: "#gallery" },
+    { label: "যোগাযোগ", href: "#contact" },
+  ];
+
+  const scrollToSection = (href: string) => {
+    setMobileMenuOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-hidden noise-bg">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-premium">
-        <div className="container max-w-6xl mx-auto flex items-center justify-between h-16 px-4">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl saturate-150 border-b border-border/20" />
+        <div className="container max-w-6xl mx-auto relative z-10 flex items-center justify-between h-16 px-4">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <img src="/favicon.png" alt="KM Production House" className="h-10 w-10 rounded-xl object-contain relative z-10" />
               <div className="absolute inset-0 bg-primary/30 rounded-xl blur-lg group-hover:bg-primary/50 transition-colors" />
             </div>
-            <span className="font-bold text-foreground text-lg tracking-tight">{settings?.site_name || "KM Production House"}</span>
+            <span className="font-bold text-foreground text-lg tracking-tight hidden sm:inline">{settings?.site_name || "KM Production House"}</span>
           </Link>
-          <div className="flex items-center gap-3">
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((nav) => (
+              <button
+                key={nav.href}
+                onClick={() => scrollToSection(nav.href)}
+                className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all duration-200"
+              >
+                {nav.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
             <LanguageToggle />
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden h-9 w-9 rounded-lg bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
+            </button>
             {user ? (
               <Link to={isAdmin ? "/admin" : "/dashboard"}>
                 <Button size="sm" className="bg-primary hover:bg-primary/90 glow-accent font-semibold">
@@ -85,6 +133,31 @@ const PublicHome = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Nav Dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden overflow-hidden relative z-10"
+            >
+              <div className="bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-4 py-3 space-y-1">
+                {navItems.map((nav) => (
+                  <button
+                    key={nav.href}
+                    onClick={() => scrollToSection(nav.href)}
+                    className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-all"
+                  >
+                    {nav.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Hero Section */}
@@ -428,6 +501,90 @@ const PublicHome = () => {
           </div>
         </section>
       )}
+
+      {/* Channels */}
+      {channels && channels.length > 0 && (
+        <section className="py-28 px-4 relative" id="channels">
+          <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-background" />
+          <div className="absolute top-1/2 right-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
+          <div className="container max-w-6xl mx-auto relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-14"
+            >
+              <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Channels</span>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">আমাদের চ্যানেল সমূহ</h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {channels.map((ch) => (
+                <motion.div key={ch.id} variants={item}>
+                  <a
+                    href={ch.url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="premium-card rounded-2xl p-6 flex items-center gap-4 group hover:border-primary/30 transition-all"
+                  >
+                    <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                      {ch.platform?.toLowerCase() === "youtube" ? (
+                        <Youtube className="h-7 w-7 text-primary" />
+                      ) : ch.platform?.toLowerCase() === "facebook" ? (
+                        <Facebook className="h-7 w-7 text-primary" />
+                      ) : (
+                        <Tv className="h-7 w-7 text-primary" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground truncate">{ch.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{ch.platform || "Channel"}</p>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                  </a>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Gallery */}
+      <section className="py-28 px-4 relative" id="gallery">
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
+        <div className="container max-w-6xl mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-14"
+          >
+            <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">ছবি গ্যালারী</h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="premium-card rounded-2xl p-12 text-center"
+          >
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <Image className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">শীঘ্রই আসছে</h3>
+            <p className="text-sm text-muted-foreground">আমাদের ছবি গ্যালারী শীঘ্রই যুক্ত করা হবে।</p>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Contact */}
       <section className="py-28 px-4 relative" id="contact">
