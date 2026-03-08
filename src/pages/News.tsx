@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Newspaper, Calendar, Star, ArrowLeft, Image as ImageIcon, Share2, Facebook, MessageCircle, Copy, Link2 } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const categories = [
@@ -129,6 +129,7 @@ const formatInline = (text: string) => {
 
 export default function News() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
@@ -153,10 +154,25 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  // Auto-open news from shared link query param
+  useEffect(() => {
+    const newsId = searchParams.get("id");
+    if (newsId && newsList) {
+      const found = newsList.find((n) => n.id === newsId);
+      if (found) {
+        setSelectedNews(found);
+        setSearchParams({}, { replace: true });
+      }
+    }
+  }, [newsList, searchParams]);
+
+  const getShareUrl = (news: NewsItem) => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    return `${supabaseUrl}/functions/v1/og-news?id=${news.id}`;
+  };
 
   const handleShare = (type: string, news: NewsItem) => {
-    const url = window.location.origin + "/news";
+    const url = getShareUrl(news);
     const text = news.title;
     switch (type) {
       case "facebook":
