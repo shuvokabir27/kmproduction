@@ -144,18 +144,22 @@ const PublicHome = () => {
           </div>
         </div>
 
-        {/* Mobile Nav - always visible */}
-        <div className="md:hidden relative z-10 bg-background/70 backdrop-blur-2xl saturate-150 border-b border-border/20 px-3 py-2">
-          <div className="flex flex-wrap justify-center gap-1.5">
-            {navItems.map((nav) => (
-              <button
-                key={nav.href}
-                onClick={() => handleNavClick(nav)}
-                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-border/30 hover:border-primary/40"
-              >
-                {nav.label}
-              </button>
-            ))}
+        {/* Mobile Nav - always visible, colorful */}
+        <div className="md:hidden relative z-10 bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-3 py-2.5">
+          <div className="flex flex-wrap justify-center gap-2">
+            {navItems.map((nav) => {
+              const Icon = nav.icon;
+              return (
+                <button
+                  key={nav.href}
+                  onClick={() => handleNavClick(nav)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 ${nav.bg} ${nav.border} border ${nav.text} hover:scale-105 active:scale-95`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {nav.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </header>
