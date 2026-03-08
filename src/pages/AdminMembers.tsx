@@ -490,14 +490,14 @@ const AdminMembers = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border/30">
-                  <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                   <th className="text-left p-3 text-muted-foreground font-medium">পদবী</th>
-                   <th className="text-left p-3 text-muted-foreground font-medium">বেতন ধরন</th>
-                   <th className="text-left p-3 text-muted-foreground font-medium">ভেরিফাইড</th>
-                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
-                  <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
+                <tr className="border-b border-border/30 bg-secondary/30">
+                  <th className="text-left p-3 text-blue-400 font-medium text-xs">আইডি</th>
+                  <th className="text-left p-3 text-cyan-400 font-medium text-xs">নাম</th>
+                   <th className="text-left p-3 text-violet-400 font-medium text-xs">পদবী</th>
+                   <th className="text-left p-3 text-amber-400 font-medium text-xs">বেতন ধরন</th>
+                   <th className="text-left p-3 text-emerald-400 font-medium text-xs">ভেরিফাইড</th>
+                   <th className="text-left p-3 text-pink-400 font-medium text-xs">স্ট্যাটাস</th>
+                  <th className="text-right p-3 text-orange-400 font-medium text-xs">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">

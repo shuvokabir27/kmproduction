@@ -235,9 +235,9 @@ const AdminAttendance = () => {
         </h1>
 
         <Tabs defaultValue="manage" className="w-full">
-          <TabsList className="bg-secondary border border-border/20 w-full md:w-auto">
-            <TabsTrigger value="manage" className="gap-1.5 text-xs flex-1 md:flex-none"><Calendar className="h-3.5 w-3.5" /> হাজিরা দিন</TabsTrigger>
-            <TabsTrigger value="history" className="gap-1.5 text-xs flex-1 md:flex-none"><History className="h-3.5 w-3.5" /> হিস্ট্রি</TabsTrigger>
+          <TabsList className="bg-secondary/50 border border-border/20 w-full md:w-auto gap-1 p-1">
+            <TabsTrigger value="manage" className="gap-1.5 text-xs flex-1 md:flex-none text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 data-[state=active]:bg-emerald-500/25 data-[state=active]:text-emerald-300"><Calendar className="h-3.5 w-3.5" /> হাজিরা দিন</TabsTrigger>
+            <TabsTrigger value="history" className="gap-1.5 text-xs flex-1 md:flex-none text-violet-400 bg-violet-500/10 border border-violet-500/20 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300"><History className="h-3.5 w-3.5" /> হিস্ট্রি</TabsTrigger>
           </TabsList>
 
           <TabsContent value="manage" className="space-y-3 mt-3">
