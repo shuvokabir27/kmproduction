@@ -75,6 +75,7 @@ const PublicHome = () => {
   });
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const navItems = [
     { label: "আমাদের টিম", href: "#team" },
