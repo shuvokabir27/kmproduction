@@ -241,6 +241,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">মাধ্যম</th>
                   <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">ট্রানজেকশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
+                  <th className="text-center p-3 text-muted-foreground font-medium">রিসিট</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -272,11 +273,16 @@ const AdminPayments = () => {
                       </td>
                       <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{p.transaction_id || "—"}</td>
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
+                      <td className="p-3 text-center">
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => showReceiptForPayment(p)}>
+                          <Download className="h-3.5 w-3.5 text-primary" />
+                        </Button>
+                      </td>
                     </tr>
                   );
                 })}
                 {payments?.length === 0 && (
-                  <tr><td colSpan={5} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
+                  <tr><td colSpan={6} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
                 )}
               </tbody>
             </table>
