@@ -145,6 +145,7 @@ const AdminShootings = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                   <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">লোকেশন</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
+                  <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">স্ক্রিপ্ট</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                 </tr>
               </thead>
