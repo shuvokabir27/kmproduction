@@ -55,13 +55,13 @@ const AdminShootings = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("shootings").insert({
-        name, description, location, shoot_date: shootDate, status
-      });
+        name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+      } as any);
       if (error) throw error;
       toast.success("শুটিং যোগ হয়েছে!");
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
       setOpen(false);
-      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan");
+      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
