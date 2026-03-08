@@ -13,6 +13,7 @@ import {
   X,
   LogOut,
   ScrollText,
+  Megaphone,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";

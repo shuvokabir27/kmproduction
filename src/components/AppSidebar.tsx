@@ -37,6 +37,7 @@ const adminItems = [
   { title: "হাজিরা", url: "/admin/attendance", icon: Calendar },
   { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard },
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
+  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone },
 ];
 
 const memberItems = [
