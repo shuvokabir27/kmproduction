@@ -30,12 +30,13 @@ interface MemberForm {
   address: string;
   salary_type: string;
   monthly_salary: string;
+  previous_balance: string;
 }
 
 const emptyForm: MemberForm = {
   full_name: "", email: "", phone: "", designation: "", bio: "",
   bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "", address: "",
-  salary_type: "daily", monthly_salary: "0",
+  salary_type: "daily", monthly_salary: "0", previous_balance: "0",
 };
 
 const AdminMembers = () => {
@@ -181,6 +182,7 @@ const AdminMembers = () => {
       address: member.address || "",
       salary_type: member.salary_type || "daily",
       monthly_salary: String(member.monthly_salary || 0),
+      previous_balance: String((member as any).previous_balance || 0),
     });
     setPhotoFile(null);
     setCoverFile(null);
@@ -212,6 +214,7 @@ const AdminMembers = () => {
           address: form.address || null,
           salary_type: form.salary_type as any,
           monthly_salary: Number(form.monthly_salary) || 0,
+          previous_balance: Number(form.previous_balance) || 0,
         };
         if (photoUrl) updateData.photo_url = photoUrl;
         if (coverUrl) updateData.cover_url = coverUrl;
@@ -391,6 +394,13 @@ const AdminMembers = () => {
                       </div>
                     )}
                   </div>
+                  {editId && (
+                    <div className="mt-2">
+                      <Label className="text-foreground text-xs">পূর্বের বাকি (৳)</Label>
+                      <Input type="number" value={form.previous_balance} onChange={(e) => setField("previous_balance" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="আগের পাওনা থাকলে লিখুন" />
+                      <p className="text-[10px] text-muted-foreground mt-1">সিস্টেম চালু হওয়ার আগের বকেয়া পরিমাণ</p>
+                    </div>
+                  )}
                 </div>
                 <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">পেমেন্ট তথ্য</p>

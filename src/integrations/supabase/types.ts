@@ -476,6 +476,7 @@ export type Database = {
           nagad_no: string | null
           phone: string | null
           photo_url: string | null
+          previous_balance: number | null
           public_display_order: number | null
           salary_type: Database["public"]["Enums"]["salary_type"] | null
           short_bio: string | null
@@ -524,6 +525,7 @@ export type Database = {
           nagad_no?: string | null
           phone?: string | null
           photo_url?: string | null
+          previous_balance?: number | null
           public_display_order?: number | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
           short_bio?: string | null
@@ -572,6 +574,7 @@ export type Database = {
           nagad_no?: string | null
           phone?: string | null
           photo_url?: string | null
+          previous_balance?: number | null
           public_display_order?: number | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
           short_bio?: string | null
