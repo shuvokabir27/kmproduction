@@ -16,7 +16,7 @@ const PublicHome = () => {
   const { data: members } = useQuery({
     queryKey: ["public-members"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").eq("is_active", true).order("member_id");
+      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,short_bio,address,is_active").eq("is_active", true).order("member_id");
       return data ?? [];
     },
   });
