@@ -67,7 +67,7 @@ const AdminDashboard = () => {
     queryFn: async () => {
       const from = filterFrom ? startOfDay(filterFrom).toISOString() : undefined;
       const to = filterTo ? endOfDay(filterTo).toISOString() : undefined;
-      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id").eq("is_active", true);
+      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id, photo_url").eq("is_active", true);
       let attQ = supabase.from("attendance").select("member_id, daily_rate, shooting_id, shootings(shoot_date)").eq("is_present", true);
       if (from) attQ = attQ.gte("created_at", from);
       if (to) attQ = attQ.lte("created_at", to);
@@ -76,8 +76,8 @@ const AdminDashboard = () => {
       if (from) payQ = payQ.gte("payment_date", from);
       if (to) payQ = payQ.lte("payment_date", to);
       const { data: payments } = await payQ;
-      const memberMap = new Map<string, { name: string; memberId: number; earned: number; paid: number }>();
-      members?.forEach(m => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, earned: 0, paid: 0 }));
+      const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number }>();
+      members?.forEach(m => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0 }));
       attendance?.forEach((a: any) => { const entry = memberMap.get(a.member_id); if (entry) entry.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
       const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned - m.paid })).filter(m => m.earned > 0 || m.paid > 0).sort((a, b) => b.due - a.due);
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
   const { data: recentPayments } = useQuery({
     queryKey: ["admin-recent-payments"],
     queryFn: async () => {
-      const { data } = await supabase.from("payments").select("*, profiles(full_name, member_id)").order("payment_date", { ascending: false }).limit(5);
+      const { data } = await supabase.from("payments").select("*, profiles(full_name, member_id, photo_url)").order("payment_date", { ascending: false }).limit(5);
       return data ?? [];
     },
   });
@@ -174,10 +174,19 @@ const AdminDashboard = () => {
           <div className="divide-y divide-border/20">
             {recentPayments?.map((p: any) => (
               <div key={p.id} className="px-3 md:px-4 py-3 flex items-center justify-between">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{p.profiles?.full_name}</p>
-                  <p className="text-[10px] text-muted-foreground">ID: {p.profiles?.member_id}</p>
-                </div>
+                 <div className="flex items-center gap-2.5 min-w-0">
+                   <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                     {p.profiles?.photo_url ? (
+                       <img src={p.profiles.photo_url} alt={p.profiles?.full_name} className="h-full w-full object-cover" />
+                     ) : (
+                       <span className="text-primary text-[10px] font-medium">{p.profiles?.full_name?.charAt(0) || "M"}</span>
+                     )}
+                   </div>
+                   <div className="min-w-0">
+                     <p className="text-sm font-medium text-foreground truncate">{p.profiles?.full_name}</p>
+                     <p className="text-[10px] text-muted-foreground">ID: {p.profiles?.member_id}</p>
+                   </div>
+                 </div>
                 <div className="text-right shrink-0 ml-2">
                   <p className="text-sm font-semibold text-foreground">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
                   <p className="text-[10px] text-muted-foreground">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</p>
@@ -255,7 +264,16 @@ const AdminDashboard = () => {
           <div className="space-y-2 md:hidden">
             {filteredData?.list.map((m, i) => (
               <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-border/20">
-                <p className="text-sm font-medium text-foreground truncate flex-1">{m.name}</p>
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                    {m.photo ? (
+                      <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-primary text-[10px] font-medium">{m.name.charAt(0)}</span>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+                </div>
                 <span className={`text-sm font-bold ml-2 ${m.due > 0 ? "text-destructive" : "text-success"}`}>
                   ৳{m.due.toLocaleString("bn-BD")}
                 </span>
@@ -275,7 +293,18 @@ const AdminDashboard = () => {
               <tbody className="divide-y divide-border/20">
                 {filteredData?.list.map((m, i) => (
                   <tr key={i} className="hover:bg-secondary/20">
-                    <td className="p-3 text-foreground font-medium text-sm">{m.name}</td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                          {m.photo ? (
+                            <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-primary text-[10px] font-medium">{m.name.charAt(0)}</span>
+                          )}
+                        </div>
+                        <span className="text-foreground font-medium text-sm">{m.name}</span>
+                      </div>
+                    </td>
                     <td className="p-3 text-right text-success text-sm">৳{m.earned.toLocaleString("bn-BD")}</td>
                     <td className="p-3 text-right text-primary text-sm">৳{m.paid.toLocaleString("bn-BD")}</td>
                     <td className="p-3 text-right font-semibold text-sm">
