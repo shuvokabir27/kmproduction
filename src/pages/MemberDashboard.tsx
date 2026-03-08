@@ -370,52 +370,101 @@ const MemberDashboard = () => {
                 </button>
               </div>
             </div>
-            <div>
-              <Label className="text-foreground text-xs">শর্ট বিবরণ</Label>
-              <Textarea value={extraFields.short_bio} onChange={e => setExtra("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="নিজের সম্পর্কে সংক্ষেপে লিখুন..." />
-            </div>
-            <div>
-              <Label className="text-foreground text-xs">ঠিকানা</Label>
-              <Input value={extraFields.address} onChange={e => setExtra("address", e.target.value)} className="bg-secondary border-border/50" />
-            </div>
-            <div>
-              <Label className="text-foreground text-xs">শিক্ষাগত যোগ্যতা</Label>
-              <Input value={extraFields.education} onChange={e => setExtra("education", e.target.value)} className="bg-secondary border-border/50" placeholder="যেমন: বি.এ (অনার্স)" />
-            </div>
-            <div>
-              <Label className="text-foreground text-xs">জন্ম তারিখ</Label>
-              <Input type="date" value={extraFields.date_of_birth} onChange={e => setExtra("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
-            </div>
-            <div>
-              <Label className="text-foreground text-xs">অর্জন</Label>
-              <Textarea value={extraFields.achievements} onChange={e => setExtra("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="আপনার উল্লেখযোগ্য অর্জনসমূহ..." />
+            {/* Language Tabs */}
+            <div className="flex gap-1 p-1 rounded-lg bg-secondary/50 border border-border/30">
+              <button
+                type="button"
+                onClick={() => setEditTab("bn")}
+                className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-colors ${editTab === "bn" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                বাংলা
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditTab("en")}
+                className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-colors ${editTab === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                English
+              </button>
             </div>
 
-            <div className="border-t border-border/30 pt-3">
-              <p className="text-xs text-muted-foreground mb-2 font-medium">পছন্দের তথ্য</p>
-              <div className="grid grid-cols-2 gap-3">
+            {editTab === "bn" ? (
+              <>
                 <div>
-                  <Label className="text-foreground text-xs">পছন্দের নায়ক</Label>
-                  <Input value={extraFields.favorite_actor} onChange={e => setExtra("favorite_actor", e.target.value)} className="bg-secondary border-border/50" />
-                </div>
-                <div>
-                  <Label className="text-foreground text-xs">পছন্দের নায়িকা</Label>
-                  <Input value={extraFields.favorite_actress} onChange={e => setExtra("favorite_actress", e.target.value)} className="bg-secondary border-border/50" />
+                  <Label className="text-foreground text-xs">শর্ট বিবরণ</Label>
+                  <Textarea value={extraFields.short_bio} onChange={e => setExtra("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="নিজের সম্পর্কে সংক্ষেপে লিখুন..." />
                 </div>
                 <div>
-                  <Label className="text-foreground text-xs">পছন্দের রং</Label>
-                  <Input value={extraFields.favorite_color} onChange={e => setExtra("favorite_color", e.target.value)} className="bg-secondary border-border/50" />
+                  <Label className="text-foreground text-xs">ঠিকানা</Label>
+                  <Input value={extraFields.address} onChange={e => setExtra("address", e.target.value)} className="bg-secondary border-border/50" />
                 </div>
                 <div>
-                  <Label className="text-foreground text-xs">পছন্দের পোশাক</Label>
-                  <Input value={extraFields.favorite_dress} onChange={e => setExtra("favorite_dress", e.target.value)} className="bg-secondary border-border/50" />
+                  <Label className="text-foreground text-xs">শিক্ষাগত যোগ্যতা</Label>
+                  <Input value={extraFields.education} onChange={e => setExtra("education", e.target.value)} className="bg-secondary border-border/50" placeholder="যেমন: বি.এ (অনার্স)" />
                 </div>
-                <div className="col-span-2">
-                  <Label className="text-foreground text-xs">পছন্দের খাবার</Label>
-                  <Input value={extraFields.favorite_food} onChange={e => setExtra("favorite_food", e.target.value)} className="bg-secondary border-border/50" />
+                <div>
+                  <Label className="text-foreground text-xs">জন্ম তারিখ</Label>
+                  <Input type="date" value={extraFields.date_of_birth} onChange={e => setExtra("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
                 </div>
-              </div>
-            </div>
+                <div>
+                  <Label className="text-foreground text-xs">অর্জন</Label>
+                  <Textarea value={extraFields.achievements} onChange={e => setExtra("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="আপনার উল্লেখযোগ্য অর্জনসমূহ..." />
+                </div>
+
+                <div className="border-t border-border/30 pt-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">পছন্দের তথ্য</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground text-xs">পছন্দের নায়ক</Label>
+                      <Input value={extraFields.favorite_actor} onChange={e => setExtra("favorite_actor", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">পছন্দের নায়িকা</Label>
+                      <Input value={extraFields.favorite_actress} onChange={e => setExtra("favorite_actress", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">পছন্দের রং</Label>
+                      <Input value={extraFields.favorite_color} onChange={e => setExtra("favorite_color", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">পছন্দের পোশাক</Label>
+                      <Input value={extraFields.favorite_dress} onChange={e => setExtra("favorite_dress", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-foreground text-xs">পছন্দের খাবার</Label>
+                      <Input value={extraFields.favorite_food} onChange={e => setExtra("favorite_food", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Label className="text-foreground text-xs">Full Name (English)</Label>
+                  <Input value={extraFields.full_name_en} onChange={e => setExtra("full_name_en", e.target.value)} className="bg-secondary border-border/50" placeholder="e.g. John Doe" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">Designation (English)</Label>
+                  <Input value={extraFields.designation_en} onChange={e => setExtra("designation_en", e.target.value)} className="bg-secondary border-border/50" placeholder="e.g. Director" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">Short Bio (English)</Label>
+                  <Textarea value={extraFields.short_bio_en} onChange={e => setExtra("short_bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Write briefly about yourself..." />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">Address (English)</Label>
+                  <Input value={extraFields.address_en} onChange={e => setExtra("address_en", e.target.value)} className="bg-secondary border-border/50" placeholder="e.g. Kuakata, Patuakhali" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">Education (English)</Label>
+                  <Input value={extraFields.education_en} onChange={e => setExtra("education_en", e.target.value)} className="bg-secondary border-border/50" placeholder="e.g. B.A (Honors)" />
+                </div>
+                <div>
+                  <Label className="text-foreground text-xs">Achievements (English)</Label>
+                  <Textarea value={extraFields.achievements_en} onChange={e => setExtra("achievements_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Your notable achievements..." />
+                </div>
+              </>
+            )}
 
             <div className="border-t border-border/30 pt-3">
               <div className="flex items-center justify-between mb-2">
