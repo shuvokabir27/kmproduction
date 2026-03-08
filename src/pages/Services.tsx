@@ -168,20 +168,16 @@ const Services = () => {
                         </div>
 
                         {(settings as any)?.whatsapp_no ? (
-                          <a
-                            href={`https://wa.me/${(settings as any).whatsapp_no.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`আমি \\"${service.title}\\" প্যাকেজ সম্পর্কে জানতে চাই।`)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block"
+                          <Button
+                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
+                            className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
-                            <Button className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}>
-                              <MessageCircle className="h-4 w-4 mr-1" />
-                              {service.price_label || "যোগাযোগ করুন"}
-                            </Button>
-                          </a>
+                            <MessageCircle className="h-4 w-4 mr-1" />
+                            {service.price_label || "বুকিং করুন"}
+                          </Button>
                         ) : (
                           <Button className="w-full bg-secondary hover:bg-secondary/80 text-foreground" disabled>
-                            {service.price_label || "যোগাযোগ করুন"}
+                            {service.price_label || "বুকিং করুন"}
                           </Button>
                         )}
                       </div>
