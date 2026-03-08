@@ -466,6 +466,16 @@ const AdminShootings = () => {
                 <p className="text-xs text-muted-foreground mt-1">কোনো চ্যানেল নেই। আগে চ্যানেল যোগ করুন।</p>
               )}
             </div>
+            <div>
+              <Label className="text-foreground mb-1 block">নাটকের লিংক (YouTube/Facebook)</Label>
+              <Input
+                value={publishVideoUrl}
+                onChange={(e) => setPublishVideoUrl(e.target.value)}
+                placeholder="https://youtu.be/... বা https://fb.watch/..."
+                className="bg-secondary border-border/50"
+              />
+              <p className="text-xs text-muted-foreground mt-1">পাবলিক সাইটে এই লিংক দেখানো হবে</p>
+            </div>
             <Button onClick={confirmPublish} className="w-full" disabled={!publishChannelId}>
               পাবলিশ করুন
             </Button>
