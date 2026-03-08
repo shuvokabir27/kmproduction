@@ -1,23 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Newspaper, Calendar, Star, ArrowLeft, Image as ImageIcon, Share2, Facebook, MessageCircle, Copy, Link2 } from "lucide-react";
+import { Newspaper, Calendar, Star, ArrowLeft, Share2, Facebook, MessageCircle, Copy, Link2, Clock, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
+import { bn } from "date-fns/locale";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import NewsDetail from "@/components/news/NewsDetail";
+import NewsTicker from "@/components/news/NewsTicker";
 
 const categories = [
-  { value: "all", label: "সব নিউজ" },
-  { value: "entertainment", label: "🎬 এন্টারটেইনমেন্ট" },
-  { value: "funny", label: "😂 ফানি" },
-  { value: "behind-the-scenes", label: "🎭 বিহাইন্ড দ্য সিন" },
-  { value: "announcement", label: "📢 ঘোষণা" },
+  { value: "all", label: "সকল" },
+  { value: "entertainment", label: "বিনোদন" },
+  { value: "funny", label: "হাসির খবর" },
+  { value: "behind-the-scenes", label: "নেপথ্যে" },
+  { value: "announcement", label: "ঘোষণা" },
 ];
 
-interface NewsItem {
+export interface NewsItem {
   id: string;
   title: string;
   content: string;
@@ -29,103 +31,6 @@ interface NewsItem {
   published_at: string | null;
   video_url: string | null;
 }
-
-const getEmbedUrl = (url: string): string | null => {
-  try {
-    // YouTube
-    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
-    if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
-    // Facebook video
-    if (url.includes("facebook.com")) return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`;
-    // Direct embed
-    return url;
-  } catch { return null; }
-};
-
-const renderFormattedContent = (text: string) => {
-  return text.split("\n").map((line, i) => {
-    // Inline image: ![caption|size](url) or ![caption](url)
-    const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-    if (imgMatch) {
-      const meta = imgMatch[1];
-      const url = imgMatch[2];
-      let caption = meta;
-      let size = 100;
-      if (meta.includes("|")) {
-        const parts = meta.split("|");
-        caption = parts[0];
-        size = parseInt(parts[1]) || 100;
-      }
-      return (
-        <figure key={i} className="my-4 flex flex-col items-center">
-          <img
-            src={url}
-            alt={caption}
-            className="rounded-xl border border-border/30 object-contain"
-            style={{ width: `${Math.min(size, 100)}%`, maxWidth: "100%" }}
-          />
-          {caption && (
-            <figcaption className="text-xs text-muted-foreground text-center mt-2 italic">{caption}</figcaption>
-          )}
-        </figure>
-      );
-    }
-    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-bold text-foreground mt-4 mb-2">{line.slice(2)}</h2>;
-    if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-semibold text-foreground mt-3 mb-1.5">{line.slice(3)}</h3>;
-    if (line === "---") return <hr key={i} className="border-border/30 my-4" />;
-    if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-foreground/85">{formatInline(line.slice(2))}</li>;
-    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-foreground/85">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
-    if (!line.trim()) return <br key={i} />;
-    return <p key={i} className="text-foreground/85 leading-relaxed">{formatInline(line)}</p>;
-  });
-};
-
-const formatInline = (text: string) => {
-  // Process bold, italic, underline, links
-  const parts: (string | JSX.Element)[] = [];
-  let remaining = text;
-  let key = 0;
-
-  while (remaining.length > 0) {
-    // Links [text](url)
-    const linkMatch = remaining.match(/\[([^\]]+)\]\(([^)]+)\)/);
-    // Bold **text**
-    const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
-    // Italic *text*
-    const italicMatch = remaining.match(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/);
-    // Underline __text__
-    const underlineMatch = remaining.match(/__(.+?)__/);
-
-    const matches = [
-      linkMatch ? { type: "link", match: linkMatch, index: linkMatch.index! } : null,
-      boldMatch ? { type: "bold", match: boldMatch, index: boldMatch.index! } : null,
-      italicMatch ? { type: "italic", match: italicMatch, index: italicMatch.index! } : null,
-      underlineMatch ? { type: "underline", match: underlineMatch, index: underlineMatch.index! } : null,
-    ].filter(Boolean).sort((a, b) => a!.index - b!.index);
-
-    if (matches.length === 0) {
-      parts.push(remaining);
-      break;
-    }
-
-    const first = matches[0]!;
-    if (first.index > 0) parts.push(remaining.slice(0, first.index));
-
-    if (first.type === "bold") {
-      parts.push(<strong key={key++} className="font-bold">{first.match![1]}</strong>);
-    } else if (first.type === "italic") {
-      parts.push(<em key={key++} className="italic">{first.match![1]}</em>);
-    } else if (first.type === "underline") {
-      parts.push(<span key={key++} className="underline">{first.match![1]}</span>);
-    } else if (first.type === "link") {
-      parts.push(<a key={key++} href={first.match![2]} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">{first.match![1]}</a>);
-    }
-
-    remaining = remaining.slice(first.index + first.match![0].length);
-  }
-
-  return <>{parts}</>;
-};
 
 export default function News() {
   const navigate = useNavigate();
@@ -177,7 +82,6 @@ export default function News() {
   const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
   const tickerSpeed = tickerSettings?.ticker_speed || 30;
 
-  // Use custom ticker items if available, otherwise use news titles
   const tickerTexts = tickerItems && tickerItems.length > 0
     ? tickerItems.map((t) => ({ id: t.id, text: t.text, newsItem: null as NewsItem | null }))
     : (newsList || []).map((n) => ({ id: n.id, text: n.title, newsItem: n }));
@@ -189,11 +93,12 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
-  // Auto-open news from shared link (query param or short ID route)
+  // Split rest into columns for newspaper layout
+  const leftColumn = rest?.filter((_, i) => i % 2 === 0) || [];
+  const rightColumn = rest?.filter((_, i) => i % 2 === 1) || [];
+
   useEffect(() => {
     if (!newsList) return;
-    
-    // Check query param first
     const newsId = searchParams.get("id");
     if (newsId) {
       const found = newsList.find((n) => n.id === newsId);
@@ -203,18 +108,13 @@ export default function News() {
       }
       return;
     }
-    
-    // Check short ID from route (UUID without dashes)
     if (shortId) {
       const fullId = shortId.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
       const found = newsList.find((n) => n.id === fullId);
-      if (found) {
-        setSelectedNews(found);
-      }
+      if (found) setSelectedNews(found);
     }
   }, [newsList, searchParams, shortId]);
 
-  // Edge function URL - serves OG tags to crawlers, redirects users
   const getShareUrl = (news: NewsItem) => {
     return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/og-news?id=${news.id}`;
   };
@@ -237,268 +137,251 @@ export default function News() {
   };
 
   if (selectedNews) {
-    const embedUrl = selectedNews.video_url ? getEmbedUrl(selectedNews.video_url) : null;
-
     return (
-      <div className="min-h-screen bg-background noise-bg">
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <Button variant="ghost" size="sm" onClick={() => setSelectedNews(null)} className="mb-4 gap-1.5">
-            <ArrowLeft className="h-4 w-4" /> ফিরে যান
-          </Button>
-
-          {selectedNews.featured_image_url && (
-            <div className="rounded-2xl overflow-hidden mb-6 border border-border/30">
-              <img src={selectedNews.featured_image_url} alt="" className="w-full h-56 md:h-80 object-cover" />
-            </div>
-          )}
-
-          <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <Badge variant="outline" className="text-xs">
-              {categories.find(c => c.value === selectedNews.category)?.label || selectedNews.category}
-            </Badge>
-            {selectedNews.is_featured && <Star className="h-4 w-4 text-amber-400 fill-amber-400" />}
-            {selectedNews.published_at && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {format(new Date(selectedNews.published_at), "dd MMM yyyy, hh:mm a")}
-              </span>
-            )}
-          </div>
-
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 leading-tight">
-            {selectedNews.title}
-          </h1>
-
-          {/* Share Buttons */}
-          <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border/30">
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Share2 className="h-3.5 w-3.5" /> শেয়ার:
-            </span>
-            <button
-              onClick={() => handleShare("facebook", selectedNews)}
-              className="h-8 w-8 rounded-full bg-blue-600/15 text-blue-400 flex items-center justify-center hover:bg-blue-600/25 transition-colors"
-            >
-              <Facebook className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => handleShare("whatsapp", selectedNews)}
-              className="h-8 w-8 rounded-full bg-green-600/15 text-green-400 flex items-center justify-center hover:bg-green-600/25 transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => handleShare("copy", selectedNews)}
-              className="h-8 w-8 rounded-full bg-secondary text-muted-foreground flex items-center justify-center hover:bg-secondary/80 transition-colors"
-            >
-              <Copy className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Formatted Content */}
-          <div className="prose prose-sm max-w-none space-y-1">
-            {renderFormattedContent(selectedNews.content)}
-          </div>
-
-          {/* Embedded Video */}
-          {embedUrl && (
-            <div className="mt-8">
-              <div className="rounded-xl overflow-hidden border border-border/30 aspect-video">
-                <iframe
-                  src={embedUrl}
-                  className="w-full h-full"
-                  allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Bottom Share */}
-          <div className="flex items-center gap-2 mt-8 pt-4 border-t border-border/30">
-            <span className="text-xs text-muted-foreground">শেয়ার করুন:</span>
-            <button onClick={() => handleShare("facebook", selectedNews)} className="text-xs text-blue-400 hover:underline flex items-center gap-1">
-              <Facebook className="h-3 w-3" /> Facebook
-            </button>
-            <button onClick={() => handleShare("whatsapp", selectedNews)} className="text-xs text-green-400 hover:underline flex items-center gap-1">
-              <MessageCircle className="h-3 w-3" /> WhatsApp
-            </button>
-            <button onClick={() => handleShare("copy", selectedNews)} className="text-xs text-muted-foreground hover:underline flex items-center gap-1">
-              <Link2 className="h-3 w-3" /> লিংক কপি
-            </button>
-          </div>
-        </div>
-      </div>
+      <NewsDetail
+        news={selectedNews}
+        categories={categories}
+        onBack={() => setSelectedNews(null)}
+        onShare={handleShare}
+      />
     );
   }
 
+  const today = format(new Date(), "EEEE, dd MMMM yyyy", { locale: bn });
+
   return (
-    <div className="min-h-screen bg-background noise-bg">
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* Masthead */}
-        <div className="text-center mb-6 pb-5 border-b border-border/30">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="absolute left-4 top-6 h-8 w-8 md:relative md:left-0 md:top-0 md:hidden">
+    <div className="min-h-screen bg-[hsl(var(--background))]">
+      <div className="max-w-6xl mx-auto px-3 md:px-6">
+
+        {/* === NEWSPAPER MASTHEAD === */}
+        <header className="relative pt-4 pb-3 md:pt-6 md:pb-4">
+          {/* Back button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/")}
+            className="absolute left-0 top-4 h-8 w-8 text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="h-8 w-8 hidden md:flex">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight" style={{ fontFamily: "'Noto Serif Bengali', serif" }}>
+
+          {/* Top rule */}
+          <div className="border-t-[3px] border-foreground/80 mb-3" />
+
+          <div className="text-center">
+            {/* Date line */}
+            <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2 font-medium">
+              {today}
+            </p>
+
+            {/* Newspaper title */}
+            <h1
+              className="text-4xl md:text-6xl font-black text-foreground tracking-tight leading-none mb-1"
+              style={{ fontFamily: "'Tiro Bangla', 'Noto Serif Bengali', serif" }}
+            >
               দৈনিক ইন্তেকাল
             </h1>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            সম্পাদক: <span className="font-semibold text-foreground/80">শিরু খাঁ</span>
-          </p>
-          <p className="text-[11px] text-primary/80 mt-1.5 font-medium">
-            ✨ বাংলা ভাইরাল নিউজ দেখতে আমাদের ফলো করুন
-          </p>
-        </div>
 
-        {/* Breaking News Ticker */}
-        {tickerEnabled && tickerTexts.length > 0 && (
-          <div className="mb-6 rounded-xl border border-border/30 overflow-hidden bg-secondary/30">
-            <div className="flex items-stretch">
-              <div className="bg-destructive text-destructive-foreground px-3 py-2 flex items-center gap-1.5 font-bold text-xs whitespace-nowrap z-10 shrink-0">
-                <span className="animate-pulse">🔴</span> ব্রেকিং
-              </div>
-              <div className="overflow-hidden flex-1 relative">
-                <div
-                  className="flex items-center h-full ticker-scroll"
-                  style={{ animationDuration: `${tickerSpeed}s` }}
-                >
-                  <div className="flex items-center gap-8 whitespace-nowrap px-4 ticker-content">
-                    {tickerTexts.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => item.newsItem && setSelectedNews(item.newsItem)}
-                        className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
-                      >
-                        <span className="text-primary/60">●</span>
-                        {item.text}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-8 whitespace-nowrap px-4 ticker-content" aria-hidden="true">
-                    {tickerTexts.map((item) => (
-                      <button
-                        key={`dup-${item.id}`}
-                        onClick={() => item.newsItem && setSelectedNews(item.newsItem)}
-                        className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
-                      >
-                        <span className="text-primary/60">●</span>
-                        {item.text}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Tagline */}
+            <p className="text-[10px] md:text-xs text-muted-foreground tracking-widest uppercase mt-1">
+              সম্পাদক: শিরু খাঁ &nbsp;•&nbsp; বাংলা ভাইরাল নিউজ পোর্টাল
+            </p>
           </div>
+
+          {/* Bottom rules */}
+          <div className="mt-3 border-t border-foreground/20" />
+          <div className="mt-[2px] border-t-[3px] border-foreground/80" />
+        </header>
+
+        {/* === BREAKING NEWS TICKER === */}
+        {tickerEnabled && tickerTexts.length > 0 && (
+          <NewsTicker
+            tickerTexts={tickerTexts}
+            tickerSpeed={tickerSpeed}
+            onSelectNews={(item) => item.newsItem && setSelectedNews(item.newsItem)}
+          />
         )}
 
-        {/* Category Filter */}
-        <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
+        {/* === CATEGORY NAV === */}
+        <nav className="flex gap-1 overflow-x-auto py-3 mb-1 scrollbar-hide border-b border-border/30">
           {categories.map((cat) => (
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap border transition-all ${
+              className={`px-4 py-1.5 text-xs font-semibold whitespace-nowrap transition-all border-b-2 ${
                 activeCategory === cat.value
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-secondary/50 text-muted-foreground border-border/30 hover:bg-secondary"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {cat.label}
             </button>
           ))}
-        </div>
+        </nav>
 
+        {/* === CONTENT === */}
         {isLoading ? (
-          <div className="grid gap-4 md:grid-cols-2">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-64 rounded-2xl bg-secondary/50 animate-pulse" />
+          <div className="py-20 space-y-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-32 bg-secondary/30 animate-pulse rounded" />
             ))}
           </div>
         ) : !filtered?.length ? (
-          <div className="text-center py-20 text-muted-foreground">
-            <Newspaper className="h-16 w-16 mx-auto mb-4 opacity-20" />
-            <p className="text-lg">এখনো কোনো নিউজ নেই</p>
+          <div className="text-center py-24 text-muted-foreground">
+            <Newspaper className="h-16 w-16 mx-auto mb-4 opacity-15" />
+            <p className="text-lg" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+              এখনো কোনো নিউজ প্রকাশিত হয়নি
+            </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* Featured News */}
+          <div className="py-4 space-y-0">
+
+            {/* === FEATURED / HEADLINE === */}
             {featured && (
-              <Card
-                className="overflow-hidden cursor-pointer hover:border-primary/30 transition-all group"
+              <article
+                className="cursor-pointer group mb-6"
                 onClick={() => setSelectedNews(featured)}
               >
-                <CardContent className="p-0">
-                  <div className="relative">
+                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                  {/* Image */}
+                  <div className="overflow-hidden border border-border/20">
                     {featured.featured_image_url ? (
-                      <img src={featured.featured_image_url} alt="" className="w-full h-56 md:h-72 object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                      <img
+                        src={featured.featured_image_url}
+                        alt=""
+                        className="w-full h-48 md:h-72 object-cover group-hover:scale-[1.02] transition-transform duration-700"
+                      />
                     ) : (
-                      <div className="w-full h-56 md:h-72 bg-gradient-to-br from-orange-500/20 to-rose-500/20 flex items-center justify-center">
-                        <Newspaper className="h-16 w-16 text-muted-foreground/20" />
+                      <div className="w-full h-48 md:h-72 bg-secondary/30 flex items-center justify-center">
+                        <Newspaper className="h-12 w-12 text-muted-foreground/15" />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge className="bg-amber-500/90 text-white text-[10px]">⭐ ফিচার্ড</Badge>
-                        <Badge variant="outline" className="text-[10px] bg-background/50 backdrop-blur-sm">
-                          {categories.find(c => c.value === featured.category)?.label}
-                        </Badge>
-                      </div>
-                      <h2 className="text-lg md:text-xl font-bold text-foreground leading-tight">{featured.title}</h2>
-                      {featured.excerpt && (
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{featured.excerpt}</p>
-                      )}
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                  {/* Text */}
+                  <div className="flex flex-col justify-center">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                        {categories.find(c => c.value === featured.category)?.label || featured.category}
+                      </span>
+                      <Star className="h-3 w-3 text-primary fill-primary" />
+                    </div>
+                    <h2
+                      className="text-2xl md:text-3xl font-black text-foreground leading-tight mb-3 group-hover:text-primary transition-colors"
+                      style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+                    >
+                      {featured.title}
+                    </h2>
+                    {featured.excerpt && (
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-3"
+                         style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+                        {featured.excerpt}
+                      </p>
+                    )}
+                    {featured.published_at && (
+                      <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-4 border-t-[2px] border-foreground/10" />
+              </article>
             )}
 
-            {/* Rest of News */}
-            <div className="grid gap-4 md:grid-cols-2">
-              {rest?.map((news) => (
-                <Card
-                  key={news.id}
-                  className="overflow-hidden cursor-pointer hover:border-border/60 transition-all group"
-                  onClick={() => setSelectedNews(news)}
-                >
-                  <CardContent className="p-0">
-                    <div className="flex h-32">
-                      <div className="w-32 md:w-40 flex-shrink-0 bg-secondary/40 overflow-hidden">
-                        {news.featured_image_url ? (
-                          <img src={news.featured_image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <ImageIcon className="h-8 w-8 text-muted-foreground/20" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
-                        <div>
-                          <Badge variant="outline" className="text-[10px] mb-1.5">
-                            {categories.find(c => c.value === news.category)?.label}
-                          </Badge>
-                          <h3 className="font-semibold text-sm text-foreground line-clamp-2 leading-tight">{news.title}</h3>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {news.published_at ? format(new Date(news.published_at), "dd MMM yyyy") : ""}
-                        </span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            {/* === TWO COLUMN NEWSPAPER LAYOUT === */}
+            <div className="grid md:grid-cols-2 gap-0 md:divide-x divide-border/20">
+              {/* Left Column */}
+              <div className="md:pr-5 space-y-0">
+                {leftColumn.map((news, idx) => (
+                  <NewsCard
+                    key={news.id}
+                    news={news}
+                    categories={categories}
+                    isFirst={idx === 0}
+                    onClick={() => setSelectedNews(news)}
+                  />
+                ))}
+              </div>
+              {/* Right Column */}
+              <div className="md:pl-5 space-y-0">
+                {rightColumn.map((news, idx) => (
+                  <NewsCard
+                    key={news.id}
+                    news={news}
+                    categories={categories}
+                    isFirst={idx === 0}
+                    onClick={() => setSelectedNews(news)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )}
+
+        {/* === FOOTER === */}
+        <footer className="border-t-[3px] border-foreground/80 mt-8 pt-4 pb-8 text-center">
+          <p className="text-[10px] text-muted-foreground tracking-widest uppercase">
+            © দৈনিক ইন্তেকাল &nbsp;•&nbsp; সর্বস্বত্ব সংরক্ষিত
+          </p>
+        </footer>
       </div>
     </div>
+  );
+}
+
+/* === News Card for column layout === */
+function NewsCard({
+  news,
+  categories,
+  isFirst,
+  onClick,
+}: {
+  news: NewsItem;
+  categories: { value: string; label: string }[];
+  isFirst: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <article
+      className={`cursor-pointer group py-4 ${!isFirst ? "border-t border-border/20" : ""}`}
+      onClick={onClick}
+    >
+      <div className="flex gap-3">
+        {/* Thumbnail */}
+        {news.featured_image_url && (
+          <div className="w-24 h-20 md:w-28 md:h-24 flex-shrink-0 overflow-hidden border border-border/10">
+            <img
+              src={news.featured_image_url}
+              alt=""
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        )}
+        {/* Text */}
+        <div className="flex-1 min-w-0">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-primary/70 mb-0.5 block">
+            {categories.find(c => c.value === news.category)?.label || news.category}
+          </span>
+          <h3
+            className="font-bold text-sm md:text-[15px] text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors"
+            style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+          >
+            {news.title}
+          </h3>
+          {news.excerpt && (
+            <p className="text-xs text-muted-foreground line-clamp-1 mt-1 hidden md:block">
+              {news.excerpt}
+            </p>
+          )}
+          {news.published_at && (
+            <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1 mt-1">
+              <Clock className="h-2.5 w-2.5" />
+              {format(new Date(news.published_at), "dd MMM yyyy")}
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
