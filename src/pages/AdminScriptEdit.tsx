@@ -25,7 +25,7 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 
 // Parse existing content into sequences
 const parseContent = (content: string): Sequence[] => {
-  if (!content) return [{ id: generateId(), title: "সিকুয়েন্স ১", content: "", collapsed: false }];
+  if (!content) return [{ id: generateId(), title: "দৃশ্য ১", content: "", collapsed: false }];
   
   // Try to parse as JSON sequences format
   try {
@@ -36,7 +36,7 @@ const parseContent = (content: string): Sequence[] => {
   } catch {}
   
   // Legacy: single content block
-  return [{ id: generateId(), title: "সিকুয়েন্স ১", content, collapsed: false }];
+  return [{ id: generateId(), title: "দৃশ্য ১", content, collapsed: false }];
 };
 
 const AdminScriptEdit = () => {
@@ -129,13 +129,13 @@ const AdminScriptEdit = () => {
 
   const addSequence = () => {
     const num = sequences.length + 1;
-    const newSeq: Sequence = { id: generateId(), title: `সিকুয়েন্স ${num}`, content: "", collapsed: false };
+    const newSeq: Sequence = { id: generateId(), title: `দৃশ্য ${num}`, content: "", collapsed: false };
     setSequences([...sequences, newSeq]);
     setActiveSeqId(newSeq.id);
   };
 
   const removeSequence = (seqId: string) => {
-    if (sequences.length <= 1) { toast.error("অন্তত একটি সিকুয়েন্স থাকতে হবে"); return; }
+    if (sequences.length <= 1) { toast.error("অন্তত একটি দৃশ্য থাকতে হবে"); return; }
     setSequences(sequences.filter(s => s.id !== seqId));
   };
 
@@ -190,7 +190,7 @@ const AdminScriptEdit = () => {
 <body>
   <div class="header">
     <h1>${script.title}</h1>
-    <p>তারিখ: ${new Date().toLocaleDateString("bn-BD")} | মোট সিকুয়েন্স: ${updated.length}</p>
+    <p>তারিখ: ${new Date().toLocaleDateString("bn-BD")} | মোট দৃশ্য: ${updated.length}</p>
   </div>
   ${updated.map((seq, i) => `
     <div class="sequence">
@@ -256,7 +256,7 @@ const AdminScriptEdit = () => {
                 <FileText className="h-5 w-5 text-primary shrink-0" />
                 {script.title}
               </h1>
-              <p className="text-[10px] text-muted-foreground">{sequences.length} সিকুয়েন্স</p>
+              <p className="text-[10px] text-muted-foreground">{sequences.length} দৃশ্য</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -352,7 +352,7 @@ const AdminScriptEdit = () => {
         {/* Add Sequence Button - only in edit mode */}
         {isEditMode && (
           <Button variant="outline" className="w-full gap-2 border-dashed border-border/50 text-muted-foreground hover:text-foreground" onClick={addSequence}>
-            <Plus className="h-4 w-4" /> নতুন সিকুয়েন্স যোগ করুন
+            <Plus className="h-4 w-4" /> নতুন দৃশ্য যোগ করুন
           </Button>
         )}
       </div>

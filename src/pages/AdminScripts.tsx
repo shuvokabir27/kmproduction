@@ -149,7 +149,7 @@ const AdminScripts = () => {
                   <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{getPreview(script.content)}</p>
                   <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(script.updated_at).toLocaleDateString("bn-BD")}</span>
-                    <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{getSeqCount(script.content)} সিকুয়েন্স</span>
+                    <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{getSeqCount(script.content)} দৃশ্য</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
