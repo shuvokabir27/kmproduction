@@ -95,15 +95,19 @@ const Services = () => {
             transition={{ duration: 0.7 }}
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-wider uppercase mb-6">
-              আমাদের সেবাসমূহ
+              {t("আমাদের সেবাসমূহ", "Our Services")}
             </span>
             <h1 className="font-display text-4xl sm:text-5xl md:text-7xl text-foreground tracking-wider leading-tight">
-              আপনার প্রোডাকশনের
+              {t("আপনার প্রোডাকশনের", "Your Production's")}
               <br />
-              <span className="gradient-text">সম্পূর্ণ সমাধান</span>
+              <span className="gradient-text">{t("সম্পূর্ণ সমাধান", "Complete Solution")}</span>
             </h1>
             <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto leading-relaxed">
-              আমরা <span className="text-primary font-semibold">কুয়াকাটা মাল্টিমিডিয়া</span> টিম — দীর্ঘ <span className="text-foreground font-bold">৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।
+              {t(
+                "আমরা কুয়াকাটা মাল্টিমিডিয়া টিম — দীর্ঘ ৭ বছর ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।",
+                "We are the Kuakata Multimedia team — working with an experienced and skilled team in this sector for over 7 years. From ads, weddings, drama production to video editing — we are by your side for everything."
+              )}
+            </p>
             </p>
           </motion.div>
         </div>
