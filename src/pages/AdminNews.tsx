@@ -666,7 +666,7 @@ export default function AdminNews() {
         </Dialog>
 
         {/* Inline Image Size Dialog */}
-        <Dialog open={inlineImageDialog} onOpenChange={(open) => { setInlineImageDialog(open); if (!open) setInlineImageUrl(null); }}>
+        <Dialog open={inlineImageDialog} onOpenChange={(open) => { setInlineImageDialog(open); if (!open) { setInlineImageUrl(null); setEditingInlineImage(null); } }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
