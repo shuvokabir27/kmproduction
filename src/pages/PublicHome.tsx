@@ -79,12 +79,12 @@ const PublicHome = () => {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const navItems = [
-    { label: t("আমাদের টিম", "Our Team"), href: "#team" },
-    { label: t("জনপ্রিয় কাজ", "Popular Work"), href: "#popular" },
-    { label: t("সেবাসমূহ", "Services"), href: "/services", isPage: true },
-    { label: t("চ্যানেল সমূহ", "Channels"), href: "#channels" },
-    { label: t("ছবি গ্যালারী", "Gallery"), href: "#gallery" },
-    { label: t("যোগাযোগ", "Contact"), href: "#contact" },
+    { label: t("আমাদের টিম", "Our Team"), href: "#team", icon: Users, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
+    { label: t("জনপ্রিয় কাজ", "Popular Work"), href: "#popular", icon: Play, gradient: "from-rose-500 to-pink-600", bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
+    { label: t("সেবাসমূহ", "Services"), href: "/services", isPage: true, icon: Film, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
+    { label: t("চ্যানেল সমূহ", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
+    { label: t("ছবি গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
+    { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, gradient: "from-fuchsia-500 to-pink-600", bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
   ];
 
   const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
@@ -144,18 +144,22 @@ const PublicHome = () => {
           </div>
         </div>
 
-        {/* Mobile Nav - always visible */}
-        <div className="md:hidden relative z-10 bg-background/70 backdrop-blur-2xl saturate-150 border-b border-border/20 px-3 py-2">
-          <div className="flex flex-wrap justify-center gap-1.5">
-            {navItems.map((nav) => (
-              <button
-                key={nav.href}
-                onClick={() => handleNavClick(nav)}
-                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-border/30 hover:border-primary/40"
-              >
-                {nav.label}
-              </button>
-            ))}
+        {/* Mobile Nav - always visible, colorful */}
+        <div className="md:hidden relative z-10 bg-background/80 backdrop-blur-2xl saturate-150 border-b border-border/20 px-3 py-2.5">
+          <div className="flex flex-wrap justify-center gap-2">
+            {navItems.map((nav) => {
+              const Icon = nav.icon;
+              return (
+                <button
+                  key={nav.href}
+                  onClick={() => handleNavClick(nav)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 ${nav.bg} ${nav.border} border ${nav.text} hover:scale-105 active:scale-95`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {nav.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </header>
