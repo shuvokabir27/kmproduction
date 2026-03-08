@@ -101,8 +101,7 @@ const Services = () => {
               <span className="gradient-text">সম্পূর্ণ সমাধান</span>
             </h1>
             <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto leading-relaxed">
-              বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য 
-              আমাদের অভিজ্ঞ প্রোডাকশন টিম আপনার পাশে।
+              আমরা <span className="text-primary font-semibold">কুয়াকাটা মাল্টিমিডিয়া</span> টিম — দীর্ঘ <span className="text-foreground font-bold">৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।
             </p>
           </motion.div>
         </div>
