@@ -743,7 +743,7 @@ export default function AdminNews() {
                   বাতিল
                 </Button>
                 <Button className="flex-1 gap-1.5" onClick={confirmInlineImage}>
-                  <Check className="h-4 w-4" /> যোগ করুন
+                  <Check className="h-4 w-4" /> {editingInlineImage ? "আপডেট করুন" : "যোগ করুন"}
                 </Button>
               </div>
             </div>
