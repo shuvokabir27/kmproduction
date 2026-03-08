@@ -176,8 +176,8 @@ const MemberDashboard = () => {
         {/* Bonus & Transport */}
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Gift className="h-4 w-4 text-primary" />
+            <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+              <Gift className="h-4 w-4 text-emerald-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">বোনাস ও গাড়ি ভাড়া</h2>
           </div>
