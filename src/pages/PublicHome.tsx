@@ -82,6 +82,7 @@ const PublicHome = () => {
     { label: t("টিম", "Team"), href: "#team", icon: Users, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
     { label: t("জনপ্রিয়", "Popular"), href: "#popular", icon: Play, gradient: "from-rose-500 to-pink-600", bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
     { label: t("সেবা", "Services"), href: "/services", isPage: true, icon: Film, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
+    { label: t("নিউজ", "News"), href: "/news", isPage: true, icon: Newspaper, gradient: "from-red-500 to-orange-600", bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-400" },
     { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
     { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
     { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, gradient: "from-fuchsia-500 to-pink-600", bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
