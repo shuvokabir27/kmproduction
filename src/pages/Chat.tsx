@@ -22,11 +22,11 @@ const Chat = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-6xl mx-auto h-[calc(100vh-8rem)] md:h-[calc(100vh-6rem)]">
+      <div className={`max-w-6xl mx-auto ${isMobile ? "h-[calc(100vh-8rem)]" : "h-[calc(100vh-6rem)]"}`}>
         <div className="bg-card border border-border/50 rounded-xl overflow-hidden h-full flex">
           {/* Conversation List */}
           {showList && (
-            <div className={`${isMobile ? "w-full" : "w-80 border-r border-border/30"} flex-shrink-0`}>
+            <div className={`${isMobile ? "w-full" : "w-80 border-r border-border/30"} flex-shrink-0 h-full`}>
               <ConversationList
                 selectedId={selectedConversation}
                 onSelect={setSelectedConversation}
@@ -38,7 +38,7 @@ const Chat = () => {
 
           {/* Messages Area */}
           {showMessages && (
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col h-full">
               {selectedConversation ? (
                 <ChatMessages
                   conversationId={selectedConversation}
@@ -57,7 +57,6 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* New Chat Dialog */}
       {newChatType && (
         <NewChatDialog
           open={!!newChatType}
