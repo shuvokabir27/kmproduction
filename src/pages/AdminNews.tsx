@@ -452,6 +452,44 @@ export default function AdminNews() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Crop Dialog */}
+        <Dialog open={cropDialogOpen} onOpenChange={(open) => { setCropDialogOpen(open); if (!open) setRawImageSrc(null); }}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Crop className="h-5 w-5 text-primary" /> ছবি ক্রপ করুন
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-2">
+              {rawImageSrc && (
+                <ReactCrop
+                  crop={crop}
+                  onChange={(c) => setCrop(c)}
+                  onComplete={(c) => setCompletedCrop(c)}
+                  aspect={16 / 9}
+                  className="rounded-lg overflow-hidden max-h-[60vh]"
+                >
+                  <img
+                    ref={imgRef}
+                    src={rawImageSrc}
+                    alt="Crop"
+                    onLoad={onImageLoad}
+                    className="max-h-[60vh] w-full object-contain"
+                  />
+                </ReactCrop>
+              )}
+              <div className="flex gap-2 mt-4">
+                <Button variant="secondary" className="flex-1" onClick={() => { setCropDialogOpen(false); setRawImageSrc(null); }}>
+                  বাতিল
+                </Button>
+                <Button className="flex-1 gap-1.5" onClick={handleCropConfirm} disabled={!completedCrop}>
+                  <Check className="h-4 w-4" /> ক্রপ সম্পন্ন
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
