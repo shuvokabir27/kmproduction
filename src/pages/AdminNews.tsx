@@ -145,6 +145,42 @@ export default function AdminNews() {
     },
   });
 
+  const { data: publishers } = useQuery({
+    queryKey: ["news-publishers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_publishers")
+        .select("*")
+        .order("name");
+      if (error) throw error;
+      return data as Publisher[];
+    },
+  });
+
+  const addPublisherMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const { error } = await supabase.from("news_publishers").insert({ name });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+      setNewPublisherName("");
+      setPublisherDialogOpen(false);
+      toast({ title: "প্রকাশক যোগ হয়েছে" });
+    },
+  });
+
+  const deletePublisherMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("news_publishers").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+      toast({ title: "প্রকাশক মুছে ফেলা হয়েছে" });
+    },
+  });
+
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
   const insertFormat = (prefix: string, suffix: string = "") => {
