@@ -241,7 +241,7 @@ const AdminShootings = () => {
         </div>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="bg-secondary/50 border border-border/30 flex-wrap h-auto gap-1 p-1">
+          <TabsList className="bg-secondary/50 border border-border/20 flex-wrap h-auto gap-0.5 p-0.5 md:p-1 md:gap-1">
             <TabsTrigger value="all" className="text-xs">সব ({shootings?.length || 0})</TabsTrigger>
             {statusOptions.map((s) => {
               const count = shootings?.filter((sh) => (sh.status || "upcoming") === s.value).length || 0;
