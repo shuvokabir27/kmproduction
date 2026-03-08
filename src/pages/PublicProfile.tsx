@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake } from "lucide-react";
-import { differenceInYears } from "date-fns";
+import { differenceInYears, format } from "date-fns";
+import { bn } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -77,12 +78,19 @@ const PublicProfile = () => {
 
   const age = p.date_of_birth ? differenceInYears(new Date(), new Date(p.date_of_birth)) : null;
 
+  const formatDate = (dateString: string) => {
+    if (lang === "bn") {
+      return format(new Date(dateString), "d MMMM yyyy", { locale: bn });
+    }
+    return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  };
+
   const infoItems = [
     p.date_of_birth && { icon: Cake, text: `${L.age}: ${age?.toLocaleString(lang === "bn" ? "bn-BD" : "en-US")} ${L.years}` },
     displayAddress && { icon: MapPin, text: displayAddress },
     displayDesignation && { icon: Briefcase, text: displayDesignation },
     displayEducation && { icon: GraduationCap, text: displayEducation },
-    profile.joining_date && { icon: Calendar, text: `${L.joinDate}: ${new Date(profile.joining_date).toLocaleDateString(lang === "bn" ? "bn-BD" : "en-US")}` },
+    profile.joining_date && { icon: Calendar, text: `${L.joinDate}: ${formatDate(profile.joining_date)}` },
   ].filter(Boolean) as { icon: any; text: string }[];
 
   return (
