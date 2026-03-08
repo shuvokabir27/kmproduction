@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake } from "lucide-react";
 import { differenceInYears } from "date-fns";
 import { motion } from "framer-motion";
+import { useLanguage, labels } from "@/hooks/useLanguage";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -14,11 +16,13 @@ const fadeUp = (delay = 0) => ({
 
 const PublicProfile = () => {
   const { memberId } = useParams();
+  const { lang, t } = useLanguage();
+  const L = labels[lang];
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id,full_name,member_id,photo_url,cover_url,designation,bio,address,education,achievements,short_bio,favorite_actor,favorite_actress,favorite_color,favorite_dress,favorite_food,joining_date,is_active,is_verified,date_of_birth").eq("member_id", Number(memberId)).single();
+      const { data } = await supabase.from("profiles").select("*").eq("member_id", Number(memberId)).single();
       return data;
     },
   });
@@ -37,7 +41,7 @@ const PublicProfile = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3">
           <div className="h-10 w-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <p className="text-muted-foreground text-sm">লোড হচ্ছে...</p>
+          <p className="text-muted-foreground text-sm">{L.loading}</p>
         </motion.div>
       </div>
     );
@@ -47,30 +51,38 @@ const PublicProfile = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">সদস্য পাওয়া যায়নি</h1>
-          <Link to="/"><Button variant="outline">হোম পেজে ফিরুন</Button></Link>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{L.notFound}</h1>
+          <Link to="/"><Button variant="outline">{L.goHome}</Button></Link>
         </div>
       </div>
     );
   }
 
   const p = profile as any;
+
+  const displayName = t(profile.full_name, p.full_name_en);
+  const displayDesignation = t(profile.designation || "সদস্য", p.designation_en || (lang === "en" ? "Member" : null));
+  const displayBio = t(p.short_bio || profile.bio || "", p.short_bio_en || p.bio_en);
+  const displayAddress = t(p.address || "", p.address_en);
+  const displayEducation = t(p.education || "", p.education_en);
+  const displayAchievements = t(p.achievements || "", p.achievements_en);
+
   const favorites = [
-    { label: "পছন্দের নায়ক", value: p.favorite_actor, icon: "🎬" },
-    { label: "পছন্দের নায়িকা", value: p.favorite_actress, icon: "🌟" },
-    { label: "পছন্দের রং", value: p.favorite_color, icon: "🎨" },
-    { label: "পছন্দের পোশাক", value: p.favorite_dress, icon: "👔" },
-    { label: "পছন্দের খাবার", value: p.favorite_food, icon: "🍕" },
+    { label: L.favActor, value: p.favorite_actor, icon: "🎬" },
+    { label: L.favActress, value: p.favorite_actress, icon: "🌟" },
+    { label: L.favColor, value: p.favorite_color, icon: "🎨" },
+    { label: L.favDress, value: p.favorite_dress, icon: "👔" },
+    { label: L.favFood, value: p.favorite_food, icon: "🍕" },
   ].filter(f => f.value);
 
   const age = p.date_of_birth ? differenceInYears(new Date(), new Date(p.date_of_birth)) : null;
 
   const infoItems = [
-    p.date_of_birth && { icon: Cake, text: `বয়স: ${age?.toLocaleString("bn-BD")} বছর` },
-    p.address && { icon: MapPin, text: p.address },
-    profile.designation && { icon: Briefcase, text: profile.designation },
-    p.education && { icon: GraduationCap, text: p.education },
-    profile.joining_date && { icon: Calendar, text: `যোগদান: ${new Date(profile.joining_date).toLocaleDateString("bn-BD")}` },
+    p.date_of_birth && { icon: Cake, text: `${L.age}: ${age?.toLocaleString(lang === "bn" ? "bn-BD" : "en-US")} ${L.years}` },
+    displayAddress && { icon: MapPin, text: displayAddress },
+    displayDesignation && { icon: Briefcase, text: displayDesignation },
+    displayEducation && { icon: GraduationCap, text: displayEducation },
+    profile.joining_date && { icon: Calendar, text: `${L.joinDate}: ${new Date(profile.joining_date).toLocaleDateString(lang === "bn" ? "bn-BD" : "en-US")}` },
   ].filter(Boolean) as { icon: any; text: string }[];
 
   return (
@@ -82,12 +94,13 @@ const PublicProfile = () => {
 
       {/* Header */}
       <header className="border-b border-border/30 backdrop-blur-xl bg-background/80 sticky top-0 z-40">
-        <div className="container max-w-4xl mx-auto flex items-center h-14 px-4">
+        <div className="container max-w-4xl mx-auto flex items-center justify-between h-14 px-4">
           <Link to="/">
             <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="h-4 w-4" /> ফিরে যান
+              <ArrowLeft className="h-4 w-4" /> {L.back}
             </Button>
           </Link>
+          <LanguageToggle />
         </div>
       </header>
 
@@ -117,10 +130,10 @@ const PublicProfile = () => {
                   <div className="absolute -inset-1 bg-gradient-to-br from-primary to-primary/50 rounded-2xl blur-sm opacity-60 group-hover:opacity-80 transition-opacity" />
                   <div className="h-32 w-32 rounded-2xl bg-card flex items-center justify-center border-2 border-primary/30 overflow-hidden relative shadow-xl">
                     {profile.photo_url ? (
-                      <img src={profile.photo_url} alt={profile.full_name} className="h-full w-full object-cover" />
+                      <img src={profile.photo_url} alt={displayName} className="h-full w-full object-cover" />
                     ) : (
                       <div className="h-full w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <span className="text-primary font-bold text-4xl">{profile.full_name.charAt(0)}</span>
+                        <span className="text-primary font-bold text-4xl">{displayName.charAt(0)}</span>
                       </div>
                     )}
                   </div>
@@ -130,10 +143,10 @@ const PublicProfile = () => {
                 <div className="pt-2 sm:pt-8">
                   <div className="flex items-center gap-2">
                     <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-                      {profile.full_name}
+                      {displayName}
                     </h1>
                     {p.is_verified && (
-                      <span title="ভেরিফাইড সদস্য" className="shrink-0">
+                      <span title={L.verified} className="shrink-0">
                         <BadgeCheck className="h-6 w-6 text-blue-500 drop-shadow-[0_0_6px_rgba(59,130,246,0.5)]" />
                       </span>
                     )}
@@ -141,20 +154,20 @@ const PublicProfile = () => {
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                     <p className="text-primary font-medium text-sm tracking-wide uppercase">
-                      {profile.designation || "সদস্য"}
+                      {displayDesignation}
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Short Bio */}
-              {(p.short_bio || profile.bio) && (
+              {displayBio && (
                 <motion.div {...fadeUp(0.15)} className="mt-8 relative">
                   <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary to-transparent rounded-full" />
                   <div className="pl-5">
                     <Quote className="h-4 w-4 text-primary/40 mb-2" />
                     <p className="text-muted-foreground text-sm leading-relaxed italic">
-                      {p.short_bio || profile.bio}
+                      {displayBio}
                     </p>
                   </div>
                 </motion.div>
@@ -178,16 +191,16 @@ const PublicProfile = () => {
         </motion.div>
 
         {/* ── Achievements ── */}
-        {p.achievements && (
+        {displayAchievements && (
           <motion.div {...fadeUp(0.25)}>
             <div className="rounded-2xl border border-border/30 bg-card p-6 sm:p-8 shadow-lg shadow-primary/3">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                   <Award className="h-5 w-5 text-primary" />
                 </div>
-                <h2 className="text-lg font-bold text-foreground tracking-tight">অর্জন</h2>
+                <h2 className="text-lg font-bold text-foreground tracking-tight">{L.achievements}</h2>
               </div>
-              <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed pl-1">{p.achievements}</p>
+              <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed pl-1">{displayAchievements}</p>
             </div>
           </motion.div>
         )}
@@ -200,7 +213,7 @@ const PublicProfile = () => {
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                   <Heart className="h-5 w-5 text-primary" />
                 </div>
-                <h2 className="text-lg font-bold text-foreground tracking-tight">পছন্দের তথ্য</h2>
+                <h2 className="text-lg font-bold text-foreground tracking-tight">{L.favorites}</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {favorites.map((f, i) => (
@@ -229,7 +242,7 @@ const PublicProfile = () => {
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                   <Sparkles className="h-5 w-5 text-primary" />
                 </div>
-                <h2 className="text-lg font-bold text-foreground tracking-tight">প্রিয় কাজসমূহ</h2>
+                <h2 className="text-lg font-bold text-foreground tracking-tight">{L.favoriteWorks}</h2>
               </div>
               <div className="space-y-3">
                 {favoriteWorks.map((w: any, i: number) => (
