@@ -171,6 +171,40 @@ const AdminShootings = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
+  const openDeleteDialog = (s: any) => {
+    setDeleteShootingId(s.id);
+    setDeleteShootingName(s.name);
+    setDeleteTimer(5);
+    setDeleteTimerActive(true);
+    setDeleteDialogOpen(true);
+  };
+
+  useEffect(() => {
+    if (!deleteTimerActive || deleteTimer <= 0) return;
+    const interval = setInterval(() => {
+      setDeleteTimer((t) => {
+        if (t <= 1) { setDeleteTimerActive(false); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [deleteTimerActive, deleteTimer]);
+
+  const handleDelete = async () => {
+    if (!deleteShootingId) return;
+    try {
+      // Delete related attendance first
+      await supabase.from("attendance").delete().eq("shooting_id", deleteShootingId);
+      const { error } = await supabase.from("shootings").delete().eq("id", deleteShootingId);
+      if (error) throw error;
+      toast.success("শুটিং ডিলিট হয়েছে!");
+      queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+      setDeleteDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
