@@ -114,6 +114,13 @@ export function NotificationBell() {
   };
 
   const handleNavigate = (n: any) => {
+    // For payment, attendance, shooting — show popup detail
+    const popupTypes = ["payment", "attendance", "shooting"];
+    if (popupTypes.includes(n.type)) {
+      setDetailNotification(n);
+      return;
+    }
+    // For notice — use link; for script — go to scripts page
     const route = n.link || typeRoutes[n.type] || "/dashboard";
     setOpen(false);
     setExpandedId(null);
