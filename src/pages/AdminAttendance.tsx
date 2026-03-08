@@ -23,10 +23,35 @@ const AdminAttendance = () => {
   const [expandedShootings, setExpandedShootings] = useState<Set<string>>(new Set());
 
   const { data: shootings } = useQuery({
-    queryKey: ["admin-shootings-list"],
+    queryKey: ["admin-shootings-for-attendance"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*").in("status", ["ongoing", "completed"]).order("shoot_date", { ascending: false });
-      return data ?? [];
+      // Get ongoing/completed shootings only
+      const { data: allShootings } = await supabase
+        .from("shootings")
+        .select("*")
+        .in("status", ["ongoing", "completed"])
+        .order("shoot_date", { ascending: false });
+      
+      if (!allShootings || allShootings.length === 0) return [];
+
+      // Check which completed shootings already have attendance
+      const completedIds = allShootings.filter(s => s.status === "completed").map(s => s.id);
+      
+      if (completedIds.length > 0) {
+        const { data: existingAtt } = await supabase
+          .from("attendance")
+          .select("shooting_id")
+          .in("shooting_id", completedIds);
+        
+        const shootingsWithAttendance = new Set((existingAtt ?? []).map(a => a.shooting_id));
+        
+        // Remove completed shootings that already have attendance
+        return allShootings.filter(s => 
+          s.status === "ongoing" || !shootingsWithAttendance.has(s.id)
+        );
+      }
+      
+      return allShootings;
     },
   });
 
