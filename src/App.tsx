@@ -15,6 +15,7 @@ import AdminAttendance from "./pages/AdminAttendance";
 import AdminPayments from "./pages/AdminPayments";
 import AdminShootings from "./pages/AdminShootings";
 import AdminChannels from "./pages/AdminChannels";
+import AdminScripts from "./pages/AdminScripts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
