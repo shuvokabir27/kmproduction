@@ -55,6 +55,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </main>
         </div>
 
+        {/* Floating Chat Button */}
+        {user && !isOnChat && (
+          <button
+            onClick={() => navigate("/chat")}
+            className="fixed bottom-20 md:bottom-6 right-4 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+          >
+            <MessageCircle className="h-5 w-5" />
+          </button>
+        )}
+
         {/* Mobile bottom navigation */}
         {isMobile && <MobileBottomNav />}
       </div>
