@@ -30,6 +30,13 @@ export interface NewsItem {
   created_at: string;
   published_at: string | null;
   video_url: string | null;
+  publisher_id: string | null;
+}
+
+export interface Publisher {
+  id: string;
+  name: string;
+  photo_url: string | null;
 }
 
 export default function News() {
