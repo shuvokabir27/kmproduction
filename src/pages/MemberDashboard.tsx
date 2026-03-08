@@ -130,12 +130,20 @@ const MemberDashboard = () => {
     setWorks(ws => ws.filter((_, i) => i !== idx));
   };
 
+  const uploadFile = async (file: File, folder: string) => {
+    const ext = file.name.split(".").pop();
+    const path = `${folder}/${profile!.id}_${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("member-photos").upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: pub } = supabase.storage.from("member-photos").getPublicUrl(path);
+    return pub.publicUrl;
+  };
+
   const handleSaveProfile = async () => {
     if (!profile) return;
     setSaving(true);
     try {
-      // Update profile extra fields
-      const { error } = await supabase.from("profiles").update({
+      const updates: any = {
         address: extraFields.address || null,
         education: extraFields.education || null,
         achievements: extraFields.achievements || null,
@@ -145,7 +153,16 @@ const MemberDashboard = () => {
         favorite_color: extraFields.favorite_color || null,
         favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null,
-      } as any).eq("id", profile.id);
+      };
+
+      if (photoFile) {
+        updates.photo_url = await uploadFile(photoFile, "profiles");
+      }
+      if (coverFile) {
+        updates.cover_url = await uploadFile(coverFile, "covers");
+      }
+
+      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
       if (error) throw error;
 
       // Delete old works and insert new ones
@@ -165,6 +182,8 @@ const MemberDashboard = () => {
       }
 
       toast.success("প্রোফাইল আপডেট হয়েছে!");
+      setPhotoFile(null); setCoverFile(null);
+      setPhotoPreview(null); setCoverPreview(null);
       queryClient.invalidateQueries({ queryKey: ["my-favorite-works"] });
       setProfileEditOpen(false);
     } catch (err: any) {
