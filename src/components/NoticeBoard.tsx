@@ -33,6 +33,27 @@ export function NoticeBoard() {
     },
   });
 
+  // Auto-open notice from URL param (e.g., /dashboard?notice=<id>)
+  useEffect(() => {
+    const noticeId = searchParams.get("notice");
+    if (noticeId && notices && notices.length > 0) {
+      const found = notices.find((n: any) => n.id === noticeId);
+      if (found) {
+        setSelectedNotice(found);
+        // Clean up URL param
+        searchParams.delete("notice");
+        setSearchParams(searchParams, { replace: true });
+      } else {
+        // Notice not in current list, fetch it directly
+        supabase.from("notices").select("*").eq("id", noticeId).maybeSingle().then(({ data }) => {
+          if (data) setSelectedNotice(data);
+          searchParams.delete("notice");
+          setSearchParams(searchParams, { replace: true });
+        });
+      }
+    }
+  }, [notices, searchParams]);
+
   const { data: comments, refetch: refetchComments } = useQuery({
     queryKey: ["notice-comments-member", selectedNotice?.id],
     enabled: !!selectedNotice?.id,
