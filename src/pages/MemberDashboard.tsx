@@ -39,6 +39,35 @@ const MemberDashboard = () => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const photoRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
+  const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [pwSaving, setPwSaving] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (newPw.length < 6) { toast.error("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে"); return; }
+    if (newPw !== confirmPw) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
+    setPwSaving(true);
+    try {
+      // Verify current password by re-signing in
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: profile?.email || user?.email || "",
+        password: currentPw,
+      });
+      if (signInErr) { toast.error("বর্তমান পাসওয়ার্ড ভুল"); setPwSaving(false); return; }
+
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) throw error;
+      toast.success("পাসওয়ার্ড পরিবর্তন হয়েছে!");
+      setPwDialogOpen(false);
+      setCurrentPw(""); setNewPw(""); setConfirmPw("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setPwSaving(false);
+    }
+  };
 
   // Profile extra fields
   const [extraFields, setExtraFields] = useState({
