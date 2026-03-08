@@ -45,6 +45,39 @@ const AdminMembers = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<MemberForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwMember, setPwMember] = useState<any>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+
+  const handleSetPassword = async () => {
+    if (!pwMember || newPassword.length < 6) {
+      toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
+      return;
+    }
+    setPwSubmitting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/set-member-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ user_id: pwMember.user_id, new_password: newPassword }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      toast.success(`${pwMember.full_name} এর পাসওয়ার্ড সেট হয়েছে!`);
+      setPwOpen(false);
+      setNewPassword("");
+      setPwMember(null);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setPwSubmitting(false);
+    }
+  };
 
   const { data: members } = useQuery({
     queryKey: ["admin-members"],
