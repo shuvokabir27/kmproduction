@@ -230,7 +230,7 @@ const PublicHome = () => {
               className="mb-12"
             >
               <span className="text-primary text-sm font-semibold tracking-widest uppercase">Our Work</span>
-              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">সাম্প্রতিক প্রজেক্ট</h2>
+              <h2 className="font-display text-4xl md:text-5xl text-foreground mt-2 tracking-wider">{L.recentProjects}</h2>
               <div className="h-1 w-16 bg-primary rounded-full mt-4" />
             </motion.div>
 
