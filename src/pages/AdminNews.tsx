@@ -173,11 +173,40 @@ export default function AdminNews() {
 
   const confirmInlineImage = () => {
     if (!inlineImageUrl) return;
-    // Format: ![caption|size](url)
-    insertFormat(`\n![${inlineCaption}|${inlineSize}](${inlineImageUrl})\n`, "");
+    if (editingInlineImage) {
+      // Replace the old markdown with new one
+      const newMarkdown = `![${inlineCaption}|${inlineSize}](${inlineImageUrl})`;
+      setContent(content.replace(editingInlineImage.match, newMarkdown));
+      setEditingInlineImage(null);
+    } else {
+      // Insert new
+      insertFormat(`\n![${inlineCaption}|${inlineSize}](${inlineImageUrl})\n`, "");
+    }
     setInlineImageDialog(false);
     setInlineImageUrl(null);
   };
+
+  const openEditInlineImage = (match: string, caption: string, size: number, url: string) => {
+    setEditingInlineImage({ match, caption, size, url });
+    setInlineImageUrl(url);
+    setInlineCaption(caption);
+    setInlineSize(size);
+    setInlineImageDialog(true);
+  };
+
+  // Parse inline images from content
+  const inlineImages = Array.from(content.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)).map((m) => {
+    const meta = m[1];
+    const url = m[2];
+    let caption = meta;
+    let size = 100;
+    if (meta.includes("|")) {
+      const parts = meta.split("|");
+      caption = parts[0];
+      size = parseInt(parts[1]) || 100;
+    }
+    return { match: m[0], caption, size, url };
+  });
 
   const resetForm = () => {
     setTitle("");
