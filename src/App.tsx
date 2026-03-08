@@ -30,6 +30,8 @@ import AdminServices from "./pages/AdminServices";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
+import AdminNews from "./pages/AdminNews";
+import News from "./pages/News";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
