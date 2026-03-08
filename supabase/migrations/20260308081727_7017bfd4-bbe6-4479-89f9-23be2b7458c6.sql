@@ -1,0 +1,1 @@
+ALTER TABLE public.shootings ADD COLUMN script_url text DEFAULT NULL;
