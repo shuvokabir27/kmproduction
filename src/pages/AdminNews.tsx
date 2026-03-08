@@ -37,6 +37,7 @@ interface NewsItem {
   is_featured: boolean;
   created_at: string;
   published_at: string | null;
+  video_url: string | null;
 }
 
 export default function AdminNews() {
