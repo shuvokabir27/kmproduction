@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit, Trash2 } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
@@ -40,6 +41,8 @@ const AdminShootings = () => {
   const [shootDate, setShootDate] = useState("");
   const [status, setStatus] = useState("plan");
   const [scriptUrl, setScriptUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [showOnPublic, setShowOnPublic] = useState(false);
   const [selectedScriptId, setSelectedScriptId] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [scriptEditorOpen, setScriptEditorOpen] = useState(false);
@@ -96,7 +99,7 @@ const AdminShootings = () => {
 
   const resetForm = () => {
     setEditId(null);
-    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl(""); setSelectedScriptId("");
+    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl(""); setVideoUrl(""); setShowOnPublic(false); setSelectedScriptId("");
   };
 
   const openAdd = () => {
@@ -112,6 +115,8 @@ const AdminShootings = () => {
     setShootDate(s.shoot_date || "");
     setStatus(s.status || "plan");
     setScriptUrl((s as any).script_url || "");
+    setVideoUrl((s as any).video_url || "");
+    setShowOnPublic((s as any).show_on_public || false);
     setSelectedScriptId((s as any).script_id || "");
     setOpen(true);
   };
@@ -123,14 +128,14 @@ const AdminShootings = () => {
       if (editId) {
         const scriptId = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").update({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId, video_url: videoUrl || null, show_on_public: showOnPublic
         } as any).eq("id", editId);
         if (error) throw error;
         toast.success("শুটিং আপডেট হয়েছে!");
       } else {
         const scriptId2 = selectedScriptId && selectedScriptId !== "none" ? selectedScriptId : null;
         const { error } = await supabase.from("shootings").insert({
-          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId2
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null, script_id: scriptId2, video_url: videoUrl || null, show_on_public: showOnPublic
         } as any);
         if (error) throw error;
         toast.success("শুটিং যোগ হয়েছে!");
@@ -192,6 +197,13 @@ const AdminShootings = () => {
     setDeleteTimer(5);
     setDeleteTimerActive(true);
     setDeleteDialogOpen(true);
+  };
+
+  const togglePublicVisibility = async (shootingId: string, current: boolean) => {
+    const { error } = await supabase.from("shootings").update({ show_on_public: !current } as any).eq("id", shootingId);
+    if (error) { toast.error(error.message); return; }
+    toast.success(!current ? "পাবলিক সাইটে দেখানো হবে" : "পাবলিক সাইট থেকে লুকানো হবে");
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
 
@@ -282,6 +294,17 @@ const AdminShootings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label className="text-foreground">ভিডিও লিংক (YouTube/Facebook)</Label>
+                  <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtu.be/... বা https://fb.watch/..." className="bg-secondary border-border/50" />
+                </div>
+                <div className="flex items-center justify-between rounded-lg border border-border/30 bg-secondary/30 p-3">
+                  <div>
+                    <Label className="text-foreground text-sm">পাবলিক সাইটে দেখান</Label>
+                    <p className="text-xs text-muted-foreground">হোম পেজে এই শুটিং প্রদর্শিত হবে</p>
+                  </div>
+                  <Switch checked={showOnPublic} onCheckedChange={setShowOnPublic} />
+                </div>
                 <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে সাইডবারে "স্ক্রিপ্ট" মেনু থেকে নতুন স্ক্রিপ্ট তৈরি করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সেভ করুন"}
@@ -329,6 +352,9 @@ const AdminShootings = () => {
                             {s.channels && <p className="text-[10px] text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
                           </div>
                            <div className="flex items-center gap-0.5 shrink-0">
+                             <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)} title={(s as any).show_on_public ? "পাবলিক সাইটে দেখাচ্ছে" : "পাবলিক সাইটে লুকানো"}>
+                               {(s as any).show_on_public ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                             </Button>
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
                                <FileText className="h-3.5 w-3.5" />
                              </Button>
@@ -371,12 +397,13 @@ const AdminShootings = () => {
                           <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
                           <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">পাবলিক</th>
                           <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/20">
                         {filtered?.length === 0 && (
-                          <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">কোনো শুটিং নেই</td></tr>
+                          <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">কোনো শুটিং নেই</td></tr>
                         )}
                         {filtered?.map((s) => {
                           const info = getStatusInfo(s.status);
@@ -410,6 +437,11 @@ const AdminShootings = () => {
                                     ))}
                                   </SelectContent>
                                 </Select>
+                              </td>
+                              <td className="p-3 text-center">
+                                <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)}>
+                                  {(s as any).show_on_public ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                                </Button>
                               </td>
                               <td className="p-3 text-right">
                                  <div className="flex items-center justify-end gap-1">

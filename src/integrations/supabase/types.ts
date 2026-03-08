@@ -751,6 +751,7 @@ export type Database = {
           script_id: string | null
           script_url: string | null
           shoot_date: string
+          show_on_public: boolean | null
           status: string | null
           updated_at: string
           video_url: string | null
@@ -766,6 +767,7 @@ export type Database = {
           script_id?: string | null
           script_url?: string | null
           shoot_date: string
+          show_on_public?: boolean | null
           status?: string | null
           updated_at?: string
           video_url?: string | null
@@ -781,6 +783,7 @@ export type Database = {
           script_id?: string | null
           script_url?: string | null
           shoot_date?: string
+          show_on_public?: boolean | null
           status?: string | null
           updated_at?: string
           video_url?: string | null

@@ -1,0 +1,1 @@
+ALTER TABLE public.shootings ADD COLUMN show_on_public boolean DEFAULT false;
