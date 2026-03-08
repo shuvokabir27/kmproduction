@@ -49,6 +49,8 @@ const moreItems = [
   { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos", color: "text-pink-400", bg: "bg-pink-500/10" },
   { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery", color: "text-indigo-400", bg: "bg-indigo-500/10" },
   { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-purple-400", bg: "bg-purple-500/10" },
+  { icon: null, label: "— অন্যান্য —", path: "__divider3__", color: "", bg: "" },
+  { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
 ];
 
 const memberTabs = [
