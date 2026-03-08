@@ -68,6 +68,34 @@ const AdminScriptEdit = () => {
     }
   }, [script]);
 
+  const { data: members } = useQuery({
+    queryKey: ["all-members-for-perms"],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("id, full_name, member_id, photo_url").eq("is_active", true).order("member_id");
+      return data ?? [];
+    },
+  });
+
+  const { data: permissions, refetch: refetchPerms } = useQuery({
+    queryKey: ["script-permissions", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data } = await supabase.from("script_permissions" as any).select("*, profiles(full_name, member_id, photo_url)").eq("script_id", id);
+      return (data ?? []) as any[];
+    },
+  });
+
+  const togglePermission = async (memberId: string) => {
+    const existing = permissions?.find((p: any) => p.member_id === memberId);
+    if (existing) {
+      await supabase.from("script_permissions" as any).delete().eq("id", existing.id);
+    } else {
+      await supabase.from("script_permissions" as any).insert({ script_id: id, member_id: memberId } as any);
+    }
+    refetchPerms();
+    queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
+  };
+
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
