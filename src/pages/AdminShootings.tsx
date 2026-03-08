@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText } from "lucide-react";
+import { Film, Plus, FileText, Edit } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -32,6 +32,7 @@ const AdminShootings = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
@@ -54,18 +55,47 @@ const AdminShootings = () => {
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEditId(null);
+    setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
+  };
+
+  const openAdd = () => {
+    resetForm();
+    setOpen(true);
+  };
+
+  const openEdit = (s: any) => {
+    setEditId(s.id);
+    setName(s.name || "");
+    setDescription(s.description || "");
+    setLocation(s.location || "");
+    setShootDate(s.shoot_date || "");
+    setStatus(s.status || "plan");
+    setScriptUrl((s as any).script_url || "");
+    setOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("shootings").insert({
-        name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
-      } as any);
-      if (error) throw error;
-      toast.success("শুটিং যোগ হয়েছে!");
+      if (editId) {
+        const { error } = await supabase.from("shootings").update({
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+        } as any).eq("id", editId);
+        if (error) throw error;
+        toast.success("শুটিং আপডেট হয়েছে!");
+      } else {
+        const { error } = await supabase.from("shootings").insert({
+          name, description, location, shoot_date: shootDate, status, script_url: scriptUrl || null
+        } as any);
+        if (error) throw error;
+        toast.success("শুটিং যোগ হয়েছে!");
+      }
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
       setOpen(false);
-      setName(""); setDescription(""); setLocation(""); setShootDate(""); setStatus("plan"); setScriptUrl("");
+      resetForm();
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -102,15 +132,15 @@ const AdminShootings = () => {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Film className="h-6 w-6 text-primary" /> শুটিং ম্যানেজমেন্ট
           </h1>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button className="gap-2"><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
+              <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border/50">
               <DialogHeader>
-                <DialogTitle className="text-foreground">নতুন শুটিং যোগ করুন</DialogTitle>
+                <DialogTitle className="text-foreground">{editId ? "শুটিং সম্পাদনা" : "নতুন শুটিং যোগ করুন"}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAdd} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label className="text-foreground">নাম</Label>
                   <Input value={name} onChange={(e) => setName(e.target.value)} required className="bg-secondary border-border/50" />
@@ -148,7 +178,7 @@ const AdminShootings = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">💡 স্ক্রিপ্ট লিখতে চাইলে শুটিং তৈরির পর টেবিলে "স্ক্রিপ্ট" বাটনে ক্লিক করুন</p>
                 <Button type="submit" className="w-full" disabled={submitting}>
-                  {submitting ? "সেভ হচ্ছে..." : "সেভ করুন"}
+                  {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সেভ করুন"}
                 </Button>
               </form>
             </DialogContent>
@@ -165,6 +195,7 @@ const AdminShootings = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">তারিখ</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ক্রিপ্ট</th>
                   <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
+                  <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -208,6 +239,11 @@ const AdminShootings = () => {
                             ))}
                           </SelectContent>
                         </Select>
+                      </td>
+                      <td className="p-3 text-right">
+                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
                       </td>
                     </tr>
                   );
