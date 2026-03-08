@@ -22,6 +22,7 @@ interface Sequence {
 }
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
+const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 // Parse existing content into sequences
 const parseContent = (content: string): Sequence[] => {
@@ -129,7 +130,7 @@ const AdminScriptEdit = () => {
 
   const addSequence = () => {
     const num = sequences.length + 1;
-    const newSeq: Sequence = { id: generateId(), title: `দৃশ্য ${num}`, content: "", collapsed: false };
+    const newSeq: Sequence = { id: generateId(), title: `দৃশ্য ${toBn(num)}`, content: "", collapsed: false };
     setSequences([...sequences, newSeq]);
     setActiveSeqId(newSeq.id);
   };
@@ -190,7 +191,7 @@ const AdminScriptEdit = () => {
 <body>
   <div class="header">
     <h1>${script.title}</h1>
-    <p>তারিখ: ${new Date().toLocaleDateString("bn-BD")} | মোট দৃশ্য: ${updated.length}</p>
+    <p>তারিখ: ${new Date().toLocaleDateString("bn-BD")} | মোট দৃশ্য: ${updated.length.toString().replace(/\d/g, (d: string) => "০১২৩৪৫৬৭৮৯"[+d])}</p>
   </div>
   ${updated.map((seq, i) => `
     <div class="sequence">
@@ -256,7 +257,7 @@ const AdminScriptEdit = () => {
                 <FileText className="h-5 w-5 text-primary shrink-0" />
                 {script.title}
               </h1>
-              <p className="text-[10px] text-muted-foreground">{sequences.length} দৃশ্য</p>
+              <p className="text-[10px] text-muted-foreground">{toBn(sequences.length)} দৃশ্য</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
