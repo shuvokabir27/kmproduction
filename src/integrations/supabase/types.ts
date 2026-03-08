@@ -174,16 +174,21 @@ export type Database = {
       profiles: {
         Row: {
           achievements: string | null
+          achievements_en: string | null
           address: string | null
+          address_en: string | null
           bank_account_no: string | null
           bank_name: string | null
           bio: string | null
+          bio_en: string | null
           bkash_no: string | null
           cover_url: string | null
           created_at: string
           date_of_birth: string | null
           designation: string | null
+          designation_en: string | null
           education: string | null
+          education_en: string | null
           email: string | null
           favorite_actor: string | null
           favorite_actress: string | null
@@ -191,6 +196,7 @@ export type Database = {
           favorite_dress: string | null
           favorite_food: string | null
           full_name: string
+          full_name_en: string | null
           id: string
           is_active: boolean | null
           is_verified: boolean | null
@@ -202,21 +208,27 @@ export type Database = {
           photo_url: string | null
           salary_type: Database["public"]["Enums"]["salary_type"] | null
           short_bio: string | null
+          short_bio_en: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           achievements?: string | null
+          achievements_en?: string | null
           address?: string | null
+          address_en?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
           bio?: string | null
+          bio_en?: string | null
           bkash_no?: string | null
           cover_url?: string | null
           created_at?: string
           date_of_birth?: string | null
           designation?: string | null
+          designation_en?: string | null
           education?: string | null
+          education_en?: string | null
           email?: string | null
           favorite_actor?: string | null
           favorite_actress?: string | null
@@ -224,6 +236,7 @@ export type Database = {
           favorite_dress?: string | null
           favorite_food?: string | null
           full_name: string
+          full_name_en?: string | null
           id?: string
           is_active?: boolean | null
           is_verified?: boolean | null
@@ -235,21 +248,27 @@ export type Database = {
           photo_url?: string | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
           short_bio?: string | null
+          short_bio_en?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           achievements?: string | null
+          achievements_en?: string | null
           address?: string | null
+          address_en?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
           bio?: string | null
+          bio_en?: string | null
           bkash_no?: string | null
           cover_url?: string | null
           created_at?: string
           date_of_birth?: string | null
           designation?: string | null
+          designation_en?: string | null
           education?: string | null
+          education_en?: string | null
           email?: string | null
           favorite_actor?: string | null
           favorite_actress?: string | null
@@ -257,6 +276,7 @@ export type Database = {
           favorite_dress?: string | null
           favorite_food?: string | null
           full_name?: string
+          full_name_en?: string | null
           id?: string
           is_active?: boolean | null
           is_verified?: boolean | null
@@ -268,6 +288,7 @@ export type Database = {
           photo_url?: string | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
           short_bio?: string | null
+          short_bio_en?: string | null
           updated_at?: string
           user_id?: string
         }
