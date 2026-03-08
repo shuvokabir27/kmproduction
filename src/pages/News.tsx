@@ -369,11 +369,13 @@ function NewsCard({
   categories,
   isFirst,
   onClick,
+  publisherName,
 }: {
   news: NewsItem;
   categories: { value: string; label: string }[];
   isFirst: boolean;
   onClick: () => void;
+  publisherName: string | null;
 }) {
   return (
     <article
@@ -407,12 +409,17 @@ function NewsCard({
               {news.excerpt}
             </p>
           )}
-          {news.published_at && (
-            <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1 mt-1">
-              <Clock className="h-2.5 w-2.5" />
-              {format(new Date(news.published_at), "dd MMM yyyy")}
-            </span>
-          )}
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            {publisherName && (
+              <span className="text-[10px] font-medium text-foreground/60">✍️ {publisherName}</span>
+            )}
+            {news.published_at && (
+              <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
+                <Clock className="h-2.5 w-2.5" />
+                {format(new Date(news.published_at), "dd MMM yyyy")}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </article>
