@@ -110,7 +110,7 @@ export function MobileBottomNav() {
               className="relative z-[61] w-[calc(100%-24px)] max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-secondary/30 backdrop-blur-xl border border-border/40 rounded-2xl shadow-2xl shadow-black/40 p-3">
+              <div className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-secondary/30 backdrop-blur-xl border border-border/40 rounded-2xl shadow-2xl shadow-black/40 p-2">
                 {/* Dot pattern background */}
                 <div className="absolute inset-0 opacity-[0.06]" style={{
                   backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
