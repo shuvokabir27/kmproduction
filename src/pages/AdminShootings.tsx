@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,6 +47,11 @@ const AdminShootings = () => {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [publishShootingId, setPublishShootingId] = useState<string>("");
   const [publishChannelId, setPublishChannelId] = useState<string>("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteShootingId, setDeleteShootingId] = useState<string>("");
+  const [deleteShootingName, setDeleteShootingName] = useState<string>("");
+  const [deleteTimer, setDeleteTimer] = useState(5);
+  const [deleteTimerActive, setDeleteTimerActive] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -55,6 +60,18 @@ const AdminShootings = () => {
       return (data ?? []) as any[];
     },
   });
+
+  // Delete timer effect - must be before early returns
+  useEffect(() => {
+    if (!deleteTimerActive || deleteTimer <= 0) return;
+    const interval = setInterval(() => {
+      setDeleteTimer((t) => {
+        if (t <= 1) { setDeleteTimerActive(false); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [deleteTimerActive, deleteTimer]);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
 
@@ -164,6 +181,31 @@ const AdminShootings = () => {
     } as any).eq("id", scriptEditShooting.id);
     if (error) throw error;
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
+  const openDeleteDialog = (s: any) => {
+    setDeleteShootingId(s.id);
+    setDeleteShootingName(s.name);
+    setDeleteTimer(5);
+    setDeleteTimerActive(true);
+    setDeleteDialogOpen(true);
+  };
+
+
+
+  const handleDelete = async () => {
+    if (!deleteShootingId) return;
+    try {
+      // Delete related attendance first
+      await supabase.from("attendance").delete().eq("shooting_id", deleteShootingId);
+      const { error } = await supabase.from("shootings").delete().eq("id", deleteShootingId);
+      if (error) throw error;
+      toast.success("শুটিং ডিলিট হয়েছে!");
+      queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+      setDeleteDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
   };
 
   return (
@@ -277,14 +319,17 @@ const AdminShootings = () => {
                             {s.location && <p className="text-[10px] text-muted-foreground mt-1">📍 {s.location}</p>}
                             {s.channels && <p className="text-[10px] text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
                           </div>
-                          <div className="flex items-center gap-0.5 shrink-0">
-                            <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
-                              <FileText className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
-                              <Edit className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
+                           <div className="flex items-center gap-0.5 shrink-0">
+                             <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
+                               <FileText className="h-3.5 w-3.5" />
+                             </Button>
+                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
+                               <Edit className="h-3.5 w-3.5" />
+                             </Button>
+                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive/70" onClick={() => openDeleteDialog(s)}>
+                               <Trash2 className="h-3.5 w-3.5" />
+                             </Button>
+                           </div>
                         </div>
                         {/* Status changer */}
                         <div className="mt-2 pt-2 border-t border-border/20">
@@ -358,10 +403,15 @@ const AdminShootings = () => {
                                 </Select>
                               </td>
                               <td className="p-3 text-right">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </td>
+                                 <div className="flex items-center justify-end gap-1">
+                                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
+                                     <Edit className="h-4 w-4" />
+                                   </Button>
+                                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive" onClick={() => openDeleteDialog(s)}>
+                                     <Trash2 className="h-4 w-4" />
+                                   </Button>
+                                 </div>
+                               </td>
                             </tr>
                           );
                         })}
@@ -410,6 +460,44 @@ const AdminShootings = () => {
             <Button onClick={confirmPublish} className="w-full" disabled={!publishChannelId}>
               পাবলিশ করুন
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog with Timer */}
+      <Dialog open={deleteDialogOpen} onOpenChange={(v) => { if (!v) { setDeleteTimerActive(false); } setDeleteDialogOpen(v); }}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-destructive flex items-center gap-2">
+              <Trash2 className="h-5 w-5" /> শুটিং ডিলিট করুন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              আপনি কি <span className="font-semibold text-foreground">"{deleteShootingName}"</span> শুটিংটি ডিলিট করতে চান? এই শুটিংয়ের সকল হাজিরা ডেটাও মুছে যাবে।
+            </p>
+            <p className="text-xs text-destructive/80">⚠️ এই কাজটি অপরিবর্তনীয়!</p>
+
+            {deleteTimer > 0 && (
+              <div className="flex items-center justify-center">
+                <div className="relative h-16 w-16">
+                  <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="16" fill="none" className="stroke-border/30" strokeWidth="2" />
+                    <circle cx="18" cy="18" r="16" fill="none" className="stroke-destructive" strokeWidth="2" strokeDasharray={`${(deleteTimer / 5) * 100.53} 100.53`} strokeLinecap="round" style={{ transition: "stroke-dasharray 1s linear" }} />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-destructive">{deleteTimer}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1 border-border/30" onClick={() => { setDeleteDialogOpen(false); setDeleteTimerActive(false); }}>
+                ক্যানসেল
+              </Button>
+              <Button variant="destructive" className="flex-1" disabled={deleteTimer > 0} onClick={handleDelete}>
+                {deleteTimer > 0 ? `অপেক্ষা করুন (${deleteTimer}স)` : "ডিলিট করুন"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
