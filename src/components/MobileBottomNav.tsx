@@ -22,6 +22,7 @@ import {
   Image as ImageIcon,
   Sparkles,
   Newspaper,
+  Globe,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
