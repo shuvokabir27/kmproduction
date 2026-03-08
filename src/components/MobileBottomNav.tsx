@@ -16,6 +16,7 @@ import {
   Megaphone,
   Settings,
   Gift,
+  MessageCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -35,11 +36,13 @@ const moreItems = [
   { icon: Gift, label: "বোনাস", path: "/admin/bonuses" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices" },
   { icon: Home, label: "পাবলিক সাইট", path: "/" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
 ];
 
 const memberTabs = [
   { icon: Home, label: "হোম", path: "/" },
   { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat" },
   { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts" },
   { icon: MoreHorizontal, label: "আরো", path: "__more__" },
 ];

@@ -11,6 +11,7 @@ import {
   Tv,
   Megaphone,
   Gift,
+  MessageCircle,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -40,10 +41,12 @@ const adminItems = [
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
 ];
 
 const memberItems = [
   { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
 ];
 
 export function AppSidebar() {
