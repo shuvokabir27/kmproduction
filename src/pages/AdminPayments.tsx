@@ -41,7 +41,7 @@ const AdminPayments = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("payments")
-        .select("*, profiles(full_name, member_id)")
+        .select("*, profiles(full_name, member_id, photo_url)")
         .order("payment_date", { ascending: false });
       return data ?? [];
     },
