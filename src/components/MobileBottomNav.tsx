@@ -44,19 +44,20 @@ const memberMoreItems = [
 ];
 
 export function MobileBottomNav() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
   const [pressedTab, setPressedTab] = useState<string | null>(null);
   const tabs = isAdmin ? adminTabs : memberTabs;
+  const currentMoreItems = isAdmin ? moreItems : memberMoreItems;
 
   const isActive = (path: string) => {
     if (path === "__more__") {
-      return moreOpen || moreItems.some(
+      return moreOpen || currentMoreItems.some(
         (m) =>
           m.path === location.pathname ||
-          (m.path !== "/" && location.pathname.startsWith(m.path))
+          (m.path !== "/" && m.path !== "__logout__" && location.pathname.startsWith(m.path))
       );
     }
     if (path === "/admin") return location.pathname === "/admin";
