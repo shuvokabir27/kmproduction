@@ -316,6 +316,27 @@ const Services = () => {
           </p>
         </div>
       </footer>
+      {/* Booking Confirmation Dialog */}
+      <AlertDialog open={!!bookingService} onOpenChange={(open) => !open && setBookingService(null)}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-lg">
+              📩 বুকিং ও মূল্য জানতে
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-sm leading-relaxed">
+              <strong className="text-foreground">"{bookingService?.title}"</strong> প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-2">
+            <AlertDialogCancel className="w-full sm:w-auto">বাতিল</AlertDialogCancel>
+            <AlertDialogAction asChild className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
+              <a href={bookingService?.waUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
+                <MessageCircle className="h-4 w-4" /> WhatsApp এ মেসেজ করুন
+              </a>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
