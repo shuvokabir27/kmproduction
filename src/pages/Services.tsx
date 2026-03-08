@@ -334,10 +334,10 @@ const Services = () => {
         <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center text-lg">
-              📩 বুকিং ও মূল্য জানতে
+              📩 {t("বুকিং ও মূল্য জানতে", "For Booking & Pricing")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center text-sm leading-relaxed">
-              <strong className="text-foreground">"{bookingService?.title}"</strong> প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।
+              <strong className="text-foreground">"{bookingService?.title}"</strong> {t("প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।", "— To know the price and details of this package, message us on WhatsApp. We'll get back to you shortly.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-2">
