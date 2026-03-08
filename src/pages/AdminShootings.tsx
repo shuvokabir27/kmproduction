@@ -191,16 +191,7 @@ const AdminShootings = () => {
     setDeleteDialogOpen(true);
   };
 
-  useEffect(() => {
-    if (!deleteTimerActive || deleteTimer <= 0) return;
-    const interval = setInterval(() => {
-      setDeleteTimer((t) => {
-        if (t <= 1) { setDeleteTimerActive(false); return 0; }
-        return t - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [deleteTimerActive, deleteTimer]);
+
 
   const handleDelete = async () => {
     if (!deleteShootingId) return;
