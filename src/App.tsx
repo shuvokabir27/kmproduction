@@ -20,6 +20,7 @@ import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
 import AdminBonuses from "./pages/AdminBonuses";
+import Chat from "./pages/Chat";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
