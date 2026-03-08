@@ -166,6 +166,7 @@ export default function News() {
         categories={categories}
         onBack={() => setSelectedNews(null)}
         onShare={handleShare}
+        publisherName={getPublisherName(selectedNews.publisher_id)}
       />
     );
   }
