@@ -44,6 +44,18 @@ const MemberDashboard = () => {
     },
   });
 
+  const { data: shootings } = useQuery({
+    queryKey: ["member-shootings"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("shootings")
+        .select("*")
+        .order("shoot_date", { ascending: false })
+        .limit(20);
+      return data ?? [];
+    },
+  });
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (isAdmin) return <Navigate to="/admin" replace />;
