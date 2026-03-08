@@ -96,6 +96,27 @@ const AdminPayments = () => {
   const methodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
   const methodIcon: Record<string, any> = { bank: Building, bkash: Smartphone, nagad: Smartphone, cash: Wallet };
 
+  const showReceiptForPayment = async (payment: any) => {
+    // Fetch member balance info
+    const { data: attendance } = await supabase.from("attendance").select("daily_rate").eq("member_id", payment.member_id).eq("is_present", true);
+    const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
+    const { data: allPayments } = await supabase.from("payments").select("amount").eq("member_id", payment.member_id);
+    const totalPaid = allPayments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
+
+    setReceiptData({
+      memberName: payment.profiles?.full_name || "",
+      memberId: payment.profiles?.member_id || 0,
+      amount: Number(payment.amount),
+      method: payment.payment_method,
+      transactionId: payment.transaction_id || null,
+      notes: payment.notes || null,
+      date: payment.payment_date,
+      totalEarned,
+      totalPaid,
+      balance: totalEarned - totalPaid,
+    });
+  };
+
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
