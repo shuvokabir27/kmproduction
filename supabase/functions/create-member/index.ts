@@ -44,10 +44,23 @@ Deno.serve(async (req) => {
       user_metadata: { full_name },
     });
     if (createError) {
-      const msg = createError.message.includes("already been registered")
-        ? "এই ইমেইল দিয়ে ইতিমধ্যে একজন সদস্য নিবন্ধিত আছে"
-        : createError.message;
-      return new Response(JSON.stringify({ error: msg }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (createError.message.includes("already been registered")) {
+        // Find existing account name
+        const { data: existingProfile } = await adminClient
+          .from("profiles")
+          .select("full_name, member_id")
+          .eq("email", email)
+          .maybeSingle();
+        const name = existingProfile?.full_name || "অজানা";
+        const mid = existingProfile?.member_id ? ` (ID: ${existingProfile.member_id})` : "";
+        return new Response(JSON.stringify({ 
+          error: `এই ইমেইল দিয়ে ইতিমধ্যে "${name}"${mid} নামে একটি অ্যাকাউন্ট নিবন্ধিত আছে।`,
+          duplicate: true,
+          existing_name: name,
+          existing_member_id: existingProfile?.member_id || null,
+        }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      return new Response(JSON.stringify({ error: createError.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // Wait for trigger to create profile
