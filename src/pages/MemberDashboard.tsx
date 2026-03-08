@@ -154,6 +154,7 @@ const MemberDashboard = () => {
         favorite_color: extraFields.favorite_color || null,
         favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null,
+        date_of_birth: extraFields.date_of_birth || null,
       };
 
       if (photoFile) {
