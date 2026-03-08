@@ -17,6 +17,7 @@ import {
   Phone,
   Image as ImageIcon,
   Sparkles,
+  Newspaper,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -45,6 +46,7 @@ const teamItems = [
   { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-amber-400", bg: "bg-amber-500/10" },
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
+  { title: "নিউজ", url: "/admin/news", icon: Newspaper, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
 ];
 
