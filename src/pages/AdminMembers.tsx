@@ -84,6 +84,33 @@ const AdminMembers = () => {
     }
   };
 
+  const handleChangeEmail = async () => {
+    if (!emailMember || !newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      toast.error("সঠিক ইমেইল দিন");
+      return;
+    }
+    setEmailSubmitting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-member-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ user_id: emailMember.user_id, new_email: newEmail.trim() }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      toast.success(`${emailMember.full_name} এর ইমেইল পরিবর্তন হয়েছে!`);
+      setEmailOpen(false);
+      setNewEmail("");
+      setEmailMember(null);
+      queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEmailSubmitting(false);
+    }
+  };
+
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const photoRef = useRef<HTMLInputElement>(null);
