@@ -65,6 +65,47 @@ export type Database = {
           },
         ]
       }
+      bonuses: {
+        Row: {
+          amount: number
+          bonus_date: string
+          created_at: string
+          given_by: string | null
+          id: string
+          member_id: string
+          notes: string | null
+          type: Database["public"]["Enums"]["bonus_type"]
+        }
+        Insert: {
+          amount: number
+          bonus_date?: string
+          created_at?: string
+          given_by?: string | null
+          id?: string
+          member_id: string
+          notes?: string | null
+          type: Database["public"]["Enums"]["bonus_type"]
+        }
+        Update: {
+          amount?: number
+          bonus_date?: string
+          created_at?: string
+          given_by?: string | null
+          id?: string
+          member_id?: string
+          notes?: string | null
+          type?: Database["public"]["Enums"]["bonus_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bonuses_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channels: {
         Row: {
           created_at: string
@@ -690,6 +731,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "member"
+      bonus_type: "bonus" | "transport"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
       salary_type: "daily" | "monthly"
     }
@@ -820,6 +862,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "member"],
+      bonus_type: ["bonus", "transport"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
       salary_type: ["daily", "monthly"],
     },
