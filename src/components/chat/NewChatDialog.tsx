@@ -9,6 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+const sb = supabase as any;
+
 interface NewChatDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -53,30 +55,26 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
     mutationFn: async () => {
       if (selectedUsers.length === 0) throw new Error("No users selected");
 
-      // For personal chat, check if conversation already exists
       if (type === "personal") {
         const targetUserId = selectedUsers[0];
-        // Get all user's conversations
-        const { data: myConvos } = await supabase
+        const { data: myConvos } = await sb
           .from("conversation_members")
           .select("conversation_id")
           .eq("user_id", user!.id);
 
         if (myConvos && myConvos.length > 0) {
-          const myConvoIds = myConvos.map((c) => c.conversation_id);
-          // Check if target user is in any of these personal conversations
-          const { data: sharedConvos } = await supabase
+          const myConvoIds = myConvos.map((c: any) => c.conversation_id);
+          const { data: sharedConvos } = await sb
             .from("conversation_members")
             .select("conversation_id")
             .eq("user_id", targetUserId)
             .in("conversation_id", myConvoIds);
 
           if (sharedConvos && sharedConvos.length > 0) {
-            // Check if any of those are personal type
-            const { data: personalConvos } = await supabase
+            const { data: personalConvos } = await sb
               .from("conversations")
               .select("id")
-              .in("id", sharedConvos.map((c) => c.conversation_id))
+              .in("id", sharedConvos.map((c: any) => c.conversation_id))
               .eq("type", "personal");
 
             if (personalConvos && personalConvos.length > 0) {
@@ -86,8 +84,7 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
         }
       }
 
-      // Create new conversation
-      const { data: conv, error } = await supabase
+      const { data: conv, error } = await sb
         .from("conversations")
         .insert({
           name: type === "group" ? groupName || "গ্রুপ চ্যাট" : null,
@@ -99,11 +96,10 @@ export function NewChatDialog({ open, onOpenChange, type, onCreated }: NewChatDi
 
       if (error) throw error;
 
-      // Add members (including self)
       const allMembers = [user!.id, ...selectedUsers];
-      const { error: memberError } = await supabase
+      const { error: memberError } = await sb
         .from("conversation_members")
-        .insert(allMembers.map((uid) => ({ conversation_id: conv.id, user_id: uid })));
+        .insert(allMembers.map((uid: string) => ({ conversation_id: conv.id, user_id: uid })));
 
       if (memberError) throw memberError;
 
