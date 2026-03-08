@@ -48,6 +48,14 @@ const PublicHome = () => {
     },
   });
 
+  const { data: popularVideos } = useQuery({
+    queryKey: ["popular-videos"],
+    queryFn: async () => {
+      const { data } = await supabase.from("popular_videos" as any).select("*").eq("is_active", true).order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background overflow-hidden noise-bg">
       {/* Header */}
