@@ -94,16 +94,16 @@ export function MobileBottomNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[60]"
+            className="fixed inset-0 z-[60] flex items-center justify-center"
             onClick={() => setMoreOpen(false)}
           >
             <div className="absolute inset-0 bg-background/70 backdrop-blur-md" />
             <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 40, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              className="absolute bottom-20 left-3 right-3 z-[61] pb-safe-bottom"
+              className="relative z-[61] w-[calc(100%-24px)] max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative overflow-hidden bg-gradient-to-br from-card via-card/95 to-secondary/30 backdrop-blur-xl border border-border/40 rounded-2xl shadow-2xl shadow-black/40 p-3">
