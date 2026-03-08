@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Globe,
   Play,
+  Phone,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -49,6 +50,7 @@ const publicSiteItems = [
   { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe },
   { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play },
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv },
+  { title: "যোগাযোগ সেটিংস", url: "/admin/contact-settings", icon: Phone },
 ];
 
 const memberItems = [

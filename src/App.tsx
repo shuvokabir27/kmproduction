@@ -23,6 +23,7 @@ import AdminBonuses from "./pages/AdminBonuses";
 import AdminPublicProfiles from "./pages/AdminPublicProfiles";
 import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
+import AdminContactSettings from "./pages/AdminContactSettings";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
 import MemberSettings from "./pages/MemberSettings";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/admin/notices" element={<AdminNotices />} />
             <Route path="/admin/public-profiles" element={<AdminPublicProfiles />} />
             <Route path="/admin/popular-videos" element={<AdminPopularVideos />} />
+            <Route path="/admin/contact-settings" element={<AdminContactSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

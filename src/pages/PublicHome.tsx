@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -437,34 +437,61 @@ const PublicHome = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-14"
+            className="mb-14 text-center"
           >
             <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
-            <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{L.contact}</h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
+            <h2 className="font-display text-3xl md:text-5xl text-foreground mt-3 tracking-wider leading-tight">
+              বিজ্ঞাপন বা প্রোডাকশনের জন্য
+              <br />
+              <span className="gradient-text">যোগাযোগ করুন</span>
+            </h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5 mx-auto" />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               className="space-y-4"
             >
+              {(settings as any)?.whatsapp_no && (
+                <a
+                  href={`https://wa.me/${(settings as any).whatsapp_no.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-card rounded-xl flex items-center gap-4 p-4 group hover:border-green-500/30 transition-all"
+                >
+                  <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                    <MessageCircle className="h-5 w-5 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">WhatsApp</p>
+                    <span className="text-foreground/80 text-sm font-medium">{(settings as any).whatsapp_no}</span>
+                  </div>
+                </a>
+              )}
+              {settings?.contact_phone && (
+                <a href={`tel:${settings.contact_phone}`} className="premium-card rounded-xl flex items-center gap-4 p-4 group">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Phone className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">ফোন</p>
+                    <span className="text-foreground/80 text-sm">{settings.contact_phone}</span>
+                  </div>
+                </a>
+              )}
               {settings?.contact_email && (
                 <div className="premium-card rounded-xl flex items-center gap-4 p-4 group">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-foreground/80 text-sm">{settings.contact_email}</span>
-                </div>
-              )}
-              {settings?.contact_phone && (
-                <div className="premium-card rounded-xl flex items-center gap-4 p-4 group">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Phone className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">ইমেইল</p>
+                    <span className="text-foreground/80 text-sm">{settings.contact_email}</span>
                   </div>
-                  <span className="text-foreground/80 text-sm">{settings.contact_phone}</span>
                 </div>
               )}
               {settings?.contact_address && (
@@ -472,33 +499,71 @@ const PublicHome = () => {
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-foreground/80 text-sm">{settings.contact_address}</span>
+                  <div>
+                    <p className="text-xs text-muted-foreground">ঠিকানা</p>
+                    <span className="text-foreground/80 text-sm">{settings.contact_address}</span>
+                  </div>
                 </div>
               )}
             </motion.div>
 
+            {/* Social & Pages */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              className="space-y-6"
             >
-              <h3 className="text-lg font-semibold text-foreground mb-5">{L.socialMedia}</h3>
-              <div className="flex gap-4">
-                {settings?.facebook_url && (
-                  <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
-                    <Facebook className="h-5 w-5 text-primary" />
-                  </a>
-                )}
-                {settings?.youtube_url && (
-                  <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
-                    <Youtube className="h-5 w-5 text-primary" />
-                  </a>
-                )}
-                {settings?.instagram_url && (
-                  <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
-                    <Instagram className="h-5 w-5 text-primary" />
-                  </a>
-                )}
+              {/* Facebook Pages */}
+              {(() => {
+                const pages = (settings as any)?.facebook_pages as any[] | null;
+                return pages && pages.length > 0 ? (
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">আমাদের পেইজ সমূহ</h3>
+                    <div className="space-y-3">
+                      {pages.map((page: any, i: number) => (
+                        <a
+                          key={i}
+                          href={page.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="premium-card rounded-xl flex items-center gap-4 p-4 group hover:border-blue-500/30 transition-all"
+                        >
+                          <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                            <Facebook className="h-5 w-5 text-blue-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-foreground text-sm font-medium truncate block">{page.name}</span>
+                            <span className="text-xs text-muted-foreground">Facebook Page</span>
+                          </div>
+                          <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
+              {/* Other Social */}
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-4">{L.socialMedia}</h3>
+                <div className="flex gap-4">
+                  {settings?.facebook_url && (
+                    <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
+                      <Facebook className="h-5 w-5 text-primary" />
+                    </a>
+                  )}
+                  {settings?.youtube_url && (
+                    <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
+                      <Youtube className="h-5 w-5 text-primary" />
+                    </a>
+                  )}
+                  {settings?.instagram_url && (
+                    <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="premium-card h-14 w-14 rounded-xl flex items-center justify-center hover:border-primary/50 hover:bg-primary/10 transition-all">
+                      <Instagram className="h-5 w-5 text-primary" />
+                    </a>
+                  )}
+                </div>
               </div>
             </motion.div>
           </div>

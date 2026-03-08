@@ -840,6 +840,7 @@ export type Database = {
           contact_address: string | null
           contact_email: string | null
           contact_phone: string | null
+          facebook_pages: Json | null
           facebook_url: string | null
           id: string
           instagram_url: string | null
@@ -848,12 +849,14 @@ export type Database = {
           site_name: string | null
           tiktok_url: string | null
           updated_at: string
+          whatsapp_no: string | null
           youtube_url: string | null
         }
         Insert: {
           contact_address?: string | null
           contact_email?: string | null
           contact_phone?: string | null
+          facebook_pages?: Json | null
           facebook_url?: string | null
           id?: string
           instagram_url?: string | null
@@ -862,12 +865,14 @@ export type Database = {
           site_name?: string | null
           tiktok_url?: string | null
           updated_at?: string
+          whatsapp_no?: string | null
           youtube_url?: string | null
         }
         Update: {
           contact_address?: string | null
           contact_email?: string | null
           contact_phone?: string | null
+          facebook_pages?: Json | null
           facebook_url?: string | null
           id?: string
           instagram_url?: string | null
@@ -876,6 +881,7 @@ export type Database = {
           site_name?: string | null
           tiktok_url?: string | null
           updated_at?: string
+          whatsapp_no?: string | null
           youtube_url?: string | null
         }
         Relationships: []
