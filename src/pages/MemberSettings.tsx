@@ -52,6 +52,7 @@ const MemberSettings = () => {
     address_en: "", education_en: "", achievements_en: "",
     favorite_actor_en: "", favorite_actress_en: "", favorite_color_en: "",
     favorite_dress_en: "", favorite_food_en: "",
+    joining_date: "",
   });
   const [editTab, setEditTab] = useState<"bn" | "en">("bn");
   const [works, setWorks] = useState<FavoriteWork[]>([]);
@@ -89,6 +90,7 @@ const MemberSettings = () => {
         favorite_color_en: (profile as any).favorite_color_en || "",
         favorite_dress_en: (profile as any).favorite_dress_en || "",
         favorite_food_en: (profile as any).favorite_food_en || "",
+        joining_date: (profile as any).joining_date || "",
       });
     }
   }, [profile]);
@@ -179,6 +181,7 @@ const MemberSettings = () => {
         favorite_actor: extraFields.favorite_actor || null, favorite_actress: extraFields.favorite_actress || null,
         favorite_color: extraFields.favorite_color || null, favorite_dress: extraFields.favorite_dress || null,
         favorite_food: extraFields.favorite_food || null, date_of_birth: extraFields.date_of_birth || null,
+        joining_date: extraFields.joining_date || null,
         full_name_en: extraFields.full_name_en || null, designation_en: extraFields.designation_en || null,
         short_bio_en: extraFields.short_bio_en || null, address_en: extraFields.address_en || null,
         education_en: extraFields.education_en || null, achievements_en: extraFields.achievements_en || null,
@@ -334,6 +337,7 @@ const MemberSettings = () => {
                 <div><Label className="text-foreground text-xs">ঠিকানা</Label><Input value={extraFields.address} onChange={e => setExtra("address", e.target.value)} className="bg-secondary border-border/50" /></div>
                 <div><Label className="text-foreground text-xs">শিক্ষাগত যোগ্যতা</Label><Input value={extraFields.education} onChange={e => setExtra("education", e.target.value)} className="bg-secondary border-border/50" placeholder="যেমন: বি.এ (অনার্স)" /></div>
                 <div><Label className="text-foreground text-xs">জন্ম তারিখ</Label><Input type="date" value={extraFields.date_of_birth} onChange={e => setExtra("date_of_birth", e.target.value)} className="bg-secondary border-border/50" /></div>
+                <div><Label className="text-foreground text-xs">যোগদানের তারিখ</Label><Input type="date" value={extraFields.joining_date} onChange={e => setExtra("joining_date", e.target.value)} className="bg-secondary border-border/50" /></div>
                 <div><Label className="text-foreground text-xs">অর্জন</Label><Textarea value={extraFields.achievements} onChange={e => setExtra("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="আপনার উল্লেখযোগ্য অর্জনসমূহ..." /></div>
                 <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">পছন্দের তথ্য</p>
