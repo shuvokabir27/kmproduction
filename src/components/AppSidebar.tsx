@@ -10,6 +10,7 @@ import {
   Home,
   Tv,
   Megaphone,
+  Gift,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
