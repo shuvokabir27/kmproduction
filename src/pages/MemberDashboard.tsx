@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, UserCog, Plus, Trash2, Save, Camera, ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
