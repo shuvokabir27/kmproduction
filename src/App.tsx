@@ -52,6 +52,7 @@ const App = () => (
             <Route path="/admin/channels" element={<AdminChannels />} />
             <Route path="/admin/scripts" element={<AdminScripts />} />
             <Route path="/admin/scripts/:id" element={<AdminScriptEdit />} />
+            <Route path="/admin/bonuses" element={<AdminBonuses />} />
             <Route path="/admin/notices" element={<AdminNotices />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
