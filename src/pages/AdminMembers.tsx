@@ -348,6 +348,7 @@ const AdminMembers = () => {
                   <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
                    <th className="text-left p-3 text-muted-foreground font-medium hidden sm:table-cell">পদবী</th>
                    <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">বেতন ধরন</th>
+                   <th className="text-left p-3 text-muted-foreground font-medium">ভেরিফাইড</th>
                    <th className="text-left p-3 text-muted-foreground font-medium">স্ট্যাটাস</th>
                   <th className="text-right p-3 text-muted-foreground font-medium">অ্যাকশন</th>
                 </tr>
