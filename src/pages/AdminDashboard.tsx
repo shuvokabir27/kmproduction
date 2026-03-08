@@ -137,10 +137,10 @@ const AdminDashboard = () => {
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
   const stats = [
-    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, gradient: "from-primary/20 to-primary/5", iconColor: "text-primary", onClick: () => navigate("/admin/members") },
-    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-success/20 to-success/5", iconColor: "text-success", onClick: () => navigate("/admin/shootings") },
-    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-warning/20 to-warning/5", iconColor: "text-warning", onClick: () => navigate("/admin/payments") },
-    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-destructive/20 to-destructive/5", iconColor: "text-destructive", onClick: () => setDueDialogOpen(true) },
+    { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, gradient: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400", iconBg: "bg-violet-500/10", onClick: () => navigate("/admin/members") },
+    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: () => navigate("/admin/shootings") },
+    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10", onClick: () => navigate("/admin/payments") },
+    { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setDueDialogOpen(true) },
   ];
 
   return (
