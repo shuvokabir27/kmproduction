@@ -22,6 +22,7 @@ const typeColors: Record<string, string> = {
   payment: "bg-success/10 text-success",
   attendance: "bg-warning/10 text-warning",
   script: "bg-accent/50 text-accent-foreground",
+  notice: "bg-destructive/10 text-destructive",
 };
 
 export function NotificationBell() {
