@@ -88,7 +88,7 @@ export function AppSidebar() {
               <div className={`h-6 w-6 rounded-md ${item.bg} flex items-center justify-center mr-2 shrink-0`}>
                 <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
               </div>
-              {!collapsed && <span>{item.title}</span>}
+              {!collapsed && <span className={item.color}>{item.title}</span>}
             </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
