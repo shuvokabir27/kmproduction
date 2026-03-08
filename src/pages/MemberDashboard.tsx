@@ -578,42 +578,62 @@ const MemberDashboard = () => {
         />
       )}
 
-      {/* Script View Dialog */}
+      {/* Script View Dialog — A4 style */}
       <Dialog open={!!viewScriptData} onOpenChange={(open) => !open && setViewScriptData(null)}>
-        <DialogContent className="bg-card border-border/50 max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-foreground flex items-center gap-2">
-              <ScrollText className="h-5 w-5 text-primary" />
+        <DialogContent className="bg-muted/50 border-none max-w-[900px] w-[95vw] max-h-[95vh] p-0 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border/20 bg-card/80 backdrop-blur">
+            <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+              <ScrollText className="h-4 w-4 text-primary" />
               {viewScriptData?.title}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {(() => {
-              const content = viewScriptData?.content;
-              if (!content) return <p className="text-muted-foreground text-sm">কোনো কন্টেন্ট নেই</p>;
-              try {
-                const parsed = JSON.parse(content);
-                if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].title !== undefined) {
-                  return parsed.map((seq: any, i: number) => (
-                    <div key={seq.id || i} className="border border-border/30 rounded-lg overflow-hidden">
-                      <div className="bg-secondary/30 px-4 py-2 border-b border-border/20">
-                        <h3 className="text-sm font-semibold text-foreground">{seq.title}</h3>
+            </h2>
+          </div>
+          <div className="overflow-y-auto p-4 md:p-8 flex justify-center" style={{ maxHeight: "calc(95vh - 56px)" }}>
+            {/* A4 Page */}
+            <div
+              className="bg-white shadow-2xl rounded-sm w-full"
+              style={{
+                maxWidth: "210mm",
+                minHeight: "297mm",
+                padding: "20mm 25mm",
+                color: "#1a1a1a",
+                fontFamily: "'Noto Sans Bengali', 'SolaimanLipi', sans-serif",
+                lineHeight: 1.8,
+                fontSize: "14px",
+              }}
+            >
+              {/* Title */}
+              <h1 style={{ fontSize: "22px", fontWeight: 700, textAlign: "center", marginBottom: "24px", color: "#000", borderBottom: "2px solid #e5e5e5", paddingBottom: "16px" }}>
+                {viewScriptData?.title}
+              </h1>
+
+              {(() => {
+                const content = viewScriptData?.content;
+                if (!content) return <p style={{ color: "#999", textAlign: "center" }}>কোনো কন্টেন্ট নেই</p>;
+                try {
+                  const parsed = JSON.parse(content);
+                  if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].title !== undefined) {
+                    return parsed.map((seq: any, i: number) => (
+                      <div key={seq.id || i} style={{ marginBottom: "28px" }}>
+                        <h2 style={{ fontSize: "16px", fontWeight: 600, color: "#333", marginBottom: "10px", borderLeft: "3px solid #2563eb", paddingLeft: "12px" }}>
+                          {seq.title}
+                        </h2>
+                        <div
+                          style={{ color: "#1a1a1a" }}
+                          className="prose prose-sm max-w-none [&_*]:!text-[#1a1a1a] [&_h1]:!text-[#000] [&_h2]:!text-[#222] [&_h3]:!text-[#333] [&_strong]:!text-[#000] [&_p]:!my-2 [&_ul]:!my-2 [&_ol]:!my-2"
+                          dangerouslySetInnerHTML={{ __html: seq.content || "" }}
+                        />
                       </div>
-                      <div
-                        className="p-4 prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: seq.content || "" }}
-                      />
-                    </div>
-                  ));
-                }
-              } catch {}
-              return (
-                <div
-                  className="prose prose-invert max-w-none text-foreground text-sm leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: content }}
-                />
-              );
-            })()}
+                    ));
+                  }
+                } catch {}
+                return (
+                  <div
+                    className="prose prose-sm max-w-none [&_*]:!text-[#1a1a1a] [&_h1]:!text-[#000] [&_h2]:!text-[#222] [&_strong]:!text-[#000]"
+                    dangerouslySetInnerHTML={{ __html: content }}
+                  />
+                );
+              })()}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
