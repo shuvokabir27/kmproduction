@@ -46,6 +46,7 @@ const adminItems = [
 
 const memberItems = [
   { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle },
 ];
 
 export function AppSidebar() {

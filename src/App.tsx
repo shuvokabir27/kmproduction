@@ -45,6 +45,7 @@ const App = () => (
             <Route path="/scripts" element={<MemberScripts />} />
             <Route path="/notifications" element={<AllNotifications />} />
             <Route path="/settings" element={<MemberSettings />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/members" element={<AdminMembers />} />
             <Route path="/admin/attendance" element={<AdminAttendance />} />
