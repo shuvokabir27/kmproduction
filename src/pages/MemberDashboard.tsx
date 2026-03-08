@@ -20,21 +20,6 @@ const MemberDashboard = () => {
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
 
-  // Profile extra fields
-  const [extraFields, setExtraFields] = useState({
-    address: "", education: "", achievements: "", short_bio: "",
-    favorite_actor: "", favorite_actress: "", favorite_color: "",
-    favorite_dress: "", favorite_food: "", date_of_birth: "",
-    full_name_en: "", designation_en: "", short_bio_en: "",
-    address_en: "", education_en: "", achievements_en: "",
-    favorite_actor_en: "", favorite_actress_en: "", favorite_color_en: "",
-    favorite_dress_en: "", favorite_food_en: "",
-  });
-  const [editTab, setEditTab] = useState<"bn" | "en">("bn");
-
-  // Favorite works
-  const [works, setWorks] = useState<FavoriteWork[]>([]);
-
   const { data: balance } = useMemberBalance(profile?.id);
 
   const { data: recentPayments } = useQuery({
@@ -63,15 +48,6 @@ const MemberDashboard = () => {
     },
   });
 
-  const { data: favoriteWorks } = useQuery({
-    queryKey: ["my-favorite-works", profile?.id],
-    enabled: !!profile?.id,
-    queryFn: async () => {
-      const { data } = await supabase.from("favorite_works" as any).select("*").eq("member_id", profile!.id).order("sort_order");
-      return (data ?? []) as any[];
-    },
-  });
-
   const { data: permittedScripts } = useQuery({
     queryKey: ["my-scripts", profile?.id],
     enabled: !!profile?.id,
@@ -82,70 +58,6 @@ const MemberDashboard = () => {
   });
 
   const [viewScriptData, setViewScriptData] = useState<any>(null);
-
-  useEffect(() => {
-    if (profile) {
-      setExtraFields({
-        address: (profile as any).address || "",
-        education: (profile as any).education || "",
-        achievements: (profile as any).achievements || "",
-        short_bio: (profile as any).short_bio || "",
-        favorite_actor: (profile as any).favorite_actor || "",
-        favorite_actress: (profile as any).favorite_actress || "",
-        favorite_color: (profile as any).favorite_color || "",
-        favorite_dress: (profile as any).favorite_dress || "",
-        favorite_food: (profile as any).favorite_food || "",
-        date_of_birth: (profile as any).date_of_birth || "",
-        full_name_en: (profile as any).full_name_en || "",
-        designation_en: (profile as any).designation_en || "",
-        short_bio_en: (profile as any).short_bio_en || "",
-        address_en: (profile as any).address_en || "",
-        education_en: (profile as any).education_en || "",
-        achievements_en: (profile as any).achievements_en || "",
-        favorite_actor_en: (profile as any).favorite_actor_en || "",
-        favorite_actress_en: (profile as any).favorite_actress_en || "",
-        favorite_color_en: (profile as any).favorite_color_en || "",
-        favorite_dress_en: (profile as any).favorite_dress_en || "",
-        favorite_food_en: (profile as any).favorite_food_en || "",
-      });
-    }
-  }, [profile]);
-
-  useEffect(() => {
-    if (favoriteWorks) {
-      setWorks(favoriteWorks.map((w: any) => ({ id: w.id, title: w.title, video_url: w.video_url || "", description: w.description || "" })));
-    }
-  }, [favoriteWorks]);
-
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
-  if (!user) return <Navigate to="/login" replace />;
-  if (isAdmin) return <Navigate to="/admin" replace />;
-
-  const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
-
-  const setExtra = (key: string, value: string) => setExtraFields(f => ({ ...f, [key]: value }));
-
-  const addWork = () => {
-    if (works.length >= 5) { toast.error("সর্বোচ্চ ৫টি কাজ যোগ করা যায়"); return; }
-    setWorks([...works, { title: "", video_url: "", description: "" }]);
-  };
-
-  const updateWork = (idx: number, field: keyof FavoriteWork, value: string) => {
-    setWorks(ws => ws.map((w, i) => i === idx ? { ...w, [field]: value } : w));
-  };
-
-  const removeWork = (idx: number) => {
-    setWorks(ws => ws.filter((_, i) => i !== idx));
-  };
-
-  const uploadFile = async (file: File, folder: string) => {
-    const ext = file.name.split(".").pop();
-    const path = `${folder}/${profile!.id}_${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("member-photos").upload(path, file, { upsert: true });
-    if (error) throw error;
-    const { data: pub } = supabase.storage.from("member-photos").getPublicUrl(path);
-    return pub.publicUrl;
-  };
 
   const handleSaveProfile = async () => {
     if (!profile) return;
