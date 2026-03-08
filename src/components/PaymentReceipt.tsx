@@ -64,7 +64,7 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
           </div>
 
           <div
-            ref={ref}
+            ref={receiptRef}
             className="bg-[#fafaf7] text-[#1a1a1a] rounded-lg overflow-hidden shadow-2xl"
             style={{
               fontFamily: "'Courier New', Courier, monospace",
