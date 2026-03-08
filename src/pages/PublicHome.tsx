@@ -79,12 +79,12 @@ const PublicHome = () => {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const navItems = [
-    { label: "আমাদের টিম", href: "#team" },
-    { label: "জনপ্রিয় কাজ", href: "#popular" },
-    { label: "সেবাসমূহ", href: "/services", isPage: true },
-    { label: "চ্যানেল সমূহ", href: "#channels" },
-    { label: "ছবি গ্যালারী", href: "#gallery" },
-    { label: "যোগাযোগ", href: "#contact" },
+    { label: t("আমাদের টিম", "Our Team"), href: "#team" },
+    { label: t("জনপ্রিয় কাজ", "Popular Work"), href: "#popular" },
+    { label: t("সেবাসমূহ", "Services"), href: "/services", isPage: true },
+    { label: t("চ্যানেল সমূহ", "Channels"), href: "#channels" },
+    { label: t("ছবি গ্যালারী", "Gallery"), href: "#gallery" },
+    { label: t("যোগাযোগ", "Contact"), href: "#contact" },
   ];
 
   const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
@@ -415,7 +415,7 @@ const PublicHome = () => {
                             <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
                               <Film className="h-3.5 w-3.5 text-primary" />
                             </div>
-                            <span className="text-xs text-primary/80 font-medium">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</span>
+                            <span className="text-xs text-primary/80 font-medium">{new Date(s.shoot_date).toLocaleDateString(lang === "en" ? "en-US" : "bn-BD")}</span>
                           </div>
                           <h3 className="font-bold text-foreground text-base leading-tight">{s.name}</h3>
                           {s.description && <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{s.description}</p>}
@@ -435,7 +435,7 @@ const PublicHome = () => {
                               <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center group-hover/link:bg-primary/30 transition-colors">
                                 <Play className="h-3.5 w-3.5 text-primary fill-primary" />
                               </div>
-                              <span className="text-sm font-medium text-primary flex-1">নাটক দেখুন</span>
+                              <span className="text-sm font-medium text-primary flex-1">{t("নাটক দেখুন", "Watch Now")}</span>
                               <ExternalLink className="h-3.5 w-3.5 text-primary/60" />
                             </a>
                           )}
@@ -462,7 +462,7 @@ const PublicHome = () => {
               className="mb-14"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Popular Work</span>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">জনপ্রিয় কাজ</h2>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("জনপ্রিয় কাজ", "Popular Work")}</h2>
               <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
             </motion.div>
 
@@ -532,7 +532,7 @@ const PublicHome = () => {
               className="mb-14"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Our Channels</span>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">আমাদের চ্যানেল সমূহ</h2>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("আমাদের চ্যানেল সমূহ", "Our Channels")}</h2>
               <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
             </motion.div>
 
@@ -585,7 +585,7 @@ const PublicHome = () => {
               className="mb-14"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Gallery</span>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">ছবি গ্যালারী</h2>
+              <h2 className="font-display text-5xl md:text-6xl text-foreground mt-3 tracking-wider">{t("ছবি গ্যালারী", "Photo Gallery")}</h2>
               <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5" />
             </motion.div>
 
@@ -636,9 +636,9 @@ const PublicHome = () => {
           >
             <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Contact Us</span>
             <h2 className="font-display text-3xl md:text-5xl text-foreground mt-3 tracking-wider leading-tight">
-              বিজ্ঞাপন বা প্রোডাকশনের জন্য
+              {t("বিজ্ঞাপন বা প্রোডাকশনের জন্য", "For Ads or Production")}
               <br />
-              <span className="gradient-text">যোগাযোগ করুন</span>
+              <span className="gradient-text">{t("যোগাযোগ করুন", "Contact Us")}</span>
             </h2>
             <div className="h-1 w-20 bg-gradient-to-r from-primary to-primary/30 rounded-full mt-5 mx-auto" />
           </motion.div>
@@ -673,7 +673,7 @@ const PublicHome = () => {
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">ফোন</p>
+                    <p className="text-xs text-muted-foreground">{t("ফোন", "Phone")}</p>
                     <span className="text-foreground/80 text-sm">{settings.contact_phone}</span>
                   </div>
                 </a>
@@ -684,7 +684,7 @@ const PublicHome = () => {
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">ইমেইল</p>
+                    <p className="text-xs text-muted-foreground">{t("ইমেইল", "Email")}</p>
                     <span className="text-foreground/80 text-sm">{settings.contact_email}</span>
                   </div>
                 </div>
@@ -695,7 +695,7 @@ const PublicHome = () => {
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">ঠিকানা</p>
+                    <p className="text-xs text-muted-foreground">{t("ঠিকানা", "Address")}</p>
                     <span className="text-foreground/80 text-sm">{settings.contact_address}</span>
                   </div>
                 </div>
@@ -714,7 +714,7 @@ const PublicHome = () => {
                 const pages = (settings as any)?.facebook_pages as any[] | null;
                 return pages && pages.length > 0 ? (
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-4">আমাদের পেইজ সমূহ</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">{t("আমাদের পেইজ সমূহ", "Our Pages")}</h3>
                     <div className="space-y-3">
                       {pages.map((page: any, i: number) => (
                         <a
@@ -782,7 +782,7 @@ const PublicHome = () => {
               <span className="font-semibold text-foreground">{settings?.site_name || "KM Production House"}</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. সর্বস্বত্ব সংরক্ষিত।
+              © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. {t("সর্বস্বত্ব সংরক্ষিত।", "All rights reserved.")}
             </p>
           </div>
         </div>

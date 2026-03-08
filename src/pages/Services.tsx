@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
@@ -24,6 +25,7 @@ const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { st
 const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
 
 const Services = () => {
+  const { t } = useLanguage();
   const [bookingService, setBookingService] = useState<{ title: string; waUrl: string } | null>(null);
 
   const { data: services } = useQuery({
@@ -66,7 +68,7 @@ const Services = () => {
           <div className="flex items-center gap-3">
             <Link to="/">
               <Button variant="ghost" size="sm" className="text-muted-foreground">
-                <ArrowLeft className="h-4 w-4 mr-1" /> হোম
+                <ArrowLeft className="h-4 w-4 mr-1" /> {t("হোম", "Home")}
               </Button>
             </Link>
             {(settings as any)?.whatsapp_no && (
@@ -93,15 +95,18 @@ const Services = () => {
             transition={{ duration: 0.7 }}
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-wider uppercase mb-6">
-              আমাদের সেবাসমূহ
+              {t("আমাদের সেবাসমূহ", "Our Services")}
             </span>
             <h1 className="font-display text-4xl sm:text-5xl md:text-7xl text-foreground tracking-wider leading-tight">
-              আপনার প্রোডাকশনের
+              {t("আপনার প্রোডাকশনের", "Your Production's")}
               <br />
-              <span className="gradient-text">সম্পূর্ণ সমাধান</span>
+              <span className="gradient-text">{t("সম্পূর্ণ সমাধান", "Complete Solution")}</span>
             </h1>
             <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto leading-relaxed">
-              আমরা <span className="text-primary font-semibold">কুয়াকাটা মাল্টিমিডিয়া</span> টিম — দীর্ঘ <span className="text-foreground font-bold">৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।
+              {t(
+                "আমরা কুয়াকাটা মাল্টিমিডিয়া টিম — দীর্ঘ ৭ বছর ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।",
+                "We are the Kuakata Multimedia team — working with an experienced and skilled team in this sector for over 7 years. From ads, weddings, drama production to video editing — we are by your side for everything."
+              )}
             </p>
           </motion.div>
         </div>
@@ -118,7 +123,7 @@ const Services = () => {
               className="mb-12 text-center"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">Featured</span>
-              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">জনপ্রিয় প্যাকেজ</h2>
+              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">{t("জনপ্রিয় প্যাকেজ", "Popular Packages")}</h2>
             </motion.div>
 
             <motion.div
@@ -140,7 +145,7 @@ const Services = () => {
                     }`}>
                       {index === 1 && (
                         <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center py-1.5 text-xs font-bold tracking-wider uppercase">
-                          ★ সবচেয়ে জনপ্রিয়
+                          ★ {t("সবচেয়ে জনপ্রিয়", "Most Popular")}
                         </div>
                       )}
                       <div className={`p-6 ${index === 1 ? "pt-10" : ""}`}>
@@ -172,11 +177,11 @@ const Services = () => {
                             className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
                             <MessageCircle className="h-4 w-4 mr-1" />
-                            {service.price_label || "বুকিং করুন"}
+                            {service.price_label || t("বুকিং করুন", "Book Now")}
                           </Button>
                         ) : (
                           <Button className="w-full bg-secondary hover:bg-secondary/80 text-foreground" disabled>
-                            {service.price_label || "বুকিং করুন"}
+                            {service.price_label || t("বুকিং করুন", "Book Now")}
                           </Button>
                         )}
                       </div>
@@ -200,7 +205,7 @@ const Services = () => {
               className="mb-12 text-center"
             >
               <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase">More Services</span>
-              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">আরো সেবাসমূহ</h2>
+              <h2 className="font-display text-3xl md:text-4xl text-foreground mt-2 tracking-wider">{t("আরো সেবাসমূহ", "More Services")}</h2>
             </motion.div>
 
             <motion.div
@@ -243,7 +248,7 @@ const Services = () => {
                           </div>
                         ))}
                         {features.length > 3 && (
-                          <span className="text-xs text-muted-foreground">+{features.length - 3} আরো</span>
+                          <span className="text-xs text-muted-foreground">+{features.length - 3} {t("আরো", "more")}</span>
                         )}
                       </div>
 
@@ -254,11 +259,11 @@ const Services = () => {
                           className="w-full"
                           onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
                         >
-                          <MessageCircle className="h-4 w-4 mr-1" /> বুকিং করুন
+                          <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
                       ) : (
                         <Button variant="outline" size="sm" className="w-full" disabled>
-                          বুকিং করুন
+                          {t("বুকিং করুন", "Book Now")}
                         </Button>
                       )}
                     </div>
@@ -282,10 +287,10 @@ const Services = () => {
           >
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
             <h2 className="font-display text-3xl md:text-4xl text-foreground tracking-wider mb-4">
-              আপনার প্রজেক্ট নিয়ে কথা বলুন
+              {t("আপনার প্রজেক্ট নিয়ে কথা বলুন", "Let's Talk About Your Project")}
             </h2>
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              আমাদের টিম আপনার প্রয়োজন অনুযায়ী কাস্টম প্যাকেজ তৈরি করে দেবে। এখনই যোগাযোগ করুন।
+              {t("আমাদের টিম আপনার প্রয়োজন অনুযায়ী কাস্টম প্যাকেজ তৈরি করে দেবে। এখনই যোগাযোগ করুন।", "Our team will create a custom package tailored to your needs. Contact us now.")}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               {(settings as any)?.whatsapp_no && (
@@ -295,14 +300,14 @@ const Services = () => {
                   rel="noopener noreferrer"
                 >
                   <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8">
-                    <MessageCircle className="h-5 w-5 mr-2" /> WhatsApp এ মেসেজ করুন
+                    <MessageCircle className="h-5 w-5 mr-2" /> {t("WhatsApp এ মেসেজ করুন", "Message on WhatsApp")}
                   </Button>
                 </a>
               )}
               {settings?.contact_phone && (
                 <a href={`tel:${settings.contact_phone}`}>
                   <Button size="lg" variant="outline" className="font-semibold px-8">
-                    <Phone className="h-5 w-5 mr-2" /> কল করুন
+                    <Phone className="h-5 w-5 mr-2" /> {t("কল করুন", "Call Us")}
                   </Button>
                 </a>
               )}
@@ -319,7 +324,7 @@ const Services = () => {
             <span className="font-semibold text-foreground">{settings?.site_name || "KM Production House"}</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. সর্বস্বত্ব সংরক্ষিত।
+            © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. {t("সর্বস্বত্ব সংরক্ষিত।", "All rights reserved.")}
           </p>
         </div>
       </footer>
@@ -328,17 +333,17 @@ const Services = () => {
         <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center text-lg">
-              📩 বুকিং ও মূল্য জানতে
+              📩 {t("বুকিং ও মূল্য জানতে", "For Booking & Pricing")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center text-sm leading-relaxed">
-              <strong className="text-foreground">"{bookingService?.title}"</strong> প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।
+              <strong className="text-foreground">"{bookingService?.title}"</strong> {t("প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।", "— To know the price and details of this package, message us on WhatsApp. We'll get back to you shortly.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-2">
-            <AlertDialogCancel className="w-full sm:w-auto">বাতিল</AlertDialogCancel>
+            <AlertDialogCancel className="w-full sm:w-auto">{t("বাতিল", "Cancel")}</AlertDialogCancel>
             <AlertDialogAction asChild className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
               <a href={bookingService?.waUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
-                <MessageCircle className="h-4 w-4" /> WhatsApp এ মেসেজ করুন
+                <MessageCircle className="h-4 w-4" /> {t("WhatsApp এ মেসেজ করুন", "Message on WhatsApp")}
               </a>
             </AlertDialogAction>
           </AlertDialogFooter>
