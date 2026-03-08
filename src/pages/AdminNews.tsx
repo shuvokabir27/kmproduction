@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check, Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, List, ListOrdered, AlignLeft, AlignCenter, Link2, Video } from "lucide-react";
 import { format } from "date-fns";
 import ReactCrop, { type Crop as CropType, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
@@ -37,6 +37,7 @@ interface NewsItem {
   is_featured: boolean;
   created_at: string;
   published_at: string | null;
+  video_url: string | null;
 }
 
 export default function AdminNews() {
@@ -54,6 +55,7 @@ export default function AdminNews() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<CropType>();
@@ -123,6 +125,24 @@ export default function AdminNews() {
     },
   });
 
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const insertFormat = (prefix: string, suffix: string = "") => {
+    const ta = contentRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const selected = content.substring(start, end);
+    const before = content.substring(0, start);
+    const after = content.substring(end);
+    const newText = `${before}${prefix}${selected}${suffix}${after}`;
+    setContent(newText);
+    setTimeout(() => {
+      ta.focus();
+      ta.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
+    }, 0);
+  };
+
   const resetForm = () => {
     setTitle("");
     setContent("");
@@ -136,6 +156,7 @@ export default function AdminNews() {
     setRawImageSrc(null);
     setCrop(undefined);
     setCompletedCrop(undefined);
+    setVideoUrl("");
   };
 
   const openEdit = (news: NewsItem) => {
@@ -147,6 +168,7 @@ export default function AdminNews() {
     setIsPublished(news.is_published);
     setIsFeatured(news.is_featured);
     setImagePreview(news.featured_image_url);
+    setVideoUrl(news.video_url || "");
     setImageFile(null);
     setDialogOpen(true);
   };
@@ -192,6 +214,7 @@ export default function AdminNews() {
         is_published: isPublished,
         is_featured: isFeatured,
         published_at: isPublished ? new Date().toISOString() : null,
+        video_url: videoUrl || null,
       };
 
       if (editingNews) {
@@ -403,16 +426,67 @@ export default function AdminNews() {
                 />
               </div>
 
-              {/* Content */}
+              {/* Content with toolbar */}
               <div>
                 <Label className="text-xs font-medium mb-1.5 block">বিস্তারিত *</Label>
-                <Textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="নিউজের পুরো বিবরণ লিখুন..."
-                  rows={8}
-                  className="text-sm leading-relaxed"
+                <div className="border border-border/50 rounded-xl overflow-hidden">
+                  {/* Toolbar */}
+                  <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 bg-secondary/40 border-b border-border/30">
+                    <button type="button" onClick={() => insertFormat("**", "**")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="বোল্ড">
+                      <Bold className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" onClick={() => insertFormat("*", "*")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="ইটালিক">
+                      <Italic className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" onClick={() => insertFormat("__", "__")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="আন্ডারলাইন">
+                      <UnderlineIcon className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="w-px h-5 bg-border/50 mx-1" />
+                    <button type="button" onClick={() => insertFormat("\n# ", "\n")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="বড় হেডিং">
+                      <Heading1 className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" onClick={() => insertFormat("\n## ", "\n")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="ছোট হেডিং">
+                      <Heading2 className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="w-px h-5 bg-border/50 mx-1" />
+                    <button type="button" onClick={() => insertFormat("\n• ", "")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="বুলেট লিস্ট">
+                      <List className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" onClick={() => insertFormat("\n1. ", "")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="নম্বর লিস্ট">
+                      <ListOrdered className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="w-px h-5 bg-border/50 mx-1" />
+                    <button type="button" onClick={() => insertFormat("\n---\n", "")} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="লাইন বিভাজক">
+                      <AlignCenter className="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" onClick={() => { const url = prompt("লিংক দিন:"); if (url) insertFormat("[", `](${url})`); }} className="h-7 w-7 rounded flex items-center justify-center hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="লিংক">
+                      <Link2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <Textarea
+                    ref={contentRef}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="নিউজের পুরো বিবরণ লিখুন..."
+                    rows={10}
+                    className="text-sm leading-relaxed border-0 rounded-none focus-visible:ring-0 resize-y"
+                  />
+                </div>
+              </div>
+
+              {/* Video URL */}
+              <div>
+                <Label className="text-xs font-medium mb-1.5 block flex items-center gap-1.5">
+                  <Video className="h-3.5 w-3.5" /> ভিডিও লিংক (ঐচ্ছিক)
+                </Label>
+                <Input
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="YouTube বা অন্য ভিডিও লিংক দিন..."
                 />
+                {videoUrl && (
+                  <p className="text-[10px] text-muted-foreground mt-1">নিউজের শেষে ভিডিও এম্বেড হবে</p>
+                )}
               </div>
 
               {/* Category */}

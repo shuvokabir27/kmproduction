@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Newspaper, Calendar, Star, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { Newspaper, Calendar, Star, ArrowLeft, Image as ImageIcon, Share2, Facebook, MessageCircle, Copy, Link2 } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const categories = [
   { value: "all", label: "সব নিউজ" },
@@ -27,7 +27,79 @@ interface NewsItem {
   is_featured: boolean;
   created_at: string;
   published_at: string | null;
+  video_url: string | null;
 }
+
+const getEmbedUrl = (url: string): string | null => {
+  try {
+    // YouTube
+    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
+    if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+    // Facebook video
+    if (url.includes("facebook.com")) return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`;
+    // Direct embed
+    return url;
+  } catch { return null; }
+};
+
+const renderFormattedContent = (text: string) => {
+  return text.split("\n").map((line, i) => {
+    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-bold text-foreground mt-4 mb-2">{line.slice(2)}</h2>;
+    if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-semibold text-foreground mt-3 mb-1.5">{line.slice(3)}</h3>;
+    if (line === "---") return <hr key={i} className="border-border/30 my-4" />;
+    if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-foreground/85">{formatInline(line.slice(2))}</li>;
+    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-foreground/85">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
+    if (!line.trim()) return <br key={i} />;
+    return <p key={i} className="text-foreground/85 leading-relaxed">{formatInline(line)}</p>;
+  });
+};
+
+const formatInline = (text: string) => {
+  // Process bold, italic, underline, links
+  const parts: (string | JSX.Element)[] = [];
+  let remaining = text;
+  let key = 0;
+
+  while (remaining.length > 0) {
+    // Links [text](url)
+    const linkMatch = remaining.match(/\[([^\]]+)\]\(([^)]+)\)/);
+    // Bold **text**
+    const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
+    // Italic *text*
+    const italicMatch = remaining.match(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/);
+    // Underline __text__
+    const underlineMatch = remaining.match(/__(.+?)__/);
+
+    const matches = [
+      linkMatch ? { type: "link", match: linkMatch, index: linkMatch.index! } : null,
+      boldMatch ? { type: "bold", match: boldMatch, index: boldMatch.index! } : null,
+      italicMatch ? { type: "italic", match: italicMatch, index: italicMatch.index! } : null,
+      underlineMatch ? { type: "underline", match: underlineMatch, index: underlineMatch.index! } : null,
+    ].filter(Boolean).sort((a, b) => a!.index - b!.index);
+
+    if (matches.length === 0) {
+      parts.push(remaining);
+      break;
+    }
+
+    const first = matches[0]!;
+    if (first.index > 0) parts.push(remaining.slice(0, first.index));
+
+    if (first.type === "bold") {
+      parts.push(<strong key={key++} className="font-bold">{first.match![1]}</strong>);
+    } else if (first.type === "italic") {
+      parts.push(<em key={key++} className="italic">{first.match![1]}</em>);
+    } else if (first.type === "underline") {
+      parts.push(<span key={key++} className="underline">{first.match![1]}</span>);
+    } else if (first.type === "link") {
+      parts.push(<a key={key++} href={first.match![2]} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">{first.match![1]}</a>);
+    }
+
+    remaining = remaining.slice(first.index + first.match![0].length);
+  }
+
+  return <>{parts}</>;
+};
 
 export default function News() {
   const navigate = useNavigate();
@@ -55,7 +127,28 @@ export default function News() {
   const featured = filtered?.find((n) => n.is_featured);
   const rest = filtered?.filter((n) => n !== featured);
 
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  const handleShare = (type: string, news: NewsItem) => {
+    const url = window.location.origin + "/news";
+    const text = news.title;
+    switch (type) {
+      case "facebook":
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, "_blank");
+        break;
+      case "whatsapp":
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`, "_blank");
+        break;
+      case "copy":
+        navigator.clipboard.writeText(url);
+        toast({ title: "লিংক কপি হয়েছে!" });
+        break;
+    }
+  };
+
   if (selectedNews) {
+    const embedUrl = selectedNews.video_url ? getEmbedUrl(selectedNews.video_url) : null;
+
     return (
       <div className="min-h-screen bg-background noise-bg">
         <div className="max-w-3xl mx-auto px-4 py-6">
@@ -86,8 +179,62 @@ export default function News() {
             {selectedNews.title}
           </h1>
 
-          <div className="prose prose-sm prose-invert max-w-none text-foreground/85 leading-relaxed whitespace-pre-wrap">
-            {selectedNews.content}
+          {/* Share Buttons */}
+          <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border/30">
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Share2 className="h-3.5 w-3.5" /> শেয়ার:
+            </span>
+            <button
+              onClick={() => handleShare("facebook", selectedNews)}
+              className="h-8 w-8 rounded-full bg-blue-600/15 text-blue-400 flex items-center justify-center hover:bg-blue-600/25 transition-colors"
+            >
+              <Facebook className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleShare("whatsapp", selectedNews)}
+              className="h-8 w-8 rounded-full bg-green-600/15 text-green-400 flex items-center justify-center hover:bg-green-600/25 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleShare("copy", selectedNews)}
+              className="h-8 w-8 rounded-full bg-secondary text-muted-foreground flex items-center justify-center hover:bg-secondary/80 transition-colors"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Formatted Content */}
+          <div className="prose prose-sm max-w-none space-y-1">
+            {renderFormattedContent(selectedNews.content)}
+          </div>
+
+          {/* Embedded Video */}
+          {embedUrl && (
+            <div className="mt-8">
+              <div className="rounded-xl overflow-hidden border border-border/30 aspect-video">
+                <iframe
+                  src={embedUrl}
+                  className="w-full h-full"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Bottom Share */}
+          <div className="flex items-center gap-2 mt-8 pt-4 border-t border-border/30">
+            <span className="text-xs text-muted-foreground">শেয়ার করুন:</span>
+            <button onClick={() => handleShare("facebook", selectedNews)} className="text-xs text-blue-400 hover:underline flex items-center gap-1">
+              <Facebook className="h-3 w-3" /> Facebook
+            </button>
+            <button onClick={() => handleShare("whatsapp", selectedNews)} className="text-xs text-green-400 hover:underline flex items-center gap-1">
+              <MessageCircle className="h-3 w-3" /> WhatsApp
+            </button>
+            <button onClick={() => handleShare("copy", selectedNews)} className="text-xs text-muted-foreground hover:underline flex items-center gap-1">
+              <Link2 className="h-3 w-3" /> লিংক কপি
+            </button>
           </div>
         </div>
       </div>
