@@ -47,6 +47,7 @@ const AdminShootings = () => {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [publishShootingId, setPublishShootingId] = useState<string>("");
   const [publishChannelId, setPublishChannelId] = useState<string>("");
+  const [publishVideoUrl, setPublishVideoUrl] = useState<string>("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteShootingId, setDeleteShootingId] = useState<string>("");
   const [deleteShootingName, setDeleteShootingName] = useState<string>("");
