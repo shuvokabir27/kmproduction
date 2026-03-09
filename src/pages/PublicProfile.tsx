@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star } from "lucide-react";
 import { differenceInYears, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { motion } from "framer-motion";
@@ -37,6 +37,20 @@ const PublicProfile = () => {
       return (data ?? []) as any[];
     },
   });
+
+  const { data: ratings } = useQuery({
+    queryKey: ["profile-ratings", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("profile_ratings" as any).select("rating").eq("profile_id", profile!.id);
+      return (data ?? []) as any[];
+    },
+  });
+
+  const avgRating = ratings?.length
+    ? (ratings.reduce((sum: number, r: any) => sum + r.rating, 0) / ratings.length).toFixed(1)
+    : null;
+  const ratingsCount = ratings?.length || 0;
 
   if (isLoading) {
     return (
@@ -163,6 +177,16 @@ const PublicProfile = () => {
                       </span>
                     )}
                   </div>
+                  {/* Rating next to name */}
+                  {avgRating && (
+                    <div className="flex items-center gap-1 mt-1">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star key={s} className={`h-4 w-4 ${s <= Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                      ))}
+                      <span className="text-foreground font-bold text-sm ml-1">{avgRating}</span>
+                      <span className="text-muted-foreground text-xs">({ratingsCount})</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                     <p className="text-primary font-medium text-sm tracking-wide uppercase">
