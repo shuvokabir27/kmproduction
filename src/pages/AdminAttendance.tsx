@@ -394,6 +394,24 @@ const AdminAttendance = () => {
                       </span>
                       <span className="text-foreground font-medium">৳{totalRate.toLocaleString("bn-BD")}</span>
                       
+                      {/* Edit button */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-primary hover:bg-primary/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const map: Record<string, { present: boolean; rate: string }> = {};
+                          group.records.forEach((r: any) => {
+                            map[r.member_id] = { present: r.is_present ?? false, rate: String(r.daily_rate || 0) };
+                          });
+                          setEditData(map);
+                          setEditShootingId(shootingId);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+
                       {/* Delete with timer */}
                       {!timerActive ? (
                         <Button
