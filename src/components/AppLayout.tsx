@@ -52,7 +52,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <AppSidebar />
         </div>
 
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 h-screen">
           {/* Top header */}
           <header className="h-12 md:h-14 flex items-center justify-between border-b border-border/30 px-3 md:px-4 bg-card/80 backdrop-blur-xl sticky top-0 z-30">
             <div className="flex items-center gap-2">
