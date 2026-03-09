@@ -224,22 +224,20 @@ const AdminPayments = () => {
                     <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-yellow-400/[0.08] pointer-events-none" />
                     <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-orange-400/[0.06] pointer-events-none" />
 
-                    {/* Header: Name + ID */}
-                    <div className="relative flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
-                          {selectedProfile.photo_url ? (
-                            <img src={selectedProfile.photo_url} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <span className="text-white/80 text-sm font-bold">{selectedProfile.full_name?.charAt(0)}</span>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-white/90">{selectedProfile.full_name}</p>
-                          <p className="text-[10px] text-white/50 font-mono">ID: {selectedProfile.member_id}</p>
-                        </div>
+                    {/* Header: Name + Photo centered */}
+                    <div className="relative flex flex-col items-center gap-2">
+                      <div className="h-14 w-14 rounded-full bg-white/10 border-2 border-white/25 flex items-center justify-center overflow-hidden shadow-lg">
+                        {selectedProfile.photo_url ? (
+                          <img src={selectedProfile.photo_url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-white/80 text-lg font-bold">{selectedProfile.full_name?.charAt(0)}</span>
+                        )}
                       </div>
-                      <CreditCard className="h-6 w-6 text-white/20" />
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-white/90">{selectedProfile.full_name}</p>
+                        <p className="text-[10px] text-white/50 font-mono">ID: {selectedProfile.member_id}</p>
+                      </div>
+                      <CreditCard className="absolute top-0 right-0 h-5 w-5 text-white/20" />
                     </div>
 
                     {/* Balance - Big */}
