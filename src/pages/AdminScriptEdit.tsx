@@ -209,7 +209,7 @@ const AdminScriptEdit = () => {
   };
 
   const Toolbar = () => (
-    <div className="flex flex-wrap items-center gap-0.5 md:gap-1 px-2 md:px-3 py-1.5 bg-card/95 backdrop-blur-md border border-border/30 rounded-lg sticky top-14 z-20 overflow-x-auto shadow-md">
+    <div className="flex flex-wrap items-center gap-0.5 md:gap-1 px-2 md:px-3 py-1.5 bg-card/95 backdrop-blur-md border border-border/30 rounded-lg sticky top-0 z-20 overflow-x-auto shadow-md">
       <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("bold")}><Bold className="h-3.5 w-3.5" /></Button>
       <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("italic")}><Italic className="h-3.5 w-3.5" /></Button>
       <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("underline")}><Underline className="h-3.5 w-3.5" /></Button>
