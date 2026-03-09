@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2 } from "lucide-react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -231,19 +231,34 @@ const AdminPayments = () => {
                     {selectedProfile.bank_name && (
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">ব্যাংক</span>
-                        <span className="text-xs text-foreground">{selectedProfile.bank_name} - {selectedProfile.bank_account_no}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-foreground">{selectedProfile.bank_name} - {selectedProfile.bank_account_no}</span>
+                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_account_no || ""); toast.success("ব্যাংক নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        </div>
                       </div>
                     )}
                     {selectedProfile.bkash_no && (
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">বিকাশ</span>
-                        <span className="text-xs text-foreground">{selectedProfile.bkash_no}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-foreground">{selectedProfile.bkash_no}</span>
+                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bkash_no || ""); toast.success("বিকাশ নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        </div>
                       </div>
                     )}
                     {selectedProfile.nagad_no && (
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">নগদ</span>
-                        <span className="text-xs text-foreground">{selectedProfile.nagad_no}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-foreground">{selectedProfile.nagad_no}</span>
+                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_no || ""); toast.success("নগদ নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        </div>
                       </div>
                     )}
                   </Card>
