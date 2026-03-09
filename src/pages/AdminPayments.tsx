@@ -270,8 +270,18 @@ const AdminPayments = () => {
                 </div>
 
                 <div>
-                  <Label className="text-foreground">ট্রানজেকশন আইডি (ঐচ্ছিক)</Label>
-                  <Input value={transactionId} onChange={(e) => setTransactionId(e.target.value)} className="bg-secondary border-border/50" />
+                  <Label className="text-foreground">পেমেন্ট লাস্ট ৪ ডিজিট (ঐচ্ছিক)</Label>
+                  <Input
+                    value={transactionId}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      setTransactionId(val);
+                    }}
+                    placeholder="যেমন: 1234"
+                    maxLength={4}
+                    inputMode="numeric"
+                    className="bg-secondary border-border/50 tracking-widest text-lg font-mono"
+                  />
                 </div>
 
                 <div>
