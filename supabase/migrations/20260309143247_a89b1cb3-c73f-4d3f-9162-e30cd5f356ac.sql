@@ -1,0 +1,1 @@
+ALTER TABLE public.messages ADD COLUMN is_deleted boolean NOT NULL DEFAULT false;
