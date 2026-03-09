@@ -209,7 +209,7 @@ const AdminScriptEdit = () => {
   };
 
   const Toolbar = () => (
-    <div className="flex flex-wrap items-center gap-0.5 md:gap-1 px-2 md:px-3 py-1.5 bg-card/95 backdrop-blur-md border border-border/30 rounded-lg sticky top-14 z-20 overflow-x-auto shadow-md">
+    <div className="flex flex-wrap items-center gap-0.5 md:gap-1 px-2 md:px-3 py-1.5 bg-card/95 backdrop-blur-md border border-border/30 rounded-lg overflow-x-auto shadow-md">
       <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("bold")}><Bold className="h-3.5 w-3.5" /></Button>
       <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("italic")}><Italic className="h-3.5 w-3.5" /></Button>
       <Button type="button" variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => execCmd("underline")}><Underline className="h-3.5 w-3.5" /></Button>
@@ -245,7 +245,7 @@ const AdminScriptEdit = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-5xl mx-auto space-y-4">
+      <div className="max-w-5xl mx-auto space-y-4 relative">
         {/* Header */}
         <div className="space-y-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -284,9 +284,14 @@ const AdminScriptEdit = () => {
           </div>
         </div>
 
-        {/* Toolbar - only in edit mode */}
-        {isEditMode && <Toolbar />}
-
+      {/* Toolbar - fixed position when in edit mode */}
+      {isEditMode && (
+        <div className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] md:w-auto max-w-2xl">
+          <div className="bg-card/95 backdrop-blur-md border border-border/30 rounded-xl shadow-2xl px-2 md:px-3 py-2">
+            <Toolbar />
+          </div>
+        </div>
+      )}
         {/* Sequences */}
         <div className="space-y-3">
           {sequences.map((seq, index) => (
