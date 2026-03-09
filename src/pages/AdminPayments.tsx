@@ -270,8 +270,18 @@ const AdminPayments = () => {
                 </div>
 
                 <div>
-                  <Label className="text-foreground">ট্রানজেকশন আইডি (ঐচ্ছিক)</Label>
-                  <Input value={transactionId} onChange={(e) => setTransactionId(e.target.value)} className="bg-secondary border-border/50" />
+                  <Label className="text-foreground">পেমেন্ট লাস্ট ৪ ডিজিট (ঐচ্ছিক)</Label>
+                  <Input
+                    value={transactionId}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      setTransactionId(val);
+                    }}
+                    placeholder="যেমন: 1234"
+                    maxLength={4}
+                    inputMode="numeric"
+                    className="bg-secondary border-border/50 tracking-widest text-lg font-mono"
+                  />
                 </div>
 
                 <div>
@@ -299,7 +309,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
                   <th className="text-left p-3 text-emerald-400 font-medium text-xs">পরিমাণ</th>
                   <th className="text-left p-3 text-amber-400 font-medium text-xs hidden sm:table-cell">মাধ্যম</th>
-                  <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">ট্রানজেকশন</th>
+                  <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">লাস্ট ৪ ডিজিট</th>
                   <th className="text-left p-3 text-pink-400 font-medium text-xs">তারিখ</th>
                   <th className="text-center p-3 text-blue-400 font-medium text-xs">রিসিট</th>
                   <th className="text-center p-3 text-red-400 font-medium text-xs">ডিলিট</th>
