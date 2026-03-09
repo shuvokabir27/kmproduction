@@ -245,7 +245,7 @@ const AdminScriptEdit = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-5xl mx-auto space-y-4">
+      <div className="max-w-5xl mx-auto space-y-4 relative">
         {/* Header */}
         <div className="space-y-3">
           <div className="flex items-center gap-3 min-w-0">
