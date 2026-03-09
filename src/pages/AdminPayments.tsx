@@ -220,9 +220,9 @@ const AdminPayments = () => {
                     }}
                   >
                     {/* Glass shine effect */}
-                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none rounded-t-2xl" />
-                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/[0.04] pointer-events-none" />
-                    <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/[0.03] pointer-events-none" />
+                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.12] to-transparent pointer-events-none rounded-t-2xl" />
+                    <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-yellow-400/[0.08] pointer-events-none" />
+                    <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-orange-400/[0.06] pointer-events-none" />
 
                     {/* Header: Name + ID */}
                     <div className="relative flex items-center justify-between">
