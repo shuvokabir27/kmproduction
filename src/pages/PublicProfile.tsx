@@ -155,7 +155,10 @@ const PublicProfile = () => {
                     </h1>
                     {p.is_verified && (
                       <span title={L.verified} className="shrink-0">
-                        <BadgeCheck className="h-6 w-6 text-blue-500 drop-shadow-[0_0_6px_rgba(59,130,246,0.5)]" />
+                        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="10" fill="#1877F2" />
+                          <path d="M9.5 12.5L11 14L15 10" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
                       </span>
                     )}
                   </div>
