@@ -187,7 +187,7 @@ const AdminPayments = () => {
             <DialogTrigger asChild>
               <Button className="gap-2"><Plus className="h-4 w-4" /> পেমেন্ট করুন</Button>
             </DialogTrigger>
-            <DialogContent className="bg-card border-border/50 max-w-lg">
+            <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-foreground">নতুন পেমেন্ট</DialogTitle>
               </DialogHeader>
