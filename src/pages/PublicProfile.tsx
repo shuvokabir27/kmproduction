@@ -163,6 +163,16 @@ const PublicProfile = () => {
                       </span>
                     )}
                   </div>
+                  {/* Rating next to name */}
+                  {avgRating && (
+                    <div className="flex items-center gap-1 mt-1">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star key={s} className={`h-4 w-4 ${s <= Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                      ))}
+                      <span className="text-foreground font-bold text-sm ml-1">{avgRating}</span>
+                      <span className="text-muted-foreground text-xs">({ratingsCount})</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                     <p className="text-primary font-medium text-sm tracking-wide uppercase">
