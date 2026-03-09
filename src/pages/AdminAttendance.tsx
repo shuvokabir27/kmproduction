@@ -496,6 +496,100 @@ const AdminAttendance = () => {
             })}
           </TabsContent>
         </Tabs>
+
+        {/* Edit Attendance Dialog */}
+        <Dialog open={!!editShootingId} onOpenChange={(open) => { if (!open) setEditShootingId(null); }}>
+          <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Pencil className="h-4 w-4 text-primary" /> হাজিরা এডিট করুন
+              </DialogTitle>
+            </DialogHeader>
+            {editShootingId && (() => {
+              const group = groupedByShooting[editShootingId];
+              if (!group) return null;
+              return (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {group.shooting?.name} — {group.shooting?.shoot_date ? new Date(group.shooting.shoot_date).toLocaleDateString("bn-BD") : ""}
+                  </p>
+                  <div className="space-y-2">
+                    {group.records.map((r: any) => (
+                      <div key={r.id} className="flex items-center justify-between gap-3 p-2 rounded-lg bg-secondary/30 border border-border/20">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Checkbox
+                            checked={editData[r.member_id]?.present || false}
+                            onCheckedChange={() => {
+                              setEditData(prev => ({
+                                ...prev,
+                                [r.member_id]: { ...prev[r.member_id], present: !prev[r.member_id]?.present }
+                              }));
+                            }}
+                          />
+                          <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                            {r.profiles?.photo_url ? (
+                              <img src={r.profiles.photo_url} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="text-primary text-[10px]">{r.profiles?.full_name?.charAt(0)}</span>
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm text-foreground truncate">{r.profiles?.full_name}</p>
+                            <p className="text-[10px] text-muted-foreground">ID: {r.profiles?.member_id}</p>
+                          </div>
+                        </div>
+                        {r.profiles?.salary_type === "monthly" ? (
+                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">মাসিক</span>
+                        ) : (
+                          <Input
+                            type="number"
+                            value={editData[r.member_id]?.rate || "0"}
+                            onChange={(e) => {
+                              setEditData(prev => ({
+                                ...prev,
+                                [r.member_id]: { ...prev[r.member_id], rate: e.target.value }
+                              }));
+                            }}
+                            className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    className="w-full gap-2"
+                    disabled={editSaving}
+                    onClick={async () => {
+                      setEditSaving(true);
+                      try {
+                        for (const r of group.records) {
+                          const d = editData[r.member_id];
+                          if (d) {
+                            await supabase.from("attendance").update({
+                              is_present: d.present,
+                              daily_rate: Number(d.rate) || 0,
+                            }).eq("id", r.id);
+                          }
+                        }
+                        toast.success("হাজিরা আপডেট হয়েছে!");
+                        queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
+                        queryClient.invalidateQueries({ queryKey: ["shootings-with-attendance"] });
+                        queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+                        setEditShootingId(null);
+                      } catch (err: any) {
+                        toast.error(err.message);
+                      } finally {
+                        setEditSaving(false);
+                      }
+                    }}
+                  >
+                    <Save className="h-4 w-4" /> {editSaving ? "সেভ হচ্ছে..." : "আপডেট করুন"}
+                  </Button>
+                </div>
+              );
+            })()}
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
