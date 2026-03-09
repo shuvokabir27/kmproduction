@@ -260,40 +260,47 @@ const AdminScriptEdit = () => {
               <p className="text-[10px] text-muted-foreground">{toBn(sequences.length)} দৃশ্য</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setPermDialogOpen(true)}>
-              <Users className="h-3.5 w-3.5" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadPDF}>
-              <Download className="h-3.5 w-3.5" /> PDF
-            </Button>
-            {isEditMode ? (
-              <>
-                <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setSearchParams({})}>
-                  <Eye className="h-3.5 w-3.5" /> প্রিভিউ
-                </Button>
-                <Button size="sm" className="gap-1.5 text-xs" onClick={handleSave} disabled={saving}>
-                  <Save className="h-3.5 w-3.5" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
-                </Button>
-              </>
-            ) : (
-              <Button size="sm" className="gap-1.5 text-xs" onClick={() => setSearchParams({ mode: "edit" })}>
-                <Edit className="h-3.5 w-3.5" /> এডিট করুন
-              </Button>
-            )}
-          </div>
         </div>
 
-      {/* Toolbar - fixed at top when in edit mode */}
+      {/* Toolbar + Action buttons - fixed at top when in edit mode */}
       {isEditMode && (
-        <div className="fixed top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)] right-0 z-40 px-2 md:px-4 py-1.5 bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg">
-          <div className="max-w-5xl mx-auto">
+        <div className="fixed top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)] right-0 z-40 bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg">
+          <div className="max-w-5xl mx-auto px-2 md:px-4 py-1.5 space-y-1.5">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+              <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={() => setPermDialogOpen(true)}>
+                <Users className="h-3 w-3" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
+              </Button>
+              <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={handleDownloadPDF}>
+                <Download className="h-3 w-3" /> PDF
+              </Button>
+              <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={() => setSearchParams({})}>
+                <Eye className="h-3 w-3" /> প্রিভিউ
+              </Button>
+              <Button size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={handleSave} disabled={saving}>
+                <Save className="h-3 w-3" /> {saving ? "সেভ..." : "সেভ"}
+              </Button>
+            </div>
             <Toolbar />
           </div>
         </div>
       )}
       {/* Spacer for fixed toolbar */}
-      {isEditMode && <div className="h-12" />}
+      {isEditMode && <div className="h-24" />}
+
+      {/* Action buttons - only when NOT in edit mode */}
+      {!isEditMode && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setPermDialogOpen(true)}>
+            <Users className="h-3.5 w-3.5" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
+          </Button>
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadPDF}>
+            <Download className="h-3.5 w-3.5" /> PDF
+          </Button>
+          <Button size="sm" className="gap-1.5 text-xs" onClick={() => setSearchParams({ mode: "edit" })}>
+            <Edit className="h-3.5 w-3.5" /> এডিট করুন
+          </Button>
+        </div>
+      )}
         {/* Sequences */}
         <div className="space-y-3">
           {sequences.map((seq, index) => (
