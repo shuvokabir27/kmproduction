@@ -212,7 +212,7 @@ const AdminPayments = () => {
                 {selectedProfile && (
                   <div className="relative rounded-2xl overflow-hidden p-5 space-y-3"
                     style={{
-                      background: "linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(168,85,247,0.2) 40%, rgba(236,72,153,0.15) 100%)",
+                      background: "linear-gradient(135deg, rgba(220,38,38,0.35) 0%, rgba(239,68,68,0.25) 30%, rgba(251,113,133,0.2) 60%, rgba(244,63,94,0.3) 100%)",
                       backdropFilter: "blur(16px)",
                       WebkitBackdropFilter: "blur(16px)",
                       border: "1px solid rgba(255,255,255,0.12)",
