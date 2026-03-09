@@ -284,12 +284,14 @@ const AdminScriptEdit = () => {
           </div>
         </div>
 
-        {/* Toolbar - only in edit mode, fixed at top */}
-        {isEditMode && (
-          <div className="sticky top-[-16px] md:top-[-24px] z-20 -mx-4 md:-mx-6 px-4 md:px-6 py-2 bg-background/80 backdrop-blur-md">
+      {/* Toolbar - fixed position when in edit mode */}
+      {isEditMode && (
+        <div className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] md:w-auto max-w-2xl">
+          <div className="bg-card/95 backdrop-blur-md border border-border/30 rounded-xl shadow-2xl px-2 md:px-3 py-2">
             <Toolbar />
           </div>
-        )}
+        </div>
+      )}
         {/* Sequences */}
         <div className="space-y-3">
           {sequences.map((seq, index) => (
