@@ -222,7 +222,7 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
 
   const deleteMessage = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await sb.from("messages").delete().eq("id", id);
+      const { error } = await sb.from("messages").update({ is_deleted: true, content: "এই মেসেজটি ডিলিট করা হয়েছে" }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
