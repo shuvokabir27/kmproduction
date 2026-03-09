@@ -212,11 +212,11 @@ const AdminPayments = () => {
                 {selectedProfile && (
                   <div className="relative rounded-2xl overflow-hidden p-5 space-y-3"
                     style={{
-                      background: "linear-gradient(135deg, rgba(220,38,38,0.35) 0%, rgba(239,68,68,0.25) 30%, rgba(251,113,133,0.2) 60%, rgba(244,63,94,0.3) 100%)",
+                      background: "linear-gradient(135deg, #b91c1c 0%, #dc2626 30%, #ef4444 60%, #f87171 100%)",
                       backdropFilter: "blur(16px)",
                       WebkitBackdropFilter: "blur(16px)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      boxShadow: "0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
+                      border: "1px solid rgba(255,100,100,0.3)",
+                      boxShadow: "0 8px 32px rgba(185,28,28,0.4), inset 0 1px 0 rgba(255,255,255,0.15)",
                     }}
                   >
                     {/* Glass shine effect */}
