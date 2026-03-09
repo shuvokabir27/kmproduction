@@ -284,9 +284,12 @@ const AdminScriptEdit = () => {
           </div>
         </div>
 
-        {/* Toolbar - only in edit mode */}
-        {isEditMode && <Toolbar />}
-
+        {/* Toolbar - only in edit mode, sticky within scroll */}
+        {isEditMode && (
+          <div className="sticky top-0 z-20 -mx-4 md:-mx-6 px-4 md:px-6">
+            <Toolbar />
+          </div>
+        )}
         {/* Sequences */}
         <div className="space-y-3">
           {sequences.map((seq, index) => (
