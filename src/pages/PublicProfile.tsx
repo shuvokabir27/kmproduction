@@ -289,6 +289,11 @@ const PublicProfile = () => {
           </motion.div>
         )}
 
+        {/* Reviews & Ratings */}
+        <motion.div {...fadeUp(0.6)} className="max-w-2xl mx-auto">
+          <ProfileReviews profileId={p.id} profileName={displayName} />
+        </motion.div>
+
         {/* Footer spacer */}
         <div className="h-8" />
       </div>
