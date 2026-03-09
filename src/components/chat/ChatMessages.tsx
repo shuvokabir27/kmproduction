@@ -343,25 +343,27 @@ export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
                   <div
                     className={cn(
                       "px-3 py-1.5 text-[13px] leading-relaxed",
-                      isMine
-                        ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md"
-                        : "bg-secondary text-secondary-foreground rounded-2xl rounded-bl-md"
+                      msg.is_deleted
+                        ? "bg-muted/50 text-muted-foreground italic rounded-2xl border border-border/30"
+                        : isMine
+                          ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md"
+                          : "bg-secondary text-secondary-foreground rounded-2xl rounded-bl-md"
                     )}
                   >
-                    {msg.content}
+                    {msg.is_deleted ? "🚫 এই মেসেজটি ডিলিট করা হয়েছে" : msg.content}
                     <span className={cn(
                       "text-[9px] ml-2 inline-flex items-center gap-0.5 align-bottom opacity-60",
-                      isMine ? "text-primary-foreground" : "text-muted-foreground"
+                      isMine && !msg.is_deleted ? "text-primary-foreground" : "text-muted-foreground"
                     )}>
                       {new Date(msg.created_at).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
-                      {isMine && (
+                      {isMine && !msg.is_deleted && (
                         seen
                           ? <CheckCheck className="h-3 w-3 text-blue-400 opacity-100" />
                           : <Check className="h-3 w-3" />
                       )}
                     </span>
                   </div>
-                  {isMine && (
+                  {isMine && !msg.is_deleted && (
                     <button
                       onClick={() => deleteMessage.mutate(msg.id)}
                       className="absolute -left-7 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1"
