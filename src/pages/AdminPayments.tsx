@@ -229,13 +229,24 @@ const AdminPayments = () => {
                       <span className="text-xs font-semibold text-cyan-400">৳{memberBalance?.totalPaid?.toLocaleString() || "0"}</span>
                     </div>
                     {selectedProfile.bank_name && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">ব্যাংক</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-foreground">{selectedProfile.bank_name} - {selectedProfile.bank_account_no}</span>
-                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_account_no || ""); toast.success("ব্যাংক নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
-                            <Copy className="h-3 w-3" />
-                          </button>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">ব্যাংক নাম</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-foreground">{selectedProfile.bank_name}</span>
+                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_name || ""); toast.success("ব্যাংক নাম কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">অ্যাকাউন্ট নং</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-foreground font-mono">{selectedProfile.bank_account_no}</span>
+                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_account_no || ""); toast.success("অ্যাকাউন্ট নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
