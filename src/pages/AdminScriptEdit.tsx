@@ -246,7 +246,43 @@ const AdminScriptEdit = () => {
   return (
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-4 relative">
-        {/* Header */}
+      {/* Fixed header with title + toolbar in edit mode */}
+      {isEditMode && (
+        <div className="fixed top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)] right-0 z-40 bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg">
+          <div className="max-w-5xl mx-auto px-2 md:px-4 py-1.5 space-y-1">
+            {/* Title row */}
+            <div className="flex items-center gap-2 min-w-0">
+              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => navigate("/admin/scripts")}>
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </Button>
+              <h1 className="text-sm font-bold text-foreground truncate flex items-center gap-1.5 flex-1 min-w-0">
+                <FileText className="h-4 w-4 text-primary shrink-0" />
+                <span className="truncate">{script.title}</span>
+              </h1>
+              <div className="flex items-center gap-1 shrink-0">
+                <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7 px-2" onClick={() => setPermDialogOpen(true)}>
+                  <Users className="h-3 w-3" />
+                </Button>
+                <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7 px-2" onClick={handleDownloadPDF}>
+                  <Download className="h-3 w-3" />
+                </Button>
+                <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7 px-2" onClick={() => setSearchParams({})}>
+                  <Eye className="h-3 w-3" />
+                </Button>
+                <Button size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={handleSave} disabled={saving}>
+                  <Save className="h-3 w-3" /> {saving ? "..." : "সেভ"}
+                </Button>
+              </div>
+            </div>
+            <Toolbar />
+          </div>
+        </div>
+      )}
+      {/* Spacer for fixed toolbar */}
+      {isEditMode && <div className="h-[88px]" />}
+
+      {/* Header - only when NOT in edit mode */}
+      {!isEditMode && (
         <div className="space-y-3">
           <div className="flex items-center gap-3 min-w-0">
             <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => navigate("/admin/scripts")}>
@@ -261,31 +297,7 @@ const AdminScriptEdit = () => {
             </div>
           </div>
         </div>
-
-      {/* Toolbar + Action buttons - fixed at top when in edit mode */}
-      {isEditMode && (
-        <div className="fixed top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)] right-0 z-40 bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg">
-          <div className="max-w-5xl mx-auto px-2 md:px-4 py-1.5 space-y-1.5">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={() => setPermDialogOpen(true)}>
-                <Users className="h-3 w-3" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
-              </Button>
-              <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={handleDownloadPDF}>
-                <Download className="h-3 w-3" /> PDF
-              </Button>
-              <Button variant="outline" size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={() => setSearchParams({})}>
-                <Eye className="h-3 w-3" /> প্রিভিউ
-              </Button>
-              <Button size="sm" className="gap-1 text-[11px] shrink-0 h-7" onClick={handleSave} disabled={saving}>
-                <Save className="h-3 w-3" /> {saving ? "সেভ..." : "সেভ"}
-              </Button>
-            </div>
-            <Toolbar />
-          </div>
-        </div>
       )}
-      {/* Spacer for fixed toolbar */}
-      {isEditMode && <div className="h-24" />}
 
       {/* Action buttons - only when NOT in edit mode */}
       {!isEditMode && (
