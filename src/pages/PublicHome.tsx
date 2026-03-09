@@ -104,13 +104,13 @@ const PublicHome = () => {
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl saturate-150 border-b border-border/20" />
         <div className="container max-w-6xl mx-auto relative z-10 flex items-center justify-between h-16 px-4">
-          <Link to="/" className="flex items-center gap-3 group">
+          <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-3 group cursor-pointer">
             <div className="relative">
               <img src="/favicon.png" alt="KM Production House" className="h-10 w-10 rounded-xl object-contain relative z-10" />
               <div className="absolute inset-0 bg-primary/30 rounded-xl blur-lg group-hover:bg-primary/50 transition-colors" />
             </div>
             <span className="font-bold text-foreground text-lg tracking-tight hidden sm:inline">{settings?.site_name || "KM Production House"}</span>
-          </Link>
+          </button>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-4">
