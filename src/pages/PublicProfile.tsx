@@ -38,6 +38,20 @@ const PublicProfile = () => {
     },
   });
 
+  const { data: ratings } = useQuery({
+    queryKey: ["profile-ratings", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase.from("profile_ratings" as any).select("rating").eq("profile_id", profile!.id);
+      return (data ?? []) as any[];
+    },
+  });
+
+  const avgRating = ratings?.length
+    ? (ratings.reduce((sum: number, r: any) => sum + r.rating, 0) / ratings.length).toFixed(1)
+    : null;
+  const ratingsCount = ratings?.length || 0;
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
