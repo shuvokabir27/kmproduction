@@ -208,71 +208,104 @@ const AdminPayments = () => {
                   </Select>
                 </div>
 
-                {/* Member Info Card */}
+                {/* Member Bank Card */}
                 {selectedProfile && (
-                   <Card className="p-4 bg-secondary/50 border-border/30 space-y-2">
-                    {/* বকেয়া ব্যালেন্স - Highlighted */}
-                    <div className="rounded-xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-red-500/15 border border-amber-500/30 p-3 flex items-center justify-between">
-                      <span className="text-sm font-medium text-amber-300">💰 বকেয়া ব্যালেন্স</span>
-                      <span className="text-xl font-extrabold text-amber-400 tracking-tight">৳{memberBalance?.balance?.toLocaleString() || "0"}</span>
+                  <div className="relative rounded-2xl overflow-hidden p-5 space-y-3"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(168,85,247,0.2) 40%, rgba(236,72,153,0.15) 100%)",
+                      backdropFilter: "blur(16px)",
+                      WebkitBackdropFilter: "blur(16px)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      boxShadow: "0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    {/* Glass shine effect */}
+                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none rounded-t-2xl" />
+                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/[0.04] pointer-events-none" />
+                    <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/[0.03] pointer-events-none" />
+
+                    {/* Header: Name + ID */}
+                    <div className="relative flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                          {selectedProfile.photo_url ? (
+                            <img src={selectedProfile.photo_url} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-white/80 text-sm font-bold">{selectedProfile.full_name?.charAt(0)}</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-white/90">{selectedProfile.full_name}</p>
+                          <p className="text-[10px] text-white/50 font-mono">ID: {selectedProfile.member_id}</p>
+                        </div>
+                      </div>
+                      <CreditCard className="h-6 w-6 text-white/20" />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">আইডি</span>
-                      <span className="text-sm text-foreground font-mono">{selectedProfile.member_id}</span>
+
+                    {/* Balance - Big */}
+                    <div className="relative text-center py-2">
+                      <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">বকেয়া ব্যালেন্স</p>
+                      <p className="text-3xl font-black text-white/95 tracking-tight">৳{memberBalance?.balance?.toLocaleString() || "0"}</p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">মোট আয়</span>
-                      <span className="text-xs font-semibold text-emerald-400">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</span>
+
+                    {/* Earned / Paid row */}
+                    <div className="relative flex items-center justify-between px-2">
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-white/35">মোট আয়</p>
+                        <p className="text-xs font-bold text-emerald-300/90">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</p>
+                      </div>
+                      <div className="w-px h-6 bg-white/10" />
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-white/35">মোট প্রদান</p>
+                        <p className="text-xs font-bold text-cyan-300/90">৳{memberBalance?.totalPaid?.toLocaleString() || "0"}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">মোট প্রদান</span>
-                      <span className="text-xs font-semibold text-cyan-400">৳{memberBalance?.totalPaid?.toLocaleString() || "0"}</span>
-                    </div>
-                    {selectedProfile.bank_name && (
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">ব্যাংক নাম</span>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs text-foreground">{selectedProfile.bank_name}</span>
-                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_name || ""); toast.success("ব্যাংক নাম কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+
+                    {/* Payment info chips */}
+                    <div className="relative space-y-1.5 pt-1">
+                      {selectedProfile.bank_name && (
+                        <>
+                          <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                            <div className="flex items-center gap-2">
+                              <Building className="h-3 w-3 text-white/40" />
+                              <span className="text-[11px] text-white/60">{selectedProfile.bank_name}</span>
+                            </div>
+                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_name || ""); toast.success("ব্যাংক নাম কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
                               <Copy className="h-3 w-3" />
                             </button>
                           </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">অ্যাকাউন্ট নং</span>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs text-foreground font-mono">{selectedProfile.bank_account_no}</span>
-                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_account_no || ""); toast.success("অ্যাকাউন্ট নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                          <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                            <span className="text-[11px] text-white/70 font-mono tracking-wider">{selectedProfile.bank_account_no}</span>
+                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_account_no || ""); toast.success("অ্যাকাউন্ট নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
                               <Copy className="h-3 w-3" />
                             </button>
                           </div>
-                        </div>
-                      </div>
-                    )}
-                    {selectedProfile.bkash_no && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">বিকাশ</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-foreground">{selectedProfile.bkash_no}</span>
-                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bkash_no || ""); toast.success("বিকাশ নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                        </>
+                      )}
+                      {selectedProfile.bkash_no && (
+                        <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                          <div className="flex items-center gap-2">
+                            <Smartphone className="h-3 w-3 text-pink-400/60" />
+                            <span className="text-[11px] text-white/70">বিকাশ: {selectedProfile.bkash_no}</span>
+                          </div>
+                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bkash_no || ""); toast.success("বিকাশ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
                             <Copy className="h-3 w-3" />
                           </button>
                         </div>
-                      </div>
-                    )}
-                    {selectedProfile.nagad_no && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">নগদ</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-foreground">{selectedProfile.nagad_no}</span>
-                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_no || ""); toast.success("নগদ নম্বর কপি হয়েছে!"); }} className="text-muted-foreground hover:text-primary transition-colors">
+                      )}
+                      {selectedProfile.nagad_no && (
+                        <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                          <div className="flex items-center gap-2">
+                            <Smartphone className="h-3 w-3 text-orange-400/60" />
+                            <span className="text-[11px] text-white/70">নগদ: {selectedProfile.nagad_no}</span>
+                          </div>
+                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_no || ""); toast.success("নগদ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
                             <Copy className="h-3 w-3" />
                           </button>
                         </div>
-                      </div>
-                    )}
-                  </Card>
+                      )}
+                    </div>
+                  </div>
                 )}
 
                 <div>
