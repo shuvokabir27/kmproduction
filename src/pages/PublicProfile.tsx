@@ -8,6 +8,7 @@ import { bn } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { ProfileReviews } from "@/components/ProfileReviews";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -287,6 +288,11 @@ const PublicProfile = () => {
             </div>
           </motion.div>
         )}
+
+        {/* Reviews & Ratings */}
+        <motion.div {...fadeUp(0.6)} className="max-w-2xl mx-auto">
+          <ProfileReviews profileId={p.id} profileName={displayName} />
+        </motion.div>
 
         {/* Footer spacer */}
         <div className="h-8" />

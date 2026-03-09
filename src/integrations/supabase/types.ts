@@ -599,6 +599,79 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_comments: {
+        Row: {
+          commenter_email: string | null
+          commenter_name: string
+          content: string
+          created_at: string
+          id: string
+          is_approved: boolean
+          profile_id: string
+        }
+        Insert: {
+          commenter_email?: string | null
+          commenter_name: string
+          content: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          profile_id: string
+        }
+        Update: {
+          commenter_email?: string | null
+          commenter_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_comments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          rater_email: string | null
+          rater_name: string
+          rating: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          rater_email?: string | null
+          rater_name: string
+          rating: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          rater_email?: string | null
+          rater_name?: string
+          rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_ratings_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           achievements: string | null
