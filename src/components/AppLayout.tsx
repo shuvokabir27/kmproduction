@@ -46,15 +46,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
-      <div className="min-h-screen flex w-full bg-background noise-bg">
-        {/* Desktop sidebar — hidden on mobile */}
+      <div className="min-h-screen flex w-full bg-background noise-bgidden on mobile */}
         <div className="hidden md:block">
           <AppSidebar />
         </div>
 
-        <div className="flex-1 flex foverflow-hiddl min-overflow-hiddn-h-0 h-screen">
-          {/* Top header */}
-          <header className="h-12 md:h-14 flex items-center justify-between border-b border-border/30 px-3 md:px-4 bg-card/80hrink-blur-xl sticky top-0 z-30">
+        <div className="flex-1 flex foverflow-hiddl min-overflow-hiddn-h-lex-col min-w-0      <header className="h-12 md:h-14 flex items-center justify-between border-b border-border/30 px-3 md:px-4 bg-card/80hrink-blur-xl sticky top-0 z-30">
             <div className="flex items-center gap-2">
               <div className="hidden md:block">
                 <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
