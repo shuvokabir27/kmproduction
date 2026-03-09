@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2 } from "lucide-react";
+import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2, Pencil } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const AdminAttendance = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -23,6 +24,9 @@ const AdminAttendance = () => {
   const [expandedShootings, setExpandedShootings] = useState<Set<string>>(new Set());
   const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editShootingId, setEditShootingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Record<string, { present: boolean; rate: string }>>({});
+  const [editSaving, setEditSaving] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-for-attendance"],
@@ -249,14 +253,14 @@ const AdminAttendance = () => {
                     <SelectValue placeholder="শুটিং নির্বাচন করুন" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border/30">
-                    {shootings?.map((s) => {
-                      const hasAtt = shootingsWithAttendance?.has(s.id);
-                      return (
-                        <SelectItem key={s.id} value={s.id}>
-                          {s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")}) {hasAtt ? "✏️" : "🆕"}
-                        </SelectItem>
-                      );
-                    })}
+                    {shootings?.filter(s => !shootingsWithAttendance?.has(s.id)).map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")}) 🆕
+                      </SelectItem>
+                    ))}
+                    {shootings?.filter(s => !shootingsWithAttendance?.has(s.id)).length === 0 && (
+                      <div className="p-3 text-center text-xs text-muted-foreground">নতুন কোনো শুটিং নেই</div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -390,6 +394,24 @@ const AdminAttendance = () => {
                       </span>
                       <span className="text-foreground font-medium">৳{totalRate.toLocaleString("bn-BD")}</span>
                       
+                      {/* Edit button */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-primary hover:bg-primary/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const map: Record<string, { present: boolean; rate: string }> = {};
+                          group.records.forEach((r: any) => {
+                            map[r.member_id] = { present: r.is_present ?? false, rate: String(r.daily_rate || 0) };
+                          });
+                          setEditData(map);
+                          setEditShootingId(shootingId);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+
                       {/* Delete with timer */}
                       {!timerActive ? (
                         <Button
@@ -474,6 +496,100 @@ const AdminAttendance = () => {
             })}
           </TabsContent>
         </Tabs>
+
+        {/* Edit Attendance Dialog */}
+        <Dialog open={!!editShootingId} onOpenChange={(open) => { if (!open) setEditShootingId(null); }}>
+          <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Pencil className="h-4 w-4 text-primary" /> হাজিরা এডিট করুন
+              </DialogTitle>
+            </DialogHeader>
+            {editShootingId && (() => {
+              const group = groupedByShooting[editShootingId];
+              if (!group) return null;
+              return (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {group.shooting?.name} — {group.shooting?.shoot_date ? new Date(group.shooting.shoot_date).toLocaleDateString("bn-BD") : ""}
+                  </p>
+                  <div className="space-y-2">
+                    {group.records.map((r: any) => (
+                      <div key={r.id} className="flex items-center justify-between gap-3 p-2 rounded-lg bg-secondary/30 border border-border/20">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Checkbox
+                            checked={editData[r.member_id]?.present || false}
+                            onCheckedChange={() => {
+                              setEditData(prev => ({
+                                ...prev,
+                                [r.member_id]: { ...prev[r.member_id], present: !prev[r.member_id]?.present }
+                              }));
+                            }}
+                          />
+                          <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                            {r.profiles?.photo_url ? (
+                              <img src={r.profiles.photo_url} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="text-primary text-[10px]">{r.profiles?.full_name?.charAt(0)}</span>
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm text-foreground truncate">{r.profiles?.full_name}</p>
+                            <p className="text-[10px] text-muted-foreground">ID: {r.profiles?.member_id}</p>
+                          </div>
+                        </div>
+                        {r.profiles?.salary_type === "monthly" ? (
+                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">মাসিক</span>
+                        ) : (
+                          <Input
+                            type="number"
+                            value={editData[r.member_id]?.rate || "0"}
+                            onChange={(e) => {
+                              setEditData(prev => ({
+                                ...prev,
+                                [r.member_id]: { ...prev[r.member_id], rate: e.target.value }
+                              }));
+                            }}
+                            className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    className="w-full gap-2"
+                    disabled={editSaving}
+                    onClick={async () => {
+                      setEditSaving(true);
+                      try {
+                        for (const r of group.records) {
+                          const d = editData[r.member_id];
+                          if (d) {
+                            await supabase.from("attendance").update({
+                              is_present: d.present,
+                              daily_rate: Number(d.rate) || 0,
+                            }).eq("id", r.id);
+                          }
+                        }
+                        toast.success("হাজিরা আপডেট হয়েছে!");
+                        queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
+                        queryClient.invalidateQueries({ queryKey: ["shootings-with-attendance"] });
+                        queryClient.invalidateQueries({ queryKey: ["member-balance"] });
+                        setEditShootingId(null);
+                      } catch (err: any) {
+                        toast.error(err.message);
+                      } finally {
+                        setEditSaving(false);
+                      }
+                    }}
+                  >
+                    <Save className="h-4 w-4" /> {editSaving ? "সেভ হচ্ছে..." : "আপডেট করুন"}
+                  </Button>
+                </div>
+              );
+            })()}
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
