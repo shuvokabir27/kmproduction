@@ -284,10 +284,10 @@ const AdminScriptEdit = () => {
           </div>
         </div>
 
-      {/* Toolbar - fixed position when in edit mode */}
+      {/* Toolbar - sticky at top when in edit mode */}
       {isEditMode && (
-        <div className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] md:w-auto max-w-2xl">
-          <div className="bg-card/95 backdrop-blur-md border border-border/30 rounded-xl shadow-2xl px-2 md:px-3 py-2">
+        <div className="sticky top-0 z-40">
+          <div className="bg-card/95 backdrop-blur-md border border-border/30 rounded-xl shadow-lg px-2 md:px-3 py-2">
             <Toolbar />
           </div>
         </div>
