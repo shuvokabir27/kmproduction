@@ -343,7 +343,12 @@ const PublicHome = () => {
                           <h3 className="text-sm font-semibold text-foreground truncate">
                             {lang === "en" && (member as any).full_name_en ? (member as any).full_name_en : member.full_name}
                           </h3>
-                          {(member as any).is_verified && <svg className="h-4 w-4 text-primary shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>}
+                          {(member as any).is_verified && (
+                            <svg className="h-[15px] w-[15px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="12" cy="12" r="10" fill="#1877F2" />
+                              <path d="M9.5 12.5L11 14L15 10" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          )}
                         </div>
                         <p className="text-[11px] text-muted-foreground truncate mt-1">
                           {lang === "en" && (member as any).designation_en ? (member as any).designation_en : (member.designation || L.member)}
