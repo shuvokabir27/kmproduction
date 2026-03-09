@@ -88,12 +88,16 @@ const MemberDashboard = () => {
         <NoticeBoard />
 
         {/* Greeting */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-end justify-between">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">স্বাগতম, {profile?.full_name}</h1>
             <p className="text-muted-foreground text-xs mt-1">আইডি: {profile?.member_id}</p>
           </div>
-          <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-amber-500 rounded-full mb-1 hidden md:block" />
+          <Link to="/" className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors border border-primary/20">
+            <Globe className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">পাবলিক সাইট দেখুন</span>
+            <span className="sm:hidden">সাইট</span>
+          </Link>
         </motion.div>
 
         {/* Balance Cards */}
