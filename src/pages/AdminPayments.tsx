@@ -309,7 +309,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
                   <th className="text-left p-3 text-emerald-400 font-medium text-xs">পরিমাণ</th>
                   <th className="text-left p-3 text-amber-400 font-medium text-xs hidden sm:table-cell">মাধ্যম</th>
-                  <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">ট্রানজেকশন</th>
+                  <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">লাস্ট ৪ ডিজিট</th>
                   <th className="text-left p-3 text-pink-400 font-medium text-xs">তারিখ</th>
                   <th className="text-center p-3 text-blue-400 font-medium text-xs">রিসিট</th>
                   <th className="text-center p-3 text-red-400 font-medium text-xs">ডিলিট</th>
