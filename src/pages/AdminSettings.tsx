@@ -403,6 +403,8 @@ const AdminSettings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <SiteSettingsDialog open={siteSettingsOpen} onOpenChange={setSiteSettingsOpen} />
     </AppLayout>
   );
 };
