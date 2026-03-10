@@ -21,6 +21,32 @@ export function NoticeBoard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
 
+  // Fetch ongoing shootings
+  const { data: ongoingShootings } = useQuery({
+    queryKey: ["ongoing-shootings"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("shootings")
+        .select("*")
+        .eq("status", "ongoing")
+        .order("shoot_date", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  // Realtime for shooting status changes
+  useEffect(() => {
+    const channel = supabase
+      .channel("shooting-status-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "shootings" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["ongoing-shootings"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
+  const hasOngoingShooting = ongoingShootings && ongoingShootings.length > 0;
+
   const { data: notices } = useQuery({
     queryKey: ["member-notices"],
     queryFn: async () => {
