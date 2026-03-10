@@ -367,7 +367,7 @@ export default function News() {
                     news={news}
                     categories={categories}
                     isFirst={idx === 0}
-                    onClick={() => setSelectedNews(news)}
+                    onClick={() => handleSelectNews(news)}
                     publisherName={getPublisherName(news.publisher_id)}
                   />
                 ))}
