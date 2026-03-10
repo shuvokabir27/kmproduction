@@ -64,6 +64,7 @@ const AdminShootings = () => {
   const [ongoingShootingName, setOngoingShootingName] = useState<string>("");
   const [ongoingCallTime, setOngoingCallTime] = useState<string>("");
   const [ongoingLocation, setOngoingLocation] = useState<string>("");
+  const [ongoingShootDate, setOngoingShootDate] = useState<string>("");
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
   const [memberDetails, setMemberDetails] = useState<Record<string, { costume: string; props: string; character_name: string }>>({});
   const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
@@ -207,6 +208,7 @@ const AdminShootings = () => {
     setOngoingShootingName(shooting?.name || "");
     setOngoingCallTime((shooting as any)?.call_time || "");
     setOngoingLocation(shooting?.location || "");
+    setOngoingShootDate(shooting?.shoot_date || "");
     setOngoingIsEdit(isEdit);
 
     if (isEdit) {
@@ -260,6 +262,7 @@ const AdminShootings = () => {
       const updateData: any = {
         call_time: ongoingCallTime || null,
         location: ongoingLocation || null,
+        shoot_date: ongoingShootDate || undefined,
       };
       if (!ongoingIsEdit) {
         updateData.status = "calltime";
@@ -676,14 +679,23 @@ const AdminShootings = () => {
               <span className="font-semibold text-cyan-400">{ongoingShootingName}</span> — কলটাইম, লোকেশন এবং সদস্যদের পোশাক/প্রপস নির্ধারণ করুন
             </p>
 
-            {/* Call Time & Location */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Call Time, Date & Location */}
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label className="text-foreground text-xs">কলটাইম *</Label>
                 <Input
                   type="time"
                   value={ongoingCallTime}
                   onChange={(e) => setOngoingCallTime(e.target.value)}
+                  className="bg-secondary border-border/50 h-9"
+                />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs">তারিখ</Label>
+                <Input
+                  type="date"
+                  value={ongoingShootDate}
+                  onChange={(e) => setOngoingShootDate(e.target.value)}
                   className="bg-secondary border-border/50 h-9"
                 />
               </div>
