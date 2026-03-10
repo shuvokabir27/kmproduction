@@ -1103,21 +1103,27 @@ export type Database = {
       }
       shooting_participants: {
         Row: {
+          costume: string | null
           created_at: string
           id: string
           member_id: string
+          props: string | null
           shooting_id: string
         }
         Insert: {
+          costume?: string | null
           created_at?: string
           id?: string
           member_id: string
+          props?: string | null
           shooting_id: string
         }
         Update: {
+          costume?: string | null
           created_at?: string
           id?: string
           member_id?: string
+          props?: string | null
           shooting_id?: string
         }
         Relationships: [
@@ -1139,6 +1145,7 @@ export type Database = {
       }
       shootings: {
         Row: {
+          call_time: string | null
           channel_id: string | null
           created_at: string
           description: string | null
@@ -1155,6 +1162,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          call_time?: string | null
           channel_id?: string | null
           created_at?: string
           description?: string | null
@@ -1171,6 +1179,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          call_time?: string | null
           channel_id?: string | null
           created_at?: string
           description?: string | null
