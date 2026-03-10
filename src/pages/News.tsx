@@ -124,6 +124,13 @@ export default function News() {
 
   useEffect(() => {
     if (!newsList) return;
+    // Check for /news/:category/:postNumber URL
+    if (urlCategory && postNumber) {
+      const num = parseInt(postNumber);
+      const found = newsList.find((n) => n.category === urlCategory && n.post_number === num);
+      if (found) setSelectedNews(found);
+      return;
+    }
     const newsId = searchParams.get("id");
     if (newsId) {
       const found = newsList.find((n) => n.id === newsId);
@@ -138,7 +145,7 @@ export default function News() {
       const found = newsList.find((n) => n.id === fullId);
       if (found) setSelectedNews(found);
     }
-  }, [newsList, searchParams, shortId]);
+  }, [newsList, searchParams, shortId, urlCategory, postNumber]);
 
   const getShareUrl = (news: NewsItem) => {
     return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/og-news?id=${news.id}`;
