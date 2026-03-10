@@ -324,8 +324,10 @@ export type Database = {
           id: string
           is_featured: boolean
           is_published: boolean
+          post_number: number | null
           published_at: string | null
           publisher_id: string | null
+          slug: string | null
           title: string
           updated_at: string
           video_url: string | null
@@ -340,8 +342,10 @@ export type Database = {
           id?: string
           is_featured?: boolean
           is_published?: boolean
+          post_number?: number | null
           published_at?: string | null
           publisher_id?: string | null
+          slug?: string | null
           title: string
           updated_at?: string
           video_url?: string | null
@@ -356,8 +360,10 @@ export type Database = {
           id?: string
           is_featured?: boolean
           is_published?: boolean
+          post_number?: number | null
           published_at?: string | null
           publisher_id?: string | null
+          slug?: string | null
           title?: string
           updated_at?: string
           video_url?: string | null
