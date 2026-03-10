@@ -87,19 +87,31 @@ export function NoticeBoard() {
 
   return (
     <>
-      <div className="relative rounded-xl p-[2px] overflow-hidden">
-        {/* Rotating light border effect */}
+      <div className="relative rounded-xl p-[2px] overflow-hidden group">
+        {/* Rotating rainbow border effect */}
         <div className="absolute inset-0 rounded-xl overflow-hidden">
           <div
             className="absolute inset-[-50%] animate-spin"
             style={{
-              background: "conic-gradient(from 0deg, transparent, hsl(var(--primary)), transparent, hsl(var(--primary) / 0.3), transparent, hsl(192 91% 56% / 0.6), transparent)",
-              animationDuration: "4s",
+              background: "conic-gradient(from 0deg, #ff0040, #ff8c00, #ffef00, #00ff80, #00bfff, #8000ff, #ff00ff, #ff0040)",
+              animationDuration: "3s",
             }}
           />
         </div>
-        {/* Inner glow */}
-        <div className="absolute inset-[1px] rounded-xl bg-card z-[1]" />
+        {/* Secondary slower glow layer */}
+        <div className="absolute inset-0 rounded-xl overflow-hidden opacity-50">
+          <div
+            className="absolute inset-[-50%] animate-spin"
+            style={{
+              background: "conic-gradient(from 180deg, #00ffff, #ff00ff, #ffff00, #00ff00, #ff6600, #0066ff, #00ffff)",
+              animationDuration: "5s",
+              animationDirection: "reverse",
+              filter: "blur(4px)",
+            }}
+          />
+        </div>
+        {/* Inner background */}
+        <div className="absolute inset-[2px] rounded-[10px] bg-card z-[1]" />
       <Card className="relative z-[2] bg-gradient-to-br from-card via-card to-primary/5 border-0 overflow-hidden shadow-lg shadow-primary/5">
         {/* Header */}
         <div className="p-4 md:p-5 border-b border-border/30 flex items-center gap-3 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
