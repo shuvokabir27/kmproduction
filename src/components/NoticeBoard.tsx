@@ -574,6 +574,24 @@ export function NoticeBoard() {
 function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boolean; myInfo: any }) {
   const countdown = useCountdown(shooting.shoot_date, shooting.call_time);
   const pad = (n: number) => String(n).padStart(2, "0");
+  const queryClient = useQueryClient();
+
+  // Auto-change status from calltime to ongoing when countdown expires
+  useEffect(() => {
+    if (countdown?.expired && shooting.status === "calltime") {
+      const autoUpdate = async () => {
+        const { error } = await supabase
+          .from("shootings")
+          .update({ status: "ongoing" } as any)
+          .eq("id", shooting.id)
+          .eq("status", "calltime"); // only if still calltime
+        if (!error) {
+          queryClient.invalidateQueries({ queryKey: ["ongoing-shootings"] });
+        }
+      };
+      autoUpdate();
+    }
+  }, [countdown?.expired, shooting.id, shooting.status, queryClient]);
 
   return (
     <motion.div
