@@ -379,7 +379,15 @@ export default function AdminShootingExpenses() {
                           <TableCell className="text-muted-foreground max-w-[200px] truncate">{e.description || "—"}</TableCell>
                           <TableCell className="text-right font-medium">৳{Number(e.amount).toLocaleString("bn-BD")}</TableCell>
                           <TableCell className="text-muted-foreground">{format(parseISO(e.expense_date), "dd MMM", { locale: bn })}</TableCell>
-                          <TableCell>
+                          <TableCell className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => openEditDialog(e)}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
