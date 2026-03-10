@@ -6,12 +6,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft } from "lucide-react";
+import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 export function NoticeBoard() {
   const { user } = useAuth();
@@ -19,6 +20,32 @@ export function NoticeBoard() {
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
+
+  // Fetch ongoing shootings
+  const { data: ongoingShootings } = useQuery({
+    queryKey: ["ongoing-shootings"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("shootings")
+        .select("*")
+        .eq("status", "ongoing")
+        .order("shoot_date", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  // Realtime for shooting status changes
+  useEffect(() => {
+    const channel = supabase
+      .channel("shooting-status-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "shootings" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["ongoing-shootings"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
+  const hasOngoingShooting = ongoingShootings && ongoingShootings.length > 0;
 
   const { data: notices } = useQuery({
     queryKey: ["member-notices"],
@@ -83,7 +110,56 @@ export function NoticeBoard() {
     }
   }, [notices, searchParams]);
 
-  if (!notices || notices.length === 0) return null;
+  if (!hasOngoingShooting && (!notices || notices.length === 0)) return null;
+
+  // Ongoing Shooting Banner
+  if (hasOngoingShooting) {
+    return (
+      <Card className="bg-gradient-to-br from-cyan-500/10 via-card to-emerald-500/5 border-cyan-500/30 overflow-hidden shadow-lg shadow-cyan-500/10">
+        <div className="p-4 md:p-5 flex items-center gap-3 bg-gradient-to-r from-cyan-500/15 via-cyan-500/5 to-transparent border-b border-cyan-500/20">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 flex items-center justify-center ring-1 ring-cyan-500/30 shadow-sm shadow-cyan-500/20">
+            <Film className="h-5 w-5 text-cyan-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold text-foreground text-base md:text-lg">🎬 শুটিং চলছে!</h2>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="divide-y divide-cyan-500/10">
+          {ongoingShootings!.map((shooting: any) => (
+            <motion.div
+              key={shooting.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 md:p-5"
+            >
+              <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
+              <div className="flex flex-wrap items-center gap-3 mt-2">
+                {shooting.location && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <MapPin className="h-3 w-3 text-cyan-400" />
+                    {shooting.location}
+                  </span>
+                )}
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-cyan-400" />
+                  {format(new Date(shooting.shoot_date), "dd MMM yyyy", { locale: bn })}
+                </span>
+              </div>
+              {shooting.description && (
+                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <>
