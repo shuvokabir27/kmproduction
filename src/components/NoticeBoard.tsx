@@ -115,49 +115,126 @@ export function NoticeBoard() {
   // Ongoing Shooting Banner
   if (hasOngoingShooting) {
     return (
-      <Card className="bg-gradient-to-br from-cyan-500/10 via-card to-emerald-500/5 border-cyan-500/30 overflow-hidden shadow-lg shadow-cyan-500/10">
-        <div className="p-4 md:p-5 flex items-center gap-3 bg-gradient-to-r from-cyan-500/15 via-cyan-500/5 to-transparent border-b border-cyan-500/20">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 flex items-center justify-center ring-1 ring-cyan-500/30 shadow-sm shadow-cyan-500/20">
-            <Film className="h-5 w-5 text-cyan-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-foreground text-base md:text-lg">🎬 শুটিং চলছে!</h2>
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="divide-y divide-cyan-500/10">
-          {ongoingShootings!.map((shooting: any) => (
-            <motion.div
-              key={shooting.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-4 md:p-5"
-            >
-              <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
-              <div className="flex flex-wrap items-center gap-3 mt-2">
-                {shooting.location && (
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <MapPin className="h-3 w-3 text-cyan-400" />
-                    {shooting.location}
-                  </span>
-                )}
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-3 w-3 text-cyan-400" />
-                  {format(new Date(shooting.shoot_date), "dd MMM yyyy", { locale: bn })}
-                </span>
-              </div>
-              {shooting.description && (
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
-              )}
-            </motion.div>
+      <>
+        <style>{`
+          @keyframes shootingSpin {
+            0% { transform: rotate(0deg); filter: drop-shadow(0 0 8px #00ffcc) drop-shadow(0 0 20px #00bfff); }
+            25% { filter: drop-shadow(0 0 12px #ffef00) drop-shadow(0 0 25px #00ff80); }
+            50% { filter: drop-shadow(0 0 10px #ff00ff) drop-shadow(0 0 22px #00bfff); }
+            75% { filter: drop-shadow(0 0 14px #00ffcc) drop-shadow(0 0 28px #8000ff); }
+            100% { transform: rotate(360deg); filter: drop-shadow(0 0 8px #00ffcc) drop-shadow(0 0 20px #00bfff); }
+          }
+          @keyframes shootingFly {
+            0% { left: -5%; opacity: 0; transform: translateY(var(--fly-y)) scale(0.5); }
+            10% { opacity: 1; transform: translateY(var(--fly-y)) scale(1); }
+            90% { opacity: 1; }
+            100% { left: 105%; opacity: 0; transform: translateY(calc(var(--fly-y) + var(--drift))) scale(0.3); }
+          }
+          .shooting-firefly {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: shootingFly var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+            z-index: 10;
+          }
+        `}</style>
+        <div className="relative rounded-xl p-[2px] overflow-visible">
+          {/* Flying light particles */}
+          {[
+            { color: "#00ffcc", size: 5, y: "20%", drift: "-15px", duration: "4s", delay: "0s" },
+            { color: "#00bfff", size: 4, y: "50%", drift: "10px", duration: "5s", delay: "1s" },
+            { color: "#ff80ff", size: 6, y: "35%", drift: "-20px", duration: "3.5s", delay: "2s" },
+            { color: "#80d0ff", size: 4, y: "70%", drift: "12px", duration: "6s", delay: "0.5s" },
+          ].map((p, i) => (
+            <div
+              key={`shoot-fly-${i}`}
+              className="shooting-firefly"
+              style={{
+                width: p.size,
+                height: p.size,
+                top: p.y,
+                background: p.color,
+                boxShadow: `0 0 ${p.size * 2}px ${p.color}, 0 0 ${p.size * 4}px ${p.color}80`,
+                "--fly-y": "0px",
+                "--drift": p.drift,
+                "--duration": p.duration,
+                "--delay": p.delay,
+              } as React.CSSProperties}
+            />
           ))}
+
+          {/* Rotating rainbow border */}
+          <div className="absolute inset-0 rounded-xl overflow-hidden">
+            <div
+              style={{
+                position: "absolute",
+                inset: "-50%",
+                background: "conic-gradient(from 0deg, #00ffcc, #00bfff, #8000ff, #ff00ff, #ff8c00, #ffef00, #00ff80, #00ffcc)",
+                animation: "shootingSpin 3s linear infinite",
+              }}
+            />
+          </div>
+          {/* Secondary reverse glow */}
+          <div className="absolute inset-0 rounded-xl overflow-hidden opacity-40">
+            <div
+              style={{
+                position: "absolute",
+                inset: "-50%",
+                background: "conic-gradient(from 180deg, #00ffff, #ff00ff, #ffff00, #00ff00, #00ffff)",
+                animation: "shootingSpin 5s linear infinite reverse",
+                filter: "blur(6px)",
+              }}
+            />
+          </div>
+          {/* Inner background */}
+          <div className="absolute inset-[2px] rounded-[10px] bg-card z-[1]" />
+
+          <Card className="relative z-[2] bg-gradient-to-br from-cyan-500/10 via-card to-emerald-500/5 border-0 overflow-hidden shadow-lg shadow-cyan-500/10">
+            <div className="p-4 md:p-5 flex items-center gap-3 bg-gradient-to-r from-cyan-500/15 via-cyan-500/5 to-transparent border-b border-cyan-500/20">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 flex items-center justify-center ring-1 ring-cyan-500/30 shadow-sm shadow-cyan-500/20">
+                <Film className="h-5 w-5 text-cyan-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h2 className="font-bold text-foreground text-base md:text-lg">🎬 শুটিং চলছে!</h2>
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="divide-y divide-cyan-500/10">
+              {ongoingShootings!.map((shooting: any) => (
+                <motion.div
+                  key={shooting.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 md:p-5"
+                >
+                  <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    {shooting.location && (
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin className="h-3 w-3 text-cyan-400" />
+                        {shooting.location}
+                      </span>
+                    )}
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3 w-3 text-cyan-400" />
+                      {format(new Date(shooting.shoot_date), "dd MMM yyyy", { locale: bn })}
+                    </span>
+                  </div>
+                  {shooting.description && (
+                    <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </Card>
         </div>
-      </Card>
+      </>
     );
   }
 
