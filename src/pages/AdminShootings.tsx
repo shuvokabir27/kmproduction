@@ -88,7 +88,15 @@ const AdminShootings = () => {
     },
   });
 
-  // Delete timer effect - must be before early returns
+  // Fetch all active members for ongoing selection
+  const { data: allMembers } = useQuery({
+    queryKey: ["all-members-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("id, full_name, member_id, photo_url").eq("is_active", true).order("full_name");
+      return (data ?? []) as any[];
+    },
+  });
+
   useEffect(() => {
     if (!deleteTimerActive || deleteTimer <= 0) return;
     const interval = setInterval(() => {
