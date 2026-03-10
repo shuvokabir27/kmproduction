@@ -165,6 +165,31 @@ export function NoticeBoard() {
           />
         ))}
 
+        {/* Reverse flying light particles (right to left) */}
+        {[
+          { color: "#ff6688", size: 5, y: "25%", drift: "12px", duration: "4.2s", delay: "0.7s" },
+          { color: "#66ffdd", size: 4, y: "55%", drift: "-10px", duration: "5.2s", delay: "1.8s" },
+          { color: "#ffdd44", size: 5, y: "40%", drift: "15px", duration: "3.8s", delay: "2.5s" },
+          { color: "#aa88ff", size: 4, y: "65%", drift: "-12px", duration: "5.8s", delay: "0.3s" },
+          { color: "#44ddff", size: 3, y: "18%", drift: "8px", duration: "4.8s", delay: "1.2s" },
+        ].map((p, i) => (
+          <div
+            key={`fly-rev-${i}`}
+            className="light-firefly-reverse"
+            style={{
+              width: p.size,
+              height: p.size,
+              top: p.y,
+              background: p.color,
+              boxShadow: `0 0 ${p.size * 2}px ${p.color}, 0 0 ${p.size * 4}px ${p.color}80`,
+              "--fly-y": "0px",
+              "--drift": p.drift,
+              "--duration": p.duration,
+              "--delay": p.delay,
+            } as React.CSSProperties}
+          />
+        ))}
+
         {/* Balloon burst particles */}
         {[
           { color: "#ff0040", tx: "-30px", ty: "-40px", delay: "0s", top: "0", left: "20%" },
