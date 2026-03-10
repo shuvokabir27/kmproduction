@@ -225,7 +225,7 @@ const AdminShootings = () => {
       setOngoingSubmitting(false);
     }
   };
-
+  const openScriptEditor = (shooting: any) => {
     setScriptEditShooting(shooting);
     setScriptEditorOpen(true);
   };
