@@ -213,16 +213,25 @@ const AdminShootings = () => {
     }
     setOngoingSubmitting(true);
     try {
-      // First delete existing participants for this shooting
+      // Delete existing participants for this shooting
       await (supabase as any).from("shooting_participants").delete().eq("shooting_id", ongoingShootingId);
-      // Insert selected participants
-      const rows = selectedMemberIds.map((mid) => ({ shooting_id: ongoingShootingId, member_id: mid }));
+      // Insert selected participants with costume/props
+      const rows = selectedMemberIds.map((mid) => ({
+        shooting_id: ongoingShootingId,
+        member_id: mid,
+        costume: memberDetails[mid]?.costume || null,
+        props: memberDetails[mid]?.props || null,
+      }));
       const { error: insertErr } = await (supabase as any).from("shooting_participants").insert(rows);
       if (insertErr) throw insertErr;
-      // Update status to ongoing
-      const { error } = await supabase.from("shootings").update({ status: "ongoing" }).eq("id", ongoingShootingId);
+      // Update shooting status + call_time
+      const { error } = await supabase.from("shootings").update({
+        status: "ongoing",
+        call_time: ongoingCallTime || null,
+        location: ongoingLocation || null,
+      } as any).eq("id", ongoingShootingId);
       if (error) throw error;
-      toast.success("শুটিং চলছে! সদস্যদের নোটিফাই করা হবে।");
+      toast.success("শুটিং কলটাইম নোটিশ দেওয়া হয়েছে!");
       setOngoingDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
     } catch (err: any) {
