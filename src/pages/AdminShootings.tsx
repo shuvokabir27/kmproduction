@@ -262,6 +262,7 @@ const AdminShootings = () => {
       const updateData: any = {
         call_time: ongoingCallTime || null,
         location: ongoingLocation || null,
+        shoot_date: ongoingShootDate || undefined,
       };
       if (!ongoingIsEdit) {
         updateData.status = "calltime";
