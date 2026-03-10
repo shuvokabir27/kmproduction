@@ -450,6 +450,11 @@ const AdminShootings = () => {
                             {s.channels && <p className="text-[10px] text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
                           </div>
                            <div className="flex items-center gap-0.5 shrink-0">
+                             {(s.status === "calltime" || s.status === "ongoing") && (
+                               <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-cyan-400" onClick={() => openCalltimeDialog(s, true)} title="কলটাইম সম্পাদনা">
+                                 <Users className="h-3.5 w-3.5" />
+                               </Button>
+                             )}
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)} title={(s as any).show_on_public ? "পাবলিক সাইটে দেখাচ্ছে" : "পাবলিক সাইটে লুকানো"}>
                                {(s as any).show_on_public ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                              </Button>
