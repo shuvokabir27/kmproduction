@@ -228,31 +228,58 @@ export function NoticeBoard() {
               </div>
             </div>
             <div className="divide-y divide-cyan-500/10">
-              {ongoingShootings!.map((shooting: any) => (
-                <motion.div
-                  key={shooting.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 md:p-5"
-                >
-                  <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
-                  <div className="flex flex-wrap items-center gap-3 mt-2">
-                    {shooting.location && (
+              {ongoingShootings!.map((shooting: any) => {
+                const iAmIn = isParticipant(shooting.id);
+                return (
+                  <motion.div
+                    key={shooting.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 md:p-5"
+                  >
+                    <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
+                    <div className="flex flex-wrap items-center gap-3 mt-2">
+                      {shooting.location && (
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-cyan-400" />
+                          {shooting.location}
+                        </span>
+                      )}
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-cyan-400" />
-                        {shooting.location}
+                        <Clock className="h-3 w-3 text-cyan-400" />
+                        {format(new Date(shooting.shoot_date), "dd MMM yyyy", { locale: bn })}
                       </span>
+                    </div>
+                    {shooting.description && (
+                      <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
                     )}
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-cyan-400" />
-                      {format(new Date(shooting.shoot_date), "dd MMM yyyy", { locale: bn })}
-                    </span>
-                  </div>
-                  {shooting.description && (
-                    <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
-                  )}
-                </motion.div>
-              ))}
+                    {/* Personalized participation message */}
+                    <div className={`mt-3 p-3 rounded-lg flex items-center gap-2.5 ${
+                      iAmIn 
+                        ? "bg-emerald-500/10 border border-emerald-500/20" 
+                        : "bg-rose-500/10 border border-rose-500/20"
+                    }`}>
+                      {iAmIn ? (
+                        <>
+                          <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                          <div>
+                            <p className="text-sm font-semibold text-emerald-300">আজ শুটিং চলছে! 🎉</p>
+                            <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-5 w-5 text-rose-400 shrink-0" />
+                          <div>
+                            <p className="text-sm font-semibold text-rose-300">দুঃখিত 😔</p>
+                            <p className="text-xs text-rose-400/80 mt-0.5">আজকের শুটিংয়ে আপনি নেই। পরবর্তী শুটিংয়ে দেখা হবে!</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </Card>
         </div>
