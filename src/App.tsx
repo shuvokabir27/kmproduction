@@ -15,6 +15,7 @@ import AdminMembers from "./pages/AdminMembers";
 import AdminAttendance from "./pages/AdminAttendance";
 import AdminPayments from "./pages/AdminPayments";
 import AdminShootings from "./pages/AdminShootings";
+import AdminShootingExpenses from "./pages/AdminShootingExpenses";
 import AdminChannels from "./pages/AdminChannels";
 import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
@@ -61,6 +62,7 @@ const App = () => (
             <Route path="/admin/attendance" element={<AdminAttendance />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/shootings" element={<AdminShootings />} />
+            <Route path="/admin/shooting-expenses" element={<AdminShootingExpenses />} />
             <Route path="/admin/channels" element={<AdminChannels />} />
             <Route path="/admin/scripts" element={<AdminScripts />} />
             <Route path="/admin/scripts/:id" element={<AdminScriptEdit />} />
