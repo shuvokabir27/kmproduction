@@ -15,6 +15,7 @@ import AdminMembers from "./pages/AdminMembers";
 import AdminAttendance from "./pages/AdminAttendance";
 import AdminPayments from "./pages/AdminPayments";
 import AdminShootings from "./pages/AdminShootings";
+import AdminShootingExpenses from "./pages/AdminShootingExpenses";
 import AdminChannels from "./pages/AdminChannels";
 import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
