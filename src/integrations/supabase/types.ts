@@ -1101,6 +1101,42 @@ export type Database = {
           },
         ]
       }
+      shooting_participants: {
+        Row: {
+          created_at: string
+          id: string
+          member_id: string
+          shooting_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          member_id: string
+          shooting_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          member_id?: string
+          shooting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shooting_participants_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shooting_participants_shooting_id_fkey"
+            columns: ["shooting_id"]
+            isOneToOne: false
+            referencedRelation: "shootings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shootings: {
         Row: {
           channel_id: string | null
