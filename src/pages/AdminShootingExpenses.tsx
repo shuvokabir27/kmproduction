@@ -313,12 +313,12 @@ export default function AdminShootingExpenses() {
 
           {/* All Expenses Tab */}
           <TabsContent value="all" className="space-y-4">
-            <Select value={selectedShooting} onValueChange={setSelectedShooting}>
+            <Select value={selectedShooting || "all"} onValueChange={(v) => setSelectedShooting(v === "all" ? "" : v)}>
               <SelectTrigger className="w-64">
                 <SelectValue placeholder="সব শুটিং" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">সব শুটিং</SelectItem>
+                <SelectItem value="all">সব শুটিং</SelectItem>
                 {shootings?.map((s) => (
                   <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
                 ))}
