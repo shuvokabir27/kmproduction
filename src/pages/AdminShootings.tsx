@@ -754,32 +754,46 @@ const AdminShootings = () => {
                       </div>
                       {isSelected && <Check className="h-4 w-4 text-cyan-400 shrink-0" />}
                     </label>
-                    {/* Costume & Props inputs (shown when selected) */}
+                    {/* Costume, Props & Character inputs (shown when selected) */}
                     {isSelected && (
-                      <div className="px-3 pb-3 pt-0 grid grid-cols-2 gap-2">
+                      <div className="px-3 pb-3 pt-0 space-y-2">
                         <div>
-                          <Label className="text-[10px] text-muted-foreground">পোশাক</Label>
+                          <Label className="text-[10px] text-muted-foreground">চরিত্র</Label>
                           <Input
-                            value={memberDetails[member.id]?.costume || ""}
+                            value={memberDetails[member.id]?.character_name || ""}
                             onChange={(e) => setMemberDetails((prev) => ({
                               ...prev,
-                              [member.id]: { ...prev[member.id], costume: e.target.value, props: prev[member.id]?.props || "" }
+                              [member.id]: { ...prev[member.id], character_name: e.target.value, costume: prev[member.id]?.costume || "", props: prev[member.id]?.props || "" }
                             }))}
-                            placeholder="যেমন: সাদা পাঞ্জাবি"
+                            placeholder="যেমন: রহিম চাচা"
                             className="bg-secondary/50 border-border/30 h-7 text-xs"
                           />
                         </div>
-                        <div>
-                          <Label className="text-[10px] text-muted-foreground">প্রপস</Label>
-                          <Input
-                            value={memberDetails[member.id]?.props || ""}
-                            onChange={(e) => setMemberDetails((prev) => ({
-                              ...prev,
-                              [member.id]: { ...prev[member.id], props: e.target.value, costume: prev[member.id]?.costume || "" }
-                            }))}
-                            placeholder="যেমন: ছাতা, ব্যাগ"
-                            className="bg-secondary/50 border-border/30 h-7 text-xs"
-                          />
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <Label className="text-[10px] text-muted-foreground">পোশাক</Label>
+                            <Input
+                              value={memberDetails[member.id]?.costume || ""}
+                              onChange={(e) => setMemberDetails((prev) => ({
+                                ...prev,
+                                [member.id]: { ...prev[member.id], costume: e.target.value, props: prev[member.id]?.props || "", character_name: prev[member.id]?.character_name || "" }
+                              }))}
+                              placeholder="যেমন: সাদা পাঞ্জাবি"
+                              className="bg-secondary/50 border-border/30 h-7 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-[10px] text-muted-foreground">প্রপস</Label>
+                            <Input
+                              value={memberDetails[member.id]?.props || ""}
+                              onChange={(e) => setMemberDetails((prev) => ({
+                                ...prev,
+                                [member.id]: { ...prev[member.id], props: e.target.value, costume: prev[member.id]?.costume || "", character_name: prev[member.id]?.character_name || "" }
+                              }))}
+                              placeholder="যেমন: ছাতা, ব্যাগ"
+                              className="bg-secondary/50 border-border/30 h-7 text-xs"
+                            />
+                          </div>
                         </div>
                       </div>
                     )}
@@ -793,7 +807,7 @@ const AdminShootings = () => {
               disabled={ongoingSubmitting || selectedMemberIds.length === 0}
               className="w-full bg-cyan-600 hover:bg-cyan-700"
             >
-              {ongoingSubmitting ? "সেভ হচ্ছে..." : `কলটাইম নোটিশ দিন (${selectedMemberIds.length} জন)`}
+              {ongoingSubmitting ? "সেভ হচ্ছে..." : ongoingIsEdit ? `আপডেট করুন (${selectedMemberIds.length} জন)` : `কলটাইম নোটিশ দিন (${selectedMemberIds.length} জন)`}
             </Button>
           </div>
         </DialogContent>
