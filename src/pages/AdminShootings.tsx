@@ -202,6 +202,41 @@ const AdminShootings = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
+  const openCalltimeDialog = async (shooting: any, isEdit: boolean) => {
+    setOngoingShootingId(shooting.id);
+    setOngoingShootingName(shooting?.name || "");
+    setOngoingCallTime((shooting as any)?.call_time || "");
+    setOngoingLocation(shooting?.location || "");
+    setOngoingIsEdit(isEdit);
+
+    if (isEdit) {
+      // Load existing participants
+      const { data: existing } = await (supabase as any)
+        .from("shooting_participants")
+        .select("member_id, costume, props, character_name")
+        .eq("shooting_id", shooting.id);
+      if (existing && existing.length > 0) {
+        setSelectedMemberIds(existing.map((p: any) => p.member_id));
+        const details: Record<string, { costume: string; props: string; character_name: string }> = {};
+        existing.forEach((p: any) => {
+          details[p.member_id] = {
+            costume: p.costume || "",
+            props: p.props || "",
+            character_name: p.character_name || "",
+          };
+        });
+        setMemberDetails(details);
+      } else {
+        setSelectedMemberIds([]);
+        setMemberDetails({});
+      }
+    } else {
+      setSelectedMemberIds([]);
+      setMemberDetails({});
+    }
+    setOngoingDialogOpen(true);
+  };
+
   const confirmOngoing = async () => {
     if (selectedMemberIds.length === 0) {
       toast.error("অন্তত একজন সদস্য নির্বাচন করুন");
@@ -211,23 +246,27 @@ const AdminShootings = () => {
     try {
       // Delete existing participants for this shooting
       await (supabase as any).from("shooting_participants").delete().eq("shooting_id", ongoingShootingId);
-      // Insert selected participants with costume/props
+      // Insert selected participants with costume/props/character
       const rows = selectedMemberIds.map((mid) => ({
         shooting_id: ongoingShootingId,
         member_id: mid,
         costume: memberDetails[mid]?.costume || null,
         props: memberDetails[mid]?.props || null,
+        character_name: memberDetails[mid]?.character_name || null,
       }));
       const { error: insertErr } = await (supabase as any).from("shooting_participants").insert(rows);
       if (insertErr) throw insertErr;
-      // Update shooting status + call_time
-      const { error } = await supabase.from("shootings").update({
-        status: "calltime",
+      // Update shooting status + call_time (only set status if not editing)
+      const updateData: any = {
         call_time: ongoingCallTime || null,
         location: ongoingLocation || null,
-      } as any).eq("id", ongoingShootingId);
+      };
+      if (!ongoingIsEdit) {
+        updateData.status = "calltime";
+      }
+      const { error } = await supabase.from("shootings").update(updateData as any).eq("id", ongoingShootingId);
       if (error) throw error;
-      toast.success("শুটিং কলটাইম নোটিশ দেওয়া হয়েছে!");
+      toast.success(ongoingIsEdit ? "কলটাইম তথ্য আপডেট হয়েছে!" : "শুটিং কলটাইম নোটিশ দেওয়া হয়েছে!");
       setOngoingDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
     } catch (err: any) {
