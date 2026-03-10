@@ -175,12 +175,20 @@ export default function News() {
     }
   };
 
+  const handleSelectNews = (news: NewsItem) => {
+    if (news.post_number) {
+      navigate(`/news/${news.category}/${news.post_number}`);
+    } else {
+      setSelectedNews(news);
+    }
+  };
+
   if (selectedNews) {
     return (
       <NewsDetail
         news={selectedNews}
         categories={categories}
-        onBack={() => setSelectedNews(null)}
+        onBack={() => navigate("/news")}
         onShare={handleShare}
         publisherName={getPublisherName(selectedNews.publisher_id)}
       />
