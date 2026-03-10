@@ -41,7 +41,9 @@ Deno.serve(async (req) => {
   }
 
   const siteUrl = "https://kmproduction.lovable.app";
-  const redirectUrl = `${siteUrl}/news?id=${news.id}`;
+  const redirectUrl = news.post_number 
+    ? `${siteUrl}/news/${news.category}/${news.post_number}`
+    : `${siteUrl}/news?id=${news.id}`;
   const title = news.title || "দৈনিক ইন্তেকাল";
   const description = news.excerpt || news.content?.substring(0, 160) || "বাংলা ভাইরাল নিউজ";
   const image = news.featured_image_url || `${siteUrl}/favicon.png`;
