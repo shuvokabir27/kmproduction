@@ -548,6 +548,11 @@ const AdminShootings = () => {
                               </td>
                               <td className="p-3 text-right">
                                  <div className="flex items-center justify-end gap-1">
+                                   {(s.status === "calltime" || s.status === "ongoing") && (
+                                     <Button variant="ghost" size="sm" className="text-cyan-400 hover:text-cyan-300" onClick={() => openCalltimeDialog(s, true)} title="কলটাইম সম্পাদনা">
+                                       <Users className="h-4 w-4" />
+                                     </Button>
+                                   )}
                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
                                      <Edit className="h-4 w-4" />
                                    </Button>
