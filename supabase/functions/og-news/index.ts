@@ -11,29 +11,39 @@ Deno.serve(async (req) => {
   }
 
   const url = new URL(req.url);
+  const category = url.searchParams.get("category");
+  const postNumber = url.searchParams.get("post_number");
   const newsId = url.searchParams.get("id");
 
-  if (!newsId) {
-    return new Response("Missing news id", { status: 400 });
+  if (!category && !postNumber && !newsId) {
+    return new Response("Missing news identifier", { status: 400 });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const { data: news, error } = await supabase
+  let query = supabase
     .from("news")
-    .select("id, title, excerpt, featured_image_url, content, category")
-    .eq("id", newsId)
-    .eq("is_published", true)
-    .single();
+    .select("id, title, excerpt, featured_image_url, content, category, post_number")
+    .eq("is_published", true);
+
+  if (category && postNumber) {
+    query = query.eq("category", category).eq("post_number", parseInt(postNumber));
+  } else if (newsId) {
+    query = query.eq("id", newsId);
+  }
+
+  const { data: news, error } = await query.single();
 
   if (error || !news) {
     return new Response("News not found", { status: 404 });
   }
 
   const siteUrl = "https://kmproduction.lovable.app";
-  const redirectUrl = `${siteUrl}/news?id=${news.id}`;
+  const redirectUrl = news.post_number 
+    ? `${siteUrl}/news/${news.category}/${news.post_number}`
+    : `${siteUrl}/news?id=${news.id}`;
   const title = news.title || "দৈনিক ইন্তেকাল";
   const description = news.excerpt || news.content?.substring(0, 160) || "বাংলা ভাইরাল নিউজ";
   const image = news.featured_image_url || `${siteUrl}/favicon.png`;
