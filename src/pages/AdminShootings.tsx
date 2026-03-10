@@ -65,8 +65,9 @@ const AdminShootings = () => {
   const [ongoingCallTime, setOngoingCallTime] = useState<string>("");
   const [ongoingLocation, setOngoingLocation] = useState<string>("");
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
-  const [memberDetails, setMemberDetails] = useState<Record<string, { costume: string; props: string }>>({});
+  const [memberDetails, setMemberDetails] = useState<Record<string, { costume: string; props: string; character_name: string }>>({});
   const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
+  const [ongoingIsEdit, setOngoingIsEdit] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -180,13 +181,7 @@ const AdminShootings = () => {
     }
     if (newStatus === "calltime") {
       const shooting = shootings?.find((s) => s.id === shootingId);
-      setOngoingShootingId(shootingId);
-      setOngoingShootingName(shooting?.name || "");
-      setOngoingCallTime((shooting as any)?.call_time || "");
-      setOngoingLocation(shooting?.location || "");
-      setSelectedMemberIds([]);
-      setMemberDetails({});
-      setOngoingDialogOpen(true);
+      openCalltimeDialog(shooting, false);
       return;
     }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
@@ -207,6 +202,41 @@ const AdminShootings = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
+  const openCalltimeDialog = async (shooting: any, isEdit: boolean) => {
+    setOngoingShootingId(shooting.id);
+    setOngoingShootingName(shooting?.name || "");
+    setOngoingCallTime((shooting as any)?.call_time || "");
+    setOngoingLocation(shooting?.location || "");
+    setOngoingIsEdit(isEdit);
+
+    if (isEdit) {
+      // Load existing participants
+      const { data: existing } = await (supabase as any)
+        .from("shooting_participants")
+        .select("member_id, costume, props, character_name")
+        .eq("shooting_id", shooting.id);
+      if (existing && existing.length > 0) {
+        setSelectedMemberIds(existing.map((p: any) => p.member_id));
+        const details: Record<string, { costume: string; props: string; character_name: string }> = {};
+        existing.forEach((p: any) => {
+          details[p.member_id] = {
+            costume: p.costume || "",
+            props: p.props || "",
+            character_name: p.character_name || "",
+          };
+        });
+        setMemberDetails(details);
+      } else {
+        setSelectedMemberIds([]);
+        setMemberDetails({});
+      }
+    } else {
+      setSelectedMemberIds([]);
+      setMemberDetails({});
+    }
+    setOngoingDialogOpen(true);
+  };
+
   const confirmOngoing = async () => {
     if (selectedMemberIds.length === 0) {
       toast.error("অন্তত একজন সদস্য নির্বাচন করুন");
@@ -216,23 +246,27 @@ const AdminShootings = () => {
     try {
       // Delete existing participants for this shooting
       await (supabase as any).from("shooting_participants").delete().eq("shooting_id", ongoingShootingId);
-      // Insert selected participants with costume/props
+      // Insert selected participants with costume/props/character
       const rows = selectedMemberIds.map((mid) => ({
         shooting_id: ongoingShootingId,
         member_id: mid,
         costume: memberDetails[mid]?.costume || null,
         props: memberDetails[mid]?.props || null,
+        character_name: memberDetails[mid]?.character_name || null,
       }));
       const { error: insertErr } = await (supabase as any).from("shooting_participants").insert(rows);
       if (insertErr) throw insertErr;
-      // Update shooting status + call_time
-      const { error } = await supabase.from("shootings").update({
-        status: "calltime",
+      // Update shooting status + call_time (only set status if not editing)
+      const updateData: any = {
         call_time: ongoingCallTime || null,
         location: ongoingLocation || null,
-      } as any).eq("id", ongoingShootingId);
+      };
+      if (!ongoingIsEdit) {
+        updateData.status = "calltime";
+      }
+      const { error } = await supabase.from("shootings").update(updateData as any).eq("id", ongoingShootingId);
       if (error) throw error;
-      toast.success("শুটিং কলটাইম নোটিশ দেওয়া হয়েছে!");
+      toast.success(ongoingIsEdit ? "কলটাইম তথ্য আপডেট হয়েছে!" : "শুটিং কলটাইম নোটিশ দেওয়া হয়েছে!");
       setOngoingDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
     } catch (err: any) {
@@ -416,6 +450,11 @@ const AdminShootings = () => {
                             {s.channels && <p className="text-[10px] text-primary mt-0.5">📺 {(s as any).channels.name}</p>}
                           </div>
                            <div className="flex items-center gap-0.5 shrink-0">
+                             {(s.status === "calltime" || s.status === "ongoing") && (
+                               <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-cyan-400" onClick={() => openCalltimeDialog(s, true)} title="কলটাইম সম্পাদনা">
+                                 <Users className="h-3.5 w-3.5" />
+                               </Button>
+                             )}
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)} title={(s as any).show_on_public ? "পাবলিক সাইটে দেখাচ্ছে" : "পাবলিক সাইটে লুকানো"}>
                                {(s as any).show_on_public ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                              </Button>
@@ -509,6 +548,11 @@ const AdminShootings = () => {
                               </td>
                               <td className="p-3 text-right">
                                  <div className="flex items-center justify-end gap-1">
+                                   {(s.status === "calltime" || s.status === "ongoing") && (
+                                     <Button variant="ghost" size="sm" className="text-cyan-400 hover:text-cyan-300" onClick={() => openCalltimeDialog(s, true)} title="কলটাইম সম্পাদনা">
+                                       <Users className="h-4 w-4" />
+                                     </Button>
+                                   )}
                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
                                      <Edit className="h-4 w-4" />
                                    </Button>
@@ -710,32 +754,46 @@ const AdminShootings = () => {
                       </div>
                       {isSelected && <Check className="h-4 w-4 text-cyan-400 shrink-0" />}
                     </label>
-                    {/* Costume & Props inputs (shown when selected) */}
+                    {/* Costume, Props & Character inputs (shown when selected) */}
                     {isSelected && (
-                      <div className="px-3 pb-3 pt-0 grid grid-cols-2 gap-2">
+                      <div className="px-3 pb-3 pt-0 space-y-2">
                         <div>
-                          <Label className="text-[10px] text-muted-foreground">পোশাক</Label>
+                          <Label className="text-[10px] text-muted-foreground">চরিত্র</Label>
                           <Input
-                            value={memberDetails[member.id]?.costume || ""}
+                            value={memberDetails[member.id]?.character_name || ""}
                             onChange={(e) => setMemberDetails((prev) => ({
                               ...prev,
-                              [member.id]: { ...prev[member.id], costume: e.target.value, props: prev[member.id]?.props || "" }
+                              [member.id]: { ...prev[member.id], character_name: e.target.value, costume: prev[member.id]?.costume || "", props: prev[member.id]?.props || "" }
                             }))}
-                            placeholder="যেমন: সাদা পাঞ্জাবি"
+                            placeholder="যেমন: রহিম চাচা"
                             className="bg-secondary/50 border-border/30 h-7 text-xs"
                           />
                         </div>
-                        <div>
-                          <Label className="text-[10px] text-muted-foreground">প্রপস</Label>
-                          <Input
-                            value={memberDetails[member.id]?.props || ""}
-                            onChange={(e) => setMemberDetails((prev) => ({
-                              ...prev,
-                              [member.id]: { ...prev[member.id], props: e.target.value, costume: prev[member.id]?.costume || "" }
-                            }))}
-                            placeholder="যেমন: ছাতা, ব্যাগ"
-                            className="bg-secondary/50 border-border/30 h-7 text-xs"
-                          />
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <Label className="text-[10px] text-muted-foreground">পোশাক</Label>
+                            <Input
+                              value={memberDetails[member.id]?.costume || ""}
+                              onChange={(e) => setMemberDetails((prev) => ({
+                                ...prev,
+                                [member.id]: { ...prev[member.id], costume: e.target.value, props: prev[member.id]?.props || "", character_name: prev[member.id]?.character_name || "" }
+                              }))}
+                              placeholder="যেমন: সাদা পাঞ্জাবি"
+                              className="bg-secondary/50 border-border/30 h-7 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-[10px] text-muted-foreground">প্রপস</Label>
+                            <Input
+                              value={memberDetails[member.id]?.props || ""}
+                              onChange={(e) => setMemberDetails((prev) => ({
+                                ...prev,
+                                [member.id]: { ...prev[member.id], props: e.target.value, costume: prev[member.id]?.costume || "", character_name: prev[member.id]?.character_name || "" }
+                              }))}
+                              placeholder="যেমন: ছাতা, ব্যাগ"
+                              className="bg-secondary/50 border-border/30 h-7 text-xs"
+                            />
+                          </div>
                         </div>
                       </div>
                     )}
@@ -749,7 +807,7 @@ const AdminShootings = () => {
               disabled={ongoingSubmitting || selectedMemberIds.length === 0}
               className="w-full bg-cyan-600 hover:bg-cyan-700"
             >
-              {ongoingSubmitting ? "সেভ হচ্ছে..." : `কলটাইম নোটিশ দিন (${selectedMemberIds.length} জন)`}
+              {ongoingSubmitting ? "সেভ হচ্ছে..." : ongoingIsEdit ? `আপডেট করুন (${selectedMemberIds.length} জন)` : `কলটাইম নোটিশ দিন (${selectedMemberIds.length} জন)`}
             </Button>
           </div>
         </DialogContent>

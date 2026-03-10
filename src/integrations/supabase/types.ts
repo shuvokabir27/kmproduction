@@ -1103,6 +1103,7 @@ export type Database = {
       }
       shooting_participants: {
         Row: {
+          character_name: string | null
           costume: string | null
           created_at: string
           id: string
@@ -1111,6 +1112,7 @@ export type Database = {
           shooting_id: string
         }
         Insert: {
+          character_name?: string | null
           costume?: string | null
           created_at?: string
           id?: string
@@ -1119,6 +1121,7 @@ export type Database = {
           shooting_id: string
         }
         Update: {
+          character_name?: string | null
           costume?: string | null
           created_at?: string
           id?: string

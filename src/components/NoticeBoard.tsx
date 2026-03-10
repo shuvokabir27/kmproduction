@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video, CheckCircle2, XCircle, Shirt, Package, Timer } from "lucide-react";
+import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video, CheckCircle2, XCircle, Shirt, Package, Timer, UserCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -84,7 +84,7 @@ export function NoticeBoard() {
       const shootingIds = ongoingShootings!.map((s: any) => s.id);
       const { data } = await (supabase as any)
         .from("shooting_participants")
-        .select("shooting_id, member_id, costume, props, profiles!shooting_participants_member_id_fkey(user_id)")
+        .select("shooting_id, member_id, costume, props, character_name, profiles!shooting_participants_member_id_fkey(user_id)")
         .in("shooting_id", shootingIds);
       return data ?? [];
     },
@@ -656,8 +656,15 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
                 <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ কামনা আপনার জন্য!</p>
               </div>
             </div>
-            {(myInfo?.costume || myInfo?.props) && (
+          {(myInfo?.character_name || myInfo?.costume || myInfo?.props) && (
               <div className="ml-7 space-y-1.5 pt-1 border-t border-emerald-500/15">
+                {myInfo.character_name && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <UserCircle className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <span className="text-muted-foreground">চরিত্র:</span>
+                    <span className="text-emerald-300 font-semibold">{myInfo.character_name}</span>
+                  </div>
+                )}
                 {myInfo.costume && (
                   <div className="flex items-center gap-2 text-xs">
                     <Shirt className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
