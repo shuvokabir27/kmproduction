@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     return new Response("News not found", { status: 404 });
   }
 
-  const siteUrl = "https://kmproduction.lovable.app";
+  const siteUrl = "https://kuakatamultimedia.com";
   const redirectUrl = news.post_number 
     ? `${siteUrl}/news/${news.category}/${news.post_number}`
     : `${siteUrl}/news?id=${news.id}`;
