@@ -168,6 +168,7 @@ export function NoticeBoard() {
           </AnimatePresence>
         </div>
       </Card>
+      </div>
 
       {/* Notice Detail - Fullscreen Drawer on mobile, Dialog on desktop */}
       {isMobile ? (
