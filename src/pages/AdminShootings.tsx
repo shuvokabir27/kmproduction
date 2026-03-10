@@ -618,83 +618,139 @@ const AdminShootings = () => {
 
       {/* Ongoing Member Selection Dialog */}
       <Dialog open={ongoingDialogOpen} onOpenChange={setOngoingDialogOpen}>
-        <DialogContent className="bg-card border-border/50 max-w-md max-h-[90vh] flex flex-col">
-          <DialogHeader>
+        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[95vh] flex flex-col p-0">
+          <DialogHeader className="px-5 pt-5 pb-0">
             <DialogTitle className="text-foreground flex items-center gap-2">
               <Users className="h-5 w-5 text-cyan-400" />
-              শুটিংয়ে কারা আছেন?
+              শুটিং কলটাইম নোটিশ
             </DialogTitle>
           </DialogHeader>
-          <p className="text-xs text-muted-foreground -mt-2">
-            <span className="font-semibold text-cyan-400">{ongoingShootingName}</span> — যারা এই শুটিংয়ে অংশ নিচ্ছেন তাদের সিলেক্ট করুন
-          </p>
-          <div className="flex items-center gap-2 mb-1">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs h-7 border-border/30"
-              onClick={() => setSelectedMemberIds(allMembers?.map((m: any) => m.id) || [])}
-            >
-              সবাই সিলেক্ট
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs h-7 border-border/30"
-              onClick={() => setSelectedMemberIds([])}
-            >
-              সব বাদ
-            </Button>
-            <span className="text-xs text-muted-foreground ml-auto">
-              {selectedMemberIds.length}/{allMembers?.length || 0} জন
-            </span>
-          </div>
-          <div className="overflow-y-auto flex-1 space-y-1 pr-1 max-h-[50vh]">
-            {allMembers?.map((member: any) => {
-              const isSelected = selectedMemberIds.includes(member.id);
-              return (
-                <label
-                  key={member.id}
-                  className={`flex items-center gap-3 p-2.5 rounded-lg cursor-pointer transition-all ${
+          
+          <div className="overflow-y-auto flex-1 px-5 pb-5 space-y-4">
+            <p className="text-xs text-muted-foreground">
+              <span className="font-semibold text-cyan-400">{ongoingShootingName}</span> — কলটাইম, লোকেশন এবং সদস্যদের পোশাক/প্রপস নির্ধারণ করুন
+            </p>
+
+            {/* Call Time & Location */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-foreground text-xs">কলটাইম *</Label>
+                <Input
+                  type="time"
+                  value={ongoingCallTime}
+                  onChange={(e) => setOngoingCallTime(e.target.value)}
+                  className="bg-secondary border-border/50 h-9"
+                />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs">লোকেশন</Label>
+                <Input
+                  value={ongoingLocation}
+                  onChange={(e) => setOngoingLocation(e.target.value)}
+                  placeholder="শুটিং স্পট"
+                  className="bg-secondary border-border/50 h-9"
+                />
+              </div>
+            </div>
+
+            {/* Member Selection Header */}
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="text-xs h-7 border-border/30"
+                onClick={() => setSelectedMemberIds(allMembers?.map((m: any) => m.id) || [])}>
+                সবাই সিলেক্ট
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs h-7 border-border/30"
+                onClick={() => { setSelectedMemberIds([]); setMemberDetails({}); }}>
+                সব বাদ
+              </Button>
+              <span className="text-xs text-muted-foreground ml-auto">
+                {selectedMemberIds.length}/{allMembers?.length || 0} জন
+              </span>
+            </div>
+
+            {/* Member List with Costume/Props */}
+            <div className="space-y-2 max-h-[45vh] overflow-y-auto pr-1">
+              {allMembers?.map((member: any) => {
+                const isSelected = selectedMemberIds.includes(member.id);
+                return (
+                  <div key={member.id} className={`rounded-lg transition-all ${
                     isSelected
-                      ? "bg-cyan-500/15 ring-1 ring-cyan-500/30"
-                      : "bg-secondary/30 hover:bg-secondary/50"
-                  }`}
-                >
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={(checked) => {
-                      setSelectedMemberIds((prev) =>
-                        checked
-                          ? [...prev, member.id]
-                          : prev.filter((id) => id !== member.id)
-                      );
-                    }}
-                    className="border-border/50 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
-                  />
-                  {member.photo_url ? (
-                    <img src={member.photo_url} alt="" className="h-8 w-8 rounded-full object-cover" />
-                  ) : (
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">
-                      {member.full_name?.charAt(0)}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{member.full_name}</p>
-                    <p className="text-[10px] text-muted-foreground">ID: {member.member_id}</p>
+                      ? "bg-cyan-500/10 ring-1 ring-cyan-500/25"
+                      : "bg-secondary/30"
+                  }`}>
+                    {/* Member row */}
+                    <label className="flex items-center gap-3 p-2.5 cursor-pointer">
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={(checked) => {
+                          setSelectedMemberIds((prev) =>
+                            checked ? [...prev, member.id] : prev.filter((id) => id !== member.id)
+                          );
+                          if (!checked) {
+                            setMemberDetails((prev) => {
+                              const next = { ...prev };
+                              delete next[member.id];
+                              return next;
+                            });
+                          }
+                        }}
+                        className="border-border/50 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
+                      />
+                      {member.photo_url ? (
+                        <img src={member.photo_url} alt="" className="h-8 w-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">
+                          {member.full_name?.charAt(0)}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{member.full_name}</p>
+                        <p className="text-[10px] text-muted-foreground">ID: {member.member_id}</p>
+                      </div>
+                      {isSelected && <Check className="h-4 w-4 text-cyan-400 shrink-0" />}
+                    </label>
+                    {/* Costume & Props inputs (shown when selected) */}
+                    {isSelected && (
+                      <div className="px-3 pb-3 pt-0 grid grid-cols-2 gap-2">
+                        <div>
+                          <Label className="text-[10px] text-muted-foreground">পোশাক</Label>
+                          <Input
+                            value={memberDetails[member.id]?.costume || ""}
+                            onChange={(e) => setMemberDetails((prev) => ({
+                              ...prev,
+                              [member.id]: { ...prev[member.id], costume: e.target.value, props: prev[member.id]?.props || "" }
+                            }))}
+                            placeholder="যেমন: সাদা পাঞ্জাবি"
+                            className="bg-secondary/50 border-border/30 h-7 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-[10px] text-muted-foreground">প্রপস</Label>
+                          <Input
+                            value={memberDetails[member.id]?.props || ""}
+                            onChange={(e) => setMemberDetails((prev) => ({
+                              ...prev,
+                              [member.id]: { ...prev[member.id], props: e.target.value, costume: prev[member.id]?.costume || "" }
+                            }))}
+                            placeholder="যেমন: ছাতা, ব্যাগ"
+                            className="bg-secondary/50 border-border/30 h-7 text-xs"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {isSelected && <Check className="h-4 w-4 text-cyan-400 shrink-0" />}
-                </label>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            <Button
+              onClick={confirmOngoing}
+              disabled={ongoingSubmitting || selectedMemberIds.length === 0}
+              className="w-full bg-cyan-600 hover:bg-cyan-700"
+            >
+              {ongoingSubmitting ? "সেভ হচ্ছে..." : `কলটাইম নোটিশ দিন (${selectedMemberIds.length} জন)`}
+            </Button>
           </div>
-          <Button
-            onClick={confirmOngoing}
-            disabled={ongoingSubmitting || selectedMemberIds.length === 0}
-            className="w-full mt-2 bg-cyan-600 hover:bg-cyan-700"
-          >
-            {ongoingSubmitting ? "সেভ হচ্ছে..." : `শুটিং শুরু করুন (${selectedMemberIds.length} জন)`}
-          </Button>
         </DialogContent>
       </Dialog>
     </AppLayout>
