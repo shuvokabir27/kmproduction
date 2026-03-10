@@ -246,7 +246,7 @@ export default function News() {
           <NewsTicker
             tickerTexts={tickerTexts}
             tickerSpeed={tickerSpeed}
-            onSelectNews={(item) => item.newsItem && setSelectedNews(item.newsItem)}
+            onSelectNews={(item) => item.newsItem && handleSelectNews(item.newsItem)}
           />
         )}
 
