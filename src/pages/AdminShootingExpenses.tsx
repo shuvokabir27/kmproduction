@@ -62,25 +62,33 @@ export default function AdminShootingExpenses() {
     },
   });
 
-  // Add expense
-  const addExpense = useMutation({
+  // Add/Edit expense
+  const saveExpense = useMutation({
     mutationFn: async () => {
-      const { error } = await (supabase as any).from("shooting_expenses").insert({
-        shooting_id: formShootingId,
-        category: formCategory,
-        amount: Number(formAmount),
-        description: formDescription || null,
-        expense_date: formDate,
-      });
-      if (error) throw error;
+      if (editingExpense) {
+        const { error } = await (supabase as any).from("shooting_expenses").update({
+          shooting_id: formShootingId,
+          category: formCategory,
+          amount: Number(formAmount),
+          description: formDescription || null,
+          expense_date: formDate,
+        }).eq("id", editingExpense.id);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any).from("shooting_expenses").insert({
+          shooting_id: formShootingId,
+          category: formCategory,
+          amount: Number(formAmount),
+          description: formDescription || null,
+          expense_date: formDate,
+        });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shooting-expenses"] });
-      toast({ title: "খরচ যুক্ত হয়েছে" });
-      setDialogOpen(false);
-      setFormAmount("");
-      setFormDescription("");
-      setFormCategory("");
+      toast({ title: editingExpense ? "খরচ আপডেট হয়েছে" : "খরচ যুক্ত হয়েছে" });
+      closeDialog();
     },
     onError: () => toast({ title: "ত্রুটি হয়েছে", variant: "destructive" }),
   });
