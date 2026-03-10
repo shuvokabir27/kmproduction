@@ -1060,6 +1060,47 @@ export type Database = {
         }
         Relationships: []
       }
+      shooting_expenses: {
+        Row: {
+          amount: number
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expense_date: string
+          id: string
+          shooting_id: string
+        }
+        Insert: {
+          amount?: number
+          category: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expense_date?: string
+          id?: string
+          shooting_id: string
+        }
+        Update: {
+          amount?: number
+          category?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expense_date?: string
+          id?: string
+          shooting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shooting_expenses_shooting_id_fkey"
+            columns: ["shooting_id"]
+            isOneToOne: false
+            referencedRelation: "shootings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shootings: {
         Row: {
           channel_id: string | null
@@ -1269,6 +1310,7 @@ export type Database = {
       app_role: "admin" | "member"
       bonus_type: "bonus" | "transport"
       conversation_type: "personal" | "group"
+      expense_category: "food" | "transport" | "props" | "other"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
       salary_type: "daily" | "monthly"
     }
@@ -1401,6 +1443,7 @@ export const Constants = {
       app_role: ["admin", "member"],
       bonus_type: ["bonus", "transport"],
       conversation_type: ["personal", "group"],
+      expense_category: ["food", "transport", "props", "other"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
       salary_type: ["daily", "monthly"],
     },
