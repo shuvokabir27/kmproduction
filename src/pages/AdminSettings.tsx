@@ -227,6 +227,19 @@ const AdminSettings = () => {
         {/* Settings Options */}
         <div className="space-y-2">
           <button
+            onClick={() => setSiteSettingsOpen(true)}
+            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
+          >
+            <div className="h-10 w-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+              <Globe className="h-5 w-5 text-cyan-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">সাইট সেটিংস</p>
+              <p className="text-xs text-muted-foreground">সাইট টাইটেল, লোগো ও আইকন পরিবর্তন করুন</p>
+            </div>
+          </button>
+
+          <button
             onClick={() => setProfileEditOpen(true)}
             className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
           >
