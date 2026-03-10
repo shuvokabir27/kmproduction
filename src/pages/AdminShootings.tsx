@@ -61,7 +61,10 @@ const AdminShootings = () => {
   const [ongoingDialogOpen, setOngoingDialogOpen] = useState(false);
   const [ongoingShootingId, setOngoingShootingId] = useState<string>("");
   const [ongoingShootingName, setOngoingShootingName] = useState<string>("");
+  const [ongoingCallTime, setOngoingCallTime] = useState<string>("");
+  const [ongoingLocation, setOngoingLocation] = useState<string>("");
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+  const [memberDetails, setMemberDetails] = useState<Record<string, { costume: string; props: string }>>({});
   const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
 
   const { data: shootings } = useQuery({
