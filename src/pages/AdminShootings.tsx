@@ -63,7 +63,6 @@ const AdminShootings = () => {
   const [ongoingShootingName, setOngoingShootingName] = useState<string>("");
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
   const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
-  const [deleteTimerActive, setDeleteTimerActive] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
