@@ -87,7 +87,20 @@ export function NoticeBoard() {
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-card via-card to-primary/5 border-border/50 overflow-hidden shadow-lg shadow-primary/5">
+      <div className="relative rounded-xl p-[2px] overflow-hidden">
+        {/* Rotating light border effect */}
+        <div className="absolute inset-0 rounded-xl overflow-hidden">
+          <div
+            className="absolute inset-[-50%] animate-spin"
+            style={{
+              background: "conic-gradient(from 0deg, transparent, hsl(var(--primary)), transparent, hsl(var(--primary) / 0.3), transparent, hsl(192 91% 56% / 0.6), transparent)",
+              animationDuration: "4s",
+            }}
+          />
+        </div>
+        {/* Inner glow */}
+        <div className="absolute inset-[1px] rounded-xl bg-card z-[1]" />
+      <Card className="relative z-[2] bg-gradient-to-br from-card via-card to-primary/5 border-0 overflow-hidden shadow-lg shadow-primary/5">
         {/* Header */}
         <div className="p-4 md:p-5 border-b border-border/30 flex items-center gap-3 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/20 shadow-sm shadow-primary/10">
