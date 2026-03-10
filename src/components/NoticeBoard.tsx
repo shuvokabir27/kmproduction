@@ -108,9 +108,49 @@ export function NoticeBoard() {
           animation: balloonBurst 2s ease-out infinite;
           pointer-events: none;
         }
+        @keyframes flyAcross {
+          0% { left: -5%; opacity: 0; transform: translateY(var(--fly-y)) scale(0.5); }
+          10% { opacity: 1; transform: translateY(var(--fly-y)) scale(1); }
+          90% { opacity: 1; }
+          100% { left: 105%; opacity: 0; transform: translateY(calc(var(--fly-y) + var(--drift))) scale(0.3); }
+        }
+        .light-firefly {
+          position: absolute;
+          border-radius: 50%;
+          pointer-events: none;
+          animation: flyAcross var(--duration) ease-in-out infinite;
+          animation-delay: var(--delay);
+          z-index: 10;
+        }
       `}</style>
 
       <div className="relative rounded-xl p-[2px] overflow-visible">
+        {/* Flying light particles */}
+        {[
+          { color: "#ffef00", size: 5, y: "20%", drift: "-15px", duration: "4s", delay: "0s" },
+          { color: "#00ffcc", size: 4, y: "50%", drift: "10px", duration: "5s", delay: "1s" },
+          { color: "#ff80ff", size: 6, y: "35%", drift: "-20px", duration: "3.5s", delay: "2s" },
+          { color: "#80d0ff", size: 4, y: "70%", drift: "12px", duration: "6s", delay: "0.5s" },
+          { color: "#ffaa00", size: 5, y: "15%", drift: "-8px", duration: "4.5s", delay: "1.5s" },
+          { color: "#00ff88", size: 3, y: "60%", drift: "18px", duration: "5.5s", delay: "3s" },
+        ].map((p, i) => (
+          <div
+            key={`fly-${i}`}
+            className="light-firefly"
+            style={{
+              width: p.size,
+              height: p.size,
+              top: p.y,
+              background: p.color,
+              boxShadow: `0 0 ${p.size * 2}px ${p.color}, 0 0 ${p.size * 4}px ${p.color}80`,
+              "--fly-y": "0px",
+              "--drift": p.drift,
+              "--duration": p.duration,
+              "--delay": p.delay,
+            } as React.CSSProperties}
+          />
+        ))}
+
         {/* Balloon burst particles */}
         {[
           { color: "#ff0040", tx: "-30px", ty: "-40px", delay: "0s", top: "0", left: "20%" },
