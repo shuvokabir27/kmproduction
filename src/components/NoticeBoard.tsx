@@ -257,7 +257,16 @@ export function NoticeBoard() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold text-foreground text-base md:text-lg">
-                    {ongoingShootings!.some((s: any) => s.status === "calltime") ? "📢 কলটাইম নোটিশ!" : "🎬 শুটিং চলছে!"}
+                    {ongoingShootings!.some((s: any) => {
+                      if (s.status === "ongoing") return true;
+                      if (s.status === "calltime" && s.call_time && s.shoot_date) {
+                        const [h, m] = s.call_time.split(":").map(Number);
+                        const target = new Date(s.shoot_date);
+                        target.setHours(h, m, 0, 0);
+                        if (target.getTime() <= Date.now()) return true;
+                      }
+                      return false;
+                    }) ? "🎬 শুটিং চলছে!" : "📢 কলটাইম নোটিশ!"}
                   </h2>
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
