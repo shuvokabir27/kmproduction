@@ -8,10 +8,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 export function NoticeBoard() {
   const { user } = useAuth();
