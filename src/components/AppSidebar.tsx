@@ -42,6 +42,7 @@ const teamItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
   { title: "সদস্য", url: "/admin/members", icon: Users, color: "text-emerald-400", bg: "bg-emerald-500/10" },
   { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
+  { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
   { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
   { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-amber-400", bg: "bg-amber-500/10" },
