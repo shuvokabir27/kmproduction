@@ -147,8 +147,15 @@ export default function News() {
     }
   }, [newsList, searchParams, shortId, urlCategory, postNumber]);
 
+  const getNewsUrl = (news: NewsItem) => {
+    if (news.post_number) {
+      return `/news/${news.category}/${news.post_number}`;
+    }
+    return `/news?id=${news.id}`;
+  };
+
   const getShareUrl = (news: NewsItem) => {
-    return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/og-news?id=${news.id}`;
+    return `${window.location.origin}${getNewsUrl(news)}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
