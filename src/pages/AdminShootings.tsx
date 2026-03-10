@@ -679,14 +679,23 @@ const AdminShootings = () => {
               <span className="font-semibold text-cyan-400">{ongoingShootingName}</span> — কলটাইম, লোকেশন এবং সদস্যদের পোশাক/প্রপস নির্ধারণ করুন
             </p>
 
-            {/* Call Time & Location */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Call Time, Date & Location */}
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label className="text-foreground text-xs">কলটাইম *</Label>
                 <Input
                   type="time"
                   value={ongoingCallTime}
                   onChange={(e) => setOngoingCallTime(e.target.value)}
+                  className="bg-secondary border-border/50 h-9"
+                />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs">তারিখ</Label>
+                <Input
+                  type="date"
+                  value={ongoingShootDate}
+                  onChange={(e) => setOngoingShootDate(e.target.value)}
                   className="bg-secondary border-border/50 h-9"
                 />
               </div>
