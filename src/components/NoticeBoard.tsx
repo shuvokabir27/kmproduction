@@ -87,26 +87,78 @@ export function NoticeBoard() {
 
   return (
     <>
-      <div className="relative rounded-xl p-[2px] overflow-hidden group">
-        {/* Rotating rainbow border effect */}
+      <style>{`
+        @keyframes noticeSpin {
+          0% { transform: rotate(0deg); filter: drop-shadow(0 0 8px #ff0040) drop-shadow(0 0 20px #8000ff); }
+          25% { filter: drop-shadow(0 0 12px #ffef00) drop-shadow(0 0 25px #00ff80); }
+          50% { filter: drop-shadow(0 0 10px #00bfff) drop-shadow(0 0 22px #ff00ff); }
+          75% { filter: drop-shadow(0 0 14px #ff8c00) drop-shadow(0 0 28px #00ffff); }
+          100% { transform: rotate(360deg); filter: drop-shadow(0 0 8px #ff0040) drop-shadow(0 0 20px #8000ff); }
+        }
+        @keyframes balloonBurst {
+          0% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 1; }
+          50% { opacity: 1; }
+          100% { transform: scale(1) translate(calc(var(--tx) * 3), calc(var(--ty) * 3)); opacity: 0; }
+        }
+        .balloon-particle {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          animation: balloonBurst 2s ease-out infinite;
+          pointer-events: none;
+        }
+      `}</style>
+
+      <div className="relative rounded-xl p-[2px] overflow-visible">
+        {/* Balloon burst particles */}
+        {[
+          { color: "#ff0040", tx: "-30px", ty: "-40px", delay: "0s", top: "0", left: "20%" },
+          { color: "#ffef00", tx: "25px", ty: "-35px", delay: "0.3s", top: "0", left: "50%" },
+          { color: "#00ff80", tx: "40px", ty: "-20px", delay: "0.6s", top: "0", left: "75%" },
+          { color: "#00bfff", tx: "-35px", ty: "-25px", delay: "0.9s", top: "0", left: "35%" },
+          { color: "#ff00ff", tx: "20px", ty: "-45px", delay: "1.2s", top: "0", left: "60%" },
+          { color: "#ff8c00", tx: "-20px", ty: "-30px", delay: "1.5s", top: "0", left: "85%" },
+          { color: "#8000ff", tx: "30px", ty: "-38px", delay: "0.4s", top: "0", left: "10%" },
+          { color: "#00ffff", tx: "-15px", ty: "-42px", delay: "0.8s", top: "0", left: "45%" },
+        ].map((p, i) => (
+          <div
+            key={i}
+            className="balloon-particle"
+            style={{
+              background: p.color,
+              top: p.top,
+              left: p.left,
+              animationDelay: p.delay,
+              // @ts-ignore
+              "--tx": p.tx,
+              "--ty": p.ty,
+              boxShadow: `0 0 6px ${p.color}, 0 0 12px ${p.color}50`,
+              zIndex: 10,
+            } as React.CSSProperties}
+          />
+        ))}
+
+        {/* Rotating rainbow border with drop shadow */}
         <div className="absolute inset-0 rounded-xl overflow-hidden">
           <div
-            className="absolute inset-[-50%] animate-spin"
             style={{
+              position: "absolute",
+              inset: "-50%",
               background: "conic-gradient(from 0deg, #ff0040, #ff8c00, #ffef00, #00ff80, #00bfff, #8000ff, #ff00ff, #ff0040)",
-              animationDuration: "3s",
+              animation: "noticeSpin 3s linear infinite",
             }}
           />
         </div>
-        {/* Secondary slower glow layer */}
-        <div className="absolute inset-0 rounded-xl overflow-hidden opacity-50">
+        {/* Secondary reverse glow */}
+        <div className="absolute inset-0 rounded-xl overflow-hidden opacity-40">
           <div
-            className="absolute inset-[-50%] animate-spin"
             style={{
+              position: "absolute",
+              inset: "-50%",
               background: "conic-gradient(from 180deg, #00ffff, #ff00ff, #ffff00, #00ff00, #ff6600, #0066ff, #00ffff)",
-              animationDuration: "5s",
-              animationDirection: "reverse",
-              filter: "blur(4px)",
+              animation: "noticeSpin 5s linear infinite reverse",
+              filter: "blur(6px)",
             }}
           />
         </div>
