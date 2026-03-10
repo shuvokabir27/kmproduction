@@ -257,7 +257,16 @@ export function NoticeBoard() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold text-foreground text-base md:text-lg">
-                    {ongoingShootings!.some((s: any) => s.status === "calltime") ? "📢 কলটাইম নোটিশ!" : "🎬 শুটিং চলছে!"}
+                    {ongoingShootings!.some((s: any) => {
+                      if (s.status === "ongoing") return true;
+                      if (s.status === "calltime" && s.call_time && s.shoot_date) {
+                        const [h, m] = s.call_time.split(":").map(Number);
+                        const target = new Date(s.shoot_date);
+                        target.setHours(h, m, 0, 0);
+                        if (target.getTime() <= Date.now()) return true;
+                      }
+                      return false;
+                    }) ? "🎬 শুটিং চলছে!" : "📢 কলটাইম নোটিশ!"}
                   </h2>
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -574,24 +583,9 @@ export function NoticeBoard() {
 function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boolean; myInfo: any }) {
   const countdown = useCountdown(shooting.shoot_date, shooting.call_time);
   const pad = (n: number) => String(n).padStart(2, "0");
-  const queryClient = useQueryClient();
 
-  // Auto-change status from calltime to ongoing when countdown expires
-  useEffect(() => {
-    if (countdown?.expired && shooting.status === "calltime") {
-      const autoUpdate = async () => {
-        const { error } = await supabase
-          .from("shootings")
-          .update({ status: "ongoing" } as any)
-          .eq("id", shooting.id)
-          .eq("status", "calltime"); // only if still calltime
-        if (!error) {
-          queryClient.invalidateQueries({ queryKey: ["ongoing-shootings"] });
-        }
-      };
-      autoUpdate();
-    }
-  }, [countdown?.expired, shooting.id, shooting.status, queryClient]);
+  // Determine effective status: if countdown expired and status is still calltime, treat as ongoing locally
+  const effectiveStatus = (countdown?.expired && shooting.status === "calltime") ? "ongoing" : shooting.status;
 
   return (
     <motion.div
@@ -649,9 +643,9 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
             </div>
           )}
           {countdown?.expired && (
-            <span className="text-xs font-semibold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-full animate-pulse">
-              ⏰ কলটাইম হয়ে গেছে!
-            </span>
+            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 animate-pulse text-sm px-3 py-1.5">
+              🎬 শুটিং চলছে!
+            </Badge>
           )}
         </div>
       )}
@@ -683,10 +677,10 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
               <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-emerald-300">
-                  {shooting.status === "ongoing" ? "🎬 শুটিং চলছে!" : "কাল শুটিং শুরু হবে! 🎉"}
+                  {effectiveStatus === "ongoing" ? "🎬 শুটিং চলছে!" : "কাল শুটিং শুরু হবে! 🎉"}
                 </p>
                 <p className="text-xs text-emerald-400/80 mt-0.5">
-                  {shooting.status === "ongoing" 
+                  {effectiveStatus === "ongoing" 
                     ? "আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!" 
                     : "আপনি এই শুটিংয়ে রয়েছেন। শুভ কামনা আপনার জন্য!"}
                 </p>
