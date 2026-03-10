@@ -174,6 +174,14 @@ const AdminShootings = () => {
       setPublishDialogOpen(true);
       return;
     }
+    if (newStatus === "ongoing") {
+      const shooting = shootings?.find((s) => s.id === shootingId);
+      setOngoingShootingId(shootingId);
+      setOngoingShootingName(shooting?.name || "");
+      setSelectedMemberIds([]);
+      setOngoingDialogOpen(true);
+      return;
+    }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
     if (error) { toast.error(error.message); return; }
     const info = getStatusInfo(newStatus);
