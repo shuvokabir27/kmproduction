@@ -21,14 +21,14 @@ export function NoticeBoard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
 
-  // Fetch ongoing shootings
+  // Fetch ongoing/calltime shootings
   const { data: ongoingShootings } = useQuery({
     queryKey: ["ongoing-shootings"],
     queryFn: async () => {
       const { data } = await supabase
         .from("shootings")
         .select("*")
-        .eq("status", "ongoing")
+        .in("status", ["ongoing", "calltime"])
         .order("shoot_date", { ascending: false });
       return data ?? [];
     },
