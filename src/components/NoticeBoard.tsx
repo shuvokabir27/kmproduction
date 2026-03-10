@@ -47,6 +47,28 @@ export function NoticeBoard() {
 
   const hasOngoingShooting = ongoingShootings && ongoingShootings.length > 0;
 
+  // Fetch my participation in ongoing shootings
+  const { data: myParticipation } = useQuery({
+    queryKey: ["my-shooting-participation", ongoingShootings?.map((s: any) => s.id)],
+    enabled: hasOngoingShooting && !!user,
+    queryFn: async () => {
+      const shootingIds = ongoingShootings!.map((s: any) => s.id);
+      const { data } = await (supabase as any)
+        .from("shooting_participants")
+        .select("shooting_id, member_id, profiles!shooting_participants_member_id_fkey(user_id)")
+        .in("shooting_id", shootingIds);
+      return data ?? [];
+    },
+  });
+
+  // Check if current user is a participant in a specific shooting
+  const isParticipant = (shootingId: string) => {
+    if (!myParticipation || !user) return false;
+    return myParticipation.some(
+      (p: any) => p.shooting_id === shootingId && p.profiles?.user_id === user.id
+    );
+  };
+
   const { data: notices } = useQuery({
     queryKey: ["member-notices"],
     queryFn: async () => {
