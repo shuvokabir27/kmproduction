@@ -59,7 +59,7 @@ export function NoticeBoard() {
       const shootingIds = ongoingShootings!.map((s: any) => s.id);
       const { data } = await (supabase as any)
         .from("shooting_participants")
-        .select("shooting_id, member_id, profiles!shooting_participants_member_id_fkey(user_id)")
+        .select("shooting_id, member_id, costume, props, profiles!shooting_participants_member_id_fkey(user_id)")
         .in("shooting_id", shootingIds);
       return data ?? [];
     },
@@ -69,6 +69,14 @@ export function NoticeBoard() {
   const isParticipant = (shootingId: string) => {
     if (!myParticipation || !user) return false;
     return myParticipation.some(
+      (p: any) => p.shooting_id === shootingId && p.profiles?.user_id === user.id
+    );
+  };
+
+  // Get current user's details for a specific shooting
+  const getMyDetails = (shootingId: string) => {
+    if (!myParticipation || !user) return null;
+    return myParticipation.find(
       (p: any) => p.shooting_id === shootingId && p.profiles?.user_id === user.id
     );
   };
