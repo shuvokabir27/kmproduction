@@ -36,6 +36,7 @@ const AdminSettings = () => {
   const coverRef = useRef<HTMLInputElement>(null);
 
   const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [siteSettingsOpen, setSiteSettingsOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
