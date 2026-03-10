@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Settings } from "lucide-react";
+import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Settings, Globe } from "lucide-react";
+import { SiteSettingsDialog } from "@/components/SiteSettingsDialog";
 import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -35,6 +36,7 @@ const AdminSettings = () => {
   const coverRef = useRef<HTMLInputElement>(null);
 
   const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [siteSettingsOpen, setSiteSettingsOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
@@ -225,6 +227,19 @@ const AdminSettings = () => {
         {/* Settings Options */}
         <div className="space-y-2">
           <button
+            onClick={() => setSiteSettingsOpen(true)}
+            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
+          >
+            <div className="h-10 w-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+              <Globe className="h-5 w-5 text-cyan-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">সাইট সেটিংস</p>
+              <p className="text-xs text-muted-foreground">সাইট টাইটেল, লোগো ও আইকন পরিবর্তন করুন</p>
+            </div>
+          </button>
+
+          <button
             onClick={() => setProfileEditOpen(true)}
             className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
           >
@@ -388,6 +403,8 @@ const AdminSettings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <SiteSettingsDialog open={siteSettingsOpen} onOpenChange={setSiteSettingsOpen} />
     </AppLayout>
   );
 };
