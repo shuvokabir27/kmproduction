@@ -181,7 +181,10 @@ const AdminShootings = () => {
       const shooting = shootings?.find((s) => s.id === shootingId);
       setOngoingShootingId(shootingId);
       setOngoingShootingName(shooting?.name || "");
+      setOngoingCallTime((shooting as any)?.call_time || "");
+      setOngoingLocation(shooting?.location || "");
       setSelectedMemberIds([]);
+      setMemberDetails({});
       setOngoingDialogOpen(true);
       return;
     }
