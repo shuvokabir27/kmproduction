@@ -288,7 +288,7 @@ export default function News() {
             {featured && (
               <article
                 className="cursor-pointer group mb-6"
-                onClick={() => setSelectedNews(featured)}
+                onClick={() => handleSelectNews(featured)}
               >
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                   {/* Image */}
