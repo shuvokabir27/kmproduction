@@ -656,8 +656,15 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
                 <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ কামনা আপনার জন্য!</p>
               </div>
             </div>
-            {(myInfo?.costume || myInfo?.props) && (
+          {(myInfo?.character_name || myInfo?.costume || myInfo?.props) && (
               <div className="ml-7 space-y-1.5 pt-1 border-t border-emerald-500/15">
+                {myInfo.character_name && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <UserCircle className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <span className="text-muted-foreground">চরিত্র:</span>
+                    <span className="text-emerald-300 font-semibold">{myInfo.character_name}</span>
+                  </div>
+                )}
                 {myInfo.costume && (
                   <div className="flex items-center gap-2 text-xs">
                     <Shirt className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
