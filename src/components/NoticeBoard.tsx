@@ -569,3 +569,122 @@ export function NoticeBoard() {
     </>
   );
 }
+
+// Separate component so useCountdown hook is called unconditionally
+function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boolean; myInfo: any }) {
+  const countdown = useCountdown(shooting.shoot_date, shooting.call_time);
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  return (
+    <motion.div
+      key={shooting.id}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-4 md:p-5"
+    >
+      <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
+      
+      {/* Highlighted Call Time + Countdown */}
+      {shooting.call_time && (
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="relative flex items-center gap-2 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-2.5 shadow-lg shadow-amber-500/10">
+            <div className="absolute inset-0 rounded-xl bg-amber-400/5 animate-pulse" />
+            <div className="relative flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                <Clock className="h-4.5 w-4.5 text-amber-400" />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-amber-400/70 font-medium">কলটাইম</p>
+                <p className="text-lg font-bold text-amber-300 leading-tight">{shooting.call_time}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Countdown Timer */}
+          {countdown && !countdown.expired && (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-violet-500/15 via-purple-500/10 to-fuchsia-500/10 border border-violet-500/25 rounded-xl px-3 py-2 shadow-md shadow-violet-500/10">
+              <Timer className="h-4 w-4 text-violet-400 shrink-0" />
+              <span className="text-[10px] text-violet-400/70 mr-1">বাকি</span>
+              <div className="flex items-center gap-1">
+                {countdown.hours > 0 && (
+                  <>
+                    <span className="bg-violet-500/20 text-violet-300 font-mono font-bold text-sm px-1.5 py-0.5 rounded-md min-w-[28px] text-center">{pad(countdown.hours)}</span>
+                    <span className="text-violet-400/60 text-xs font-bold">:</span>
+                  </>
+                )}
+                <span className="bg-violet-500/20 text-violet-300 font-mono font-bold text-sm px-1.5 py-0.5 rounded-md min-w-[28px] text-center">{pad(countdown.minutes)}</span>
+                <span className="text-violet-400/60 text-xs font-bold">:</span>
+                <span className="bg-violet-500/20 text-violet-300 font-mono font-bold text-sm px-1.5 py-0.5 rounded-md min-w-[28px] text-center animate-pulse">{pad(countdown.seconds)}</span>
+              </div>
+            </div>
+          )}
+          {countdown?.expired && (
+            <span className="text-xs font-semibold text-amber-400 bg-amber-500/15 px-2.5 py-1 rounded-full animate-pulse">
+              ⏰ কলটাইম হয়ে গেছে!
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center gap-3 mt-2">
+        {shooting.location && (
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
+            <MapPin className="h-3 w-3 text-cyan-400" />
+            {shooting.location}
+          </span>
+        )}
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <Clock className="h-3 w-3 text-cyan-400" />
+          {format(new Date(shooting.shoot_date), "dd MMM yyyy", { locale: bn })}
+        </span>
+      </div>
+      {shooting.description && (
+        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
+      )}
+      {/* Personalized participation message */}
+      <div className={`mt-3 p-3 rounded-lg ${
+        iAmIn 
+          ? "bg-emerald-500/10 border border-emerald-500/20" 
+          : "bg-rose-500/10 border border-rose-500/20"
+      }`}>
+        {iAmIn ? (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+              <div>
+                <p className="text-sm font-semibold text-emerald-300">আজ শুটিং চলছে! 🎉</p>
+                <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!</p>
+              </div>
+            </div>
+            {(myInfo?.costume || myInfo?.props) && (
+              <div className="ml-7 space-y-1.5 pt-1 border-t border-emerald-500/15">
+                {myInfo.costume && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Shirt className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <span className="text-muted-foreground">পোশাক:</span>
+                    <span className="text-emerald-300 font-medium">{myInfo.costume}</span>
+                  </div>
+                )}
+                {myInfo.props && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Package className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <span className="text-muted-foreground">প্রপস:</span>
+                    <span className="text-emerald-300 font-medium">{myInfo.props}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2.5">
+            <XCircle className="h-5 w-5 text-rose-400 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-rose-300">দুঃখিত 😔</p>
+              <p className="text-xs text-rose-400/80 mt-0.5">আজকের শুটিংয়ে আপনি নেই। পরবর্তী শুটিংয়ে দেখা হবে!</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
