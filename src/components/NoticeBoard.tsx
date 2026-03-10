@@ -114,11 +114,25 @@ export function NoticeBoard() {
           90% { opacity: 1; }
           100% { left: 105%; opacity: 0; transform: translateY(calc(var(--fly-y) + var(--drift))) scale(0.3); }
         }
+        @keyframes flyAcrossReverse {
+          0% { right: -5%; opacity: 0; transform: translateY(var(--fly-y)) scale(0.5); }
+          10% { opacity: 1; transform: translateY(var(--fly-y)) scale(1); }
+          90% { opacity: 1; }
+          100% { right: 105%; opacity: 0; transform: translateY(calc(var(--fly-y) + var(--drift))) scale(0.3); }
+        }
         .light-firefly {
           position: absolute;
           border-radius: 50%;
           pointer-events: none;
           animation: flyAcross var(--duration) ease-in-out infinite;
+          animation-delay: var(--delay);
+          z-index: 10;
+        }
+        .light-firefly-reverse {
+          position: absolute;
+          border-radius: 50%;
+          pointer-events: none;
+          animation: flyAcrossReverse var(--duration) ease-in-out infinite;
           animation-delay: var(--delay);
           z-index: 10;
         }
@@ -137,6 +151,31 @@ export function NoticeBoard() {
           <div
             key={`fly-${i}`}
             className="light-firefly"
+            style={{
+              width: p.size,
+              height: p.size,
+              top: p.y,
+              background: p.color,
+              boxShadow: `0 0 ${p.size * 2}px ${p.color}, 0 0 ${p.size * 4}px ${p.color}80`,
+              "--fly-y": "0px",
+              "--drift": p.drift,
+              "--duration": p.duration,
+              "--delay": p.delay,
+            } as React.CSSProperties}
+          />
+        ))}
+
+        {/* Reverse flying light particles (right to left) */}
+        {[
+          { color: "#ff6688", size: 5, y: "25%", drift: "12px", duration: "4.2s", delay: "0.7s" },
+          { color: "#66ffdd", size: 4, y: "55%", drift: "-10px", duration: "5.2s", delay: "1.8s" },
+          { color: "#ffdd44", size: 5, y: "40%", drift: "15px", duration: "3.8s", delay: "2.5s" },
+          { color: "#aa88ff", size: 4, y: "65%", drift: "-12px", duration: "5.8s", delay: "0.3s" },
+          { color: "#44ddff", size: 3, y: "18%", drift: "8px", duration: "4.8s", delay: "1.2s" },
+        ].map((p, i) => (
+          <div
+            key={`fly-rev-${i}`}
+            className="light-firefly-reverse"
             style={{
               width: p.size,
               height: p.size,
