@@ -472,7 +472,7 @@ const PublicHome = () => {
                 const youtubeId = extractYouTubeId(v.video_url);
                 return (
                   <motion.div key={v.id} variants={item}>
-                    <div className="premium-card rounded-2xl overflow-hidden relative group">
+                    <div className="premium-card rounded-2xl overflow-hidden relative group transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(0,200,255,0.15)] hover:border-primary/30 border border-transparent">
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary via-primary/60 to-transparent z-20" />
                       {youtubeId ? (
                         <div className="relative w-full aspect-video bg-background">
