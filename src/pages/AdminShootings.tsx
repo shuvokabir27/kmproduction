@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useCallback } from "react";
@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScriptEditor } from "@/components/ScriptEditor";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const statusOptions = [
   { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "text-violet-400 bg-violet-500/10 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300 border border-violet-500/20" },
@@ -56,6 +57,12 @@ const AdminShootings = () => {
   const [deleteShootingName, setDeleteShootingName] = useState<string>("");
   const [deleteTimer, setDeleteTimer] = useState(5);
   const [deleteTimerActive, setDeleteTimerActive] = useState(false);
+  // Ongoing member selection
+  const [ongoingDialogOpen, setOngoingDialogOpen] = useState(false);
+  const [ongoingShootingId, setOngoingShootingId] = useState<string>("");
+  const [ongoingShootingName, setOngoingShootingName] = useState<string>("");
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+  const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -81,7 +88,15 @@ const AdminShootings = () => {
     },
   });
 
-  // Delete timer effect - must be before early returns
+  // Fetch all active members for ongoing selection
+  const { data: allMembers } = useQuery({
+    queryKey: ["all-members-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("id, full_name, member_id, photo_url").eq("is_active", true).order("full_name");
+      return (data ?? []) as any[];
+    },
+  });
+
   useEffect(() => {
     if (!deleteTimerActive || deleteTimer <= 0) return;
     const interval = setInterval(() => {
@@ -159,6 +174,14 @@ const AdminShootings = () => {
       setPublishDialogOpen(true);
       return;
     }
+    if (newStatus === "ongoing") {
+      const shooting = shootings?.find((s) => s.id === shootingId);
+      setOngoingShootingId(shootingId);
+      setOngoingShootingName(shooting?.name || "");
+      setSelectedMemberIds([]);
+      setOngoingDialogOpen(true);
+      return;
+    }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
     if (error) { toast.error(error.message); return; }
     const info = getStatusInfo(newStatus);
@@ -177,6 +200,31 @@ const AdminShootings = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
   };
 
+  const confirmOngoing = async () => {
+    if (selectedMemberIds.length === 0) {
+      toast.error("অন্তত একজন সদস্য নির্বাচন করুন");
+      return;
+    }
+    setOngoingSubmitting(true);
+    try {
+      // First delete existing participants for this shooting
+      await (supabase as any).from("shooting_participants").delete().eq("shooting_id", ongoingShootingId);
+      // Insert selected participants
+      const rows = selectedMemberIds.map((mid) => ({ shooting_id: ongoingShootingId, member_id: mid }));
+      const { error: insertErr } = await (supabase as any).from("shooting_participants").insert(rows);
+      if (insertErr) throw insertErr;
+      // Update status to ongoing
+      const { error } = await supabase.from("shootings").update({ status: "ongoing" }).eq("id", ongoingShootingId);
+      if (error) throw error;
+      toast.success("শুটিং চলছে! সদস্যদের নোটিফাই করা হবে।");
+      setOngoingDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setOngoingSubmitting(false);
+    }
+  };
   const openScriptEditor = (shooting: any) => {
     setScriptEditShooting(shooting);
     setScriptEditorOpen(true);
@@ -550,6 +598,88 @@ const AdminShootings = () => {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Ongoing Member Selection Dialog */}
+      <Dialog open={ongoingDialogOpen} onOpenChange={setOngoingDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-md max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Users className="h-5 w-5 text-cyan-400" />
+              শুটিংয়ে কারা আছেন?
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-xs text-muted-foreground -mt-2">
+            <span className="font-semibold text-cyan-400">{ongoingShootingName}</span> — যারা এই শুটিংয়ে অংশ নিচ্ছেন তাদের সিলেক্ট করুন
+          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs h-7 border-border/30"
+              onClick={() => setSelectedMemberIds(allMembers?.map((m: any) => m.id) || [])}
+            >
+              সবাই সিলেক্ট
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs h-7 border-border/30"
+              onClick={() => setSelectedMemberIds([])}
+            >
+              সব বাদ
+            </Button>
+            <span className="text-xs text-muted-foreground ml-auto">
+              {selectedMemberIds.length}/{allMembers?.length || 0} জন
+            </span>
+          </div>
+          <div className="overflow-y-auto flex-1 space-y-1 pr-1 max-h-[50vh]">
+            {allMembers?.map((member: any) => {
+              const isSelected = selectedMemberIds.includes(member.id);
+              return (
+                <label
+                  key={member.id}
+                  className={`flex items-center gap-3 p-2.5 rounded-lg cursor-pointer transition-all ${
+                    isSelected
+                      ? "bg-cyan-500/15 ring-1 ring-cyan-500/30"
+                      : "bg-secondary/30 hover:bg-secondary/50"
+                  }`}
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={(checked) => {
+                      setSelectedMemberIds((prev) =>
+                        checked
+                          ? [...prev, member.id]
+                          : prev.filter((id) => id !== member.id)
+                      );
+                    }}
+                    className="border-border/50 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
+                  />
+                  {member.photo_url ? (
+                    <img src={member.photo_url} alt="" className="h-8 w-8 rounded-full object-cover" />
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">
+                      {member.full_name?.charAt(0)}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{member.full_name}</p>
+                    <p className="text-[10px] text-muted-foreground">ID: {member.member_id}</p>
+                  </div>
+                  {isSelected && <Check className="h-4 w-4 text-cyan-400 shrink-0" />}
+                </label>
+              );
+            })}
+          </div>
+          <Button
+            onClick={confirmOngoing}
+            disabled={ongoingSubmitting || selectedMemberIds.length === 0}
+            className="w-full mt-2 bg-cyan-600 hover:bg-cyan-700"
+          >
+            {ongoingSubmitting ? "সেভ হচ্ছে..." : `শুটিং শুরু করুন (${selectedMemberIds.length} জন)`}
+          </Button>
         </DialogContent>
       </Dialog>
     </AppLayout>
