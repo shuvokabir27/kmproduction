@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Receipt, TrendingUp, Utensils, Car, Package, MoreHorizontal } from "lucide-react";
+import { Plus, Trash2, Receipt, TrendingUp, Utensils, Car, Package, MoreHorizontal, Pencil } from "lucide-react";
 import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
 import { bn } from "date-fns/locale";
 
@@ -27,6 +27,7 @@ export default function AdminShootingExpenses() {
   const [selectedShooting, setSelectedShooting] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), "yyyy-MM"));
+  const [editingExpense, setEditingExpense] = useState<any>(null);
 
   // Form state
   const [formShootingId, setFormShootingId] = useState("");
