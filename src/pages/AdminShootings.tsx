@@ -227,7 +227,7 @@ const AdminShootings = () => {
       if (insertErr) throw insertErr;
       // Update shooting status + call_time
       const { error } = await supabase.from("shootings").update({
-        status: "ongoing",
+        status: "calltime",
         call_time: ongoingCallTime || null,
         location: ongoingLocation || null,
       } as any).eq("id", ongoingShootingId);
