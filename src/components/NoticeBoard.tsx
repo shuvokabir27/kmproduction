@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,13 +6,38 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video, CheckCircle2, XCircle, Shirt, Package } from "lucide-react";
+import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video, CheckCircle2, XCircle, Shirt, Package, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
+
+// Countdown timer hook
+function useCountdown(targetDateStr: string | null, targetTimeStr: string | null) {
+  const [now, setNow] = useState(Date.now());
+  
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return useMemo(() => {
+    if (!targetDateStr || !targetTimeStr) return null;
+    // Parse call_time like "08:00" and shoot_date
+    const [hours, minutes] = targetTimeStr.split(":").map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return null;
+    const target = new Date(targetDateStr);
+    target.setHours(hours, minutes, 0, 0);
+    const diff = target.getTime() - now;
+    if (diff <= 0) return { hours: 0, minutes: 0, seconds: 0, expired: true };
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return { hours: h, minutes: m, seconds: s, expired: false };
+  }, [targetDateStr, targetTimeStr, now]);
+}
 
 export function NoticeBoard() {
   const { user } = useAuth();
