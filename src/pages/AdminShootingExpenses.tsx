@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Receipt, TrendingUp, Utensils, Car, Package, MoreHorizontal } from "lucide-react";
+import { Plus, Trash2, Receipt, TrendingUp, Utensils, Car, Package, MoreHorizontal, Pencil } from "lucide-react";
 import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
 import { bn } from "date-fns/locale";
 
@@ -27,6 +27,7 @@ export default function AdminShootingExpenses() {
   const [selectedShooting, setSelectedShooting] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), "yyyy-MM"));
+  const [editingExpense, setEditingExpense] = useState<any>(null);
 
   // Form state
   const [formShootingId, setFormShootingId] = useState("");
@@ -61,25 +62,33 @@ export default function AdminShootingExpenses() {
     },
   });
 
-  // Add expense
-  const addExpense = useMutation({
+  // Add/Edit expense
+  const saveExpense = useMutation({
     mutationFn: async () => {
-      const { error } = await (supabase as any).from("shooting_expenses").insert({
-        shooting_id: formShootingId,
-        category: formCategory,
-        amount: Number(formAmount),
-        description: formDescription || null,
-        expense_date: formDate,
-      });
-      if (error) throw error;
+      if (editingExpense) {
+        const { error } = await (supabase as any).from("shooting_expenses").update({
+          shooting_id: formShootingId,
+          category: formCategory,
+          amount: Number(formAmount),
+          description: formDescription || null,
+          expense_date: formDate,
+        }).eq("id", editingExpense.id);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any).from("shooting_expenses").insert({
+          shooting_id: formShootingId,
+          category: formCategory,
+          amount: Number(formAmount),
+          description: formDescription || null,
+          expense_date: formDate,
+        });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shooting-expenses"] });
-      toast({ title: "খরচ যুক্ত হয়েছে" });
-      setDialogOpen(false);
-      setFormAmount("");
-      setFormDescription("");
-      setFormCategory("");
+      toast({ title: editingExpense ? "খরচ আপডেট হয়েছে" : "খরচ যুক্ত হয়েছে" });
+      closeDialog();
     },
     onError: () => toast({ title: "ত্রুটি হয়েছে", variant: "destructive" }),
   });
@@ -95,6 +104,26 @@ export default function AdminShootingExpenses() {
       toast({ title: "খরচ মুছে ফেলা হয়েছে" });
     },
   });
+
+  const openEditDialog = (expense: any) => {
+    setEditingExpense(expense);
+    setFormShootingId(expense.shooting_id);
+    setFormCategory(expense.category);
+    setFormAmount(String(expense.amount));
+    setFormDescription(expense.description || "");
+    setFormDate(expense.expense_date);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setEditingExpense(null);
+    setFormShootingId("");
+    setFormCategory("");
+    setFormAmount("");
+    setFormDescription("");
+    setFormDate(format(new Date(), "yyyy-MM-dd"));
+  };
 
   // Filter expenses by shooting
   const filteredExpenses = useMemo(() => {
@@ -160,13 +189,13 @@ export default function AdminShootingExpenses() {
             <h1 className="text-2xl font-bold">শুটিং খরচ</h1>
             <p className="text-sm text-muted-foreground">শুটিং অনুযায়ী খরচ ব্যবস্থাপনা</p>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); else setDialogOpen(true); }}>
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" /> খরচ যুক্ত</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>নতুন খরচ যুক্ত করুন</DialogTitle>
+                <DialogTitle>{editingExpense ? "খরচ সম্পাদনা করুন" : "নতুন খরচ যুক্ত করুন"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <Select value={formShootingId} onValueChange={setFormShootingId}>
@@ -205,10 +234,10 @@ export default function AdminShootingExpenses() {
                 />
                 <Button
                   className="w-full"
-                  disabled={!formShootingId || !formCategory || !formAmount || addExpense.isPending}
-                  onClick={() => addExpense.mutate()}
+                  disabled={!formShootingId || !formCategory || !formAmount || saveExpense.isPending}
+                  onClick={() => saveExpense.mutate()}
                 >
-                  {addExpense.isPending ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
+                  {saveExpense.isPending ? "সেভ হচ্ছে..." : editingExpense ? "আপডেট করুন" : "যুক্ত করুন"}
                 </Button>
               </div>
             </DialogContent>
@@ -350,7 +379,15 @@ export default function AdminShootingExpenses() {
                           <TableCell className="text-muted-foreground max-w-[200px] truncate">{e.description || "—"}</TableCell>
                           <TableCell className="text-right font-medium">৳{Number(e.amount).toLocaleString("bn-BD")}</TableCell>
                           <TableCell className="text-muted-foreground">{format(parseISO(e.expense_date), "dd MMM", { locale: bn })}</TableCell>
-                          <TableCell>
+                          <TableCell className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => openEditDialog(e)}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
