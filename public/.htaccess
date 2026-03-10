@@ -2,19 +2,10 @@
   RewriteEngine On
   RewriteBase /
 
-  # Redirect social media crawlers to edge function for OG tags
-  RewriteCond %{HTTP_USER_AGENT} facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|TelegramBot|Pinterest|Discordbot [NC]
-  RewriteCond %{REQUEST_URI} ^/news/([^/]+)/([0-9]+)$ [NC]
-  RewriteRule ^news/([^/]+)/([0-9]+)$ https://xbgxnwzluykgxcxujeay.supabase.co/functions/v1/og-news?category=%1&post_number=%2 [R=302,L]
-
-  # Redirect social media crawlers for news with id param
-  RewriteCond %{HTTP_USER_AGENT} facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|TelegramBot|Pinterest|Discordbot [NC]
-  RewriteCond %{QUERY_STRING} id=([a-f0-9-]+) [NC]
-  RewriteRule ^news$ https://xbgxnwzluykgxcxujeay.supabase.co/functions/v1/og-news?id=%1 [R=302,L]
-
-  # SPA fallback
+  # Route all requests through index.php for crawler detection
   RewriteRule ^index\.html$ - [L]
+  RewriteRule ^index\.php$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule . /index.php [L]
 </IfModule>
