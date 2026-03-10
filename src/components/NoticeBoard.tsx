@@ -643,9 +643,9 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
             </div>
           )}
           {countdown?.expired && (
-            <span className="text-xs font-semibold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-full animate-pulse">
-              ⏰ কলটাইম হয়ে গেছে!
-            </span>
+            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 animate-pulse text-sm px-3 py-1.5">
+              🎬 শুটিং চলছে!
+            </Badge>
           )}
         </div>
       )}
