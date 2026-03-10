@@ -1133,6 +1133,7 @@ export type Database = {
           contact_phone: string | null
           facebook_pages: Json | null
           facebook_url: string | null
+          favicon_url: string | null
           id: string
           instagram_url: string | null
           logo_url: string | null
@@ -1151,6 +1152,7 @@ export type Database = {
           contact_phone?: string | null
           facebook_pages?: Json | null
           facebook_url?: string | null
+          favicon_url?: string | null
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
@@ -1169,6 +1171,7 @@ export type Database = {
           contact_phone?: string | null
           facebook_pages?: Json | null
           facebook_url?: string | null
+          favicon_url?: string | null
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
