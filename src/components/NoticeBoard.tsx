@@ -87,41 +87,63 @@ export function NoticeBoard() {
 
   return (
     <>
-      <Card className="bg-card border-border/50 overflow-hidden">
-        <div className="p-4 border-b border-border/30 flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Megaphone className="h-4 w-4 text-primary" />
+      <Card className="bg-gradient-to-br from-card via-card to-primary/5 border-border/50 overflow-hidden shadow-lg shadow-primary/5">
+        {/* Header */}
+        <div className="p-4 md:p-5 border-b border-border/30 flex items-center gap-3 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/20 shadow-sm shadow-primary/10">
+            <Megaphone className="h-5 w-5 text-primary" />
           </div>
-          <h2 className="font-semibold text-foreground">নোটিশ বোর্ড</h2>
+          <div>
+            <h2 className="font-bold text-foreground text-base md:text-lg">নোটিশ বোর্ড</h2>
+            <p className="text-[10px] md:text-xs text-muted-foreground">{notices.length}টি নোটিশ</p>
+          </div>
         </div>
-        <div className="divide-y divide-border/20">
+
+        {/* Notice List */}
+        <div className="divide-y divide-border/15">
           <AnimatePresence>
             {notices.map((notice: any, i: number) => (
               <motion.div
                 key={notice.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="p-4 hover:bg-secondary/30 transition-colors cursor-pointer"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
+                className={`p-3.5 md:p-4 cursor-pointer transition-all duration-200 group
+                  ${notice.is_pinned
+                    ? "bg-gradient-to-r from-amber-500/8 via-transparent to-transparent border-l-[3px] border-l-amber-400 hover:from-amber-500/15"
+                    : "hover:bg-primary/5 border-l-[3px] border-l-transparent"
+                  }`}
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start gap-3">
-                  {notice.is_pinned && (
-                    <Pin className="h-3.5 w-3.5 text-primary mt-1 shrink-0" />
-                  )}
+                  {/* Icon */}
+                  <div className={`mt-0.5 shrink-0 h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center ${
+                    notice.is_pinned
+                      ? "bg-amber-500/15 ring-1 ring-amber-500/20"
+                      : "bg-primary/10 ring-1 ring-primary/10 group-hover:ring-primary/20"
+                  }`}>
+                    {notice.is_pinned
+                      ? <Pin className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
+                      : <Megaphone className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary/70 group-hover:text-primary" />
+                    }
+                  </div>
+                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <h3 className={`text-sm font-semibold text-foreground ${notice.is_pinned ? "text-primary" : ""}`}>
+                    <h3 className={`text-sm md:text-[15px] font-semibold leading-snug ${
+                      notice.is_pinned ? "text-amber-300" : "text-foreground group-hover:text-primary"
+                    } transition-colors`}>
+                      {notice.is_pinned && <span className="text-[10px] font-medium text-amber-400/80 uppercase tracking-wider mr-1.5">পিন করা</span>}
                       {notice.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{notice.content}</p>
-                    <div className="flex items-center gap-3 mt-1.5">
-                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-2.5 w-2.5" />
+                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mt-1 leading-relaxed">{notice.content}</p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] md:text-xs text-muted-foreground/70 flex items-center gap-1">
+                        <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
                         {formatDistanceToNow(new Date(notice.created_at), { addSuffix: true, locale: bn })}
                       </span>
                       {(commentCounts?.[notice.id] ?? 0) > 0 && (
-                        <span className="text-[10px] text-primary flex items-center gap-1 font-medium">
-                          <MessageSquare className="h-2.5 w-2.5" />
+                        <span className="text-[10px] md:text-xs text-primary flex items-center gap-1 font-semibold bg-primary/10 px-1.5 py-0.5 rounded-full">
+                          <MessageSquare className="h-2.5 w-2.5 md:h-3 md:w-3" />
                           {commentCounts[notice.id]}
                         </span>
                       )}
