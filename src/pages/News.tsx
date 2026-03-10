@@ -192,7 +192,7 @@ export default function News() {
       <NewsDetail
         news={selectedNews}
         categories={categories}
-        onBack={() => navigate("/news")}
+        onBack={() => { setSelectedNews(null); navigate("/news"); }}
         onShare={handleShare}
         publisherName={getPublisherName(selectedNews.publisher_id)}
       />
