@@ -2,10 +2,15 @@
   RewriteEngine On
   RewriteBase /
 
-  # Route all requests through index.php for crawler detection
-  RewriteRule ^index\.html$ - [L]
-  RewriteRule ^index\.php$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.php [L]
+  # Let real files and directories pass through
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Route social media crawlers through index.php for OG tags
+  RewriteCond %{HTTP_USER_AGENT} facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|TelegramBot|Pinterest|Discordbot [NC]
+  RewriteRule ^ /index.php [L]
+
+  # All other requests go to index.html (SPA fallback)
+  RewriteRule ^ /index.html [L]
 </IfModule>
