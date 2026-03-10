@@ -31,6 +31,8 @@ export interface NewsItem {
   published_at: string | null;
   video_url: string | null;
   publisher_id: string | null;
+  post_number: number | null;
+  slug: string | null;
 }
 
 export interface Publisher {
@@ -42,7 +44,7 @@ export interface Publisher {
 export default function News() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { shortId } = useParams();
+  const { shortId, category: urlCategory, postNumber } = useParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
@@ -122,6 +124,13 @@ export default function News() {
 
   useEffect(() => {
     if (!newsList) return;
+    // Check for /news/:category/:postNumber URL
+    if (urlCategory && postNumber) {
+      const num = parseInt(postNumber);
+      const found = newsList.find((n) => n.category === urlCategory && n.post_number === num);
+      if (found) setSelectedNews(found);
+      return;
+    }
     const newsId = searchParams.get("id");
     if (newsId) {
       const found = newsList.find((n) => n.id === newsId);
@@ -136,10 +145,17 @@ export default function News() {
       const found = newsList.find((n) => n.id === fullId);
       if (found) setSelectedNews(found);
     }
-  }, [newsList, searchParams, shortId]);
+  }, [newsList, searchParams, shortId, urlCategory, postNumber]);
+
+  const getNewsUrl = (news: NewsItem) => {
+    if (news.post_number) {
+      return `/news/${news.category}/${news.post_number}`;
+    }
+    return `/news?id=${news.id}`;
+  };
 
   const getShareUrl = (news: NewsItem) => {
-    return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/og-news?id=${news.id}`;
+    return `${window.location.origin}${getNewsUrl(news)}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
@@ -159,12 +175,20 @@ export default function News() {
     }
   };
 
+  const handleSelectNews = (news: NewsItem) => {
+    if (news.post_number) {
+      navigate(`/news/${news.category}/${news.post_number}`);
+    } else {
+      setSelectedNews(news);
+    }
+  };
+
   if (selectedNews) {
     return (
       <NewsDetail
         news={selectedNews}
         categories={categories}
-        onBack={() => setSelectedNews(null)}
+        onBack={() => navigate("/news")}
         onShare={handleShare}
         publisherName={getPublisherName(selectedNews.publisher_id)}
       />
@@ -222,7 +246,7 @@ export default function News() {
           <NewsTicker
             tickerTexts={tickerTexts}
             tickerSpeed={tickerSpeed}
-            onSelectNews={(item) => item.newsItem && setSelectedNews(item.newsItem)}
+            onSelectNews={(item) => item.newsItem && handleSelectNews(item.newsItem)}
           />
         )}
 
@@ -264,7 +288,7 @@ export default function News() {
             {featured && (
               <article
                 className="cursor-pointer group mb-6"
-                onClick={() => setSelectedNews(featured)}
+                onClick={() => handleSelectNews(featured)}
               >
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                   {/* Image */}
@@ -330,7 +354,7 @@ export default function News() {
                     news={news}
                     categories={categories}
                     isFirst={idx === 0}
-                    onClick={() => setSelectedNews(news)}
+                    onClick={() => handleSelectNews(news)}
                     publisherName={getPublisherName(news.publisher_id)}
                   />
                 ))}
@@ -343,7 +367,7 @@ export default function News() {
                     news={news}
                     categories={categories}
                     isFirst={idx === 0}
-                    onClick={() => setSelectedNews(news)}
+                    onClick={() => handleSelectNews(news)}
                     publisherName={getPublisherName(news.publisher_id)}
                   />
                 ))}
