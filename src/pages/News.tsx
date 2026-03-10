@@ -31,6 +31,8 @@ export interface NewsItem {
   published_at: string | null;
   video_url: string | null;
   publisher_id: string | null;
+  post_number: number | null;
+  slug: string | null;
 }
 
 export interface Publisher {

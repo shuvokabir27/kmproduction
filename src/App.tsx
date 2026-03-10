@@ -74,6 +74,7 @@ const App = () => (
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/news" element={<News />} />
+            <Route path="/news/:category/:postNumber" element={<News />} />
             <Route path="/news/:shortId" element={<News />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
