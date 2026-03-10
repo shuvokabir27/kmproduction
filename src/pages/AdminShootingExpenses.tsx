@@ -105,6 +105,26 @@ export default function AdminShootingExpenses() {
     },
   });
 
+  const openEditDialog = (expense: any) => {
+    setEditingExpense(expense);
+    setFormShootingId(expense.shooting_id);
+    setFormCategory(expense.category);
+    setFormAmount(String(expense.amount));
+    setFormDescription(expense.description || "");
+    setFormDate(expense.expense_date);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setEditingExpense(null);
+    setFormShootingId("");
+    setFormCategory("");
+    setFormAmount("");
+    setFormDescription("");
+    setFormDate(format(new Date(), "yyyy-MM-dd"));
+  };
+
   // Filter expenses by shooting
   const filteredExpenses = useMemo(() => {
     if (!expenses) return [];
