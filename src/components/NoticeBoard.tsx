@@ -574,6 +574,24 @@ export function NoticeBoard() {
 function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boolean; myInfo: any }) {
   const countdown = useCountdown(shooting.shoot_date, shooting.call_time);
   const pad = (n: number) => String(n).padStart(2, "0");
+  const queryClient = useQueryClient();
+
+  // Auto-change status from calltime to ongoing when countdown expires
+  useEffect(() => {
+    if (countdown?.expired && shooting.status === "calltime") {
+      const autoUpdate = async () => {
+        const { error } = await supabase
+          .from("shootings")
+          .update({ status: "ongoing" } as any)
+          .eq("id", shooting.id)
+          .eq("status", "calltime"); // only if still calltime
+        if (!error) {
+          queryClient.invalidateQueries({ queryKey: ["ongoing-shootings"] });
+        }
+      };
+      autoUpdate();
+    }
+  }, [countdown?.expired, shooting.id, shooting.status, queryClient]);
 
   return (
     <motion.div
@@ -664,8 +682,14 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
             <div className="flex items-center gap-2.5">
               <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-emerald-300">কাল শুটিং শুরু হবে! 🎉</p>
-                <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ কামনা আপনার জন্য!</p>
+                <p className="text-sm font-semibold text-emerald-300">
+                  {shooting.status === "ongoing" ? "🎬 শুটিং চলছে!" : "কাল শুটিং শুরু হবে! 🎉"}
+                </p>
+                <p className="text-xs text-emerald-400/80 mt-0.5">
+                  {shooting.status === "ongoing" 
+                    ? "আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!" 
+                    : "আপনি এই শুটিংয়ে রয়েছেন। শুভ কামনা আপনার জন্য!"}
+                </p>
               </div>
             </div>
           {(myInfo?.character_name || myInfo?.costume || myInfo?.props) && (
