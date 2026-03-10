@@ -57,6 +57,13 @@ const AdminShootings = () => {
   const [deleteShootingName, setDeleteShootingName] = useState<string>("");
   const [deleteTimer, setDeleteTimer] = useState(5);
   const [deleteTimerActive, setDeleteTimerActive] = useState(false);
+  // Ongoing member selection
+  const [ongoingDialogOpen, setOngoingDialogOpen] = useState(false);
+  const [ongoingShootingId, setOngoingShootingId] = useState<string>("");
+  const [ongoingShootingName, setOngoingShootingName] = useState<string>("");
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+  const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
+  const [deleteTimerActive, setDeleteTimerActive] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
