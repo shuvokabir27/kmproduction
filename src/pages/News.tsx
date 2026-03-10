@@ -44,7 +44,7 @@ export interface Publisher {
 export default function News() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { shortId } = useParams();
+  const { shortId, category: urlCategory, postNumber } = useParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
