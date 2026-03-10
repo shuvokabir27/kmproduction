@@ -181,13 +181,7 @@ const AdminShootings = () => {
     }
     if (newStatus === "calltime") {
       const shooting = shootings?.find((s) => s.id === shootingId);
-      setOngoingShootingId(shootingId);
-      setOngoingShootingName(shooting?.name || "");
-      setOngoingCallTime((shooting as any)?.call_time || "");
-      setOngoingLocation(shooting?.location || "");
-      setSelectedMemberIds([]);
-      setMemberDetails({});
-      setOngoingDialogOpen(true);
+      openCalltimeDialog(shooting, false);
       return;
     }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
