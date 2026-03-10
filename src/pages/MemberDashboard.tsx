@@ -132,6 +132,7 @@ const MemberDashboard = () => {
               const statusMap: Record<string, { label: string; color: string }> = {
                 plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
                 upcoming: { label: "আসন্ন", color: "bg-warning/10 text-warning" },
+                calltime: { label: "কলটাইম", color: "bg-orange-500/10 text-orange-400" },
                 ongoing: { label: "চলছে", color: "bg-primary/10 text-primary" },
                 completed: { label: "শুটিং শেষ", color: "bg-success/10 text-success" },
                 editing: { label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },

@@ -21,14 +21,14 @@ export function NoticeBoard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
 
-  // Fetch ongoing shootings
+  // Fetch ongoing/calltime shootings
   const { data: ongoingShootings } = useQuery({
     queryKey: ["ongoing-shootings"],
     queryFn: async () => {
       const { data } = await supabase
         .from("shootings")
         .select("*")
-        .eq("status", "ongoing")
+        .in("status", ["ongoing", "calltime"])
         .order("shoot_date", { ascending: false });
       return data ?? [];
     },
@@ -231,7 +231,9 @@ export function NoticeBoard() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h2 className="font-bold text-foreground text-base md:text-lg">🎬 শুটিং চলছে!</h2>
+                  <h2 className="font-bold text-foreground text-base md:text-lg">
+                    {ongoingShootings!.some((s: any) => s.status === "calltime") ? "📢 কলটাইম নোটিশ!" : "🎬 শুটিং চলছে!"}
+                  </h2>
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
