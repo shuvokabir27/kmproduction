@@ -25,5 +25,5 @@ if ($isCrawler) {
     }
 }
 
-// For normal users, serve the SPA
-include __DIR__ . '/index.html';
+// For all other requests (including non-crawlers), serve the SPA
+readfile(__DIR__ . '/index.html');
