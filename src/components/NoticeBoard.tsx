@@ -242,6 +242,7 @@ export function NoticeBoard() {
             <div className="divide-y divide-cyan-500/10">
               {ongoingShootings!.map((shooting: any) => {
                 const iAmIn = isParticipant(shooting.id);
+                const myInfo = getMyDetails(shooting.id);
                 return (
                   <motion.div
                     key={shooting.id}
@@ -251,6 +252,12 @@ export function NoticeBoard() {
                   >
                     <h3 className="text-base md:text-lg font-bold text-cyan-300">{shooting.name}</h3>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
+                      {(shooting as any).call_time && (
+                        <span className="text-xs font-semibold text-cyan-300 flex items-center gap-1 bg-cyan-500/15 px-2 py-0.5 rounded-full">
+                          <Clock className="h-3 w-3" />
+                          কলটাইম: {(shooting as any).call_time}
+                        </span>
+                      )}
                       {shooting.location && (
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <MapPin className="h-3 w-3 text-cyan-400" />
@@ -266,27 +273,48 @@ export function NoticeBoard() {
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{shooting.description}</p>
                     )}
                     {/* Personalized participation message */}
-                    <div className={`mt-3 p-3 rounded-lg flex items-center gap-2.5 ${
+                    <div className={`mt-3 p-3 rounded-lg ${
                       iAmIn 
                         ? "bg-emerald-500/10 border border-emerald-500/20" 
                         : "bg-rose-500/10 border border-rose-500/20"
                     }`}>
                       {iAmIn ? (
-                        <>
-                          <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-                          <div>
-                            <p className="text-sm font-semibold text-emerald-300">আজ শুটিং চলছে! 🎉</p>
-                            <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!</p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2.5">
+                            <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                            <div>
+                              <p className="text-sm font-semibold text-emerald-300">আজ শুটিং চলছে! 🎉</p>
+                              <p className="text-xs text-emerald-400/80 mt-0.5">আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!</p>
+                            </div>
                           </div>
-                        </>
+                          {/* Costume & Props info */}
+                          {(myInfo?.costume || myInfo?.props) && (
+                            <div className="ml-7 space-y-1.5 pt-1 border-t border-emerald-500/15">
+                              {myInfo.costume && (
+                                <div className="flex items-center gap-2 text-xs">
+                                  <Shirt className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                                  <span className="text-muted-foreground">পোশাক:</span>
+                                  <span className="text-emerald-300 font-medium">{myInfo.costume}</span>
+                                </div>
+                              )}
+                              {myInfo.props && (
+                                <div className="flex items-center gap-2 text-xs">
+                                  <Package className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                                  <span className="text-muted-foreground">প্রপস:</span>
+                                  <span className="text-emerald-300 font-medium">{myInfo.props}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       ) : (
-                        <>
+                        <div className="flex items-center gap-2.5">
                           <XCircle className="h-5 w-5 text-rose-400 shrink-0" />
                           <div>
                             <p className="text-sm font-semibold text-rose-300">দুঃখিত 😔</p>
                             <p className="text-xs text-rose-400/80 mt-0.5">আজকের শুটিংয়ে আপনি নেই। পরবর্তী শুটিংয়ে দেখা হবে!</p>
                           </div>
-                        </>
+                        </div>
                       )}
                     </div>
                   </motion.div>
