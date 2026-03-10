@@ -208,6 +208,7 @@ const AdminShootings = () => {
     setOngoingShootingName(shooting?.name || "");
     setOngoingCallTime((shooting as any)?.call_time || "");
     setOngoingLocation(shooting?.location || "");
+    setOngoingShootDate(shooting?.shoot_date || "");
     setOngoingIsEdit(isEdit);
 
     if (isEdit) {
