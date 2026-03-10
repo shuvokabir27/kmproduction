@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video, CheckCircle2, XCircle, Shirt, Package, Timer } from "lucide-react";
+import { Megaphone, Pin, Clock, MessageSquare, ArrowLeft, Film, MapPin, Video, CheckCircle2, XCircle, Shirt, Package, Timer, UserCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
 import { bn } from "date-fns/locale";
