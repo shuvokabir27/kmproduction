@@ -45,7 +45,6 @@ export function NoticeBoard() {
       .on("postgres_changes", { event: "*", schema: "public", table: "shooting_participants" }, () => {
         queryClient.invalidateQueries({ queryKey: ["my-shooting-participation"] });
       })
-      })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
