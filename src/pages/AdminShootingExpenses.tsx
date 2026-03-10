@@ -189,13 +189,13 @@ export default function AdminShootingExpenses() {
             <h1 className="text-2xl font-bold">শুটিং খরচ</h1>
             <p className="text-sm text-muted-foreground">শুটিং অনুযায়ী খরচ ব্যবস্থাপনা</p>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog(); else setDialogOpen(true); }}>
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" /> খরচ যুক্ত</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>নতুন খরচ যুক্ত করুন</DialogTitle>
+                <DialogTitle>{editingExpense ? "খরচ সম্পাদনা করুন" : "নতুন খরচ যুক্ত করুন"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <Select value={formShootingId} onValueChange={setFormShootingId}>
@@ -234,10 +234,10 @@ export default function AdminShootingExpenses() {
                 />
                 <Button
                   className="w-full"
-                  disabled={!formShootingId || !formCategory || !formAmount || addExpense.isPending}
-                  onClick={() => addExpense.mutate()}
+                  disabled={!formShootingId || !formCategory || !formAmount || saveExpense.isPending}
+                  onClick={() => saveExpense.mutate()}
                 >
-                  {addExpense.isPending ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
+                  {saveExpense.isPending ? "সেভ হচ্ছে..." : editingExpense ? "আপডেট করুন" : "যুক্ত করুন"}
                 </Button>
               </div>
             </DialogContent>
