@@ -21,6 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 const statusOptions = [
   { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "text-violet-400 bg-violet-500/10 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300 border border-violet-500/20" },
   { value: "upcoming", label: "আসন্ন", color: "bg-amber-500/15 text-amber-400", tabColor: "text-amber-400 bg-amber-500/10 data-[state=active]:bg-amber-500/25 data-[state=active]:text-amber-300 border border-amber-500/20" },
+  { value: "calltime", label: "কলটাইম", color: "bg-orange-500/15 text-orange-400", tabColor: "text-orange-400 bg-orange-500/10 data-[state=active]:bg-orange-500/25 data-[state=active]:text-orange-300 border border-orange-500/20" },
   { value: "ongoing", label: "চলছে", color: "bg-cyan-500/15 text-cyan-400", tabColor: "text-cyan-400 bg-cyan-500/10 data-[state=active]:bg-cyan-500/25 data-[state=active]:text-cyan-300 border border-cyan-500/20" },
   { value: "completed", label: "শুটিং শেষ", color: "bg-emerald-500/15 text-emerald-400", tabColor: "text-emerald-400 bg-emerald-500/10 data-[state=active]:bg-emerald-500/25 data-[state=active]:text-emerald-300 border border-emerald-500/20" },
   { value: "editing", label: "এডিটিং চলছে", color: "bg-pink-500/15 text-pink-400", tabColor: "text-pink-400 bg-pink-500/10 data-[state=active]:bg-pink-500/25 data-[state=active]:text-pink-300 border border-pink-500/20" },
