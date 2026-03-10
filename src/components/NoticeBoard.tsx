@@ -108,6 +108,20 @@ export function NoticeBoard() {
           animation: balloonBurst 2s ease-out infinite;
           pointer-events: none;
         }
+        @keyframes flyAcross {
+          0% { left: -5%; opacity: 0; transform: translateY(var(--fly-y)) scale(0.5); }
+          10% { opacity: 1; transform: translateY(var(--fly-y)) scale(1); }
+          90% { opacity: 1; }
+          100% { left: 105%; opacity: 0; transform: translateY(calc(var(--fly-y) + var(--drift))) scale(0.3); }
+        }
+        .light-firefly {
+          position: absolute;
+          border-radius: 50%;
+          pointer-events: none;
+          animation: flyAcross var(--duration) ease-in-out infinite;
+          animation-delay: var(--delay);
+          z-index: 10;
+        }
       `}</style>
 
       <div className="relative rounded-xl p-[2px] overflow-visible">
