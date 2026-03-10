@@ -178,7 +178,7 @@ const AdminShootings = () => {
       setPublishDialogOpen(true);
       return;
     }
-    if (newStatus === "ongoing") {
+    if (newStatus === "calltime") {
       const shooting = shootings?.find((s) => s.id === shootingId);
       setOngoingShootingId(shootingId);
       setOngoingShootingName(shooting?.name || "");
