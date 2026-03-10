@@ -84,7 +84,7 @@ export function NoticeBoard() {
       const shootingIds = ongoingShootings!.map((s: any) => s.id);
       const { data } = await (supabase as any)
         .from("shooting_participants")
-        .select("shooting_id, member_id, costume, props, profiles!shooting_participants_member_id_fkey(user_id)")
+        .select("shooting_id, member_id, costume, props, character_name, profiles!shooting_participants_member_id_fkey(user_id)")
         .in("shooting_id", shootingIds);
       return data ?? [];
     },
