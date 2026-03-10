@@ -586,7 +586,7 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
       
       {/* Highlighted Call Time + Countdown */}
       {shooting.call_time && (
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+      <div className="mt-3 flex flex-wrap items-center gap-3">
           <div className="relative flex items-center gap-2 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-2.5 shadow-lg shadow-amber-500/10">
             <div className="absolute inset-0 rounded-xl bg-amber-400/5 animate-pulse" />
             <div className="relative flex items-center gap-2">
@@ -595,31 +595,43 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-amber-400/70 font-medium">কলটাইম</p>
-                <p className="text-lg font-bold text-amber-300 leading-tight">{shooting.call_time}</p>
+                <p className="text-lg font-bold text-amber-300 leading-tight">
+                  {(() => {
+                    const [h, m] = shooting.call_time.split(":").map(Number);
+                    const ampm = h >= 12 ? "PM" : "AM";
+                    const h12 = h % 12 || 12;
+                    return `${String(h12).padStart(2, "0")}:${String(m).padStart(2, "0")} ${ampm}`;
+                  })()}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Countdown Timer */}
+          {/* Countdown Timer - Red theme */}
           {countdown && !countdown.expired && (
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-violet-500/15 via-purple-500/10 to-fuchsia-500/10 border border-violet-500/25 rounded-xl px-3 py-2 shadow-md shadow-violet-500/10">
-              <Timer className="h-4 w-4 text-violet-400 shrink-0" />
-              <span className="text-[10px] text-violet-400/70 mr-1">বাকি</span>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-rose-600/25 via-red-600/20 to-rose-600/15 border border-rose-500/30 rounded-xl px-3.5 py-2.5 shadow-md shadow-rose-500/15">
+              <Timer className="h-4 w-4 text-rose-400 shrink-0" />
+              <span className="text-[10px] text-rose-300/70 font-medium">বাকি</span>
               <div className="flex items-center gap-1">
-                {countdown.hours > 0 && (
-                  <>
-                    <span className="bg-violet-500/20 text-violet-300 font-mono font-bold text-sm px-1.5 py-0.5 rounded-md min-w-[28px] text-center">{pad(countdown.hours)}</span>
-                    <span className="text-violet-400/60 text-xs font-bold">:</span>
-                  </>
-                )}
-                <span className="bg-violet-500/20 text-violet-300 font-mono font-bold text-sm px-1.5 py-0.5 rounded-md min-w-[28px] text-center">{pad(countdown.minutes)}</span>
-                <span className="text-violet-400/60 text-xs font-bold">:</span>
-                <span className="bg-violet-500/20 text-violet-300 font-mono font-bold text-sm px-1.5 py-0.5 rounded-md min-w-[28px] text-center animate-pulse">{pad(countdown.seconds)}</span>
+                <div className="flex flex-col items-center">
+                  <span className="bg-rose-500/30 text-white font-mono font-bold text-base px-2 py-1 rounded-md min-w-[32px] text-center">{pad(countdown.hours)}</span>
+                  <span className="text-[8px] text-rose-300/60 mt-0.5">ঘণ্টা</span>
+                </div>
+                <span className="text-white text-base font-bold mb-3">:</span>
+                <div className="flex flex-col items-center">
+                  <span className="bg-rose-500/30 text-white font-mono font-bold text-base px-2 py-1 rounded-md min-w-[32px] text-center">{pad(countdown.minutes)}</span>
+                  <span className="text-[8px] text-rose-300/60 mt-0.5">মিনিট</span>
+                </div>
+                <span className="text-white text-base font-bold mb-3">:</span>
+                <div className="flex flex-col items-center">
+                  <span className="bg-rose-500/30 text-white font-mono font-bold text-base px-2 py-1 rounded-md min-w-[32px] text-center animate-pulse">{pad(countdown.seconds)}</span>
+                  <span className="text-[8px] text-rose-300/60 mt-0.5">সেকেন্ড</span>
+                </div>
               </div>
             </div>
           )}
           {countdown?.expired && (
-            <span className="text-xs font-semibold text-amber-400 bg-amber-500/15 px-2.5 py-1 rounded-full animate-pulse">
+            <span className="text-xs font-semibold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-full animate-pulse">
               ⏰ কলটাইম হয়ে গেছে!
             </span>
           )}
