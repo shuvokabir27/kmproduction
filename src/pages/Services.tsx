@@ -84,6 +84,19 @@ const Services = () => {
     return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ বুকিং করতে চাই।${priceText}${offerText}`)}`;
   };
 
+  const parsePriceFromLabel = (label: string): number | null => {
+    const cleaned = label.replace(/[^\d.,০১২৩৪৫৬৭৮৯]/g, '');
+    const banglaToEn = cleaned.replace(/[০-৯]/g, (d) => String('০১২৩৪৫৬৭৮৯'.indexOf(d)));
+    const num = parseFloat(banglaToEn.replace(/,/g, ''));
+    return isNaN(num) ? null : num;
+  };
+
+  const getServicePrice = (service: any): number | null => {
+    if (service.price) return Number(service.price);
+    if (service.price_label) return parsePriceFromLabel(service.price_label);
+    return null;
+  };
+
   const getDiscountedPrice = (price: number) => {
     if (activeOffer?.discount_percentage) {
       return Math.round(price - (price * activeOffer.discount_percentage / 100));
