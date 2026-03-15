@@ -19,6 +19,7 @@ interface ServiceForm {
   category: string;
   price_label: string;
   price: string;
+  price_per_minute: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
