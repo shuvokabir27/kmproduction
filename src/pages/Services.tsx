@@ -5,10 +5,15 @@ import { Button } from "@/components/ui/button";
 import {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
   ChevronRight, Check, Star, ArrowLeft, MessageCircle, Phone,
-  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent, Clock, Minus, Plus as PlusIcon,
+  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent, Clock, Minus, Plus as PlusIcon, CalendarIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { bn } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
@@ -32,6 +37,8 @@ const Services = () => {
   const [bookingService, setBookingService] = useState<any | null>(null);
   const [bookingStep, setBookingStep] = useState<'options' | 'form' | 'success'>('options');
   const [bookingForm, setBookingForm] = useState({ name: '', phone: '', address: '' });
+  const [bookingDate, setBookingDate] = useState<Date | undefined>(undefined);
+  const [bookingDays, setBookingDays] = useState(1);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
   const [hourSelections, setHourSelections] = useState<Record<string, number>>({});
@@ -719,7 +726,7 @@ const Services = () => {
         </div>
       </footer>
       {/* Booking Detail Dialog */}
-      <AlertDialog open={!!bookingService} onOpenChange={(open) => { if (!open) { setBookingService(null); setBookingStep('options'); setBookingForm({ name: '', phone: '', address: '' }); } }}>
+      <AlertDialog open={!!bookingService} onOpenChange={(open) => { if (!open) { setBookingService(null); setBookingStep('options'); setBookingForm({ name: '', phone: '', address: '' }); setBookingDate(undefined); setBookingDays(1); } }}>
         <AlertDialogContent className="max-w-md p-0 overflow-hidden">
           {bookingService && (() => {
             const IconComp = iconMap[bookingService.icon] || Camera;
@@ -747,6 +754,8 @@ const Services = () => {
               else if (perMin) d += ` | ${mins} মিনিট`;
               if (finalPrice) d += ` | মূল্য: ৳${finalPrice}`;
               if (discount > 0) d += ` (${discount}% ছাড়)`;
+              if (bookingDate) d += ` | তারিখ: ${format(bookingDate, 'dd/MM/yyyy')}`;
+              if (bookingDays > 1) d += ` | ${bookingDays} দিন`;
               return d;
             };
 
@@ -763,6 +772,8 @@ const Services = () => {
                 customer_phone: bookingForm.phone.trim(),
                 customer_address: bookingForm.address.trim() || null,
                 details: buildDetails(),
+                booking_date: bookingDate ? format(bookingDate, 'yyyy-MM-dd') : null,
+                booking_days: bookingDays,
                 status: 'pending',
               } as any);
               setBookingSubmitting(false);
@@ -886,6 +897,8 @@ const Services = () => {
                             setBookingService(null);
                             setBookingStep('options');
                             setBookingForm({ name: '', phone: '', address: '' });
+                            setBookingDate(undefined);
+                            setBookingDays(1);
                           }}
                           className="w-full font-bold py-5 text-base rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300"
                         >
@@ -950,6 +963,53 @@ const Services = () => {
                             onChange={(e) => setBookingForm(p => ({ ...p, address: e.target.value }))}
                             placeholder={t("আপনার ঠিকানা (ঐচ্ছিক)", "Your address (optional)")}
                           />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label className="text-foreground">{t("তারিখ", "Date")}</Label>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !bookingDate && "text-muted-foreground"
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {bookingDate ? format(bookingDate, "dd MMM yyyy", { locale: bn }) : t("তারিখ বাছুন", "Pick date")}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={bookingDate}
+                                  onSelect={setBookingDate}
+                                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                  initialFocus
+                                  className={cn("p-3 pointer-events-auto")}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                          <div>
+                            <Label className="text-foreground">{t("কত দিন", "Days")}</Label>
+                            <div className="flex items-center gap-2">
+                              <button onClick={() => setBookingDays(Math.max(1, bookingDays - 1))} className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <Input
+                                type="number"
+                                value={bookingDays}
+                                onChange={(e) => setBookingDays(Math.max(1, parseInt(e.target.value) || 1))}
+                                className="w-16 text-center h-10"
+                                min={1}
+                              />
+                              <button onClick={() => setBookingDays(bookingDays + 1)} className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                <PlusIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <Button
