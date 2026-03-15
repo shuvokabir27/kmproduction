@@ -281,9 +281,12 @@ const AdminServices = () => {
                       {s.discount_percentage && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{s.discount_percentage}% ছাড়</span>}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {s.category} • ক্রম: {s.sort_order}
+                      {s.category}
+                      {s.pricing_type && <span className="ml-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold">{pricingTypeLabels[s.pricing_type as PricingType] || s.pricing_type}</span>}
+                      {' • '}ক্রম: {s.sort_order}
                       {s.price_per_hour && ` • ৳${s.price_per_hour}/ঘন্টা`}
                       {s.price_per_minute && ` • ৳${s.price_per_minute}/মিনিট`}
+                      {s.price && !s.price_per_hour && !s.price_per_minute && ` • ৳${s.price}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
