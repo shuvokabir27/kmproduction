@@ -964,6 +964,53 @@ const Services = () => {
                             placeholder={t("আপনার ঠিকানা (ঐচ্ছিক)", "Your address (optional)")}
                           />
                         </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label className="text-foreground">{t("তারিখ", "Date")}</Label>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !bookingDate && "text-muted-foreground"
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {bookingDate ? format(bookingDate, "dd MMM yyyy", { locale: bn }) : t("তারিখ বাছুন", "Pick date")}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={bookingDate}
+                                  onSelect={setBookingDate}
+                                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                  initialFocus
+                                  className={cn("p-3 pointer-events-auto")}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                          <div>
+                            <Label className="text-foreground">{t("কত দিন", "Days")}</Label>
+                            <div className="flex items-center gap-2">
+                              <button onClick={() => setBookingDays(Math.max(1, bookingDays - 1))} className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <Input
+                                type="number"
+                                value={bookingDays}
+                                onChange={(e) => setBookingDays(Math.max(1, parseInt(e.target.value) || 1))}
+                                className="w-16 text-center h-10"
+                                min={1}
+                              />
+                              <button onClick={() => setBookingDays(bookingDays + 1)} className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                <PlusIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <Button
                         onClick={handleBookingSubmit}
