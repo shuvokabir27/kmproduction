@@ -124,6 +124,7 @@ const AdminServices = () => {
       discount_percentage: Number(offerDiscount),
       offer_end_date: new Date(offerEndDate).toISOString(),
       is_active: offerActive,
+      service_ids: offerServiceIds.length > 0 ? offerServiceIds : [],
     };
     if (offerEditId) {
       const { error } = await (supabase as any).from("service_offers").update(payload).eq("id", offerEditId);
