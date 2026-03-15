@@ -373,13 +373,18 @@ const Services = () => {
                       {service.price ? (
                         <div className="mb-3">
                           {activeOffer ? (
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-xs text-muted-foreground line-through">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                              <span className="text-lg font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{activeOffer.discount_percentage}% ছাড়</span>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-2xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">ডিসকাউন্ট:</span>
+                                <span className="text-lg font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
+                              </div>
                             </div>
                           ) : (
-                            <span className="text-lg font-black text-primary">৳{Number(service.price).toLocaleString('bn-BD')}</span>
+                            <span className="text-2xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
                           )}
                         </div>
                       ) : service.price_label ? (
