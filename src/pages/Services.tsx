@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
   ChevronRight, Check, Star, ArrowLeft, MessageCircle, Phone,
-  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent,
+  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent, Clock, Minus, Plus as PlusIcon,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
