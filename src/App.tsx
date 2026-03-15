@@ -75,6 +75,7 @@ const App = () => (
             <Route path="/admin/gallery" element={<AdminGallery />} />
             <Route path="/admin/services" element={<AdminServices />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
