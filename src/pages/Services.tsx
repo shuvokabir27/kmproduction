@@ -720,14 +720,20 @@ const Services = () => {
             const IconComp = iconMap[bookingService.icon] || Camera;
             const features = (bookingService.features as string[]) || [];
             const perMin = bookingService.price_per_minute ? Number(bookingService.price_per_minute) : null;
+            const perHour = bookingService.price_per_hour ? Number(bookingService.price_per_hour) : null;
+            const editedPerHour = bookingService.edited_photos_per_hour ? Number(bookingService.edited_photos_per_hour) : 20;
+            const unlimitedPhotos = bookingService.unlimited_photos_per_hour !== false;
             const numPrice = getServicePrice(bookingService);
             const mins = minuteSelections[bookingService.id] || 1;
+            const hrs = hourSelections[bookingService.id] || 1;
             const discount = getServiceDiscount(bookingService);
-            const rawPrice = perMin ? perMin * mins : numPrice;
+            const rawPrice = perHour ? perHour * hrs : perMin ? perMin * mins : numPrice;
             const finalPrice = rawPrice ? getDiscountedPrice(rawPrice, discount) : null;
-            const waUrl = perMin
-              ? getWaUrl(bookingService.title, discount, undefined, { rate: perMin, minutes: mins })
-              : getWaUrl(bookingService.title, discount, numPrice || undefined);
+            const waUrl = perHour
+              ? getWaUrl(bookingService.title, discount, undefined, undefined, { rate: perHour, hours: hrs, editedPhotos: editedPerHour })
+              : perMin
+                ? getWaUrl(bookingService.title, discount, undefined, { rate: perMin, minutes: mins })
+                : getWaUrl(bookingService.title, discount, numPrice || undefined);
             const phone = settings?.contact_phone;
 
             return (
