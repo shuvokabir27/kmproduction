@@ -317,6 +317,23 @@ const AdminServices = () => {
                 <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার মিনিট সিলেক্ট করে মূল্য দেখতে পারবে</p>
               </div>
               <div>
+                <Label>প্রতি ঘন্টা মূল্য (৳) — ফটোগ্রাফি</Label>
+                <Input type="number" value={form.price_per_hour} onChange={(e) => setForm({ ...form, price_per_hour: e.target.value })} placeholder="যেমন: 2000" />
+                <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার ঘন্টা সিলেক্ট করে মূল্য দেখতে পারবে</p>
+              </div>
+              {form.price_per_hour && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>প্রতি ঘন্টায় এডিটেড ছবি</Label>
+                    <Input type="number" value={form.edited_photos_per_hour} onChange={(e) => setForm({ ...form, edited_photos_per_hour: e.target.value })} placeholder="20" />
+                  </div>
+                  <div className="flex items-center gap-2 pt-6">
+                    <Switch checked={form.unlimited_photos_per_hour} onCheckedChange={(v) => setForm({ ...form, unlimited_photos_per_hour: v })} />
+                    <Label>আনলিমিটেড ছবি</Label>
+                  </div>
+                </div>
+              )}
+              <div>
                 <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
                 <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
               </div>
