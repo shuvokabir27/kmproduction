@@ -102,8 +102,15 @@ const AdminBookings = () => {
                           {b.details && (
                             <p className="text-xs text-muted-foreground mt-1 bg-secondary/30 rounded-lg p-2">{b.details}</p>
                           )}
+                          {b.booking_date && (
+                            <div className="flex items-center gap-2 text-sm text-foreground">
+                              <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+                              <span>তারিখ: <span className="font-semibold">{new Date(b.booking_date).toLocaleDateString("bn-BD")}</span></span>
+                              {b.booking_days > 1 && <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">{b.booking_days} দিন</span>}
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <CalendarDays className="h-3 w-3" />
+                            <Clock className="h-3 w-3" />
                             <span>{new Date(b.created_at).toLocaleString("bn-BD")}</span>
                           </div>
                         </div>
