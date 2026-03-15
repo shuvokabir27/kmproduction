@@ -32,7 +32,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
-  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", price_per_hour: "", edited_photos_per_hour: "20", unlimited_photos_per_hour: true, discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
