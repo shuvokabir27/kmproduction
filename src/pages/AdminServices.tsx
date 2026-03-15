@@ -269,6 +269,7 @@ const AdminServices = () => {
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {s.category} • ক্রম: {s.sort_order}
+                      {s.price_per_hour && ` • ৳${s.price_per_hour}/ঘন্টা`}
                       {s.price_per_minute && ` • ৳${s.price_per_minute}/মিনিট`}
                     </p>
                   </div>
