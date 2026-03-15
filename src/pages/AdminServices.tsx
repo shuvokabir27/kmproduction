@@ -18,6 +18,7 @@ interface ServiceForm {
   icon: string;
   category: string;
   price_label: string;
+  price: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
@@ -26,7 +27,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
-  price_label: "যোগাযোগ করুন", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
@@ -75,6 +76,7 @@ const AdminServices = () => {
         icon: form.icon,
         category: form.category,
         price_label: form.price_label,
+        price: form.price ? Number(form.price) : null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
@@ -165,6 +167,7 @@ const AdminServices = () => {
       icon: service.icon || "Camera",
       category: service.category || "",
       price_label: service.price_label || "",
+      price: service.price ? String(service.price) : "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
@@ -281,9 +284,13 @@ const AdminServices = () => {
                   <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="বিজ্ঞাপন" />
                 </div>
                 <div>
-                  <Label>মূল্য লেবেল</Label>
-                  <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
+                  <Label>মূল্য (৳)</Label>
+                  <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="15000" />
                 </div>
+              </div>
+              <div>
+                <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
+                <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
               </div>
               <div>
                 <Label>আইকন</Label>
