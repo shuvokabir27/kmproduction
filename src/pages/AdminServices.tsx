@@ -315,42 +315,78 @@ const AdminServices = () => {
                 <Label>বিবরণ</Label>
                 <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="সেবার বিবরণ" rows={3} />
               </div>
+              {/* Pricing Type Selector */}
+              <div>
+                <Label>প্রাইসিং ধরন *</Label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  {(Object.keys(pricingTypeLabels) as PricingType[]).map((pt) => (
+                    <button
+                      key={pt}
+                      onClick={() => setForm({ ...form, pricing_type: pt })}
+                      className={`px-3 py-2 rounded-lg text-sm border transition-all text-left ${
+                        form.pricing_type === pt ? "bg-primary/10 border-primary/30 text-primary font-semibold" : "bg-secondary/30 border-border/30 text-muted-foreground"
+                      }`}
+                    >
+                      {pricingTypeLabels[pt]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>ক্যাটেগরি</Label>
                   <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="বিজ্ঞাপন" />
                 </div>
                 <div>
-                  <Label>মূল্য (৳)</Label>
-                  <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="15000" />
+                  <Label>ক্রম</Label>
+                  <Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
                 </div>
               </div>
-              <div>
-                <Label>প্রতি মিনিট মূল্য (৳) — ঐচ্ছিক</Label>
-                <Input type="number" value={form.price_per_minute} onChange={(e) => setForm({ ...form, price_per_minute: e.target.value })} placeholder="যেমন: 500 (ভিডিও এডিটিং এর জন্য)" />
-                <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার মিনিট সিলেক্ট করে মূল্য দেখতে পারবে</p>
-              </div>
-              <div>
-                <Label>প্রতি ঘন্টা মূল্য (৳) — ফটোগ্রাফি</Label>
-                <Input type="number" value={form.price_per_hour} onChange={(e) => setForm({ ...form, price_per_hour: e.target.value })} placeholder="যেমন: 2000" />
-                <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার ঘন্টা সিলেক্ট করে মূল্য দেখতে পারবে</p>
-              </div>
-              {form.price_per_hour && (
+
+              {/* Fixed / Event Price */}
+              {(form.pricing_type === 'fixed' || form.pricing_type === 'event') && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label>প্রতি ঘন্টায় এডিটেড ছবি</Label>
-                    <Input type="number" value={form.edited_photos_per_hour} onChange={(e) => setForm({ ...form, edited_photos_per_hour: e.target.value })} placeholder="20" />
+                    <Label>মূল্য (৳)</Label>
+                    <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="15000" />
                   </div>
-                  <div className="flex items-center gap-2 pt-6">
-                    <Switch checked={form.unlimited_photos_per_hour} onCheckedChange={(v) => setForm({ ...form, unlimited_photos_per_hour: v })} />
-                    <Label>আনলিমিটেড ছবি</Label>
+                  <div>
+                    <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
+                    <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
                   </div>
                 </div>
               )}
-              <div>
-                <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
-                <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
-              </div>
+
+              {/* Per Minute */}
+              {form.pricing_type === 'per_minute' && (
+                <div>
+                  <Label>প্রতি মিনিট মূল্য (৳) *</Label>
+                  <Input type="number" value={form.price_per_minute} onChange={(e) => setForm({ ...form, price_per_minute: e.target.value })} placeholder="যেমন: 500" />
+                  <p className="text-xs text-muted-foreground mt-1">কাস্টমার মিনিট সিলেক্ট করে মূল্য দেখতে পারবে</p>
+                </div>
+              )}
+
+              {/* Hourly */}
+              {form.pricing_type === 'hourly' && (
+                <>
+                  <div>
+                    <Label>প্রতি ঘন্টা মূল্য (৳) *</Label>
+                    <Input type="number" value={form.price_per_hour} onChange={(e) => setForm({ ...form, price_per_hour: e.target.value })} placeholder="যেমন: 2000" />
+                    <p className="text-xs text-muted-foreground mt-1">কাস্টমার ঘন্টা সিলেক্ট করে মূল্য দেখতে পারবে</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>প্রতি ঘন্টায় এডিটেড ছবি</Label>
+                      <Input type="number" value={form.edited_photos_per_hour} onChange={(e) => setForm({ ...form, edited_photos_per_hour: e.target.value })} placeholder="20" />
+                    </div>
+                    <div className="flex items-center gap-2 pt-6">
+                      <Switch checked={form.unlimited_photos_per_hour} onCheckedChange={(v) => setForm({ ...form, unlimited_photos_per_hour: v })} />
+                      <Label>আনলিমিটেড ছবি</Label>
+                    </div>
+                  </div>
+                </>
+              )}
               <div>
                 <Label>আইকন</Label>
                 <div className="flex flex-wrap gap-2 mt-1">
