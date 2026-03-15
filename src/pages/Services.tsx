@@ -84,6 +84,19 @@ const Services = () => {
     return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ বুকিং করতে চাই।${priceText}${offerText}`)}`;
   };
 
+  const parsePriceFromLabel = (label: string): number | null => {
+    const cleaned = label.replace(/[^\d.,০১২৩৪৫৬৭৮৯]/g, '');
+    const banglaToEn = cleaned.replace(/[০-৯]/g, (d) => String('০১২৩৪৫৬৭৮৯'.indexOf(d)));
+    const num = parseFloat(banglaToEn.replace(/,/g, ''));
+    return isNaN(num) ? null : num;
+  };
+
+  const getServicePrice = (service: any): number | null => {
+    if (service.price) return Number(service.price);
+    if (service.price_label) return parsePriceFromLabel(service.price_label);
+    return null;
+  };
+
   const getDiscountedPrice = (price: number) => {
     if (activeOffer?.discount_percentage) {
       return Math.round(price - (price * activeOffer.discount_percentage / 100));
@@ -266,28 +279,34 @@ const Services = () => {
                         <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
                         
                         {/* Price Display */}
-                        {service.price ? (
-                          <div className="mb-5">
-                            {activeOffer ? (
-                              <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-3xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                                  <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm text-muted-foreground">ডিসকাউন্ট মূল্য:</span>
-                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
-                                </div>
+                        {(() => {
+                          const numPrice = getServicePrice(service);
+                          if (numPrice) {
+                            return (
+                              <div className="mb-5">
+                                {activeOffer ? (
+                                  <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <span className="text-xl text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                    </div>
+                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice).toLocaleString('bn-BD')}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-3xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
+                                )}
                               </div>
-                            ) : (
-                              <span className="text-3xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                            )}
-                          </div>
-                        ) : service.price_label ? (
-                          <div className="mb-5">
-                            <span className="text-lg font-bold text-muted-foreground">{service.price_label}</span>
-                          </div>
-                        ) : null}
+                            );
+                          }
+                          if (service.price_label) {
+                            return (
+                              <div className="mb-5">
+                                <span className="text-lg font-bold text-muted-foreground">{service.price_label}</span>
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
 
                         <div className="space-y-2.5 mb-6">
                           {features.map((f: string, i: number) => (
@@ -302,7 +321,7 @@ const Services = () => {
 
                         {(settings as any)?.whatsapp_no ? (
                           <Button
-                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, service.price ? Number(service.price) : undefined) })}
+                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, getServicePrice(service) || undefined) })}
                             className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
                             <MessageCircle className="h-4 w-4 mr-1" />
@@ -370,28 +389,34 @@ const Services = () => {
                       <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{service.description}</p>
                       
                       {/* Price Display */}
-                      {service.price ? (
-                        <div className="mb-3">
-                          {activeOffer ? (
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-2xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">ডিসকাউন্ট:</span>
-                                <span className="text-lg font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
-                              </div>
+                      {(() => {
+                        const numPrice = getServicePrice(service);
+                        if (numPrice) {
+                          return (
+                            <div className="mb-3">
+                              {activeOffer ? (
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-base text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                  </div>
+                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(numPrice).toLocaleString('bn-BD')}</span>
+                                </div>
+                              ) : (
+                                <span className="text-2xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
+                              )}
                             </div>
-                          ) : (
-                            <span className="text-2xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                          )}
-                        </div>
-                      ) : service.price_label ? (
-                        <div className="mb-3">
-                          <span className="text-sm font-bold text-muted-foreground">{service.price_label}</span>
-                        </div>
-                      ) : null}
+                          );
+                        }
+                        if (service.price_label) {
+                          return (
+                            <div className="mb-3">
+                              <span className="text-sm font-bold text-muted-foreground">{service.price_label}</span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
 
                       <div className="space-y-2 mb-5">
                         {features.slice(0, 3).map((f: string, i: number) => (
@@ -410,7 +435,7 @@ const Services = () => {
                           variant="outline"
                           size="sm"
                           className="w-full"
-                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, service.price ? Number(service.price) : undefined) })}
+                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, getServicePrice(service) || undefined) })}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
