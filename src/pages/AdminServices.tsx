@@ -390,6 +390,35 @@ const AdminServices = () => {
                   <Input type="datetime-local" value={offerEndDate} onChange={(e) => setOfferEndDate(e.target.value)} />
                 </div>
               </div>
+              {/* Service Selection */}
+              {services && services.length > 0 && (
+                <div>
+                  <Label>কোন সেবায় প্রযোজ্য? (সিলেক্ট না করলে সবগুলোতে প্রযোজ্য হবে)</Label>
+                  <div className="mt-2 space-y-1.5 max-h-40 overflow-y-auto rounded-lg border border-border/30 p-2">
+                    {services.map((s: any) => (
+                      <label key={s.id} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-secondary/30 cursor-pointer text-sm">
+                        <input
+                          type="checkbox"
+                          checked={offerServiceIds.includes(s.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setOfferServiceIds([...offerServiceIds, s.id]);
+                            } else {
+                              setOfferServiceIds(offerServiceIds.filter(id => id !== s.id));
+                            }
+                          }}
+                          className="rounded border-border"
+                        />
+                        <span className="text-foreground">{s.title}</span>
+                        {s.category && <span className="text-[10px] text-muted-foreground">({s.category})</span>}
+                      </label>
+                    ))}
+                  </div>
+                  {offerServiceIds.length > 0 && (
+                    <p className="text-xs text-primary mt-1">{offerServiceIds.length}টি সেবা সিলেক্ট করা হয়েছে</p>
+                  )}
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <Switch checked={offerActive} onCheckedChange={setOfferActive} />
                 <Label>সক্রিয়</Label>
