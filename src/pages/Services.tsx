@@ -30,7 +30,7 @@ const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transiti
 const Services = () => {
   const { t } = useLanguage();
   const [bookingService, setBookingService] = useState<any | null>(null);
-  const [bookingStep, setBookingStep] = useState<'options' | 'form'>('options');
+  const [bookingStep, setBookingStep] = useState<'options' | 'form' | 'success'>('options');
   const [bookingForm, setBookingForm] = useState({ name: '', phone: '', address: '' });
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
@@ -769,10 +769,7 @@ const Services = () => {
               if (error) {
                 toast({ title: "সমস্যা হয়েছে", description: error.message, variant: "destructive" });
               } else {
-                toast({ title: "বুকিং সফল!", description: "আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।" });
-                setBookingService(null);
-                setBookingStep('options');
-                setBookingForm({ name: '', phone: '', address: '' });
+                setBookingStep('success');
               }
             };
 
@@ -835,9 +832,68 @@ const Services = () => {
                   </div>
                 )}
 
-                {/* Options or Form */}
+                {/* Options, Form, or Success */}
                 <div className="p-6 space-y-3">
-                  {bookingStep === 'options' ? (
+                  {bookingStep === 'success' ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, type: "spring" }}
+                      className="text-center py-4 space-y-5"
+                    >
+                      {/* Success Icon */}
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                        className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center shadow-xl shadow-green-500/30"
+                      >
+                        <Check className="h-10 w-10 text-white" />
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="space-y-3"
+                      >
+                        <h3 className="text-2xl font-black text-foreground">
+                          🎉 {t("বুকিং সফল!", "Booking Successful!")}
+                        </h3>
+                        <div className="rounded-xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-teal-500/10 border border-green-500/20 p-4 space-y-2">
+                          <p className="text-sm text-foreground leading-relaxed">
+                            আপনার বুকিং সফলভাবে সাবমিট হয়েছে। ✅
+                          </p>
+                          <p className="text-sm text-foreground leading-relaxed">
+                            শীঘ্রই আমাদের প্রতিনিধি আপনাকে <span className="font-bold text-primary">কল করে বুকিং কনফার্ম</span> করবেন।
+                          </p>
+                        </div>
+                        <p className="text-base font-semibold bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
+                          🙏 আমাদের সেবা নেওয়ার জন্য আপনাকে অসংখ্য ধন্যবাদ!
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {settings?.site_name || "KM Production House"} পরিবারের পক্ষ থেকে শুভেচ্ছা 💐
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                      >
+                        <Button
+                          onClick={() => {
+                            setBookingService(null);
+                            setBookingStep('options');
+                            setBookingForm({ name: '', phone: '', address: '' });
+                          }}
+                          className="w-full font-bold py-5 text-base rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300"
+                        >
+                          {t("বন্ধ করুন", "Close")}
+                        </Button>
+                      </motion.div>
+                    </motion.div>
+                  ) : bookingStep === 'options' ? (
                     <>
                       <AlertDialogDescription className="text-sm text-muted-foreground text-center mb-2">
                         {t("বুকিং এর জন্য নিচের যেকোনো একটি অপশন বেছে নিন", "Choose one of the options below")}
