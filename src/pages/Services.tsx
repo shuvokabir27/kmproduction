@@ -719,7 +719,7 @@ const Services = () => {
         </div>
       </footer>
       {/* Booking Detail Dialog */}
-      <AlertDialog open={!!bookingService} onOpenChange={(open) => !open && setBookingService(null)}>
+      <AlertDialog open={!!bookingService} onOpenChange={(open) => { if (!open) { setBookingService(null); setBookingStep('options'); setBookingForm({ name: '', phone: '', address: '' }); } }}>
         <AlertDialogContent className="max-w-md p-0 overflow-hidden">
           {bookingService && (() => {
             const IconComp = iconMap[bookingService.icon] || Camera;
@@ -741,6 +741,41 @@ const Services = () => {
                 : getWaUrl(bookingService.title, discount, numPrice || undefined);
             const phone = settings?.contact_phone;
 
+            const buildDetails = () => {
+              let d = `সেবা: ${bookingService.title}`;
+              if (perHour) d += ` | ${hrs} ঘন্টা | এডিটেড: ${editedPerHour * hrs}টি`;
+              else if (perMin) d += ` | ${mins} মিনিট`;
+              if (finalPrice) d += ` | মূল্য: ৳${finalPrice}`;
+              if (discount > 0) d += ` (${discount}% ছাড়)`;
+              return d;
+            };
+
+            const handleBookingSubmit = async () => {
+              if (!bookingForm.name.trim() || !bookingForm.phone.trim()) {
+                toast({ title: "নাম ও মোবাইল নম্বর দিন", variant: "destructive" });
+                return;
+              }
+              setBookingSubmitting(true);
+              const { error } = await supabase.from("bookings" as any).insert({
+                service_id: bookingService.id,
+                service_title: bookingService.title,
+                customer_name: bookingForm.name.trim(),
+                customer_phone: bookingForm.phone.trim(),
+                customer_address: bookingForm.address.trim() || null,
+                details: buildDetails(),
+                status: 'pending',
+              } as any);
+              setBookingSubmitting(false);
+              if (error) {
+                toast({ title: "সমস্যা হয়েছে", description: error.message, variant: "destructive" });
+              } else {
+                toast({ title: "বুকিং সফল!", description: "আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।" });
+                setBookingService(null);
+                setBookingStep('options');
+                setBookingForm({ name: '', phone: '', address: '' });
+              }
+            };
+
             return (
               <>
                 {/* Header */}
@@ -756,33 +791,9 @@ const Services = () => {
                   </div>
                 </div>
 
-                {/* Body */}
-                <div className="p-6 space-y-4">
-                  {bookingService.description && (
-                    <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
-                      {bookingService.description}
-                    </AlertDialogDescription>
-                  )}
-
-                  {/* Features */}
-                  {features.length > 0 && (
-                    <div className="space-y-2">
-                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("সুবিধাসমূহ", "Features")}</span>
-                      <div className="space-y-1.5">
-                        {features.map((f: string, i: number) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                              <Check className="h-2.5 w-2.5 text-primary" />
-                            </div>
-                            <span className="text-sm text-foreground/80">{f}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Price Summary */}
-                  {(finalPrice || rawPrice) && (
+                {/* Price Summary */}
+                {(finalPrice || rawPrice) && (
+                  <div className="px-6 pt-4">
                     <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("মূল্য", "Price")}</span>
                       {perHour && (
@@ -813,9 +824,7 @@ const Services = () => {
                       )}
                       <div className="flex items-baseline gap-2 mt-1">
                         {discount > 0 && rawPrice && (
-                          <span className="text-base text-muted-foreground line-through">
-                            ৳{rawPrice.toLocaleString('bn-BD')}
-                          </span>
+                          <span className="text-base text-muted-foreground line-through">৳{rawPrice.toLocaleString('bn-BD')}</span>
                         )}
                         <span className="text-3xl font-black text-primary">৳{(finalPrice || rawPrice)!.toLocaleString('bn-BD')}</span>
                         {discount > 0 && (
@@ -823,26 +832,82 @@ const Services = () => {
                         )}
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                {/* Action Buttons */}
-                <div className="p-6 pt-0 space-y-2">
-                  {(settings as any)?.whatsapp_no && (
-                    <a href={waUrl} target="_blank" rel="noopener noreferrer" className="block">
-                      <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 text-base shadow-lg shadow-green-600/20">
-                        <MessageCircle className="h-5 w-5 mr-2" /> {t("WhatsApp এ বুকিং করুন", "Book via WhatsApp")}
+                {/* Options or Form */}
+                <div className="p-6 space-y-3">
+                  {bookingStep === 'options' ? (
+                    <>
+                      <AlertDialogDescription className="text-sm text-muted-foreground text-center mb-2">
+                        {t("বুকিং এর জন্য নিচের যেকোনো একটি অপশন বেছে নিন", "Choose one of the options below")}
+                      </AlertDialogDescription>
+                      {phone && (
+                        <a href={`tel:${phone}`} className="block">
+                          <Button variant="outline" className="w-full font-bold py-5 text-base">
+                            <Phone className="h-5 w-5 mr-2" /> {t("কল করুন", "Call Us")}
+                          </Button>
+                        </a>
+                      )}
+                      {(settings as any)?.whatsapp_no && (
+                        <a href={waUrl} target="_blank" rel="noopener noreferrer" className="block">
+                          <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 text-base shadow-lg shadow-green-600/20">
+                            <MessageCircle className="h-5 w-5 mr-2" /> WhatsApp
+                          </Button>
+                        </a>
+                      )}
+                      <Button
+                        onClick={() => setBookingStep('form')}
+                        className="w-full font-bold py-5 text-base bg-primary hover:bg-primary/90"
+                      >
+                        <ChevronRight className="h-5 w-5 mr-2" /> {t("বুকিং করুন", "Book Now")}
                       </Button>
-                    </a>
-                  )}
-                  {phone && (
-                    <a href={`tel:${phone}`} className="block">
-                      <Button variant="outline" className="w-full font-bold py-5 text-base">
-                        <Phone className="h-5 w-5 mr-2" /> {t("কল করুন", "Call Us")}
+                      <AlertDialogCancel className="w-full mt-1">{t("বন্ধ করুন", "Close")}</AlertDialogCancel>
+                    </>
+                  ) : (
+                    <>
+                      <AlertDialogDescription className="text-sm text-muted-foreground text-center mb-2">
+                        {t("আপনার তথ্য দিন এবং বুকিং সাবমিট করুন", "Fill your info and submit booking")}
+                      </AlertDialogDescription>
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-foreground">{t("আপনার নাম", "Your Name")} *</Label>
+                          <Input
+                            value={bookingForm.name}
+                            onChange={(e) => setBookingForm(p => ({ ...p, name: e.target.value }))}
+                            placeholder={t("পুরো নাম লিখুন", "Full name")}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-foreground">{t("মোবাইল নম্বর", "Mobile Number")} *</Label>
+                          <Input
+                            value={bookingForm.phone}
+                            onChange={(e) => setBookingForm(p => ({ ...p, phone: e.target.value }))}
+                            placeholder="01XXXXXXXXX"
+                            type="tel"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-foreground">{t("ঠিকানা", "Address")}</Label>
+                          <Input
+                            value={bookingForm.address}
+                            onChange={(e) => setBookingForm(p => ({ ...p, address: e.target.value }))}
+                            placeholder={t("আপনার ঠিকানা (ঐচ্ছিক)", "Your address (optional)")}
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        onClick={handleBookingSubmit}
+                        disabled={bookingSubmitting}
+                        className="w-full font-bold py-5 text-base bg-primary hover:bg-primary/90 mt-2"
+                      >
+                        {bookingSubmitting ? t("সাবমিট হচ্ছে...", "Submitting...") : t("বুকিং সাবমিট করুন", "Submit Booking")}
                       </Button>
-                    </a>
+                      <Button variant="ghost" onClick={() => setBookingStep('options')} className="w-full">
+                        {t("পিছনে যান", "Go Back")}
+                      </Button>
+                    </>
                   )}
-                  <AlertDialogCancel className="w-full mt-1">{t("বন্ধ করুন", "Close")}</AlertDialogCancel>
                 </div>
               </>
             );
