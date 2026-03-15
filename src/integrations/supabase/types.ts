@@ -1035,6 +1035,7 @@ export type Database = {
           price_label: string | null
           price_per_hour: number | null
           price_per_minute: number | null
+          pricing_type: Database["public"]["Enums"]["pricing_type"] | null
           sort_order: number | null
           title: string
           unlimited_photos_per_hour: boolean | null
@@ -1055,6 +1056,7 @@ export type Database = {
           price_label?: string | null
           price_per_hour?: number | null
           price_per_minute?: number | null
+          pricing_type?: Database["public"]["Enums"]["pricing_type"] | null
           sort_order?: number | null
           title: string
           unlimited_photos_per_hour?: boolean | null
@@ -1075,6 +1077,7 @@ export type Database = {
           price_label?: string | null
           price_per_hour?: number | null
           price_per_minute?: number | null
+          pricing_type?: Database["public"]["Enums"]["pricing_type"] | null
           sort_order?: number | null
           title?: string
           unlimited_photos_per_hour?: boolean | null
@@ -1381,6 +1384,7 @@ export type Database = {
       conversation_type: "personal" | "group"
       expense_category: "food" | "transport" | "props" | "other"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
+      pricing_type: "hourly" | "per_minute" | "event" | "fixed"
       salary_type: "daily" | "monthly"
     }
     CompositeTypes: {
@@ -1514,6 +1518,7 @@ export const Constants = {
       conversation_type: ["personal", "group"],
       expense_category: ["food", "transport", "props", "other"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
+      pricing_type: ["hourly", "per_minute", "event", "fixed"],
       salary_type: ["daily", "monthly"],
     },
   },
