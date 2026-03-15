@@ -1026,6 +1026,7 @@ export type Database = {
           image_url: string | null
           is_active: boolean | null
           is_featured: boolean | null
+          price: number | null
           price_label: string | null
           sort_order: number | null
           title: string
@@ -1040,6 +1041,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
+          price?: number | null
           price_label?: string | null
           sort_order?: number | null
           title: string
@@ -1054,6 +1056,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
+          price?: number | null
           price_label?: string | null
           sort_order?: number | null
           title?: string
