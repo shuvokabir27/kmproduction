@@ -616,10 +616,12 @@ const Services = () => {
             const perMin = bookingService.price_per_minute ? Number(bookingService.price_per_minute) : null;
             const numPrice = getServicePrice(bookingService);
             const mins = minuteSelections[bookingService.id] || 1;
-            const finalPrice = perMin ? getDiscountedPrice(perMin * mins) : numPrice ? getDiscountedPrice(numPrice) : null;
+            const discount = getServiceDiscount(bookingService);
+            const rawPrice = perMin ? perMin * mins : numPrice;
+            const finalPrice = rawPrice ? getDiscountedPrice(rawPrice, discount) : null;
             const waUrl = perMin
-              ? getWaUrl(bookingService.title, undefined, { rate: perMin, minutes: mins })
-              : getWaUrl(bookingService.title, numPrice || undefined);
+              ? getWaUrl(bookingService.title, discount, undefined, { rate: perMin, minutes: mins })
+              : getWaUrl(bookingService.title, discount, numPrice || undefined);
             const phone = settings?.contact_phone;
 
             return (
@@ -663,7 +665,7 @@ const Services = () => {
                   )}
 
                   {/* Price Summary */}
-                  {finalPrice && (
+                  {(finalPrice || rawPrice) && (
                     <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("মূল্য", "Price")}</span>
                       {perMin && (
@@ -672,14 +674,14 @@ const Services = () => {
                         </p>
                       )}
                       <div className="flex items-baseline gap-2 mt-1">
-                        {activeOffer && (
+                        {discount > 0 && rawPrice && (
                           <span className="text-base text-muted-foreground line-through">
-                            ৳{(perMin ? perMin * mins : numPrice!).toLocaleString('bn-BD')}
+                            ৳{rawPrice.toLocaleString('bn-BD')}
                           </span>
                         )}
-                        <span className="text-3xl font-black text-primary">৳{finalPrice.toLocaleString('bn-BD')}</span>
-                        {activeOffer && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                        <span className="text-3xl font-black text-primary">৳{(finalPrice || rawPrice)!.toLocaleString('bn-BD')}</span>
+                        {discount > 0 && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                         )}
                       </div>
                     </div>
