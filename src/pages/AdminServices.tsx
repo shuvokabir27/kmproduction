@@ -81,6 +81,7 @@ const AdminServices = () => {
         price_label: form.price_label,
         price: form.price ? Number(form.price) : null,
         price_per_minute: form.price_per_minute ? Number(form.price_per_minute) : null,
+        discount_percentage: form.discount_percentage ? Number(form.discount_percentage) : null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
