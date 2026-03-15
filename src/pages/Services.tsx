@@ -384,9 +384,9 @@ const Services = () => {
                                 : getWaUrl(service.title, getServicePrice(service) || undefined);
                               setBookingService({ title: service.title, waUrl });
                             }}
-                            className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
+                            className={`w-full font-bold text-base py-5 shadow-lg transition-all duration-300 ${index === 1 ? "bg-green-600 hover:bg-green-700 text-white shadow-green-600/30 hover:shadow-green-600/50 hover:scale-[1.02]" : "bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02]"}`}
                           >
-                            <MessageCircle className="h-4 w-4 mr-1" />
+                            <MessageCircle className="h-5 w-5 mr-2" />
                             {t("বুকিং করুন", "Book Now")}
                           </Button>
                         ) : (
