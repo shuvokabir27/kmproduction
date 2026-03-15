@@ -153,6 +153,7 @@ const AdminServices = () => {
     setOfferDiscount("");
     setOfferEndDate("");
     setOfferActive(true);
+    setOfferServiceIds([]);
   };
 
   const openEditOffer = (offer: any) => {
