@@ -110,9 +110,24 @@ const Services = () => {
     return null;
   };
 
-  const getDiscountedPrice = (price: number) => {
+  const getServiceDiscount = (service: any): number => {
+    // 1. Per-service discount takes priority
+    if (service.discount_percentage) return Number(service.discount_percentage);
+    // 2. Active offer discount (if offer applies to this service)
     if (activeOffer?.discount_percentage) {
-      return Math.round(price - (price * activeOffer.discount_percentage / 100));
+      const offerServiceIds = (activeOffer.service_ids as string[]) || [];
+      // If no services selected in offer, applies to all
+      if (offerServiceIds.length === 0 || offerServiceIds.includes(service.id)) {
+        return Number(activeOffer.discount_percentage);
+      }
+    }
+    return 0;
+  };
+
+  const getDiscountedPrice = (price: number, discount?: number) => {
+    const d = discount ?? 0;
+    if (d > 0) {
+      return Math.round(price - (price * d / 100));
     }
     return price;
   };
