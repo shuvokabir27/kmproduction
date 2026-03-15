@@ -26,6 +26,28 @@ const methodLabel: Record<string, string> = {
   cash: "ক্যাশ",
 };
 
+const getAccountLabel = (method: string): string => {
+  switch (method) {
+    case "bank":
+      return "ব্যাংক লাস্ট ৪ ডিজিট";
+    case "bkash":
+      return "বিকাশ";
+    case "nagad":
+      return "নগদ";
+    default:
+      return "ট্রানজেকশন আইডি";
+  }
+};
+
+const formatAccountNumber = (method: string, transactionId?: string | null): string => {
+  if (!transactionId) return "";
+  if (method === "bank") {
+    // Show last 4 digits only for bank
+    return transactionId.slice(-4);
+  }
+  return transactionId;
+};
+
 const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
   ({ receiptData, onClose }, ref) => {
     const receiptRef = useRef<HTMLDivElement>(null);
@@ -126,11 +148,11 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
                     {methodLabel[receiptData.method] || receiptData.method}
                   </span>
                 </div>
-                {receiptData.transactionId && (
+{receiptData.transactionId && (
                   <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">ট্রানজেকশন আইডি</span>
+                    <span className="text-gray-600">{getAccountLabel(receiptData.method)}</span>
                     <span className="font-mono font-semibold text-[11px]">
-                      {receiptData.transactionId}
+                      {formatAccountNumber(receiptData.method, receiptData.transactionId)}
                     </span>
                   </div>
                 )}
