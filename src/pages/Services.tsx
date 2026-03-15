@@ -263,8 +263,27 @@ const Services = () => {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{service.category}</span>
                         </div>
                         <h3 className="text-xl font-bold text-foreground mb-2">{service.title}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-5">{service.description}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
                         
+                        {/* Price Display */}
+                        {service.price ? (
+                          <div className="mb-5">
+                            {activeOffer ? (
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-sm text-muted-foreground line-through">৳{Number(service.price).toLocaleString('bn-BD')}</span>
+                                <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{activeOffer.discount_percentage}% ছাড়</span>
+                              </div>
+                            ) : (
+                              <span className="text-2xl font-black text-primary">৳{Number(service.price).toLocaleString('bn-BD')}</span>
+                            )}
+                          </div>
+                        ) : service.price_label ? (
+                          <div className="mb-5">
+                            <span className="text-lg font-bold text-muted-foreground">{service.price_label}</span>
+                          </div>
+                        ) : null}
+
                         <div className="space-y-2.5 mb-6">
                           {features.map((f: string, i: number) => (
                             <div key={i} className="flex items-center gap-2.5">
@@ -278,15 +297,15 @@ const Services = () => {
 
                         {(settings as any)?.whatsapp_no ? (
                           <Button
-                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
+                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, service.price ? Number(service.price) : undefined) })}
                             className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
                             <MessageCircle className="h-4 w-4 mr-1" />
-                            {service.price_label || t("বুকিং করুন", "Book Now")}
+                            {t("বুকিং করুন", "Book Now")}
                           </Button>
                         ) : (
                           <Button className="w-full bg-secondary hover:bg-secondary/80 text-foreground" disabled>
-                            {service.price_label || t("বুকিং করুন", "Book Now")}
+                            {t("বুকিং করুন", "Book Now")}
                           </Button>
                         )}
                       </div>
