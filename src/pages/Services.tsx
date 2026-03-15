@@ -77,10 +77,18 @@ const Services = () => {
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
 
-  const getWaUrl = (serviceTitle: string) => {
+  const getWaUrl = (serviceTitle: string, price?: number) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
     const offerText = activeOffer ? ` (${activeOffer.discount_percentage}% ডিসকাউন্ট অফার সহ)` : '';
-    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ সম্পর্কে বিস্তারিত ও মূল্য জানতে চাই।${offerText}`)}`;
+    const priceText = price ? ` • মূল্য: ৳${getDiscountedPrice(price)}` : '';
+    return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ বুকিং করতে চাই।${priceText}${offerText}`)}`;
+  };
+
+  const getDiscountedPrice = (price: number) => {
+    if (activeOffer?.discount_percentage) {
+      return Math.round(price - (price * activeOffer.discount_percentage / 100));
+    }
+    return price;
   };
 
   const featured = services?.filter((s: any) => s.is_featured) ?? [];
