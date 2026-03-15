@@ -19,6 +19,7 @@ interface ServiceForm {
   category: string;
   price_label: string;
   price: string;
+  price_per_minute: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
@@ -27,7 +28,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
-  price_label: "যোগাযোগ করুন", price: "", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
@@ -77,6 +78,7 @@ const AdminServices = () => {
         category: form.category,
         price_label: form.price_label,
         price: form.price ? Number(form.price) : null,
+        price_per_minute: form.price_per_minute ? Number(form.price_per_minute) : null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
@@ -168,6 +170,7 @@ const AdminServices = () => {
       category: service.category || "",
       price_label: service.price_label || "",
       price: service.price ? String(service.price) : "",
+      price_per_minute: service.price_per_minute ? String(service.price_per_minute) : "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
@@ -287,6 +290,11 @@ const AdminServices = () => {
                   <Label>মূল্য (৳)</Label>
                   <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="15000" />
                 </div>
+              </div>
+              <div>
+                <Label>প্রতি মিনিট মূল্য (৳) — ঐচ্ছিক</Label>
+                <Input type="number" value={form.price_per_minute} onChange={(e) => setForm({ ...form, price_per_minute: e.target.value })} placeholder="যেমন: 500 (ভিডিও এডিটিং এর জন্য)" />
+                <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার মিনিট সিলেক্ট করে মূল্য দেখতে পারবে</p>
               </div>
               <div>
                 <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>

@@ -1028,6 +1028,7 @@ export type Database = {
           is_featured: boolean | null
           price: number | null
           price_label: string | null
+          price_per_minute: number | null
           sort_order: number | null
           title: string
         }
@@ -1043,6 +1044,7 @@ export type Database = {
           is_featured?: boolean | null
           price?: number | null
           price_label?: string | null
+          price_per_minute?: number | null
           sort_order?: number | null
           title: string
         }
@@ -1058,6 +1060,7 @@ export type Database = {
           is_featured?: boolean | null
           price?: number | null
           price_label?: string | null
+          price_per_minute?: number | null
           sort_order?: number | null
           title?: string
         }

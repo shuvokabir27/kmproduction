@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
   ChevronRight, Check, Star, ArrowLeft, MessageCircle, Phone,
-  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent,
+  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent, Clock, Minus, Plus as PlusIcon,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -27,6 +28,7 @@ const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transiti
 const Services = () => {
   const { t } = useLanguage();
   const [bookingService, setBookingService] = useState<{ title: string; waUrl: string } | null>(null);
+  const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
 
   const { data: services } = useQuery({
     queryKey: ["public-services"],
@@ -77,11 +79,22 @@ const Services = () => {
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
 
-  const getWaUrl = (serviceTitle: string, price?: number) => {
+  const getWaUrl = (serviceTitle: string, price?: number, perMinuteInfo?: { rate: number; minutes: number }) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
     const offerText = activeOffer ? ` (${activeOffer.discount_percentage}% ডিসকাউন্ট অফার সহ)` : '';
-    const priceText = price ? ` • মূল্য: ৳${getDiscountedPrice(price)}` : '';
+    let priceText = '';
+    if (perMinuteInfo) {
+      const total = perMinuteInfo.rate * perMinuteInfo.minutes;
+      const finalPrice = getDiscountedPrice(total);
+      priceText = ` • ${perMinuteInfo.minutes} মিনিট • মূল্য: ৳${finalPrice}`;
+    } else if (price) {
+      priceText = ` • মূল্য: ৳${getDiscountedPrice(price)}`;
+    }
     return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ বুকিং করতে চাই।${priceText}${offerText}`)}`;
+  };
+
+  const setMinutes = (serviceId: string, val: number) => {
+    setMinuteSelections(prev => ({ ...prev, [serviceId]: Math.max(1, val) }));
   };
 
   const parsePriceFromLabel = (label: string): number | null => {
@@ -281,6 +294,48 @@ const Services = () => {
                         {/* Price Display */}
                         {(() => {
                           const numPrice = getServicePrice(service);
+                          const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                          
+                          if (perMin) {
+                            const mins = minuteSelections[service.id] || 1;
+                            const totalPrice = perMin * mins;
+                            return (
+                              <div className="mb-5 space-y-3">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Clock className="h-4 w-4 text-primary" />
+                                  <span>প্রতি মিনিট: <span className="font-bold text-foreground">৳{perMin.toLocaleString('bn-BD')}</span></span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button onClick={() => setMinutes(service.id, mins - 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                    <Minus className="h-4 w-4" />
+                                  </button>
+                                  <Input
+                                    type="number"
+                                    value={mins}
+                                    onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)}
+                                    className="w-20 text-center h-8 text-sm"
+                                    min={1}
+                                  />
+                                  <button onClick={() => setMinutes(service.id, mins + 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                    <PlusIcon className="h-4 w-4" />
+                                  </button>
+                                  <span className="text-xs text-muted-foreground">মিনিট</span>
+                                </div>
+                                {activeOffer ? (
+                                  <div className="flex flex-col gap-1">
+                                    <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice).toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-3xl font-black text-foreground">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                )}
+                              </div>
+                            );
+                          }
+                          
                           if (numPrice) {
                             return (
                               <div className="mb-5">
@@ -321,7 +376,14 @@ const Services = () => {
 
                         {(settings as any)?.whatsapp_no ? (
                           <Button
-                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, getServicePrice(service) || undefined) })}
+                            onClick={() => {
+                              const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                              const mins = minuteSelections[service.id] || 1;
+                              const waUrl = perMin
+                                ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
+                                : getWaUrl(service.title, getServicePrice(service) || undefined);
+                              setBookingService({ title: service.title, waUrl });
+                            }}
                             className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
                             <MessageCircle className="h-4 w-4 mr-1" />
@@ -391,6 +453,48 @@ const Services = () => {
                       {/* Price Display */}
                       {(() => {
                         const numPrice = getServicePrice(service);
+                        const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                        
+                        if (perMin) {
+                          const mins = minuteSelections[service.id] || 1;
+                          const totalPrice = perMin * mins;
+                          return (
+                            <div className="mb-3 space-y-2">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Clock className="h-3.5 w-3.5 text-primary" />
+                                <span>প্রতি মিনিট: <span className="font-bold text-foreground">৳{perMin.toLocaleString('bn-BD')}</span></span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button onClick={() => setMinutes(service.id, mins - 1)} className="h-7 w-7 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                  <Minus className="h-3.5 w-3.5" />
+                                </button>
+                                <Input
+                                  type="number"
+                                  value={mins}
+                                  onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)}
+                                  className="w-16 text-center h-7 text-xs"
+                                  min={1}
+                                />
+                                <button onClick={() => setMinutes(service.id, mins + 1)} className="h-7 w-7 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                  <PlusIcon className="h-3.5 w-3.5" />
+                                </button>
+                                <span className="text-[10px] text-muted-foreground">মিনিট</span>
+                              </div>
+                              {activeOffer ? (
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice).toLocaleString('bn-BD')}</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-2xl font-black text-foreground">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                              )}
+                            </div>
+                          );
+                        }
+                        
                         if (numPrice) {
                           return (
                             <div className="mb-3">
@@ -435,7 +539,14 @@ const Services = () => {
                           variant="outline"
                           size="sm"
                           className="w-full"
-                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, getServicePrice(service) || undefined) })}
+                          onClick={() => {
+                            const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                            const mins = minuteSelections[service.id] || 1;
+                            const waUrl = perMin
+                              ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
+                              : getWaUrl(service.title, getServicePrice(service) || undefined);
+                            setBookingService({ title: service.title, waUrl });
+                          }}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
