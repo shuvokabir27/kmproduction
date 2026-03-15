@@ -163,6 +163,7 @@ const AdminServices = () => {
     setOfferDiscount(String(offer.discount_percentage));
     setOfferEndDate(new Date(offer.offer_end_date).toISOString().slice(0, 16));
     setOfferActive(offer.is_active);
+    setOfferServiceIds((offer.service_ids as string[]) || []);
     setOfferDialogOpen(true);
   };
 
