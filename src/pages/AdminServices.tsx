@@ -256,8 +256,12 @@ const AdminServices = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-foreground truncate">{s.title}</h3>
                       {s.is_featured && <Star className="h-4 w-4 text-primary fill-primary flex-shrink-0" />}
+                      {s.discount_percentage && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{s.discount_percentage}% ছাড়</span>}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">{s.category} • ক্রম: {s.sort_order}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {s.category} • ক্রম: {s.sort_order}
+                      {s.price_per_minute && ` • ৳${s.price_per_minute}/মিনিট`}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(s)}>
