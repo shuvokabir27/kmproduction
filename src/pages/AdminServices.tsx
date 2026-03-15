@@ -76,6 +76,7 @@ const AdminServices = () => {
         icon: form.icon,
         category: form.category,
         price_label: form.price_label,
+        price: form.price ? Number(form.price) : null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
