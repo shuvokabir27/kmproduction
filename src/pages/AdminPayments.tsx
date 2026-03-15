@@ -201,7 +201,16 @@ const AdminPayments = () => {
                     <SelectContent className="bg-card border-border/50">
                       {members?.map((m) => (
                         <SelectItem key={m.id} value={m.id}>
-                          {m.full_name} (ID: {m.member_id})
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded-full bg-primary/15 flex items-center justify-center overflow-hidden shrink-0">
+                              {m.photo_url ? (
+                                <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                              ) : (
+                                <span className="text-primary text-[10px] font-semibold">{m.full_name?.charAt(0)}</span>
+                              )}
+                            </div>
+                            <span>{m.full_name} (ID: {m.member_id})</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
