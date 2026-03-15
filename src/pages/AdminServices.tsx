@@ -292,6 +292,11 @@ const AdminServices = () => {
                 </div>
               </div>
               <div>
+                <Label>প্রতি মিনিট মূল্য (৳) — ঐচ্ছিক</Label>
+                <Input type="number" value={form.price_per_minute} onChange={(e) => setForm({ ...form, price_per_minute: e.target.value })} placeholder="যেমন: 500 (ভিডিও এডিটিং এর জন্য)" />
+                <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার মিনিট সিলেক্ট করে মূল্য দেখতে পারবে</p>
+              </div>
+              <div>
                 <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
                 <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
               </div>
