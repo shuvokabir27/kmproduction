@@ -362,8 +362,27 @@ const Services = () => {
                           <h3 className="text-lg font-bold text-foreground">{service.title}</h3>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">{service.description}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{service.description}</p>
                       
+                      {/* Price Display */}
+                      {service.price ? (
+                        <div className="mb-3">
+                          {activeOffer ? (
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs text-muted-foreground line-through">৳{Number(service.price).toLocaleString('bn-BD')}</span>
+                              <span className="text-lg font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{activeOffer.discount_percentage}% ছাড়</span>
+                            </div>
+                          ) : (
+                            <span className="text-lg font-black text-primary">৳{Number(service.price).toLocaleString('bn-BD')}</span>
+                          )}
+                        </div>
+                      ) : service.price_label ? (
+                        <div className="mb-3">
+                          <span className="text-sm font-bold text-muted-foreground">{service.price_label}</span>
+                        </div>
+                      ) : null}
+
                       <div className="space-y-2 mb-5">
                         {features.slice(0, 3).map((f: string, i: number) => (
                           <div key={i} className="flex items-center gap-2">
@@ -381,7 +400,7 @@ const Services = () => {
                           variant="outline"
                           size="sm"
                           className="w-full"
-                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title) })}
+                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, service.price ? Number(service.price) : undefined) })}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
