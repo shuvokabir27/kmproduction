@@ -284,9 +284,13 @@ const AdminServices = () => {
                   <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="বিজ্ঞাপন" />
                 </div>
                 <div>
-                  <Label>মূল্য লেবেল</Label>
-                  <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
+                  <Label>মূল্য (৳)</Label>
+                  <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="15000" />
                 </div>
+              </div>
+              <div>
+                <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
+                <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />
               </div>
               <div>
                 <Label>আইকন</Label>
