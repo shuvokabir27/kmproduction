@@ -531,14 +531,7 @@ const Services = () => {
                         <Button
                           size="sm"
                           className="w-full font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02] transition-all duration-300"
-                          onClick={() => {
-                            const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
-                            const mins = minuteSelections[service.id] || 1;
-                            const waUrl = perMin
-                              ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
-                              : getWaUrl(service.title, getServicePrice(service) || undefined);
-                            setBookingService({ title: service.title, waUrl });
-                          }}
+                          onClick={() => setBookingService(service)}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
