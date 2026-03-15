@@ -727,7 +727,7 @@ const Services = () => {
       </footer>
       {/* Booking Detail Dialog */}
       <AlertDialog open={!!bookingService} onOpenChange={(open) => { if (!open) { setBookingService(null); setBookingStep('options'); setBookingForm({ name: '', phone: '', address: '' }); setBookingDate(undefined); setBookingDays(1); } }}>
-        <AlertDialogContent className="max-w-md p-0 overflow-hidden">
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
           {bookingService && (() => {
             const IconComp = iconMap[bookingService.icon] || Camera;
             const features = (bookingService.features as string[]) || [];
