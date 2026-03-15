@@ -192,6 +192,7 @@ const AdminServices = () => {
       description: service.description || "",
       icon: service.icon || "Camera",
       category: service.category || "",
+      pricing_type: service.pricing_type || "fixed",
       price_label: service.price_label || "",
       price: service.price ? String(service.price) : "",
       price_per_minute: service.price_per_minute ? String(service.price_per_minute) : "",
