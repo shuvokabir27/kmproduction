@@ -279,28 +279,34 @@ const Services = () => {
                         <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
                         
                         {/* Price Display */}
-                        {service.price ? (
-                          <div className="mb-5">
-                            {activeOffer ? (
-                              <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-3xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                                  <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm text-muted-foreground">ডিসকাউন্ট মূল্য:</span>
-                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(Number(service.price)).toLocaleString('bn-BD')}</span>
-                                </div>
+                        {(() => {
+                          const numPrice = getServicePrice(service);
+                          if (numPrice) {
+                            return (
+                              <div className="mb-5">
+                                {activeOffer ? (
+                                  <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <span className="text-xl text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                    </div>
+                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice).toLocaleString('bn-BD')}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-3xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
+                                )}
                               </div>
-                            ) : (
-                              <span className="text-3xl font-black text-foreground">৳{Number(service.price).toLocaleString('bn-BD')}</span>
-                            )}
-                          </div>
-                        ) : service.price_label ? (
-                          <div className="mb-5">
-                            <span className="text-lg font-bold text-muted-foreground">{service.price_label}</span>
-                          </div>
-                        ) : null}
+                            );
+                          }
+                          if (service.price_label) {
+                            return (
+                              <div className="mb-5">
+                                <span className="text-lg font-bold text-muted-foreground">{service.price_label}</span>
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
 
                         <div className="space-y-2.5 mb-6">
                           {features.map((f: string, i: number) => (
