@@ -20,6 +20,7 @@ interface ServiceForm {
   price_label: string;
   price: string;
   price_per_minute: string;
+  discount_percentage: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
@@ -28,7 +29,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
-  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
