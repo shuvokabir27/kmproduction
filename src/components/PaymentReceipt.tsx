@@ -148,11 +148,11 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
                     {methodLabel[receiptData.method] || receiptData.method}
                   </span>
                 </div>
-                {receiptData.transactionId && (
+{receiptData.transactionId && (
                   <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">ট্রানজেকশন আইডি</span>
+                    <span className="text-gray-600">{getAccountLabel(receiptData.method)}</span>
                     <span className="font-mono font-semibold text-[11px]">
-                      {receiptData.transactionId}
+                      {formatAccountNumber(receiptData.method, receiptData.transactionId)}
                     </span>
                   </div>
                 )}
