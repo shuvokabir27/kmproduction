@@ -79,16 +79,16 @@ const Services = () => {
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
 
-  const getWaUrl = (serviceTitle: string, price?: number, perMinuteInfo?: { rate: number; minutes: number }) => {
+  const getWaUrl = (serviceTitle: string, discount: number, price?: number, perMinuteInfo?: { rate: number; minutes: number }) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
-    const offerText = activeOffer ? ` (${activeOffer.discount_percentage}% ডিসকাউন্ট অফার সহ)` : '';
+    const offerText = discount > 0 ? ` (${discount}% ডিসকাউন্ট সহ)` : '';
     let priceText = '';
     if (perMinuteInfo) {
       const total = perMinuteInfo.rate * perMinuteInfo.minutes;
-      const finalPrice = getDiscountedPrice(total);
+      const finalPrice = getDiscountedPrice(total, discount);
       priceText = ` • ${perMinuteInfo.minutes} মিনিট • মূল্য: ৳${finalPrice}`;
     } else if (price) {
-      priceText = ` • মূল্য: ৳${getDiscountedPrice(price)}`;
+      priceText = ` • মূল্য: ৳${getDiscountedPrice(price, discount)}`;
     }
     return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ বুকিং করতে চাই।${priceText}${offerText}`)}`;
   };
