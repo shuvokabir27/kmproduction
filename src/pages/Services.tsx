@@ -376,7 +376,14 @@ const Services = () => {
 
                         {(settings as any)?.whatsapp_no ? (
                           <Button
-                            onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, getServicePrice(service) || undefined) })}
+                            onClick={() => {
+                              const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                              const mins = minuteSelections[service.id] || 1;
+                              const waUrl = perMin
+                                ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
+                                : getWaUrl(service.title, getServicePrice(service) || undefined);
+                              setBookingService({ title: service.title, waUrl });
+                            }}
                             className={`w-full ${index === 1 ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80 text-foreground"}`}
                           >
                             <MessageCircle className="h-4 w-4 mr-1" />
