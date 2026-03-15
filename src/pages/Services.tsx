@@ -844,25 +844,25 @@ const Services = () => {
                       </AlertDialogDescription>
                       {phone && (
                         <a href={`tel:${phone}`} className="block">
-                          <Button variant="outline" className="w-full font-bold py-5 text-base">
+                          <Button variant="outline" className="w-full font-bold py-6 text-base rounded-xl border-2 border-blue-500/40 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-400 hover:from-blue-500/20 hover:to-cyan-500/20 hover:border-blue-400/60 hover:text-blue-300 shadow-lg shadow-blue-500/10 transition-all duration-300 hover:scale-[1.02]">
                             <Phone className="h-5 w-5 mr-2" /> {t("কল করুন", "Call Us")}
                           </Button>
                         </a>
                       )}
                       {(settings as any)?.whatsapp_no && (
                         <a href={waUrl} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 text-base shadow-lg shadow-green-600/20">
+                          <Button className="w-full font-bold py-6 text-base rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white shadow-xl shadow-green-600/30 hover:shadow-green-500/40 transition-all duration-300 hover:scale-[1.02] border-0">
                             <MessageCircle className="h-5 w-5 mr-2" /> WhatsApp
                           </Button>
                         </a>
                       )}
                       <Button
                         onClick={() => setBookingStep('form')}
-                        className="w-full font-bold py-5 text-base bg-primary hover:bg-primary/90"
+                        className="w-full font-bold py-6 text-base rounded-xl bg-gradient-to-r from-orange-500 via-red-500 to-rose-500 hover:from-orange-400 hover:via-red-400 hover:to-rose-400 text-white shadow-xl shadow-red-500/30 hover:shadow-red-500/40 transition-all duration-300 hover:scale-[1.02] border-0"
                       >
                         <ChevronRight className="h-5 w-5 mr-2" /> {t("বুকিং করুন", "Book Now")}
                       </Button>
-                      <AlertDialogCancel className="w-full mt-1">{t("বন্ধ করুন", "Close")}</AlertDialogCancel>
+                      <AlertDialogCancel className="w-full mt-1 rounded-xl py-5 text-base font-medium">{t("বন্ধ করুন", "Close")}</AlertDialogCancel>
                     </>
                   ) : (
                     <>
