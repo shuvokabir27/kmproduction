@@ -12,8 +12,8 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import {
-  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+  AlertDialog, AlertDialogContent, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
 const iconMap: Record<string, any> = {
