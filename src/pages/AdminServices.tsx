@@ -20,6 +20,9 @@ interface ServiceForm {
   price_label: string;
   price: string;
   price_per_minute: string;
+  price_per_hour: string;
+  edited_photos_per_hour: string;
+  unlimited_photos_per_hour: boolean;
   discount_percentage: string;
   features: string;
   is_featured: boolean;
