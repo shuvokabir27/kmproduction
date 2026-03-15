@@ -80,11 +80,15 @@ const Services = () => {
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
 
-  const getWaUrl = (serviceTitle: string, discount: number, price?: number, perMinuteInfo?: { rate: number; minutes: number }) => {
+  const getWaUrl = (serviceTitle: string, discount: number, price?: number, perMinuteInfo?: { rate: number; minutes: number }, perHourInfo?: { rate: number; hours: number; editedPhotos: number }) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
     const offerText = discount > 0 ? ` (${discount}% ডিসকাউন্ট সহ)` : '';
     let priceText = '';
-    if (perMinuteInfo) {
+    if (perHourInfo) {
+      const total = perHourInfo.rate * perHourInfo.hours;
+      const finalPrice = getDiscountedPrice(total, discount);
+      priceText = ` • ${perHourInfo.hours} ঘন্টা • এডিটেড ছবি: ${perHourInfo.editedPhotos * perHourInfo.hours}টি • মূল্য: ৳${finalPrice}`;
+    } else if (perMinuteInfo) {
       const total = perMinuteInfo.rate * perMinuteInfo.minutes;
       const finalPrice = getDiscountedPrice(total, discount);
       priceText = ` • ${perMinuteInfo.minutes} মিনিট • মূল্য: ৳${finalPrice}`;
