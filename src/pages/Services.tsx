@@ -28,6 +28,7 @@ const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transiti
 const Services = () => {
   const { t } = useLanguage();
   const [bookingService, setBookingService] = useState<{ title: string; waUrl: string } | null>(null);
+  const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
 
   const { data: services } = useQuery({
     queryKey: ["public-services"],
