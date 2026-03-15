@@ -29,6 +29,7 @@ const Services = () => {
   const { t } = useLanguage();
   const [bookingService, setBookingService] = useState<any | null>(null);
   const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
+  const [hourSelections, setHourSelections] = useState<Record<string, number>>({});
 
   const { data: services } = useQuery({
     queryKey: ["public-services"],
