@@ -34,6 +34,7 @@ import MemberSettings from "./pages/MemberSettings";
 import AdminNews from "./pages/AdminNews";
 import AdminSettings from "./pages/AdminSettings";
 import News from "./pages/News";
+import AdminBookings from "./pages/AdminBookings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/admin/gallery" element={<AdminGallery />} />
             <Route path="/admin/services" element={<AdminServices />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
