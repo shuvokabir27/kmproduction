@@ -780,7 +780,28 @@ const Services = () => {
                   {(finalPrice || rawPrice) && (
                     <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("মূল্য", "Price")}</span>
-                      {perMin && (
+                      {perHour && (
+                        <>
+                          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> প্রতি ঘন্টা ৳{perHour.toLocaleString('bn-BD')} × {hrs} ঘন্টা
+                          </p>
+                          <div className="mt-2 rounded-lg bg-primary/5 border border-primary/10 p-2.5 space-y-1">
+                            <div className="flex items-center gap-1.5 text-xs text-foreground/80">
+                              <Camera className="h-3.5 w-3.5 text-primary" />
+                              {unlimitedPhotos ? <span>প্রতি ঘন্টায় আনলিমিটেড ছবি তোলা হবে</span> : <span>ছবি তোলা হবে</span>}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-foreground/80">
+                              <Check className="h-3.5 w-3.5 text-primary" />
+                              <span><span className="font-bold text-primary">{editedPerHour * hrs}টি</span> ছবি এডিট করে দেওয়া হবে</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <Check className="h-3.5 w-3.5" />
+                              <span>বাকি সব ছবি এডিট ছাড়া দেওয়া হবে</span>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      {perMin && !perHour && (
                         <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                           <Clock className="h-3 w-3" /> প্রতি মিনিট ৳{perMin.toLocaleString('bn-BD')} × {mins} মিনিট
                         </p>
