@@ -79,16 +79,16 @@ const Services = () => {
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
 
-  const getWaUrl = (serviceTitle: string, price?: number, perMinuteInfo?: { rate: number; minutes: number }) => {
+  const getWaUrl = (serviceTitle: string, discount: number, price?: number, perMinuteInfo?: { rate: number; minutes: number }) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
-    const offerText = activeOffer ? ` (${activeOffer.discount_percentage}% ডিসকাউন্ট অফার সহ)` : '';
+    const offerText = discount > 0 ? ` (${discount}% ডিসকাউন্ট সহ)` : '';
     let priceText = '';
     if (perMinuteInfo) {
       const total = perMinuteInfo.rate * perMinuteInfo.minutes;
-      const finalPrice = getDiscountedPrice(total);
+      const finalPrice = getDiscountedPrice(total, discount);
       priceText = ` • ${perMinuteInfo.minutes} মিনিট • মূল্য: ৳${finalPrice}`;
     } else if (price) {
-      priceText = ` • মূল্য: ৳${getDiscountedPrice(price)}`;
+      priceText = ` • মূল্য: ৳${getDiscountedPrice(price, discount)}`;
     }
     return `https://wa.me/${phone}?text=${encodeURIComponent(`আমি "${serviceTitle}" প্যাকেজ বুকিং করতে চাই।${priceText}${offerText}`)}`;
   };
@@ -110,9 +110,24 @@ const Services = () => {
     return null;
   };
 
-  const getDiscountedPrice = (price: number) => {
+  const getServiceDiscount = (service: any): number => {
+    // 1. Per-service discount takes priority
+    if (service.discount_percentage) return Number(service.discount_percentage);
+    // 2. Active offer discount (if offer applies to this service)
     if (activeOffer?.discount_percentage) {
-      return Math.round(price - (price * activeOffer.discount_percentage / 100));
+      const offerServiceIds = (activeOffer.service_ids as string[]) || [];
+      // If no services selected in offer, applies to all
+      if (offerServiceIds.length === 0 || offerServiceIds.includes(service.id)) {
+        return Number(activeOffer.discount_percentage);
+      }
+    }
+    return 0;
+  };
+
+  const getDiscountedPrice = (price: number, discount?: number) => {
+    const d = discount ?? 0;
+    if (d > 0) {
+      return Math.round(price - (price * d / 100));
     }
     return price;
   };
@@ -295,6 +310,7 @@ const Services = () => {
                         {(() => {
                           const numPrice = getServicePrice(service);
                           const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                          const discount = getServiceDiscount(service);
                           
                           if (perMin) {
                             const mins = minuteSelections[service.id] || 1;
@@ -309,24 +325,18 @@ const Services = () => {
                                   <button onClick={() => setMinutes(service.id, mins - 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
                                     <Minus className="h-4 w-4" />
                                   </button>
-                                  <Input
-                                    type="number"
-                                    value={mins}
-                                    onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)}
-                                    className="w-20 text-center h-8 text-sm"
-                                    min={1}
-                                  />
+                                  <Input type="number" value={mins} onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)} className="w-20 text-center h-8 text-sm" min={1} />
                                   <button onClick={() => setMinutes(service.id, mins + 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
                                     <PlusIcon className="h-4 w-4" />
                                   </button>
                                   <span className="text-xs text-muted-foreground">মিনিট</span>
                                 </div>
-                                {activeOffer ? (
+                                {discount > 0 ? (
                                   <div className="flex flex-col gap-1">
                                     <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice).toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
                                   </div>
                                 ) : (
@@ -339,13 +349,13 @@ const Services = () => {
                           if (numPrice) {
                             return (
                               <div className="mb-5">
-                                {activeOffer ? (
+                                {discount > 0 ? (
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2 flex-wrap">
                                       <span className="text-xl text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
-                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice).toLocaleString('bn-BD')}</span>
+                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                   </div>
                                 ) : (
                                   <span className="text-3xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
@@ -447,6 +457,7 @@ const Services = () => {
                       {(() => {
                         const numPrice = getServicePrice(service);
                         const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                        const discount = getServiceDiscount(service);
                         
                         if (perMin) {
                           const mins = minuteSelections[service.id] || 1;
@@ -461,24 +472,18 @@ const Services = () => {
                                 <button onClick={() => setMinutes(service.id, mins - 1)} className="h-7 w-7 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
                                   <Minus className="h-3.5 w-3.5" />
                                 </button>
-                                <Input
-                                  type="number"
-                                  value={mins}
-                                  onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)}
-                                  className="w-16 text-center h-7 text-xs"
-                                  min={1}
-                                />
+                                <Input type="number" value={mins} onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)} className="w-16 text-center h-7 text-xs" min={1} />
                                 <button onClick={() => setMinutes(service.id, mins + 1)} className="h-7 w-7 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
                                   <PlusIcon className="h-3.5 w-3.5" />
                                 </button>
                                 <span className="text-[10px] text-muted-foreground">মিনিট</span>
                               </div>
-                              {activeOffer ? (
+                              {discount > 0 ? (
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice).toLocaleString('bn-BD')}</span>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
                               ) : (
@@ -491,13 +496,13 @@ const Services = () => {
                         if (numPrice) {
                           return (
                             <div className="mb-3">
-                              {activeOffer ? (
+                              {discount > 0 ? (
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <span className="text-base text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
-                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(numPrice).toLocaleString('bn-BD')}</span>
+                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                 </div>
                               ) : (
                                 <span className="text-2xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
@@ -611,10 +616,12 @@ const Services = () => {
             const perMin = bookingService.price_per_minute ? Number(bookingService.price_per_minute) : null;
             const numPrice = getServicePrice(bookingService);
             const mins = minuteSelections[bookingService.id] || 1;
-            const finalPrice = perMin ? getDiscountedPrice(perMin * mins) : numPrice ? getDiscountedPrice(numPrice) : null;
+            const discount = getServiceDiscount(bookingService);
+            const rawPrice = perMin ? perMin * mins : numPrice;
+            const finalPrice = rawPrice ? getDiscountedPrice(rawPrice, discount) : null;
             const waUrl = perMin
-              ? getWaUrl(bookingService.title, undefined, { rate: perMin, minutes: mins })
-              : getWaUrl(bookingService.title, numPrice || undefined);
+              ? getWaUrl(bookingService.title, discount, undefined, { rate: perMin, minutes: mins })
+              : getWaUrl(bookingService.title, discount, numPrice || undefined);
             const phone = settings?.contact_phone;
 
             return (
@@ -658,7 +665,7 @@ const Services = () => {
                   )}
 
                   {/* Price Summary */}
-                  {finalPrice && (
+                  {(finalPrice || rawPrice) && (
                     <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("মূল্য", "Price")}</span>
                       {perMin && (
@@ -667,14 +674,14 @@ const Services = () => {
                         </p>
                       )}
                       <div className="flex items-baseline gap-2 mt-1">
-                        {activeOffer && (
+                        {discount > 0 && rawPrice && (
                           <span className="text-base text-muted-foreground line-through">
-                            ৳{(perMin ? perMin * mins : numPrice!).toLocaleString('bn-BD')}
+                            ৳{rawPrice.toLocaleString('bn-BD')}
                           </span>
                         )}
-                        <span className="text-3xl font-black text-primary">৳{finalPrice.toLocaleString('bn-BD')}</span>
-                        {activeOffer && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                        <span className="text-3xl font-black text-primary">৳{(finalPrice || rawPrice)!.toLocaleString('bn-BD')}</span>
+                        {discount > 0 && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                         )}
                       </div>
                     </div>

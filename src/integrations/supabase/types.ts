@@ -990,6 +990,7 @@ export type Database = {
           id: string
           is_active: boolean
           offer_end_date: string
+          service_ids: Json | null
           title: string
           updated_at: string
         }
@@ -1000,6 +1001,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           offer_end_date: string
+          service_ids?: Json | null
           title?: string
           updated_at?: string
         }
@@ -1010,6 +1012,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           offer_end_date?: string
+          service_ids?: Json | null
           title?: string
           updated_at?: string
         }
@@ -1020,6 +1023,7 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          discount_percentage: number | null
           features: Json | null
           icon: string | null
           id: string
@@ -1036,6 +1040,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          discount_percentage?: number | null
           features?: Json | null
           icon?: string | null
           id?: string
@@ -1052,6 +1057,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          discount_percentage?: number | null
           features?: Json | null
           icon?: string | null
           id?: string

@@ -20,6 +20,7 @@ interface ServiceForm {
   price_label: string;
   price: string;
   price_per_minute: string;
+  discount_percentage: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
@@ -28,7 +29,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
-  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
@@ -51,6 +52,7 @@ const AdminServices = () => {
   const [offerDiscount, setOfferDiscount] = useState("");
   const [offerEndDate, setOfferEndDate] = useState("");
   const [offerActive, setOfferActive] = useState(true);
+  const [offerServiceIds, setOfferServiceIds] = useState<string[]>([]);
 
   const { data: services, isLoading } = useQuery({
     queryKey: ["admin-services"],
@@ -79,6 +81,7 @@ const AdminServices = () => {
         price_label: form.price_label,
         price: form.price ? Number(form.price) : null,
         price_per_minute: form.price_per_minute ? Number(form.price_per_minute) : null,
+        discount_percentage: form.discount_percentage ? Number(form.discount_percentage) : null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
@@ -121,6 +124,7 @@ const AdminServices = () => {
       discount_percentage: Number(offerDiscount),
       offer_end_date: new Date(offerEndDate).toISOString(),
       is_active: offerActive,
+      service_ids: offerServiceIds.length > 0 ? offerServiceIds : [],
     };
     if (offerEditId) {
       const { error } = await (supabase as any).from("service_offers").update(payload).eq("id", offerEditId);
@@ -149,6 +153,7 @@ const AdminServices = () => {
     setOfferDiscount("");
     setOfferEndDate("");
     setOfferActive(true);
+    setOfferServiceIds([]);
   };
 
   const openEditOffer = (offer: any) => {
@@ -158,6 +163,7 @@ const AdminServices = () => {
     setOfferDiscount(String(offer.discount_percentage));
     setOfferEndDate(new Date(offer.offer_end_date).toISOString().slice(0, 16));
     setOfferActive(offer.is_active);
+    setOfferServiceIds((offer.service_ids as string[]) || []);
     setOfferDialogOpen(true);
   };
 
@@ -171,6 +177,7 @@ const AdminServices = () => {
       price_label: service.price_label || "",
       price: service.price ? String(service.price) : "",
       price_per_minute: service.price_per_minute ? String(service.price_per_minute) : "",
+      discount_percentage: service.discount_percentage ? String(service.discount_percentage) : "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
@@ -249,8 +256,12 @@ const AdminServices = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-foreground truncate">{s.title}</h3>
                       {s.is_featured && <Star className="h-4 w-4 text-primary fill-primary flex-shrink-0" />}
+                      {s.discount_percentage && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{s.discount_percentage}% ছাড়</span>}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">{s.category} • ক্রম: {s.sort_order}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {s.category} • ক্রম: {s.sort_order}
+                      {s.price_per_minute && ` • ৳${s.price_per_minute}/মিনিট`}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(s)}>
@@ -325,9 +336,15 @@ const AdminServices = () => {
                   rows={4}
                 />
               </div>
-              <div>
-                <Label>ক্রম</Label>
-                <Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>ক্রম</Label>
+                  <Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+                </div>
+                <div>
+                  <Label>ডিসকাউন্ট (%) — ঐচ্ছিক</Label>
+                  <Input type="number" value={form.discount_percentage} onChange={(e) => setForm({ ...form, discount_percentage: e.target.value })} placeholder="যেমন: 10" min="0" max="100" />
+                </div>
               </div>
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
@@ -373,6 +390,35 @@ const AdminServices = () => {
                   <Input type="datetime-local" value={offerEndDate} onChange={(e) => setOfferEndDate(e.target.value)} />
                 </div>
               </div>
+              {/* Service Selection */}
+              {services && services.length > 0 && (
+                <div>
+                  <Label>কোন সেবায় প্রযোজ্য? (সিলেক্ট না করলে সবগুলোতে প্রযোজ্য হবে)</Label>
+                  <div className="mt-2 space-y-1.5 max-h-40 overflow-y-auto rounded-lg border border-border/30 p-2">
+                    {services.map((s: any) => (
+                      <label key={s.id} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-secondary/30 cursor-pointer text-sm">
+                        <input
+                          type="checkbox"
+                          checked={offerServiceIds.includes(s.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setOfferServiceIds([...offerServiceIds, s.id]);
+                            } else {
+                              setOfferServiceIds(offerServiceIds.filter(id => id !== s.id));
+                            }
+                          }}
+                          className="rounded border-border"
+                        />
+                        <span className="text-foreground">{s.title}</span>
+                        {s.category && <span className="text-[10px] text-muted-foreground">({s.category})</span>}
+                      </label>
+                    ))}
+                  </div>
+                  {offerServiceIds.length > 0 && (
+                    <p className="text-xs text-primary mt-1">{offerServiceIds.length}টি সেবা সিলেক্ট করা হয়েছে</p>
+                  )}
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <Switch checked={offerActive} onCheckedChange={setOfferActive} />
                 <Label>সক্রিয়</Label>
