@@ -167,6 +167,7 @@ const AdminServices = () => {
       icon: service.icon || "Camera",
       category: service.category || "",
       price_label: service.price_label || "",
+      price: service.price ? String(service.price) : "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
