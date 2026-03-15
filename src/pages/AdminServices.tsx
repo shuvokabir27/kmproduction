@@ -12,11 +12,21 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Pencil, X, Star, Eye, EyeOff, Timer, Percent, Gift } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+type PricingType = 'hourly' | 'per_minute' | 'event' | 'fixed';
+
+const pricingTypeLabels: Record<PricingType, string> = {
+  hourly: "ঘন্টা ভিত্তিক",
+  per_minute: "মিনিট ভিত্তিক",
+  event: "ইভেন্ট ভিত্তিক",
+  fixed: "নির্দিষ্ট মূল্য",
+};
+
 interface ServiceForm {
   title: string;
   description: string;
   icon: string;
   category: string;
+  pricing_type: PricingType;
   price_label: string;
   price: string;
   price_per_minute: string;
@@ -32,6 +42,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
+  pricing_type: "fixed",
   price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", price_per_hour: "", edited_photos_per_hour: "20", unlimited_photos_per_hour: true, discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
