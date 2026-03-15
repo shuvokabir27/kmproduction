@@ -336,9 +336,15 @@ const AdminServices = () => {
                   rows={4}
                 />
               </div>
-              <div>
-                <Label>ক্রম</Label>
-                <Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>ক্রম</Label>
+                  <Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+                </div>
+                <div>
+                  <Label>ডিসকাউন্ট (%) — ঐচ্ছিক</Label>
+                  <Input type="number" value={form.discount_percentage} onChange={(e) => setForm({ ...form, discount_percentage: e.target.value })} placeholder="যেমন: 10" min="0" max="100" />
+                </div>
               </div>
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
