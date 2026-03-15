@@ -12,8 +12,8 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import {
-  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+  AlertDialog, AlertDialogContent, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
 const iconMap: Record<string, any> = {
@@ -27,7 +27,7 @@ const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transiti
 
 const Services = () => {
   const { t } = useLanguage();
-  const [bookingService, setBookingService] = useState<{ title: string; waUrl: string } | null>(null);
+  const [bookingService, setBookingService] = useState<any | null>(null);
   const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
 
   const { data: services } = useQuery({
@@ -376,14 +376,7 @@ const Services = () => {
 
                         {(settings as any)?.whatsapp_no ? (
                           <Button
-                            onClick={() => {
-                              const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
-                              const mins = minuteSelections[service.id] || 1;
-                              const waUrl = perMin
-                                ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
-                                : getWaUrl(service.title, getServicePrice(service) || undefined);
-                              setBookingService({ title: service.title, waUrl });
-                            }}
+                            onClick={() => setBookingService(service)}
                             className={`w-full font-bold text-base py-5 shadow-lg transition-all duration-300 ${index === 1 ? "bg-green-600 hover:bg-green-700 text-white shadow-green-600/30 hover:shadow-green-600/50 hover:scale-[1.02]" : "bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02]"}`}
                           >
                             <MessageCircle className="h-5 w-5 mr-2" />
@@ -538,14 +531,7 @@ const Services = () => {
                         <Button
                           size="sm"
                           className="w-full font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02] transition-all duration-300"
-                          onClick={() => {
-                            const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
-                            const mins = minuteSelections[service.id] || 1;
-                            const waUrl = perMin
-                              ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
-                              : getWaUrl(service.title, getServicePrice(service) || undefined);
-                            setBookingService({ title: service.title, waUrl });
-                          }}
+                          onClick={() => setBookingService(service)}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
@@ -616,25 +602,106 @@ const Services = () => {
           </p>
         </div>
       </footer>
-      {/* Booking Confirmation Dialog */}
+      {/* Booking Detail Dialog */}
       <AlertDialog open={!!bookingService} onOpenChange={(open) => !open && setBookingService(null)}>
-        <AlertDialogContent className="max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-lg">
-              📩 {t("বুকিং ও মূল্য জানতে", "For Booking & Pricing")}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center text-sm leading-relaxed">
-              <strong className="text-foreground">"{bookingService?.title}"</strong> {t("প্যাকেজের মূল্য ও বিস্তারিত জানতে আমাদের WhatsApp এ মেসেজ করুন। আমরা দ্রুত আপনাকে জানাবো।", "— To know the price and details of this package, message us on WhatsApp. We'll get back to you shortly.")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-2">
-            <AlertDialogCancel className="w-full sm:w-auto">{t("বাতিল", "Cancel")}</AlertDialogCancel>
-            <AlertDialogAction asChild className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
-              <a href={bookingService?.waUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
-                <MessageCircle className="h-4 w-4" /> {t("WhatsApp এ মেসেজ করুন", "Message on WhatsApp")}
-              </a>
-            </AlertDialogAction>
-          </AlertDialogFooter>
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden">
+          {bookingService && (() => {
+            const IconComp = iconMap[bookingService.icon] || Camera;
+            const features = (bookingService.features as string[]) || [];
+            const perMin = bookingService.price_per_minute ? Number(bookingService.price_per_minute) : null;
+            const numPrice = getServicePrice(bookingService);
+            const mins = minuteSelections[bookingService.id] || 1;
+            const finalPrice = perMin ? getDiscountedPrice(perMin * mins) : numPrice ? getDiscountedPrice(numPrice) : null;
+            const waUrl = perMin
+              ? getWaUrl(bookingService.title, undefined, { rate: perMin, minutes: mins })
+              : getWaUrl(bookingService.title, numPrice || undefined);
+            const phone = settings?.contact_phone;
+
+            return (
+              <>
+                {/* Header */}
+                <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-6 pb-4 border-b border-border/20">
+                  <div className="flex items-start gap-4">
+                    <div className="h-14 w-14 rounded-2xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <IconComp className="h-7 w-7 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{bookingService.category}</span>
+                      <AlertDialogTitle className="text-xl font-bold text-foreground">{bookingService.title}</AlertDialogTitle>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-6 space-y-4">
+                  {bookingService.description && (
+                    <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
+                      {bookingService.description}
+                    </AlertDialogDescription>
+                  )}
+
+                  {/* Features */}
+                  {features.length > 0 && (
+                    <div className="space-y-2">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("সুবিধাসমূহ", "Features")}</span>
+                      <div className="space-y-1.5">
+                        {features.map((f: string, i: number) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <Check className="h-2.5 w-2.5 text-primary" />
+                            </div>
+                            <span className="text-sm text-foreground/80">{f}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Price Summary */}
+                  {finalPrice && (
+                    <div className="rounded-xl bg-primary/5 border border-primary/10 p-4">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("মূল্য", "Price")}</span>
+                      {perMin && (
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                          <Clock className="h-3 w-3" /> প্রতি মিনিট ৳{perMin.toLocaleString('bn-BD')} × {mins} মিনিট
+                        </p>
+                      )}
+                      <div className="flex items-baseline gap-2 mt-1">
+                        {activeOffer && (
+                          <span className="text-base text-muted-foreground line-through">
+                            ৳{(perMin ? perMin * mins : numPrice!).toLocaleString('bn-BD')}
+                          </span>
+                        )}
+                        <span className="text-3xl font-black text-primary">৳{finalPrice.toLocaleString('bn-BD')}</span>
+                        {activeOffer && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="p-6 pt-0 space-y-2">
+                  {(settings as any)?.whatsapp_no && (
+                    <a href={waUrl} target="_blank" rel="noopener noreferrer" className="block">
+                      <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 text-base shadow-lg shadow-green-600/20">
+                        <MessageCircle className="h-5 w-5 mr-2" /> {t("WhatsApp এ বুকিং করুন", "Book via WhatsApp")}
+                      </Button>
+                    </a>
+                  )}
+                  {phone && (
+                    <a href={`tel:${phone}`} className="block">
+                      <Button variant="outline" className="w-full font-bold py-5 text-base">
+                        <Phone className="h-5 w-5 mr-2" /> {t("কল করুন", "Call Us")}
+                      </Button>
+                    </a>
+                  )}
+                  <AlertDialogCancel className="w-full mt-1">{t("বন্ধ করুন", "Close")}</AlertDialogCancel>
+                </div>
+              </>
+            );
+          })()}
         </AlertDialogContent>
       </AlertDialog>
     </div>
