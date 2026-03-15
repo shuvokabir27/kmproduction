@@ -170,6 +170,7 @@ const AdminServices = () => {
       category: service.category || "",
       price_label: service.price_label || "",
       price: service.price ? String(service.price) : "",
+      price_per_minute: service.price_per_minute ? String(service.price_per_minute) : "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
