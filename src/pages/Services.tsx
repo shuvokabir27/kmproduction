@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { toast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog, AlertDialogContent, AlertDialogTitle,
   AlertDialogDescription, AlertDialogCancel,
