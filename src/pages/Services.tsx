@@ -310,6 +310,7 @@ const Services = () => {
                         {(() => {
                           const numPrice = getServicePrice(service);
                           const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                          const discount = getServiceDiscount(service);
                           
                           if (perMin) {
                             const mins = minuteSelections[service.id] || 1;
@@ -324,24 +325,18 @@ const Services = () => {
                                   <button onClick={() => setMinutes(service.id, mins - 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
                                     <Minus className="h-4 w-4" />
                                   </button>
-                                  <Input
-                                    type="number"
-                                    value={mins}
-                                    onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)}
-                                    className="w-20 text-center h-8 text-sm"
-                                    min={1}
-                                  />
+                                  <Input type="number" value={mins} onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)} className="w-20 text-center h-8 text-sm" min={1} />
                                   <button onClick={() => setMinutes(service.id, mins + 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
                                     <PlusIcon className="h-4 w-4" />
                                   </button>
                                   <span className="text-xs text-muted-foreground">মিনিট</span>
                                 </div>
-                                {activeOffer ? (
+                                {discount > 0 ? (
                                   <div className="flex flex-col gap-1">
                                     <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice).toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
                                   </div>
                                 ) : (
@@ -354,13 +349,13 @@ const Services = () => {
                           if (numPrice) {
                             return (
                               <div className="mb-5">
-                                {activeOffer ? (
+                                {discount > 0 ? (
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2 flex-wrap">
                                       <span className="text-xl text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
-                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice).toLocaleString('bn-BD')}</span>
+                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                   </div>
                                 ) : (
                                   <span className="text-3xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
