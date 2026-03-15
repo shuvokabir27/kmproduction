@@ -37,6 +37,8 @@ const Services = () => {
   const [bookingService, setBookingService] = useState<any | null>(null);
   const [bookingStep, setBookingStep] = useState<'options' | 'form' | 'success'>('options');
   const [bookingForm, setBookingForm] = useState({ name: '', phone: '', address: '' });
+  const [bookingDate, setBookingDate] = useState<Date | undefined>(undefined);
+  const [bookingDays, setBookingDays] = useState(1);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
   const [hourSelections, setHourSelections] = useState<Record<string, number>>({});
