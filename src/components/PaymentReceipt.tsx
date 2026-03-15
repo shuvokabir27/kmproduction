@@ -31,9 +31,9 @@ const getAccountLabel = (method: string): string => {
     case "bank":
       return "ব্যাংক লাস্ট ৪ ডিজিট";
     case "bkash":
-      return "বিকাশ";
+      return "বিকাশ লাস্ট ৪ ডিজিট";
     case "nagad":
-      return "নগদ";
+      return "নগদ লাস্ট ৪ ডিজিট";
     default:
       return "ট্রানজেকশন আইডি";
   }
