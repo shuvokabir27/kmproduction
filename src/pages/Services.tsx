@@ -843,6 +843,30 @@ const Services = () => {
                   </div>
                 )}
 
+                {/* Description & Features */}
+                <div className="px-6 space-y-3">
+                  {bookingService.description && (
+                    <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
+                      {bookingService.description}
+                    </AlertDialogDescription>
+                  )}
+                  {features.length > 0 && (
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("সুবিধাসমূহ", "Features")}</span>
+                      <div className="space-y-1">
+                        {features.map((f: string, i: number) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <Check className="h-2.5 w-2.5 text-primary" />
+                            </div>
+                            <span className="text-sm text-foreground/80">{f}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Options, Form, or Success */}
                 <div className="p-6 space-y-3">
                   {bookingStep === 'success' ? (
