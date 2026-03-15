@@ -769,10 +769,7 @@ const Services = () => {
               if (error) {
                 toast({ title: "সমস্যা হয়েছে", description: error.message, variant: "destructive" });
               } else {
-                toast({ title: "বুকিং সফল!", description: "আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।" });
-                setBookingService(null);
-                setBookingStep('options');
-                setBookingForm({ name: '', phone: '', address: '' });
+                setBookingStep('success');
               }
             };
 
