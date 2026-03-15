@@ -18,6 +18,7 @@ interface ServiceForm {
   icon: string;
   category: string;
   price_label: string;
+  price: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
