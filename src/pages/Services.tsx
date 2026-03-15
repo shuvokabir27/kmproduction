@@ -435,7 +435,7 @@ const Services = () => {
                           variant="outline"
                           size="sm"
                           className="w-full"
-                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, service.price ? Number(service.price) : undefined) })}
+                          onClick={() => setBookingService({ title: service.title, waUrl: getWaUrl(service.title, getServicePrice(service) || undefined) })}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
