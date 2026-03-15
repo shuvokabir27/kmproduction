@@ -294,6 +294,48 @@ const Services = () => {
                         {/* Price Display */}
                         {(() => {
                           const numPrice = getServicePrice(service);
+                          const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                          
+                          if (perMin) {
+                            const mins = minuteSelections[service.id] || 1;
+                            const totalPrice = perMin * mins;
+                            return (
+                              <div className="mb-5 space-y-3">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Clock className="h-4 w-4 text-primary" />
+                                  <span>প্রতি মিনিট: <span className="font-bold text-foreground">৳{perMin.toLocaleString('bn-BD')}</span></span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button onClick={() => setMinutes(service.id, mins - 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                    <Minus className="h-4 w-4" />
+                                  </button>
+                                  <Input
+                                    type="number"
+                                    value={mins}
+                                    onChange={(e) => setMinutes(service.id, parseInt(e.target.value) || 1)}
+                                    className="w-20 text-center h-8 text-sm"
+                                    min={1}
+                                  />
+                                  <button onClick={() => setMinutes(service.id, mins + 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                    <PlusIcon className="h-4 w-4" />
+                                  </button>
+                                  <span className="text-xs text-muted-foreground">মিনিট</span>
+                                </div>
+                                {activeOffer ? (
+                                  <div className="flex flex-col gap-1">
+                                    <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice).toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{activeOffer.discount_percentage}%</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-3xl font-black text-foreground">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                )}
+                              </div>
+                            );
+                          }
+                          
                           if (numPrice) {
                             return (
                               <div className="mb-5">
