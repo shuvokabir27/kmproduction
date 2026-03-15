@@ -318,8 +318,59 @@ const Services = () => {
                         {(() => {
                           const numPrice = getServicePrice(service);
                           const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
+                          const perHour = service.price_per_hour ? Number(service.price_per_hour) : null;
+                          const editedPerHour = service.edited_photos_per_hour ? Number(service.edited_photos_per_hour) : 20;
+                          const unlimitedPhotos = service.unlimited_photos_per_hour !== false;
                           const discount = getServiceDiscount(service);
                           
+                          if (perHour) {
+                            const hrs = hourSelections[service.id] || 1;
+                            const totalPrice = perHour * hrs;
+                            return (
+                              <div className="mb-5 space-y-3">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Clock className="h-4 w-4 text-primary" />
+                                  <span>প্রতি ঘন্টা: <span className="font-bold text-foreground">৳{perHour.toLocaleString('bn-BD')}</span></span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button onClick={() => setHours(service.id, hrs - 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                    <Minus className="h-4 w-4" />
+                                  </button>
+                                  <Input type="number" value={hrs} onChange={(e) => setHours(service.id, parseInt(e.target.value) || 1)} className="w-20 text-center h-8 text-sm" min={1} />
+                                  <button onClick={() => setHours(service.id, hrs + 1)} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                                    <PlusIcon className="h-4 w-4" />
+                                  </button>
+                                  <span className="text-xs text-muted-foreground">ঘন্টা</span>
+                                </div>
+                                <div className="rounded-lg bg-primary/5 border border-primary/10 p-2.5 space-y-1">
+                                  <div className="flex items-center gap-1.5 text-xs text-foreground/80">
+                                    <Camera className="h-3.5 w-3.5 text-primary" />
+                                    {unlimitedPhotos ? <span>প্রতি ঘন্টায় আনলিমিটেড ছবি</span> : <span>ছবি তোলা হবে</span>}
+                                  </div>
+                                  <div className="flex items-center gap-1.5 text-xs text-foreground/80">
+                                    <Check className="h-3.5 w-3.5 text-primary" />
+                                    <span><span className="font-bold text-primary">{editedPerHour * hrs}টি</span> ছবি এডিট করে দেওয়া হবে</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Check className="h-3.5 w-3.5" />
+                                    <span>বাকি সব ছবি এডিট ছাড়া দেওয়া হবে</span>
+                                  </div>
+                                </div>
+                                {discount > 0 ? (
+                                  <div className="flex flex-col gap-1">
+                                    <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-3xl font-black text-foreground">৳{totalPrice.toLocaleString('bn-BD')}</span>
+                                )}
+                              </div>
+                            );
+                          }
+
                           if (perMin) {
                             const mins = minuteSelections[service.id] || 1;
                             const totalPrice = perMin * mins;
