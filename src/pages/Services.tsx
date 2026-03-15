@@ -97,6 +97,9 @@ const Services = () => {
   const setMinutes = (serviceId: string, val: number) => {
     setMinuteSelections(prev => ({ ...prev, [serviceId]: Math.max(1, val) }));
   };
+  const setHours = (serviceId: string, val: number) => {
+    setHourSelections(prev => ({ ...prev, [serviceId]: Math.max(1, val) }));
+  };
 
   const parsePriceFromLabel = (label: string): number | null => {
     const cleaned = label.replace(/[^\d.,০১২৩৪৫৬৭৮৯]/g, '');
