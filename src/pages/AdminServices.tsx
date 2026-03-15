@@ -52,6 +52,7 @@ const AdminServices = () => {
   const [offerDiscount, setOfferDiscount] = useState("");
   const [offerEndDate, setOfferEndDate] = useState("");
   const [offerActive, setOfferActive] = useState(true);
+  const [offerServiceIds, setOfferServiceIds] = useState<string[]>([]);
 
   const { data: services, isLoading } = useQuery({
     queryKey: ["admin-services"],
