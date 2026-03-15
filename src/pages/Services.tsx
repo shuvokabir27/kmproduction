@@ -754,6 +754,8 @@ const Services = () => {
               else if (perMin) d += ` | ${mins} মিনিট`;
               if (finalPrice) d += ` | মূল্য: ৳${finalPrice}`;
               if (discount > 0) d += ` (${discount}% ছাড়)`;
+              if (bookingDate) d += ` | তারিখ: ${format(bookingDate, 'dd/MM/yyyy')}`;
+              if (bookingDays > 1) d += ` | ${bookingDays} দিন`;
               return d;
             };
 
@@ -770,6 +772,8 @@ const Services = () => {
                 customer_phone: bookingForm.phone.trim(),
                 customer_address: bookingForm.address.trim() || null,
                 details: buildDetails(),
+                booking_date: bookingDate ? format(bookingDate, 'yyyy-MM-dd') : null,
+                booking_days: bookingDays,
                 status: 'pending',
               } as any);
               setBookingSubmitting(false);
