@@ -376,14 +376,7 @@ const Services = () => {
 
                         {(settings as any)?.whatsapp_no ? (
                           <Button
-                            onClick={() => {
-                              const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
-                              const mins = minuteSelections[service.id] || 1;
-                              const waUrl = perMin
-                                ? getWaUrl(service.title, undefined, { rate: perMin, minutes: mins })
-                                : getWaUrl(service.title, getServicePrice(service) || undefined);
-                              setBookingService({ title: service.title, waUrl });
-                            }}
+                            onClick={() => setBookingService(service)}
                             className={`w-full font-bold text-base py-5 shadow-lg transition-all duration-300 ${index === 1 ? "bg-green-600 hover:bg-green-700 text-white shadow-green-600/30 hover:shadow-green-600/50 hover:scale-[1.02]" : "bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02]"}`}
                           >
                             <MessageCircle className="h-5 w-5 mr-2" />
