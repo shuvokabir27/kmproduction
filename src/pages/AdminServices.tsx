@@ -20,6 +20,9 @@ interface ServiceForm {
   price_label: string;
   price: string;
   price_per_minute: string;
+  price_per_hour: string;
+  edited_photos_per_hour: string;
+  unlimited_photos_per_hour: boolean;
   discount_percentage: string;
   features: string;
   is_featured: boolean;
@@ -29,7 +32,7 @@ interface ServiceForm {
 
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
-  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", price_per_hour: "", edited_photos_per_hour: "20", unlimited_photos_per_hour: true, discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
@@ -81,6 +84,9 @@ const AdminServices = () => {
         price_label: form.price_label,
         price: form.price ? Number(form.price) : null,
         price_per_minute: form.price_per_minute ? Number(form.price_per_minute) : null,
+        price_per_hour: form.price_per_hour ? Number(form.price_per_hour) : null,
+        edited_photos_per_hour: form.edited_photos_per_hour ? Number(form.edited_photos_per_hour) : 20,
+        unlimited_photos_per_hour: form.unlimited_photos_per_hour,
         discount_percentage: form.discount_percentage ? Number(form.discount_percentage) : null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
@@ -177,6 +183,9 @@ const AdminServices = () => {
       price_label: service.price_label || "",
       price: service.price ? String(service.price) : "",
       price_per_minute: service.price_per_minute ? String(service.price_per_minute) : "",
+      price_per_hour: service.price_per_hour ? String(service.price_per_hour) : "",
+      edited_photos_per_hour: service.edited_photos_per_hour ? String(service.edited_photos_per_hour) : "20",
+      unlimited_photos_per_hour: service.unlimited_photos_per_hour ?? true,
       discount_percentage: service.discount_percentage ? String(service.discount_percentage) : "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
@@ -260,6 +269,7 @@ const AdminServices = () => {
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {s.category} • ক্রম: {s.sort_order}
+                      {s.price_per_hour && ` • ৳${s.price_per_hour}/ঘন্টা`}
                       {s.price_per_minute && ` • ৳${s.price_per_minute}/মিনিট`}
                     </p>
                   </div>
@@ -307,6 +317,23 @@ const AdminServices = () => {
                 <Input type="number" value={form.price_per_minute} onChange={(e) => setForm({ ...form, price_per_minute: e.target.value })} placeholder="যেমন: 500 (ভিডিও এডিটিং এর জন্য)" />
                 <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার মিনিট সিলেক্ট করে মূল্য দেখতে পারবে</p>
               </div>
+              <div>
+                <Label>প্রতি ঘন্টা মূল্য (৳) — ফটোগ্রাফি</Label>
+                <Input type="number" value={form.price_per_hour} onChange={(e) => setForm({ ...form, price_per_hour: e.target.value })} placeholder="যেমন: 2000" />
+                <p className="text-xs text-muted-foreground mt-1">এটি দিলে কাস্টমার ঘন্টা সিলেক্ট করে মূল্য দেখতে পারবে</p>
+              </div>
+              {form.price_per_hour && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>প্রতি ঘন্টায় এডিটেড ছবি</Label>
+                    <Input type="number" value={form.edited_photos_per_hour} onChange={(e) => setForm({ ...form, edited_photos_per_hour: e.target.value })} placeholder="20" />
+                  </div>
+                  <div className="flex items-center gap-2 pt-6">
+                    <Switch checked={form.unlimited_photos_per_hour} onCheckedChange={(v) => setForm({ ...form, unlimited_photos_per_hour: v })} />
+                    <Label>আনলিমিটেড ছবি</Label>
+                  </div>
+                </div>
+              )}
               <div>
                 <Label>মূল্য লেবেল (ঐচ্ছিক)</Label>
                 <Input value={form.price_label} onChange={(e) => setForm({ ...form, price_label: e.target.value })} placeholder="যোগাযোগ করুন" />

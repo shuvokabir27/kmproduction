@@ -1024,6 +1024,7 @@ export type Database = {
           created_at: string
           description: string | null
           discount_percentage: number | null
+          edited_photos_per_hour: number | null
           features: Json | null
           icon: string | null
           id: string
@@ -1032,15 +1033,18 @@ export type Database = {
           is_featured: boolean | null
           price: number | null
           price_label: string | null
+          price_per_hour: number | null
           price_per_minute: number | null
           sort_order: number | null
           title: string
+          unlimited_photos_per_hour: boolean | null
         }
         Insert: {
           category?: string | null
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
+          edited_photos_per_hour?: number | null
           features?: Json | null
           icon?: string | null
           id?: string
@@ -1049,15 +1053,18 @@ export type Database = {
           is_featured?: boolean | null
           price?: number | null
           price_label?: string | null
+          price_per_hour?: number | null
           price_per_minute?: number | null
           sort_order?: number | null
           title: string
+          unlimited_photos_per_hour?: boolean | null
         }
         Update: {
           category?: string | null
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
+          edited_photos_per_hour?: number | null
           features?: Json | null
           icon?: string | null
           id?: string
@@ -1066,9 +1073,11 @@ export type Database = {
           is_featured?: boolean | null
           price?: number | null
           price_label?: string | null
+          price_per_hour?: number | null
           price_per_minute?: number | null
           sort_order?: number | null
           title?: string
+          unlimited_photos_per_hour?: boolean | null
         }
         Relationships: []
       }
