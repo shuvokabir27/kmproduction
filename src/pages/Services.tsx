@@ -30,6 +30,9 @@ const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transiti
 const Services = () => {
   const { t } = useLanguage();
   const [bookingService, setBookingService] = useState<any | null>(null);
+  const [bookingStep, setBookingStep] = useState<'options' | 'form'>('options');
+  const [bookingForm, setBookingForm] = useState({ name: '', phone: '', address: '' });
+  const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [minuteSelections, setMinuteSelections] = useState<Record<string, number>>({});
   const [hourSelections, setHourSelections] = useState<Record<string, number>>({});
 
