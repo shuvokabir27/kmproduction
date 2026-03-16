@@ -303,9 +303,9 @@ const Services = () => {
                 const IconComp = iconMap[service.icon] || Camera;
                 const features = (service.features as string[]) || [];
                 const cardColors = [
-                  { gradient: "from-violet-500/15 via-purple-500/5 to-card", border: "border-violet-500/30", icon: "bg-violet-500/20 text-violet-400", glow: "bg-violet-500/20", accent: "text-violet-400", checkBg: "bg-violet-500/10", checkIcon: "text-violet-400", tag: "text-violet-300" },
-                  { gradient: "from-primary/20 via-primary/5 to-card", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
-                  { gradient: "from-emerald-500/15 via-teal-500/5 to-card", border: "border-emerald-500/30", icon: "bg-emerald-500/20 text-emerald-400", glow: "bg-emerald-500/20", accent: "text-emerald-400", checkBg: "bg-emerald-500/10", checkIcon: "text-emerald-400", tag: "text-emerald-300" },
+                  { gradient: "from-violet-600/25 via-purple-500/15 to-indigo-500/10", border: "border-violet-500/30", icon: "bg-violet-500/20 text-violet-400", glow: "bg-violet-500/20", accent: "text-violet-400", checkBg: "bg-violet-500/10", checkIcon: "text-violet-400", tag: "text-violet-300" },
+                  { gradient: "from-primary/30 via-orange-500/15 to-amber-500/10", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
+                  { gradient: "from-emerald-600/25 via-teal-500/15 to-cyan-500/10", border: "border-emerald-500/30", icon: "bg-emerald-500/20 text-emerald-400", glow: "bg-emerald-500/20", accent: "text-emerald-400", checkBg: "bg-emerald-500/10", checkIcon: "text-emerald-400", tag: "text-emerald-300" },
                 ];
                 const c = cardColors[index % cardColors.length];
                 return (
@@ -511,12 +511,12 @@ const Services = () => {
                 const isLastRow = index >= totalOthers - remainder;
                 const shouldCenter = remainder === 1 && isLastRow;
                 const otherColors = [
-                  { gradient: "from-sky-500/12 to-card", border: "border-sky-500/25", icon: "bg-sky-500/15 text-sky-400", accent: "text-sky-400", checkIcon: "text-sky-400", tag: "text-sky-300", glow: "bg-sky-500/15" },
-                  { gradient: "from-amber-500/12 to-card", border: "border-amber-500/25", icon: "bg-amber-500/15 text-amber-400", accent: "text-amber-400", checkIcon: "text-amber-400", tag: "text-amber-300", glow: "bg-amber-500/15" },
-                  { gradient: "from-rose-500/12 to-card", border: "border-rose-500/25", icon: "bg-rose-500/15 text-rose-400", accent: "text-rose-400", checkIcon: "text-rose-400", tag: "text-rose-300", glow: "bg-rose-500/15" },
-                  { gradient: "from-indigo-500/12 to-card", border: "border-indigo-500/25", icon: "bg-indigo-500/15 text-indigo-400", accent: "text-indigo-400", checkIcon: "text-indigo-400", tag: "text-indigo-300", glow: "bg-indigo-500/15" },
-                  { gradient: "from-teal-500/12 to-card", border: "border-teal-500/25", icon: "bg-teal-500/15 text-teal-400", accent: "text-teal-400", checkIcon: "text-teal-400", tag: "text-teal-300", glow: "bg-teal-500/15" },
-                  { gradient: "from-fuchsia-500/12 to-card", border: "border-fuchsia-500/25", icon: "bg-fuchsia-500/15 text-fuchsia-400", accent: "text-fuchsia-400", checkIcon: "text-fuchsia-400", tag: "text-fuchsia-300", glow: "bg-fuchsia-500/15" },
+                  { gradient: "from-sky-600/25 via-blue-500/15 to-cyan-500/10", border: "border-sky-500/25", icon: "bg-sky-500/15 text-sky-400", accent: "text-sky-400", checkIcon: "text-sky-400", tag: "text-sky-300", glow: "bg-sky-500/20" },
+                  { gradient: "from-amber-600/25 via-yellow-500/15 to-orange-500/10", border: "border-amber-500/25", icon: "bg-amber-500/15 text-amber-400", accent: "text-amber-400", checkIcon: "text-amber-400", tag: "text-amber-300", glow: "bg-amber-500/20" },
+                  { gradient: "from-rose-600/25 via-pink-500/15 to-red-500/10", border: "border-rose-500/25", icon: "bg-rose-500/15 text-rose-400", accent: "text-rose-400", checkIcon: "text-rose-400", tag: "text-rose-300", glow: "bg-rose-500/20" },
+                  { gradient: "from-indigo-600/25 via-blue-500/15 to-violet-500/10", border: "border-indigo-500/25", icon: "bg-indigo-500/15 text-indigo-400", accent: "text-indigo-400", checkIcon: "text-indigo-400", tag: "text-indigo-300", glow: "bg-indigo-500/20" },
+                  { gradient: "from-teal-600/25 via-emerald-500/15 to-green-500/10", border: "border-teal-500/25", icon: "bg-teal-500/15 text-teal-400", accent: "text-teal-400", checkIcon: "text-teal-400", tag: "text-teal-300", glow: "bg-teal-500/20" },
+                  { gradient: "from-fuchsia-600/25 via-purple-500/15 to-pink-500/10", border: "border-fuchsia-500/25", icon: "bg-fuchsia-500/15 text-fuchsia-400", accent: "text-fuchsia-400", checkIcon: "text-fuchsia-400", tag: "text-fuchsia-300", glow: "bg-fuchsia-500/20" },
                 ];
                 const c = otherColors[index % otherColors.length];
                 return (
