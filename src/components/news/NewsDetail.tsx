@@ -50,18 +50,18 @@ const renderFormattedContent = (text: string) => {
       if (meta.includes("|")) { const p = meta.split("|"); caption = p[0]; size = parseInt(p[1]) || 100; }
       return (
         <figure key={i} className="my-6 flex flex-col items-center">
-          <img src={url} alt={caption} className="border border-border/20 object-contain" style={{ width: `${Math.min(size, 100)}%`, maxWidth: "100%" }} />
-          {caption && <figcaption className="text-[11px] text-muted-foreground text-center mt-2 italic">{caption}</figcaption>}
+          <img src={url} alt={caption} className="border border-gray-200 object-contain" style={{ width: `${Math.min(size, 100)}%`, maxWidth: "100%" }} />
+          {caption && <figcaption className="text-[11px] text-gray-600 text-center mt-2 italic">{caption}</figcaption>}
         </figure>
       );
     }
-    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-black text-foreground mt-6 mb-2" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{line.slice(2)}</h2>;
-    if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-bold text-foreground mt-4 mb-1.5">{line.slice(3)}</h3>;
-    if (line === "---") return <hr key={i} className="border-border/20 my-6" />;
-    if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-foreground/85 leading-relaxed">{formatInline(line.slice(2))}</li>;
-    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-foreground/85 leading-relaxed">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
+    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-black text-gray-900 mt-6 mb-2" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{line.slice(2)}</h2>;
+    if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-bold text-gray-900 mt-4 mb-1.5">{line.slice(3)}</h3>;
+    if (line === "---") return <hr key={i} className="border-gray-200 my-6" />;
+    if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-gray-800 leading-relaxed">{formatInline(line.slice(2))}</li>;
+    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-gray-800 leading-relaxed">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
     if (!line.trim()) return <br key={i} />;
-    return <p key={i} className="text-foreground/85 leading-[1.8] text-[15px]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{formatInline(line)}</p>;
+    return <p key={i} className="text-gray-800 leading-[1.8] text-[15px]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{formatInline(line)}</p>;
   });
 };
 
@@ -80,7 +80,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
-    <div className="py-4">
+    <div className="py-4 bg-white">
       {/* Main content + Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 lg:gap-8">
           {/* === Article === */}
@@ -92,7 +92,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
               </span>
               {news.is_featured && <Star className="h-3 w-3 text-primary fill-primary" />}
               {news.published_at && (
-                <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                <span className="text-[10px] text-gray-600 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {format(new Date(news.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
                 </span>
@@ -101,33 +101,33 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
 
             {/* Headline */}
             <h1
-              className="text-2xl md:text-4xl font-black text-foreground mb-5 leading-tight"
+              className="text-2xl md:text-4xl font-black text-gray-900 mb-5 leading-tight"
               style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
             >
               {news.title}
             </h1>
 
             {/* Divider */}
-            <div className="border-t border-border/30 mb-4" />
+            <div className="border-t border-gray-200 mb-4" />
 
             {/* Publisher byline */}
             {publisherName && (
-              <p className="text-sm text-foreground/70 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
                 ✍️ <span className="font-semibold">{publisherName}</span>
               </p>
             )}
 
             {/* Share bar */}
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার</span>
+              <span className="text-[10px] text-gray-600 uppercase tracking-wider font-semibold">শেয়ার</span>
               <div className="flex gap-1.5">
-                <button onClick={() => onShare("facebook", news)} className="h-7 w-7 rounded-sm bg-blue-600/10 text-blue-400 flex items-center justify-center hover:bg-blue-600/20 transition-colors">
+                <button onClick={() => onShare("facebook", news)} className="h-7 w-7 rounded-sm bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors">
                   <Facebook className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => onShare("whatsapp", news)} className="h-7 w-7 rounded-sm bg-green-600/10 text-green-400 flex items-center justify-center hover:bg-green-600/20 transition-colors">
+                <button onClick={() => onShare("whatsapp", news)} className="h-7 w-7 rounded-sm bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors">
                   <MessageCircle className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => onShare("copy", news)} className="h-7 w-7 rounded-sm bg-secondary text-muted-foreground flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                <button onClick={() => onShare("copy", news)} className="h-7 w-7 rounded-sm bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
                   <Copy className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -136,7 +136,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             {/* Featured Image */}
             {news.featured_image_url && (
               <figure className="mb-6">
-                <div className="border border-border/20 overflow-hidden">
+                <div className="border border-gray-200 overflow-hidden">
                   <img src={news.featured_image_url} alt="" className="w-full h-56 md:h-80 object-cover" />
                 </div>
               </figure>
@@ -150,22 +150,22 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             {/* Embedded Video */}
             {embedUrl && (
               <div className="mt-8">
-                <div className="border border-border/20 overflow-hidden aspect-video">
+                <div className="border border-gray-200 overflow-hidden aspect-video">
                   <iframe src={embedUrl} className="w-full h-full" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
                 </div>
               </div>
             )}
 
             {/* Bottom share */}
-            <div className="flex items-center gap-3 mt-10 pt-4 border-t border-border/20">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার করুন</span>
-              <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-400 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
-              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-400 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
-              <button onClick={() => onShare("copy", news)} className="text-xs text-muted-foreground hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
+            <div className="flex items-center gap-3 mt-10 pt-4 border-t border-gray-200">
+              <span className="text-[10px] text-gray-600 uppercase tracking-wider font-semibold">শেয়ার করুন</span>
+              <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-600 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
+              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-600 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
+              <button onClick={() => onShare("copy", news)} className="text-xs text-gray-700 hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
             </div>
 
             {/* Bottom rule */}
-            <div className="mt-8 border-t-[3px] border-foreground/80" />
+            <div className="mt-8 border-t-[3px] border-gray-900" />
           </div>
 
           {/* === Sidebar: Other News === */}
@@ -175,7 +175,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
               <div className="border-t-[3px] border-primary mb-4 lg:mb-0" />
               <div className="lg:sticky lg:top-4">
                 <h3
-                  className="text-lg font-black text-foreground mb-4 flex items-center gap-2 pt-3"
+                  className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2 pt-3"
                   style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   <Newspaper className="h-4 w-4 text-primary" />
@@ -185,12 +185,12 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                   {otherNews.map((item, idx) => (
                     <article
                       key={item.id}
-                      className={`cursor-pointer group py-3 ${idx !== 0 ? "border-t border-border/20" : ""}`}
+                      className={`cursor-pointer group py-3 ${idx !== 0 ? "border-t border-gray-200" : ""}`}
                       onClick={() => onSelectNews?.(item)}
                     >
                       <div className="flex gap-3">
                         {item.featured_image_url && (
-                          <div className="w-20 h-16 flex-shrink-0 overflow-hidden border border-border/10 rounded-sm">
+                          <div className="w-20 h-16 flex-shrink-0 overflow-hidden border border-gray-200 rounded-sm">
                             <img
                               src={item.featured_image_url}
                               alt=""
@@ -203,17 +203,17 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                             {categories.find(c => c.value === item.category)?.label || item.category}
                           </span>
                           <h4
-                            className="font-bold text-[13px] text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors"
+                            className="font-bold text-[13px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
                             style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                           >
                             {item.title}
                           </h4>
                           <div className="flex items-center gap-2 mt-1">
                             {getPublisherName?.(item.publisher_id) && (
-                              <span className="text-[9px] text-foreground/50">✍️ {getPublisherName(item.publisher_id)}</span>
+                              <span className="text-[9px] text-gray-600">✍️ {getPublisherName(item.publisher_id)}</span>
                             )}
                             {item.published_at && (
-                              <span className="text-[9px] text-muted-foreground/50 flex items-center gap-0.5">
+                              <span className="text-[9px] text-gray-500 flex items-center gap-0.5">
                                 <Clock className="h-2.5 w-2.5" />
                                 {format(new Date(item.published_at), "dd MMM yyyy")}
                               </span>

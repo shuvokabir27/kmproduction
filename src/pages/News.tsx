@@ -194,7 +194,7 @@ export default function News() {
   const today = format(new Date(), "EEEE, dd MMMM yyyy", { locale: bn });
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))]">
+    <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-3 md:px-6">
 
         {/* === NEWSPAPER MASTHEAD === */}
@@ -213,26 +213,26 @@ export default function News() {
           </Button>
 
           {/* Top rule */}
-          <div className="border-t-[3px] border-foreground/80 mb-3" />
+          <div className="border-t-[3px] border-gray-900 mb-3" />
 
           <div className="text-center">
-            <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2 font-medium">
+            <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-gray-600 mb-2 font-medium">
               {today}
             </p>
             <h1
-              className="text-4xl md:text-6xl font-black text-foreground tracking-tight leading-none mb-1 cursor-pointer"
+              className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight leading-none mb-1 cursor-pointer"
               style={{ fontFamily: "'Tiro Bangla', 'Noto Serif Bengali', serif" }}
               onClick={() => { setSelectedNews(null); navigate("/news"); }}
             >
               দৈনিক ইন্তেকাল
             </h1>
-            <p className="text-[10px] md:text-xs text-muted-foreground tracking-widest uppercase mt-1">
+            <p className="text-[10px] md:text-xs text-gray-600 tracking-widest uppercase mt-1">
               সম্পাদক: শিরু খাঁ &nbsp;•&nbsp; বাংলা ভাইরাল নিউজ পোর্টাল
             </p>
           </div>
 
-          <div className="mt-3 border-t border-foreground/20" />
-          <div className="mt-[2px] border-t-[3px] border-foreground/80" />
+          <div className="mt-3 border-t border-gray-300" />
+          <div className="mt-[2px] border-t-[3px] border-gray-900" />
         </header>
 
         {/* === BREAKING NEWS TICKER === */}
@@ -245,7 +245,7 @@ export default function News() {
         )}
 
         {/* === CATEGORY NAV === */}
-        <nav className="flex gap-1 overflow-x-auto py-3 mb-1 scrollbar-hide border-b border-border/30">
+        <nav className="flex gap-1 overflow-x-auto py-3 mb-1 scrollbar-hide border-b border-gray-200">
           {categories.map((cat) => (
             <button
               key={cat.value}
@@ -256,7 +256,7 @@ export default function News() {
               className={`px-4 py-1.5 text-xs font-semibold whitespace-nowrap transition-all border-b-2 ${
                 activeCategory === cat.value
                   ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  : "border-transparent text-gray-600 hover:text-gray-900"
               }`}
             >
               {cat.label}
@@ -279,11 +279,11 @@ export default function News() {
         ) : isLoading ? (
           <div className="py-20 space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-32 bg-secondary/30 animate-pulse rounded" />
+              <div key={i} className="h-32 bg-gray-100 animate-pulse rounded" />
             ))}
           </div>
         ) : !filtered?.length ? (
-          <div className="text-center py-24 text-muted-foreground">
+          <div className="text-center py-24 text-gray-500">
             <Newspaper className="h-16 w-16 mx-auto mb-4 opacity-15" />
             <p className="text-lg" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
               এখনো কোনো নিউজ প্রকাশিত হয়নি
@@ -299,7 +299,7 @@ export default function News() {
                 onClick={() => handleSelectNews(featured)}
               >
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="overflow-hidden border border-border/20">
+                  <div className="overflow-hidden border border-gray-200">
                     {featured.featured_image_url ? (
                       <img
                         src={featured.featured_image_url}
@@ -307,8 +307,8 @@ export default function News() {
                         className="w-full h-48 md:h-72 object-cover group-hover:scale-[1.02] transition-transform duration-700"
                       />
                     ) : (
-                      <div className="w-full h-48 md:h-72 bg-secondary/30 flex items-center justify-center">
-                        <Newspaper className="h-12 w-12 text-muted-foreground/15" />
+                      <div className="w-full h-48 md:h-72 bg-gray-100 flex items-center justify-center">
+                        <Newspaper className="h-12 w-12 text-gray-300" />
                       </div>
                     )}
                   </div>
@@ -320,25 +320,25 @@ export default function News() {
                       <Star className="h-3 w-3 text-primary fill-primary" />
                     </div>
                     <h2
-                      className="text-2xl md:text-3xl font-black text-foreground leading-tight mb-3 group-hover:text-primary transition-colors"
+                      className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors"
                       style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                     >
                       {featured.title}
                     </h2>
                     {featured.excerpt && (
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-3"
+                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3"
                          style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
                         {featured.excerpt}
                       </p>
                     )}
                     <div className="flex items-center gap-2 flex-wrap">
                       {getPublisherName(featured.publisher_id) && (
-                        <span className="text-[10px] font-semibold text-foreground/70">
+                        <span className="text-[10px] font-semibold text-gray-700">
                           ✍️ {getPublisherName(featured.publisher_id)}
                         </span>
                       )}
                       {featured.published_at && (
-                        <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                        <span className="text-[10px] text-gray-500 flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
                         </span>
@@ -346,12 +346,12 @@ export default function News() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 border-t-[2px] border-foreground/10" />
+                <div className="mt-4 border-t-[2px] border-gray-200" />
               </article>
             )}
 
             {/* === TWO COLUMN NEWSPAPER LAYOUT === */}
-            <div className="grid md:grid-cols-2 gap-0 md:divide-x divide-border/20">
+            <div className="grid md:grid-cols-2 gap-0 md:divide-x divide-gray-200">
               <div className="md:pr-5 space-y-0">
                 {leftColumn.map((news, idx) => (
                   <NewsCard
@@ -381,8 +381,8 @@ export default function News() {
         )}
 
         {/* === FOOTER === */}
-        <footer className="border-t-[3px] border-foreground/80 mt-8 pt-4 pb-8 text-center">
-          <p className="text-[10px] text-muted-foreground tracking-widest uppercase">
+        <footer className="border-t-[3px] border-gray-900 mt-8 pt-4 pb-8 text-center">
+          <p className="text-[10px] text-gray-600 tracking-widest uppercase">
             © দৈনিক ইন্তেকাল &nbsp;•&nbsp; সর্বস্বত্ব সংরক্ষিত
           </p>
         </footer>
@@ -407,13 +407,13 @@ function NewsCard({
 }) {
   return (
     <article
-      className={`cursor-pointer group py-4 ${!isFirst ? "border-t border-border/20" : ""}`}
+      className={`cursor-pointer group py-4 ${!isFirst ? "border-t border-gray-200" : ""}`}
       onClick={onClick}
     >
       <div className="flex gap-3">
         {/* Thumbnail */}
         {news.featured_image_url && (
-          <div className="w-24 h-20 md:w-28 md:h-24 flex-shrink-0 overflow-hidden border border-border/10">
+          <div className="w-24 h-20 md:w-28 md:h-24 flex-shrink-0 overflow-hidden border border-gray-200">
             <img
               src={news.featured_image_url}
               alt=""
@@ -427,22 +427,22 @@ function NewsCard({
             {categories.find(c => c.value === news.category)?.label || news.category}
           </span>
           <h3
-            className="font-bold text-sm md:text-[15px] text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors"
+            className="font-bold text-sm md:text-[15px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
             style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
           >
             {news.title}
           </h3>
           {news.excerpt && (
-            <p className="text-xs text-muted-foreground line-clamp-1 mt-1 hidden md:block">
+            <p className="text-xs text-gray-600 line-clamp-1 mt-1 hidden md:block">
               {news.excerpt}
             </p>
           )}
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             {publisherName && (
-              <span className="text-[10px] font-medium text-foreground/60">✍️ {publisherName}</span>
+              <span className="text-[10px] font-medium text-gray-700">✍️ {publisherName}</span>
             )}
             {news.published_at && (
-              <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
+              <span className="text-[10px] text-gray-500 flex items-center gap-1">
                 <Clock className="h-2.5 w-2.5" />
                 {format(new Date(news.published_at), "dd MMM yyyy")}
               </span>
