@@ -579,6 +579,7 @@ export default function AdminNews() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="news">
 
         {isLoading ? (
           <div className="grid gap-4">
