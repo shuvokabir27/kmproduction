@@ -175,7 +175,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
               <div className="border-t-[3px] border-primary mb-4 lg:mb-0" />
               <div className="lg:sticky lg:top-4">
                 <h3
-                  className="text-lg font-black text-foreground mb-4 flex items-center gap-2 pt-3"
+                  className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2 pt-3"
                   style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   <Newspaper className="h-4 w-4 text-primary" />
@@ -185,12 +185,12 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                   {otherNews.map((item, idx) => (
                     <article
                       key={item.id}
-                      className={`cursor-pointer group py-3 ${idx !== 0 ? "border-t border-border/20" : ""}`}
+                      className={`cursor-pointer group py-3 ${idx !== 0 ? "border-t border-gray-200" : ""}`}
                       onClick={() => onSelectNews?.(item)}
                     >
                       <div className="flex gap-3">
                         {item.featured_image_url && (
-                          <div className="w-20 h-16 flex-shrink-0 overflow-hidden border border-border/10 rounded-sm">
+                          <div className="w-20 h-16 flex-shrink-0 overflow-hidden border border-gray-200 rounded-sm">
                             <img
                               src={item.featured_image_url}
                               alt=""
@@ -203,17 +203,17 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                             {categories.find(c => c.value === item.category)?.label || item.category}
                           </span>
                           <h4
-                            className="font-bold text-[13px] text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors"
+                            className="font-bold text-[13px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
                             style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                           >
                             {item.title}
                           </h4>
                           <div className="flex items-center gap-2 mt-1">
                             {getPublisherName?.(item.publisher_id) && (
-                              <span className="text-[9px] text-foreground/50">✍️ {getPublisherName(item.publisher_id)}</span>
+                              <span className="text-[9px] text-gray-600">✍️ {getPublisherName(item.publisher_id)}</span>
                             )}
                             {item.published_at && (
-                              <span className="text-[9px] text-muted-foreground/50 flex items-center gap-0.5">
+                              <span className="text-[9px] text-gray-500 flex items-center gap-0.5">
                                 <Clock className="h-2.5 w-2.5" />
                                 {format(new Date(item.published_at), "dd MMM yyyy")}
                               </span>
