@@ -428,6 +428,30 @@ export type Database = {
           },
         ]
       }
+      news_categories: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          sort_order: number | null
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number | null
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number | null
+          value?: string
+        }
+        Relationships: []
+      }
       news_publishers: {
         Row: {
           created_at: string

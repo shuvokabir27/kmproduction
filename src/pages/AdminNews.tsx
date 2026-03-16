@@ -21,12 +21,12 @@ import { format } from "date-fns";
 import ReactCrop, { type Crop as CropType, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
-const categories = [
-  { value: "entertainment", label: "🎬 এন্টারটেইনমেন্ট" },
-  { value: "funny", label: "😂 ফানি" },
-  { value: "behind-the-scenes", label: "🎭 বিহাইন্ড দ্য সিন" },
-  { value: "announcement", label: "📢 ঘোষণা" },
-];
+interface CategoryItem {
+  id: string;
+  value: string;
+  label: string;
+  sort_order: number | null;
+}
 
 interface NewsItem {
   id: string;
@@ -67,6 +67,8 @@ export default function AdminNews() {
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [publisherId, setPublisherId] = useState<string | null>(null);
+  const [newCategoryLabel, setNewCategoryLabel] = useState("");
+  const [newCategoryValue, setNewCategoryValue] = useState("");
   const [publisherDialogOpen, setPublisherDialogOpen] = useState(false);
   const [newPublisherName, setNewPublisherName] = useState("");
   const [inlineUploading, setInlineUploading] = useState(false);
@@ -154,6 +156,35 @@ export default function AdminNews() {
         .order("name");
       if (error) throw error;
       return data as Publisher[];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["news-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as CategoryItem[];
+    },
+  });
+
+  const addCategoryMutation = useMutation({
+    mutationFn: async ({ value, label }: { value: string; label: string }) => {
+      const maxOrder = categories.length > 0 ? Math.max(...categories.map(c => c.sort_order || 0)) : 0;
+      const { error } = await supabase.from("news_categories").insert({ value, label, sort_order: maxOrder + 1 });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+      setNewCategoryLabel("");
+      setNewCategoryValue("");
+      toast({ title: "নতুন ক্যাটাগরি যোগ হয়েছে" });
+    },
+    onError: (err: any) => {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
     },
   });
 
@@ -717,6 +748,31 @@ export default function AdminNews() {
                     ))}
                   </SelectContent>
                 </Select>
+                {/* Add new category inline */}
+                <div className="flex items-center gap-2 mt-2">
+                  <Input
+                    value={newCategoryLabel}
+                    onChange={(e) => {
+                      setNewCategoryLabel(e.target.value);
+                      setNewCategoryValue(e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\u0980-\u09FF-]/g, ""));
+                    }}
+                    placeholder="নতুন ক্যাটাগরি নাম..."
+                    className="flex-1 h-8 text-xs"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs gap-1"
+                    disabled={!newCategoryLabel.trim() || !newCategoryValue.trim()}
+                    onClick={() => {
+                      addCategoryMutation.mutate({ value: newCategoryValue, label: newCategoryLabel.trim() });
+                      setCategory(newCategoryValue);
+                    }}
+                  >
+                    <Plus className="h-3 w-3" /> যোগ
+                  </Button>
+                </div>
               </div>
 
               {/* Publisher */}

@@ -11,12 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import NewsDetail from "@/components/news/NewsDetail";
 import NewsTicker from "@/components/news/NewsTicker";
 
-const categories = [
+const defaultCategories = [
   { value: "all", label: "সকল" },
-  { value: "entertainment", label: "বিনোদন" },
-  { value: "funny", label: "হাসির খবর" },
-  { value: "behind-the-scenes", label: "নেপথ্যে" },
-  { value: "announcement", label: "ঘোষণা" },
 ];
 
 export interface NewsItem {
@@ -47,6 +43,23 @@ export default function News() {
   const { shortId, category: urlCategory, postNumber } = useParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
+  const { data: dbCategories = [] } = useQuery({
+    queryKey: ["public-news-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as { id: string; value: string; label: string; sort_order: number | null }[];
+    },
+  });
+
+  const categories = [
+    ...defaultCategories,
+    ...dbCategories.map(c => ({ value: c.value, label: c.label })),
+  ];
 
   const { data: newsList, isLoading } = useQuery({
     queryKey: ["public-news"],
