@@ -11,12 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import NewsDetail from "@/components/news/NewsDetail";
 import NewsTicker from "@/components/news/NewsTicker";
 
-const categories = [
+const defaultCategories = [
   { value: "all", label: "সকল" },
-  { value: "entertainment", label: "বিনোদন" },
-  { value: "funny", label: "হাসির খবর" },
-  { value: "behind-the-scenes", label: "নেপথ্যে" },
-  { value: "announcement", label: "ঘোষণা" },
 ];
 
 export interface NewsItem {
