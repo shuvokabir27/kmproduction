@@ -61,6 +61,7 @@ export default function News() {
     ...dbCategories.map(c => ({ value: c.value, label: c.label })),
   ];
 
+  const { data: newsList, isLoading } = useQuery({
     queryKey: ["public-news"],
     queryFn: async () => {
       const { data, error } = await supabase
