@@ -194,7 +194,7 @@ export default function News() {
   const today = format(new Date(), "EEEE, dd MMMM yyyy", { locale: bn });
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))]">
+    <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-3 md:px-6">
 
         {/* === NEWSPAPER MASTHEAD === */}
