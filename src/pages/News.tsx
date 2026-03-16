@@ -245,7 +245,7 @@ export default function News() {
         )}
 
         {/* === CATEGORY NAV === */}
-        <nav className="flex gap-1 overflow-x-auto py-3 mb-1 scrollbar-hide border-b border-border/30">
+        <nav className="flex gap-1 overflow-x-auto py-3 mb-1 scrollbar-hide border-b border-gray-200">
           {categories.map((cat) => (
             <button
               key={cat.value}
@@ -256,7 +256,7 @@ export default function News() {
               className={`px-4 py-1.5 text-xs font-semibold whitespace-nowrap transition-all border-b-2 ${
                 activeCategory === cat.value
                   ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  : "border-transparent text-gray-600 hover:text-gray-900"
               }`}
             >
               {cat.label}
