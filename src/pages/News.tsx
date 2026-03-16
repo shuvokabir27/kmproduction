@@ -44,7 +44,23 @@ export default function News() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
-  const { data: newsList, isLoading } = useQuery({
+  const { data: dbCategories = [] } = useQuery({
+    queryKey: ["public-news-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as { id: string; value: string; label: string; sort_order: number | null }[];
+    },
+  });
+
+  const categories = [
+    ...defaultCategories,
+    ...dbCategories.map(c => ({ value: c.value, label: c.label })),
+  ];
+
     queryKey: ["public-news"],
     queryFn: async () => {
       const { data, error } = await supabase
