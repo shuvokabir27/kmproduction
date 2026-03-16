@@ -285,7 +285,7 @@ export default function News() {
         ) : !filtered?.length ? (
           <div className="text-center py-24 text-gray-500">
             <Newspaper className="h-16 w-16 mx-auto mb-4 opacity-15" />
-            <p className="text-lg" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+            <p className="text-lg">
               এখনো কোনো নিউজ প্রকাশিত হয়নি
             </p>
           </div>
@@ -321,13 +321,11 @@ export default function News() {
                     </div>
                     <h2
                       className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors"
-                      style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                     >
                       {featured.title}
                     </h2>
                     {featured.excerpt && (
-                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3"
-                         style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3">
                         {featured.excerpt}
                       </p>
                     )}
@@ -428,7 +426,6 @@ function NewsCard({
           </span>
           <h3
             className="font-bold text-sm md:text-[15px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
-            style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
           >
             {news.title}
           </h3>

@@ -55,13 +55,13 @@ const renderFormattedContent = (text: string) => {
         </figure>
       );
     }
-    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-black text-gray-900 mt-6 mb-2" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{line.slice(2)}</h2>;
+    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-black text-gray-900 mt-6 mb-2">{line.slice(2)}</h2>;
     if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-bold text-gray-900 mt-4 mb-1.5">{line.slice(3)}</h3>;
     if (line === "---") return <hr key={i} className="border-gray-200 my-6" />;
     if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-gray-800 leading-relaxed">{formatInline(line.slice(2))}</li>;
     if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-gray-800 leading-relaxed">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
     if (!line.trim()) return <br key={i} />;
-    return <p key={i} className="text-gray-800 leading-[1.8] text-[15px]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{formatInline(line)}</p>;
+    return <p key={i} className="text-gray-800 leading-[1.8] text-[15px]">{formatInline(line)}</p>;
   });
 };
 
@@ -102,7 +102,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             {/* Headline */}
             <h1
               className="text-2xl md:text-4xl font-black text-gray-900 mb-5 leading-tight"
-              style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
             >
               {news.title}
             </h1>
@@ -112,7 +111,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
 
             {/* Publisher byline */}
             {publisherName && (
-              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5">
                 ✍️ <span className="font-semibold">{publisherName}</span>
               </p>
             )}
@@ -176,7 +175,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
               <div className="lg:sticky lg:top-4">
                 <h3
                   className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2 pt-3"
-                  style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   <Newspaper className="h-4 w-4 text-primary" />
                   অন্যান্য সংবাদ
@@ -204,7 +202,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                           </span>
                           <h4
                             className="font-bold text-[13px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
-                            style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                           >
                             {item.title}
                           </h4>
