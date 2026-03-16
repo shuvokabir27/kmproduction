@@ -14,9 +14,9 @@ interface Props {
 
 export default function NewsTicker({ tickerTexts, tickerSpeed, onSelectNews }: Props) {
   return (
-    <div className="my-3 border-y border-border/30 overflow-hidden bg-secondary/20">
+    <div className="my-3 border-y border-gray-200 overflow-hidden bg-gray-50">
       <div className="flex items-stretch">
-        <div className="bg-primary text-primary-foreground px-3 py-2 flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider whitespace-nowrap z-10 shrink-0">
+        <div className="bg-primary text-white px-3 py-2 flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider whitespace-nowrap z-10 shrink-0">
           <span className="animate-pulse text-xs">●</span> সর্বশেষ
         </div>
         <div className="overflow-hidden flex-1 relative">
@@ -29,7 +29,7 @@ export default function NewsTicker({ tickerTexts, tickerSpeed, onSelectNews }: P
                 <button
                   key={item.id}
                   onClick={() => onSelectNews(item)}
-                  className="text-[13px] text-foreground/80 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
+                  className="text-[13px] text-gray-800 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
                   style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   <span className="text-primary/50 text-[8px]">■</span>
@@ -42,7 +42,7 @@ export default function NewsTicker({ tickerTexts, tickerSpeed, onSelectNews }: P
                 <button
                   key={`dup-${item.id}`}
                   onClick={() => onSelectNews(item)}
-                  className="text-[13px] text-foreground/80 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
+                  className="text-[13px] text-gray-800 hover:text-primary transition-colors cursor-pointer inline-flex items-center gap-2"
                   style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   <span className="text-primary/50 text-[8px]">■</span>
