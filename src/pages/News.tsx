@@ -213,26 +213,26 @@ export default function News() {
           </Button>
 
           {/* Top rule */}
-          <div className="border-t-[3px] border-foreground/80 mb-3" />
+          <div className="border-t-[3px] border-gray-900 mb-3" />
 
           <div className="text-center">
-            <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2 font-medium">
+            <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-gray-600 mb-2 font-medium">
               {today}
             </p>
             <h1
-              className="text-4xl md:text-6xl font-black text-foreground tracking-tight leading-none mb-1 cursor-pointer"
+              className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight leading-none mb-1 cursor-pointer"
               style={{ fontFamily: "'Tiro Bangla', 'Noto Serif Bengali', serif" }}
               onClick={() => { setSelectedNews(null); navigate("/news"); }}
             >
               দৈনিক ইন্তেকাল
             </h1>
-            <p className="text-[10px] md:text-xs text-muted-foreground tracking-widest uppercase mt-1">
+            <p className="text-[10px] md:text-xs text-gray-600 tracking-widest uppercase mt-1">
               সম্পাদক: শিরু খাঁ &nbsp;•&nbsp; বাংলা ভাইরাল নিউজ পোর্টাল
             </p>
           </div>
 
-          <div className="mt-3 border-t border-foreground/20" />
-          <div className="mt-[2px] border-t-[3px] border-foreground/80" />
+          <div className="mt-3 border-t border-gray-300" />
+          <div className="mt-[2px] border-t-[3px] border-gray-900" />
         </header>
 
         {/* === BREAKING NEWS TICKER === */}
