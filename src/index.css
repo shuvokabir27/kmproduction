@@ -223,10 +223,4 @@
     }
   }
 
-  /* Newsprint dot pattern */
-  .newsprint-bg {
-    background-image: radial-gradient(circle, #d4d4d4 1.2px, transparent 1.2px);
-    background-size: 12px 12px;
-    background-color: #ffffff;
-  }
 }
