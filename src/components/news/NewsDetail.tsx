@@ -71,12 +71,14 @@ interface Props {
   onBack: () => void;
   onShare: (type: string, news: NewsItem) => void;
   publisherName?: string | null;
+  publisherPhoto?: string | null;
   otherNews?: NewsItem[];
   onSelectNews?: (news: NewsItem) => void;
   getPublisherName?: (pubId: string | null) => string | null;
+  getPublisherPhoto?: (pubId: string | null) => string | null;
 }
 
-export default function NewsDetail({ news, categories, onBack, onShare, publisherName, otherNews = [], onSelectNews, getPublisherName }: Props) {
+export default function NewsDetail({ news, categories, onBack, onShare, publisherName, publisherPhoto, otherNews = [], onSelectNews, getPublisherName, getPublisherPhoto }: Props) {
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
