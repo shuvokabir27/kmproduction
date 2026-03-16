@@ -102,7 +102,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             {/* Headline */}
             <h1
               className="text-2xl md:text-4xl font-black text-gray-900 mb-5 leading-tight"
-              style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
             >
               {news.title}
             </h1>
