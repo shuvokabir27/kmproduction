@@ -117,6 +117,11 @@ export default function News() {
     return publishers.find(p => p.id === pubId)?.name || null;
   };
 
+  const getPublisherPhoto = (pubId: string | null) => {
+    if (!pubId || !publishers) return null;
+    return publishers.find(p => p.id === pubId)?.photo_url || null;
+  };
+
   const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
   const tickerSpeed = tickerSettings?.ticker_speed || 30;
 
