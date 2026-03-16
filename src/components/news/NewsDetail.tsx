@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Star, Share2, Facebook, MessageCircle, Copy, Link2, Clock, ChevronRight, Newspaper } from "lucide-react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 import type { NewsItem } from "@/pages/News";
 
 const getEmbedUrl = (url: string): string | null => {
@@ -79,6 +80,7 @@ interface Props {
 }
 
 export default function NewsDetail({ news, categories, onBack, onShare, publisherName, publisherPhoto, otherNews = [], onSelectNews, getPublisherName, getPublisherPhoto }: Props) {
+  const navigate = useNavigate();
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
@@ -113,13 +115,18 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
 
             {/* Publisher byline */}
             {publisherName && (
-              <div className="flex items-center gap-2.5 mb-4">
+              <div
+                className="flex items-center gap-2.5 mb-4 cursor-pointer group"
+                onClick={() => news.publisher_id && navigate(`/publisher/${news.publisher_id}`)}
+              >
                 {publisherPhoto ? (
                   <img src={publisherPhoto} alt={publisherName} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
                 ) : (
                   <span className="text-lg">✍️</span>
                 )}
-                <span className="text-sm font-semibold text-gray-700">{publisherName}</span>
+                <span className="text-sm font-semibold text-gray-700 group-hover:text-primary transition-colors underline-offset-2 group-hover:underline">
+                  {publisherName}
+                </span>
               </div>
             )}
 

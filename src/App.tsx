@@ -34,6 +34,7 @@ import MemberSettings from "./pages/MemberSettings";
 import AdminNews from "./pages/AdminNews";
 import AdminSettings from "./pages/AdminSettings";
 import News from "./pages/News";
+import PublisherProfile from "./pages/PublisherProfile";
 import AdminBookings from "./pages/AdminBookings";
 import NotFound from "./pages/NotFound";
 
@@ -80,6 +81,7 @@ const App = () => (
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
             <Route path="/news/:shortId" element={<News />} />
+            <Route path="/publisher/:publisherId" element={<PublisherProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

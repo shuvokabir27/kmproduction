@@ -89,6 +89,11 @@ export default function AdminNews() {
   const [editingPublisherId, setEditingPublisherId] = useState<string | null>(null);
   const [editPublisherName, setEditPublisherName] = useState("");
   const [publisherPhotoUploading, setPublisherPhotoUploading] = useState(false);
+  const [publisherEditDialogOpen, setPublisherEditDialogOpen] = useState(false);
+  const [editPublisherBio, setEditPublisherBio] = useState("");
+  const [editPublisherAge, setEditPublisherAge] = useState("");
+  const [editPublisherExperience, setEditPublisherExperience] = useState("");
+  const [editPublisherFunFact, setEditPublisherFunFact] = useState("");
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
@@ -526,7 +531,13 @@ export default function AdminNews() {
                                 size="sm" variant="default" className="h-7 gap-1"
                                 onClick={async () => {
                                   if (!editPublisherName.trim()) return;
-                                  await supabase.from("news_publishers").update({ name: editPublisherName.trim() }).eq("id", pub.id);
+                                  await supabase.from("news_publishers").update({
+                                    name: editPublisherName.trim(),
+                                    bio: editPublisherBio || null,
+                                    age: editPublisherAge ? parseInt(editPublisherAge) : null,
+                                    experience: editPublisherExperience || null,
+                                    fun_fact: editPublisherFunFact || null,
+                                  }).eq("id", pub.id);
                                   queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
                                   setEditingPublisherId(null);
                                   toast({ title: "প্রকাশক আপডেট হয়েছে" });
@@ -541,9 +552,18 @@ export default function AdminNews() {
                           ) : (
                             <>
                               <span className="flex-1 text-sm font-medium">{pub.name}</span>
+                              {(pub as any).bio && <Badge variant="secondary" className="text-[10px]">প্রোফাইল আছে</Badge>}
                               <Button
                                 variant="ghost" size="icon" className="h-7 w-7"
-                                onClick={() => { setEditingPublisherId(pub.id); setEditPublisherName(pub.name); }}
+                                onClick={() => {
+                                  setEditingPublisherId(pub.id);
+                                  setEditPublisherName(pub.name);
+                                  setEditPublisherBio((pub as any).bio || "");
+                                  setEditPublisherAge((pub as any).age?.toString() || "");
+                                  setEditPublisherExperience((pub as any).experience || "");
+                                  setEditPublisherFunFact((pub as any).fun_fact || "");
+                                  setPublisherEditDialogOpen(true);
+                                }}
                               >
                                 <Pencil className="h-3.5 w-3.5" />
                               </Button>
@@ -569,6 +589,56 @@ export default function AdminNews() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Publisher Edit Dialog */}
+          <Dialog open={publisherEditDialogOpen} onOpenChange={setPublisherEditDialogOpen}>
+            <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>প্রকাশক প্রোফাইল সম্পাদনা</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">নাম *</Label>
+                  <Input value={editPublisherName} onChange={(e) => setEditPublisherName(e.target.value)} placeholder="প্রকাশকের নাম" />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">বয়স</Label>
+                  <Input value={editPublisherAge} onChange={(e) => setEditPublisherAge(e.target.value)} placeholder="যেমন: ২৮" type="number" />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">পরিচিতি / বায়ো</Label>
+                  <Textarea value={editPublisherBio} onChange={(e) => setEditPublisherBio(e.target.value)} placeholder="প্রকাশক সম্পর্কে কিছু লাইন..." rows={3} />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">অভিজ্ঞতা</Label>
+                  <Textarea value={editPublisherExperience} onChange={(e) => setEditPublisherExperience(e.target.value)} placeholder="কোন কোন পত্রিকায় কাজ করেছেন..." rows={3} />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">মজার তথ্য 😄</Label>
+                  <Textarea value={editPublisherFunFact} onChange={(e) => setEditPublisherFunFact(e.target.value)} placeholder="ফানি কিছু লিখুন..." rows={2} />
+                </div>
+                <Button
+                  className="w-full gap-1.5"
+                  onClick={async () => {
+                    if (!editPublisherName.trim() || !editingPublisherId) return;
+                    await supabase.from("news_publishers").update({
+                      name: editPublisherName.trim(),
+                      bio: editPublisherBio || null,
+                      age: editPublisherAge ? parseInt(editPublisherAge) : null,
+                      experience: editPublisherExperience || null,
+                      fun_fact: editPublisherFunFact || null,
+                    }).eq("id", editingPublisherId);
+                    queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+                    setPublisherEditDialogOpen(false);
+                    setEditingPublisherId(null);
+                    toast({ title: "প্রকাশক প্রোফাইল আপডেট হয়েছে" });
+                  }}
+                >
+                  <Check className="h-4 w-4" /> সেভ করুন
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <TabsContent value="categories">
             <Card>
