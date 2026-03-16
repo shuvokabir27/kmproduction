@@ -302,26 +302,30 @@ const Services = () => {
               {featured.map((service: any, index: number) => {
                 const IconComp = iconMap[service.icon] || Camera;
                 const features = (service.features as string[]) || [];
+                const cardColors = [
+                  { gradient: "from-violet-500/15 via-purple-500/5 to-card", border: "border-violet-500/30", icon: "bg-violet-500/20 text-violet-400", glow: "bg-violet-500/20", accent: "text-violet-400", checkBg: "bg-violet-500/10", checkIcon: "text-violet-400", tag: "text-violet-300" },
+                  { gradient: "from-primary/20 via-primary/5 to-card", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
+                  { gradient: "from-emerald-500/15 via-teal-500/5 to-card", border: "border-emerald-500/30", icon: "bg-emerald-500/20 text-emerald-400", glow: "bg-emerald-500/20", accent: "text-emerald-400", checkBg: "bg-emerald-500/10", checkIcon: "text-emerald-400", tag: "text-emerald-300" },
+                ];
+                const c = cardColors[index % cardColors.length];
                 return (
                   <motion.div key={service.id} variants={item}>
-                    <div className={`relative rounded-2xl overflow-hidden h-full ${
-                      index === 1
-                        ? "bg-gradient-to-b from-primary/20 via-primary/5 to-card border-2 border-primary/30 shadow-xl shadow-primary/10"
-                        : "premium-card"
-                    }`}>
+                    <div className={`relative rounded-2xl overflow-hidden h-full bg-gradient-to-b ${c.gradient} border-2 ${c.border} shadow-xl`}>
+                      {/* Decorative glow */}
+                      <div className={`absolute -top-20 -right-20 w-40 h-40 ${c.glow} rounded-full blur-3xl opacity-60`} />
+                      <div className={`absolute -bottom-10 -left-10 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-30`} />
+                      
                       {index === 1 && (
-                        <div className="absolute top-0 left-0 right-0 bg-primary text-primary-foreground text-center py-1.5 text-xs font-bold tracking-wider uppercase">
+                        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary via-red-500 to-orange-500 text-white text-center py-1.5 text-xs font-bold tracking-wider uppercase">
                           ★ {t("সবচেয়ে জনপ্রিয়", "Most Popular")}
                         </div>
                       )}
-                      <div className={`p-6 ${index === 1 ? "pt-10" : ""}`}>
-                        <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-5 ${
-                          index === 1 ? "bg-primary/20" : "bg-primary/10"
-                        }`}>
-                          <IconComp className="h-7 w-7 text-primary" />
+                      <div className={`p-6 relative z-10 ${index === 1 ? "pt-10" : ""}`}>
+                        <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-5 ${c.icon} backdrop-blur-sm`}>
+                          <IconComp className="h-7 w-7" />
                         </div>
                         <div className="mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{service.category}</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${c.tag}`}>{service.category}</span>
                         </div>
                         <h3 className="text-xl font-bold text-foreground mb-2">{service.title}</h3>
                         <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
@@ -341,7 +345,7 @@ const Services = () => {
                             return (
                               <div className="mb-5 space-y-3">
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Clock className="h-4 w-4 text-primary" />
+                                  <Clock className={`h-4 w-4 ${c.accent}`} />
                                   <span>প্রতি ঘন্টা: <span className="font-bold text-foreground">৳{perHour.toLocaleString('bn-BD')}</span></span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -354,14 +358,14 @@ const Services = () => {
                                   </button>
                                   <span className="text-xs text-muted-foreground">ঘন্টা</span>
                                 </div>
-                                <div className="rounded-lg bg-primary/5 border border-primary/10 p-2.5 space-y-1">
+                                <div className={`rounded-lg ${c.checkBg} border border-white/5 p-2.5 space-y-1`}>
                                   <div className="flex items-center gap-1.5 text-xs text-foreground/80">
-                                    <Camera className="h-3.5 w-3.5 text-primary" />
+                                    <Camera className={`h-3.5 w-3.5 ${c.checkIcon}`} />
                                     {unlimitedPhotos ? <span>প্রতি ঘন্টায় আনলিমিটেড ছবি</span> : <span>ছবি তোলা হবে</span>}
                                   </div>
                                   <div className="flex items-center gap-1.5 text-xs text-foreground/80">
-                                    <Check className="h-3.5 w-3.5 text-primary" />
-                                    <span><span className="font-bold text-primary">{editedPerHour * hrs}টি</span> ছবি এডিট করে দেওয়া হবে</span>
+                                    <Check className={`h-3.5 w-3.5 ${c.checkIcon}`} />
+                                    <span><span className={`font-bold ${c.accent}`}>{editedPerHour * hrs}টি</span> ছবি এডিট করে দেওয়া হবে</span>
                                   </div>
                                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                     <Check className="h-3.5 w-3.5" />
@@ -372,7 +376,7 @@ const Services = () => {
                                   <div className="flex flex-col gap-1">
                                     <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                      <span className={`text-3xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
                                       <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
                                   </div>
@@ -389,7 +393,7 @@ const Services = () => {
                             return (
                               <div className="mb-5 space-y-3">
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Clock className="h-4 w-4 text-primary" />
+                                  <Clock className={`h-4 w-4 ${c.accent}`} />
                                   <span>প্রতি মিনিট: <span className="font-bold text-foreground">৳{perMin.toLocaleString('bn-BD')}</span></span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -406,7 +410,7 @@ const Services = () => {
                                   <div className="flex flex-col gap-1">
                                     <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                      <span className={`text-3xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
                                       <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
                                   </div>
@@ -426,7 +430,7 @@ const Services = () => {
                                       <span className="text-xl text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
                                       <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                     </div>
-                                    <span className="text-3xl font-black text-primary">৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
+                                    <span className={`text-3xl font-black ${c.accent}`}>৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                   </div>
                                 ) : (
                                   <span className="text-3xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
@@ -447,8 +451,8 @@ const Services = () => {
                         <div className="space-y-2.5 mb-6">
                           {features.map((f: string, i: number) => (
                             <div key={i} className="flex items-center gap-2.5">
-                              <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <Check className="h-3 w-3 text-primary" />
+                              <div className={`h-5 w-5 rounded-full ${c.checkBg} flex items-center justify-center flex-shrink-0`}>
+                                <Check className={`h-3 w-3 ${c.checkIcon}`} />
                               </div>
                               <span className="text-sm text-foreground/80">{f}</span>
                             </div>
@@ -458,7 +462,7 @@ const Services = () => {
                         {(settings as any)?.whatsapp_no ? (
                           <Button
                             onClick={() => setBookingService(service)}
-                            className={`w-full font-bold text-base py-5 shadow-lg transition-all duration-300 ${index === 1 ? "bg-green-600 hover:bg-green-700 text-white shadow-green-600/30 hover:shadow-green-600/50 hover:scale-[1.02]" : "bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02]"}`}
+                            className="w-full font-bold text-base py-5 shadow-lg transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02]"
                           >
                             <MessageCircle className="h-5 w-5 mr-2" />
                             {t("বুকিং করুন", "Book Now")}
@@ -506,25 +510,38 @@ const Services = () => {
                 const remainder = totalOthers % 3;
                 const isLastRow = index >= totalOthers - remainder;
                 const shouldCenter = remainder === 1 && isLastRow;
+                const otherColors = [
+                  { gradient: "from-sky-500/12 to-card", border: "border-sky-500/25", icon: "bg-sky-500/15 text-sky-400", accent: "text-sky-400", checkIcon: "text-sky-400", tag: "text-sky-300", glow: "bg-sky-500/15" },
+                  { gradient: "from-amber-500/12 to-card", border: "border-amber-500/25", icon: "bg-amber-500/15 text-amber-400", accent: "text-amber-400", checkIcon: "text-amber-400", tag: "text-amber-300", glow: "bg-amber-500/15" },
+                  { gradient: "from-rose-500/12 to-card", border: "border-rose-500/25", icon: "bg-rose-500/15 text-rose-400", accent: "text-rose-400", checkIcon: "text-rose-400", tag: "text-rose-300", glow: "bg-rose-500/15" },
+                  { gradient: "from-indigo-500/12 to-card", border: "border-indigo-500/25", icon: "bg-indigo-500/15 text-indigo-400", accent: "text-indigo-400", checkIcon: "text-indigo-400", tag: "text-indigo-300", glow: "bg-indigo-500/15" },
+                  { gradient: "from-teal-500/12 to-card", border: "border-teal-500/25", icon: "bg-teal-500/15 text-teal-400", accent: "text-teal-400", checkIcon: "text-teal-400", tag: "text-teal-300", glow: "bg-teal-500/15" },
+                  { gradient: "from-fuchsia-500/12 to-card", border: "border-fuchsia-500/25", icon: "bg-fuchsia-500/15 text-fuchsia-400", accent: "text-fuchsia-400", checkIcon: "text-fuchsia-400", tag: "text-fuchsia-300", glow: "bg-fuchsia-500/15" },
+                ];
+                const c = otherColors[index % otherColors.length];
                 return (
                   <motion.div
                     key={service.id}
                     variants={item}
                     className={`w-full ${shouldCenter ? "sm:col-span-2 lg:col-span-1 lg:col-start-2" : ""}`}
                   >
-                    <div className="premium-card rounded-2xl p-6 h-full flex flex-col">
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <IconComp className="h-6 w-6 text-primary" />
+                    <div className={`relative rounded-2xl p-6 h-full flex flex-col overflow-hidden bg-gradient-to-b ${c.gradient} border ${c.border}`}>
+                      {/* Decorative glow */}
+                      <div className={`absolute -top-16 -right-16 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-50`} />
+                      
+                      <div className="flex items-start gap-4 mb-4 relative z-10">
+                        <div className={`h-12 w-12 rounded-xl ${c.icon} flex items-center justify-center flex-shrink-0`}>
+                          <IconComp className="h-6 w-6" />
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{service.category}</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${c.tag}`}>{service.category}</span>
                           <h3 className="text-lg font-bold text-foreground">{service.title}</h3>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{service.description}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1 relative z-10">{service.description}</p>
                       
                       {/* Price Display */}
+                      <div className="relative z-10">
                       {(() => {
                         const numPrice = getServicePrice(service);
                         const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
@@ -539,7 +556,7 @@ const Services = () => {
                           return (
                             <div className="mb-3 space-y-2">
                               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Clock className="h-3.5 w-3.5 text-primary" />
+                                <Clock className={`h-3.5 w-3.5 ${c.accent}`} />
                                 <span>প্রতি ঘন্টা: <span className="font-bold text-foreground">৳{perHour.toLocaleString('bn-BD')}</span></span>
                               </div>
                               <div className="flex items-center gap-2">
@@ -552,21 +569,21 @@ const Services = () => {
                                 </button>
                                 <span className="text-[10px] text-muted-foreground">ঘন্টা</span>
                               </div>
-                              <div className="rounded-lg bg-primary/5 border border-primary/10 p-2 space-y-0.5">
+                              <div className="rounded-lg bg-white/5 border border-white/5 p-2 space-y-0.5">
                                 <div className="flex items-center gap-1.5 text-[10px] text-foreground/80">
-                                  <Camera className="h-3 w-3 text-primary" />
+                                  <Camera className={`h-3 w-3 ${c.checkIcon}`} />
                                   {unlimitedPhotos ? <span>আনলিমিটেড ছবি</span> : <span>ছবি তোলা</span>}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-[10px] text-foreground/80">
-                                  <Check className="h-3 w-3 text-primary" />
-                                  <span><span className="font-bold text-primary">{editedPerHour * hrs}টি</span> এডিটেড ছবি</span>
+                                  <Check className={`h-3 w-3 ${c.checkIcon}`} />
+                                  <span><span className={`font-bold ${c.accent}`}>{editedPerHour * hrs}টি</span> এডিটেড ছবি</span>
                                 </div>
                               </div>
                               {discount > 0 ? (
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                    <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
@@ -583,7 +600,7 @@ const Services = () => {
                           return (
                             <div className="mb-3 space-y-2">
                               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Clock className="h-3.5 w-3.5 text-primary" />
+                                <Clock className={`h-3.5 w-3.5 ${c.accent}`} />
                                 <span>প্রতি মিনিট: <span className="font-bold text-foreground">৳{perMin.toLocaleString('bn-BD')}</span></span>
                               </div>
                               <div className="flex items-center gap-2">
@@ -600,7 +617,7 @@ const Services = () => {
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                    <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
@@ -620,7 +637,7 @@ const Services = () => {
                                     <span className="text-base text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
-                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
+                                  <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                 </div>
                               ) : (
                                 <span className="text-2xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
@@ -637,11 +654,12 @@ const Services = () => {
                         }
                         return null;
                       })()}
+                      </div>
 
-                      <div className="space-y-2 mb-5">
+                      <div className="space-y-2 mb-5 relative z-10">
                         {features.slice(0, 3).map((f: string, i: number) => (
                           <div key={i} className="flex items-center gap-2">
-                            <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                            <Check className={`h-3.5 w-3.5 ${c.checkIcon} flex-shrink-0`} />
                             <span className="text-xs text-foreground/70">{f}</span>
                           </div>
                         ))}
@@ -653,13 +671,13 @@ const Services = () => {
                       {(settings as any)?.whatsapp_no ? (
                         <Button
                           size="sm"
-                          className="w-full font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02] transition-all duration-300"
+                          className="w-full font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02] transition-all duration-300 relative z-10"
                           onClick={() => setBookingService(service)}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
                       ) : (
-                        <Button size="sm" className="w-full" disabled>
+                        <Button size="sm" className="w-full relative z-10" disabled>
                           {t("বুকিং করুন", "Book Now")}
                         </Button>
                       )}
