@@ -80,6 +80,7 @@ interface Props {
 }
 
 export default function NewsDetail({ news, categories, onBack, onShare, publisherName, publisherPhoto, otherNews = [], onSelectNews, getPublisherName, getPublisherPhoto }: Props) {
+  const navigate = useNavigate();
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
