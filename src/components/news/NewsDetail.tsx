@@ -111,7 +111,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
 
             {/* Publisher byline */}
             {publisherName && (
-              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5">
                 ✍️ <span className="font-semibold">{publisherName}</span>
               </p>
             )}
