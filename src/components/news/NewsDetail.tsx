@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Star, Share2, Facebook, MessageCircle, Copy, Link2, Clock, ChevronRight, Newspaper } from "lucide-react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 import type { NewsItem } from "@/pages/News";
 
 const getEmbedUrl = (url: string): string | null => {
