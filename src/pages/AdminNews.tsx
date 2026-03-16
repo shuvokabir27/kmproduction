@@ -494,7 +494,91 @@ export default function AdminNews() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="news">
+          <TabsContent value="categories">
+            <Card>
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={newCategoryLabel}
+                    onChange={(e) => {
+                      setNewCategoryLabel(e.target.value);
+                      setNewCategoryValue(e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\u0980-\u09FF-]/g, ""));
+                    }}
+                    placeholder="ক্যাটাগরির নাম (বাংলা)..."
+                    className="flex-1"
+                  />
+                  <Input
+                    value={newCategoryValue}
+                    onChange={(e) => setNewCategoryValue(e.target.value)}
+                    placeholder="slug (english)"
+                    className="w-40"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (newCategoryLabel.trim() && newCategoryValue.trim()) {
+                        addCategoryMutation.mutate({ value: newCategoryValue.trim(), label: newCategoryLabel.trim() });
+                      }
+                    }}
+                    disabled={!newCategoryLabel.trim() || !newCategoryValue.trim()}
+                  >
+                    <Plus className="h-4 w-4 mr-1" /> যোগ করুন
+                  </Button>
+                </div>
+
+                {categories.length > 0 ? (
+                  <div className="space-y-2">
+                    {categories.map((cat, idx) => (
+                      <div key={cat.id} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/30">
+                        <Badge variant="outline" className="text-xs">{cat.value}</Badge>
+                        <span className="flex-1 text-sm font-medium">{cat.label}</span>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost" size="icon" className="h-7 w-7"
+                            disabled={idx === 0}
+                            onClick={async () => {
+                              const prev = categories[idx - 1];
+                              await supabase.from("news_categories").update({ sort_order: prev.sort_order }).eq("id", cat.id);
+                              await supabase.from("news_categories").update({ sort_order: cat.sort_order }).eq("id", prev.id);
+                              queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                            }}
+                          >
+                            <ArrowUp className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost" size="icon" className="h-7 w-7"
+                            disabled={idx === categories.length - 1}
+                            onClick={async () => {
+                              const next = categories[idx + 1];
+                              await supabase.from("news_categories").update({ sort_order: next.sort_order }).eq("id", cat.id);
+                              await supabase.from("news_categories").update({ sort_order: cat.sort_order }).eq("id", next.id);
+                              queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                            }}
+                          >
+                            <ArrowDown className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
+                            onClick={async () => {
+                              if (!confirm(`"${cat.label}" ক্যাটাগরি মুছে ফেলবেন?`)) return;
+                              await supabase.from("news_categories").delete().eq("id", cat.id);
+                              queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                              toast({ title: "ক্যাটাগরি মুছে ফেলা হয়েছে" });
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">কোনো ক্যাটাগরি যোগ করা হয়নি</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
 
         {isLoading ? (
           <div className="grid gap-4">
