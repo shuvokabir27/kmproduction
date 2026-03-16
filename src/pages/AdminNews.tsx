@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check, Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, List, ListOrdered, AlignLeft, AlignCenter, Link2, Video, ZoomIn, ZoomOut, Zap } from "lucide-react";
+import { Plus, Pencil, Trash2, Image as ImageIcon, Eye, EyeOff, Star, Calendar, Newspaper, Crop, Check, Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, List, ListOrdered, AlignLeft, AlignCenter, Link2, Video, ZoomIn, ZoomOut, Zap, Tag, ArrowUp, ArrowDown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminTicker from "@/components/AdminTicker";
 import { format } from "date-fns";
