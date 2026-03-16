@@ -202,7 +202,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                           </span>
                           <h4
                             className="font-bold text-[13px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
-                            style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                           >
                             {item.title}
                           </h4>

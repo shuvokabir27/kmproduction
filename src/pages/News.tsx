@@ -426,7 +426,6 @@ function NewsCard({
           </span>
           <h3
             className="font-bold text-sm md:text-[15px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
-            style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
           >
             {news.title}
           </h3>
