@@ -80,7 +80,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
-    <div className="py-4">
+    <div className="py-4 bg-white">
       {/* Main content + Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 lg:gap-8">
           {/* === Article === */}
