@@ -410,6 +410,11 @@ const AdminServices = () => {
                 </div>
               </div>
               <div>
+                <Label>সার্ভিস ডিউরেশন</Label>
+                <Input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="যেমন: প্রজেক্ট টাইম / কাস্টম টাইম / প্রতি ভিডিও ৩ দিন" />
+                <p className="text-xs text-muted-foreground mt-1">সার্ভিস কার্ডে হাইলাইট করে দেখাবে</p>
+              </div>
+              <div>
                 <Label>ফিচার সমূহ (প্রতি লাইনে একটি)</Label>
                 <Textarea
                   value={form.features}
