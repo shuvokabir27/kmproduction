@@ -55,13 +55,13 @@ const renderFormattedContent = (text: string) => {
         </figure>
       );
     }
-    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-black text-foreground mt-6 mb-2" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{line.slice(2)}</h2>;
-    if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-bold text-foreground mt-4 mb-1.5">{line.slice(3)}</h3>;
-    if (line === "---") return <hr key={i} className="border-border/20 my-6" />;
-    if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-foreground/85 leading-relaxed">{formatInline(line.slice(2))}</li>;
-    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-foreground/85 leading-relaxed">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
+    if (line.startsWith("# ")) return <h2 key={i} className="text-xl font-black text-gray-900 mt-6 mb-2" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{line.slice(2)}</h2>;
+    if (line.startsWith("## ")) return <h3 key={i} className="text-lg font-bold text-gray-900 mt-4 mb-1.5">{line.slice(3)}</h3>;
+    if (line === "---") return <hr key={i} className="border-gray-200 my-6" />;
+    if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-gray-800 leading-relaxed">{formatInline(line.slice(2))}</li>;
+    if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-gray-800 leading-relaxed">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
     if (!line.trim()) return <br key={i} />;
-    return <p key={i} className="text-foreground/85 leading-[1.8] text-[15px]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{formatInline(line)}</p>;
+    return <p key={i} className="text-gray-800 leading-[1.8] text-[15px]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{formatInline(line)}</p>;
   });
 };
 
