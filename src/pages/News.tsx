@@ -321,7 +321,6 @@ export default function News() {
                     </div>
                     <h2
                       className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors"
-                      style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                     >
                       {featured.title}
                     </h2>
