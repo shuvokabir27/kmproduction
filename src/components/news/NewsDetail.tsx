@@ -136,7 +136,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             {/* Featured Image */}
             {news.featured_image_url && (
               <figure className="mb-6">
-                <div className="border border-border/20 overflow-hidden">
+                <div className="border border-gray-200 overflow-hidden">
                   <img src={news.featured_image_url} alt="" className="w-full h-56 md:h-80 object-cover" />
                 </div>
               </figure>
