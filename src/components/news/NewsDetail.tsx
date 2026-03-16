@@ -80,17 +80,9 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))]">
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Top rule */}
-        <div className="border-t-[3px] border-foreground/80 mb-4" />
-
-        <Button variant="ghost" size="sm" onClick={onBack} className="mb-4 gap-1.5 text-muted-foreground hover:text-foreground -ml-2">
-          <ArrowLeft className="h-4 w-4" /> সংবাদ তালিকা
-        </Button>
-
-        {/* Main content + Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 lg:gap-8">
+    <div className="py-4">
+      {/* Main content + Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 lg:gap-8">
           {/* === Article === */}
           <div>
             {/* Category & date */}
@@ -237,6 +229,5 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
           )}
         </div>
       </div>
-    </div>
   );
 }
