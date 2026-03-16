@@ -1023,8 +1023,8 @@ export default function AdminNews() {
             </div>
           </DialogContent>
         </Dialog>
-          </TabsContent>
         </Tabs>
+      </div>
       </div>
     </AppLayout>
   );
