@@ -279,11 +279,11 @@ export default function News() {
         ) : isLoading ? (
           <div className="py-20 space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-32 bg-secondary/30 animate-pulse rounded" />
+              <div key={i} className="h-32 bg-gray-100 animate-pulse rounded" />
             ))}
           </div>
         ) : !filtered?.length ? (
-          <div className="text-center py-24 text-muted-foreground">
+          <div className="text-center py-24 text-gray-500">
             <Newspaper className="h-16 w-16 mx-auto mb-4 opacity-15" />
             <p className="text-lg" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
               এখনো কোনো নিউজ প্রকাশিত হয়নি
