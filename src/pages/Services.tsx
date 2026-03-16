@@ -532,7 +532,7 @@ const Services = () => {
                               <span className="text-[10px] font-bold text-primary">{service.duration}</span>
                             </div>
                           )}
-                      </div>
+                        </div>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{service.description}</p>
                       
                       {/* Price Display */}
