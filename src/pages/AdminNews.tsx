@@ -441,6 +441,9 @@ export default function AdminNews() {
             <TabsTrigger value="publishers" className="gap-1.5">
               📝 প্রকাশক
             </TabsTrigger>
+            <TabsTrigger value="categories" className="gap-1.5">
+              <Tag className="h-3.5 w-3.5" /> ক্যাটাগরি
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ticker">
