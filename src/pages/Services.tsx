@@ -462,7 +462,7 @@ const Services = () => {
                         {(settings as any)?.whatsapp_no ? (
                           <Button
                             onClick={() => setBookingService(service)}
-                            className="w-full font-bold text-base py-5 shadow-lg transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02]"
+                            className="w-full font-bold text-base py-5 shadow-lg transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02]"
                           >
                             <MessageCircle className="h-5 w-5 mr-2" />
                             {t("বুকিং করুন", "Book Now")}
