@@ -433,9 +433,6 @@ export default function News() {
             </div>
           </div>
         </footer>
-            </p>
-          </div>
-        </footer>
       </div>
     </div>
   );
