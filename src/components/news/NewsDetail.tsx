@@ -175,7 +175,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
               <div className="lg:sticky lg:top-4">
                 <h3
                   className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2 pt-3"
-                  style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   <Newspaper className="h-4 w-4 text-primary" />
                   অন্যান্য সংবাদ
