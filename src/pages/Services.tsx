@@ -325,9 +325,14 @@ const Services = () => {
                         </div>
                         <h3 className="text-xl font-bold text-foreground mb-2">{service.title}</h3>
                         {service.duration && (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
-                            <Timer className="h-3.5 w-3.5 text-primary" />
-                            <span className="text-xs font-bold text-primary">{service.duration}</span>
+                          <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 mb-3">
+                            <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+                              <Timer className="h-4 w-4 text-primary" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">প্রজেক্ট ডিউরেশন</span>
+                              <span className="text-sm font-bold text-primary">{service.duration}</span>
+                            </div>
                           </div>
                         )}
                         <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
