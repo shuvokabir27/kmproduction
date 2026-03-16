@@ -202,6 +202,7 @@ const AdminServices = () => {
       edited_photos_per_hour: service.edited_photos_per_hour ? String(service.edited_photos_per_hour) : "20",
       unlimited_photos_per_hour: service.unlimited_photos_per_hour ?? true,
       discount_percentage: service.discount_percentage ? String(service.discount_percentage) : "",
+      duration: service.duration || "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
