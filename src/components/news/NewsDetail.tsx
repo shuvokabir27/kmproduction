@@ -113,9 +113,14 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
 
             {/* Publisher byline */}
             {publisherName && (
-              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5">
-                ✍️ <span className="font-semibold">{publisherName}</span>
-              </p>
+              <div className="flex items-center gap-2.5 mb-4">
+                {publisherPhoto ? (
+                  <img src={publisherPhoto} alt={publisherName} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
+                ) : (
+                  <span className="text-lg">✍️</span>
+                )}
+                <span className="text-sm font-semibold text-gray-700">{publisherName}</span>
+              </div>
             )}
 
             {/* Share bar */}
