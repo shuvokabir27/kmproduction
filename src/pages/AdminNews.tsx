@@ -159,6 +159,35 @@ export default function AdminNews() {
     },
   });
 
+  const { data: categories = [] } = useQuery({
+    queryKey: ["news-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news_categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as CategoryItem[];
+    },
+  });
+
+  const addCategoryMutation = useMutation({
+    mutationFn: async ({ value, label }: { value: string; label: string }) => {
+      const maxOrder = categories.length > 0 ? Math.max(...categories.map(c => c.sort_order || 0)) : 0;
+      const { error } = await supabase.from("news_categories").insert({ value, label, sort_order: maxOrder + 1 });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+      setNewCategoryLabel("");
+      setNewCategoryValue("");
+      toast({ title: "নতুন ক্যাটাগরি যোগ হয়েছে" });
+    },
+    onError: (err: any) => {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+    },
+  });
+
   const addPublisherMutation = useMutation({
     mutationFn: async (name: string) => {
       const { error } = await supabase.from("news_publishers").insert({ name });
