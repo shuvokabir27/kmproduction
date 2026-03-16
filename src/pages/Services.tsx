@@ -533,6 +533,7 @@ const Services = () => {
                             </div>
                           )}
                         </div>
+                      </div>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{service.description}</p>
                       
                       {/* Price Display */}
