@@ -101,18 +101,18 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
 
             {/* Headline */}
             <h1
-              className="text-2xl md:text-4xl font-black text-foreground mb-5 leading-tight"
+              className="text-2xl md:text-4xl font-black text-gray-900 mb-5 leading-tight"
               style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
             >
               {news.title}
             </h1>
 
             {/* Divider */}
-            <div className="border-t border-border/30 mb-4" />
+            <div className="border-t border-gray-200 mb-4" />
 
             {/* Publisher byline */}
             {publisherName && (
-              <p className="text-sm text-foreground/70 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+              <p className="text-sm text-gray-700 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
                 ✍️ <span className="font-semibold">{publisherName}</span>
               </p>
             )}
