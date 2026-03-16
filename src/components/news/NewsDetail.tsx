@@ -50,8 +50,8 @@ const renderFormattedContent = (text: string) => {
       if (meta.includes("|")) { const p = meta.split("|"); caption = p[0]; size = parseInt(p[1]) || 100; }
       return (
         <figure key={i} className="my-6 flex flex-col items-center">
-          <img src={url} alt={caption} className="border border-border/20 object-contain" style={{ width: `${Math.min(size, 100)}%`, maxWidth: "100%" }} />
-          {caption && <figcaption className="text-[11px] text-muted-foreground text-center mt-2 italic">{caption}</figcaption>}
+          <img src={url} alt={caption} className="border border-gray-200 object-contain" style={{ width: `${Math.min(size, 100)}%`, maxWidth: "100%" }} />
+          {caption && <figcaption className="text-[11px] text-gray-600 text-center mt-2 italic">{caption}</figcaption>}
         </figure>
       );
     }
