@@ -188,6 +188,7 @@ export default function News() {
   };
 
   if (selectedNews) {
+    const otherNews = (newsList || []).filter(n => n.id !== selectedNews.id).slice(0, 10);
     return (
       <NewsDetail
         news={selectedNews}
@@ -195,6 +196,9 @@ export default function News() {
         onBack={() => { setSelectedNews(null); navigate("/news"); }}
         onShare={handleShare}
         publisherName={getPublisherName(selectedNews.publisher_id)}
+        otherNews={otherNews}
+        onSelectNews={handleSelectNews}
+        getPublisherName={getPublisherName}
       />
     );
   }

@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Star, Share2, Facebook, MessageCircle, Copy, Link2, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Star, Share2, Facebook, MessageCircle, Copy, Link2, Clock, ChevronRight, Newspaper } from "lucide-react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 import type { NewsItem } from "@/pages/News";
@@ -71,14 +71,17 @@ interface Props {
   onBack: () => void;
   onShare: (type: string, news: NewsItem) => void;
   publisherName?: string | null;
+  otherNews?: NewsItem[];
+  onSelectNews?: (news: NewsItem) => void;
+  getPublisherName?: (pubId: string | null) => string | null;
 }
 
-export default function NewsDetail({ news, categories, onBack, onShare, publisherName }: Props) {
+export default function NewsDetail({ news, categories, onBack, onShare, publisherName, otherNews = [], onSelectNews, getPublisherName }: Props) {
   const embedUrl = news.video_url ? getEmbedUrl(news.video_url) : null;
 
   return (
     <div className="min-h-screen bg-[hsl(var(--background))]">
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-4 py-6">
         {/* Top rule */}
         <div className="border-t-[3px] border-foreground/80 mb-4" />
 
@@ -86,87 +89,153 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
           <ArrowLeft className="h-4 w-4" /> সংবাদ তালিকা
         </Button>
 
-        {/* Category & date */}
-        <div className="flex items-center gap-3 mb-3">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-            {categories.find(c => c.value === news.category)?.label || news.category}
-          </span>
-          {news.is_featured && <Star className="h-3 w-3 text-primary fill-primary" />}
-          {news.published_at && (
-            <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {format(new Date(news.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
-            </span>
+        {/* Main content + Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 lg:gap-8">
+          {/* === Article === */}
+          <div>
+            {/* Category & date */}
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                {categories.find(c => c.value === news.category)?.label || news.category}
+              </span>
+              {news.is_featured && <Star className="h-3 w-3 text-primary fill-primary" />}
+              {news.published_at && (
+                <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {format(new Date(news.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
+                </span>
+              )}
+            </div>
+
+            {/* Headline */}
+            <h1
+              className="text-2xl md:text-4xl font-black text-foreground mb-5 leading-tight"
+              style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+            >
+              {news.title}
+            </h1>
+
+            {/* Divider */}
+            <div className="border-t border-border/30 mb-4" />
+
+            {/* Publisher byline */}
+            {publisherName && (
+              <p className="text-sm text-foreground/70 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+                ✍️ <span className="font-semibold">{publisherName}</span>
+              </p>
+            )}
+
+            {/* Share bar */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার</span>
+              <div className="flex gap-1.5">
+                <button onClick={() => onShare("facebook", news)} className="h-7 w-7 rounded-sm bg-blue-600/10 text-blue-400 flex items-center justify-center hover:bg-blue-600/20 transition-colors">
+                  <Facebook className="h-3.5 w-3.5" />
+                </button>
+                <button onClick={() => onShare("whatsapp", news)} className="h-7 w-7 rounded-sm bg-green-600/10 text-green-400 flex items-center justify-center hover:bg-green-600/20 transition-colors">
+                  <MessageCircle className="h-3.5 w-3.5" />
+                </button>
+                <button onClick={() => onShare("copy", news)} className="h-7 w-7 rounded-sm bg-secondary text-muted-foreground flex items-center justify-center hover:bg-secondary/80 transition-colors">
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Featured Image */}
+            {news.featured_image_url && (
+              <figure className="mb-6">
+                <div className="border border-border/20 overflow-hidden">
+                  <img src={news.featured_image_url} alt="" className="w-full h-56 md:h-80 object-cover" />
+                </div>
+              </figure>
+            )}
+
+            {/* Article body */}
+            <div className="space-y-1">
+              {renderFormattedContent(news.content)}
+            </div>
+
+            {/* Embedded Video */}
+            {embedUrl && (
+              <div className="mt-8">
+                <div className="border border-border/20 overflow-hidden aspect-video">
+                  <iframe src={embedUrl} className="w-full h-full" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
+                </div>
+              </div>
+            )}
+
+            {/* Bottom share */}
+            <div className="flex items-center gap-3 mt-10 pt-4 border-t border-border/20">
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার করুন</span>
+              <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-400 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
+              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-400 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
+              <button onClick={() => onShare("copy", news)} className="text-xs text-muted-foreground hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
+            </div>
+
+            {/* Bottom rule */}
+            <div className="mt-8 border-t-[3px] border-foreground/80" />
+          </div>
+
+          {/* === Sidebar: Other News === */}
+          {otherNews.length > 0 && (
+            <aside className="mt-8 lg:mt-0">
+              {/* Sidebar header */}
+              <div className="border-t-[3px] border-primary mb-4 lg:mb-0" />
+              <div className="lg:sticky lg:top-4">
+                <h3
+                  className="text-lg font-black text-foreground mb-4 flex items-center gap-2 pt-3"
+                  style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+                >
+                  <Newspaper className="h-4 w-4 text-primary" />
+                  অন্যান্য সংবাদ
+                </h3>
+                <div className="space-y-0">
+                  {otherNews.map((item, idx) => (
+                    <article
+                      key={item.id}
+                      className={`cursor-pointer group py-3 ${idx !== 0 ? "border-t border-border/20" : ""}`}
+                      onClick={() => onSelectNews?.(item)}
+                    >
+                      <div className="flex gap-3">
+                        {item.featured_image_url && (
+                          <div className="w-20 h-16 flex-shrink-0 overflow-hidden border border-border/10 rounded-sm">
+                            <img
+                              src={item.featured_image_url}
+                              alt=""
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-primary/70 block mb-0.5">
+                            {categories.find(c => c.value === item.category)?.label || item.category}
+                          </span>
+                          <h4
+                            className="font-bold text-[13px] text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors"
+                            style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+                          >
+                            {item.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            {getPublisherName?.(item.publisher_id) && (
+                              <span className="text-[9px] text-foreground/50">✍️ {getPublisherName(item.publisher_id)}</span>
+                            )}
+                            {item.published_at && (
+                              <span className="text-[9px] text-muted-foreground/50 flex items-center gap-0.5">
+                                <Clock className="h-2.5 w-2.5" />
+                                {format(new Date(item.published_at), "dd MMM yyyy")}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </aside>
           )}
         </div>
-
-        {/* Headline */}
-        <h1
-          className="text-2xl md:text-4xl font-black text-foreground mb-5 leading-tight"
-          style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
-        >
-          {news.title}
-        </h1>
-
-        {/* Divider */}
-        <div className="border-t border-border/30 mb-4" />
-
-        {/* Publisher byline */}
-        {publisherName && (
-          <p className="text-sm text-foreground/70 mb-4 flex items-center gap-1.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
-            ✍️ <span className="font-semibold">{publisherName}</span>
-          </p>
-        )}
-
-        {/* Share bar */}
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার</span>
-          <div className="flex gap-1.5">
-            <button onClick={() => onShare("facebook", news)} className="h-7 w-7 rounded-sm bg-blue-600/10 text-blue-400 flex items-center justify-center hover:bg-blue-600/20 transition-colors">
-              <Facebook className="h-3.5 w-3.5" />
-            </button>
-            <button onClick={() => onShare("whatsapp", news)} className="h-7 w-7 rounded-sm bg-green-600/10 text-green-400 flex items-center justify-center hover:bg-green-600/20 transition-colors">
-              <MessageCircle className="h-3.5 w-3.5" />
-            </button>
-            <button onClick={() => onShare("copy", news)} className="h-7 w-7 rounded-sm bg-secondary text-muted-foreground flex items-center justify-center hover:bg-secondary/80 transition-colors">
-              <Copy className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Featured Image */}
-        {news.featured_image_url && (
-          <figure className="mb-6">
-            <div className="border border-border/20 overflow-hidden">
-              <img src={news.featured_image_url} alt="" className="w-full h-56 md:h-80 object-cover" />
-            </div>
-          </figure>
-        )}
-
-        {/* Article body */}
-        <div className="space-y-1">
-          {renderFormattedContent(news.content)}
-        </div>
-
-        {/* Embedded Video */}
-        {embedUrl && (
-          <div className="mt-8">
-            <div className="border border-border/20 overflow-hidden aspect-video">
-              <iframe src={embedUrl} className="w-full h-full" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
-            </div>
-          </div>
-        )}
-
-        {/* Bottom share */}
-        <div className="flex items-center gap-3 mt-10 pt-4 border-t border-border/20">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার করুন</span>
-          <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-400 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
-          <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-400 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
-          <button onClick={() => onShare("copy", news)} className="text-xs text-muted-foreground hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
-        </div>
-
-        {/* Bottom rule */}
-        <div className="mt-8 border-t-[3px] border-foreground/80" />
       </div>
     </div>
   );
