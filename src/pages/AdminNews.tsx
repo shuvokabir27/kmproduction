@@ -528,49 +528,102 @@ export default function AdminNews() {
 
                 {categories.length > 0 ? (
                   <div className="space-y-2">
-                    {categories.map((cat, idx) => (
-                      <div key={cat.id} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/30">
-                        <Badge variant="outline" className="text-xs">{cat.value}</Badge>
-                        <span className="flex-1 text-sm font-medium">{cat.label}</span>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost" size="icon" className="h-7 w-7"
-                            disabled={idx === 0}
-                            onClick={async () => {
-                              const prev = categories[idx - 1];
-                              await supabase.from("news_categories").update({ sort_order: prev.sort_order }).eq("id", cat.id);
-                              await supabase.from("news_categories").update({ sort_order: cat.sort_order }).eq("id", prev.id);
-                              queryClient.invalidateQueries({ queryKey: ["news-categories"] });
-                            }}
-                          >
-                            <ArrowUp className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost" size="icon" className="h-7 w-7"
-                            disabled={idx === categories.length - 1}
-                            onClick={async () => {
-                              const next = categories[idx + 1];
-                              await supabase.from("news_categories").update({ sort_order: next.sort_order }).eq("id", cat.id);
-                              await supabase.from("news_categories").update({ sort_order: cat.sort_order }).eq("id", next.id);
-                              queryClient.invalidateQueries({ queryKey: ["news-categories"] });
-                            }}
-                          >
-                            <ArrowDown className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
-                            onClick={async () => {
-                              if (!confirm(`"${cat.label}" ক্যাটাগরি মুছে ফেলবেন?`)) return;
-                              await supabase.from("news_categories").delete().eq("id", cat.id);
-                              queryClient.invalidateQueries({ queryKey: ["news-categories"] });
-                              toast({ title: "ক্যাটাগরি মুছে ফেলা হয়েছে" });
-                            }}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
+                    {categories.map((cat, idx) => {
+                      const newsCount = newsList?.filter(n => n.category === cat.value).length || 0;
+                      const isEditing = editingCategoryId === cat.id;
+                      return (
+                        <div key={cat.id} className="flex items-center gap-2 p-2.5 rounded-lg bg-secondary/30">
+                          {isEditing ? (
+                            <>
+                              <Input
+                                value={editCategoryLabel}
+                                onChange={(e) => setEditCategoryLabel(e.target.value)}
+                                className="flex-1 h-8 text-sm"
+                                autoFocus
+                              />
+                              <Input
+                                value={editCategoryValue}
+                                onChange={(e) => setEditCategoryValue(e.target.value)}
+                                className="w-32 h-8 text-sm"
+                              />
+                              <Button
+                                size="sm" variant="default" className="h-7 gap-1"
+                                onClick={async () => {
+                                  if (!editCategoryLabel.trim() || !editCategoryValue.trim()) return;
+                                  await supabase.from("news_categories").update({ label: editCategoryLabel.trim(), value: editCategoryValue.trim() }).eq("id", cat.id);
+                                  // Update news that used the old category value
+                                  if (editCategoryValue.trim() !== cat.value) {
+                                    await supabase.from("news").update({ category: editCategoryValue.trim() }).eq("category", cat.value);
+                                  }
+                                  queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                                  queryClient.invalidateQueries({ queryKey: ["admin-news"] });
+                                  setEditingCategoryId(null);
+                                  toast({ title: "ক্যাটাগরি আপডেট হয়েছে" });
+                                }}
+                              >
+                                <Check className="h-3.5 w-3.5" /> সেভ
+                              </Button>
+                              <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditingCategoryId(null)}>
+                                বাতিল
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Badge variant="outline" className="text-xs">{cat.value}</Badge>
+                              <span className="flex-1 text-sm font-medium">{cat.label}</span>
+                              <Badge variant="secondary" className="text-[10px]">{newsCount} নিউজ</Badge>
+                              <div className="flex items-center gap-1">
+                                <Button
+                                  variant="ghost" size="icon" className="h-7 w-7"
+                                  disabled={idx === 0}
+                                  onClick={async () => {
+                                    const prev = categories[idx - 1];
+                                    await supabase.from("news_categories").update({ sort_order: prev.sort_order }).eq("id", cat.id);
+                                    await supabase.from("news_categories").update({ sort_order: cat.sort_order }).eq("id", prev.id);
+                                    queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                                  }}
+                                >
+                                  <ArrowUp className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                  variant="ghost" size="icon" className="h-7 w-7"
+                                  disabled={idx === categories.length - 1}
+                                  onClick={async () => {
+                                    const next = categories[idx + 1];
+                                    await supabase.from("news_categories").update({ sort_order: next.sort_order }).eq("id", cat.id);
+                                    await supabase.from("news_categories").update({ sort_order: cat.sort_order }).eq("id", next.id);
+                                    queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                                  }}
+                                >
+                                  <ArrowDown className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                  variant="ghost" size="icon" className="h-7 w-7"
+                                  onClick={() => {
+                                    setEditingCategoryId(cat.id);
+                                    setEditCategoryLabel(cat.label);
+                                    setEditCategoryValue(cat.value);
+                                  }}
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                  variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
+                                  onClick={async () => {
+                                    if (!confirm(`"${cat.label}" ক্যাটাগরি মুছে ফেলবেন?`)) return;
+                                    await supabase.from("news_categories").delete().eq("id", cat.id);
+                                    queryClient.invalidateQueries({ queryKey: ["news-categories"] });
+                                    toast({ title: "ক্যাটাগরি মুছে ফেলা হয়েছে" });
+                                  }}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            </>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">কোনো ক্যাটাগরি যোগ করা হয়নি</p>
