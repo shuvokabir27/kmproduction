@@ -290,9 +290,11 @@ export default function News() {
             onBack={() => { setSelectedNews(null); navigate("/news"); }}
             onShare={handleShare}
             publisherName={getPublisherName(selectedNews.publisher_id)}
+            publisherPhoto={getPublisherPhoto(selectedNews.publisher_id)}
             otherNews={otherNews}
             onSelectNews={handleSelectNews}
             getPublisherName={getPublisherName}
+            getPublisherPhoto={getPublisherPhoto}
           />
         ) : isLoading ? (
           <div className="py-20 space-y-4">
