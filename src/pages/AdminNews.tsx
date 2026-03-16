@@ -21,12 +21,12 @@ import { format } from "date-fns";
 import ReactCrop, { type Crop as CropType, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
-const categories = [
-  { value: "entertainment", label: "🎬 এন্টারটেইনমেন্ট" },
-  { value: "funny", label: "😂 ফানি" },
-  { value: "behind-the-scenes", label: "🎭 বিহাইন্ড দ্য সিন" },
-  { value: "announcement", label: "📢 ঘোষণা" },
-];
+interface CategoryItem {
+  id: string;
+  value: string;
+  label: string;
+  sort_order: number | null;
+}
 
 interface NewsItem {
   id: string;
