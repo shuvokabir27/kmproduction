@@ -285,7 +285,7 @@ export default function News() {
         ) : !filtered?.length ? (
           <div className="text-center py-24 text-gray-500">
             <Newspaper className="h-16 w-16 mx-auto mb-4 opacity-15" />
-            <p className="text-lg" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+            <p className="text-lg">
               এখনো কোনো নিউজ প্রকাশিত হয়নি
             </p>
           </div>
