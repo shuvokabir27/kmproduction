@@ -531,7 +531,13 @@ export default function AdminNews() {
                                 size="sm" variant="default" className="h-7 gap-1"
                                 onClick={async () => {
                                   if (!editPublisherName.trim()) return;
-                                  await supabase.from("news_publishers").update({ name: editPublisherName.trim() }).eq("id", pub.id);
+                                  await supabase.from("news_publishers").update({
+                                    name: editPublisherName.trim(),
+                                    bio: editPublisherBio || null,
+                                    age: editPublisherAge ? parseInt(editPublisherAge) : null,
+                                    experience: editPublisherExperience || null,
+                                    fun_fact: editPublisherFunFact || null,
+                                  }).eq("id", pub.id);
                                   queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
                                   setEditingPublisherId(null);
                                   toast({ title: "প্রকাশক আপডেট হয়েছে" });
@@ -546,9 +552,18 @@ export default function AdminNews() {
                           ) : (
                             <>
                               <span className="flex-1 text-sm font-medium">{pub.name}</span>
+                              {(pub as any).bio && <Badge variant="secondary" className="text-[10px]">প্রোফাইল আছে</Badge>}
                               <Button
                                 variant="ghost" size="icon" className="h-7 w-7"
-                                onClick={() => { setEditingPublisherId(pub.id); setEditPublisherName(pub.name); }}
+                                onClick={() => {
+                                  setEditingPublisherId(pub.id);
+                                  setEditPublisherName(pub.name);
+                                  setEditPublisherBio((pub as any).bio || "");
+                                  setEditPublisherAge((pub as any).age?.toString() || "");
+                                  setEditPublisherExperience((pub as any).experience || "");
+                                  setEditPublisherFunFact((pub as any).fun_fact || "");
+                                  setPublisherEditDialogOpen(true);
+                                }}
                               >
                                 <Pencil className="h-3.5 w-3.5" />
                               </Button>
