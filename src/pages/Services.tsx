@@ -510,25 +510,38 @@ const Services = () => {
                 const remainder = totalOthers % 3;
                 const isLastRow = index >= totalOthers - remainder;
                 const shouldCenter = remainder === 1 && isLastRow;
+                const otherColors = [
+                  { gradient: "from-sky-500/12 to-card", border: "border-sky-500/25", icon: "bg-sky-500/15 text-sky-400", accent: "text-sky-400", checkIcon: "text-sky-400", tag: "text-sky-300", glow: "bg-sky-500/15" },
+                  { gradient: "from-amber-500/12 to-card", border: "border-amber-500/25", icon: "bg-amber-500/15 text-amber-400", accent: "text-amber-400", checkIcon: "text-amber-400", tag: "text-amber-300", glow: "bg-amber-500/15" },
+                  { gradient: "from-rose-500/12 to-card", border: "border-rose-500/25", icon: "bg-rose-500/15 text-rose-400", accent: "text-rose-400", checkIcon: "text-rose-400", tag: "text-rose-300", glow: "bg-rose-500/15" },
+                  { gradient: "from-indigo-500/12 to-card", border: "border-indigo-500/25", icon: "bg-indigo-500/15 text-indigo-400", accent: "text-indigo-400", checkIcon: "text-indigo-400", tag: "text-indigo-300", glow: "bg-indigo-500/15" },
+                  { gradient: "from-teal-500/12 to-card", border: "border-teal-500/25", icon: "bg-teal-500/15 text-teal-400", accent: "text-teal-400", checkIcon: "text-teal-400", tag: "text-teal-300", glow: "bg-teal-500/15" },
+                  { gradient: "from-fuchsia-500/12 to-card", border: "border-fuchsia-500/25", icon: "bg-fuchsia-500/15 text-fuchsia-400", accent: "text-fuchsia-400", checkIcon: "text-fuchsia-400", tag: "text-fuchsia-300", glow: "bg-fuchsia-500/15" },
+                ];
+                const c = otherColors[index % otherColors.length];
                 return (
                   <motion.div
                     key={service.id}
                     variants={item}
                     className={`w-full ${shouldCenter ? "sm:col-span-2 lg:col-span-1 lg:col-start-2" : ""}`}
                   >
-                    <div className="premium-card rounded-2xl p-6 h-full flex flex-col">
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <IconComp className="h-6 w-6 text-primary" />
+                    <div className={`relative rounded-2xl p-6 h-full flex flex-col overflow-hidden bg-gradient-to-b ${c.gradient} border ${c.border}`}>
+                      {/* Decorative glow */}
+                      <div className={`absolute -top-16 -right-16 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-50`} />
+                      
+                      <div className="flex items-start gap-4 mb-4 relative z-10">
+                        <div className={`h-12 w-12 rounded-xl ${c.icon} flex items-center justify-center flex-shrink-0`}>
+                          <IconComp className="h-6 w-6" />
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{service.category}</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${c.tag}`}>{service.category}</span>
                           <h3 className="text-lg font-bold text-foreground">{service.title}</h3>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1">{service.description}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 flex-1 relative z-10">{service.description}</p>
                       
                       {/* Price Display */}
+                      <div className="relative z-10">
                       {(() => {
                         const numPrice = getServicePrice(service);
                         const perMin = service.price_per_minute ? Number(service.price_per_minute) : null;
@@ -543,7 +556,7 @@ const Services = () => {
                           return (
                             <div className="mb-3 space-y-2">
                               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Clock className="h-3.5 w-3.5 text-primary" />
+                                <Clock className={`h-3.5 w-3.5 ${c.accent}`} />
                                 <span>প্রতি ঘন্টা: <span className="font-bold text-foreground">৳{perHour.toLocaleString('bn-BD')}</span></span>
                               </div>
                               <div className="flex items-center gap-2">
@@ -556,21 +569,21 @@ const Services = () => {
                                 </button>
                                 <span className="text-[10px] text-muted-foreground">ঘন্টা</span>
                               </div>
-                              <div className="rounded-lg bg-primary/5 border border-primary/10 p-2 space-y-0.5">
+                              <div className="rounded-lg bg-white/5 border border-white/5 p-2 space-y-0.5">
                                 <div className="flex items-center gap-1.5 text-[10px] text-foreground/80">
-                                  <Camera className="h-3 w-3 text-primary" />
+                                  <Camera className={`h-3 w-3 ${c.checkIcon}`} />
                                   {unlimitedPhotos ? <span>আনলিমিটেড ছবি</span> : <span>ছবি তোলা</span>}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-[10px] text-foreground/80">
-                                  <Check className="h-3 w-3 text-primary" />
-                                  <span><span className="font-bold text-primary">{editedPerHour * hrs}টি</span> এডিটেড ছবি</span>
+                                  <Check className={`h-3 w-3 ${c.checkIcon}`} />
+                                  <span><span className={`font-bold ${c.accent}`}>{editedPerHour * hrs}টি</span> এডিটেড ছবি</span>
                                 </div>
                               </div>
                               {discount > 0 ? (
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                    <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
@@ -587,7 +600,7 @@ const Services = () => {
                           return (
                             <div className="mb-3 space-y-2">
                               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Clock className="h-3.5 w-3.5 text-primary" />
+                                <Clock className={`h-3.5 w-3.5 ${c.accent}`} />
                                 <span>প্রতি মিনিট: <span className="font-bold text-foreground">৳{perMin.toLocaleString('bn-BD')}</span></span>
                               </div>
                               <div className="flex items-center gap-2">
@@ -604,7 +617,7 @@ const Services = () => {
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
+                                    <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
@@ -624,7 +637,7 @@ const Services = () => {
                                     <span className="text-base text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
                                   </div>
-                                  <span className="text-2xl font-black text-primary">৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
+                                  <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                 </div>
                               ) : (
                                 <span className="text-2xl font-black text-foreground">৳{numPrice.toLocaleString('bn-BD')}</span>
@@ -641,11 +654,12 @@ const Services = () => {
                         }
                         return null;
                       })()}
+                      </div>
 
-                      <div className="space-y-2 mb-5">
+                      <div className="space-y-2 mb-5 relative z-10">
                         {features.slice(0, 3).map((f: string, i: number) => (
                           <div key={i} className="flex items-center gap-2">
-                            <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                            <Check className={`h-3.5 w-3.5 ${c.checkIcon} flex-shrink-0`} />
                             <span className="text-xs text-foreground/70">{f}</span>
                           </div>
                         ))}
@@ -657,13 +671,13 @@ const Services = () => {
                       {(settings as any)?.whatsapp_no ? (
                         <Button
                           size="sm"
-                          className="w-full font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02] transition-all duration-300"
+                          className="w-full font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 hover:shadow-green-600/40 hover:scale-[1.02] transition-all duration-300 relative z-10"
                           onClick={() => setBookingService(service)}
                         >
                           <MessageCircle className="h-4 w-4 mr-1" /> {t("বুকিং করুন", "Book Now")}
                         </Button>
                       ) : (
-                        <Button size="sm" className="w-full" disabled>
+                        <Button size="sm" className="w-full relative z-10" disabled>
                           {t("বুকিং করুন", "Book Now")}
                         </Button>
                       )}
