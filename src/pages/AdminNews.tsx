@@ -748,6 +748,31 @@ export default function AdminNews() {
                     ))}
                   </SelectContent>
                 </Select>
+                {/* Add new category inline */}
+                <div className="flex items-center gap-2 mt-2">
+                  <Input
+                    value={newCategoryLabel}
+                    onChange={(e) => {
+                      setNewCategoryLabel(e.target.value);
+                      setNewCategoryValue(e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\u0980-\u09FF-]/g, ""));
+                    }}
+                    placeholder="নতুন ক্যাটাগরি নাম..."
+                    className="flex-1 h-8 text-xs"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-xs gap-1"
+                    disabled={!newCategoryLabel.trim() || !newCategoryValue.trim()}
+                    onClick={() => {
+                      addCategoryMutation.mutate({ value: newCategoryValue, label: newCategoryLabel.trim() });
+                      setCategory(newCategoryValue);
+                    }}
+                  >
+                    <Plus className="h-3 w-3" /> যোগ
+                  </Button>
+                </div>
               </div>
 
               {/* Publisher */}
