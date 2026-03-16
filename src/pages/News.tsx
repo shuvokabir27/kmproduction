@@ -407,13 +407,13 @@ function NewsCard({
 }) {
   return (
     <article
-      className={`cursor-pointer group py-4 ${!isFirst ? "border-t border-border/20" : ""}`}
+      className={`cursor-pointer group py-4 ${!isFirst ? "border-t border-gray-200" : ""}`}
       onClick={onClick}
     >
       <div className="flex gap-3">
         {/* Thumbnail */}
         {news.featured_image_url && (
-          <div className="w-24 h-20 md:w-28 md:h-24 flex-shrink-0 overflow-hidden border border-border/10">
+          <div className="w-24 h-20 md:w-28 md:h-24 flex-shrink-0 overflow-hidden border border-gray-200">
             <img
               src={news.featured_image_url}
               alt=""
@@ -427,22 +427,22 @@ function NewsCard({
             {categories.find(c => c.value === news.category)?.label || news.category}
           </span>
           <h3
-            className="font-bold text-sm md:text-[15px] text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors"
+            className="font-bold text-sm md:text-[15px] text-gray-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors"
             style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
           >
             {news.title}
           </h3>
           {news.excerpt && (
-            <p className="text-xs text-muted-foreground line-clamp-1 mt-1 hidden md:block">
+            <p className="text-xs text-gray-600 line-clamp-1 mt-1 hidden md:block">
               {news.excerpt}
             </p>
           )}
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             {publisherName && (
-              <span className="text-[10px] font-medium text-foreground/60">✍️ {publisherName}</span>
+              <span className="text-[10px] font-medium text-gray-700">✍️ {publisherName}</span>
             )}
             {news.published_at && (
-              <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
+              <span className="text-[10px] text-gray-500 flex items-center gap-1">
                 <Clock className="h-2.5 w-2.5" />
                 {format(new Date(news.published_at), "dd MMM yyyy")}
               </span>
