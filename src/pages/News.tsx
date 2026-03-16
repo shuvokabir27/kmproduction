@@ -299,7 +299,7 @@ export default function News() {
                 onClick={() => handleSelectNews(featured)}
               >
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="overflow-hidden border border-border/20">
+                  <div className="overflow-hidden border border-gray-200">
                     {featured.featured_image_url ? (
                       <img
                         src={featured.featured_image_url}
@@ -307,8 +307,8 @@ export default function News() {
                         className="w-full h-48 md:h-72 object-cover group-hover:scale-[1.02] transition-transform duration-700"
                       />
                     ) : (
-                      <div className="w-full h-48 md:h-72 bg-secondary/30 flex items-center justify-center">
-                        <Newspaper className="h-12 w-12 text-muted-foreground/15" />
+                      <div className="w-full h-48 md:h-72 bg-gray-100 flex items-center justify-center">
+                        <Newspaper className="h-12 w-12 text-gray-300" />
                       </div>
                     )}
                   </div>
@@ -320,25 +320,25 @@ export default function News() {
                       <Star className="h-3 w-3 text-primary fill-primary" />
                     </div>
                     <h2
-                      className="text-2xl md:text-3xl font-black text-foreground leading-tight mb-3 group-hover:text-primary transition-colors"
+                      className="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-3 group-hover:text-primary transition-colors"
                       style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                     >
                       {featured.title}
                     </h2>
                     {featured.excerpt && (
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-3"
+                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3"
                          style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
                         {featured.excerpt}
                       </p>
                     )}
                     <div className="flex items-center gap-2 flex-wrap">
                       {getPublisherName(featured.publisher_id) && (
-                        <span className="text-[10px] font-semibold text-foreground/70">
+                        <span className="text-[10px] font-semibold text-gray-700">
                           ✍️ {getPublisherName(featured.publisher_id)}
                         </span>
                       )}
                       {featured.published_at && (
-                        <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                        <span className="text-[10px] text-gray-500 flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {format(new Date(featured.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
                         </span>
@@ -346,7 +346,7 @@ export default function News() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 border-t-[2px] border-foreground/10" />
+                <div className="mt-4 border-t-[2px] border-gray-200" />
               </article>
             )}
 
