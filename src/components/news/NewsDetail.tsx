@@ -92,7 +92,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
               </span>
               {news.is_featured && <Star className="h-3 w-3 text-primary fill-primary" />}
               {news.published_at && (
-                <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
+                <span className="text-[10px] text-gray-600 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {format(new Date(news.published_at), "dd MMMM yyyy, hh:mm a", { locale: bn })}
                 </span>
