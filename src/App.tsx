@@ -34,6 +34,7 @@ import MemberSettings from "./pages/MemberSettings";
 import AdminNews from "./pages/AdminNews";
 import AdminSettings from "./pages/AdminSettings";
 import News from "./pages/News";
+import PublisherProfile from "./pages/PublisherProfile";
 import AdminBookings from "./pages/AdminBookings";
 import NotFound from "./pages/NotFound";
 
