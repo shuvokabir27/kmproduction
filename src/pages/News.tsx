@@ -117,6 +117,11 @@ export default function News() {
     return publishers.find(p => p.id === pubId)?.name || null;
   };
 
+  const getPublisherPhoto = (pubId: string | null) => {
+    if (!pubId || !publishers) return null;
+    return publishers.find(p => p.id === pubId)?.photo_url || null;
+  };
+
   const tickerEnabled = tickerSettings?.ticker_enabled ?? true;
   const tickerSpeed = tickerSettings?.ticker_speed || 30;
 
@@ -285,9 +290,11 @@ export default function News() {
             onBack={() => { setSelectedNews(null); navigate("/news"); }}
             onShare={handleShare}
             publisherName={getPublisherName(selectedNews.publisher_id)}
+            publisherPhoto={getPublisherPhoto(selectedNews.publisher_id)}
             otherNews={otherNews}
             onSelectNews={handleSelectNews}
             getPublisherName={getPublisherName}
+            getPublisherPhoto={getPublisherPhoto}
           />
         ) : isLoading ? (
           <div className="py-20 space-y-4">

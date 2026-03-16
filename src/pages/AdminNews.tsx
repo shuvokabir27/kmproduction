@@ -86,6 +86,9 @@ export default function AdminNews() {
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [editCategoryLabel, setEditCategoryLabel] = useState("");
   const [editCategoryValue, setEditCategoryValue] = useState("");
+  const [editingPublisherId, setEditingPublisherId] = useState<string | null>(null);
+  const [editPublisherName, setEditPublisherName] = useState("");
+  const [publisherPhotoUploading, setPublisherPhotoUploading] = useState(false);
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
@@ -474,21 +477,91 @@ export default function AdminNews() {
                 </div>
                 {publishers?.length ? (
                   <div className="space-y-2">
-                    {publishers.map((pub) => (
-                      <div key={pub.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-secondary/40 border border-border/30">
-                        <span className="text-sm font-medium">{pub.name}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-destructive"
-                          onClick={() => {
-                            if (confirm("এই প্রকাশক মুছে ফেলতে চান?")) deletePublisherMutation.mutate(pub.id);
-                          }}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    ))}
+                    {publishers.map((pub) => {
+                      const isEditing = editingPublisherId === pub.id;
+                      return (
+                        <div key={pub.id} className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-secondary/40 border border-border/30">
+                          {/* Photo */}
+                          <div className="relative group">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-secondary flex items-center justify-center border border-border/50">
+                              {pub.photo_url ? (
+                                <img src={pub.photo_url} alt={pub.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="text-lg">✍️</span>
+                              )}
+                            </div>
+                            <label className="absolute inset-0 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 bg-black/40 flex items-center justify-center transition-opacity">
+                              <ImageIcon className="h-4 w-4 text-white" />
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  setPublisherPhotoUploading(true);
+                                  const ext = file.name.split(".").pop();
+                                  const path = `publishers/${pub.id}.${ext}`;
+                                  const { error: uploadErr } = await supabase.storage.from("news-images").upload(path, file, { upsert: true });
+                                  if (uploadErr) { toast({ title: "আপলোড ব্যর্থ", variant: "destructive" }); setPublisherPhotoUploading(false); return; }
+                                  const { data: urlData } = supabase.storage.from("news-images").getPublicUrl(path);
+                                  await supabase.from("news_publishers").update({ photo_url: urlData.publicUrl }).eq("id", pub.id);
+                                  queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+                                  setPublisherPhotoUploading(false);
+                                  toast({ title: "ছবি আপলোড হয়েছে" });
+                                }}
+                              />
+                            </label>
+                          </div>
+
+                          {isEditing ? (
+                            <>
+                              <Input
+                                value={editPublisherName}
+                                onChange={(e) => setEditPublisherName(e.target.value)}
+                                className="flex-1 h-8 text-sm"
+                                autoFocus
+                              />
+                              <Button
+                                size="sm" variant="default" className="h-7 gap-1"
+                                onClick={async () => {
+                                  if (!editPublisherName.trim()) return;
+                                  await supabase.from("news_publishers").update({ name: editPublisherName.trim() }).eq("id", pub.id);
+                                  queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+                                  setEditingPublisherId(null);
+                                  toast({ title: "প্রকাশক আপডেট হয়েছে" });
+                                }}
+                              >
+                                <Check className="h-3.5 w-3.5" /> সেভ
+                              </Button>
+                              <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditingPublisherId(null)}>
+                                বাতিল
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="flex-1 text-sm font-medium">{pub.name}</span>
+                              <Button
+                                variant="ghost" size="icon" className="h-7 w-7"
+                                onClick={() => { setEditingPublisherId(pub.id); setEditPublisherName(pub.name); }}
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-destructive"
+                                onClick={() => {
+                                  if (confirm("এই প্রকাশক মুছে ফেলতে চান?")) deletePublisherMutation.mutate(pub.id);
+                                }}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">কোনো প্রকাশক যোগ করা হয়নি</p>
