@@ -187,21 +187,9 @@ export default function News() {
     }
   };
 
-  if (selectedNews) {
-    const otherNews = (newsList || []).filter(n => n.id !== selectedNews.id).slice(0, 10);
-    return (
-      <NewsDetail
-        news={selectedNews}
-        categories={categories}
-        onBack={() => { setSelectedNews(null); navigate("/news"); }}
-        onShare={handleShare}
-        publisherName={getPublisherName(selectedNews.publisher_id)}
-        otherNews={otherNews}
-        onSelectNews={handleSelectNews}
-        getPublisherName={getPublisherName}
-      />
-    );
-  }
+  const otherNews = selectedNews
+    ? (newsList || []).filter(n => n.id !== selectedNews.id).slice(0, 10)
+    : [];
 
   const today = format(new Date(), "EEEE, dd MMMM yyyy", { locale: bn });
 
@@ -215,7 +203,10 @@ export default function News() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              if (selectedNews) { setSelectedNews(null); navigate("/news"); }
+              else navigate("/");
+            }}
             className="absolute left-0 top-4 h-8 w-8 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -225,26 +216,21 @@ export default function News() {
           <div className="border-t-[3px] border-foreground/80 mb-3" />
 
           <div className="text-center">
-            {/* Date line */}
             <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2 font-medium">
               {today}
             </p>
-
-            {/* Newspaper title */}
             <h1
-              className="text-4xl md:text-6xl font-black text-foreground tracking-tight leading-none mb-1"
+              className="text-4xl md:text-6xl font-black text-foreground tracking-tight leading-none mb-1 cursor-pointer"
               style={{ fontFamily: "'Tiro Bangla', 'Noto Serif Bengali', serif" }}
+              onClick={() => { setSelectedNews(null); navigate("/news"); }}
             >
               দৈনিক ইন্তেকাল
             </h1>
-
-            {/* Tagline */}
             <p className="text-[10px] md:text-xs text-muted-foreground tracking-widest uppercase mt-1">
               সম্পাদক: শিরু খাঁ &nbsp;•&nbsp; বাংলা ভাইরাল নিউজ পোর্টাল
             </p>
           </div>
 
-          {/* Bottom rules */}
           <div className="mt-3 border-t border-foreground/20" />
           <div className="mt-[2px] border-t-[3px] border-foreground/80" />
         </header>
@@ -263,7 +249,10 @@ export default function News() {
           {categories.map((cat) => (
             <button
               key={cat.value}
-              onClick={() => setActiveCategory(cat.value)}
+              onClick={() => {
+                setActiveCategory(cat.value);
+                if (selectedNews) { setSelectedNews(null); navigate("/news"); }
+              }}
               className={`px-4 py-1.5 text-xs font-semibold whitespace-nowrap transition-all border-b-2 ${
                 activeCategory === cat.value
                   ? "border-primary text-primary"
@@ -275,8 +264,19 @@ export default function News() {
           ))}
         </nav>
 
-        {/* === CONTENT === */}
-        {isLoading ? (
+        {/* === CONTENT AREA === */}
+        {selectedNews ? (
+          <NewsDetail
+            news={selectedNews}
+            categories={categories}
+            onBack={() => { setSelectedNews(null); navigate("/news"); }}
+            onShare={handleShare}
+            publisherName={getPublisherName(selectedNews.publisher_id)}
+            otherNews={otherNews}
+            onSelectNews={handleSelectNews}
+            getPublisherName={getPublisherName}
+          />
+        ) : isLoading ? (
           <div className="py-20 space-y-4">
             {[1, 2, 3].map(i => (
               <div key={i} className="h-32 bg-secondary/30 animate-pulse rounded" />
@@ -299,7 +299,6 @@ export default function News() {
                 onClick={() => handleSelectNews(featured)}
               >
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  {/* Image */}
                   <div className="overflow-hidden border border-border/20">
                     {featured.featured_image_url ? (
                       <img
@@ -313,7 +312,6 @@ export default function News() {
                       </div>
                     )}
                   </div>
-                  {/* Text */}
                   <div className="flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
@@ -354,7 +352,6 @@ export default function News() {
 
             {/* === TWO COLUMN NEWSPAPER LAYOUT === */}
             <div className="grid md:grid-cols-2 gap-0 md:divide-x divide-border/20">
-              {/* Left Column */}
               <div className="md:pr-5 space-y-0">
                 {leftColumn.map((news, idx) => (
                   <NewsCard
@@ -367,7 +364,6 @@ export default function News() {
                   />
                 ))}
               </div>
-              {/* Right Column */}
               <div className="md:pl-5 space-y-0">
                 {rightColumn.map((news, idx) => (
                   <NewsCard
