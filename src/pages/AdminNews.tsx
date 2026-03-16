@@ -665,8 +665,8 @@ export default function AdminNews() {
             ))}
           </div>
         )}
+          </TabsContent>
 
-        {/* Create/Edit Dialog */}
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
