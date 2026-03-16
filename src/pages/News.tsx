@@ -381,8 +381,8 @@ export default function News() {
         )}
 
         {/* === FOOTER === */}
-        <footer className="border-t-[3px] border-foreground/80 mt-8 pt-4 pb-8 text-center">
-          <p className="text-[10px] text-muted-foreground tracking-widest uppercase">
+        <footer className="border-t-[3px] border-gray-900 mt-8 pt-4 pb-8 text-center">
+          <p className="text-[10px] text-gray-600 tracking-widest uppercase">
             © দৈনিক ইন্তেকাল &nbsp;•&nbsp; সর্বস্বত্ব সংরক্ষিত
           </p>
         </footer>
