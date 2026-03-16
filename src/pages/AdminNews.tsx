@@ -86,6 +86,9 @@ export default function AdminNews() {
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [editCategoryLabel, setEditCategoryLabel] = useState("");
   const [editCategoryValue, setEditCategoryValue] = useState("");
+  const [editingPublisherId, setEditingPublisherId] = useState<string | null>(null);
+  const [editPublisherName, setEditPublisherName] = useState("");
+  const [publisherPhotoUploading, setPublisherPhotoUploading] = useState(false);
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
