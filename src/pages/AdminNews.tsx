@@ -1025,7 +1025,6 @@ export default function AdminNews() {
         </Dialog>
         </Tabs>
       </div>
-      </div>
     </AppLayout>
   );
 }
