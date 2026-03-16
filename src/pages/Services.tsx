@@ -303,9 +303,9 @@ const Services = () => {
                 const IconComp = iconMap[service.icon] || Camera;
                 const features = (service.features as string[]) || [];
                 const cardColors = [
-                  { gradient: "from-violet-500/15 via-purple-500/5 to-card", border: "border-violet-500/30", icon: "bg-violet-500/20 text-violet-400", glow: "bg-violet-500/20", accent: "text-violet-400", checkBg: "bg-violet-500/10", checkIcon: "text-violet-400", tag: "text-violet-300" },
-                  { gradient: "from-primary/20 via-primary/5 to-card", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
-                  { gradient: "from-emerald-500/15 via-teal-500/5 to-card", border: "border-emerald-500/30", icon: "bg-emerald-500/20 text-emerald-400", glow: "bg-emerald-500/20", accent: "text-emerald-400", checkBg: "bg-emerald-500/10", checkIcon: "text-emerald-400", tag: "text-emerald-300" },
+                  { gradient: "from-violet-600/25 via-purple-500/15 to-indigo-500/10", border: "border-violet-500/30", icon: "bg-violet-500/20 text-violet-400", glow: "bg-violet-500/20", accent: "text-violet-400", checkBg: "bg-violet-500/10", checkIcon: "text-violet-400", tag: "text-violet-300" },
+                  { gradient: "from-primary/30 via-orange-500/15 to-amber-500/10", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
+                  { gradient: "from-emerald-600/25 via-teal-500/15 to-cyan-500/10", border: "border-emerald-500/30", icon: "bg-emerald-500/20 text-emerald-400", glow: "bg-emerald-500/20", accent: "text-emerald-400", checkBg: "bg-emerald-500/10", checkIcon: "text-emerald-400", tag: "text-emerald-300" },
                 ];
                 const c = cardColors[index % cardColors.length];
                 return (
