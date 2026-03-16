@@ -150,7 +150,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             {/* Embedded Video */}
             {embedUrl && (
               <div className="mt-8">
-                <div className="border border-border/20 overflow-hidden aspect-video">
+                <div className="border border-gray-200 overflow-hidden aspect-video">
                   <iframe src={embedUrl} className="w-full h-full" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
                 </div>
               </div>
