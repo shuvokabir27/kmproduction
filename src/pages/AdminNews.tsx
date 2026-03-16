@@ -590,7 +590,56 @@ export default function AdminNews() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="categories">
+          {/* Publisher Edit Dialog */}
+          <Dialog open={publisherEditDialogOpen} onOpenChange={setPublisherEditDialogOpen}>
+            <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>প্রকাশক প্রোফাইল সম্পাদনা</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">নাম *</Label>
+                  <Input value={editPublisherName} onChange={(e) => setEditPublisherName(e.target.value)} placeholder="প্রকাশকের নাম" />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">বয়স</Label>
+                  <Input value={editPublisherAge} onChange={(e) => setEditPublisherAge(e.target.value)} placeholder="যেমন: ২৮" type="number" />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">পরিচিতি / বায়ো</Label>
+                  <Textarea value={editPublisherBio} onChange={(e) => setEditPublisherBio(e.target.value)} placeholder="প্রকাশক সম্পর্কে কিছু লাইন..." rows={3} />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">অভিজ্ঞতা</Label>
+                  <Textarea value={editPublisherExperience} onChange={(e) => setEditPublisherExperience(e.target.value)} placeholder="কোন কোন পত্রিকায় কাজ করেছেন..." rows={3} />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium mb-1 block">মজার তথ্য 😄</Label>
+                  <Textarea value={editPublisherFunFact} onChange={(e) => setEditPublisherFunFact(e.target.value)} placeholder="ফানি কিছু লিখুন..." rows={2} />
+                </div>
+                <Button
+                  className="w-full gap-1.5"
+                  onClick={async () => {
+                    if (!editPublisherName.trim() || !editingPublisherId) return;
+                    await supabase.from("news_publishers").update({
+                      name: editPublisherName.trim(),
+                      bio: editPublisherBio || null,
+                      age: editPublisherAge ? parseInt(editPublisherAge) : null,
+                      experience: editPublisherExperience || null,
+                      fun_fact: editPublisherFunFact || null,
+                    }).eq("id", editingPublisherId);
+                    queryClient.invalidateQueries({ queryKey: ["news-publishers"] });
+                    setPublisherEditDialogOpen(false);
+                    setEditingPublisherId(null);
+                    toast({ title: "প্রকাশক প্রোফাইল আপডেট হয়েছে" });
+                  }}
+                >
+                  <Check className="h-4 w-4" /> সেভ করুন
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
             <Card>
               <CardContent className="p-4 space-y-4">
                 <div className="flex items-center gap-2">
