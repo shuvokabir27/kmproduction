@@ -157,15 +157,15 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             )}
 
             {/* Bottom share */}
-            <div className="flex items-center gap-3 mt-10 pt-4 border-t border-border/20">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">শেয়ার করুন</span>
-              <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-400 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
-              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-400 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
-              <button onClick={() => onShare("copy", news)} className="text-xs text-muted-foreground hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
+            <div className="flex items-center gap-3 mt-10 pt-4 border-t border-gray-200">
+              <span className="text-[10px] text-gray-600 uppercase tracking-wider font-semibold">শেয়ার করুন</span>
+              <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-600 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
+              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-600 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
+              <button onClick={() => onShare("copy", news)} className="text-xs text-gray-700 hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
             </div>
 
             {/* Bottom rule */}
-            <div className="mt-8 border-t-[3px] border-foreground/80" />
+            <div className="mt-8 border-t-[3px] border-gray-900" />
           </div>
 
           {/* === Sidebar: Other News === */}
