@@ -325,8 +325,7 @@ export default function News() {
                       {featured.title}
                     </h2>
                     {featured.excerpt && (
-                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3"
-                         style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-3">
                         {featured.excerpt}
                       </p>
                     )}
