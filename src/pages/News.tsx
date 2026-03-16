@@ -379,10 +379,57 @@ export default function News() {
         )}
 
         {/* === FOOTER === */}
-        <footer className="border-t-[3px] border-gray-900 mt-8 pt-4 pb-8 text-center">
-          <p className="text-[10px] text-gray-600 tracking-widest uppercase">
-            © দৈনিক ইন্তেকাল &nbsp;•&nbsp; সর্বস্বত্ব সংরক্ষিত
-          </p>
+        <footer className="border-t-[3px] border-gray-900 mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-6 pb-4">
+            {/* About */}
+            <div>
+              <h4 className="text-base font-black text-gray-900 mb-2">দৈনিক ইন্তেকাল</h4>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                বাংলা ভাইরাল নিউজ পোর্টাল। বিনোদন, হাসির খবর, নেপথ্যের গল্প ও সর্বশেষ ঘোষণা — সব এক জায়গায়।
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 mb-2">বিভাগসমূহ</h4>
+              <ul className="space-y-1">
+                {categories.filter(c => c.value !== "all").map(cat => (
+                  <li key={cat.value}>
+                    <button
+                      onClick={() => { setActiveCategory(cat.value); setSelectedNews(null); navigate("/news"); }}
+                      className="text-xs text-gray-600 hover:text-primary transition-colors"
+                    >
+                      ▸ {cat.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact / Info */}
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 mb-2">যোগাযোগ</h4>
+              <ul className="space-y-1.5 text-xs text-gray-600">
+                <li>সম্পাদক: শিরু খাঁ</li>
+                <li>ইমেইল: news@intekal.com</li>
+                <li>ফোন: +৮৮০ ১৭XX-XXXXXX</li>
+              </ul>
+              <div className="flex gap-3 mt-3">
+                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-xs">ফেসবুক</a>
+                <a href="#" className="text-gray-500 hover:text-primary transition-colors text-xs">ইউটিউব</a>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-gray-300 mt-4 pt-3 pb-6 flex flex-col md:flex-row items-center justify-between gap-2">
+            <p className="text-[10px] text-gray-500">
+              © {new Date().getFullYear()} দৈনিক ইন্তেকাল — সর্বস্বত্ব সংরক্ষিত
+            </p>
+            <p className="text-[10px] text-gray-400">
+              KM Production House কর্তৃক পরিচালিত
+            </p>
+          </div>
         </footer>
       </div>
     </div>
