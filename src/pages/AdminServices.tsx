@@ -34,6 +34,7 @@ interface ServiceForm {
   edited_photos_per_hour: string;
   unlimited_photos_per_hour: boolean;
   discount_percentage: string;
+  duration: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
@@ -43,7 +44,7 @@ interface ServiceForm {
 const defaultForm: ServiceForm = {
   title: "", description: "", icon: "Camera", category: "",
   pricing_type: "fixed",
-  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", price_per_hour: "", edited_photos_per_hour: "20", unlimited_photos_per_hour: true, discount_percentage: "", features: "", is_featured: false, is_active: true, sort_order: 0,
+  price_label: "যোগাযোগ করুন", price: "", price_per_minute: "", price_per_hour: "", edited_photos_per_hour: "20", unlimited_photos_per_hour: true, discount_percentage: "", duration: "", features: "", is_featured: false, is_active: true, sort_order: 0,
 };
 
 const iconOptions = [
@@ -100,6 +101,7 @@ const AdminServices = () => {
         edited_photos_per_hour: form.pricing_type === 'hourly' && form.edited_photos_per_hour ? Number(form.edited_photos_per_hour) : 20,
         unlimited_photos_per_hour: form.pricing_type === 'hourly' ? form.unlimited_photos_per_hour : true,
         discount_percentage: form.discount_percentage ? Number(form.discount_percentage) : null,
+        duration: form.duration || null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
@@ -200,6 +202,7 @@ const AdminServices = () => {
       edited_photos_per_hour: service.edited_photos_per_hour ? String(service.edited_photos_per_hour) : "20",
       unlimited_photos_per_hour: service.unlimited_photos_per_hour ?? true,
       discount_percentage: service.discount_percentage ? String(service.discount_percentage) : "",
+      duration: service.duration || "",
       features: ((service.features as string[]) || []).join("\n"),
       is_featured: service.is_featured || false,
       is_active: service.is_active ?? true,
@@ -405,6 +408,11 @@ const AdminServices = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+              <div>
+                <Label>সার্ভিস ডিউরেশন</Label>
+                <Input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="যেমন: প্রজেক্ট টাইম / কাস্টম টাইম / প্রতি ভিডিও ৩ দিন" />
+                <p className="text-xs text-muted-foreground mt-1">সার্ভিস কার্ডে হাইলাইট করে দেখাবে</p>
               </div>
               <div>
                 <Label>ফিচার সমূহ (প্রতি লাইনে একটি)</Label>

@@ -1074,6 +1074,7 @@ export type Database = {
           created_at: string
           description: string | null
           discount_percentage: number | null
+          duration: string | null
           edited_photos_per_hour: number | null
           features: Json | null
           icon: string | null
@@ -1095,6 +1096,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
+          duration?: string | null
           edited_photos_per_hour?: number | null
           features?: Json | null
           icon?: string | null
@@ -1116,6 +1118,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
+          duration?: string | null
           edited_photos_per_hour?: number | null
           features?: Json | null
           icon?: string | null
