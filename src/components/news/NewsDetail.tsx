@@ -226,7 +226,6 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                 </div>
               </div>
             </aside>
-          )}
         </div>
       </div>
     </div>
