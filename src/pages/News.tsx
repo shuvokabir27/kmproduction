@@ -173,11 +173,11 @@ export default function News() {
   };
 
   const getShareUrl = (news: NewsItem) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const siteUrl = "https://kuakatamultimedia.com";
     if (news.post_number) {
-      return `${supabaseUrl}/functions/v1/og-news?category=${encodeURIComponent(news.category)}&post_number=${news.post_number}`;
+      return `${siteUrl}/news/${encodeURIComponent(news.category)}/${news.post_number}`;
     }
-    return `${supabaseUrl}/functions/v1/og-news?id=${news.id}`;
+    return `${siteUrl}/news?id=${news.id}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
