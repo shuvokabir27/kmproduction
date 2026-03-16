@@ -61,7 +61,7 @@ const renderFormattedContent = (text: string) => {
     if (line.startsWith("• ")) return <li key={i} className="ml-4 list-disc text-gray-800 leading-relaxed">{formatInline(line.slice(2))}</li>;
     if (/^\d+\.\s/.test(line)) return <li key={i} className="ml-4 list-decimal text-gray-800 leading-relaxed">{formatInline(line.replace(/^\d+\.\s/, ""))}</li>;
     if (!line.trim()) return <br key={i} />;
-    return <p key={i} className="text-gray-800 leading-[1.8] text-[15px]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>{formatInline(line)}</p>;
+    return <p key={i} className="text-gray-800 leading-[1.8] text-[15px]">{formatInline(line)}</p>;
   });
 };
 
