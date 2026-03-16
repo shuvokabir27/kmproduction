@@ -34,6 +34,7 @@ interface ServiceForm {
   edited_photos_per_hour: string;
   unlimited_photos_per_hour: boolean;
   discount_percentage: string;
+  duration: string;
   features: string;
   is_featured: boolean;
   is_active: boolean;
