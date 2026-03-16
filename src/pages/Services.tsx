@@ -324,6 +324,12 @@ const Services = () => {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{service.category}</span>
                         </div>
                         <h3 className="text-xl font-bold text-foreground mb-2">{service.title}</h3>
+                        {service.duration && (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
+                            <Timer className="h-3.5 w-3.5 text-primary" />
+                            <span className="text-xs font-bold text-primary">{service.duration}</span>
+                          </div>
+                        )}
                         <p className="text-sm text-muted-foreground leading-relaxed mb-4">{service.description}</p>
                         
                         {/* Price Display */}
