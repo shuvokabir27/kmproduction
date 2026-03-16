@@ -454,22 +454,37 @@ export type Database = {
       }
       news_publishers: {
         Row: {
+          age: number | null
+          bio: string | null
           created_at: string
+          experience: string | null
+          fun_fact: string | null
           id: string
           name: string
           photo_url: string | null
+          slug: string | null
         }
         Insert: {
+          age?: number | null
+          bio?: string | null
           created_at?: string
+          experience?: string | null
+          fun_fact?: string | null
           id?: string
           name: string
           photo_url?: string | null
+          slug?: string | null
         }
         Update: {
+          age?: number | null
+          bio?: string | null
           created_at?: string
+          experience?: string | null
+          fun_fact?: string | null
           id?: string
           name?: string
           photo_url?: string | null
+          slug?: string | null
         }
         Relationships: []
       }
