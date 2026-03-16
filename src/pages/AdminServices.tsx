@@ -101,6 +101,7 @@ const AdminServices = () => {
         edited_photos_per_hour: form.pricing_type === 'hourly' && form.edited_photos_per_hour ? Number(form.edited_photos_per_hour) : 20,
         unlimited_photos_per_hour: form.pricing_type === 'hourly' ? form.unlimited_photos_per_hour : true,
         discount_percentage: form.discount_percentage ? Number(form.discount_percentage) : null,
+        duration: form.duration || null,
         features: form.features.split("\n").filter(Boolean),
         is_featured: form.is_featured,
         is_active: form.is_active,
