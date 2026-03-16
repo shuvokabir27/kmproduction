@@ -351,7 +351,7 @@ export default function News() {
             )}
 
             {/* === TWO COLUMN NEWSPAPER LAYOUT === */}
-            <div className="grid md:grid-cols-2 gap-0 md:divide-x divide-border/20">
+            <div className="grid md:grid-cols-2 gap-0 md:divide-x divide-gray-200">
               <div className="md:pr-5 space-y-0">
                 {leftColumn.map((news, idx) => (
                   <NewsCard
