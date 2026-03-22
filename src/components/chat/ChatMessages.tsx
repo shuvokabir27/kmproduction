@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOnlineStatus, isUserOnline, getLastSeenText } from "@/hooks/usePresence";
 import { playMessageSound } from "@/lib/sounds";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Send, ArrowLeft, Users, Trash2, Check, CheckCheck } from "lucide-react";
+import { Send, ArrowLeft, Users, Trash2, Check, CheckCheck, Phone, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
