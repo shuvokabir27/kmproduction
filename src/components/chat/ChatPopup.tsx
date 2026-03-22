@@ -25,10 +25,10 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
       {isOpen && (
         <div
           className={cn(
-            "fixed z-[60] bg-card border border-border/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-300",
+            "fixed z-[60] bg-card border border-border/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 fade-in duration-300 rounded-2xl",
             isMobile
-              ? "inset-x-2 bottom-2 top-16 rounded-2xl"
-              : "bottom-6 right-6 w-[380px] h-[520px] rounded-2xl"
+              ? "bottom-[7rem] right-3 left-3 h-[65vh]"
+              : "bottom-[5.5rem] right-6 w-[380px] h-[520px]"
           )}
         >
           {/* Header */}
