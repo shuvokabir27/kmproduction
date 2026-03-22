@@ -3,6 +3,8 @@ import { MessageCircle, X, Minimize2 } from "lucide-react";
 import { ConversationList } from "./ConversationList";
 import { ChatMessages } from "./ChatMessages";
 import { NewChatDialog } from "./NewChatDialog";
+import { IncomingCallDialog, ActiveCallScreen } from "./CallComponents";
+import { useWebRTC } from "@/hooks/useWebRTC";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
