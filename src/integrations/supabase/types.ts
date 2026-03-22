@@ -156,6 +156,50 @@ export type Database = {
           },
         ]
       }
+      calls: {
+        Row: {
+          call_type: Database["public"]["Enums"]["call_type"]
+          callee_id: string
+          caller_id: string
+          conversation_id: string | null
+          created_at: string
+          ended_at: string | null
+          id: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["call_status"]
+        }
+        Insert: {
+          call_type?: Database["public"]["Enums"]["call_type"]
+          callee_id: string
+          caller_id: string
+          conversation_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["call_status"]
+        }
+        Update: {
+          call_type?: Database["public"]["Enums"]["call_type"]
+          callee_id?: string
+          caller_id?: string
+          conversation_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["call_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channels: {
         Row: {
           created_at: string
@@ -1473,6 +1517,8 @@ export type Database = {
     Enums: {
       app_role: "admin" | "member"
       bonus_type: "bonus" | "transport"
+      call_status: "ringing" | "active" | "ended" | "missed" | "declined"
+      call_type: "audio" | "video"
       conversation_type: "personal" | "group"
       expense_category: "food" | "transport" | "props" | "other"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
@@ -1607,6 +1653,8 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "member"],
       bonus_type: ["bonus", "transport"],
+      call_status: ["ringing", "active", "ended", "missed", "declined"],
+      call_type: ["audio", "video"],
       conversation_type: ["personal", "group"],
       expense_category: ["food", "transport", "props", "other"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
