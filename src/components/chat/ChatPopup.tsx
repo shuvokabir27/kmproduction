@@ -28,7 +28,7 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
 
   const getDefaultPos = useCallback(() => ({
     x: window.innerWidth - BTN_SIZE - 16,
-    y: window.innerHeight - 80,
+    y: window.innerWidth < 768 ? window.innerHeight - 140 : window.innerHeight - 80,
   }), []);
 
   // Reset to default on mount and viewport change
