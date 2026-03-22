@@ -14,6 +14,7 @@ const sb = supabase as any;
 interface ChatMessagesProps {
   conversationId: string;
   onBack?: () => void;
+  onStartCall?: (targetUserId: string, type: "audio" | "video") => void;
 }
 
 function useTypingIndicator(conversationId: string, userId: string | undefined) {
