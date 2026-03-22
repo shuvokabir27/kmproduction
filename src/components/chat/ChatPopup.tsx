@@ -304,6 +304,34 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
           }}
         />
       )}
+
+      {/* Incoming Call Dialog */}
+      {incomingCall && (
+        <IncomingCallDialog
+          callerName={incomingCall.callerName}
+          callType={incomingCall.callType}
+          onAccept={handleAcceptCall}
+          onDecline={handleDeclineCall}
+        />
+      )}
+
+      {/* Active Call Screen */}
+      {(webrtc.callState === "calling" || webrtc.callState === "active" || webrtc.callState === "ended") && (
+        <ActiveCallScreen
+          callerName={remoteUserName}
+          callType={webrtc.callType}
+          callState={webrtc.callState}
+          duration={webrtc.callDuration}
+          isMuted={webrtc.isMuted}
+          isVideoOff={webrtc.isVideoOff}
+          localVideoRef={webrtc.localVideoRef}
+          remoteVideoRef={webrtc.remoteVideoRef}
+          remoteStream={webrtc.remoteStream}
+          onToggleMute={webrtc.toggleMute}
+          onToggleVideo={webrtc.toggleVideo}
+          onEndCall={webrtc.endCall}
+        />
+      )}
     </>
   );
 }
