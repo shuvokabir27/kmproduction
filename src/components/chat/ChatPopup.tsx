@@ -250,6 +250,7 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
                 <ChatMessages
                   conversationId={selectedConversation!}
                   onBack={() => setSelectedConversation(null)}
+                  onStartCall={handleStartCall}
                 />
               </div>
             )}
