@@ -61,7 +61,7 @@ function useTypingIndicator(conversationId: string, userId: string | undefined) 
   return { typingUsers, sendTyping };
 }
 
-export function ChatMessages({ conversationId, onBack }: ChatMessagesProps) {
+export function ChatMessages({ conversationId, onBack, onStartCall }: ChatMessagesProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [newMessage, setNewMessage] = useState("");
