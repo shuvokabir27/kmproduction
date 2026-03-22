@@ -78,53 +78,58 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
 
   if (!pos) return null;
 
-  // Calculate popup position so it never goes off-screen
+  // Calculate popup position so it always stays inside the viewport
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const btnCenterX = pos.x + BTN_SIZE / 2;
-  const btnTop = pos.y;
+  const clampToRange = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-  let popupStyle: React.CSSProperties;
+  const popupWidth = isMobile ? Math.max(280, vw - 24) : Math.min(POPUP_W, vw - 16);
+  const popupHeight = isMobile
+    ? Math.min(Math.max(320, Math.round(vh * 0.58)), vh - 16)
+    : Math.min(POPUP_H, vh - 16);
+
+  const availableAbove = pos.y - GAP - 8;
+  const availableBelow = vh - (pos.y + BTN_SIZE) - GAP - 8;
+  const openAbove = availableAbove >= popupHeight || availableAbove >= availableBelow;
+
+  let opensRight = btnCenterX <= vw / 2;
+  let left = 12;
 
   if (isMobile) {
-    const popH = Math.min(vh * 0.6, btnTop - GAP - 8);
-    popupStyle = {
-      position: "fixed",
-      left: 12,
-      right: 12,
-      bottom: vh - btnTop + GAP,
-      height: Math.max(300, popH),
-    };
+    left = clampToRange((vw - popupWidth) / 2, 8, vw - popupWidth - 8);
   } else {
-    // Horizontal: prefer aligning popup edge with button side
-    let left: number;
-    if (btnCenterX < vw / 2) {
-      // Button on left — popup opens to right
-      left = Math.max(8, pos.x);
-    } else {
-      // Button on right — popup opens to left
-      left = Math.min(vw - POPUP_W - 8, pos.x + BTN_SIZE - POPUP_W);
-    }
-    // Clamp horizontal
-    left = Math.max(8, Math.min(left, vw - POPUP_W - 8));
-
-    // Vertical: popup above button
-    let popBottom = vh - btnTop + GAP;
-    const popTop = vh - popBottom - POPUP_H;
-    if (popTop < 8) {
-      popBottom = vh - POPUP_H - 8;
-    }
-
-    popupStyle = {
-      position: "fixed",
-      left,
-      bottom: popBottom,
-      width: POPUP_W,
-      height: POPUP_H,
-    };
+    const availableRight = vw - (pos.x + BTN_SIZE) - 8;
+    const availableLeft = pos.x - 8;
+    opensRight = availableRight >= popupWidth || availableRight >= availableLeft;
+    left = clampToRange(
+      opensRight ? pos.x : pos.x + BTN_SIZE - popupWidth,
+      8,
+      vw - popupWidth - 8,
+    );
   }
 
-  const originClass = btnCenterX < vw / 2 ? "origin-bottom-left" : "origin-bottom-right";
+  const top = clampToRange(
+    openAbove ? pos.y - popupHeight - GAP : pos.y + BTN_SIZE + GAP,
+    8,
+    vh - popupHeight - 8,
+  );
+
+  const popupStyle: React.CSSProperties = {
+    position: "fixed",
+    left,
+    top,
+    width: popupWidth,
+    height: popupHeight,
+  };
+
+  const originClass = openAbove
+    ? opensRight
+      ? "origin-bottom-left"
+      : "origin-bottom-right"
+    : opensRight
+      ? "origin-top-left"
+      : "origin-top-right";
 
   return (
     <>
@@ -133,11 +138,10 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
         <div
           className="fixed z-[59] pointer-events-none rounded-3xl"
           style={{
-            left: (popupStyle.left as number) - 8,
-            right: popupStyle.right ? 4 : undefined,
-            bottom: (popupStyle.bottom as number) - 8,
-            width: isMobile ? undefined : POPUP_W + 16,
-            height: (popupStyle.height as number) + 16,
+            left: left - 8,
+            top: top - 8,
+            width: popupWidth + 16,
+            height: popupHeight + 16,
           }}
         >
           <div className="absolute inset-0 rounded-3xl bg-primary/15 blur-xl animate-pulse" />
