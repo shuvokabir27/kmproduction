@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { MessageCircle, X, Minimize2 } from "lucide-react";
 import { ConversationList } from "./ConversationList";
 import { ChatMessages } from "./ChatMessages";
-import { NewChatDialog } from "./NewChatDialog";
+import { NewChatInline } from "./NewChatInline";
 import { IncomingCallDialog, ActiveCallScreen } from "./CallComponents";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { cn } from "@/lib/utils";
@@ -235,7 +235,16 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
 
           {/* Content */}
           <div className="flex-1 overflow-hidden flex flex-col">
-            {showList && !showMessages && (
+            {newChatType ? (
+              <NewChatInline
+                type={newChatType}
+                onCreated={(id) => {
+                  setSelectedConversation(id);
+                  setNewChatType(null);
+                }}
+                onBack={() => setNewChatType(null)}
+              />
+            ) : showList && !showMessages ? (
               <div className="flex-1 overflow-hidden">
                 <ConversationList
                   selectedId={selectedConversation}
@@ -244,8 +253,7 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
                   onNewGroup={() => setNewChatType("group")}
                 />
               </div>
-            )}
-            {showMessages && (
+            ) : showMessages ? (
               <div className="flex-1 overflow-hidden flex flex-col">
                 <ChatMessages
                   conversationId={selectedConversation!}
@@ -253,7 +261,7 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
                   onStartCall={handleStartCall}
                 />
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}
@@ -292,18 +300,6 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
         </div>
       </div>
 
-      {/* New Chat Dialog */}
-      {newChatType && (
-        <NewChatDialog
-          open={!!newChatType}
-          onOpenChange={(open) => !open && setNewChatType(null)}
-          type={newChatType}
-          onCreated={(id) => {
-            setSelectedConversation(id);
-            setNewChatType(null);
-          }}
-        />
-      )}
 
       {/* Incoming Call Dialog */}
       {incomingCall && (
