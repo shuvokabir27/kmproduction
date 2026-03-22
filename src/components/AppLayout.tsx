@@ -84,20 +84,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </main>
         </div>
 
-        {/* Floating Chat Button */}
-        {user && !isOnChat && (
-          <button
-            onClick={() => navigate("/chat")}
-            className="fixed bottom-24 md:bottom-8 right-4 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-2xl hover:bg-primary/90 flex items-center justify-center transition-transform hover:scale-110 active:scale-95 ring-2 ring-primary/30"
-          >
-            <MessageCircle className="h-7 w-7" />
-            {(unreadCount ?? 0) > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 h-6 min-w-6 px-1.5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center shadow-lg shadow-red-500/40 animate-bounce">
-                {unreadCount! > 99 ? "99+" : unreadCount}
-              </span>
-            )}
-          </button>
-        )}
+        {/* Chat Popup Widget */}
+        {user && <ChatPopup unreadCount={unreadCount ?? 0} />}
 
         {/* Mobile bottom navigation */}
         {isMobile && <MobileBottomNav />}
