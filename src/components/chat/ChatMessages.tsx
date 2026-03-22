@@ -302,6 +302,29 @@ export function ChatMessages({ conversationId, onBack, onStartCall }: ChatMessag
             </>
           )}
         </div>
+        {/* Call buttons */}
+        {onStartCall && conversation?.type === "personal" && (() => {
+          const other = conversation?.profiles?.find((p: any) => p.user_id !== user?.id);
+          if (!other) return null;
+          return (
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <button
+                onClick={() => onStartCall(other.user_id, "audio")}
+                className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary/10 text-primary transition-colors"
+                title="অডিও কল"
+              >
+                <Phone className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => onStartCall(other.user_id, "video")}
+                className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-primary/10 text-primary transition-colors"
+                title="ভিডিও কল"
+              >
+                <Video className="h-4 w-4" />
+              </button>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Messages */}
