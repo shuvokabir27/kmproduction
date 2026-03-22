@@ -25,12 +25,22 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; dragged: boolean } | null>(null);
 
+  const getDefaultPos = useCallback(() => ({
+    x: window.innerWidth - BTN_SIZE - 16,
+    y: window.innerHeight - (window.innerWidth < 768 ? 140 : 80),
+  }), []);
+
+  // Reset to default on mount and viewport change
   useEffect(() => {
-    setPos({
-      x: window.innerWidth - BTN_SIZE - 16,
-      y: window.innerHeight - (isMobile ? 140 : 80),
-    });
-  }, [isMobile]);
+    setPos(getDefaultPos());
+  }, [isMobile, getDefaultPos]);
+
+  // Reset on resize so button never stays off-screen
+  useEffect(() => {
+    const onResize = () => setPos(getDefaultPos());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [getDefaultPos]);
 
   const clamp = useCallback((x: number, y: number) => ({
     x: Math.max(4, Math.min(x, window.innerWidth - BTN_SIZE - 4)),
