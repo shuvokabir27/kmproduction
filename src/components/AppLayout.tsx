@@ -8,7 +8,7 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import { playMessageSound } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle } from "lucide-react";
+import { ChatPopup } from "@/components/chat/ChatPopup";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
