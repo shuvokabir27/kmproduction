@@ -23,6 +23,53 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
   const [newChatType, setNewChatType] = useState<"personal" | "group" | null>(null);
   const isMobile = useIsMobile();
 
+  // Incoming call state
+  const [incomingCall, setIncomingCall] = useState<{
+    callerId: string;
+    callerName: string;
+    callType: "audio" | "video";
+    callId: string;
+  } | null>(null);
+
+  const webrtc = useWebRTC({
+    onIncomingCall: (callerId, callerName, callType, callId) => {
+      setIncomingCall({ callerId, callerName, callType, callId });
+    },
+  });
+
+  const handleStartCall = useCallback((targetUserId: string, type: "audio" | "video") => {
+    webrtc.startCall(targetUserId, type);
+  }, [webrtc]);
+
+  const handleAcceptCall = useCallback(() => {
+    if (!incomingCall) return;
+    webrtc.answerCall(incomingCall.callerId, incomingCall.callType, incomingCall.callId);
+    setIncomingCall(null);
+  }, [incomingCall, webrtc]);
+
+  const handleDeclineCall = useCallback(() => {
+    if (!incomingCall) return;
+    webrtc.declineCall(incomingCall.callId, incomingCall.callerId);
+    setIncomingCall(null);
+  }, [incomingCall, webrtc]);
+
+  // Get remote user name for active call
+  const [remoteUserName, setRemoteUserName] = useState("সদস্য");
+  useEffect(() => {
+    if (webrtc.remoteUserId) {
+      import("@/integrations/supabase/client").then(({ supabase }) => {
+        supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("user_id", webrtc.remoteUserId!)
+          .single()
+          .then(({ data }) => {
+            if (data) setRemoteUserName(data.full_name);
+          });
+      });
+    }
+  }, [webrtc.remoteUserId]);
+
   // Draggable state — default bottom-right
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; dragged: boolean } | null>(null);
