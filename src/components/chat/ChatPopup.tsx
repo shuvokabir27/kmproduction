@@ -3,8 +3,6 @@ import { MessageCircle, X, Minimize2 } from "lucide-react";
 import { ConversationList } from "./ConversationList";
 import { ChatMessages } from "./ChatMessages";
 import { NewChatInline } from "./NewChatInline";
-import { IncomingCallDialog, ActiveCallScreen } from "./CallComponents";
-import { useWebRTC } from "@/hooks/useWebRTC";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -23,52 +21,6 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
   const [newChatType, setNewChatType] = useState<"personal" | "group" | null>(null);
   const isMobile = useIsMobile();
 
-  // Incoming call state
-  const [incomingCall, setIncomingCall] = useState<{
-    callerId: string;
-    callerName: string;
-    callType: "audio" | "video";
-    callId: string;
-  } | null>(null);
-
-  const webrtc = useWebRTC({
-    onIncomingCall: (callerId, callerName, callType, callId) => {
-      setIncomingCall({ callerId, callerName, callType, callId });
-    },
-  });
-
-  const handleStartCall = useCallback((targetUserId: string, type: "audio" | "video") => {
-    webrtc.startCall(targetUserId, type);
-  }, [webrtc]);
-
-  const handleAcceptCall = useCallback(() => {
-    if (!incomingCall) return;
-    webrtc.answerCall(incomingCall.callerId, incomingCall.callType, incomingCall.callId);
-    setIncomingCall(null);
-  }, [incomingCall, webrtc]);
-
-  const handleDeclineCall = useCallback(() => {
-    if (!incomingCall) return;
-    webrtc.declineCall(incomingCall.callId, incomingCall.callerId);
-    setIncomingCall(null);
-  }, [incomingCall, webrtc]);
-
-  // Get remote user name for active call
-  const [remoteUserName, setRemoteUserName] = useState("সদস্য");
-  useEffect(() => {
-    if (webrtc.remoteUserId) {
-      import("@/integrations/supabase/client").then(({ supabase }) => {
-        supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("user_id", webrtc.remoteUserId!)
-          .single()
-          .then(({ data }) => {
-            if (data) setRemoteUserName(data.full_name);
-          });
-      });
-    }
-  }, [webrtc.remoteUserId]);
 
   // Draggable state — default bottom-right
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
@@ -301,33 +253,6 @@ export function ChatPopup({ unreadCount }: ChatPopupProps) {
       </div>
 
 
-      {/* Incoming Call Dialog */}
-      {incomingCall && (
-        <IncomingCallDialog
-          callerName={incomingCall.callerName}
-          callType={incomingCall.callType}
-          onAccept={handleAcceptCall}
-          onDecline={handleDeclineCall}
-        />
-      )}
-
-      {/* Active Call Screen */}
-      {(webrtc.callState === "calling" || webrtc.callState === "active" || webrtc.callState === "ended") && (
-        <ActiveCallScreen
-          callerName={remoteUserName}
-          callType={webrtc.callType}
-          callState={webrtc.callState}
-          duration={webrtc.callDuration}
-          isMuted={webrtc.isMuted}
-          isVideoOff={webrtc.isVideoOff}
-          localVideoRef={webrtc.localVideoRef}
-          remoteVideoRef={webrtc.remoteVideoRef}
-          remoteStream={webrtc.remoteStream}
-          onToggleMute={webrtc.toggleMute}
-          onToggleVideo={webrtc.toggleVideo}
-          onEndCall={webrtc.endCall}
-        />
-      )}
     </>
   );
 }
