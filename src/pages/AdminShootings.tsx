@@ -601,18 +601,33 @@ const AdminShootings = () => {
                                 </div>
                               </td>
                               <td className="p-3">
-                                <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
-                                  <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
+                                {s.status === "published" ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <Lock className="h-3 w-3 text-green-400/60" />
                                     <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-card border-border/30">
-                                    {statusOptions.map((opt) => (
-                                      <SelectItem key={opt.value} value={opt.value}>
-                                        <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                    <Button variant="ghost" size="sm" className="h-6 text-[10px] text-primary gap-1 px-1.5 ml-1" onClick={() => {
+                                      setPublishShootingId(s.id);
+                                      setPublishChannelId((s as any)?.channel_id || "");
+                                      setPublishVideoUrl((s as any)?.video_url || "");
+                                      setPublishDialogOpen(true);
+                                    }}>
+                                      <Edit className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
+                                    <SelectTrigger className="h-7 w-auto min-w-[120px] border-0 bg-transparent p-0 px-1 focus:ring-0">
+                                      <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-card border-border/30">
+                                      {statusOptions.map((opt) => (
+                                        <SelectItem key={opt.value} value={opt.value}>
+                                          <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
                               </td>
                               <td className="p-3 text-center">
                                 <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)}>
