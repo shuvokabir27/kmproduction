@@ -68,6 +68,7 @@ const AdminNotices = () => {
       const { data } = await supabase
         .from("polls")
         .select("*")
+        .order("is_pinned", { ascending: false })
         .order("created_at", { ascending: false });
       return data ?? [];
     },
