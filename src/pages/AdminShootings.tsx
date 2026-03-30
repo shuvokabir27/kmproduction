@@ -220,6 +220,7 @@ const AdminShootings = () => {
     }
   };
 
+  const changeStatus = async (shootingId: string, newStatus: string) => {
     // Check if going backward
     const shooting = shootings?.find((s) => s.id === shootingId);
     const currentStatus = shooting?.status || "plan";
