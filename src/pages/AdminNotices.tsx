@@ -22,11 +22,13 @@ const AdminNotices = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
+  const [pollCreateOpen, setPollCreateOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPinned, setIsPinned] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
+  const [selectedPoll, setSelectedPoll] = useState<any>(null);
 
   const { data: notices } = useQuery({
     queryKey: ["admin-notices"],
