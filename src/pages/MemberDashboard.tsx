@@ -328,6 +328,57 @@ const MemberDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Payment Detail Dialog */}
+      <Dialog open={paymentDetailOpen} onOpenChange={setPaymentDetailOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-md max-h-[85vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-rose-400" />
+              মোট পেমেন্ট বিবরণ
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Total Summary */}
+            <div className="rounded-xl bg-gradient-to-br from-rose-500/15 to-rose-500/5 p-4 text-center border border-rose-500/10">
+              <p className="text-xs text-muted-foreground mb-1">সর্বমোট পেমেন্ট পেয়েছেন</p>
+              <p className="text-3xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p>
+              <p className="text-[10px] text-muted-foreground mt-2">মোট {recentPayments?.length || 0}টি পেমেন্ট</p>
+            </div>
+
+            {/* Note */}
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/15 p-3">
+              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                📌 <span className="font-medium">বিশেষ দ্রষ্টব্য:</span> এই হিসাব অ্যাপ চালু হওয়ার পর থেকে গণনা করা হচ্ছে। অ্যাপ চালুর পূর্বের কোনো লেনদেন এখানে অন্তর্ভুক্ত নয়।
+              </p>
+            </div>
+
+            {/* Payment List */}
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-medium">পেমেন্ট তালিকা</p>
+              <div className="divide-y divide-border/10 rounded-xl border border-border/20 overflow-hidden">
+                {recentPayments?.length === 0 && (
+                  <div className="p-6 text-center text-sm text-muted-foreground">কোনো পেমেন্ট নেই</div>
+                )}
+                {recentPayments?.map((p: any) => (
+                  <div key={p.id} className="p-3 flex items-center justify-between hover:bg-secondary/10 transition-colors">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {new Date(p.payment_date).toLocaleDateString("bn-BD")} • {paymentMethodLabel[p.payment_method] || p.payment_method}
+                      </p>
+                      {p.notes && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{p.notes}</p>}
+                    </div>
+                    <div className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-medium">
+                      {paymentMethodLabel[p.payment_method] || p.payment_method}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
