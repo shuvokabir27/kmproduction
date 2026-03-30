@@ -393,7 +393,7 @@ const MemberSettings = () => {
                   )}
                   {hasBkash && (
                     <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(230, 20, 80, 0.08)' }}>
-                      <img src={bkashLogo} alt="bKash" className="h-8 w-8 object-contain shrink-0" />
+                      <div className="h-8 w-8 rounded bg-white flex items-center justify-center shrink-0 p-1"><img src={bkashLogo} alt="bKash" className="h-full w-full object-contain" /></div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-medium" style={{ color: '#E6145B' }}>বিকাশ</p>
                         <p className="text-[11px] text-muted-foreground truncate">{p.bkash_no}</p>
