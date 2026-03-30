@@ -658,7 +658,7 @@ const MemberSettings = () => {
             {/* নগদ */}
             <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(237, 28, 36, 0.08)', borderColor: 'rgba(237, 130, 20, 0.3)' }}>
               <div className="flex items-center gap-2">
-                <img src={nagadLogo} alt="Nagad" className="h-6 w-auto object-contain" />
+                <div className="h-6 w-6 rounded bg-white flex items-center justify-center p-0.5"><img src={nagadLogo} alt="Nagad" className="h-full w-full object-contain" /></div>
                 <p className="text-xs font-semibold" style={{ color: '#ED1C24' }}>নগদ</p>
               </div>
               <div>
