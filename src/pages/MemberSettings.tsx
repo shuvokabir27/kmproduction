@@ -403,7 +403,7 @@ const MemberSettings = () => {
                   )}
                   {hasNagad && (
                     <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(237, 28, 36, 0.08)' }}>
-                      <img src={nagadLogo} alt="Nagad" className="h-8 w-auto max-w-[32px] object-contain shrink-0" />
+                      <div className="h-8 w-8 rounded bg-white flex items-center justify-center shrink-0 p-1"><img src={nagadLogo} alt="Nagad" className="h-full w-full object-contain" /></div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-medium" style={{ color: '#ED1C24' }}>নগদ</p>
                         <p className="text-[11px] text-muted-foreground truncate">{p.nagad_no}</p>
