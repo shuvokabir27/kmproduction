@@ -503,8 +503,13 @@ const MemberSettings = () => {
           </DialogHeader>
           <div className="space-y-5">
             {/* ব্যাংক একাউন্ট */}
-            <div className="space-y-2 p-3 rounded-lg bg-secondary/30 border border-border/30">
-              <p className="text-xs font-semibold text-foreground">🏦 ব্যাংক একাউন্ট</p>
+            <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(30, 80, 160, 0.08)', borderColor: 'rgba(30, 80, 160, 0.25)' }}>
+              <div className="flex items-center gap-2">
+                <div className="h-6 w-6 rounded flex items-center justify-center" style={{ backgroundColor: '#1E50A0' }}>
+                  <Landmark className="h-3.5 w-3.5 text-white" />
+                </div>
+                <p className="text-xs font-semibold" style={{ color: '#1E50A0' }}>ব্যাংক একাউন্ট</p>
+              </div>
               <div>
                 <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
                 <Input value={bankFields.bank_name} onChange={e => setBankFields(f => ({ ...f, bank_name: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="যেমন: ডাচ বাংলা ব্যাংক" />
