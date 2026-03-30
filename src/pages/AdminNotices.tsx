@@ -182,11 +182,12 @@ const AdminNotices = () => {
     }
   };
 
-  const togglePollActive = async (id: string, current: boolean) => {
-    const { error } = await supabase.from("polls").update({ is_active: !current }).eq("id", id);
+  const closePoll = async (id: string) => {
+    if (!confirm("ভোটিং বন্ধ করতে চান? একবার বন্ধ করলে আর চালু করা যাবে না।")) return;
+    const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success(!current ? "ভোটিং চালু করা হয়েছে" : "ভোটিং বন্ধ করা হয়েছে");
+      toast.success("ভোটিং বন্ধ করা হয়েছে");
       queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
     }
   };
@@ -297,10 +298,15 @@ const AdminNotices = () => {
                         <h3 className="font-semibold text-foreground text-sm">{poll.question}</h3>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
-                        <Button variant="ghost" size="icon" className="h-8 w-8"
-                          onClick={() => togglePollActive(poll.id, poll.is_active)}>
-                          {poll.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
-                        </Button>
+                        {poll.is_active && (
+                          <Button variant="ghost" size="icon" className="h-8 w-8" title="ভোটিং বন্ধ করুন"
+                            onClick={() => closePoll(poll.id)}>
+                            <EyeOff className="h-3.5 w-3.5 text-orange-400" />
+                          </Button>
+                        )}
+                        {!poll.is_active && (
+                          <span className="text-[10px] text-destructive font-medium mr-1">বন্ধ</span>
+                        )}
                         <Button variant="ghost" size="icon" className="h-8 w-8"
                           onClick={() => togglePollPin(poll.id, poll.is_pinned)}>
                           <Pin className={`h-3.5 w-3.5 ${poll.is_pinned ? "text-primary" : "text-muted-foreground"}`} />
