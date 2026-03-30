@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Landmark } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import bkashLogo from "@/assets/bkash-logo.png";
+import nagadLogo from "@/assets/nagad-logo.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
