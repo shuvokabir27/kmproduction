@@ -493,7 +493,7 @@ export function NoticeBoard() {
                     <h3 className={`text-sm md:text-[15px] font-semibold leading-snug ${
                       notice.is_pinned ? "text-amber-300" : "text-foreground group-hover:text-primary"
                     } transition-colors`}>
-                      {notice.is_pinned && <span className="text-[10px] font-medium text-amber-400/80 uppercase tracking-wider mr-1.5">পিন করা</span>}
+                      
                       {notice.title}
                     </h3>
                     <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mt-1 leading-relaxed">{notice.content}</p>
