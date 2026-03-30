@@ -146,7 +146,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
             <div key={opt.id}>
               <motion.button
                 disabled={hasVoted || voting || !poll.is_active}
-                onClick={() => handleVote(opt.id)}
+                onClick={() => handleVoteClick(opt.id)}
                 className={`relative w-full text-left rounded-xl overflow-hidden transition-all duration-200
                   ${showResults
                     ? "cursor-default"
