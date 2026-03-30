@@ -61,12 +61,60 @@ const AdminNotices = () => {
     enabled: !!notices && notices.length > 0,
   });
 
+  // Fetch polls
+  const { data: polls } = useQuery({
+    queryKey: ["admin-polls"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("polls")
+        .select("*")
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  // Fetch poll options and votes for all polls
+  const { data: pollOptions } = useQuery({
+    queryKey: ["admin-poll-options"],
+    queryFn: async () => {
+      if (!polls || polls.length === 0) return {};
+      const ids = polls.map((p: any) => p.id);
+      const { data } = await supabase.from("poll_options").select("*").in("poll_id", ids).order("sort_order");
+      const map: Record<string, any[]> = {};
+      (data ?? []).forEach((o: any) => {
+        if (!map[o.poll_id]) map[o.poll_id] = [];
+        map[o.poll_id].push(o);
+      });
+      return map;
+    },
+    enabled: !!polls && polls.length > 0,
+  });
+
+  const { data: pollVoteCounts } = useQuery({
+    queryKey: ["admin-poll-vote-counts"],
+    queryFn: async () => {
+      if (!polls || polls.length === 0) return {};
+      const ids = polls.map((p: any) => p.id);
+      const { data } = await supabase.from("poll_votes").select("poll_id, option_id").in("poll_id", ids);
+      const map: Record<string, Record<string, number>> = {};
+      (data ?? []).forEach((v: any) => {
+        if (!map[v.poll_id]) map[v.poll_id] = {};
+        map[v.poll_id][v.option_id] = (map[v.poll_id][v.option_id] || 0) + 1;
+      });
+      return map;
+    },
+    enabled: !!polls && polls.length > 0,
+  });
+
   // Realtime for comment counts
   useEffect(() => {
     const channel = supabase
       .channel("admin-notice-comments-counts")
       .on("postgres_changes", { event: "*", schema: "public", table: "notice_comments" }, () => {
         queryClient.invalidateQueries({ queryKey: ["admin-notice-comment-counts"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-poll-vote-counts"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
