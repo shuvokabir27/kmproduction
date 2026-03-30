@@ -69,6 +69,12 @@ const AdminShootings = () => {
   const [memberDetails, setMemberDetails] = useState<Record<string, { costume: string; props: string; character_name: string }>>({});
   const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
   const [ongoingIsEdit, setOngoingIsEdit] = useState(false);
+  // Status revert password protection
+  const [revertDialogOpen, setRevertDialogOpen] = useState(false);
+  const [revertPassword, setRevertPassword] = useState("");
+  const [revertShootingId, setRevertShootingId] = useState<string>("");
+  const [revertNewStatus, setRevertNewStatus] = useState<string>("");
+  const [revertVerifying, setRevertVerifying] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
