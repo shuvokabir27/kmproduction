@@ -689,6 +689,23 @@ const AdminShootings = () => {
                   onChange={(e) => setOngoingCallTime(e.target.value)}
                   className="bg-secondary border-border/50 h-9"
                 />
+                {/* Quick time presets */}
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {["06:00", "07:00", "08:00", "09:00", "10:00", "14:00", "16:00"].map((t) => {
+                    const hour = parseInt(t.split(":")[0]);
+                    const label = hour < 12 ? `সকাল ${hour}টা` : hour === 12 ? `দুপুর ১২টা` : hour <= 16 ? `বিকাল ${hour - 12}টা` : `সন্ধ্যা ${hour - 12}টা`;
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setOngoingCallTime(t)}
+                        className={`text-[9px] px-1.5 py-0.5 rounded-md border transition-colors ${ongoingCallTime === t ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300" : "bg-secondary/50 border-border/30 text-muted-foreground hover:border-cyan-500/30"}`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div>
                 <Label className="text-foreground text-xs">তারিখ</Label>
