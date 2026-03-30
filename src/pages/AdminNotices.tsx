@@ -11,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pin, Trash2, MessageSquare, Clock, Eye, EyeOff, Vote, Users, Trophy } from "lucide-react"; 
-import { motion } from "framer-motion";
+import { Plus, Pin, Trash2, MessageSquare, Clock, Eye, EyeOff, Vote, Users, Trophy, AlertTriangle, X, Ban } from "lucide-react"; 
+import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
@@ -29,6 +29,7 @@ const AdminNotices = () => {
   const [saving, setSaving] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
   const [selectedPoll, setSelectedPoll] = useState<any>(null);
+  const [closePollConfirm, setClosePollConfirm] = useState<string | null>(null);
 
   const { data: notices } = useQuery({
     queryKey: ["admin-notices"],
@@ -199,9 +200,10 @@ const AdminNotices = () => {
     }
   };
 
-  const closePoll = async (id: string) => {
-    if (!confirm("ভোটিং বন্ধ করতে চান? একবার বন্ধ করলে আর চালু করা যাবে না।")) return;
-    const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", id);
+  const closePoll = async () => {
+    if (!closePollConfirm) return;
+    const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", closePollConfirm);
+    setClosePollConfirm(null);
     if (error) toast.error(error.message);
     else {
       toast.success("ভোটিং বন্ধ করা হয়েছে");
@@ -317,7 +319,7 @@ const AdminNotices = () => {
                       <div className="flex items-center gap-1 shrink-0">
                         {poll.is_active && (
                           <Button variant="ghost" size="icon" className="h-8 w-8" title="ভোটিং বন্ধ করুন"
-                            onClick={() => closePoll(poll.id)}>
+                            onClick={() => setClosePollConfirm(poll.id)}>
                             <EyeOff className="h-3.5 w-3.5 text-orange-400" />
                           </Button>
                         )}
@@ -440,6 +442,69 @@ const AdminNotices = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Close Poll Confirmation Modal */}
+        <AnimatePresence>
+          {closePollConfirm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+              onClick={() => setClosePollConfirm(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: "spring", damping: 25, stiffness: 350 }}
+                className="w-full max-w-sm rounded-2xl bg-card border border-border/50 shadow-2xl overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-gradient-to-r from-destructive/15 via-orange-500/10 to-destructive/15 px-5 pt-5 pb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-10 w-10 rounded-xl bg-destructive/20 ring-1 ring-destructive/30 flex items-center justify-center">
+                      <Ban className="h-5 w-5 text-destructive" />
+                    </div>
+                    <button onClick={() => setClosePollConfirm(null)} className="h-8 w-8 rounded-full bg-secondary/80 flex items-center justify-center hover:bg-secondary transition-colors">
+                      <X className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <h3 className="text-base font-bold text-foreground">ভোটিং বন্ধ করুন</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    আপনি কি এই ভোটিং স্থায়ীভাবে বন্ধ করতে চান?
+                  </p>
+                </div>
+
+                <div className="px-5 py-3">
+                  <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/8 border border-amber-500/15 px-3.5 py-3">
+                    <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-300/90 leading-relaxed">
+                      একবার বন্ধ করলে আর চালু করা যাবে না। সদস্যরা আর ভোট দিতে পারবে না।
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-5 pb-5 flex gap-2.5">
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl border-border/50 h-11"
+                    onClick={() => setClosePollConfirm(null)}
+                  >
+                    বাতিল
+                  </Button>
+                  <Button
+                    className="flex-1 rounded-xl bg-gradient-to-r from-destructive to-orange-600 hover:from-destructive/90 hover:to-orange-700 text-white border-0 h-11 font-semibold"
+                    onClick={closePoll}
+                  >
+                    <Ban className="h-4 w-4 mr-1.5" />
+                    বন্ধ করুন
+                  </Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </AppLayout>
   );
