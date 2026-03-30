@@ -45,6 +45,23 @@ export function PollCard({ poll, compact }: PollCardProps) {
     },
   });
 
+  // Fetch voter names (shown when poll is closed)
+  const { data: voterNames } = useQuery({
+    queryKey: ["poll-voter-names", poll.id],
+    queryFn: async () => {
+      if (!votes || votes.length === 0) return {};
+      const userIds = [...new Set(votes.map((v: any) => v.user_id))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, full_name")
+        .in("user_id", userIds);
+      const map: Record<string, string> = {};
+      (profiles ?? []).forEach((p: any) => { map[p.user_id] = p.full_name; });
+      return map;
+    },
+    enabled: !poll.is_active && !!votes && votes.length > 0,
+  });
+
   const totalVotes = votes?.length ?? 0;
   const myVote = votes?.find((v: any) => v.user_id === user?.id);
   const hasVoted = !!myVote;
@@ -94,7 +111,9 @@ export function PollCard({ poll, compact }: PollCardProps) {
         <div className="flex-1 min-w-0">
           <h3 className="text-sm md:text-[15px] font-semibold text-foreground leading-snug">{poll.question}</h3>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded-full">ভোটিং</span>
+            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${poll.is_active ? "text-emerald-400 bg-emerald-500/10" : "text-destructive bg-destructive/10"}`}>
+              {poll.is_active ? "ভোটিং চলছে" : "ভোটিং শেষ"}
+            </span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
               <Users className="h-2.5 w-2.5" /> {totalVotes} ভোট
             </span>
@@ -107,60 +126,72 @@ export function PollCard({ poll, compact }: PollCardProps) {
         {options?.map((opt: any, idx: number) => {
           const count = getVoteCount(opt.id);
           const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
-          const isWinner = hasVoted && count === maxVotes && maxVotes > 0;
+          const showResults = hasVoted || !poll.is_active;
+          const isWinner = showResults && count === maxVotes && maxVotes > 0;
           const isMyVote = myVote?.option_id === opt.id;
+          const optionVoterNames = !poll.is_active && voterNames
+            ? (votes ?? []).filter((v: any) => v.option_id === opt.id).map((v: any) => voterNames[v.user_id] || "অজানা")
+            : [];
 
           return (
-            <motion.button
-              key={opt.id}
-              disabled={hasVoted || voting || !poll.is_active}
-              onClick={() => handleVote(opt.id)}
-              className={`relative w-full text-left rounded-xl overflow-hidden transition-all duration-200
-                ${hasVoted
-                  ? "cursor-default"
-                  : "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98]"
-                }
-                ${isMyVote ? "ring-1 ring-emerald-500/40" : ""}
-                bg-secondary/50
-              `}
-              whileTap={!hasVoted ? { scale: 0.98 } : {}}
-            >
-              {/* Progress bar background */}
-              {hasVoted && (
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className={`absolute inset-y-0 left-0 bg-gradient-to-r ${barColors[idx % barColors.length]} opacity-15 rounded-xl`}
-                />
-              )}
+            <div key={opt.id}>
+              <motion.button
+                disabled={hasVoted || voting || !poll.is_active}
+                onClick={() => handleVote(opt.id)}
+                className={`relative w-full text-left rounded-xl overflow-hidden transition-all duration-200
+                  ${showResults
+                    ? "cursor-default"
+                    : "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98]"
+                  }
+                  ${isMyVote ? "ring-1 ring-emerald-500/40" : ""}
+                  bg-secondary/50
+                `}
+                whileTap={!hasVoted && poll.is_active ? { scale: 0.98 } : {}}
+              >
+                {/* Progress bar background */}
+                {showResults && (
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className={`absolute inset-y-0 left-0 bg-gradient-to-r ${barColors[idx % barColors.length]} opacity-15 rounded-xl`}
+                  />
+                )}
 
-              <div className="relative flex items-center gap-3 px-3.5 py-2.5">
-                {/* Vote indicator or radio */}
-                {hasVoted ? (
-                  isMyVote ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                <div className="relative flex items-center gap-3 px-3.5 py-2.5">
+                  {showResults ? (
+                    isMyVote ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    ) : (
+                      <div className="h-4 w-4 rounded-full border border-border/50 shrink-0" />
+                    )
                   ) : (
-                    <div className="h-4 w-4 rounded-full border border-border/50 shrink-0" />
-                  )
-                ) : (
-                  <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 shrink-0 group-hover:border-primary" />
-                )}
+                    <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                  )}
 
-                <span className={`text-sm flex-1 ${isMyVote ? "text-foreground font-medium" : "text-foreground/80"}`}>
-                  {opt.option_text}
-                </span>
+                  <span className={`text-sm flex-1 ${isMyVote ? "text-foreground font-medium" : "text-foreground/80"}`}>
+                    {opt.option_text}
+                  </span>
 
-                {hasVoted && (
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    {isWinner && <Trophy className="h-3.5 w-3.5 text-amber-400" />}
-                    <span className={`text-xs font-bold ${isWinner ? "text-amber-400" : "text-muted-foreground"}`}>
-                      {pct}%
-                    </span>
-                  </div>
-                )}
-              </div>
-            </motion.button>
+                  {showResults && (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {isWinner && <Trophy className="h-3.5 w-3.5 text-amber-400" />}
+                      <span className={`text-xs font-bold ${isWinner ? "text-amber-400" : "text-muted-foreground"}`}>
+                        {pct}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </motion.button>
+              {/* Voter names when poll is closed */}
+              {!poll.is_active && optionVoterNames.length > 0 && (
+                <div className="mt-1 ml-3 flex flex-wrap gap-1">
+                  {optionVoterNames.map((name: string, ni: number) => (
+                    <span key={ni} className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{name}</span>
+                  ))}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>

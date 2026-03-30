@@ -91,16 +91,33 @@ const AdminNotices = () => {
     enabled: !!polls && polls.length > 0,
   });
 
-  const { data: pollVoteCounts } = useQuery({
-    queryKey: ["admin-poll-vote-counts"],
+  // Fetch votes with voter names for admin
+  const { data: pollVoteDetails } = useQuery({
+    queryKey: ["admin-poll-vote-details"],
     queryFn: async () => {
       if (!polls || polls.length === 0) return {};
       const ids = polls.map((p: any) => p.id);
-      const { data } = await supabase.from("poll_votes").select("poll_id, option_id").in("poll_id", ids);
-      const map: Record<string, Record<string, number>> = {};
+      const { data } = await supabase
+        .from("poll_votes")
+        .select("poll_id, option_id, user_id")
+        .in("poll_id", ids);
+      // Get unique user_ids
+      const userIds = [...new Set((data ?? []).map((v: any) => v.user_id))];
+      let profileMap: Record<string, string> = {};
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name")
+          .in("user_id", userIds);
+        (profiles ?? []).forEach((p: any) => { profileMap[p.user_id] = p.full_name; });
+      }
+      // Group by poll_id -> option_id -> { count, names[] }
+      const map: Record<string, Record<string, { count: number; names: string[] }>> = {};
       (data ?? []).forEach((v: any) => {
         if (!map[v.poll_id]) map[v.poll_id] = {};
-        map[v.poll_id][v.option_id] = (map[v.poll_id][v.option_id] || 0) + 1;
+        if (!map[v.poll_id][v.option_id]) map[v.poll_id][v.option_id] = { count: 0, names: [] };
+        map[v.poll_id][v.option_id].count++;
+        map[v.poll_id][v.option_id].names.push(profileMap[v.user_id] || "অজানা");
       });
       return map;
     },
@@ -115,7 +132,7 @@ const AdminNotices = () => {
         queryClient.invalidateQueries({ queryKey: ["admin-notice-comment-counts"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () => {
-        queryClient.invalidateQueries({ queryKey: ["admin-poll-vote-counts"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-poll-vote-details"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -284,13 +301,13 @@ const AdminNotices = () => {
             </h2>
             {polls.map((poll: any) => {
               const opts = pollOptions?.[poll.id] ?? [];
-              const votesMap = pollVoteCounts?.[poll.id] ?? {};
-              const totalVotes = Object.values(votesMap).reduce((a: number, b: any) => a + (b as number), 0) as number;
-              const maxCount = opts.length > 0 ? Math.max(...opts.map((o: any) => votesMap[o.id] ?? 0), 0) : 0;
+              const detailsMap = pollVoteDetails?.[poll.id] ?? {};
+              const totalVotes = Object.values(detailsMap).reduce((a: number, b: any) => a + (b as any).count, 0) as number;
+              const maxCount = opts.length > 0 ? Math.max(...opts.map((o: any) => detailsMap[o.id]?.count ?? 0), 0) : 0;
 
               return (
                 <motion.div key={poll.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                  <Card className={`p-4 bg-card border-border/50 ${!poll.is_active ? "opacity-50" : ""}`}>
+                  <Card className={`p-4 bg-card border-border/50 ${!poll.is_active ? "opacity-60" : ""}`}>
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-2">
                         {poll.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-400 shrink-0" />}
@@ -318,27 +335,37 @@ const AdminNotices = () => {
                       </div>
                     </div>
 
-                    {/* Results bars */}
-                    <div className="space-y-1.5">
+                    {/* Results bars with voter names */}
+                    <div className="space-y-2">
                       {opts.map((opt: any) => {
-                        const count = votesMap[opt.id] ?? 0;
-                        const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
-                        const isWinner = count === maxCount && maxCount > 0;
+                        const detail = detailsMap[opt.id] ?? { count: 0, names: [] };
+                        const pct = totalVotes > 0 ? Math.round((detail.count / totalVotes) * 100) : 0;
+                        const isWinner = detail.count === maxCount && maxCount > 0;
                         return (
-                          <div key={opt.id} className="relative rounded-lg overflow-hidden bg-secondary/50">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${pct}%` }}
-                              transition={{ duration: 0.8 }}
-                              className={`absolute inset-y-0 left-0 ${isWinner ? "bg-emerald-500/20" : "bg-primary/10"} rounded-lg`}
-                            />
-                            <div className="relative flex items-center justify-between px-3 py-2">
-                              <span className="text-xs text-foreground flex items-center gap-1.5">
-                                {isWinner && <Trophy className="h-3 w-3 text-amber-400" />}
-                                {opt.option_text}
-                              </span>
-                              <span className="text-xs font-bold text-muted-foreground">{pct}% ({count})</span>
+                          <div key={opt.id}>
+                            <div className="relative rounded-lg overflow-hidden bg-secondary/50">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${pct}%` }}
+                                transition={{ duration: 0.8 }}
+                                className={`absolute inset-y-0 left-0 ${isWinner ? "bg-emerald-500/20" : "bg-primary/10"} rounded-lg`}
+                              />
+                              <div className="relative flex items-center justify-between px-3 py-2">
+                                <span className="text-xs text-foreground flex items-center gap-1.5">
+                                  {isWinner && <Trophy className="h-3 w-3 text-amber-400" />}
+                                  {opt.option_text}
+                                </span>
+                                <span className="text-xs font-bold text-muted-foreground">{pct}% ({detail.count})</span>
+                              </div>
                             </div>
+                            {/* Voter names */}
+                            {detail.names.length > 0 && (
+                              <div className="mt-1 ml-3 flex flex-wrap gap-1">
+                                {detail.names.map((name: string, ni: number) => (
+                                  <span key={ni} className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{name}</span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
