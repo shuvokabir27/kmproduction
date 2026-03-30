@@ -362,16 +362,16 @@ const MemberSettings = () => {
               }
 
               const bankData = [
-                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651" },
-                { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838" },
-                { name: "BRAC Bank", short: "BRAC", bg: "#E31E25" },
-                { name: "City Bank", short: "CITY", bg: "#004B87" },
-                { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC" },
-                { name: "Prime Bank", short: "PB", bg: "#1B3A6B" },
-                { name: "Sonali Bank", short: "SB", bg: "#F7941D" },
-                { name: "Janata Bank", short: "JB", bg: "#003366" },
-                { name: "Agrani Bank", short: "AB", bg: "#8B0000" },
-                { name: "Pubali Bank", short: "PBL", bg: "#2E8B57" },
+                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", logo: null as string | null },
+                { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", logo: ibblLogo },
+                { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", logo: null },
+                { name: "City Bank", short: "CITY", bg: "#004B87", logo: null },
+                { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC", logo: null },
+                { name: "Prime Bank", short: "PB", bg: "#1B3A6B", logo: null },
+                { name: "Sonali Bank", short: "SB", bg: "#F7941D", logo: null },
+                { name: "Janata Bank", short: "JB", bg: "#003366", logo: null },
+                { name: "Agrani Bank", short: "AB", bg: "#8B0000", logo: null },
+                { name: "Pubali Bank", short: "PBL", bg: "#2E8B57", logo: null },
               ];
               const selectedBank = bankData.find(b => b.name === p?.bank_name);
 
