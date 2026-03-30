@@ -363,7 +363,7 @@ const MemberSettings = () => {
               }
 
               const bankData = [
-                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", logo: null as string | null },
+                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", logo: dbblLogo },
                 { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", logo: ibblLogo },
                 { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", logo: null },
                 { name: "City Bank", short: "CITY", bg: "#004B87", logo: null },
