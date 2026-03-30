@@ -182,11 +182,12 @@ const AdminNotices = () => {
     }
   };
 
-  const togglePollActive = async (id: string, current: boolean) => {
-    const { error } = await supabase.from("polls").update({ is_active: !current }).eq("id", id);
+  const closePoll = async (id: string) => {
+    if (!confirm("ভোটিং বন্ধ করতে চান? একবার বন্ধ করলে আর চালু করা যাবে না।")) return;
+    const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success(!current ? "ভোটিং চালু করা হয়েছে" : "ভোটিং বন্ধ করা হয়েছে");
+      toast.success("ভোটিং বন্ধ করা হয়েছে");
       queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
     }
   };
