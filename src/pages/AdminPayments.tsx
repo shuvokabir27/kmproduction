@@ -287,28 +287,56 @@ const AdminPayments = () => {
                               <Copy className="h-3 w-3" />
                             </button>
                           </div>
+                          {selectedProfile.bank_account_holder && (
+                            <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                              <span className="text-[11px] text-white/70">হোল্ডার: {selectedProfile.bank_account_holder}</span>
+                              <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bank_account_holder || ""); toast.success("হোল্ডার নাম কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            </div>
+                          )}
                         </>
                       )}
                       {selectedProfile.bkash_no && (
-                        <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
-                          <div className="flex items-center gap-2">
-                            <Smartphone className="h-3 w-3 text-pink-400/60" />
-                            <span className="text-[11px] text-white/70">বিকাশ: {selectedProfile.bkash_no}</span>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                            <div className="flex items-center gap-2">
+                              <Smartphone className="h-3 w-3 text-pink-400/60" />
+                              <span className="text-[11px] text-white/70">বিকাশ: {selectedProfile.bkash_no}</span>
+                            </div>
+                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bkash_no || ""); toast.success("বিকাশ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
+                              <Copy className="h-3 w-3" />
+                            </button>
                           </div>
-                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bkash_no || ""); toast.success("বিকাশ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
-                            <Copy className="h-3 w-3" />
-                          </button>
+                          {selectedProfile.bkash_holder && (
+                            <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                              <span className="text-[11px] text-white/70">হোল্ডার: {selectedProfile.bkash_holder}</span>
+                              <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.bkash_holder || ""); toast.success("হোল্ডার নাম কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
                       {selectedProfile.nagad_no && (
-                        <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
-                          <div className="flex items-center gap-2">
-                            <Smartphone className="h-3 w-3 text-orange-400/60" />
-                            <span className="text-[11px] text-white/70">নগদ: {selectedProfile.nagad_no}</span>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                            <div className="flex items-center gap-2">
+                              <Smartphone className="h-3 w-3 text-orange-400/60" />
+                              <span className="text-[11px] text-white/70">নগদ: {selectedProfile.nagad_no}</span>
+                            </div>
+                            <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_no || ""); toast.success("নগদ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
+                              <Copy className="h-3 w-3" />
+                            </button>
                           </div>
-                          <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_no || ""); toast.success("নগদ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
-                            <Copy className="h-3 w-3" />
-                          </button>
+                          {selectedProfile.nagad_holder && (
+                            <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
+                              <span className="text-[11px] text-white/70">হোল্ডার: {selectedProfile.nagad_holder}</span>
+                              <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_holder || ""); toast.success("হোল্ডার নাম কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
