@@ -513,33 +513,45 @@ const MemberSettings = () => {
               </div>
               <div>
                 <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
-                <Select value={bankFields.bank_name} onValueChange={v => setBankFields(f => ({ ...f, bank_name: v }))}>
-                  <SelectTrigger className="bg-secondary/50 border-border/50">
-                    <SelectValue placeholder="ব্যাংক নির্বাচন করুন" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    {[
-                      "Sonali Bank", "Janata Bank", "Agrani Bank", "Rupali Bank",
-                      "Bangladesh Development Bank", "BASIC Bank", "Bangladesh Krishi Bank",
-                      "Rajshahi Krishi Unnayan Bank", "Probashi Kallyan Bank", "Karmasangsthan Bank",
-                      "Dutch-Bangla Bank", "Islami Bank Bangladesh", "BRAC Bank",
-                      "Eastern Bank (EBL)", "National Bank", "Prime Bank", "Southeast Bank",
-                      "City Bank", "NCC Bank", "Uttara Bank", "Pubali Bank",
-                      "Mercantile Bank", "Standard Bank", "ONE Bank",
-                      "Exim Bank", "First Security Islami Bank", "Shahjalal Islami Bank",
-                      "Al-Arafah Islami Bank", "Social Islami Bank", "Union Bank",
-                      "Padma Bank", "Mutual Trust Bank", "Trust Bank",
-                      "Dhaka Bank", "NRB Commercial Bank", "NRB Bank",
-                      "Meghna Bank", "Jamuna Bank", "AB Bank", "IFIC Bank",
-                      "Bangladesh Commerce Bank", "Community Bank", "Global Islami Bank",
-                      "Midland Bank", "Bengal Commercial Bank", "Citizens Bank",
-                      "Standard Chartered Bank", "HSBC", "Commercial Bank of Ceylon",
-                      "State Bank of India", "Habib Bank", "Woori Bank", "Bank Alfalah",
-                    ].map(bank => (
-                      <SelectItem key={bank} value={bank}>{bank}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {(() => {
+                  const banks = [
+                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff" },
+                    { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", text: "#fff" },
+                    { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", text: "#fff" },
+                    { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff" },
+                    { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC", text: "#fff" },
+                    { name: "Prime Bank", short: "PB", bg: "#1B3A6B", text: "#fff" },
+                    { name: "Sonali Bank", short: "SB", bg: "#F7941D", text: "#fff" },
+                    { name: "Janata Bank", short: "JB", bg: "#003366", text: "#fff" },
+                    { name: "Agrani Bank", short: "AB", bg: "#8B0000", text: "#fff" },
+                    { name: "Pubali Bank", short: "PBL", bg: "#2E8B57", text: "#fff" },
+                  ];
+                  const selected = banks.find(b => b.name === bankFields.bank_name);
+                  return (
+                    <>
+                      <Select value={bankFields.bank_name} onValueChange={v => setBankFields(f => ({ ...f, bank_name: v }))}>
+                        <SelectTrigger className="bg-secondary/50 border-border/50">
+                          <div className="flex items-center gap-2">
+                            {selected && (
+                              <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: selected.bg, color: selected.text }}>{selected.short}</span>
+                            )}
+                            <SelectValue placeholder="ব্যাংক নির্বাচন করুন" />
+                          </div>
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60">
+                          {banks.map(bank => (
+                            <SelectItem key={bank.name} value={bank.name}>
+                              <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: bank.bg, color: bank.text }}>{bank.short}</span>
+                                {bank.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  );
+                })()}
               </div>
               <div>
                 <Label className="text-muted-foreground text-xs">একাউন্ট নম্বর</Label>
