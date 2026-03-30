@@ -171,6 +171,25 @@ const AdminNotices = () => {
     }
   };
 
+  const handleDeletePoll = async (id: string) => {
+    if (!confirm("ভোটিং মুছে ফেলতে চান?")) return;
+    const { error } = await supabase.from("polls").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("ভোটিং মুছে ফেলা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+    }
+  };
+
+  const togglePollActive = async (id: string, current: boolean) => {
+    const { error } = await supabase.from("polls").update({ is_active: !current }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(!current ? "ভোটিং চালু করা হয়েছে" : "ভোটিং বন্ধ করা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
