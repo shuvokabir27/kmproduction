@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Landmark } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import bkashLogo from "@/assets/bkash-logo.png";
+import nagadLogo from "@/assets/nagad-logo.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
@@ -518,8 +520,11 @@ const MemberSettings = () => {
             </div>
 
             {/* বিকাশ */}
-            <div className="space-y-2 p-3 rounded-lg bg-secondary/30 border border-border/30">
-              <p className="text-xs font-semibold text-foreground">📱 বিকাশ</p>
+            <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(230, 20, 80, 0.08)', borderColor: 'rgba(230, 20, 80, 0.25)' }}>
+              <div className="flex items-center gap-2">
+                <img src={bkashLogo} alt="bKash" className="h-6 w-6 object-contain" />
+                <p className="text-xs font-semibold" style={{ color: '#E6145B' }}>বিকাশ</p>
+              </div>
               <div>
                 <Label className="text-muted-foreground text-xs">বিকাশ নম্বর</Label>
                 <Input value={bankFields.bkash_no} onChange={e => setBankFields(f => ({ ...f, bkash_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="বিকাশ নম্বর দিন" />
@@ -531,8 +536,11 @@ const MemberSettings = () => {
             </div>
 
             {/* নগদ */}
-            <div className="space-y-2 p-3 rounded-lg bg-secondary/30 border border-border/30">
-              <p className="text-xs font-semibold text-foreground">💰 নগদ</p>
+            <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(237, 28, 36, 0.08)', borderColor: 'rgba(237, 130, 20, 0.3)' }}>
+              <div className="flex items-center gap-2">
+                <img src={nagadLogo} alt="Nagad" className="h-6 w-auto object-contain" />
+                <p className="text-xs font-semibold" style={{ color: '#ED1C24' }}>নগদ</p>
+              </div>
               <div>
                 <Label className="text-muted-foreground text-xs">নগদ নম্বর</Label>
                 <Input value={bankFields.nagad_no} onChange={e => setBankFields(f => ({ ...f, nagad_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="নগদ নম্বর দিন" />
