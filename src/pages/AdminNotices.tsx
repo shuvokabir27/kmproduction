@@ -319,7 +319,7 @@ const AdminNotices = () => {
                       <div className="flex items-center gap-1 shrink-0">
                         {poll.is_active && (
                           <Button variant="ghost" size="icon" className="h-8 w-8" title="ভোটিং বন্ধ করুন"
-                            onClick={() => closePoll(poll.id)}>
+                            onClick={() => setClosePollConfirm(poll.id)}>
                             <EyeOff className="h-3.5 w-3.5 text-orange-400" />
                           </Button>
                         )}
