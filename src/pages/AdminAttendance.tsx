@@ -508,12 +508,18 @@ const AdminAttendance = () => {
             {editShootingId && (() => {
               const group = groupedByShooting[editShootingId];
               if (!group) return null;
+              // Members NOT in this attendance yet
+              const existingMemberIds = new Set(group.records.map((r: any) => r.member_id));
+              const availableMembers = (members ?? []).filter((m: any) => !existingMemberIds.has(m.id));
               return (
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground">
                     {group.shooting?.name} — {group.shooting?.shoot_date ? new Date(group.shooting.shoot_date).toLocaleDateString("bn-BD") : ""}
                   </p>
+                  
+                  {/* Existing records */}
                   <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground font-medium">বর্তমান হাজিরা ({group.records.length} জন)</p>
                     {group.records.map((r: any) => (
                       <div key={r.id} className="flex items-center justify-between gap-3 p-2 rounded-lg bg-secondary/30 border border-border/20">
                         <div className="flex items-center gap-2 min-w-0">
@@ -556,12 +562,74 @@ const AdminAttendance = () => {
                       </div>
                     ))}
                   </div>
+
+                  {/* Add new members */}
+                  {availableMembers.length > 0 && (
+                    <div className="space-y-2 border-t border-border/20 pt-3">
+                      <p className="text-xs text-muted-foreground font-medium">নতুন সদস্য যুক্ত করুন</p>
+                      {availableMembers.map((m: any) => {
+                        const isAdded = !!editData[m.id];
+                        return (
+                          <div key={m.id} className={`flex items-center justify-between gap-3 p-2 rounded-lg border transition-colors ${isAdded ? "bg-emerald-500/5 border-emerald-500/20" : "bg-secondary/10 border-border/10"}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <Checkbox
+                                checked={isAdded}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setEditData(prev => ({
+                                      ...prev,
+                                      [m.id]: { present: true, rate: m.salary_type === "daily" ? String(m.daily_rate || 0) : "0" }
+                                    }));
+                                  } else {
+                                    setEditData(prev => {
+                                      const next = { ...prev };
+                                      delete next[m.id];
+                                      return next;
+                                    });
+                                  }
+                                }}
+                              />
+                              <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+                                {m.photo_url ? (
+                                  <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                                ) : (
+                                  <span className="text-primary text-[10px]">{m.full_name?.charAt(0)}</span>
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm text-foreground truncate">{m.full_name}</p>
+                                <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
+                              </div>
+                            </div>
+                            {isAdded && m.salary_type !== "monthly" && (
+                              <Input
+                                type="number"
+                                value={editData[m.id]?.rate || "0"}
+                                onChange={(e) => {
+                                  setEditData(prev => ({
+                                    ...prev,
+                                    [m.id]: { ...prev[m.id], rate: e.target.value }
+                                  }));
+                                }}
+                                className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                              />
+                            )}
+                            {isAdded && m.salary_type === "monthly" && (
+                              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">মাসিক</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
                   <Button
                     className="w-full gap-2"
                     disabled={editSaving}
                     onClick={async () => {
                       setEditSaving(true);
                       try {
+                        // Update existing records
                         for (const r of group.records) {
                           const d = editData[r.member_id];
                           if (d) {
@@ -570,6 +638,17 @@ const AdminAttendance = () => {
                               daily_rate: Number(d.rate) || 0,
                             }).eq("id", r.id);
                           }
+                        }
+                        // Insert new members
+                        const newMembers = Object.entries(editData).filter(([id]) => !existingMemberIds.has(id));
+                        if (newMembers.length > 0) {
+                          const rows = newMembers.map(([memberId, d]) => ({
+                            shooting_id: editShootingId,
+                            member_id: memberId,
+                            is_present: d.present,
+                            daily_rate: Number(d.rate) || 0,
+                          }));
+                          await supabase.from("attendance").insert(rows);
                         }
                         toast.success("হাজিরা আপডেট হয়েছে!");
                         queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
