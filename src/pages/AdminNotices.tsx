@@ -11,21 +11,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pin, Trash2, MessageSquare, Clock, Eye, EyeOff } from "lucide-react";
+import { Plus, Pin, Trash2, MessageSquare, Clock, Eye, EyeOff, Vote, Users, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
+import { AdminPollCreate } from "@/components/AdminPollCreate";
 
 const AdminNotices = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
+  const [pollCreateOpen, setPollCreateOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPinned, setIsPinned] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
+  const [selectedPoll, setSelectedPoll] = useState<any>(null);
 
   const { data: notices } = useQuery({
     queryKey: ["admin-notices"],
@@ -58,12 +61,60 @@ const AdminNotices = () => {
     enabled: !!notices && notices.length > 0,
   });
 
+  // Fetch polls
+  const { data: polls } = useQuery({
+    queryKey: ["admin-polls"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("polls")
+        .select("*")
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  // Fetch poll options and votes for all polls
+  const { data: pollOptions } = useQuery({
+    queryKey: ["admin-poll-options"],
+    queryFn: async () => {
+      if (!polls || polls.length === 0) return {};
+      const ids = polls.map((p: any) => p.id);
+      const { data } = await supabase.from("poll_options").select("*").in("poll_id", ids).order("sort_order");
+      const map: Record<string, any[]> = {};
+      (data ?? []).forEach((o: any) => {
+        if (!map[o.poll_id]) map[o.poll_id] = [];
+        map[o.poll_id].push(o);
+      });
+      return map;
+    },
+    enabled: !!polls && polls.length > 0,
+  });
+
+  const { data: pollVoteCounts } = useQuery({
+    queryKey: ["admin-poll-vote-counts"],
+    queryFn: async () => {
+      if (!polls || polls.length === 0) return {};
+      const ids = polls.map((p: any) => p.id);
+      const { data } = await supabase.from("poll_votes").select("poll_id, option_id").in("poll_id", ids);
+      const map: Record<string, Record<string, number>> = {};
+      (data ?? []).forEach((v: any) => {
+        if (!map[v.poll_id]) map[v.poll_id] = {};
+        map[v.poll_id][v.option_id] = (map[v.poll_id][v.option_id] || 0) + 1;
+      });
+      return map;
+    },
+    enabled: !!polls && polls.length > 0,
+  });
+
   // Realtime for comment counts
   useEffect(() => {
     const channel = supabase
       .channel("admin-notice-comments-counts")
       .on("postgres_changes", { event: "*", schema: "public", table: "notice_comments" }, () => {
         queryClient.invalidateQueries({ queryKey: ["admin-notice-comment-counts"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-poll-vote-counts"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -120,6 +171,25 @@ const AdminNotices = () => {
     }
   };
 
+  const handleDeletePoll = async (id: string) => {
+    if (!confirm("ভোটিং মুছে ফেলতে চান?")) return;
+    const { error } = await supabase.from("polls").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("ভোটিং মুছে ফেলা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+    }
+  };
+
+  const togglePollActive = async (id: string, current: boolean) => {
+    const { error } = await supabase.from("polls").update({ is_active: !current }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(!current ? "ভোটিং চালু করা হয়েছে" : "ভোটিং বন্ধ করা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -128,8 +198,11 @@ const AdminNotices = () => {
             <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 via-pink-400 to-violet-400 bg-clip-text text-transparent">নোটিশ বোর্ড</h1>
             <p className="text-sm text-muted-foreground">সকল সদস্যদের জন্য নোটিশ প্রকাশ করুন</p>
           </div>
-          <Button onClick={() => setCreateOpen(true)} className="gap-2 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white border-0">
-            <Plus className="h-4 w-4" /> নতুন নোটিশ
+          <Button onClick={() => setCreateOpen(true)} className="gap-2 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white border-0" size="sm">
+            <Plus className="h-4 w-4" /> নোটিশ
+          </Button>
+          <Button onClick={() => setPollCreateOpen(true)} className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white border-0" size="sm">
+            <Vote className="h-4 w-4" /> ভোটিং
           </Button>
         </div>
 
@@ -195,6 +268,79 @@ const AdminNotices = () => {
           ))}
         </div>
 
+        {/* Polls Section */}
+        {polls && polls.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <Vote className="h-5 w-5 text-emerald-400" /> ভোটিং সমূহ
+            </h2>
+            {polls.map((poll: any) => {
+              const opts = pollOptions?.[poll.id] ?? [];
+              const votesMap = pollVoteCounts?.[poll.id] ?? {};
+              const totalVotes = Object.values(votesMap).reduce((a: number, b: any) => a + (b as number), 0) as number;
+              const maxCount = opts.length > 0 ? Math.max(...opts.map((o: any) => votesMap[o.id] ?? 0), 0) : 0;
+
+              return (
+                <motion.div key={poll.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                  <Card className={`p-4 bg-card border-border/50 ${!poll.is_active ? "opacity-50" : ""}`}>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2">
+                        <Vote className="h-4 w-4 text-emerald-400 shrink-0" />
+                        <h3 className="font-semibold text-foreground text-sm">{poll.question}</h3>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8"
+                          onClick={() => togglePollActive(poll.id, poll.is_active)}>
+                          {poll.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => handleDeletePoll(poll.id)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Results bars */}
+                    <div className="space-y-1.5">
+                      {opts.map((opt: any) => {
+                        const count = votesMap[opt.id] ?? 0;
+                        const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+                        const isWinner = count === maxCount && maxCount > 0;
+                        return (
+                          <div key={opt.id} className="relative rounded-lg overflow-hidden bg-secondary/50">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${pct}%` }}
+                              transition={{ duration: 0.8 }}
+                              className={`absolute inset-y-0 left-0 ${isWinner ? "bg-emerald-500/20" : "bg-primary/10"} rounded-lg`}
+                            />
+                            <div className="relative flex items-center justify-between px-3 py-2">
+                              <span className="text-xs text-foreground flex items-center gap-1.5">
+                                {isWinner && <Trophy className="h-3 w-3 text-amber-400" />}
+                                {opt.option_text}
+                              </span>
+                              <span className="text-xs font-bold text-muted-foreground">{pct}% ({count})</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <Users className="h-3 w-3" /> মোট {totalVotes} ভোট
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(poll.created_at), { addSuffix: true, locale: bn })}
+                      </span>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
         {/* Create Notice Dialog */}
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogContent className="bg-card border-border/50 max-w-lg">
@@ -220,6 +366,9 @@ const AdminNotices = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Poll Create Dialog */}
+        <AdminPollCreate open={pollCreateOpen} onOpenChange={setPollCreateOpen} userId={user.id} />
 
         {/* Notice Detail + Comments Dialog */}
         <Dialog open={!!selectedNotice} onOpenChange={(v) => !v && setSelectedNotice(null)}>

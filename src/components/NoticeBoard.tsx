@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
+import { PollCard } from "@/components/PollCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 
@@ -139,12 +140,28 @@ export function NoticeBoard() {
     enabled: !!notices && notices.length > 0,
   });
 
+  // Fetch active polls
+  const { data: activePolls } = useQuery({
+    queryKey: ["member-polls"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("polls")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
   // Realtime for comment counts
   useEffect(() => {
     const channel = supabase
       .channel("notice-comments-counts")
       .on("postgres_changes", { event: "*", schema: "public", table: "notice_comments" }, () => {
         queryClient.invalidateQueries({ queryKey: ["notice-comment-counts"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["poll-votes"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -169,7 +186,9 @@ export function NoticeBoard() {
     }
   }, [notices, searchParams]);
 
-  if (!hasOngoingShooting && (!notices || notices.length === 0)) return null;
+  const hasPolls = activePolls && activePolls.length > 0;
+
+  if (!hasOngoingShooting && (!notices || notices.length === 0) && !hasPolls) return null;
 
   // Ongoing Shooting Banner
   if (hasOngoingShooting) {
@@ -456,7 +475,7 @@ export function NoticeBoard() {
           </div>
           <div>
             <h2 className="font-bold text-foreground text-base md:text-lg">নোটিশ বোর্ড</h2>
-            <p className="text-[10px] md:text-xs text-muted-foreground">{notices.length}টি নোটিশ</p>
+            <p className="text-[10px] md:text-xs text-muted-foreground">{notices.length}টি নোটিশ{hasPolls ? ` · ${activePolls!.length}টি ভোটিং` : ""}</p>
           </div>
         </div>
 
@@ -515,6 +534,23 @@ export function NoticeBoard() {
             ))}
           </AnimatePresence>
         </div>
+
+        {/* Poll Cards */}
+        {hasPolls && (
+          <div className="divide-y divide-border/15">
+            {activePolls!.map((poll: any, i: number) => (
+              <motion.div
+                key={poll.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: (notices?.length ?? 0) * 0.06 + i * 0.06, type: "spring", stiffness: 200 }}
+                className="p-3.5 md:p-4"
+              >
+                <PollCard poll={poll} compact />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </Card>
       </div>
 
