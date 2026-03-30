@@ -600,7 +600,7 @@ const MemberSettings = () => {
                     { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff", logo: dbblLogo },
                     { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", text: "#fff", logo: ibblLogo },
                     { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", text: "#fff", logo: null },
-                    { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff", logo: null },
+                    { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff", logo: cityLogo },
                     { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC", text: "#fff", logo: null },
                     { name: "Prime Bank", short: "PB", bg: "#1B3A6B", text: "#fff", logo: null },
                     { name: "Sonali Bank", short: "SB", bg: "#F7941D", text: "#fff", logo: null },
