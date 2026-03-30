@@ -268,6 +268,79 @@ const AdminNotices = () => {
           ))}
         </div>
 
+        {/* Polls Section */}
+        {polls && polls.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <Vote className="h-5 w-5 text-emerald-400" /> ভোটিং সমূহ
+            </h2>
+            {polls.map((poll: any) => {
+              const opts = pollOptions?.[poll.id] ?? [];
+              const votesMap = pollVoteCounts?.[poll.id] ?? {};
+              const totalVotes = Object.values(votesMap).reduce((a: number, b: any) => a + (b as number), 0) as number;
+              const maxCount = opts.length > 0 ? Math.max(...opts.map((o: any) => votesMap[o.id] ?? 0), 0) : 0;
+
+              return (
+                <motion.div key={poll.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                  <Card className={`p-4 bg-card border-border/50 ${!poll.is_active ? "opacity-50" : ""}`}>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2">
+                        <Vote className="h-4 w-4 text-emerald-400 shrink-0" />
+                        <h3 className="font-semibold text-foreground text-sm">{poll.question}</h3>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8"
+                          onClick={() => togglePollActive(poll.id, poll.is_active)}>
+                          {poll.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => handleDeletePoll(poll.id)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Results bars */}
+                    <div className="space-y-1.5">
+                      {opts.map((opt: any) => {
+                        const count = votesMap[opt.id] ?? 0;
+                        const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+                        const isWinner = count === maxCount && maxCount > 0;
+                        return (
+                          <div key={opt.id} className="relative rounded-lg overflow-hidden bg-secondary/50">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${pct}%` }}
+                              transition={{ duration: 0.8 }}
+                              className={`absolute inset-y-0 left-0 ${isWinner ? "bg-emerald-500/20" : "bg-primary/10"} rounded-lg`}
+                            />
+                            <div className="relative flex items-center justify-between px-3 py-2">
+                              <span className="text-xs text-foreground flex items-center gap-1.5">
+                                {isWinner && <Trophy className="h-3 w-3 text-amber-400" />}
+                                {opt.option_text}
+                              </span>
+                              <span className="text-xs font-bold text-muted-foreground">{pct}% ({count})</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <Users className="h-3 w-3" /> মোট {totalVotes} ভোট
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(poll.created_at), { addSuffix: true, locale: bn })}
+                      </span>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
         {/* Create Notice Dialog */}
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogContent className="bg-card border-border/50 max-w-lg">
@@ -293,6 +366,9 @@ const AdminNotices = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Poll Create Dialog */}
+        <AdminPollCreate open={pollCreateOpen} onOpenChange={setPollCreateOpen} userId={user.id} />
 
         {/* Notice Detail + Comments Dialog */}
         <Dialog open={!!selectedNotice} onOpenChange={(v) => !v && setSelectedNotice(null)}>
