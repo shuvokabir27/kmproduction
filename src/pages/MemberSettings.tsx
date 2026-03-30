@@ -519,22 +519,22 @@ const MemberSettings = () => {
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
                     {[
-                      "সোনালী ব্যাংক", "জনতা ব্যাংক", "অগ্রণী ব্যাংক", "রূপালী ব্যাংক",
-                      "বাংলাদেশ ডেভেলপমেন্ট ব্যাংক", "বেসিক ব্যাংক", "বাংলাদেশ কৃষি ব্যাংক",
-                      "রাজশাহী কৃষি উন্নয়ন ব্যাংক", "প্রবাসী কল্যাণ ব্যাংক", "কর্মসংস্থান ব্যাংক",
-                      "ডাচ বাংলা ব্যাংক", "ইসলামী ব্যাংক বাংলাদেশ", "ব্র্যাক ব্যাংক",
-                      "ইস্টার্ন ব্যাংক", "ন্যাশনাল ব্যাংক", "প্রাইম ব্যাংক", "সাউথইস্ট ব্যাংক",
-                      "সিটি ব্যাংক", "এনসিসি ব্যাংক", "উত্তরা ব্যাংক", "পূবালী ব্যাংক",
-                      "মার্কেন্টাইল ব্যাংক", "স্ট্যান্ডার্ড ব্যাংক", "ওয়ান ব্যাংক",
-                      "এক্সিম ব্যাংক", "ফার্স্ট সিকিউরিটি ইসলামী ব্যাংক", "শাহজালাল ইসলামী ব্যাংক",
-                      "আল-আরাফাহ ইসলামী ব্যাংক", "সোশ্যাল ইসলামী ব্যাংক", "ইউনিয়ন ব্যাংক",
-                      "মডার্না ব্যাংক (পদ্মা ব্যাংক)", "মিউচুয়াল ট্রাস্ট ব্যাংক", "ট্রাস্ট ব্যাংক",
-                      "ঢাকা ব্যাংক", "এনআরবি কমার্শিয়াল ব্যাংক", "এনআরবি ব্যাংক",
-                      "মেঘনা ব্যাংক", "জামুনা ব্যাংক", "এবি ব্যাংক", "আইএফআইসি ব্যাংক",
-                      "বাংলাদেশ কমার্স ব্যাংক", "কমিউনিটি ব্যাংক", "গ্লোবাল ইসলামী ব্যাংক",
-                      "মিডল্যান্ড ব্যাংক", "বেঙ্গল কমার্শিয়াল ব্যাংক", "সিটিজেনস ব্যাংক",
-                      "স্ট্যান্ডার্ড চার্টার্ড ব্যাংক", "এইচএসবিসি", "কমার্শিয়াল ব্যাংক অব সিলন",
-                      "স্টেট ব্যাংক অব ইন্ডিয়া", "হাবিব ব্যাংক", "ওরি ব্যাংক", "ব্যাংক আলফালাহ",
+                      "Sonali Bank", "Janata Bank", "Agrani Bank", "Rupali Bank",
+                      "Bangladesh Development Bank", "BASIC Bank", "Bangladesh Krishi Bank",
+                      "Rajshahi Krishi Unnayan Bank", "Probashi Kallyan Bank", "Karmasangsthan Bank",
+                      "Dutch-Bangla Bank", "Islami Bank Bangladesh", "BRAC Bank",
+                      "Eastern Bank (EBL)", "National Bank", "Prime Bank", "Southeast Bank",
+                      "City Bank", "NCC Bank", "Uttara Bank", "Pubali Bank",
+                      "Mercantile Bank", "Standard Bank", "ONE Bank",
+                      "Exim Bank", "First Security Islami Bank", "Shahjalal Islami Bank",
+                      "Al-Arafah Islami Bank", "Social Islami Bank", "Union Bank",
+                      "Padma Bank", "Mutual Trust Bank", "Trust Bank",
+                      "Dhaka Bank", "NRB Commercial Bank", "NRB Bank",
+                      "Meghna Bank", "Jamuna Bank", "AB Bank", "IFIC Bank",
+                      "Bangladesh Commerce Bank", "Community Bank", "Global Islami Bank",
+                      "Midland Bank", "Bengal Commercial Bank", "Citizens Bank",
+                      "Standard Chartered Bank", "HSBC", "Commercial Bank of Ceylon",
+                      "State Bank of India", "Habib Bank", "Woori Bank", "Bank Alfalah",
                     ].map(bank => (
                       <SelectItem key={bank} value={bank}>{bank}</SelectItem>
                     ))}
