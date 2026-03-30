@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useCallback } from "react";
@@ -69,6 +69,12 @@ const AdminShootings = () => {
   const [memberDetails, setMemberDetails] = useState<Record<string, { costume: string; props: string; character_name: string }>>({});
   const [ongoingSubmitting, setOngoingSubmitting] = useState(false);
   const [ongoingIsEdit, setOngoingIsEdit] = useState(false);
+  // Status revert password protection
+  const [revertDialogOpen, setRevertDialogOpen] = useState(false);
+  const [revertPassword, setRevertPassword] = useState("");
+  const [revertShootingId, setRevertShootingId] = useState<string>("");
+  const [revertNewStatus, setRevertNewStatus] = useState<string>("");
+  const [revertVerifying, setRevertVerifying] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -171,9 +177,25 @@ const AdminShootings = () => {
     }
   };
 
+  const statusOrder = statusOptions.map(s => s.value);
+
   const changeStatus = async (shootingId: string, newStatus: string) => {
+    // Check if going backward
+    const shooting = shootings?.find((s) => s.id === shootingId);
+    const currentStatus = shooting?.status || "plan";
+    const currentIndex = statusOrder.indexOf(currentStatus);
+    const newIndex = statusOrder.indexOf(newStatus);
+
+    if (newIndex < currentIndex) {
+      // Going backward - require password
+      setRevertShootingId(shootingId);
+      setRevertNewStatus(newStatus);
+      setRevertPassword("");
+      setRevertDialogOpen(true);
+      return;
+    }
+
     if (newStatus === "published") {
-      const shooting = shootings?.find((s) => s.id === shootingId);
       setPublishShootingId(shootingId);
       setPublishChannelId((shooting as any)?.channel_id || "");
       setPublishVideoUrl((shooting as any)?.video_url || "");
@@ -181,7 +203,6 @@ const AdminShootings = () => {
       return;
     }
     if (newStatus === "calltime") {
-      const shooting = shootings?.find((s) => s.id === shootingId);
       openCalltimeDialog(shooting, false);
       return;
     }
@@ -190,6 +211,37 @@ const AdminShootings = () => {
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
+  const handleRevertWithPassword = async () => {
+    if (!revertPassword) { toast.error("পাসওয়ার্ড দিন"); return; }
+    setRevertVerifying(true);
+    try {
+      // Get current user email and re-authenticate
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser?.email) throw new Error("ইউজার পাওয়া যায়নি");
+
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: currentUser.email,
+        password: revertPassword,
+      });
+      if (authError) {
+        toast.error("পাসওয়ার্ড ভুল হয়েছে!");
+        return;
+      }
+
+      // Password verified - proceed with status revert
+      const { error } = await supabase.from("shootings").update({ status: revertNewStatus }).eq("id", revertShootingId);
+      if (error) { toast.error(error.message); return; }
+      const info = getStatusInfo(revertNewStatus);
+      toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
+      queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+      setRevertDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setRevertVerifying(false);
+    }
   };
 
   const confirmPublish = async () => {
@@ -837,6 +889,49 @@ const AdminShootings = () => {
               className="w-full bg-cyan-600 hover:bg-cyan-700"
             >
               {ongoingSubmitting ? "সেভ হচ্ছে..." : ongoingIsEdit ? `আপডেট করুন (${selectedMemberIds.length} জন)` : `কলটাইম নোটিশ দিন (${selectedMemberIds.length} জন)`}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Revert Status Password Dialog */}
+      <Dialog open={revertDialogOpen} onOpenChange={setRevertDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Lock className="h-5 w-5 text-amber-400" />
+              স্ট্যাটাস পেছনে নেওয়া
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/15 p-3">
+              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                ⚠️ আপনি স্ট্যাটাস পেছনে নিয়ে যেতে চাচ্ছেন। এই কাজটি সম্পন্ন করতে আপনার এডমিন পাসওয়ার্ড প্রয়োজন।
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>পরিবর্তন:</span>
+              <span className={`px-2 py-0.5 rounded-full ${getStatusInfo(shootings?.find(s => s.id === revertShootingId)?.status)?.color}`}>
+                {getStatusInfo(shootings?.find(s => s.id === revertShootingId)?.status)?.label}
+              </span>
+              <span>→</span>
+              <span className={`px-2 py-0.5 rounded-full ${getStatusInfo(revertNewStatus)?.color}`}>
+                {getStatusInfo(revertNewStatus)?.label}
+              </span>
+            </div>
+            <div>
+              <Label className="text-foreground text-xs">এডমিন পাসওয়ার্ড *</Label>
+              <Input
+                type="password"
+                value={revertPassword}
+                onChange={(e) => setRevertPassword(e.target.value)}
+                placeholder="পাসওয়ার্ড লিখুন"
+                className="bg-secondary border-border/50 mt-1"
+                onKeyDown={(e) => e.key === "Enter" && handleRevertWithPassword()}
+              />
+            </div>
+            <Button onClick={handleRevertWithPassword} disabled={revertVerifying} className="w-full">
+              {revertVerifying ? "যাচাই হচ্ছে..." : "নিশ্চিত করুন"}
             </Button>
           </div>
         </DialogContent>
