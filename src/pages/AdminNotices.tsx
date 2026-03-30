@@ -190,6 +190,12 @@ const AdminNotices = () => {
     }
   };
 
+  const togglePollPin = async (id: string, current: boolean) => {
+    const { error } = await supabase.from("polls").update({ is_pinned: !current }).eq("id", id);
+    if (error) toast.error(error.message);
+    else queryClient.invalidateQueries({ queryKey: ["admin-polls"] });
+  };
+
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
