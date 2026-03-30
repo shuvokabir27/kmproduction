@@ -2,8 +2,9 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { Vote, CheckCircle2, Trophy, Users } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Vote, CheckCircle2, Trophy, Users, AlertTriangle, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PollCardProps {
   poll: {
@@ -19,6 +20,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [voting, setVoting] = useState(false);
+  const [confirmVote, setConfirmVote] = useState<{ optionId: string; optionText: string } | null>(null);
 
   // Fetch options
   const { data: options } = useQuery({
@@ -73,16 +75,20 @@ export function PollCard({ poll, compact }: PollCardProps) {
     ? Math.max(...options.map((o: any) => getVoteCount(o.id)), 0)
     : 0;
 
-  const handleVote = async (optionId: string) => {
+  const handleVoteClick = (optionId: string) => {
     if (!user || hasVoted || voting) return;
     const optText = options?.find((o: any) => o.id === optionId)?.option_text ?? "";
-    const confirmed = confirm(`আপনি "${optText}" এ ভোট দিতে চান?\n\n⚠️ একবার ভোট দিলে আর পরিবর্তন করা যাবে না।`);
-    if (!confirmed) return;
+    setConfirmVote({ optionId, optionText: optText });
+  };
+
+  const handleVoteConfirm = async () => {
+    if (!confirmVote || !user) return;
     setVoting(true);
+    setConfirmVote(null);
     try {
       const { error } = await supabase.from("poll_votes").insert({
         poll_id: poll.id,
-        option_id: optionId,
+        option_id: confirmVote.optionId,
         user_id: user.id,
       });
       if (error) throw error;
@@ -140,7 +146,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
             <div key={opt.id}>
               <motion.button
                 disabled={hasVoted || voting || !poll.is_active}
-                onClick={() => handleVote(opt.id)}
+                onClick={() => handleVoteClick(opt.id)}
                 className={`relative w-full text-left rounded-xl overflow-hidden transition-all duration-200
                   ${showResults
                     ? "cursor-default"
@@ -203,6 +209,72 @@ export function PollCard({ poll, compact }: PollCardProps) {
       {!hasVoted && poll.is_active && (
         <p className="text-[10px] text-muted-foreground/60 mt-2 ml-1">একটি অপশনে ক্লিক করে ভোট দিন</p>
       )}
+
+      {/* Vote Confirmation Modal */}
+      <AnimatePresence>
+        {confirmVote && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setConfirmVote(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="w-full max-w-sm rounded-2xl bg-card border border-border/50 shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header gradient */}
+              <div className="bg-gradient-to-r from-emerald-500/15 via-cyan-500/10 to-emerald-500/15 px-5 pt-5 pb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-500/30 flex items-center justify-center">
+                    <Vote className="h-5 w-5 text-emerald-400" />
+                  </div>
+                  <button onClick={() => setConfirmVote(null)} className="h-8 w-8 rounded-full bg-secondary/80 flex items-center justify-center hover:bg-secondary transition-colors">
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                </div>
+                <h3 className="text-base font-bold text-foreground">ভোট নিশ্চিত করুন</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  আপনি <span className="font-semibold text-foreground">"{confirmVote.optionText}"</span> এ ভোট দিতে চান?
+                </p>
+              </div>
+
+              {/* Warning */}
+              <div className="px-5 py-3">
+                <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/8 border border-amber-500/15 px-3.5 py-3">
+                  <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-300/90 leading-relaxed">
+                    একবার ভোট দিলে আর পরিবর্তন করা যাবে না। সাবধানে নির্বাচন করুন।
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="px-5 pb-5 flex gap-2.5">
+                <Button
+                  variant="outline"
+                  className="flex-1 rounded-xl border-border/50 h-11"
+                  onClick={() => setConfirmVote(null)}
+                >
+                  বাতিল
+                </Button>
+                <Button
+                  className="flex-1 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white border-0 h-11 font-semibold"
+                  onClick={handleVoteConfirm}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                  ভোট দিন
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
