@@ -29,6 +29,7 @@ const MemberSettings = () => {
   const queryClient = useQueryClient();
 
   const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const [bankExpanded, setBankExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
