@@ -150,6 +150,37 @@ const MemberSettings = () => {
     }
   };
 
+  const openBankDialog = () => {
+    setBankFields({
+      bank_name: (profile as any)?.bank_name || "",
+      bank_account_no: (profile as any)?.bank_account_no || "",
+      bkash_no: (profile as any)?.bkash_no || "",
+      nagad_no: (profile as any)?.nagad_no || "",
+    });
+    setBankDialogOpen(true);
+  };
+
+  const handleSaveBank = async () => {
+    if (!profile) return;
+    setBankSaving(true);
+    try {
+      const { error } = await supabase.from("profiles").update({
+        bank_name: bankFields.bank_name || null,
+        bank_account_no: bankFields.bank_account_no || null,
+        bkash_no: bankFields.bkash_no || null,
+        nagad_no: bankFields.nagad_no || null,
+      }).eq("id", profile.id);
+      if (error) throw error;
+      toast.success("ব্যাংক তথ্য আপডেট হয়েছে!");
+      setBankDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setBankSaving(false);
+    }
+  };
+
   const handleChangeEmail = async () => {
     if (!newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       toast.error("সঠিক ইমেইল দিন"); return;
