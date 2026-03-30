@@ -893,6 +893,49 @@ const AdminShootings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Revert Status Password Dialog */}
+      <Dialog open={revertDialogOpen} onOpenChange={setRevertDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Lock className="h-5 w-5 text-amber-400" />
+              স্ট্যাটাস পেছনে নেওয়া
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/15 p-3">
+              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                ⚠️ আপনি স্ট্যাটাস পেছনে নিয়ে যেতে চাচ্ছেন। এই কাজটি সম্পন্ন করতে আপনার এডমিন পাসওয়ার্ড প্রয়োজন।
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>পরিবর্তন:</span>
+              <span className={`px-2 py-0.5 rounded-full ${getStatusInfo(shootings?.find(s => s.id === revertShootingId)?.status)?.color}`}>
+                {getStatusInfo(shootings?.find(s => s.id === revertShootingId)?.status)?.label}
+              </span>
+              <span>→</span>
+              <span className={`px-2 py-0.5 rounded-full ${getStatusInfo(revertNewStatus)?.color}`}>
+                {getStatusInfo(revertNewStatus)?.label}
+              </span>
+            </div>
+            <div>
+              <Label className="text-foreground text-xs">এডমিন পাসওয়ার্ড *</Label>
+              <Input
+                type="password"
+                value={revertPassword}
+                onChange={(e) => setRevertPassword(e.target.value)}
+                placeholder="পাসওয়ার্ড লিখুন"
+                className="bg-secondary border-border/50 mt-1"
+                onKeyDown={(e) => e.key === "Enter" && handleRevertWithPassword()}
+              />
+            </div>
+            <Button onClick={handleRevertWithPassword} disabled={revertVerifying} className="w-full">
+              {revertVerifying ? "যাচাই হচ্ছে..." : "নিশ্চিত করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
