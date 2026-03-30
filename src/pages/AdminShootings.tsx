@@ -179,6 +179,47 @@ const AdminShootings = () => {
 
   const statusOrder = statusOptions.map(s => s.value);
 
+  const autoCreateAttendance = async (shootingId: string) => {
+    try {
+      const { data: existing } = await supabase.from("attendance").select("id").eq("shooting_id", shootingId).limit(1);
+      if (existing && existing.length > 0) return;
+
+      const { data: participants } = await (supabase as any).from("shooting_participants").select("member_id").eq("shooting_id", shootingId);
+      
+      if (participants && participants.length > 0) {
+        const memberIds = participants.map((p: any) => p.member_id);
+        const { data: profiles } = await (supabase as any).from("profiles").select("id, daily_rate, salary_type").in("id", memberIds);
+        const rateMap: Record<string, number> = {};
+        profiles?.forEach((p: any) => { rateMap[p.id] = p.salary_type === "daily" ? Number(p.daily_rate || 0) : 0; });
+
+        const rows = participants.map((p: any) => ({
+          shooting_id: shootingId,
+          member_id: p.member_id,
+          is_present: true,
+          daily_rate: rateMap[p.member_id] || 0,
+          check_in_time: new Date().toISOString(),
+        }));
+        await supabase.from("attendance").insert(rows);
+        toast.success(`${rows.length} জন সদস্যের অটো হাজিরা যুক্ত হয়েছে!`);
+      } else {
+        const { data: allMembers } = await (supabase as any).from("profiles").select("id, daily_rate, salary_type").eq("is_active", true);
+        if (allMembers && allMembers.length > 0) {
+          const rows = allMembers.map((m: any) => ({
+            shooting_id: shootingId,
+            member_id: m.id,
+            is_present: false,
+            daily_rate: m.salary_type === "daily" ? Number(m.daily_rate || 0) : 0,
+          }));
+          await supabase.from("attendance").insert(rows);
+          toast.info(`${rows.length} জন সদস্যের হাজিরা তৈরি হয়েছে — হাজিরা পেজ থেকে আপডেট করুন।`);
+        }
+      }
+    } catch (err: any) {
+      console.error("Auto attendance error:", err);
+      toast.error("অটো হাজিরা তৈরিতে সমস্যা। হাজিরা পেজ থেকে ম্যানুয়ালি দিন।");
+    }
+  };
+
   const changeStatus = async (shootingId: string, newStatus: string) => {
     // Check if going backward
     const shooting = shootings?.find((s) => s.id === shootingId);
@@ -208,9 +249,16 @@ const AdminShootings = () => {
     }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
     if (error) { toast.error(error.message); return; }
+    
+    // Auto-create attendance when status becomes "completed"
+    if (newStatus === "completed") {
+      await autoCreateAttendance(shootingId);
+    }
+    
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings-for-attendance"] });
   };
 
   const handleRevertWithPassword = async () => {
