@@ -208,9 +208,16 @@ const AdminShootings = () => {
     }
     const { error } = await supabase.from("shootings").update({ status: newStatus }).eq("id", shootingId);
     if (error) { toast.error(error.message); return; }
+    
+    // Auto-create attendance when status becomes "completed"
+    if (newStatus === "completed") {
+      await autoCreateAttendance(shootingId);
+    }
+    
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-shootings-for-attendance"] });
   };
 
   const handleRevertWithPassword = async () => {
