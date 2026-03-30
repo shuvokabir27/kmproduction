@@ -182,7 +182,8 @@ const MemberSettings = () => {
       if (error) throw error;
       toast.success("ব্যাংক তথ্য আপডেট হয়েছে!");
       setBankDialogOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+      // Force page reload to refresh profile data from auth context
+      window.location.reload();
     } catch (err: any) {
       toast.error(err.message);
     } finally {
