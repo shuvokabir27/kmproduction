@@ -379,7 +379,9 @@ const MemberSettings = () => {
                 <div className="px-4 pb-4 pt-1 space-y-2">
                   {hasBank && (
                     <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(30, 80, 160, 0.08)' }}>
-                      {selectedBank ? (
+                      {selectedBank?.logo ? (
+                        <div className="h-8 w-10 rounded bg-white flex items-center justify-center shrink-0 p-0.5"><img src={selectedBank.logo} alt={selectedBank.short} className="h-full w-full object-contain" /></div>
+                      ) : selectedBank ? (
                         <span className="inline-flex items-center justify-center h-8 w-10 rounded text-[10px] font-bold shrink-0" style={{ backgroundColor: selectedBank.bg, color: '#fff' }}>{selectedBank.short}</span>
                       ) : (
                         <div className="h-8 w-10 rounded flex items-center justify-center" style={{ backgroundColor: '#1E50A0' }}>
