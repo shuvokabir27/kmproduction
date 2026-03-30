@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Landmark } from "lucide-react";
+import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Landmark, Pencil } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import bkashLogo from "@/assets/bkash-logo.png";
 import nagadLogo from "@/assets/nagad-logo.png";
@@ -327,18 +327,93 @@ const MemberSettings = () => {
             </div>
           </button>
 
-          <button
-            onClick={openBankDialog}
-            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
-          >
-            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Landmark className="h-5 w-5 text-primary" />
+          {/* ব্যাংক তথ্য কার্ড */}
+          <div className="rounded-xl bg-card border border-border/50 overflow-hidden">
+            <div className="flex items-center justify-between p-4 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Landmark className="h-5 w-5 text-primary" />
+                </div>
+                <p className="text-sm font-medium text-foreground">ব্যাংক তথ্য</p>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={openBankDialog}>
+                <Pencil className="h-4 w-4 text-muted-foreground" />
+              </Button>
             </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">ব্যাংক তথ্য</p>
-              <p className="text-xs text-muted-foreground">ব্যাংক, বিকাশ, নগদ নম্বর আপডেট করুন</p>
-            </div>
-          </button>
+
+            {(() => {
+              const p = profile as any;
+              const hasBank = p?.bank_name || p?.bank_account_no;
+              const hasBkash = p?.bkash_no;
+              const hasNagad = p?.nagad_no;
+              const hasAny = hasBank || hasBkash || hasNagad;
+
+              if (!hasAny) {
+                return (
+                  <div className="px-4 pb-4 pt-1">
+                    <button onClick={openBankDialog} className="w-full py-3 rounded-lg border-2 border-dashed border-border/50 text-xs text-muted-foreground hover:border-primary/50 transition-colors">
+                      + ব্যাংক, বিকাশ বা নগদ তথ্য যুক্ত করুন
+                    </button>
+                  </div>
+                );
+              }
+
+              const bankData = [
+                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651" },
+                { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838" },
+                { name: "BRAC Bank", short: "BRAC", bg: "#E31E25" },
+                { name: "City Bank", short: "CITY", bg: "#004B87" },
+                { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC" },
+                { name: "Prime Bank", short: "PB", bg: "#1B3A6B" },
+                { name: "Sonali Bank", short: "SB", bg: "#F7941D" },
+                { name: "Janata Bank", short: "JB", bg: "#003366" },
+                { name: "Agrani Bank", short: "AB", bg: "#8B0000" },
+                { name: "Pubali Bank", short: "PBL", bg: "#2E8B57" },
+              ];
+              const selectedBank = bankData.find(b => b.name === p?.bank_name);
+
+              return (
+                <div className="px-4 pb-4 pt-1 space-y-2">
+                  {hasBank && (
+                    <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(30, 80, 160, 0.08)' }}>
+                      {selectedBank ? (
+                        <span className="inline-flex items-center justify-center h-8 w-10 rounded text-[10px] font-bold shrink-0" style={{ backgroundColor: selectedBank.bg, color: '#fff' }}>{selectedBank.short}</span>
+                      ) : (
+                        <div className="h-8 w-10 rounded flex items-center justify-center" style={{ backgroundColor: '#1E50A0' }}>
+                          <Landmark className="h-4 w-4 text-white" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium text-foreground truncate">{p.bank_name || "ব্যাংক"}</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{p.bank_account_no}</p>
+                        {p.bank_account_holder && <p className="text-[10px] text-muted-foreground/70 truncate">{p.bank_account_holder}</p>}
+                      </div>
+                    </div>
+                  )}
+                  {hasBkash && (
+                    <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(230, 20, 80, 0.08)' }}>
+                      <img src={bkashLogo} alt="bKash" className="h-8 w-8 object-contain shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium" style={{ color: '#E6145B' }}>বিকাশ</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{p.bkash_no}</p>
+                        {p.bkash_holder && <p className="text-[10px] text-muted-foreground/70 truncate">{p.bkash_holder}</p>}
+                      </div>
+                    </div>
+                  )}
+                  {hasNagad && (
+                    <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(237, 28, 36, 0.08)' }}>
+                      <img src={nagadLogo} alt="Nagad" className="h-8 w-auto max-w-[32px] object-contain shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium" style={{ color: '#ED1C24' }}>নগদ</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{p.nagad_no}</p>
+                        {p.nagad_holder && <p className="text-[10px] text-muted-foreground/70 truncate">{p.nagad_holder}</p>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
 
           <button
             onClick={async () => { await signOut(); navigate("/login"); }}
