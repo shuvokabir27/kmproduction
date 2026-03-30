@@ -132,7 +132,7 @@ const AdminNotices = () => {
         queryClient.invalidateQueries({ queryKey: ["admin-notice-comment-counts"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () => {
-        queryClient.invalidateQueries({ queryKey: ["admin-poll-vote-counts"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-poll-vote-details"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
