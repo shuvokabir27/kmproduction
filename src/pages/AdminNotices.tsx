@@ -91,16 +91,33 @@ const AdminNotices = () => {
     enabled: !!polls && polls.length > 0,
   });
 
-  const { data: pollVoteCounts } = useQuery({
-    queryKey: ["admin-poll-vote-counts"],
+  // Fetch votes with voter names for admin
+  const { data: pollVoteDetails } = useQuery({
+    queryKey: ["admin-poll-vote-details"],
     queryFn: async () => {
       if (!polls || polls.length === 0) return {};
       const ids = polls.map((p: any) => p.id);
-      const { data } = await supabase.from("poll_votes").select("poll_id, option_id").in("poll_id", ids);
-      const map: Record<string, Record<string, number>> = {};
+      const { data } = await supabase
+        .from("poll_votes")
+        .select("poll_id, option_id, user_id")
+        .in("poll_id", ids);
+      // Get unique user_ids
+      const userIds = [...new Set((data ?? []).map((v: any) => v.user_id))];
+      let profileMap: Record<string, string> = {};
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name")
+          .in("user_id", userIds);
+        (profiles ?? []).forEach((p: any) => { profileMap[p.user_id] = p.full_name; });
+      }
+      // Group by poll_id -> option_id -> { count, names[] }
+      const map: Record<string, Record<string, { count: number; names: string[] }>> = {};
       (data ?? []).forEach((v: any) => {
         if (!map[v.poll_id]) map[v.poll_id] = {};
-        map[v.poll_id][v.option_id] = (map[v.poll_id][v.option_id] || 0) + 1;
+        if (!map[v.poll_id][v.option_id]) map[v.poll_id][v.option_id] = { count: 0, names: [] };
+        map[v.poll_id][v.option_id].count++;
+        map[v.poll_id][v.option_id].names.push(profileMap[v.user_id] || "অজানা");
       });
       return map;
     },
