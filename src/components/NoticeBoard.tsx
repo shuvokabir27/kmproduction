@@ -140,12 +140,28 @@ export function NoticeBoard() {
     enabled: !!notices && notices.length > 0,
   });
 
+  // Fetch active polls
+  const { data: activePolls } = useQuery({
+    queryKey: ["member-polls"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("polls")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
   // Realtime for comment counts
   useEffect(() => {
     const channel = supabase
       .channel("notice-comments-counts")
       .on("postgres_changes", { event: "*", schema: "public", table: "notice_comments" }, () => {
         queryClient.invalidateQueries({ queryKey: ["notice-comment-counts"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["poll-votes"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -170,7 +186,9 @@ export function NoticeBoard() {
     }
   }, [notices, searchParams]);
 
-  if (!hasOngoingShooting && (!notices || notices.length === 0)) return null;
+  const hasPolls = activePolls && activePolls.length > 0;
+
+  if (!hasOngoingShooting && (!notices || notices.length === 0) && !hasPolls) return null;
 
   // Ongoing Shooting Banner
   if (hasOngoingShooting) {
