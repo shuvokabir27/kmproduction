@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Plus, Pin, Trash2, MessageSquare, Clock, Eye, EyeOff, Vote, Users, Trophy, AlertTriangle, X, Ban } from "lucide-react"; 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import { NoticeComments } from "@/components/NoticeComments";
