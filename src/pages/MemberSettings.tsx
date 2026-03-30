@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail } from "lucide-react";
+import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Landmark } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -43,6 +43,10 @@ const MemberSettings = () => {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+
+  const [bankDialogOpen, setBankDialogOpen] = useState(false);
+  const [bankFields, setBankFields] = useState({ bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "" });
+  const [bankSaving, setBankSaving] = useState(false);
 
   const [extraFields, setExtraFields] = useState({
     address: "", education: "", achievements: "", short_bio: "",
@@ -143,6 +147,37 @@ const MemberSettings = () => {
       toast.error(err.message);
     } finally {
       setPwSaving(false);
+    }
+  };
+
+  const openBankDialog = () => {
+    setBankFields({
+      bank_name: (profile as any)?.bank_name || "",
+      bank_account_no: (profile as any)?.bank_account_no || "",
+      bkash_no: (profile as any)?.bkash_no || "",
+      nagad_no: (profile as any)?.nagad_no || "",
+    });
+    setBankDialogOpen(true);
+  };
+
+  const handleSaveBank = async () => {
+    if (!profile) return;
+    setBankSaving(true);
+    try {
+      const { error } = await supabase.from("profiles").update({
+        bank_name: bankFields.bank_name || null,
+        bank_account_no: bankFields.bank_account_no || null,
+        bkash_no: bankFields.bkash_no || null,
+        nagad_no: bankFields.nagad_no || null,
+      }).eq("id", profile.id);
+      if (error) throw error;
+      toast.success("ব্যাংক তথ্য আপডেট হয়েছে!");
+      setBankDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setBankSaving(false);
     }
   };
 
@@ -280,6 +315,19 @@ const MemberSettings = () => {
             <div>
               <p className="text-sm font-medium text-foreground">ইমেইল পরিবর্তন</p>
               <p className="text-xs text-muted-foreground">{profile?.email || user?.email || "ইমেইল সেট করুন"}</p>
+            </div>
+          </button>
+
+          <button
+            onClick={openBankDialog}
+            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
+          >
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Landmark className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">ব্যাংক তথ্য</p>
+              <p className="text-xs text-muted-foreground">ব্যাংক, বিকাশ, নগদ নম্বর আপডেট করুন</p>
             </div>
           </button>
 
@@ -432,6 +480,38 @@ const MemberSettings = () => {
             </div>
             <Button onClick={handleChangeEmail} disabled={emailSaving || !newEmail.trim()} className="w-full gap-2">
               <Mail className="h-4 w-4" /> {emailSaving ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bank Info Dialog */}
+      <Dialog open={bankDialogOpen} onOpenChange={setBankDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Landmark className="h-5 w-5 text-primary" /> ব্যাংক তথ্য
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
+              <Input value={bankFields.bank_name} onChange={e => setBankFields(f => ({ ...f, bank_name: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="যেমন: ডাচ বাংলা ব্যাংক" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">ব্যাংক একাউন্ট নম্বর</Label>
+              <Input value={bankFields.bank_account_no} onChange={e => setBankFields(f => ({ ...f, bank_account_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="একাউন্ট নম্বর দিন" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">বিকাশ নম্বর</Label>
+              <Input value={bankFields.bkash_no} onChange={e => setBankFields(f => ({ ...f, bkash_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="বিকাশ নম্বর দিন" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">নগদ নম্বর</Label>
+              <Input value={bankFields.nagad_no} onChange={e => setBankFields(f => ({ ...f, nagad_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="নগদ নম্বর দিন" />
+            </div>
+            <Button onClick={handleSaveBank} disabled={bankSaving} className="w-full gap-2">
+              <Save className="h-4 w-4" /> {bankSaving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
             </Button>
           </div>
         </DialogContent>
