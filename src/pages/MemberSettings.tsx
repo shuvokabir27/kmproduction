@@ -44,6 +44,10 @@ const MemberSettings = () => {
   const [newEmail, setNewEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
 
+  const [bankDialogOpen, setBankDialogOpen] = useState(false);
+  const [bankFields, setBankFields] = useState({ bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "" });
+  const [bankSaving, setBankSaving] = useState(false);
+
   const [extraFields, setExtraFields] = useState({
     address: "", education: "", achievements: "", short_bio: "",
     favorite_actor: "", favorite_actress: "", favorite_color: "",
