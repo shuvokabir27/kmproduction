@@ -19,6 +19,7 @@ const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
+  const [paymentDetailOpen, setPaymentDetailOpen] = useState(false);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
