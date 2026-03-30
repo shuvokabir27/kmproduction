@@ -154,8 +154,11 @@ const MemberSettings = () => {
     setBankFields({
       bank_name: (profile as any)?.bank_name || "",
       bank_account_no: (profile as any)?.bank_account_no || "",
+      bank_account_holder: (profile as any)?.bank_account_holder || "",
       bkash_no: (profile as any)?.bkash_no || "",
+      bkash_holder: (profile as any)?.bkash_holder || "",
       nagad_no: (profile as any)?.nagad_no || "",
+      nagad_holder: (profile as any)?.nagad_holder || "",
     });
     setBankDialogOpen(true);
   };
@@ -167,9 +170,12 @@ const MemberSettings = () => {
       const { error } = await supabase.from("profiles").update({
         bank_name: bankFields.bank_name || null,
         bank_account_no: bankFields.bank_account_no || null,
+        bank_account_holder: bankFields.bank_account_holder || null,
         bkash_no: bankFields.bkash_no || null,
+        bkash_holder: bankFields.bkash_holder || null,
         nagad_no: bankFields.nagad_no || null,
-      }).eq("id", profile.id);
+        nagad_holder: bankFields.nagad_holder || null,
+      } as any).eq("id", profile.id);
       if (error) throw error;
       toast.success("ব্যাংক তথ্য আপডেট হয়েছে!");
       setBankDialogOpen(false);
