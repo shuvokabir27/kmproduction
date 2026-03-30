@@ -624,7 +624,10 @@ const MemberSettings = () => {
                           {banks.map(bank => (
                             <SelectItem key={bank.name} value={bank.name}>
                               <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: bank.bg, color: bank.text }}>{bank.short}</span>
+                                {bank.logo
+                                  ? <div className="h-5 w-7 rounded bg-white flex items-center justify-center shrink-0 p-0.5"><img src={bank.logo} alt={bank.short} className="h-full w-full object-contain" /></div>
+                                  : <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: bank.bg, color: bank.text }}>{bank.short}</span>
+                                }
                                 {bank.name}
                               </div>
                             </SelectItem>
