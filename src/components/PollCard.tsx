@@ -20,6 +20,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [voting, setVoting] = useState(false);
+  const [confirmVote, setConfirmVote] = useState<{ optionId: string; optionText: string } | null>(null);
 
   // Fetch options
   const { data: options } = useQuery({
