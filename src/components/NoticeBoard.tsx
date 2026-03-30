@@ -148,6 +148,7 @@ export function NoticeBoard() {
         .from("polls")
         .select("*")
         .eq("is_active", true)
+        .order("is_pinned", { ascending: false })
         .order("created_at", { ascending: false });
       return data ?? [];
     },
@@ -479,40 +480,38 @@ export function NoticeBoard() {
           </div>
         </div>
 
-        {/* Notice List */}
+        {/* Combined: Pinned items first (notices + polls), then unpinned notices, then unpinned polls */}
         <div className="divide-y divide-border/15">
           <AnimatePresence>
-            {notices.map((notice: any, i: number) => (
+            {/* Pinned polls */}
+            {activePolls?.filter((p: any) => p.is_pinned).map((poll: any, i: number) => (
+              <motion.div
+                key={`poll-${poll.id}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
+                className="p-3.5 md:p-4 bg-gradient-to-r from-emerald-500/8 via-transparent to-transparent"
+              >
+                <PollCard poll={poll} compact />
+              </motion.div>
+            ))}
+
+            {/* Pinned notices */}
+            {notices.filter((n: any) => n.is_pinned).map((notice: any, i: number) => (
               <motion.div
                 key={notice.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
-                className={`p-3.5 md:p-4 cursor-pointer transition-all duration-200 group
-                  ${notice.is_pinned
-                    ? "bg-gradient-to-r from-amber-500/8 via-transparent to-transparent hover:from-amber-500/15"
-                    : "hover:bg-primary/5"
-                  }`}
+                transition={{ delay: (activePolls?.filter((p: any) => p.is_pinned).length ?? 0) * 0.06 + i * 0.06, type: "spring", stiffness: 200 }}
+                className="p-3.5 md:p-4 cursor-pointer transition-all duration-200 group bg-gradient-to-r from-amber-500/8 via-transparent to-transparent hover:from-amber-500/15"
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start gap-3">
-                  {/* Icon */}
-                  <div className={`mt-0.5 shrink-0 h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center ${
-                    notice.is_pinned
-                      ? "bg-amber-500/15 ring-1 ring-amber-500/20"
-                      : "bg-primary/10 ring-1 ring-primary/10 group-hover:ring-primary/20"
-                  }`}>
-                    {notice.is_pinned
-                      ? <Pin className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
-                      : <Megaphone className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary/70 group-hover:text-primary" />
-                    }
+                  <div className="mt-0.5 shrink-0 h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center bg-amber-500/15 ring-1 ring-amber-500/20">
+                    <Pin className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
                   </div>
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <h3 className={`text-sm md:text-[15px] font-semibold leading-snug ${
-                      notice.is_pinned ? "text-amber-300" : "text-foreground group-hover:text-primary"
-                    } transition-colors`}>
-                      
+                    <h3 className="text-sm md:text-[15px] font-semibold leading-snug text-amber-300 transition-colors">
                       {notice.title}
                     </h3>
                     <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mt-1 leading-relaxed">{notice.content}</p>
@@ -532,25 +531,57 @@ export function NoticeBoard() {
                 </div>
               </motion.div>
             ))}
-          </AnimatePresence>
-        </div>
 
-        {/* Poll Cards */}
-        {hasPolls && (
-          <div className="divide-y divide-border/15">
-            {activePolls!.map((poll: any, i: number) => (
+            {/* Unpinned notices */}
+            {notices.filter((n: any) => !n.is_pinned).map((notice: any, i: number) => (
               <motion.div
-                key={poll.id}
+                key={notice.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (notices?.length ?? 0) * 0.06 + i * 0.06, type: "spring", stiffness: 200 }}
+                transition={{ delay: 0.2 + i * 0.06, type: "spring", stiffness: 200 }}
+                className="p-3.5 md:p-4 cursor-pointer transition-all duration-200 group hover:bg-primary/5"
+                onClick={() => setSelectedNotice(notice)}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 shrink-0 h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center bg-primary/10 ring-1 ring-primary/10 group-hover:ring-primary/20">
+                    <Megaphone className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary/70 group-hover:text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm md:text-[15px] font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
+                      {notice.title}
+                    </h3>
+                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mt-1 leading-relaxed">{notice.content}</p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] md:text-xs text-muted-foreground/70 flex items-center gap-1">
+                        <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                        {formatDistanceToNow(new Date(notice.created_at), { addSuffix: true, locale: bn })}
+                      </span>
+                      {(commentCounts?.[notice.id] ?? 0) > 0 && (
+                        <span className="text-[10px] md:text-xs text-primary flex items-center gap-1 font-semibold bg-primary/10 px-1.5 py-0.5 rounded-full">
+                          <MessageSquare className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                          {commentCounts[notice.id]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Unpinned polls */}
+            {activePolls?.filter((p: any) => !p.is_pinned).map((poll: any, i: number) => (
+              <motion.div
+                key={`poll-${poll.id}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.06, type: "spring", stiffness: 200 }}
                 className="p-3.5 md:p-4"
               >
                 <PollCard poll={poll} compact />
               </motion.div>
             ))}
-          </div>
-        )}
+          </AnimatePresence>
+        </div>
       </Card>
       </div>
 

@@ -786,6 +786,7 @@ export type Database = {
           expires_at: string | null
           id: string
           is_active: boolean
+          is_pinned: boolean
           question: string
         }
         Insert: {
@@ -794,6 +795,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_active?: boolean
+          is_pinned?: boolean
           question: string
         }
         Update: {
@@ -802,6 +804,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_active?: boolean
+          is_pinned?: boolean
           question?: string
         }
         Relationships: []
