@@ -613,7 +613,9 @@ const MemberSettings = () => {
                         <SelectTrigger className="bg-secondary/50 border-border/50">
                           <div className="flex items-center gap-2">
                             {selected && (
-                              <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: selected.bg, color: selected.text }}>{selected.short}</span>
+                              selected.logo
+                                ? <div className="h-5 w-7 rounded bg-white flex items-center justify-center shrink-0 p-0.5"><img src={selected.logo} alt={selected.short} className="h-full w-full object-contain" /></div>
+                                : <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: selected.bg, color: selected.text }}>{selected.short}</span>
                             )}
                             <SelectValue placeholder="ব্যাংক নির্বাচন করুন" />
                           </div>
