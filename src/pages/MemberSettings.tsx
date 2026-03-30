@@ -14,6 +14,7 @@ import { useState, useEffect, useRef } from "react";
 import bkashLogo from "@/assets/bkash-logo.png";
 import nagadLogo from "@/assets/nagad-logo.png";
 import ibblLogo from "@/assets/bank-logos/ibbl.png";
+import dbblLogo from "@/assets/bank-logos/dbbl.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
@@ -362,7 +363,7 @@ const MemberSettings = () => {
               }
 
               const bankData = [
-                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", logo: null as string | null },
+                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", logo: dbblLogo },
                 { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", logo: ibblLogo },
                 { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", logo: null },
                 { name: "City Bank", short: "CITY", bg: "#004B87", logo: null },
@@ -595,7 +596,7 @@ const MemberSettings = () => {
                 <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
                 {(() => {
                   const banks = [
-                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff", logo: null as string | null },
+                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff", logo: dbblLogo },
                     { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", text: "#fff", logo: ibblLogo },
                     { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", text: "#fff", logo: null },
                     { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff", logo: null },
