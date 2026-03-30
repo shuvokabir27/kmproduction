@@ -29,6 +29,7 @@ const AdminNotices = () => {
   const [saving, setSaving] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<any>(null);
   const [selectedPoll, setSelectedPoll] = useState<any>(null);
+  const [closePollConfirm, setClosePollConfirm] = useState<string | null>(null);
 
   const { data: notices } = useQuery({
     queryKey: ["admin-notices"],
