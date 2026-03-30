@@ -45,6 +45,23 @@ export function PollCard({ poll, compact }: PollCardProps) {
     },
   });
 
+  // Fetch voter names (shown when poll is closed)
+  const { data: voterNames } = useQuery({
+    queryKey: ["poll-voter-names", poll.id],
+    queryFn: async () => {
+      if (!votes || votes.length === 0) return {};
+      const userIds = [...new Set(votes.map((v: any) => v.user_id))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, full_name")
+        .in("user_id", userIds);
+      const map: Record<string, string> = {};
+      (profiles ?? []).forEach((p: any) => { map[p.user_id] = p.full_name; });
+      return map;
+    },
+    enabled: !poll.is_active && !!votes && votes.length > 0,
+  });
+
   const totalVotes = votes?.length ?? 0;
   const myVote = votes?.find((v: any) => v.user_id === user?.id);
   const hasVoted = !!myVote;
