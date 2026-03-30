@@ -200,9 +200,10 @@ const AdminNotices = () => {
     }
   };
 
-  const closePoll = async (id: string) => {
-    if (!confirm("ভোটিং বন্ধ করতে চান? একবার বন্ধ করলে আর চালু করা যাবে না।")) return;
-    const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", id);
+  const closePoll = async () => {
+    if (!closePollConfirm) return;
+    const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", closePollConfirm);
+    setClosePollConfirm(null);
     if (error) toast.error(error.message);
     else {
       toast.success("ভোটিং বন্ধ করা হয়েছে");
