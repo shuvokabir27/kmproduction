@@ -111,7 +111,9 @@ export function PollCard({ poll, compact }: PollCardProps) {
         <div className="flex-1 min-w-0">
           <h3 className="text-sm md:text-[15px] font-semibold text-foreground leading-snug">{poll.question}</h3>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded-full">ভোটিং</span>
+            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${poll.is_active ? "text-emerald-400 bg-emerald-500/10" : "text-destructive bg-destructive/10"}`}>
+              {poll.is_active ? "ভোটিং চলছে" : "ভোটিং শেষ"}
+            </span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
               <Users className="h-2.5 w-2.5" /> {totalVotes} ভোট
             </span>
