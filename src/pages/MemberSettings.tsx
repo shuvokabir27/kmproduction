@@ -15,6 +15,7 @@ import bkashLogo from "@/assets/bkash-logo.png";
 import nagadLogo from "@/assets/nagad-logo.png";
 import ibblLogo from "@/assets/bank-logos/ibbl.png";
 import dbblLogo from "@/assets/bank-logos/dbbl.png";
+import cityLogo from "@/assets/bank-logos/city.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
