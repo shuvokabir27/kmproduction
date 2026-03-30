@@ -471,8 +471,8 @@ export function NoticeBoard() {
                 transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
                 className={`p-3.5 md:p-4 cursor-pointer transition-all duration-200 group
                   ${notice.is_pinned
-                    ? "bg-gradient-to-r from-amber-500/8 via-transparent to-transparent border-l-[3px] border-l-amber-400 hover:from-amber-500/15"
-                    : "hover:bg-primary/5 border-l-[3px] border-l-transparent"
+                    ? "bg-gradient-to-r from-amber-500/8 via-transparent to-transparent hover:from-amber-500/15"
+                    : "hover:bg-primary/5"
                   }`}
                 onClick={() => setSelectedNotice(notice)}
               >
