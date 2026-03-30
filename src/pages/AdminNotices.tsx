@@ -291,6 +291,7 @@ const AdminNotices = () => {
                   <Card className={`p-4 bg-card border-border/50 ${!poll.is_active ? "opacity-50" : ""}`}>
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-2">
+                        {poll.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-400 shrink-0" />}
                         <Vote className="h-4 w-4 text-emerald-400 shrink-0" />
                         <h3 className="font-semibold text-foreground text-sm">{poll.question}</h3>
                       </div>
@@ -298,6 +299,10 @@ const AdminNotices = () => {
                         <Button variant="ghost" size="icon" className="h-8 w-8"
                           onClick={() => togglePollActive(poll.id, poll.is_active)}>
                           {poll.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8"
+                          onClick={() => togglePollPin(poll.id, poll.is_pinned)}>
+                          <Pin className={`h-3.5 w-3.5 ${poll.is_pinned ? "text-primary" : "text-muted-foreground"}`} />
                         </Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive"
                           onClick={() => handleDeletePoll(poll.id)}>
