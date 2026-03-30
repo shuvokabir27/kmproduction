@@ -534,6 +534,23 @@ export function NoticeBoard() {
             ))}
           </AnimatePresence>
         </div>
+
+        {/* Poll Cards */}
+        {hasPolls && (
+          <div className="divide-y divide-border/15">
+            {activePolls!.map((poll: any, i: number) => (
+              <motion.div
+                key={poll.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: (notices?.length ?? 0) * 0.06 + i * 0.06, type: "spring", stiffness: 200 }}
+                className="p-3.5 md:p-4"
+              >
+                <PollCard poll={poll} compact />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </Card>
       </div>
 
