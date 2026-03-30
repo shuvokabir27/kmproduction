@@ -75,6 +75,9 @@ export function PollCard({ poll, compact }: PollCardProps) {
 
   const handleVote = async (optionId: string) => {
     if (!user || hasVoted || voting) return;
+    const optText = options?.find((o: any) => o.id === optionId)?.option_text ?? "";
+    const confirmed = confirm(`আপনি "${optText}" এ ভোট দিতে চান?\n\n⚠️ একবার ভোট দিলে আর পরিবর্তন করা যাবে না।`);
+    if (!confirmed) return;
     setVoting(true);
     try {
       const { error } = await supabase.from("poll_votes").insert({
