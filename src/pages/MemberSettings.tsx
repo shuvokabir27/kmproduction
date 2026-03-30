@@ -596,7 +596,7 @@ const MemberSettings = () => {
                 <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
                 {(() => {
                   const banks = [
-                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff", logo: null as string | null },
+                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff", logo: dbblLogo },
                     { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", text: "#fff", logo: ibblLogo },
                     { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", text: "#fff", logo: null },
                     { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff", logo: null },
