@@ -13,6 +13,7 @@ import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, Lo
 import { useState, useEffect, useRef } from "react";
 import bkashLogo from "@/assets/bkash-logo.png";
 import nagadLogo from "@/assets/nagad-logo.png";
+import ibblLogo from "@/assets/bank-logos/ibbl.png";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
@@ -361,16 +362,16 @@ const MemberSettings = () => {
               }
 
               const bankData = [
-                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651" },
-                { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838" },
-                { name: "BRAC Bank", short: "BRAC", bg: "#E31E25" },
-                { name: "City Bank", short: "CITY", bg: "#004B87" },
-                { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC" },
-                { name: "Prime Bank", short: "PB", bg: "#1B3A6B" },
-                { name: "Sonali Bank", short: "SB", bg: "#F7941D" },
-                { name: "Janata Bank", short: "JB", bg: "#003366" },
-                { name: "Agrani Bank", short: "AB", bg: "#8B0000" },
-                { name: "Pubali Bank", short: "PBL", bg: "#2E8B57" },
+                { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", logo: null as string | null },
+                { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", logo: ibblLogo },
+                { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", logo: null },
+                { name: "City Bank", short: "CITY", bg: "#004B87", logo: null },
+                { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC", logo: null },
+                { name: "Prime Bank", short: "PB", bg: "#1B3A6B", logo: null },
+                { name: "Sonali Bank", short: "SB", bg: "#F7941D", logo: null },
+                { name: "Janata Bank", short: "JB", bg: "#003366", logo: null },
+                { name: "Agrani Bank", short: "AB", bg: "#8B0000", logo: null },
+                { name: "Pubali Bank", short: "PBL", bg: "#2E8B57", logo: null },
               ];
               const selectedBank = bankData.find(b => b.name === p?.bank_name);
 
@@ -378,7 +379,9 @@ const MemberSettings = () => {
                 <div className="px-4 pb-4 pt-1 space-y-2">
                   {hasBank && (
                     <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(30, 80, 160, 0.08)' }}>
-                      {selectedBank ? (
+                      {selectedBank?.logo ? (
+                        <div className="h-8 w-10 rounded bg-white flex items-center justify-center shrink-0 p-0.5"><img src={selectedBank.logo} alt={selectedBank.short} className="h-full w-full object-contain" /></div>
+                      ) : selectedBank ? (
                         <span className="inline-flex items-center justify-center h-8 w-10 rounded text-[10px] font-bold shrink-0" style={{ backgroundColor: selectedBank.bg, color: '#fff' }}>{selectedBank.short}</span>
                       ) : (
                         <div className="h-8 w-10 rounded flex items-center justify-center" style={{ backgroundColor: '#1E50A0' }}>
@@ -592,16 +595,16 @@ const MemberSettings = () => {
                 <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
                 {(() => {
                   const banks = [
-                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff" },
-                    { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", text: "#fff" },
-                    { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", text: "#fff" },
-                    { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff" },
-                    { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC", text: "#fff" },
-                    { name: "Prime Bank", short: "PB", bg: "#1B3A6B", text: "#fff" },
-                    { name: "Sonali Bank", short: "SB", bg: "#F7941D", text: "#fff" },
-                    { name: "Janata Bank", short: "JB", bg: "#003366", text: "#fff" },
-                    { name: "Agrani Bank", short: "AB", bg: "#8B0000", text: "#fff" },
-                    { name: "Pubali Bank", short: "PBL", bg: "#2E8B57", text: "#fff" },
+                    { name: "Dutch-Bangla Bank", short: "DBBL", bg: "#00A651", text: "#fff", logo: null as string | null },
+                    { name: "Islami Bank Bangladesh", short: "IBBL", bg: "#006838", text: "#fff", logo: ibblLogo },
+                    { name: "BRAC Bank", short: "BRAC", bg: "#E31E25", text: "#fff", logo: null },
+                    { name: "City Bank", short: "CITY", bg: "#004B87", text: "#fff", logo: null },
+                    { name: "Eastern Bank (EBL)", short: "EBL", bg: "#0072BC", text: "#fff", logo: null },
+                    { name: "Prime Bank", short: "PB", bg: "#1B3A6B", text: "#fff", logo: null },
+                    { name: "Sonali Bank", short: "SB", bg: "#F7941D", text: "#fff", logo: null },
+                    { name: "Janata Bank", short: "JB", bg: "#003366", text: "#fff", logo: null },
+                    { name: "Agrani Bank", short: "AB", bg: "#8B0000", text: "#fff", logo: null },
+                    { name: "Pubali Bank", short: "PBL", bg: "#2E8B57", text: "#fff", logo: null },
                   ];
                   const selected = banks.find(b => b.name === bankFields.bank_name);
                   return (
@@ -610,7 +613,9 @@ const MemberSettings = () => {
                         <SelectTrigger className="bg-secondary/50 border-border/50">
                           <div className="flex items-center gap-2">
                             {selected && (
-                              <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: selected.bg, color: selected.text }}>{selected.short}</span>
+                              selected.logo
+                                ? <div className="h-5 w-7 rounded bg-white flex items-center justify-center shrink-0 p-0.5"><img src={selected.logo} alt={selected.short} className="h-full w-full object-contain" /></div>
+                                : <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: selected.bg, color: selected.text }}>{selected.short}</span>
                             )}
                             <SelectValue placeholder="ব্যাংক নির্বাচন করুন" />
                           </div>
@@ -619,7 +624,10 @@ const MemberSettings = () => {
                           {banks.map(bank => (
                             <SelectItem key={bank.name} value={bank.name}>
                               <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: bank.bg, color: bank.text }}>{bank.short}</span>
+                                {bank.logo
+                                  ? <div className="h-5 w-7 rounded bg-white flex items-center justify-center shrink-0 p-0.5"><img src={bank.logo} alt={bank.short} className="h-full w-full object-contain" /></div>
+                                  : <span className="inline-flex items-center justify-center h-5 w-7 rounded text-[9px] font-bold shrink-0" style={{ backgroundColor: bank.bg, color: bank.text }}>{bank.short}</span>
+                                }
                                 {bank.name}
                               </div>
                             </SelectItem>
