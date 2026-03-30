@@ -2,8 +2,9 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { Vote, CheckCircle2, Trophy, Users } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Vote, CheckCircle2, Trophy, Users, AlertTriangle, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PollCardProps {
   poll: {
