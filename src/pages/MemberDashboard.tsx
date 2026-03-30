@@ -19,6 +19,7 @@ const MemberDashboard = () => {
   const { user, profile, loading, isAdmin } = useAuth();
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
+  const [paymentDetailOpen, setPaymentDetailOpen] = useState(false);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
@@ -75,11 +76,11 @@ const MemberDashboard = () => {
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
   const balanceCards = [
-    { label: "বর্তমান ব্যালেন্স", value: balance?.balance, icon: Wallet, gradient: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400", iconBg: "bg-violet-500/10" },
-    { label: "মোট পেমেন্ট", value: balance?.totalPaid, icon: CreditCard, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10" },
-    { label: "মোট বোনাস", value: balance?.totalBonus, icon: Gift, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10" },
-    { label: "মোট গাড়ি ভাড়া", value: balance?.totalTransport, icon: Car, gradient: "from-cyan-500/20 to-cyan-500/5", iconColor: "text-cyan-400", iconBg: "bg-cyan-500/10" },
-    { label: "মাসিক বেতন", value: balance?.totalSalaryCredits, icon: Banknote, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10" },
+    { label: "বর্তমান ব্যালেন্স", value: balance?.balance, icon: Wallet, gradient: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400", iconBg: "bg-violet-500/10", onClick: undefined as (() => void) | undefined },
+    { label: "মোট পেমেন্ট", value: balance?.totalPaid, icon: CreditCard, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setPaymentDetailOpen(true) },
+    { label: "মোট বোনাস", value: balance?.totalBonus, icon: Gift, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: undefined },
+    { label: "মোট গাড়ি ভাড়া", value: balance?.totalTransport, icon: Car, gradient: "from-cyan-500/20 to-cyan-500/5", iconColor: "text-cyan-400", iconBg: "bg-cyan-500/10", onClick: undefined },
+    { label: "মাসিক বেতন", value: balance?.totalSalaryCredits, icon: Banknote, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10", onClick: undefined },
   ];
 
   return (
@@ -105,7 +106,10 @@ const MemberDashboard = () => {
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card) => (
             <motion.div key={card.label} variants={item}>
-              <div className="premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+              <div
+                className={`premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
+                onClick={card.onClick}
+              >
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
                 <div className="relative z-10">
                   <div className={`h-9 w-9 rounded-xl ${card.iconBg} flex items-center justify-center mb-3`}>
@@ -113,6 +117,7 @@ const MemberDashboard = () => {
                   </div>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">{card.label}</p>
                   <p className="text-xl md:text-2xl font-bold text-foreground mt-1">৳{card.value?.toLocaleString("bn-BD") || "০"}</p>
+                  {card.onClick && <p className="text-[9px] text-primary/60 mt-1">বিস্তারিত দেখুন →</p>}
                 </div>
               </div>
             </motion.div>
@@ -319,6 +324,57 @@ const MemberDashboard = () => {
                   />
                 );
               })()}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Detail Dialog */}
+      <Dialog open={paymentDetailOpen} onOpenChange={setPaymentDetailOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-md max-h-[85vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <CreditCard className="h-5 w-5 text-rose-400" />
+              মোট পেমেন্ট বিবরণ
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Total Summary */}
+            <div className="rounded-xl bg-gradient-to-br from-rose-500/15 to-rose-500/5 p-4 text-center border border-rose-500/10">
+              <p className="text-xs text-muted-foreground mb-1">সর্বমোট পেমেন্ট পেয়েছেন</p>
+              <p className="text-3xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p>
+              <p className="text-[10px] text-muted-foreground mt-2">মোট {recentPayments?.length || 0}টি পেমেন্ট</p>
+            </div>
+
+            {/* Note */}
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/15 p-3">
+              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                📌 <span className="font-medium">বিশেষ দ্রষ্টব্য:</span> এই হিসাব অ্যাপ চালু হওয়ার পর থেকে গণনা করা হচ্ছে। অ্যাপ চালুর পূর্বের কোনো লেনদেন এখানে অন্তর্ভুক্ত নয়।
+              </p>
+            </div>
+
+            {/* Payment List */}
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-medium">পেমেন্ট তালিকা</p>
+              <div className="divide-y divide-border/10 rounded-xl border border-border/20 overflow-hidden">
+                {recentPayments?.length === 0 && (
+                  <div className="p-6 text-center text-sm text-muted-foreground">কোনো পেমেন্ট নেই</div>
+                )}
+                {recentPayments?.map((p: any) => (
+                  <div key={p.id} className="p-3 flex items-center justify-between hover:bg-secondary/10 transition-colors">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {new Date(p.payment_date).toLocaleDateString("bn-BD")} • {paymentMethodLabel[p.payment_method] || p.payment_method}
+                      </p>
+                      {p.notes && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{p.notes}</p>}
+                    </div>
+                    <div className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-medium">
+                      {paymentMethodLabel[p.payment_method] || p.payment_method}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </DialogContent>
