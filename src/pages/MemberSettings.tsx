@@ -393,7 +393,7 @@ const MemberSettings = () => {
                   )}
                   {hasBkash && (
                     <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(230, 20, 80, 0.08)' }}>
-                      <img src={bkashLogo} alt="bKash" className="h-8 w-8 object-contain shrink-0" />
+                      <div className="h-8 w-8 rounded bg-white flex items-center justify-center shrink-0 p-1"><img src={bkashLogo} alt="bKash" className="h-full w-full object-contain" /></div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-medium" style={{ color: '#E6145B' }}>বিকাশ</p>
                         <p className="text-[11px] text-muted-foreground truncate">{p.bkash_no}</p>
@@ -403,7 +403,7 @@ const MemberSettings = () => {
                   )}
                   {hasNagad && (
                     <div className="flex items-center gap-3 p-2.5 rounded-lg" style={{ backgroundColor: 'rgba(237, 28, 36, 0.08)' }}>
-                      <img src={nagadLogo} alt="Nagad" className="h-8 w-auto max-w-[32px] object-contain shrink-0" />
+                      <div className="h-8 w-8 rounded bg-white flex items-center justify-center shrink-0 p-1"><img src={nagadLogo} alt="Nagad" className="h-full w-full object-contain" /></div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-medium" style={{ color: '#ED1C24' }}>নগদ</p>
                         <p className="text-[11px] text-muted-foreground truncate">{p.nagad_no}</p>
@@ -642,7 +642,7 @@ const MemberSettings = () => {
             {/* বিকাশ */}
             <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(230, 20, 80, 0.08)', borderColor: 'rgba(230, 20, 80, 0.25)' }}>
               <div className="flex items-center gap-2">
-                <img src={bkashLogo} alt="bKash" className="h-6 w-6 object-contain" />
+                <div className="h-6 w-6 rounded bg-white flex items-center justify-center p-0.5"><img src={bkashLogo} alt="bKash" className="h-full w-full object-contain" /></div>
                 <p className="text-xs font-semibold" style={{ color: '#E6145B' }}>বিকাশ</p>
               </div>
               <div>
@@ -658,7 +658,7 @@ const MemberSettings = () => {
             {/* নগদ */}
             <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(237, 28, 36, 0.08)', borderColor: 'rgba(237, 130, 20, 0.3)' }}>
               <div className="flex items-center gap-2">
-                <img src={nagadLogo} alt="Nagad" className="h-6 w-auto object-contain" />
+                <div className="h-6 w-6 rounded bg-white flex items-center justify-center p-0.5"><img src={nagadLogo} alt="Nagad" className="h-full w-full object-contain" /></div>
                 <p className="text-xs font-semibold" style={{ color: '#ED1C24' }}>নগদ</p>
               </div>
               <div>
