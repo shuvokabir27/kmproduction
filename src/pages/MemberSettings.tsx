@@ -484,6 +484,38 @@ const MemberSettings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Bank Info Dialog */}
+      <Dialog open={bankDialogOpen} onOpenChange={setBankDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <Landmark className="h-5 w-5 text-primary" /> ব্যাংক তথ্য
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
+              <Input value={bankFields.bank_name} onChange={e => setBankFields(f => ({ ...f, bank_name: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="যেমন: ডাচ বাংলা ব্যাংক" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">ব্যাংক একাউন্ট নম্বর</Label>
+              <Input value={bankFields.bank_account_no} onChange={e => setBankFields(f => ({ ...f, bank_account_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="একাউন্ট নম্বর দিন" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">বিকাশ নম্বর</Label>
+              <Input value={bankFields.bkash_no} onChange={e => setBankFields(f => ({ ...f, bkash_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="বিকাশ নম্বর দিন" />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">নগদ নম্বর</Label>
+              <Input value={bankFields.nagad_no} onChange={e => setBankFields(f => ({ ...f, nagad_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="নগদ নম্বর দিন" />
+            </div>
+            <Button onClick={handleSaveBank} disabled={bankSaving} className="w-full gap-2">
+              <Save className="h-4 w-4" /> {bankSaving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
