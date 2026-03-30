@@ -177,9 +177,25 @@ const AdminShootings = () => {
     }
   };
 
+  const statusOrder = statusOptions.map(s => s.value);
+
   const changeStatus = async (shootingId: string, newStatus: string) => {
+    // Check if going backward
+    const shooting = shootings?.find((s) => s.id === shootingId);
+    const currentStatus = shooting?.status || "plan";
+    const currentIndex = statusOrder.indexOf(currentStatus);
+    const newIndex = statusOrder.indexOf(newStatus);
+
+    if (newIndex < currentIndex) {
+      // Going backward - require password
+      setRevertShootingId(shootingId);
+      setRevertNewStatus(newStatus);
+      setRevertPassword("");
+      setRevertDialogOpen(true);
+      return;
+    }
+
     if (newStatus === "published") {
-      const shooting = shootings?.find((s) => s.id === shootingId);
       setPublishShootingId(shootingId);
       setPublishChannelId((shooting as any)?.channel_id || "");
       setPublishVideoUrl((shooting as any)?.video_url || "");
@@ -187,7 +203,6 @@ const AdminShootings = () => {
       return;
     }
     if (newStatus === "calltime") {
-      const shooting = shootings?.find((s) => s.id === shootingId);
       openCalltimeDialog(shooting, false);
       return;
     }
@@ -196,6 +211,37 @@ const AdminShootings = () => {
     const info = getStatusInfo(newStatus);
     toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
     queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+  };
+
+  const handleRevertWithPassword = async () => {
+    if (!revertPassword) { toast.error("পাসওয়ার্ড দিন"); return; }
+    setRevertVerifying(true);
+    try {
+      // Get current user email and re-authenticate
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser?.email) throw new Error("ইউজার পাওয়া যায়নি");
+
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: currentUser.email,
+        password: revertPassword,
+      });
+      if (authError) {
+        toast.error("পাসওয়ার্ড ভুল হয়েছে!");
+        return;
+      }
+
+      // Password verified - proceed with status revert
+      const { error } = await supabase.from("shootings").update({ status: revertNewStatus }).eq("id", revertShootingId);
+      if (error) { toast.error(error.message); return; }
+      const info = getStatusInfo(revertNewStatus);
+      toast.success(`স্ট্যাটাস পরিবর্তন: ${info.label}`);
+      queryClient.invalidateQueries({ queryKey: ["admin-shootings"] });
+      setRevertDialogOpen(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setRevertVerifying(false);
+    }
   };
 
   const confirmPublish = async () => {
