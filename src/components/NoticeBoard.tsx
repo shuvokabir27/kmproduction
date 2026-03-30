@@ -475,7 +475,7 @@ export function NoticeBoard() {
           </div>
           <div>
             <h2 className="font-bold text-foreground text-base md:text-lg">নোটিশ বোর্ড</h2>
-            <p className="text-[10px] md:text-xs text-muted-foreground">{notices.length}টি নোটিশ</p>
+            <p className="text-[10px] md:text-xs text-muted-foreground">{notices.length}টি নোটিশ{hasPolls ? ` · ${activePolls!.length}টি ভোটিং` : ""}</p>
           </div>
         </div>
 
