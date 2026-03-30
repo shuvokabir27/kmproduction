@@ -45,7 +45,7 @@ const MemberSettings = () => {
   const [emailSaving, setEmailSaving] = useState(false);
 
   const [bankDialogOpen, setBankDialogOpen] = useState(false);
-  const [bankFields, setBankFields] = useState({ bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "" });
+  const [bankFields, setBankFields] = useState({ bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "" });
   const [bankSaving, setBankSaving] = useState(false);
 
   const [extraFields, setExtraFields] = useState({
@@ -154,8 +154,11 @@ const MemberSettings = () => {
     setBankFields({
       bank_name: (profile as any)?.bank_name || "",
       bank_account_no: (profile as any)?.bank_account_no || "",
+      bank_account_holder: (profile as any)?.bank_account_holder || "",
       bkash_no: (profile as any)?.bkash_no || "",
+      bkash_holder: (profile as any)?.bkash_holder || "",
       nagad_no: (profile as any)?.nagad_no || "",
+      nagad_holder: (profile as any)?.nagad_holder || "",
     });
     setBankDialogOpen(true);
   };
@@ -167,9 +170,12 @@ const MemberSettings = () => {
       const { error } = await supabase.from("profiles").update({
         bank_name: bankFields.bank_name || null,
         bank_account_no: bankFields.bank_account_no || null,
+        bank_account_holder: bankFields.bank_account_holder || null,
         bkash_no: bankFields.bkash_no || null,
+        bkash_holder: bankFields.bkash_holder || null,
         nagad_no: bankFields.nagad_no || null,
-      }).eq("id", profile.id);
+        nagad_holder: bankFields.nagad_holder || null,
+      } as any).eq("id", profile.id);
       if (error) throw error;
       toast.success("ব্যাংক তথ্য আপডেট হয়েছে!");
       setBankDialogOpen(false);
@@ -493,23 +499,50 @@ const MemberSettings = () => {
               <Landmark className="h-5 w-5 text-primary" /> ব্যাংক তথ্য
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
-              <Input value={bankFields.bank_name} onChange={e => setBankFields(f => ({ ...f, bank_name: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="যেমন: ডাচ বাংলা ব্যাংক" />
+          <div className="space-y-5">
+            {/* ব্যাংক একাউন্ট */}
+            <div className="space-y-2 p-3 rounded-lg bg-secondary/30 border border-border/30">
+              <p className="text-xs font-semibold text-foreground">🏦 ব্যাংক একাউন্ট</p>
+              <div>
+                <Label className="text-muted-foreground text-xs">ব্যাংকের নাম</Label>
+                <Input value={bankFields.bank_name} onChange={e => setBankFields(f => ({ ...f, bank_name: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="যেমন: ডাচ বাংলা ব্যাংক" />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">একাউন্ট নম্বর</Label>
+                <Input value={bankFields.bank_account_no} onChange={e => setBankFields(f => ({ ...f, bank_account_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="একাউন্ট নম্বর দিন" />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">একাউন্ট হোল্ডার নাম</Label>
+                <Input value={bankFields.bank_account_holder} onChange={e => setBankFields(f => ({ ...f, bank_account_holder: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="একাউন্ট হোল্ডারের নাম দিন" />
+              </div>
             </div>
-            <div>
-              <Label className="text-muted-foreground text-xs">ব্যাংক একাউন্ট নম্বর</Label>
-              <Input value={bankFields.bank_account_no} onChange={e => setBankFields(f => ({ ...f, bank_account_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="একাউন্ট নম্বর দিন" />
+
+            {/* বিকাশ */}
+            <div className="space-y-2 p-3 rounded-lg bg-secondary/30 border border-border/30">
+              <p className="text-xs font-semibold text-foreground">📱 বিকাশ</p>
+              <div>
+                <Label className="text-muted-foreground text-xs">বিকাশ নম্বর</Label>
+                <Input value={bankFields.bkash_no} onChange={e => setBankFields(f => ({ ...f, bkash_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="বিকাশ নম্বর দিন" />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">একাউন্ট হোল্ডার নাম</Label>
+                <Input value={bankFields.bkash_holder} onChange={e => setBankFields(f => ({ ...f, bkash_holder: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="বিকাশ হোল্ডারের নাম দিন" />
+              </div>
             </div>
-            <div>
-              <Label className="text-muted-foreground text-xs">বিকাশ নম্বর</Label>
-              <Input value={bankFields.bkash_no} onChange={e => setBankFields(f => ({ ...f, bkash_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="বিকাশ নম্বর দিন" />
+
+            {/* নগদ */}
+            <div className="space-y-2 p-3 rounded-lg bg-secondary/30 border border-border/30">
+              <p className="text-xs font-semibold text-foreground">💰 নগদ</p>
+              <div>
+                <Label className="text-muted-foreground text-xs">নগদ নম্বর</Label>
+                <Input value={bankFields.nagad_no} onChange={e => setBankFields(f => ({ ...f, nagad_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="নগদ নম্বর দিন" />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-xs">একাউন্ট হোল্ডার নাম</Label>
+                <Input value={bankFields.nagad_holder} onChange={e => setBankFields(f => ({ ...f, nagad_holder: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="নগদ হোল্ডারের নাম দিন" />
+              </div>
             </div>
-            <div>
-              <Label className="text-muted-foreground text-xs">নগদ নম্বর</Label>
-              <Input value={bankFields.nagad_no} onChange={e => setBankFields(f => ({ ...f, nagad_no: e.target.value }))} className="bg-secondary/50 border-border/50" placeholder="নগদ নম্বর দিন" />
-            </div>
+
             <Button onClick={handleSaveBank} disabled={bankSaving} className="w-full gap-2">
               <Save className="h-4 w-4" /> {bankSaving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
             </Button>
