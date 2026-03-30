@@ -106,7 +106,10 @@ const MemberDashboard = () => {
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card) => (
             <motion.div key={card.label} variants={item}>
-              <div className="premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden">
+              <div
+                className={`premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
+                onClick={card.onClick}
+              >
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
                 <div className="relative z-10">
                   <div className={`h-9 w-9 rounded-xl ${card.iconBg} flex items-center justify-center mb-3`}>
@@ -114,6 +117,7 @@ const MemberDashboard = () => {
                   </div>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">{card.label}</p>
                   <p className="text-xl md:text-2xl font-bold text-foreground mt-1">৳{card.value?.toLocaleString("bn-BD") || "০"}</p>
+                  {card.onClick && <p className="text-[9px] text-primary/60 mt-1">বিস্তারিত দেখুন →</p>}
                 </div>
               </div>
             </motion.div>
