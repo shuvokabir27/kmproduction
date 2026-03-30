@@ -642,7 +642,7 @@ const MemberSettings = () => {
             {/* বিকাশ */}
             <div className="space-y-2 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(230, 20, 80, 0.08)', borderColor: 'rgba(230, 20, 80, 0.25)' }}>
               <div className="flex items-center gap-2">
-                <img src={bkashLogo} alt="bKash" className="h-6 w-6 object-contain" />
+                <div className="h-6 w-6 rounded bg-white flex items-center justify-center p-0.5"><img src={bkashLogo} alt="bKash" className="h-full w-full object-contain" /></div>
                 <p className="text-xs font-semibold" style={{ color: '#E6145B' }}>বিকাশ</p>
               </div>
               <div>
