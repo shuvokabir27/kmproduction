@@ -817,10 +817,12 @@ export type Database = {
           achievements_en: string | null
           address: string | null
           address_en: string | null
+          bank_account_holder: string | null
           bank_account_no: string | null
           bank_name: string | null
           bio: string | null
           bio_en: string | null
+          bkash_holder: string | null
           bkash_no: string | null
           cover_url: string | null
           created_at: string
@@ -850,6 +852,7 @@ export type Database = {
           last_seen_at: string | null
           member_id: number
           monthly_salary: number | null
+          nagad_holder: string | null
           nagad_no: string | null
           phone: string | null
           photo_url: string | null
@@ -867,10 +870,12 @@ export type Database = {
           achievements_en?: string | null
           address?: string | null
           address_en?: string | null
+          bank_account_holder?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
           bio?: string | null
           bio_en?: string | null
+          bkash_holder?: string | null
           bkash_no?: string | null
           cover_url?: string | null
           created_at?: string
@@ -900,6 +905,7 @@ export type Database = {
           last_seen_at?: string | null
           member_id?: number
           monthly_salary?: number | null
+          nagad_holder?: string | null
           nagad_no?: string | null
           phone?: string | null
           photo_url?: string | null
@@ -917,10 +923,12 @@ export type Database = {
           achievements_en?: string | null
           address?: string | null
           address_en?: string | null
+          bank_account_holder?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
           bio?: string | null
           bio_en?: string | null
+          bkash_holder?: string | null
           bkash_no?: string | null
           cover_url?: string | null
           created_at?: string
@@ -950,6 +958,7 @@ export type Database = {
           last_seen_at?: string | null
           member_id?: number
           monthly_salary?: number | null
+          nagad_holder?: string | null
           nagad_no?: string | null
           phone?: string | null
           photo_url?: string | null
