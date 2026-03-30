@@ -526,18 +526,36 @@ const AdminShootings = () => {
                         </div>
                         {/* Status changer */}
                         <div className="mt-2 pt-2 border-t border-border/20">
-                          <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
-                            <SelectTrigger className="h-7 border-border/20 bg-secondary/30 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="bg-card border-border/30">
-                              {statusOptions.map((opt) => (
-                                <SelectItem key={opt.value} value={opt.value}>
-                                  <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {s.status === "published" ? (
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <Lock className="h-3 w-3 text-green-400/60" />
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
+                                <span className="text-[9px] text-muted-foreground">(স্ট্যাটাস লক)</span>
+                              </div>
+                              <Button variant="ghost" size="sm" className="h-6 text-[10px] text-primary gap-1 px-2" onClick={() => {
+                                setPublishShootingId(s.id);
+                                setPublishChannelId((s as any)?.channel_id || "");
+                                setPublishVideoUrl((s as any)?.video_url || "");
+                                setPublishDialogOpen(true);
+                              }}>
+                                <Edit className="h-3 w-3" /> চ্যানেল/লিংক
+                              </Button>
+                            </div>
+                          ) : (
+                            <Select value={s.status || "upcoming"} onValueChange={(v) => changeStatus(s.id, v)}>
+                              <SelectTrigger className="h-7 border-border/20 bg-secondary/30 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-card border-border/30">
+                                {statusOptions.map((opt) => (
+                                  <SelectItem key={opt.value} value={opt.value}>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${opt.color}`}>{opt.label}</span>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
                         </div>
                       </Card>
                     );
