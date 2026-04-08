@@ -201,12 +201,13 @@ const Login = () => {
               <TabsContent value="client">
                 <form onSubmit={handleClientLogin} className="space-y-4">
                   <div>
-                    <Label htmlFor="client-id" className="text-foreground text-xs">ক্লায়েন্ট আইডি</Label>
+                    <Label htmlFor="client-phone" className="text-foreground text-xs">মোবাইল নম্বর</Label>
                     <Input
-                      id="client-id"
-                      value={clientId}
-                      onChange={(e) => setClientId(e.target.value)}
-                      placeholder="যেমন: CLIENT-001"
+                      id="client-phone"
+                      type="tel"
+                      value={clientPhone}
+                      onChange={(e) => setClientPhone(e.target.value)}
+                      placeholder="যেমন: 01712345678"
                       required
                       className="bg-secondary border-border/30 h-11 text-base"
                     />
