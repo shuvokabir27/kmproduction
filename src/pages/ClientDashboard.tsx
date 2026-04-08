@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Calendar, MapPin, Users, FileText, CheckCircle2, Clock, LogOut, Wallet, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
