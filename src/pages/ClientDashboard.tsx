@@ -57,7 +57,7 @@ export default function ClientDashboard() {
     },
   });
 
-  const { data: allScenes = [] } = useQuery({
+  const { data: allScenes = [], refetch: refetchScenes } = useQuery({
     queryKey: ["client-scenes", clientProfile?.id],
     enabled: !!clientProfile?.id && projects.length > 0,
     queryFn: async () => {
