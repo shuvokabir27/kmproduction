@@ -709,7 +709,7 @@ export default function AdminFreelance() {
 
               {/* Client Script (read-only for admin) */}
               {lineupDialog && (() => {
-                const proj = projects.find((p: any) => p.id === lineupDialog);
+                const proj: any = projects.find((p: any) => p.id === lineupDialog);
                 if (!proj?.client_script && (!proj?.client_script_images || (Array.isArray(proj.client_script_images) && proj.client_script_images.length === 0))) return null;
                 return (
                   <div className="space-y-2 border-t border-border/30 pt-3">
