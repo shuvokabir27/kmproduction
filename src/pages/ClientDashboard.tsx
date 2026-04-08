@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, Users, DollarSign, FileText, CheckCircle2, Clock, LogOut } from "lucide-react";
+import { Briefcase, Calendar, MapPin, Users, FileText, CheckCircle2, Clock, LogOut, Wallet, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -81,14 +81,33 @@ export default function ClientDashboard() {
   const getAssignments = (pid: string) => allAssignments.filter((a: any) => a.project_id === pid);
   const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
 
+  // Overall summary across all projects
+  const overallSummary = projects.reduce(
+    (acc: any, p: any) => {
+      const assigns = getAssignments(p.id);
+      const memberCost = assigns.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
+      const paidAmount = assigns.reduce((s: number, a: any) => s + (a.is_paid ? Number(a.paid_amount || a.rate || 0) : 0), 0);
+      const unpaidAmount = memberCost - paidAmount;
+      acc.totalBudget += Number(p.total_budget || 0);
+      acc.totalExpense += Number(p.total_expense || 0);
+      acc.totalMemberCost += memberCost;
+      acc.totalPaid += paidAmount;
+      acc.totalUnpaid += unpaidAmount;
+      acc.projectCount += 1;
+      return acc;
+    },
+    { totalBudget: 0, totalExpense: 0, totalMemberCost: 0, totalPaid: 0, totalUnpaid: 0, projectCount: 0 }
+  );
+  const overallProfit = overallSummary.totalBudget - overallSummary.totalExpense - overallSummary.totalMemberCost;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <Briefcase className="h-5 w-5 text-orange-400" />
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Briefcase className="h-5 w-5 text-primary" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">স্বাগতম, {clientProfile?.name || "ক্লায়েন্ট"}</h1>
@@ -100,17 +119,63 @@ export default function ClientDashboard() {
           </Button>
         </div>
 
+        {/* Overall Summary Cards */}
+        {projects.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Card className="border-border/50">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Briefcase className="h-4 w-4 text-primary" />
+                  <span className="text-xs text-muted-foreground">মোট প্রজেক্ট</span>
+                </div>
+                <div className="text-2xl font-bold text-foreground">{overallSummary.projectCount}</div>
+              </CardContent>
+            </Card>
+            <Card className="border-border/50">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Wallet className="h-4 w-4 text-sky-400" />
+                  <span className="text-xs text-muted-foreground">মোট বাজেট</span>
+                </div>
+                <div className="text-2xl font-bold text-sky-400">৳{overallSummary.totalBudget.toLocaleString("bn-BD")}</div>
+              </CardContent>
+            </Card>
+            <Card className="border-border/50">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <span className="text-xs text-muted-foreground">মোট পেইড</span>
+                </div>
+                <div className="text-2xl font-bold text-emerald-400">৳{overallSummary.totalPaid.toLocaleString("bn-BD")}</div>
+              </CardContent>
+            </Card>
+            <Card className="border-border/50">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Clock className="h-4 w-4 text-amber-400" />
+                  <span className="text-xs text-muted-foreground">মোট বাকি</span>
+                </div>
+                <div className="text-2xl font-bold text-amber-400">৳{overallSummary.totalUnpaid.toLocaleString("bn-BD")}</div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Projects */}
         {projects.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">কোনো প্রজেক্ট নেই</div>
         ) : (
           <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" /> আপনার প্রজেক্ট সমূহ
+            </h2>
             {projects.map((p: any) => {
               const assigns = getAssignments(p.id);
               const scenes = getScenes(p.id);
               const memberCost = assigns.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
+              const paidAmount = assigns.reduce((s: number, a: any) => s + (a.is_paid ? Number(a.paid_amount || a.rate || 0) : 0), 0);
+              const unpaidAmount = memberCost - paidAmount;
               const totalCost = Number(p.total_expense) + memberCost;
-              const profit = Number(p.total_budget) - totalCost;
               const st = statusMap[p.status] || statusMap.upcoming;
               const isOpen = expandedProject === p.id;
 
@@ -122,17 +187,30 @@ export default function ClientDashboard() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-foreground">{p.name}</h3>
                           <Badge variant="outline" className={st.color}>{st.label}</Badge>
                         </div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
                           {p.location && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {p.location}</span>}
+                          <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {assigns.length} জন</span>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right shrink-0">
                         <div className="text-sm font-medium text-foreground">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
+                        <div className="flex items-center gap-2 text-xs mt-0.5">
+                          {paidAmount > 0 && (
+                            <span className="flex items-center gap-0.5 text-emerald-400">
+                              <ArrowUpRight className="h-3 w-3" /> ৳{paidAmount.toLocaleString("bn-BD")}
+                            </span>
+                          )}
+                          {unpaidAmount > 0 && (
+                            <span className="flex items-center gap-0.5 text-amber-400">
+                              <ArrowDownRight className="h-3 w-3" /> ৳{unpaidAmount.toLocaleString("bn-BD")}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -147,22 +225,31 @@ export default function ClientDashboard() {
                       >
                         <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4">
                           {/* Financial Summary */}
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div className="rounded-lg bg-sky-500/10 p-3 text-center">
-                              <div className="text-xs text-muted-foreground">বাজেট</div>
-                              <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
+                          <div>
+                            <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
+                              <Wallet className="h-4 w-4 text-primary" /> আর্থিক সামারি
+                            </h4>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                              <div className="rounded-lg bg-sky-500/10 p-3 text-center">
+                                <div className="text-xs text-muted-foreground">বাজেট</div>
+                                <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
+                              </div>
+                              <div className="rounded-lg bg-amber-500/10 p-3 text-center">
+                                <div className="text-xs text-muted-foreground">অন্যান্য খরচ</div>
+                                <div className="font-bold text-amber-400">৳{Number(p.total_expense).toLocaleString("bn-BD")}</div>
+                              </div>
+                              <div className="rounded-lg bg-emerald-500/10 p-3 text-center">
+                                <div className="text-xs text-muted-foreground">পেইড</div>
+                                <div className="font-bold text-emerald-400">৳{paidAmount.toLocaleString("bn-BD")}</div>
+                              </div>
+                              <div className="rounded-lg bg-red-500/10 p-3 text-center">
+                                <div className="text-xs text-muted-foreground">বাকি</div>
+                                <div className="font-bold text-red-400">৳{unpaidAmount.toLocaleString("bn-BD")}</div>
+                              </div>
                             </div>
-                            <div className="rounded-lg bg-amber-500/10 p-3 text-center">
-                              <div className="text-xs text-muted-foreground">খরচ</div>
-                              <div className="font-bold text-amber-400">৳{Number(p.total_expense).toLocaleString("bn-BD")}</div>
-                            </div>
-                            <div className="rounded-lg bg-violet-500/10 p-3 text-center">
-                              <div className="text-xs text-muted-foreground">সদস্য খরচ</div>
-                              <div className="font-bold text-violet-400">৳{memberCost.toLocaleString("bn-BD")}</div>
-                            </div>
-                            <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
-                              <div className="text-xs text-muted-foreground">লাভ</div>
-                              <div className={`font-bold ${profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
+                            <div className="mt-2 p-2.5 rounded-lg bg-secondary/30 flex items-center justify-between">
+                              <span className="text-xs text-muted-foreground">মোট খরচ (অন্যান্য + সদস্য)</span>
+                              <span className="text-sm font-bold text-foreground">৳{totalCost.toLocaleString("bn-BD")}</span>
                             </div>
                           </div>
 
@@ -170,21 +257,25 @@ export default function ClientDashboard() {
                           {assigns.length > 0 && (
                             <div>
                               <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                                <Users className="h-4 w-4" /> টিম সদস্য
+                                <Users className="h-4 w-4 text-primary" /> টিম সদস্য ({assigns.length} জন)
                               </h4>
                               <div className="space-y-1.5">
                                 {assigns.map((a: any) => (
                                   <div key={a.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                                    <div>
-                                      <div className="text-sm font-medium text-foreground">{a.profiles?.full_name || "—"}</div>
-                                      <div className="text-xs text-muted-foreground">{a.role_label}</div>
+                                    <div className="flex items-center gap-2.5">
+                                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                                        {a.profiles?.full_name?.charAt(0) || "?"}
+                                      </div>
+                                      <div>
+                                        <div className="text-sm font-medium text-foreground">{a.profiles?.full_name || "—"}</div>
+                                        <div className="text-xs text-muted-foreground">{a.role_label || "—"}</div>
+                                      </div>
                                     </div>
                                     <div className="text-right">
                                       <div className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</div>
-                                      <div className={`text-[10px] flex items-center gap-0.5 justify-end ${a.is_paid ? "text-emerald-400" : "text-amber-400"}`}>
-                                        {a.is_paid ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                                        {a.is_paid ? "পেইড" : "বাকি"}
-                                      </div>
+                                      <Badge variant={a.is_paid ? "default" : "secondary"} className={`text-[10px] h-5 ${a.is_paid ? "bg-emerald-600" : ""}`}>
+                                        {a.is_paid ? <><CheckCircle2 className="h-3 w-3 mr-0.5" /> পেইড</> : <><Clock className="h-3 w-3 mr-0.5" /> বাকি</>}
+                                      </Badge>
                                     </div>
                                   </div>
                                 ))}
@@ -196,7 +287,7 @@ export default function ClientDashboard() {
                           {scenes.length > 0 && (
                             <div>
                               <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                                <FileText className="h-4 w-4" /> শুটিং লাইনআপ
+                                <FileText className="h-4 w-4 text-primary" /> শুটিং লাইনআপ ({scenes.length} সিন)
                               </h4>
                               <div className="rounded-lg border border-border/30 overflow-hidden">
                                 <table className="w-full text-sm">
@@ -223,7 +314,7 @@ export default function ClientDashboard() {
                             </div>
                           )}
 
-                          {p.notes && <p className="text-xs text-muted-foreground italic">নোট: {p.notes}</p>}
+                          {p.notes && <p className="text-xs text-muted-foreground italic border-t border-border/20 pt-2">নোট: {p.notes}</p>}
                         </div>
                       </motion.div>
                     )}
