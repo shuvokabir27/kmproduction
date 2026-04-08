@@ -337,6 +337,7 @@ export default function AdminFreelance() {
         <Tabs defaultValue="projects">
           <TabsList>
             <TabsTrigger value="projects">প্রজেক্ট সমূহ</TabsTrigger>
+            <TabsTrigger value="clients">ক্লায়েন্ট</TabsTrigger>
             <TabsTrigger value="summary">মাসিক হিসাব</TabsTrigger>
           </TabsList>
 
