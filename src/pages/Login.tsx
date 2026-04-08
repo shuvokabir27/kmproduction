@@ -85,6 +85,22 @@ const Login = () => {
     }
   };
 
+  const handleClientLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setErrorMsg("");
+    try {
+      const fakeEmail = `${clientId.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.local`;
+      const { error } = await supabase.auth.signInWithPassword({ email: fakeEmail, password: clientPassword });
+      if (error) throw error;
+      toast.success("সফলভাবে লগইন হয়েছে!");
+    } catch (err: any) {
+      setErrorMsg(getErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Status bar spacer for mobile */}
