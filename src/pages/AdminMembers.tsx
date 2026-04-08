@@ -45,6 +45,7 @@ const AdminMembers = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [editOriginalSalaryType, setEditOriginalSalaryType] = useState<string>("daily");
   const [form, setForm] = useState<MemberForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
