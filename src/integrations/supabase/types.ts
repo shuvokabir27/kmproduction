@@ -321,6 +321,102 @@ export type Database = {
           },
         ]
       }
+      freelance_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          is_paid: boolean
+          member_id: string
+          notes: string | null
+          paid_amount: number
+          project_id: string
+          rate: number
+          role_label: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_paid?: boolean
+          member_id: string
+          notes?: string | null
+          paid_amount?: number
+          project_id: string
+          rate?: number
+          role_label?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_paid?: boolean
+          member_id?: string
+          notes?: string | null
+          paid_amount?: number
+          project_id?: string
+          rate?: number
+          role_label?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freelance_assignments_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "freelance_assignments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "freelance_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      freelance_projects: {
+        Row: {
+          client_name: string
+          client_phone: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          project_date: string
+          status: string
+          total_budget: number
+          total_expense: number
+        }
+        Insert: {
+          client_name: string
+          client_phone?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          project_date: string
+          status?: string
+          total_budget?: number
+          total_expense?: number
+        }
+        Update: {
+          client_name?: string
+          client_phone?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          project_date?: string
+          status?: string
+          total_budget?: number
+          total_expense?: number
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           created_at: string

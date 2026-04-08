@@ -36,6 +36,7 @@ import AdminSettings from "./pages/AdminSettings";
 import News from "./pages/News";
 import PublisherProfile from "./pages/PublisherProfile";
 import AdminBookings from "./pages/AdminBookings";
+import AdminFreelance from "./pages/AdminFreelance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/admin/services" element={<AdminServices />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
+            <Route path="/admin/freelance" element={<AdminFreelance />} />
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
