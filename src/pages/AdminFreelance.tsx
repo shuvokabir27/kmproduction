@@ -114,9 +114,17 @@ export default function AdminFreelance() {
     },
   });
 
+  const { data: clients = [] } = useQuery({
+    queryKey: ["client-profiles"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("client_profiles").select("*").order("created_at", { ascending: false });
+      return data || [];
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (isEdit: boolean) => {
-      const payload = {
+      const payload: any = {
         name: form.name,
         client_name: form.client_name,
         client_phone: form.client_phone || null,
@@ -124,6 +132,7 @@ export default function AdminFreelance() {
         location: form.location || null,
         total_budget: Number(form.total_budget) || 0,
         notes: form.notes || null,
+        client_profile_id: form.client_profile_id || null,
         ...(isEdit ? {} : { created_by: user?.id || null }),
       };
       if (isEdit && editProject) {
