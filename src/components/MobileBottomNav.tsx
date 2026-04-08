@@ -23,6 +23,7 @@ import {
   Sparkles,
   Newspaper,
   Globe,
+  Briefcase,
   Receipt,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
