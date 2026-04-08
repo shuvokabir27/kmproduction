@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye, Gift, Car, Banknote, Globe } from "lucide-react";
+import { Wallet, Calendar, CreditCard, TrendingUp, Film, ExternalLink, FileText, ScrollText, Eye, Gift, Car, Banknote, Globe, Briefcase, CheckCircle2, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
