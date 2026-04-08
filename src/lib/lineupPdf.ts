@@ -71,7 +71,7 @@ export function downloadLineupPDF(data: LineupPDFData) {
       s.characters || "-",
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: yPos,
       margin: { left: margin, right: margin },
       head: [["#", "Description", "Location", "Characters"]],
