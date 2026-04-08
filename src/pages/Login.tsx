@@ -19,7 +19,7 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [memberPassword, setMemberPassword] = useState("");
-  const [clientId, setClientId] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   const [clientPassword, setClientPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
