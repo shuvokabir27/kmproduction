@@ -618,6 +618,19 @@ export default function AdminFreelance() {
             </DialogHeader>
             <div className="space-y-3">
               <div><Label>প্রজেক্টের নাম *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="যেমন: রাজু নাটক শুটিং" /></div>
+              <div><Label>ক্লায়েন্ট (প্রফাইল)</Label>
+                <Select value={form.client_profile_id} onValueChange={(v) => {
+                  const selected = clients.find((c: any) => c.id === v);
+                  setForm({ ...form, client_profile_id: v, client_name: selected?.name || form.client_name, client_phone: selected?.phone || form.client_phone });
+                }}>
+                  <SelectTrigger><SelectValue placeholder="ক্লায়েন্ট নির্বাচন (ঐচ্ছিক)" /></SelectTrigger>
+                  <SelectContent>
+                    {clients.map((c: any) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name} ({c.client_id})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div><Label>ক্লায়েন্ট *</Label><Input value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} placeholder="ক্লায়েন্টের নাম" /></div>
               <div><Label>ফোন</Label><Input value={form.client_phone} onChange={(e) => setForm({ ...form, client_phone: e.target.value })} placeholder="ফোন নম্বর" /></div>
               <div><Label>তারিখ *</Label><Input type="date" value={form.project_date} onChange={(e) => setForm({ ...form, project_date: e.target.value })} /></div>
