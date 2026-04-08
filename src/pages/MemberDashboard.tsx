@@ -226,7 +226,46 @@ const MemberDashboard = () => {
           </div>
         </div>
 
-        {/* Payment & Attendance History */}
+        {/* Freelance Work */}
+        {myFreelance && myFreelance.length > 0 && (
+          <div className="premium-card rounded-2xl overflow-hidden">
+            <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                <Briefcase className="h-4 w-4 text-orange-400" />
+              </div>
+              <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ</h2>
+            </div>
+            <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+              {myFreelance.map((a: any) => {
+                const project = a.freelance_projects;
+                const statusMap: Record<string, string> = { upcoming: "আসন্ন", ongoing: "চলছে", completed: "সম্পন্ন", paid: "পেইড" };
+                return (
+                  <div key={a.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`h-8 w-8 rounded-lg ${a.is_paid ? "bg-success/10" : "bg-warning/10"} flex items-center justify-center`}>
+                        {a.is_paid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+                      </div>
+                      <div>
+                        <p className="text-sm text-foreground font-medium">{project?.name || "প্রজেক্ট"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {a.role_label}{project?.project_date && ` • ${new Date(project.project_date).toLocaleDateString("bn-BD")}`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</span>
+                      <p className={`text-[10px] mt-0.5 ${a.is_paid ? "text-success" : "text-warning"}`}>
+                        {a.is_paid ? "পেমেন্ট সম্পন্ন" : "বাকি আছে"}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="premium-card rounded-2xl overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
