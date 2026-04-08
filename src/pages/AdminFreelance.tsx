@@ -872,10 +872,10 @@ export default function AdminFreelance() {
                   <Button
                     variant="outline"
                     className="w-full gap-2"
-                    onClick={() => {
+                    onClick={async () => {
                       const scenes = getScenes(lineupDialog);
                       const proj: any = projects.find((p) => p.id === lineupDialog);
-                      downloadLineupPDF({
+                      await downloadLineupPDF({
                         projectName: proj?.name || "Project",
                         clientName: proj?.client_name || "",
                         projectDate: proj?.project_date || new Date().toISOString(),
