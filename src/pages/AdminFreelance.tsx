@@ -65,6 +65,8 @@ export default function AdminFreelance() {
   const [projectDialog, setProjectDialog] = useState(false);
   const [editProject, setEditProject] = useState<FreelanceProject | null>(null);
   const [assignDialog, setAssignDialog] = useState<string | null>(null);
+  const [lineupDialog, setLineupDialog] = useState<string | null>(null);
+  const [sceneForm, setSceneForm] = useState({ scene_number: "", description: "", location: "", characters: "" });
 
   // Form state
   const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" });
