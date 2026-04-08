@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 
@@ -71,7 +71,7 @@ export function downloadLineupPDF(data: LineupPDFData) {
       s.characters || "-",
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: yPos,
       margin: { left: margin, right: margin },
       head: [["#", "Description", "Location", "Characters"]],
