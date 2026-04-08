@@ -67,6 +67,19 @@ const MemberDashboard = () => {
     },
   });
 
+  const { data: myFreelance } = useQuery({
+    queryKey: ["my-freelance", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("freelance_assignments")
+        .select("*, freelance_projects(*)")
+        .eq("member_id", profile!.id)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
   const [viewScriptData, setViewScriptData] = useState<any>(null);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
