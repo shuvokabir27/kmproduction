@@ -448,7 +448,7 @@ const AdminMembers = () => {
         {/* Mobile card list */}
         <div className="md:hidden space-y-2">
           {members?.map((m) => (
-            <Card key={m.id} className="bg-card border-border/30 p-3 active:scale-[0.99] transition-transform">
+            <Card key={m.id} className={`bg-card border-border/30 p-3 active:scale-[0.99] transition-transform ${!(m.is_active ?? true) ? "opacity-50" : ""}`}>
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0 overflow-hidden">
                   {m.photo_url ? (
@@ -461,10 +461,16 @@ const AdminMembers = () => {
                   <div className="flex items-center gap-1.5">
                     <p className="text-sm font-semibold text-foreground truncate">{m.full_name}</p>
                     {(m as any).is_verified && <span className="text-blue-500 text-xs">✓</span>}
+                    {!(m.is_active ?? true) && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-destructive/15 text-destructive">নিষ্ক্রিয়</span>}
                   </div>
                   <p className="text-[10px] text-muted-foreground">{m.designation || "সদস্য"} · ID: {m.member_id}</p>
                 </div>
                 <div className="flex items-center gap-0.5 shrink-0">
+                  <Switch
+                    checked={m.is_active ?? true}
+                    onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)}
+                    className="scale-75"
+                  />
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
                     <Edit className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
@@ -502,7 +508,7 @@ const AdminMembers = () => {
               </thead>
               <tbody className="divide-y divide-border/20">
                 {members?.map((m) => (
-                  <tr key={m.id} className="hover:bg-secondary/30 transition-colors">
+                  <tr key={m.id} className={`hover:bg-secondary/30 transition-colors ${!(m.is_active ?? true) ? "opacity-50" : ""}`}>
                     <td className="p-3 text-foreground font-mono text-xs">{m.member_id}</td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">
