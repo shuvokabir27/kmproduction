@@ -13,12 +13,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle } from "lucide-react";
 
 const Login = () => {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, isClient, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [memberPassword, setMemberPassword] = useState("");
+  const [clientId, setClientId] = useState("");
+  const [clientPassword, setClientPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   if (loading) {
@@ -29,7 +31,7 @@ const Login = () => {
     );
   }
 
-  if (user) return <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />;
+  if (user) return <Navigate to={isAdmin ? "/admin" : isClient ? "/client" : "/dashboard"} replace />;
 
   const getErrorMessage = (err: any): string => {
     const msg = err?.message?.toLowerCase() || "";
@@ -83,6 +85,22 @@ const Login = () => {
     }
   };
 
+  const handleClientLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setErrorMsg("");
+    try {
+      const fakeEmail = `${clientId.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.local`;
+      const { error } = await supabase.auth.signInWithPassword({ email: fakeEmail, password: clientPassword });
+      if (error) throw error;
+      toast.success("সফলভাবে লগইন হয়েছে!");
+    } catch (err: any) {
+      setErrorMsg(getErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Status bar spacer for mobile */}
@@ -116,6 +134,7 @@ const Login = () => {
             <Tabs defaultValue="member" className="w-full" onValueChange={() => setErrorMsg("")}>
               <TabsList className="w-full bg-secondary/50 border border-border/20 mb-5 h-10">
                 <TabsTrigger value="member" className="flex-1 text-xs font-medium">সদস্য</TabsTrigger>
+                <TabsTrigger value="client" className="flex-1 text-xs font-medium">ক্লায়েন্ট</TabsTrigger>
                 <TabsTrigger value="admin" className="flex-1 text-xs font-medium">এডমিন</TabsTrigger>
               </TabsList>
 
@@ -170,6 +189,56 @@ const Login = () => {
                   <p className="text-center text-xs text-muted-foreground mt-3">
                     পাসওয়ার্ড ভুলে গেছেন? <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
                   </p>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="client">
+                <form onSubmit={handleClientLogin} className="space-y-4">
+                  <div>
+                    <Label htmlFor="client-id" className="text-foreground text-xs">ক্লায়েন্ট আইডি</Label>
+                    <Input
+                      id="client-id"
+                      value={clientId}
+                      onChange={(e) => setClientId(e.target.value)}
+                      placeholder="যেমন: CLIENT-001"
+                      required
+                      className="bg-secondary border-border/30 h-11 text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="client-password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
+                    <Input
+                      id="client-password"
+                      type="password"
+                      value={clientPassword}
+                      onChange={(e) => setClientPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      minLength={6}
+                      className="bg-secondary border-border/30 h-11 text-base"
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errorMsg && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
+                      >
+                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
+                    {submitting ? (
+                      <span className="flex items-center gap-2">
+                        <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                        অপেক্ষা করুন
+                      </span>
+                    ) : "লগইন"}
+                  </Button>
                 </form>
               </TabsContent>
 

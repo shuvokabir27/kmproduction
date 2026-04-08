@@ -67,9 +67,11 @@ export default function AdminFreelance() {
   const [assignDialog, setAssignDialog] = useState<string | null>(null);
   const [lineupDialog, setLineupDialog] = useState<string | null>(null);
   const [sceneForm, setSceneForm] = useState({ scene_number: "", description: "", location: "", characters: "" });
+  const [clientDialog, setClientDialog] = useState(false);
+  const [clientForm, setClientForm] = useState({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
 
   // Form state
-  const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" });
+  const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" });
   const [assignForm, setAssignForm] = useState({ member_id: "", role_label: "", rate: "" });
 
   const { data: projects = [], isLoading } = useQuery({
@@ -112,9 +114,17 @@ export default function AdminFreelance() {
     },
   });
 
+  const { data: clients = [] } = useQuery({
+    queryKey: ["client-profiles"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("client_profiles").select("*").order("created_at", { ascending: false });
+      return data || [];
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (isEdit: boolean) => {
-      const payload = {
+      const payload: any = {
         name: form.name,
         client_name: form.client_name,
         client_phone: form.client_phone || null,
@@ -122,6 +132,7 @@ export default function AdminFreelance() {
         location: form.location || null,
         total_budget: Number(form.total_budget) || 0,
         notes: form.notes || null,
+        client_profile_id: form.client_profile_id || null,
         ...(isEdit ? {} : { created_by: user?.id || null }),
       };
       if (isEdit && editProject) {
@@ -136,7 +147,7 @@ export default function AdminFreelance() {
       qc.invalidateQueries({ queryKey: ["freelance-projects"] });
       setProjectDialog(false);
       setEditProject(null);
-      setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" });
+      setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" });
       toast({ title: "সফল!", description: "প্রজেক্ট সেভ হয়েছে" });
     },
   });
@@ -233,6 +244,30 @@ export default function AdminFreelance() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-scenes"] }),
   });
 
+  const createClientMutation = useMutation({
+    mutationFn: async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionData.session?.access_token}`,
+        },
+        body: JSON.stringify(clientForm),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      return result;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-profiles"] });
+      setClientDialog(false);
+      setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
+      toast({ title: "ক্লায়েন্ট তৈরি হয়েছে!" });
+    },
+    onError: (err: any) => toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }),
+  });
+
   const generateShareToken = useMutation({
     mutationFn: async (projectId: string) => {
       const token = crypto.randomUUID().replace(/-/g, "").substring(0, 12);
@@ -258,6 +293,7 @@ export default function AdminFreelance() {
       location: p.location || "",
       total_budget: String(p.total_budget),
       notes: p.notes || "",
+      client_profile_id: (p as any).client_profile_id || "",
     });
     setProjectDialog(true);
   };
@@ -293,7 +329,7 @@ export default function AdminFreelance() {
               <p className="text-xs text-muted-foreground">ফ্রিল্যান্স প্রজেক্ট ম্যানেজমেন্ট</p>
             </div>
           </div>
-          <Button onClick={() => { setEditProject(null); setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" }); setProjectDialog(true); }} className="gap-2">
+          <Button onClick={() => { setEditProject(null); setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" }); setProjectDialog(true); }} className="gap-2">
             <Plus className="h-4 w-4" /> নতুন প্রজেক্ট
           </Button>
         </div>
@@ -301,6 +337,7 @@ export default function AdminFreelance() {
         <Tabs defaultValue="projects">
           <TabsList>
             <TabsTrigger value="projects">প্রজেক্ট সমূহ</TabsTrigger>
+            <TabsTrigger value="clients">ক্লায়েন্ট</TabsTrigger>
             <TabsTrigger value="summary">মাসিক হিসাব</TabsTrigger>
           </TabsList>
 
