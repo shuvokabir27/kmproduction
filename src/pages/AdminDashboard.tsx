@@ -53,17 +53,21 @@ const AdminDashboard = () => {
   const { data: totalDue } = useQuery({
     queryKey: ["admin-total-due"],
     queryFn: async () => {
-      const { data: attendance } = await supabase.from("attendance").select("daily_rate").eq("is_present", true);
+      // Only count active members
+      const { data: activeProfiles } = await supabase.from("profiles").select("id, previous_balance").eq("is_active", true);
+      const activeIds = activeProfiles?.map(p => p.id) ?? [];
+      if (activeIds.length === 0) return { totalEarned: 0, totalPaid: 0, due: 0 };
+
+      const { data: attendance } = await supabase.from("attendance").select("daily_rate, member_id").eq("is_present", true).in("member_id", activeIds);
       const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
-      const { data: payments } = await supabase.from("payments").select("amount");
+      const { data: payments } = await supabase.from("payments").select("amount, member_id").in("member_id", activeIds);
       const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
-      const { data: bonuses } = await (supabase as any).from("bonuses").select("amount");
+      const { data: bonuses } = await (supabase as any).from("bonuses").select("amount, member_id").in("member_id", activeIds);
       const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
-      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount");
+      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, member_id").in("member_id", activeIds);
       const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
-      const { data: profiles } = await (supabase as any).from("profiles").select("previous_balance");
-      const totalPreviousBalance = profiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
-      const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("rate");
+      const totalPreviousBalance = activeProfiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
+      const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("rate, member_id").in("member_id", activeIds);
       const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
       return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + totalPreviousBalance - totalPaid };
     },
