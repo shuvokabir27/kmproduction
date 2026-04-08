@@ -484,6 +484,5 @@ const MemberDashboard = () => {
     </AppLayout>
   );
 };
-};
 
 export default MemberDashboard;
