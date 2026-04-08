@@ -35,6 +35,7 @@ type FreelanceProject = {
   notes: string | null;
   created_by: string | null;
   created_at: string;
+  share_token: string | null;
 };
 
 type FreelanceAssignment = {
