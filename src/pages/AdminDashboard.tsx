@@ -135,18 +135,32 @@ const AdminDashboard = () => {
   const { data: memberBalances } = useQuery({
     queryKey: ["admin-member-balances"],
     queryFn: async () => {
-      const { data: members } = await supabase.from("profiles").select("id, full_name, member_id, photo_url, designation, previous_balance").eq("is_active", true);
+      const { data: members } = await (supabase as any).from("profiles").select("id, full_name, member_id, photo_url, designation, previous_balance, salary_type, salary_type_changed_at").eq("is_active", true);
       const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
       const { data: payments } = await supabase.from("payments").select("member_id, amount");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
-      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount");
+      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
       const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("member_id, rate");
+
+      // Build exclude map for members changed from monthly to daily
+      const excludeMap: Record<string, string> = {};
+      members?.forEach((m: any) => {
+        if (m.salary_type === "daily" && m.salary_type_changed_at) {
+          const d = new Date(m.salary_type_changed_at);
+          excludeMap[m.id] = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+        }
+      });
+
       const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; previous: number }>();
-      members?.forEach(m => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, previous: Number((m as any).previous_balance || 0) }));
+      members?.forEach((m: any) => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const e = map.get(b.member_id); if (e) e.bonus += Number(b.amount || 0); });
-      salaryCredits?.forEach((s: any) => { const e = map.get(s.member_id); if (e) e.salary += Number(s.amount || 0); });
+      salaryCredits?.forEach((s: any) => {
+        const cutoff = excludeMap[s.member_id];
+        if (cutoff && s.credit_month >= cutoff) return;
+        const e = map.get(s.member_id); if (e) e.salary += Number(s.amount || 0);
+      });
       freelanceData?.forEach((f: any) => { const e = map.get(f.member_id); if (e) e.freelance += Number(f.rate || 0); });
       return Array.from(map.values()).map(m => ({ ...m, balance: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).sort((a, b) => b.balance - a.balance);
     },
