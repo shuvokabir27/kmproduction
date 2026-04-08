@@ -570,7 +570,117 @@ export default function AdminFreelance() {
             )}
           </TabsContent>
 
-          <TabsContent value="clients" className="space-y-4 mt-4">
+          <TabsContent value="payments" className="space-y-4 mt-4">
+            {/* Client selector */}
+            <div className="space-y-4">
+              <div className="max-w-sm">
+                <Label className="text-xs">ক্লায়েন্ট নির্বাচন করুন</Label>
+                <Select value={paymentForm.client_profile_id} onValueChange={(v) => setPaymentForm({ ...paymentForm, client_profile_id: v })}>
+                  <SelectTrigger><SelectValue placeholder="ক্লায়েন্ট বাছাই করুন" /></SelectTrigger>
+                  <SelectContent>
+                    {clients.map((c: any) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name} ({c.client_id})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {paymentForm.client_profile_id && (() => {
+                const cid = paymentForm.client_profile_id;
+                const totalBudget = getClientTotalBudget(cid);
+                const totalPaid = getClientTotalPaid(cid);
+                const due = totalBudget - totalPaid;
+                const payments = getClientPayments(cid);
+                const clientProjects = projects.filter((p) => (p as any).client_profile_id === cid);
+
+                return (
+                  <div className="space-y-4">
+                    {/* Summary cards */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <Card className="border-border/50">
+                        <CardContent className="p-3 text-center">
+                          <div className="text-xs text-muted-foreground">মোট বাজেট</div>
+                          <div className="text-lg font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
+                          <div className="text-[10px] text-muted-foreground">{clientProjects.length} প্রজেক্ট</div>
+                        </CardContent>
+                      </Card>
+                      <Card className="border-border/50">
+                        <CardContent className="p-3 text-center">
+                          <div className="text-xs text-muted-foreground">মোট পেমেন্ট</div>
+                          <div className="text-lg font-bold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
+                        </CardContent>
+                      </Card>
+                      <Card className="border-border/50">
+                        <CardContent className="p-3 text-center">
+                          <div className="text-xs text-muted-foreground">বাকি</div>
+                          <div className={`text-lg font-bold ${due > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                            ৳{Math.max(0, due).toLocaleString("bn-BD")}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Payment history */}
+                    {payments.length > 0 && (
+                      <Card className="border-border/50">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm">পেমেন্ট হিস্ট্রি</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          {payments.map((pay: any) => (
+                            <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
+                              <div>
+                                <div className="text-sm font-bold text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
+                                  {" • "}{pay.payment_method}
+                                  {pay.notes && ` • ${pay.notes}`}
+                                </div>
+                              </div>
+                              <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => deletePaymentMutation.mutate(pay.id)}>
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Add payment form */}
+                    <Card className="border-border/50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">নতুন পেমেন্ট যুক্ত করুন</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div><Label className="text-xs">পরিমাণ (৳) *</Label><Input type="number" value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} placeholder="0" /></div>
+                        <div>
+                          <Label className="text-xs">পেমেন্ট মাধ্যম</Label>
+                          <Select value={paymentForm.payment_method} onValueChange={(v) => setPaymentForm({ ...paymentForm, payment_method: v })}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cash">নগদ</SelectItem>
+                              <SelectItem value="bkash">বিকাশ</SelectItem>
+                              <SelectItem value="nagad">নাগাদ</SelectItem>
+                              <SelectItem value="bank">ব্যাংক</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div><Label className="text-xs">নোট</Label><Input value={paymentForm.notes} onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })} placeholder="নোট (ঐচ্ছিক)" /></div>
+                        <Button className="w-full" disabled={!paymentForm.amount || Number(paymentForm.amount) <= 0} onClick={() => addPaymentMutation.mutate()}>
+                          <Plus className="h-3 w-3 mr-1" /> পেমেন্ট যুক্ত করুন
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              })()}
+
+              {!paymentForm.client_profile_id && (
+                <div className="text-center py-12 text-muted-foreground">একটি ক্লায়েন্ট নির্বাচন করুন</div>
+              )}
+            </div>
+          </TabsContent>
+
             <div className="flex justify-end">
               <Button onClick={() => setClientDialog(true)} className="gap-2">
                 <Plus className="h-4 w-4" /> নতুন ক্লায়েন্ট
