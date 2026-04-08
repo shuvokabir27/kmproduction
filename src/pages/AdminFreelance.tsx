@@ -584,6 +584,55 @@ export default function AdminFreelance() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Lineup Dialog */}
+        <Dialog open={!!lineupDialog} onOpenChange={() => setLineupDialog(null)}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" /> শুটিং লাইনআপ
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {/* Existing scenes */}
+              {lineupDialog && getScenes(lineupDialog).length > 0 && (
+                <div className="space-y-2">
+                  {getScenes(lineupDialog).map((scene: any) => (
+                    <div key={scene.id} className="flex items-start gap-2 p-3 rounded-lg bg-secondary/30">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                        {scene.scene_number}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-foreground">{scene.description || "—"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {scene.location && `📍 ${scene.location}`}
+                          {scene.characters && ` • 👤 ${scene.characters}`}
+                        </p>
+                      </div>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive shrink-0" onClick={() => deleteSceneMutation.mutate(scene.id)}>
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add scene form */}
+              <div className="space-y-2 border-t border-border/30 pt-3">
+                <h4 className="text-sm font-medium text-foreground">নতুন সিন যুক্ত করুন</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><Label className="text-xs">সিন নম্বর</Label><Input type="number" value={sceneForm.scene_number} onChange={(e) => setSceneForm({ ...sceneForm, scene_number: e.target.value })} placeholder="১" /></div>
+                  <div><Label className="text-xs">লোকেশন</Label><Input value={sceneForm.location} onChange={(e) => setSceneForm({ ...sceneForm, location: e.target.value })} placeholder="লোকেশন" /></div>
+                </div>
+                <div><Label className="text-xs">বিবরণ *</Label><Input value={sceneForm.description} onChange={(e) => setSceneForm({ ...sceneForm, description: e.target.value })} placeholder="সিনের বিবরণ" /></div>
+                <div><Label className="text-xs">চরিত্র/অভিনেতা</Label><Input value={sceneForm.characters} onChange={(e) => setSceneForm({ ...sceneForm, characters: e.target.value })} placeholder="চরিত্রের নাম" /></div>
+                <Button size="sm" className="w-full" disabled={!sceneForm.description} onClick={() => lineupDialog && addSceneMutation.mutate(lineupDialog)}>
+                  <Plus className="h-3 w-3 mr-1" /> সিন যুক্ত করুন
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
