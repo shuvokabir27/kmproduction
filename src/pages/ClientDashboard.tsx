@@ -190,49 +190,16 @@ export default function ClientDashboard() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4">
-                          {/* Financial Summary */}
+                          {/* Budget only */}
                           <div>
                             <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                              <Wallet className="h-4 w-4 text-primary" /> আর্থিক সামারি
+                              <Wallet className="h-4 w-4 text-primary" /> বাজেট
                             </h4>
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="rounded-lg bg-sky-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">বাজেট</div>
-                                <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                              </div>
-                              <div className="rounded-lg bg-emerald-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">পেমেন্ট</div>
-                                <div className="font-bold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
-                              </div>
-                              <div className="rounded-lg bg-red-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">বাকি</div>
-                                <div className="font-bold text-red-400">৳{Math.max(0, due).toLocaleString("bn-BD")}</div>
-                              </div>
+                            <div className="rounded-lg bg-sky-500/10 p-3 text-center">
+                              <div className="text-xs text-muted-foreground">প্রজেক্ট বাজেট</div>
+                              <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                             </div>
                           </div>
-
-                          {/* Payment History */}
-                          {payments.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> পেমেন্ট হিস্ট্রি
-                              </h4>
-                              <div className="space-y-1.5">
-                                {payments.map((pay: any) => (
-                                  <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                                    <div>
-                                      <div className="text-sm font-medium text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
-                                      <div className="text-xs text-muted-foreground">
-                                        {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
-                                        {" • "}{paymentMethodLabel[pay.payment_method] || pay.payment_method}
-                                      </div>
-                                    </div>
-                                    {pay.notes && <span className="text-xs text-muted-foreground max-w-[150px] truncate">{pay.notes}</span>}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
 
                           {/* Scenes */}
                           {scenes.length > 0 && (
