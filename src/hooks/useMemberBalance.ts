@@ -50,6 +50,15 @@ export function useMemberBalance(profileId: string | undefined) {
 
       const previousBalance = Number((profile as any)?.previous_balance || 0);
 
+      // Freelance income (paid assignments)
+      const { data: freelanceData } = await (supabase as any)
+        .from("freelance_assignments")
+        .select("paid_amount")
+        .eq("member_id", profileId!)
+        .eq("is_paid", true);
+
+      const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
+
       return {
         totalEarned,
         totalPaid,
@@ -57,8 +66,9 @@ export function useMemberBalance(profileId: string | undefined) {
         totalTransport,
         totalBonuses,
         totalSalaryCredits,
+        totalFreelance,
         previousBalance,
-        balance: totalEarned + totalBonuses + totalSalaryCredits + previousBalance - totalPaid,
+        balance: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid,
       };
     },
   });
