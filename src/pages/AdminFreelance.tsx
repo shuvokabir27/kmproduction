@@ -524,6 +524,46 @@ export default function AdminFreelance() {
             )}
           </TabsContent>
 
+          <TabsContent value="clients" className="space-y-4 mt-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setClientDialog(true)} className="gap-2">
+                <Plus className="h-4 w-4" /> নতুন ক্লায়েন্ট
+              </Button>
+            </div>
+            {clients.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">কোনো ক্লায়েন্ট নেই</div>
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {clients.map((c: any) => (
+                  <Card key={c.id} className="border-border/50">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                          {c.name?.charAt(0) || "?"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-foreground truncate">{c.name}</h3>
+                            <Badge variant="outline" className="text-xs shrink-0">{c.client_id}</Badge>
+                          </div>
+                          <div className="text-xs text-muted-foreground space-y-0.5 mt-1">
+                            {c.company && <div>🏢 {c.company}</div>}
+                            {c.phone && <div className="flex items-center gap-1"><Phone className="h-3 w-3" />{c.phone}</div>}
+                            {c.email && <div>✉️ {c.email}</div>}
+                            {c.address && <div className="flex items-center gap-1"><MapPin className="h-3 w-3" />{c.address}</div>}
+                          </div>
+                        </div>
+                        <Badge variant={c.is_active ? "default" : "secondary"} className="shrink-0 text-xs">
+                          {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
           <TabsContent value="summary" className="mt-4">
             {sortedMonths.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">কোনো ডাটা নেই</div>
