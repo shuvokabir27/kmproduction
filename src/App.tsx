@@ -85,6 +85,7 @@ const App = () => (
             <Route path="/news/:category/:postNumber" element={<News />} />
             <Route path="/news/:shortId" element={<News />} />
             <Route path="/publisher/:publisherId" element={<PublisherProfile />} />
+            <Route path="/project/:token" element={<FreelanceClientView />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
