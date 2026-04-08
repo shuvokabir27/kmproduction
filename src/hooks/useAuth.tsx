@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!session?.user) {
         setProfile(null);
         setIsAdmin(false);
+        setIsClient(false);
         setLoading(false);
         return;
       }
@@ -64,6 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setProfile(profileRes.data ?? null);
       setIsAdmin(roleRes.data?.some((r) => r.role === "admin") ?? false);
+      setIsClient(roleRes.data?.some((r) => r.role === "client") ?? false);
       setLoading(false);
     };
 
@@ -88,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, profile, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, isClient, profile, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
