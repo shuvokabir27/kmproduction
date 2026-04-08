@@ -8,19 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle } from "lucide-react";
 
 const Login = () => {
   const { user, isAdmin, isClient, loading } = useAuth();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [memberId, setMemberId] = useState("");
-  const [memberPassword, setMemberPassword] = useState("");
-  const [clientPhone, setClientPhone] = useState("");
-  const [clientPassword, setClientPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   if (loading) {
@@ -36,25 +31,61 @@ const Login = () => {
   const getErrorMessage = (err: any): string => {
     const msg = err?.message?.toLowerCase() || "";
     if (msg.includes("invalid login") || msg.includes("invalid credentials") || msg.includes("wrong password"))
-      return "ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে। আবার চেষ্টা করুন।";
+      return "আইডি অথবা পাসওয়ার্ড ভুল হয়েছে। আবার চেষ্টা করুন।";
     if (msg.includes("email not confirmed"))
       return "আপনার ইমেইল ভেরিফাই করা হয়নি।";
     if (msg.includes("user not found") || msg.includes("no user"))
       return "এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি।";
     if (msg.includes("rate limit") || msg.includes("too many"))
       return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
-    // Pass through Bengali messages from edge function as-is
     if (/[\u0980-\u09FF]/.test(err?.message || "")) return err.message;
     return "লগইন করা যায়নি। আবার চেষ্টা করুন।";
   };
 
-  const handleAdminLogin = async (e: React.FormEvent) => {
+  const detectType = (val: string): "member" | "client" | "admin" => {
+    const trimmed = val.trim();
+    // Pure digits and looks like member ID (5 digits starting with 2)
+    if (/^\d{4,6}$/.test(trimmed) && trimmed.startsWith("2")) return "member";
+    // Phone number pattern (starts with 0 or +)
+    if (/^(\+?\d{10,15}|0\d{9,11})$/.test(trimmed)) return "client";
+    // Email
+    if (trimmed.includes("@")) return "admin";
+    // Fallback: if all digits, try member
+    if (/^\d+$/.test(trimmed)) return "member";
+    return "admin";
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setErrorMsg("");
+    const type = detectType(identifier);
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (type === "member") {
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/member-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ member_id: identifier.trim(), password }),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error);
+        const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
+        if (error) throw error;
+      } else if (type === "client") {
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/client-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: identifier.trim(), password }),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error);
+        const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: identifier.trim(), password });
+        if (error) throw error;
+      }
       toast.success("সফলভাবে লগইন হয়েছে!");
     } catch (err: any) {
       setErrorMsg(getErrorMessage(err));
@@ -63,55 +94,12 @@ const Login = () => {
     }
   };
 
-  const handleMemberLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setErrorMsg("");
-    try {
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/member-login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ member_id: memberId, password: memberPassword }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error);
-      const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
-      if (error) throw error;
-      toast.success("সফলভাবে লগইন হয়েছে!");
-    } catch (err: any) {
-      setErrorMsg(getErrorMessage(err));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleClientLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setErrorMsg("");
-    try {
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/client-login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: clientPhone, password: clientPassword }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error);
-      const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
-      if (error) throw error;
-      toast.success("সফলভাবে লগইন হয়েছে!");
-    } catch (err: any) {
-      setErrorMsg(getErrorMessage(err));
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const currentType = detectType(identifier);
+  const placeholderHint = currentType === "member" ? "সদস্য আইডি" : currentType === "client" ? "মোবাইল নম্বর" : "ইমেইল";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Status bar spacer for mobile */}
       <div className="h-safe-top" />
-
       <div className="flex-1 flex flex-col items-center justify-center p-5">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -135,194 +123,67 @@ const Login = () => {
             <p className="text-muted-foreground text-xs mt-1">KM Production House</p>
           </div>
 
-          {/* Login Card */}
+          {/* Unified Login Card */}
           <Card className="p-5 bg-card border-border/30 shadow-xl shadow-primary/5">
-            <Tabs defaultValue="member" className="w-full" onValueChange={() => setErrorMsg("")}>
-              <TabsList className="w-full bg-secondary/50 border border-border/20 mb-5 h-10">
-                <TabsTrigger value="member" className="flex-1 text-xs font-medium">সদস্য</TabsTrigger>
-                <TabsTrigger value="client" className="flex-1 text-xs font-medium">ক্লায়েন্ট</TabsTrigger>
-                <TabsTrigger value="admin" className="flex-1 text-xs font-medium">এডমিন</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="member">
-                <form onSubmit={handleMemberLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="member-id" className="text-foreground text-xs">সদস্য আইডি</Label>
-                    <Input
-                      id="member-id"
-                      type="number"
-                      value={memberId}
-                      onChange={(e) => setMemberId(e.target.value)}
-                      placeholder="যেমন: 20201"
-                      required
-                      className="bg-secondary border-border/30 h-11 text-base"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="member-password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
-                    <Input
-                      id="member-password"
-                      type="password"
-                      value={memberPassword}
-                      onChange={(e) => setMemberPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                      minLength={6}
-                      className="bg-secondary border-border/30 h-11 text-base"
-                    />
-                  </div>
-                  <AnimatePresence>
-                    {errorMsg && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8, height: 0 }}
-                        animate={{ opacity: 1, y: 0, height: "auto" }}
-                        exit={{ opacity: 0, y: -8, height: 0 }}
-                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
-                      >
-                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
-                    {submitting ? (
-                      <span className="flex items-center gap-2">
-                        <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                        অপেক্ষা করুন
-                      </span>
-                    ) : "লগইন"}
-                  </Button>
-                  <p className="text-center text-xs text-muted-foreground mt-3">
-                    পাসওয়ার্ড ভুলে গেছেন? <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <Label htmlFor="identifier" className="text-foreground text-xs">আইডি / মোবাইল / ইমেইল</Label>
+                <Input
+                  id="identifier"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => { setIdentifier(e.target.value); setErrorMsg(""); }}
+                  placeholder="সদস্য আইডি, মোবাইল নম্বর বা ইমেইল"
+                  required
+                  className="bg-secondary border-border/30 h-11 text-base"
+                />
+                {identifier.trim() && (
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    সনাক্ত হয়েছে: <span className="text-primary font-medium">{placeholderHint}</span>
                   </p>
-                </form>
-              </TabsContent>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setErrorMsg(""); }}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                  className="bg-secondary border-border/30 h-11 text-base"
+                />
+              </div>
 
-              <TabsContent value="client">
-                <form onSubmit={handleClientLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="client-phone" className="text-foreground text-xs">মোবাইল নম্বর</Label>
-                    <Input
-                      id="client-phone"
-                      type="tel"
-                      value={clientPhone}
-                      onChange={(e) => setClientPhone(e.target.value)}
-                      placeholder="যেমন: 01712345678"
-                      required
-                      className="bg-secondary border-border/30 h-11 text-base"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="client-password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
-                    <Input
-                      id="client-password"
-                      type="password"
-                      value={clientPassword}
-                      onChange={(e) => setClientPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                      minLength={6}
-                      className="bg-secondary border-border/30 h-11 text-base"
-                    />
-                  </div>
-                  <AnimatePresence>
-                    {errorMsg && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8, height: 0 }}
-                        animate={{ opacity: 1, y: 0, height: "auto" }}
-                        exit={{ opacity: 0, y: -8, height: 0 }}
-                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
-                      >
-                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
-                    {submitting ? (
-                      <span className="flex items-center gap-2">
-                        <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                        অপেক্ষা করুন
-                      </span>
-                    ) : "লগইন"}
-                  </Button>
-                </form>
-              </TabsContent>
+              <AnimatePresence>
+                {errorMsg && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -8, height: 0 }}
+                    className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
+                  >
+                    <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              <TabsContent value="admin">
-                <form onSubmit={handleAdminLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="admin-email" className="text-foreground text-xs">ইমেইল</Label>
-                    <Input
-                      id="admin-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="admin@example.com"
-                      required
-                      className="bg-secondary border-border/30 h-11 text-base"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="admin-password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
-                    <Input
-                      id="admin-password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                      minLength={6}
-                      className="bg-secondary border-border/30 h-11 text-base"
-                    />
-                  </div>
-                  <AnimatePresence>
-                    {errorMsg && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8, height: 0 }}
-                        animate={{ opacity: 1, y: 0, height: "auto" }}
-                        exit={{ opacity: 0, y: -8, height: 0 }}
-                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
-                      >
-                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
-                    {submitting ? (
-                      <span className="flex items-center gap-2">
-                        <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                        অপেক্ষা করুন
-                      </span>
-                    ) : "লগইন"}
-                  </Button>
-                  <div className="text-center mt-4 pt-3 border-t border-border/20">
-                    <button
-                      type="button"
-                      className="text-sm text-primary hover:underline font-medium"
-                      onClick={async () => {
-                        if (!email) {
-                          toast.error("প্রথমে ইমেইল লিখুন।");
-                          return;
-                        }
-                        try {
-                          const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                            redirectTo: `${window.location.origin}/reset-password`,
-                          });
-                          if (error) throw error;
-                          toast.success("পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে!");
-                        } catch (err: any) {
-                          toast.error("রিসেট লিংক পাঠানো যায়নি। আবার চেষ্টা করুন।");
-                        }
-                      }}
-                    >
-                      পাসওয়ার্ড ভুলে গেছেন?
-                    </button>
-                  </div>
-                </form>
-              </TabsContent>
-            </Tabs>
+              <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
+                {submitting ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    অপেক্ষা করুন
+                  </span>
+                ) : "লগইন"}
+              </Button>
+
+              <p className="text-center text-xs text-muted-foreground mt-3">
+                পাসওয়ার্ড ভুলে গেছেন? <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
+              </p>
+            </form>
           </Card>
         </motion.div>
       </div>
