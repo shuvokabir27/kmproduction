@@ -13,12 +13,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle } from "lucide-react";
 
 const Login = () => {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, isClient, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [memberPassword, setMemberPassword] = useState("");
+  const [clientId, setClientId] = useState("");
+  const [clientPassword, setClientPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   if (loading) {
@@ -29,7 +31,7 @@ const Login = () => {
     );
   }
 
-  if (user) return <Navigate to={isAdmin ? "/admin" : "/dashboard"} replace />;
+  if (user) return <Navigate to={isAdmin ? "/admin" : isClient ? "/client" : "/dashboard"} replace />;
 
   const getErrorMessage = (err: any): string => {
     const msg = err?.message?.toLowerCase() || "";
