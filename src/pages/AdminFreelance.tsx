@@ -123,8 +123,44 @@ export default function AdminFreelance() {
       return data || [];
     },
   });
+  const { data: projectPayments = [] } = useQuery({
+    queryKey: ["freelance-payments"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("freelance_payments").select("*").order("payment_date", { ascending: false });
+      return data || [];
+    },
+  });
 
-  const saveMutation = useMutation({
+  const getProjectPayments = (pid: string) => projectPayments.filter((p: any) => p.project_id === pid);
+
+  const addPaymentMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      const { error } = await (supabase as any).from("freelance_payments").insert({
+        project_id: projectId,
+        amount: Number(paymentForm.amount) || 0,
+        payment_method: paymentForm.payment_method,
+        notes: paymentForm.notes || null,
+        paid_by: user?.id || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["freelance-payments"] });
+      setPaymentDialog(null);
+      setPaymentForm({ amount: "", payment_method: "cash", notes: "" });
+      toast({ title: "সফল!", description: "পেমেন্ট যুক্ত হয়েছে" });
+    },
+  });
+
+  const deletePaymentMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any).from("freelance_payments").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-payments"] }),
+  });
+
+
     mutationFn: async (isEdit: boolean) => {
       const payload: any = {
         name: form.name,
