@@ -242,6 +242,7 @@ const Login = () => {
                 </form>
               </TabsContent>
 
+              <TabsContent value="admin">
                 <form onSubmit={handleAdminLogin} className="space-y-4">
                   <div>
                     <Label htmlFor="admin-email" className="text-foreground text-xs">ইমেইল</Label>
