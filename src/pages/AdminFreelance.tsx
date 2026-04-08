@@ -723,6 +723,30 @@ export default function AdminFreelance() {
             </div>
           </DialogContent>
         </Dialog>
+        {/* Client Create Dialog */}
+        <Dialog open={clientDialog} onOpenChange={setClientDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>নতুন ক্লায়েন্ট তৈরি</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div><Label>ক্লায়েন্ট আইডি *</Label><Input value={clientForm.client_id} onChange={(e) => setClientForm({ ...clientForm, client_id: e.target.value })} placeholder="যেমন: CLIENT-001" /></div>
+              <div><Label>নাম *</Label><Input value={clientForm.name} onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })} placeholder="ক্লায়েন্টের নাম" /></div>
+              <div><Label>ফোন</Label><Input value={clientForm.phone} onChange={(e) => setClientForm({ ...clientForm, phone: e.target.value })} placeholder="ফোন নম্বর" /></div>
+              <div><Label>ইমেইল</Label><Input value={clientForm.email} onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })} placeholder="ইমেইল" /></div>
+              <div><Label>কোম্পানি</Label><Input value={clientForm.company} onChange={(e) => setClientForm({ ...clientForm, company: e.target.value })} placeholder="কোম্পানির নাম" /></div>
+              <div><Label>ঠিকানা</Label><Input value={clientForm.address} onChange={(e) => setClientForm({ ...clientForm, address: e.target.value })} placeholder="ঠিকানা" /></div>
+              <div><Label>পাসওয়ার্ড *</Label><Input type="password" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} placeholder="লগইন পাসওয়ার্ড" /></div>
+              <Button
+                className="w-full"
+                disabled={!clientForm.client_id || !clientForm.name || !clientForm.password || createClientMutation.isPending}
+                onClick={() => createClientMutation.mutate()}
+              >
+                {createClientMutation.isPending ? "তৈরি হচ্ছে..." : "ক্লায়েন্ট তৈরি করুন"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
