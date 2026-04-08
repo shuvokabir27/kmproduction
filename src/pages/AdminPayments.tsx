@@ -132,6 +132,7 @@ const AdminPayments = () => {
         notes: notes || null,
         date: new Date().toISOString(),
         totalEarned: memberBalance?.totalEarned || 0,
+        totalFreelance: memberBalance?.totalFreelance || 0,
         totalPaid: (memberBalance?.totalPaid || 0) + Number(amount),
         balance: (memberBalance?.balance || 0) - Number(amount),
       });
