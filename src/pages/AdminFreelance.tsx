@@ -261,33 +261,8 @@ export default function AdminFreelance() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-projects"] }),
   });
 
-  const addSceneMutation = useMutation({
-    mutationFn: async (projectId: string) => {
-      const projectScenes = allScenes.filter((s: any) => s.project_id === projectId);
-      const { error } = await (supabase as any).from("freelance_scenes").insert({
-        project_id: projectId,
-        scene_number: Number(sceneForm.scene_number) || (projectScenes.length + 1),
-        description: sceneForm.description || null,
-        location: sceneForm.location || null,
-        characters: sceneForm.characters || null,
-        sort_order: projectScenes.length,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["freelance-scenes"] });
-      setSceneForm({ scene_number: "", description: "", location: "", characters: "" });
-      toast({ title: "সিন যুক্ত হয়েছে" });
-    },
-  });
 
-  const deleteSceneMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("freelance_scenes").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-scenes"] }),
-  });
+
 
   const createClientMutation = useMutation({
     mutationFn: async () => {
