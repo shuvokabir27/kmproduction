@@ -832,7 +832,7 @@ export default function AdminFreelance() {
           </DialogContent>
         </Dialog>
 
-        {/* Lineup Dialog */}
+        {/* Lineup Dialog (Read-only for admin + Download) */}
         <Dialog open={!!lineupDialog} onOpenChange={() => setLineupDialog(null)}>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-auto">
             <DialogHeader>
@@ -841,8 +841,8 @@ export default function AdminFreelance() {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              {/* Existing scenes */}
-              {lineupDialog && getScenes(lineupDialog).length > 0 && (
+              {/* Scenes (read-only) */}
+              {lineupDialog && getScenes(lineupDialog).length > 0 ? (
                 <div className="space-y-2">
                   {getScenes(lineupDialog).map((scene: any) => (
                     <div key={scene.id} className="flex items-start gap-2 p-3 rounded-lg bg-secondary/30">
@@ -856,12 +856,11 @@ export default function AdminFreelance() {
                           {scene.characters && ` • 👤 ${scene.characters}`}
                         </p>
                       </div>
-                      <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive shrink-0" onClick={() => deleteSceneMutation.mutate(scene.id)}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">ক্লায়েন্ট এখনো কোনো সিন যুক্ত করেনি</p>
               )}
 
               {/* Client Script (read-only for admin) */}
@@ -891,19 +890,38 @@ export default function AdminFreelance() {
                 );
               })()}
 
-              {/* Add scene form */}
-              <div className="space-y-2 border-t border-border/30 pt-3">
-                <h4 className="text-sm font-medium text-foreground">নতুন সিন যুক্ত করুন</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <div><Label className="text-xs">সিন নম্বর</Label><Input type="number" value={sceneForm.scene_number} onChange={(e) => setSceneForm({ ...sceneForm, scene_number: e.target.value })} placeholder="১" /></div>
-                  <div><Label className="text-xs">লোকেশন</Label><Input value={sceneForm.location} onChange={(e) => setSceneForm({ ...sceneForm, location: e.target.value })} placeholder="লোকেশন" /></div>
+              {/* Download button */}
+              {lineupDialog && getScenes(lineupDialog).length > 0 && (
+                <div className="border-t border-border/30 pt-3">
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2"
+                    onClick={() => {
+                      const scenes = getScenes(lineupDialog);
+                      const proj = projects.find((p) => p.id === lineupDialog);
+                      let text = `শুটিং লাইনআপ: ${proj?.name || ""}\nতারিখ: ${proj?.project_date || ""}\nলোকেশন: ${proj?.location || ""}\n\n`;
+                      scenes.forEach((s: any) => {
+                        text += `সিন ${s.scene_number}: ${s.description || "—"}\n`;
+                        if (s.location) text += `  লোকেশন: ${s.location}\n`;
+                        if (s.characters) text += `  চরিত্র: ${s.characters}\n`;
+                        text += "\n";
+                      });
+                      if (proj && (proj as any).client_script) {
+                        text += `\n--- ক্লায়েন্টের স্ক্রিপ্ট ---\n${(proj as any).client_script}\n`;
+                      }
+                      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `lineup_${proj?.name || "project"}.txt`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <FileText className="h-4 w-4" /> লাইনআপ ডাউনলোড করুন
+                  </Button>
                 </div>
-                <div><Label className="text-xs">বিবরণ *</Label><Input value={sceneForm.description} onChange={(e) => setSceneForm({ ...sceneForm, description: e.target.value })} placeholder="সিনের বিবরণ" /></div>
-                <div><Label className="text-xs">চরিত্র/অভিনেতা</Label><Input value={sceneForm.characters} onChange={(e) => setSceneForm({ ...sceneForm, characters: e.target.value })} placeholder="চরিত্রের নাম" /></div>
-                <Button size="sm" className="w-full" disabled={!sceneForm.description} onClick={() => lineupDialog && addSceneMutation.mutate(lineupDialog)}>
-                  <Plus className="h-3 w-3 mr-1" /> সিন যুক্ত করুন
-                </Button>
-              </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>
