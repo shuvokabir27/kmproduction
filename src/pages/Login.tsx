@@ -134,6 +134,7 @@ const Login = () => {
             <Tabs defaultValue="member" className="w-full" onValueChange={() => setErrorMsg("")}>
               <TabsList className="w-full bg-secondary/50 border border-border/20 mb-5 h-10">
                 <TabsTrigger value="member" className="flex-1 text-xs font-medium">সদস্য</TabsTrigger>
+                <TabsTrigger value="client" className="flex-1 text-xs font-medium">ক্লায়েন্ট</TabsTrigger>
                 <TabsTrigger value="admin" className="flex-1 text-xs font-medium">এডমিন</TabsTrigger>
               </TabsList>
 
