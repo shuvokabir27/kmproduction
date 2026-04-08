@@ -433,8 +433,57 @@ const MemberDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Freelance Detail Dialog */}
+      <Dialog open={freelanceDetailOpen} onOpenChange={setFreelanceDetailOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-md max-h-[85vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <Briefcase className="h-5 w-5 text-orange-400" /> বাইরের আয় বিস্তারিত
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-orange-500/10">
+              <span className="text-sm text-muted-foreground">মোট বাইরের আয়</span>
+              <span className="text-lg font-bold text-orange-400">৳{(balance?.totalFreelance ?? 0).toLocaleString("bn-BD")}</span>
+            </div>
+            {myFreelance && myFreelance.length > 0 ? (
+              <div className="space-y-2">
+                {myFreelance.map((a: any) => {
+                  const project = a.freelance_projects;
+                  const statusMap: Record<string, string> = { upcoming: "আসন্ন", ongoing: "চলছে", completed: "সম্পন্ন", paid: "পেইড" };
+                  return (
+                    <div key={a.id} className="p-3 rounded-xl bg-secondary/30 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-foreground">{project?.name || "প্রজেক্ট"}</span>
+                        <span className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{a.role_label}</span>
+                        <span>{project?.project_date ? new Date(project.project_date).toLocaleDateString("bn-BD") : ""}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">ক্লায়েন্ট: {project?.client_name || "—"}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${a.is_paid ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                          {a.is_paid ? "পেমেন্ট সম্পন্ন" : "বাকি আছে"}
+                        </span>
+                      </div>
+                      {project?.status && (
+                        <div className="text-[10px] text-muted-foreground">স্ট্যাটাস: {statusMap[project.status] || project.status}</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-center text-sm text-muted-foreground py-4">কোনো বাইরের কাজ নেই</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
+};
 };
 
 export default MemberDashboard;
