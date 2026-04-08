@@ -72,13 +72,12 @@ export default function ClientDashboard() {
 
   const { data: allPayments = [] } = useQuery({
     queryKey: ["client-payments", clientProfile?.id],
-    enabled: !!clientProfile?.id && projects.length > 0,
+    enabled: !!clientProfile?.id,
     queryFn: async () => {
-      const projectIds = projects.map((p: any) => p.id);
       const { data } = await (supabase as any)
         .from("freelance_payments")
         .select("*")
-        .in("project_id", projectIds)
+        .eq("client_profile_id", clientProfile.id)
         .order("payment_date", { ascending: false });
       return data || [];
     },
