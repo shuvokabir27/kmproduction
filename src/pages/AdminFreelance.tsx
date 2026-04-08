@@ -67,9 +67,11 @@ export default function AdminFreelance() {
   const [assignDialog, setAssignDialog] = useState<string | null>(null);
   const [lineupDialog, setLineupDialog] = useState<string | null>(null);
   const [sceneForm, setSceneForm] = useState({ scene_number: "", description: "", location: "", characters: "" });
+  const [clientDialog, setClientDialog] = useState(false);
+  const [clientForm, setClientForm] = useState({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
 
   // Form state
-  const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" });
+  const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" });
   const [assignForm, setAssignForm] = useState({ member_id: "", role_label: "", rate: "" });
 
   const { data: projects = [], isLoading } = useQuery({
