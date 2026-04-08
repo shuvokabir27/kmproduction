@@ -524,6 +524,46 @@ export default function AdminFreelance() {
             )}
           </TabsContent>
 
+          <TabsContent value="clients" className="space-y-4 mt-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setClientDialog(true)} className="gap-2">
+                <Plus className="h-4 w-4" /> নতুন ক্লায়েন্ট
+              </Button>
+            </div>
+            {clients.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">কোনো ক্লায়েন্ট নেই</div>
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {clients.map((c: any) => (
+                  <Card key={c.id} className="border-border/50">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                          {c.name?.charAt(0) || "?"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-foreground truncate">{c.name}</h3>
+                            <Badge variant="outline" className="text-xs shrink-0">{c.client_id}</Badge>
+                          </div>
+                          <div className="text-xs text-muted-foreground space-y-0.5 mt-1">
+                            {c.company && <div>🏢 {c.company}</div>}
+                            {c.phone && <div className="flex items-center gap-1"><Phone className="h-3 w-3" />{c.phone}</div>}
+                            {c.email && <div>✉️ {c.email}</div>}
+                            {c.address && <div className="flex items-center gap-1"><MapPin className="h-3 w-3" />{c.address}</div>}
+                          </div>
+                        </div>
+                        <Badge variant={c.is_active ? "default" : "secondary"} className="shrink-0 text-xs">
+                          {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
           <TabsContent value="summary" className="mt-4">
             {sortedMonths.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">কোনো ডাটা নেই</div>
@@ -578,6 +618,19 @@ export default function AdminFreelance() {
             </DialogHeader>
             <div className="space-y-3">
               <div><Label>প্রজেক্টের নাম *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="যেমন: রাজু নাটক শুটিং" /></div>
+              <div><Label>ক্লায়েন্ট (প্রফাইল)</Label>
+                <Select value={form.client_profile_id} onValueChange={(v) => {
+                  const selected = clients.find((c: any) => c.id === v);
+                  setForm({ ...form, client_profile_id: v, client_name: selected?.name || form.client_name, client_phone: selected?.phone || form.client_phone });
+                }}>
+                  <SelectTrigger><SelectValue placeholder="ক্লায়েন্ট নির্বাচন (ঐচ্ছিক)" /></SelectTrigger>
+                  <SelectContent>
+                    {clients.map((c: any) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name} ({c.client_id})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div><Label>ক্লায়েন্ট *</Label><Input value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} placeholder="ক্লায়েন্টের নাম" /></div>
               <div><Label>ফোন</Label><Input value={form.client_phone} onChange={(e) => setForm({ ...form, client_phone: e.target.value })} placeholder="ফোন নম্বর" /></div>
               <div><Label>তারিখ *</Label><Input type="date" value={form.project_date} onChange={(e) => setForm({ ...form, project_date: e.target.value })} /></div>
@@ -667,6 +720,30 @@ export default function AdminFreelance() {
                   <Plus className="h-3 w-3 mr-1" /> সিন যুক্ত করুন
                 </Button>
               </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        {/* Client Create Dialog */}
+        <Dialog open={clientDialog} onOpenChange={setClientDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>নতুন ক্লায়েন্ট তৈরি</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div><Label>ক্লায়েন্ট আইডি *</Label><Input value={clientForm.client_id} onChange={(e) => setClientForm({ ...clientForm, client_id: e.target.value })} placeholder="যেমন: CLIENT-001" /></div>
+              <div><Label>নাম *</Label><Input value={clientForm.name} onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })} placeholder="ক্লায়েন্টের নাম" /></div>
+              <div><Label>ফোন</Label><Input value={clientForm.phone} onChange={(e) => setClientForm({ ...clientForm, phone: e.target.value })} placeholder="ফোন নম্বর" /></div>
+              <div><Label>ইমেইল</Label><Input value={clientForm.email} onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })} placeholder="ইমেইল" /></div>
+              <div><Label>কোম্পানি</Label><Input value={clientForm.company} onChange={(e) => setClientForm({ ...clientForm, company: e.target.value })} placeholder="কোম্পানির নাম" /></div>
+              <div><Label>ঠিকানা</Label><Input value={clientForm.address} onChange={(e) => setClientForm({ ...clientForm, address: e.target.value })} placeholder="ঠিকানা" /></div>
+              <div><Label>পাসওয়ার্ড *</Label><Input type="password" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} placeholder="লগইন পাসওয়ার্ড" /></div>
+              <Button
+                className="w-full"
+                disabled={!clientForm.client_id || !clientForm.name || !clientForm.password || createClientMutation.isPending}
+                onClick={() => createClientMutation.mutate()}
+              >
+                {createClientMutation.isPending ? "তৈরি হচ্ছে..." : "ক্লায়েন্ট তৈরি করুন"}
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
