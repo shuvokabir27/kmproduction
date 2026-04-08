@@ -138,7 +138,7 @@ export default function AdminFreelance() {
       qc.invalidateQueries({ queryKey: ["freelance-projects"] });
       setProjectDialog(false);
       setEditProject(null);
-      setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" });
+      setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" });
       toast({ title: "সফল!", description: "প্রজেক্ট সেভ হয়েছে" });
     },
   });
@@ -295,7 +295,7 @@ export default function AdminFreelance() {
               <p className="text-xs text-muted-foreground">ফ্রিল্যান্স প্রজেক্ট ম্যানেজমেন্ট</p>
             </div>
           </div>
-          <Button onClick={() => { setEditProject(null); setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" }); setProjectDialog(true); }} className="gap-2">
+          <Button onClick={() => { setEditProject(null); setForm({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" }); setProjectDialog(true); }} className="gap-2">
             <Plus className="h-4 w-4" /> নতুন প্রজেক্ট
           </Button>
         </div>
