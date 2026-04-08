@@ -159,8 +159,7 @@ export default function AdminFreelance() {
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-payments"] }),
   });
-
-
+  const saveMutation = useMutation({
     mutationFn: async (isEdit: boolean) => {
       const payload: any = {
         name: form.name,
