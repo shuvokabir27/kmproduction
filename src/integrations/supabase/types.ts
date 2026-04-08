@@ -420,35 +420,45 @@ export type Database = {
       freelance_payments: {
         Row: {
           amount: number
+          client_profile_id: string | null
           created_at: string
           id: string
           notes: string | null
           paid_by: string | null
           payment_date: string
           payment_method: string
-          project_id: string
+          project_id: string | null
         }
         Insert: {
           amount?: number
+          client_profile_id?: string | null
           created_at?: string
           id?: string
           notes?: string | null
           paid_by?: string | null
           payment_date?: string
           payment_method?: string
-          project_id: string
+          project_id?: string | null
         }
         Update: {
           amount?: number
+          client_profile_id?: string | null
           created_at?: string
           id?: string
           notes?: string | null
           paid_by?: string | null
           payment_date?: string
           payment_method?: string
-          project_id?: string
+          project_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "freelance_payments_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "freelance_payments_project_id_fkey"
             columns: ["project_id"]

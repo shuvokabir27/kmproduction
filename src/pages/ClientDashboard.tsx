@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -72,13 +72,12 @@ export default function ClientDashboard() {
 
   const { data: allPayments = [] } = useQuery({
     queryKey: ["client-payments", clientProfile?.id],
-    enabled: !!clientProfile?.id && projects.length > 0,
+    enabled: !!clientProfile?.id,
     queryFn: async () => {
-      const projectIds = projects.map((p: any) => p.id);
       const { data } = await (supabase as any)
         .from("freelance_payments")
         .select("*")
-        .in("project_id", projectIds)
+        .eq("client_profile_id", clientProfile.id)
         .order("payment_date", { ascending: false });
       return data || [];
     },
@@ -88,20 +87,11 @@ export default function ClientDashboard() {
   if (!user) return <Navigate to="/login" replace />;
 
   const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
-  const getPayments = (pid: string) => allPayments.filter((p: any) => p.project_id === pid);
 
-  const overallSummary = projects.reduce(
-    (acc: any, p: any) => {
-      const payments = getPayments(p.id);
-      const totalPaid = payments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-      acc.totalBudget += Number(p.total_budget || 0);
-      acc.totalPaid += totalPaid;
-      acc.projectCount += 1;
-      return acc;
-    },
-    { totalBudget: 0, totalPaid: 0, projectCount: 0 }
-  );
-  const overallDue = overallSummary.totalBudget - overallSummary.totalPaid;
+  const totalBudget = projects.reduce((s: number, p: any) => s + Number(p.total_budget || 0), 0);
+  const totalPaid = allPayments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+  const overallSummary = { totalBudget, totalPaid, projectCount: projects.length };
+  const overallDue = totalBudget - totalPaid;
 
   return (
     <div className="min-h-screen bg-background">
@@ -155,6 +145,29 @@ export default function ClientDashboard() {
           </div>
         )}
 
+        {/* Payment History */}
+        {allPayments.length > 0 && (
+          <Card className="border-border/50">
+            <CardContent className="p-4 space-y-2">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> পেমেন্ট হিস্ট্রি
+              </h3>
+              {allPayments.map((pay: any) => (
+                <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
+                  <div>
+                    <div className="text-sm font-medium text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
+                      {" • "}{paymentMethodLabel[pay.payment_method] || pay.payment_method}
+                    </div>
+                  </div>
+                  {pay.notes && <span className="text-xs text-muted-foreground max-w-[150px] truncate">{pay.notes}</span>}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Projects */}
         {projects.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">কোনো প্রজেক্ট নেই</div>
@@ -165,9 +178,6 @@ export default function ClientDashboard() {
             </h2>
             {projects.map((p: any) => {
               const scenes = getScenes(p.id);
-              const payments = getPayments(p.id);
-              const totalPaid = payments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-              const due = Number(p.total_budget) - totalPaid;
               const st = statusMap[p.status] || statusMap.upcoming;
               const isOpen = expandedProject === p.id;
 
@@ -190,18 +200,6 @@ export default function ClientDashboard() {
                       </div>
                       <div className="text-right shrink-0">
                         <div className="text-sm font-medium text-foreground">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                        <div className="flex items-center gap-2 text-xs mt-0.5">
-                          {totalPaid > 0 && (
-                            <span className="flex items-center gap-0.5 text-emerald-400">
-                              <ArrowUpRight className="h-3 w-3" /> ৳{totalPaid.toLocaleString("bn-BD")}
-                            </span>
-                          )}
-                          {due > 0 && (
-                            <span className="flex items-center gap-0.5 text-amber-400">
-                              <ArrowDownRight className="h-3 w-3" /> ৳{due.toLocaleString("bn-BD")}
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -215,49 +213,16 @@ export default function ClientDashboard() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4">
-                          {/* Financial Summary */}
+                          {/* Budget only */}
                           <div>
                             <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                              <Wallet className="h-4 w-4 text-primary" /> আর্থিক সামারি
+                              <Wallet className="h-4 w-4 text-primary" /> বাজেট
                             </h4>
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="rounded-lg bg-sky-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">বাজেট</div>
-                                <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                              </div>
-                              <div className="rounded-lg bg-emerald-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">পেমেন্ট</div>
-                                <div className="font-bold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
-                              </div>
-                              <div className="rounded-lg bg-red-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">বাকি</div>
-                                <div className="font-bold text-red-400">৳{Math.max(0, due).toLocaleString("bn-BD")}</div>
-                              </div>
+                            <div className="rounded-lg bg-sky-500/10 p-3 text-center">
+                              <div className="text-xs text-muted-foreground">প্রজেক্ট বাজেট</div>
+                              <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                             </div>
                           </div>
-
-                          {/* Payment History */}
-                          {payments.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> পেমেন্ট হিস্ট্রি
-                              </h4>
-                              <div className="space-y-1.5">
-                                {payments.map((pay: any) => (
-                                  <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                                    <div>
-                                      <div className="text-sm font-medium text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
-                                      <div className="text-xs text-muted-foreground">
-                                        {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
-                                        {" • "}{paymentMethodLabel[pay.payment_method] || pay.payment_method}
-                                      </div>
-                                    </div>
-                                    {pay.notes && <span className="text-xs text-muted-foreground max-w-[150px] truncate">{pay.notes}</span>}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
 
                           {/* Scenes */}
                           {scenes.length > 0 && (
