@@ -20,6 +20,7 @@ const MemberDashboard = () => {
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
   const [paymentDetailOpen, setPaymentDetailOpen] = useState(false);
+  const [freelanceDetailOpen, setFreelanceDetailOpen] = useState(false);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
