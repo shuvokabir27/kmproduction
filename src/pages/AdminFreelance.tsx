@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { downloadLineupPDF } from "@/lib/lineupPdf";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -866,34 +867,25 @@ export default function AdminFreelance() {
               })()}
 
               {/* Download button */}
-              {lineupDialog && getScenes(lineupDialog).length > 0 && (
+              {lineupDialog && (getScenes(lineupDialog).length > 0 || (() => { const proj: any = projects.find((p: any) => p.id === lineupDialog); return proj?.client_script; })()) && (
                 <div className="border-t border-border/30 pt-3">
                   <Button
                     variant="outline"
                     className="w-full gap-2"
                     onClick={() => {
                       const scenes = getScenes(lineupDialog);
-                      const proj = projects.find((p) => p.id === lineupDialog);
-                      let text = `শুটিং লাইনআপ: ${proj?.name || ""}\nতারিখ: ${proj?.project_date || ""}\nলোকেশন: ${proj?.location || ""}\n\n`;
-                      scenes.forEach((s: any) => {
-                        text += `সিন ${s.scene_number}: ${s.description || "—"}\n`;
-                        if (s.location) text += `  লোকেশন: ${s.location}\n`;
-                        if (s.characters) text += `  চরিত্র: ${s.characters}\n`;
-                        text += "\n";
+                      const proj: any = projects.find((p) => p.id === lineupDialog);
+                      downloadLineupPDF({
+                        projectName: proj?.name || "Project",
+                        clientName: proj?.client_name || "",
+                        projectDate: proj?.project_date || new Date().toISOString(),
+                        location: proj?.location || null,
+                        scenes,
+                        clientScript: proj?.client_script || null,
                       });
-                      if (proj && (proj as any).client_script) {
-                        text += `\n--- ক্লায়েন্টের স্ক্রিপ্ট ---\n${(proj as any).client_script}\n`;
-                      }
-                      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = url;
-                      a.download = `lineup_${proj?.name || "project"}.txt`;
-                      a.click();
-                      URL.revokeObjectURL(url);
                     }}
                   >
-                    <FileText className="h-4 w-4" /> লাইনআপ ডাউনলোড করুন
+                    <FileText className="h-4 w-4" /> PDF ডাউনলোড করুন
                   </Button>
                 </div>
               )}
