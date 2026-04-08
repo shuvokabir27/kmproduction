@@ -29,26 +29,44 @@ export function useMemberBalance(profileId: string | undefined) {
         .select("amount, type")
         .eq("member_id", profileId!);
 
-      const totalBonus = bonuses?.filter(b => b.type === "bonus").reduce((sum, b) => sum + Number(b.amount || 0), 0) ?? 0;
-      const totalTransport = bonuses?.filter(b => b.type === "transport").reduce((sum, b) => sum + Number(b.amount || 0), 0) ?? 0;
+      const totalBonus = bonuses?.filter((b: any) => b.type === "bonus").reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
+      const totalTransport = bonuses?.filter((b: any) => b.type === "transport").reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
       const totalBonuses = totalBonus + totalTransport;
 
-      // Monthly salary credits
-      const { data: salaryCredits } = await (supabase as any)
-        .from("salary_credits")
-        .select("amount")
-        .eq("member_id", profileId!);
-
-      const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
-
-      // Previous balance (prior dues)
+      // Get profile info including salary_type_changed_at
       const { data: profile } = await (supabase as any)
         .from("profiles")
-        .select("previous_balance")
+        .select("previous_balance, salary_type, salary_type_changed_at")
         .eq("id", profileId!)
         .maybeSingle();
 
-      const previousBalance = Number((profile as any)?.previous_balance || 0);
+      const previousBalance = Number(profile?.previous_balance || 0);
+
+      // Monthly salary credits - exclude credits from the month salary type changed (monthly→daily)
+      const { data: salaryCredits } = await (supabase as any)
+        .from("salary_credits")
+        .select("amount, credit_month")
+        .eq("member_id", profileId!);
+
+      let totalSalaryCredits = 0;
+      if (salaryCredits) {
+        const changedAt = profile?.salary_type_changed_at;
+        let excludeFromMonth: string | null = null;
+
+        if (changedAt && profile?.salary_type === "daily") {
+          // Get the first day of the month when salary type changed
+          const changedDate = new Date(changedAt);
+          excludeFromMonth = `${changedDate.getFullYear()}-${String(changedDate.getMonth() + 1).padStart(2, "0")}-01`;
+        }
+
+        totalSalaryCredits = salaryCredits.reduce((sum: number, s: any) => {
+          // Exclude salary credits from the change month onwards
+          if (excludeFromMonth && s.credit_month >= excludeFromMonth) {
+            return sum;
+          }
+          return sum + Number(s.amount || 0);
+        }, 0);
+      }
 
       // Freelance income (assigned external work rates)
       const { data: freelanceData } = await (supabase as any)
