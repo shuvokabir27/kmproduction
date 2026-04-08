@@ -69,6 +69,8 @@ export default function AdminFreelance() {
   const [sceneForm, setSceneForm] = useState({ scene_number: "", description: "", location: "", characters: "" });
   const [clientDialog, setClientDialog] = useState(false);
   const [clientForm, setClientForm] = useState({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
+  const [paymentDialog, setPaymentDialog] = useState<string | null>(null);
+  const [paymentForm, setPaymentForm] = useState({ amount: "", payment_method: "cash", notes: "" });
 
   // Form state
   const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" });
