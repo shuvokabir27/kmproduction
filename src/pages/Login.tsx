@@ -192,7 +192,56 @@ const Login = () => {
                 </form>
               </TabsContent>
 
-              <TabsContent value="admin">
+              <TabsContent value="client">
+                <form onSubmit={handleClientLogin} className="space-y-4">
+                  <div>
+                    <Label htmlFor="client-id" className="text-foreground text-xs">ক্লায়েন্ট আইডি</Label>
+                    <Input
+                      id="client-id"
+                      value={clientId}
+                      onChange={(e) => setClientId(e.target.value)}
+                      placeholder="যেমন: CLIENT-001"
+                      required
+                      className="bg-secondary border-border/30 h-11 text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="client-password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
+                    <Input
+                      id="client-password"
+                      type="password"
+                      value={clientPassword}
+                      onChange={(e) => setClientPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      minLength={6}
+                      className="bg-secondary border-border/30 h-11 text-base"
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {errorMsg && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        className="flex items-start gap-2.5 p-3 rounded-lg bg-destructive/10 border border-destructive/20"
+                      >
+                        <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                        <p className="text-sm text-destructive font-medium leading-snug">{errorMsg}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
+                    {submitting ? (
+                      <span className="flex items-center gap-2">
+                        <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                        অপেক্ষা করুন
+                      </span>
+                    ) : "লগইন"}
+                  </Button>
+                </form>
+              </TabsContent>
+
                 <form onSubmit={handleAdminLogin} className="space-y-4">
                   <div>
                     <Label htmlFor="admin-email" className="text-foreground text-xs">ইমেইল</Label>
