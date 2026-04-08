@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 
@@ -19,138 +19,114 @@ interface LineupPDFData {
   clientScript: string | null;
 }
 
-export function downloadLineupPDF(data: LineupPDFData) {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-
-  const pageW = doc.internal.pageSize.getWidth();
-  const margin = 15;
-  const contentW = pageW - margin * 2;
-
-  // Title area with background
-  doc.setFillColor(30, 30, 40);
-  doc.rect(0, 0, pageW, 55, "F");
-
-  // Accent line
-  doc.setFillColor(59, 130, 246);
-  doc.rect(0, 55, pageW, 2, "F");
-
-  // Title text
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(22);
-  doc.text("SHOOTING LINEUP", pageW / 2, 22, { align: "center" });
-
-  doc.setFontSize(16);
-  doc.text(data.projectName, pageW / 2, 34, { align: "center" });
-
-  // Meta info
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.setTextColor(180, 180, 200);
-
+export async function downloadLineupPDF(data: LineupPDFData) {
   const dateStr = format(new Date(data.projectDate), "d MMMM yyyy", { locale: bn });
-  let metaLine = `Date: ${dateStr}`;
-  if (data.location) metaLine += `  |  Location: ${data.location}`;
-  metaLine += `  |  Client: ${data.clientName}`;
-  doc.text(metaLine, pageW / 2, 47, { align: "center" });
 
-  let yPos = 65;
+  // Create a hidden container for rendering
+  const container = document.createElement("div");
+  container.style.cssText = `
+    position: fixed; left: -9999px; top: 0;
+    width: 794px; /* A4 width at 96dpi */
+    background: white;
+    font-family: 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', Arial, sans-serif;
+    color: #28282d;
+  `;
 
-  // Scenes table
+  let metaLine = `তারিখ: ${dateStr}`;
+  if (data.location) metaLine += `  |  লোকেশন: ${data.location}`;
+  metaLine += `  |  ক্লায়েন্ট: ${data.clientName}`;
+
+  let scenesHTML = "";
   if (data.scenes.length > 0) {
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(40, 40, 50);
-    doc.setFontSize(13);
-    doc.text("Scene Lineup", margin, yPos);
-    yPos += 8;
+    const rows = data.scenes
+      .map(
+        (s) => `
+      <tr>
+        <td style="width:40px;text-align:center;font-weight:bold;padding:10px 6px;border:1px solid #ddd;">${s.scene_number}</td>
+        <td style="padding:10px 8px;border:1px solid #ddd;">${s.description || "-"}</td>
+        <td style="width:120px;padding:10px 8px;border:1px solid #ddd;">${s.location || "-"}</td>
+        <td style="width:120px;padding:10px 8px;border:1px solid #ddd;">${s.characters || "-"}</td>
+      </tr>`
+      )
+      .join("");
 
-    const tableData = data.scenes.map((s) => [
-      String(s.scene_number),
-      s.description || "-",
-      s.location || "-",
-      s.characters || "-",
-    ]);
+    scenesHTML = `
+      <div style="margin-top:24px;">
+        <h2 style="font-size:17px;font-weight:bold;margin-bottom:10px;color:#1e1e28;">সিন লাইনআপ</h2>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#1e1e28;color:#fff;">
+              <th style="width:40px;padding:10px 6px;text-align:center;border:1px solid #1e1e28;">#</th>
+              <th style="padding:10px 8px;text-align:left;border:1px solid #1e1e28;">বর্ণনা</th>
+              <th style="width:120px;padding:10px 8px;text-align:left;border:1px solid #1e1e28;">লোকেশন</th>
+              <th style="width:120px;padding:10px 8px;text-align:left;border:1px solid #1e1e28;">চরিত্র</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  }
 
-    autoTable(doc, {
-      startY: yPos,
-      margin: { left: margin, right: margin },
-      head: [["#", "Description", "Location", "Characters"]],
-      body: tableData,
-      theme: "grid",
-      headStyles: {
-        fillColor: [30, 30, 40],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        fontSize: 10,
-        halign: "left",
-      },
-      bodyStyles: {
-        fontSize: 9,
-        textColor: [40, 40, 50],
-        lineColor: [220, 220, 230],
-      },
-      alternateRowStyles: {
-        fillColor: [245, 247, 250],
-      },
-      columnStyles: {
-        0: { cellWidth: 12, halign: "center", fontStyle: "bold" },
-        1: { cellWidth: "auto" },
-        2: { cellWidth: 35 },
-        3: { cellWidth: 35 },
-      },
-      styles: {
-        cellPadding: 4,
-        lineWidth: 0.3,
-      },
+  let scriptHTML = "";
+  if (data.clientScript) {
+    scriptHTML = `
+      <div style="margin-top:24px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:4px;height:24px;background:#3b82f6;border-radius:2px;"></div>
+          <h2 style="font-size:17px;font-weight:bold;color:#1e1e28;">ক্লায়েন্ট স্ক্রিপ্ট</h2>
+        </div>
+        <div style="background:#fafafc;border:1px solid #ddd;border-radius:6px;padding:14px 16px;font-size:13px;line-height:1.8;white-space:pre-wrap;color:#3c3c46;">
+          ${data.clientScript}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div style="background:#1e1e28;padding:28px 30px 18px;text-align:center;">
+      <div style="font-size:24px;font-weight:bold;color:#fff;letter-spacing:2px;">SHOOTING LINEUP</div>
+      <div style="font-size:18px;font-weight:bold;color:#fff;margin-top:6px;">${data.projectName}</div>
+      <div style="font-size:11px;color:#b4b4c8;margin-top:10px;">${metaLine}</div>
+    </div>
+    <div style="height:3px;background:#3b82f6;"></div>
+    <div style="padding:20px 30px 40px;">
+      ${scenesHTML}
+      ${scriptHTML}
+    </div>
+  `;
+
+  document.body.appendChild(container);
+
+  try {
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#ffffff",
     });
 
-    yPos = (doc as any).lastAutoTable.finalY + 12;
-  }
+    const imgWidth = 210; // A4 mm
+    const pageHeight = 297;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const imgData = canvas.toDataURL("image/png");
 
-  // Client Script
-  if (data.clientScript) {
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 20;
+    const pdf = new jsPDF("p", "mm", "a4");
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
     }
 
-    // Section header
-    doc.setFillColor(59, 130, 246);
-    doc.rect(margin, yPos, 3, 8, "F");
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(40, 40, 50);
-    doc.setFontSize(13);
-    doc.text("Client Script", margin + 6, yPos + 6);
-    yPos += 14;
-
-    // Script box
-    doc.setDrawColor(220, 220, 230);
-    doc.setFillColor(250, 250, 252);
-
-    const lines = doc.splitTextToSize(data.clientScript, contentW - 12);
-    const boxH = Math.min(lines.length * 5 + 10, 200);
-
-    doc.roundedRect(margin, yPos, contentW, boxH, 2, 2, "FD");
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(60, 60, 70);
-    doc.text(lines, margin + 6, yPos + 7);
+    pdf.save(`Lineup_${data.projectName.replace(/\s+/g, "_")}.pdf`);
+  } finally {
+    document.body.removeChild(container);
   }
-
-  // Footer
-  const pageCount = doc.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    const pH = doc.internal.pageSize.getHeight();
-    doc.setFillColor(245, 245, 248);
-    doc.rect(0, pH - 12, pageW, 12, "F");
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 160);
-    doc.text(`Page ${i} of ${pageCount}`, pageW / 2, pH - 4, { align: "center" });
-    doc.text(data.projectName, margin, pH - 4);
-    doc.text(format(new Date(), "dd/MM/yyyy"), pageW - margin, pH - 4, { align: "right" });
-  }
-
-  doc.save(`Lineup_${data.projectName.replace(/\s+/g, "_")}.pdf`);
 }
