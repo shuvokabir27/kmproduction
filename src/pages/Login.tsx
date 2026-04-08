@@ -90,8 +90,14 @@ const Login = () => {
     setSubmitting(true);
     setErrorMsg("");
     try {
-      const fakeEmail = `${clientId.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.local`;
-      const { error } = await supabase.auth.signInWithPassword({ email: fakeEmail, password: clientPassword });
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/client-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: clientPhone, password: clientPassword }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
       if (error) throw error;
       toast.success("সফলভাবে লগইন হয়েছে!");
     } catch (err: any) {
