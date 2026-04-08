@@ -23,6 +23,7 @@ import {
   Sparkles,
   Newspaper,
   Globe,
+  Briefcase,
   Receipt,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,6 +43,7 @@ const moreItems = [
   { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
   { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400", bg: "bg-green-500/10" },
   { icon: Receipt, label: "শুটিং খরচ", path: "/admin/shooting-expenses", color: "text-red-400", bg: "bg-red-500/10" },
+  { icon: Briefcase, label: "বাইরের কাজ", path: "/admin/freelance", color: "text-orange-400", bg: "bg-orange-500/10" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400", bg: "bg-orange-500/10" },
   { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/10" },
   { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__", color: "", bg: "" },
