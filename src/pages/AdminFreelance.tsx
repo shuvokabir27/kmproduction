@@ -707,6 +707,33 @@ export default function AdminFreelance() {
                 </div>
               )}
 
+              {/* Client Script (read-only for admin) */}
+              {lineupDialog && (() => {
+                const proj: any = projects.find((p: any) => p.id === lineupDialog);
+                if (!proj?.client_script && (!proj?.client_script_images || (Array.isArray(proj.client_script_images) && proj.client_script_images.length === 0))) return null;
+                return (
+                  <div className="space-y-2 border-t border-border/30 pt-3">
+                    <h4 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                      <FileText className="h-4 w-4 text-amber-400" /> ক্লায়েন্টের স্ক্রিপ্ট
+                    </h4>
+                    {proj.client_script && (
+                      <div className="p-3 rounded-lg bg-secondary/30 text-sm text-foreground whitespace-pre-wrap">
+                        {proj.client_script}
+                      </div>
+                    )}
+                    {Array.isArray(proj.client_script_images) && proj.client_script_images.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2">
+                        {proj.client_script_images.map((url: string, i: number) => (
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                            <img src={url} alt={`স্ক্রিপ্ট ${i + 1}`} className="w-full h-32 object-cover rounded-lg border border-border/30" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* Add scene form */}
               <div className="space-y-2 border-t border-border/30 pt-3">
                 <h4 className="text-sm font-medium text-foreground">নতুন সিন যুক্ত করুন</h4>
