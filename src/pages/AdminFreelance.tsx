@@ -534,9 +534,6 @@ export default function AdminFreelance() {
                                    <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setLineupDialog(p.id)}>
                                      <FileText className="h-3 w-3" /> লাইনআপ
                                    </Button>
-                                   <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setPaymentDialog(p.id)}>
-                                     <Wallet className="h-3 w-3" /> পেমেন্ট
-                                   </Button>
                                   <Button
                                     size="sm"
                                     variant="outline"
