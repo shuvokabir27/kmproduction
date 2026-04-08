@@ -13,6 +13,7 @@ interface PaymentReceiptProps {
     date: string;
     paidBy?: string;
     totalEarned?: number;
+    totalFreelance?: number;
     totalPaid?: number;
     balance?: number;
   };
@@ -172,6 +173,12 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
                   <div className="flex justify-between text-xs">
                     <span className="text-gray-600">মোট আয়</span>
                     <span>৳{receiptData.totalEarned.toLocaleString()}</span>
+                  </div>
+                )}
+                {(receiptData.totalFreelance ?? 0) > 0 && (
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">বাইরের আয়</span>
+                    <span>৳{receiptData.totalFreelance!.toLocaleString()}</span>
                   </div>
                 )}
                 {receiptData.totalPaid !== undefined && (

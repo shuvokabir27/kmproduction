@@ -132,6 +132,7 @@ const AdminPayments = () => {
         notes: notes || null,
         date: new Date().toISOString(),
         totalEarned: memberBalance?.totalEarned || 0,
+        totalFreelance: memberBalance?.totalFreelance || 0,
         totalPaid: (memberBalance?.totalPaid || 0) + Number(amount),
         balance: (memberBalance?.balance || 0) - Number(amount),
       });
@@ -150,7 +151,6 @@ const AdminPayments = () => {
   const methodIcon: Record<string, any> = { bank: Building, bkash: Smartphone, nagad: Smartphone, cash: Wallet };
 
   const showReceiptForPayment = async (payment: any) => {
-    // Fetch member balance info
     const { data: attendance } = await supabase.from("attendance").select("daily_rate").eq("member_id", payment.member_id).eq("is_present", true);
     const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
     const { data: allPayments } = await supabase.from("payments").select("amount").eq("member_id", payment.member_id);
@@ -161,6 +161,8 @@ const AdminPayments = () => {
     const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
     const { data: profile } = await (supabase as any).from("profiles").select("previous_balance").eq("id", payment.member_id).maybeSingle();
     const previousBalance = Number((profile as any)?.previous_balance || 0);
+    const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("paid_amount").eq("member_id", payment.member_id).eq("is_paid", true);
+    const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
 
     setReceiptData({
       memberName: payment.profiles?.full_name || "",
@@ -171,8 +173,9 @@ const AdminPayments = () => {
       notes: payment.notes || null,
       date: payment.payment_date,
       totalEarned,
+      totalFreelance,
       totalPaid,
-      balance: totalEarned + totalBonuses + totalSalaryCredits + previousBalance - totalPaid,
+      balance: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid,
     });
   };
 
@@ -255,11 +258,16 @@ const AdminPayments = () => {
                       <p className="text-3xl font-black text-white/95 tracking-tight">৳{memberBalance?.balance?.toLocaleString() || "0"}</p>
                     </div>
 
-                    {/* Earned / Paid row */}
+                    {/* Earned / Paid / Freelance row */}
                     <div className="relative flex items-center justify-between px-2">
                       <div className="text-center">
                         <p className="text-[9px] uppercase tracking-wider text-white/35">মোট আয়</p>
                         <p className="text-xs font-bold text-emerald-300/90">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</p>
+                      </div>
+                      <div className="w-px h-6 bg-white/10" />
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-white/35">বাইরের আয়</p>
+                        <p className="text-xs font-bold text-orange-300/90">৳{memberBalance?.totalFreelance?.toLocaleString() || "0"}</p>
                       </div>
                       <div className="w-px h-6 bg-white/10" />
                       <div className="text-center">
