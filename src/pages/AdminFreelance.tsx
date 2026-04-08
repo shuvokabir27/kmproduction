@@ -69,8 +69,8 @@ export default function AdminFreelance() {
   const [sceneForm, setSceneForm] = useState({ scene_number: "", description: "", location: "", characters: "" });
   const [clientDialog, setClientDialog] = useState(false);
   const [clientForm, setClientForm] = useState({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
-  const [paymentDialog, setPaymentDialog] = useState<string | null>(null);
-  const [paymentForm, setPaymentForm] = useState({ amount: "", payment_method: "cash", notes: "" });
+  const [paymentDialog, setPaymentDialog] = useState(false);
+  const [paymentForm, setPaymentForm] = useState({ amount: "", payment_method: "cash", notes: "", client_profile_id: "" });
 
   // Form state
   const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "", client_profile_id: "" });
@@ -133,10 +133,19 @@ export default function AdminFreelance() {
 
   const getProjectPayments = (pid: string) => projectPayments.filter((p: any) => p.project_id === pid);
 
+  const getClientPayments = (clientProfileId: string) => projectPayments.filter((p: any) => p.client_profile_id === clientProfileId);
+
+  const getClientTotalBudget = (clientProfileId: string) =>
+    projects.filter((p) => (p as any).client_profile_id === clientProfileId).reduce((s, p) => s + p.total_budget, 0);
+
+  const getClientTotalPaid = (clientProfileId: string) =>
+    getClientPayments(clientProfileId).reduce((s: number, p: any) => s + Number(p.amount), 0);
+
   const addPaymentMutation = useMutation({
-    mutationFn: async (projectId: string) => {
+    mutationFn: async () => {
       const { error } = await (supabase as any).from("freelance_payments").insert({
-        project_id: projectId,
+        client_profile_id: paymentForm.client_profile_id,
+        project_id: null,
         amount: Number(paymentForm.amount) || 0,
         payment_method: paymentForm.payment_method,
         notes: paymentForm.notes || null,
@@ -146,8 +155,7 @@ export default function AdminFreelance() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["freelance-payments"] });
-      setPaymentDialog(null);
-      setPaymentForm({ amount: "", payment_method: "cash", notes: "" });
+      setPaymentForm({ ...paymentForm, amount: "", notes: "" });
       toast({ title: "সফল!", description: "পেমেন্ট যুক্ত হয়েছে" });
     },
   });
