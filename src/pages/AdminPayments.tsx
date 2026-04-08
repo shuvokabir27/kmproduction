@@ -255,11 +255,16 @@ const AdminPayments = () => {
                       <p className="text-3xl font-black text-white/95 tracking-tight">৳{memberBalance?.balance?.toLocaleString() || "0"}</p>
                     </div>
 
-                    {/* Earned / Paid row */}
+                    {/* Earned / Paid / Freelance row */}
                     <div className="relative flex items-center justify-between px-2">
                       <div className="text-center">
                         <p className="text-[9px] uppercase tracking-wider text-white/35">মোট আয়</p>
                         <p className="text-xs font-bold text-emerald-300/90">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</p>
+                      </div>
+                      <div className="w-px h-6 bg-white/10" />
+                      <div className="text-center">
+                        <p className="text-[9px] uppercase tracking-wider text-white/35">বাইরের আয়</p>
+                        <p className="text-xs font-bold text-orange-300/90">৳{memberBalance?.totalFreelance?.toLocaleString() || "0"}</p>
                       </div>
                       <div className="w-px h-6 bg-white/10" />
                       <div className="text-center">
