@@ -177,18 +177,6 @@ export default function ClientDashboard() {
                       </div>
                       <div className="text-right shrink-0">
                         <div className="text-sm font-medium text-foreground">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                        <div className="flex items-center gap-2 text-xs mt-0.5">
-                          {totalPaid > 0 && (
-                            <span className="flex items-center gap-0.5 text-emerald-400">
-                              <ArrowUpRight className="h-3 w-3" /> ৳{totalPaid.toLocaleString("bn-BD")}
-                            </span>
-                          )}
-                          {due > 0 && (
-                            <span className="flex items-center gap-0.5 text-amber-400">
-                              <ArrowDownRight className="h-3 w-3" /> ৳{due.toLocaleString("bn-BD")}
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
