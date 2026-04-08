@@ -11,6 +11,7 @@ import { bn } from "date-fns/locale";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
+import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 
 const statusMap: Record<string, { label: string; color: string }> = {
   upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400" },
@@ -56,7 +57,7 @@ export default function ClientDashboard() {
     },
   });
 
-  const { data: allScenes = [] } = useQuery({
+  const { data: allScenes = [], refetch: refetchScenes } = useQuery({
     queryKey: ["client-scenes", clientProfile?.id],
     enabled: !!clientProfile?.id && projects.length > 0,
     queryFn: async () => {
@@ -224,36 +225,12 @@ export default function ClientDashboard() {
                             </div>
                           </div>
 
-                          {/* Scenes */}
-                          {scenes.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                                <FileText className="h-4 w-4 text-primary" /> শুটিং লাইনআপ ({scenes.length} সিন)
-                              </h4>
-                              <div className="rounded-lg border border-border/30 overflow-hidden">
-                                <table className="w-full text-sm">
-                                  <thead>
-                                    <tr className="bg-secondary/30 border-b border-border/30">
-                                      <th className="text-left p-2.5 font-medium text-foreground w-14">সিন</th>
-                                      <th className="text-left p-2.5 font-medium text-foreground">বিবরণ</th>
-                                      <th className="text-left p-2.5 font-medium text-foreground">লোকেশন</th>
-                                      <th className="text-left p-2.5 font-medium text-foreground">চরিত্র</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {scenes.map((s: any) => (
-                                      <tr key={s.id} className="border-b border-border/15">
-                                        <td className="p-2.5 font-bold text-foreground">{s.scene_number}</td>
-                                        <td className="p-2.5 text-foreground">{s.description || "—"}</td>
-                                        <td className="p-2.5 text-muted-foreground">{s.location || "—"}</td>
-                                        <td className="p-2.5 text-muted-foreground">{s.characters || "—"}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-                          )}
+                          {/* Client Scene Editor */}
+                          <ClientSceneEditor
+                            projectId={p.id}
+                            scenes={scenes}
+                            onUpdate={() => refetchScenes()}
+                          />
 
                           {/* Client Script Writing */}
                           <ClientProjectScript
