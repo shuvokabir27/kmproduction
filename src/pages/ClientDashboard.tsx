@@ -155,9 +155,6 @@ export default function ClientDashboard() {
             </h2>
             {projects.map((p: any) => {
               const scenes = getScenes(p.id);
-              const payments = getPayments(p.id);
-              const totalPaid = payments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-              const due = Number(p.total_budget) - totalPaid;
               const st = statusMap[p.status] || statusMap.upcoming;
               const isOpen = expandedProject === p.id;
 
