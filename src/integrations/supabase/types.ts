@@ -383,6 +383,7 @@ export type Database = {
           name: string
           notes: string | null
           project_date: string
+          share_token: string | null
           status: string
           total_budget: number
           total_expense: number
@@ -397,6 +398,7 @@ export type Database = {
           name: string
           notes?: string | null
           project_date: string
+          share_token?: string | null
           status?: string
           total_budget?: number
           total_expense?: number
@@ -411,11 +413,53 @@ export type Database = {
           name?: string
           notes?: string | null
           project_date?: string
+          share_token?: string | null
           status?: string
           total_budget?: number
           total_expense?: number
         }
         Relationships: []
+      }
+      freelance_scenes: {
+        Row: {
+          characters: string | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          project_id: string
+          scene_number: number
+          sort_order: number | null
+        }
+        Insert: {
+          characters?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          project_id: string
+          scene_number?: number
+          sort_order?: number | null
+        }
+        Update: {
+          characters?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          project_id?: string
+          scene_number?: number
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freelance_scenes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "freelance_projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gallery_images: {
         Row: {
