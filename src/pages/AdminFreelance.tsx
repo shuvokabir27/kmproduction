@@ -681,6 +681,7 @@ export default function AdminFreelance() {
             </div>
           </TabsContent>
 
+          <TabsContent value="clients" className="space-y-4 mt-4">
             <div className="flex justify-end">
               <Button onClick={() => setClientDialog(true)} className="gap-2">
                 <Plus className="h-4 w-4" /> নতুন ক্লায়েন্ট
