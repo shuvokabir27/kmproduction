@@ -254,8 +254,12 @@ const AdminPayments = () => {
 
                     {/* Balance - Big */}
                     <div className="relative text-center py-2">
-                      <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">বকেয়া ব্যালেন্স</p>
-                      <p className="text-3xl font-black text-white/95 tracking-tight">৳{memberBalance?.balance?.toLocaleString() || "0"}</p>
+                      <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
+                        {(memberBalance?.balance ?? 0) > 0 ? "বকেয়া ব্যালেন্স" : (memberBalance?.balance ?? 0) < 0 ? "অগ্রিম ব্যালেন্স" : "সমন্বয়কৃত"}
+                      </p>
+                      <p className={`text-3xl font-black tracking-tight ${(memberBalance?.balance ?? 0) > 0 ? "text-red-300" : (memberBalance?.balance ?? 0) < 0 ? "text-emerald-300" : "text-cyan-300"}`}>
+                        ৳{Math.abs(memberBalance?.balance ?? 0).toLocaleString()}
+                      </p>
                     </div>
 
                     {/* Earned / Paid / Freelance row */}
