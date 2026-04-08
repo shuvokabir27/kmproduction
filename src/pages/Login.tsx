@@ -19,7 +19,7 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [memberPassword, setMemberPassword] = useState("");
-  const [clientId, setClientId] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   const [clientPassword, setClientPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -90,8 +90,14 @@ const Login = () => {
     setSubmitting(true);
     setErrorMsg("");
     try {
-      const fakeEmail = `${clientId.toLowerCase().replace(/[^a-z0-9]/g, "")}@client.local`;
-      const { error } = await supabase.auth.signInWithPassword({ email: fakeEmail, password: clientPassword });
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/client-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: clientPhone, password: clientPassword }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
       if (error) throw error;
       toast.success("সফলভাবে লগইন হয়েছে!");
     } catch (err: any) {
@@ -195,12 +201,13 @@ const Login = () => {
               <TabsContent value="client">
                 <form onSubmit={handleClientLogin} className="space-y-4">
                   <div>
-                    <Label htmlFor="client-id" className="text-foreground text-xs">ক্লায়েন্ট আইডি</Label>
+                    <Label htmlFor="client-phone" className="text-foreground text-xs">মোবাইল নম্বর</Label>
                     <Input
-                      id="client-id"
-                      value={clientId}
-                      onChange={(e) => setClientId(e.target.value)}
-                      placeholder="যেমন: CLIENT-001"
+                      id="client-phone"
+                      type="tel"
+                      value={clientPhone}
+                      onChange={(e) => setClientPhone(e.target.value)}
+                      placeholder="যেমন: 01712345678"
                       required
                       className="bg-secondary border-border/30 h-11 text-base"
                     />
