@@ -205,6 +205,49 @@ export default function AdminFreelance() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-projects"] }),
   });
 
+  const addSceneMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      const projectScenes = allScenes.filter((s: any) => s.project_id === projectId);
+      const { error } = await (supabase as any).from("freelance_scenes").insert({
+        project_id: projectId,
+        scene_number: Number(sceneForm.scene_number) || (projectScenes.length + 1),
+        description: sceneForm.description || null,
+        location: sceneForm.location || null,
+        characters: sceneForm.characters || null,
+        sort_order: projectScenes.length,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["freelance-scenes"] });
+      setSceneForm({ scene_number: "", description: "", location: "", characters: "" });
+      toast({ title: "সিন যুক্ত হয়েছে" });
+    },
+  });
+
+  const deleteSceneMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any).from("freelance_scenes").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-scenes"] }),
+  });
+
+  const generateShareToken = useMutation({
+    mutationFn: async (projectId: string) => {
+      const token = crypto.randomUUID().replace(/-/g, "").substring(0, 12);
+      const { error } = await supabase.from("freelance_projects").update({ share_token: token } as any).eq("id", projectId);
+      if (error) throw error;
+      return token;
+    },
+    onSuccess: (token) => {
+      qc.invalidateQueries({ queryKey: ["freelance-projects"] });
+      const url = `${window.location.origin}/project/${token}`;
+      navigator.clipboard.writeText(url);
+      toast({ title: "লিংক কপি হয়েছে!", description: url });
+    },
+  });
+
   const openEditDialog = (p: FreelanceProject) => {
     setEditProject(p);
     setForm({
