@@ -39,10 +39,10 @@ export default function ClientDashboard() {
     queryKey: ["client-projects", clientProfile?.id],
     enabled: !!clientProfile?.id,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("freelance_projects")
         .select("*")
-        .eq("client_profile_id" as any, clientProfile.id)
+        .eq("client_profile_id", clientProfile.id)
         .order("project_date", { ascending: false });
       return data || [];
     },
