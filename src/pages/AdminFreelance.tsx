@@ -449,6 +449,26 @@ export default function AdminFreelance() {
                                   <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => openEditDialog(p)}>
                                     <Edit className="h-3 w-3" /> এডিট
                                   </Button>
+                                  <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setLineupDialog(p.id)}>
+                                    <FileText className="h-3 w-3" /> লাইনআপ
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 text-xs gap-1"
+                                    onClick={() => {
+                                      if ((p as any).share_token) {
+                                        const url = `${window.location.origin}/project/${(p as any).share_token}`;
+                                        navigator.clipboard.writeText(url);
+                                        toast({ title: "লিংক কপি হয়েছে!", description: url });
+                                      } else {
+                                        generateShareToken.mutate(p.id);
+                                      }
+                                    }}
+                                  >
+                                    {(p as any).share_token ? <Copy className="h-3 w-3" /> : <Link2 className="h-3 w-3" />}
+                                    {(p as any).share_token ? "লিংক কপি" : "শেয়ার লিংক"}
+                                  </Button>
                                   <Button size="sm" variant="destructive" className="h-8 text-xs gap-1" onClick={() => { if (confirm("মুছে ফেলতে চান?")) deleteMutation.mutate(p.id); }}>
                                     <Trash2 className="h-3 w-3" /> মুছুন
                                   </Button>
