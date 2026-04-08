@@ -263,6 +263,7 @@ export default function AdminFreelance() {
   };
 
   const getAssignments = (projectId: string) => allAssignments.filter(a => a.project_id === projectId);
+  const getScenes = (projectId: string) => allScenes.filter((s: any) => s.project_id === projectId);
 
   const totalMemberCost = (projectId: string) => getAssignments(projectId).reduce((s, a) => s + a.rate, 0);
 
