@@ -260,6 +260,7 @@ export default function AdminFreelance() {
       location: p.location || "",
       total_budget: String(p.total_budget),
       notes: p.notes || "",
+      client_profile_id: (p as any).client_profile_id || "",
     });
     setProjectDialog(true);
   };
