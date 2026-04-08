@@ -37,6 +37,7 @@ import News from "./pages/News";
 import PublisherProfile from "./pages/PublisherProfile";
 import AdminBookings from "./pages/AdminBookings";
 import AdminFreelance from "./pages/AdminFreelance";
+import FreelanceClientView from "./pages/FreelanceClientView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
