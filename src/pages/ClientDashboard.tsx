@@ -315,6 +315,15 @@ export default function ClientDashboard() {
                             </div>
                           )}
 
+                          {/* Client Script Writing */}
+                          <ClientProjectScript
+                            projectId={p.id}
+                            userId={user!.id}
+                            initialScript={p.client_script}
+                            initialImages={Array.isArray(p.client_script_images) ? p.client_script_images : []}
+                            onUpdate={() => {}}
+                          />
+
                           {p.notes && <p className="text-xs text-muted-foreground italic border-t border-border/20 pt-2">নোট: {p.notes}</p>}
                         </div>
                       </motion.div>
