@@ -18,6 +18,7 @@ import { bn } from "date-fns/locale";
 import {
   Plus, Briefcase, MapPin, Phone, Calendar, Users, DollarSign,
   CheckCircle2, XCircle, ChevronDown, ChevronUp, Trash2, Edit, TrendingUp,
+  Link2, FileText, Copy,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
