@@ -2,21 +2,28 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, Users, FileText, CheckCircle2, Clock, LogOut, Wallet, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { ClientProjectScript } from "@/components/ClientProjectScript";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ClientProjectScript } from "@/components/ClientProjectScript";
 
 const statusMap: Record<string, { label: string; color: string }> = {
   upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400" },
   ongoing: { label: "চলছে", color: "bg-amber-500/20 text-amber-400" },
   completed: { label: "সম্পন্ন", color: "bg-emerald-500/20 text-emerald-400" },
   paid: { label: "পেইড", color: "bg-violet-500/20 text-violet-400" },
+};
+
+const paymentMethodLabel: Record<string, string> = {
+  cash: "নগদ",
+  bkash: "বিকাশ",
+  nagad: "নগদ (নাগাদ)",
+  bank: "ব্যাংক",
 };
 
 export default function ClientDashboard() {
@@ -49,19 +56,6 @@ export default function ClientDashboard() {
     },
   });
 
-  const { data: allAssignments = [] } = useQuery({
-    queryKey: ["client-assignments", clientProfile?.id],
-    enabled: !!clientProfile?.id && projects.length > 0,
-    queryFn: async () => {
-      const projectIds = projects.map((p: any) => p.id);
-      const { data } = await supabase
-        .from("freelance_assignments")
-        .select("*, profiles(full_name)")
-        .in("project_id", projectIds);
-      return data || [];
-    },
-  });
-
   const { data: allScenes = [] } = useQuery({
     queryKey: ["client-scenes", clientProfile?.id],
     enabled: !!clientProfile?.id && projects.length > 0,
@@ -76,30 +70,38 @@ export default function ClientDashboard() {
     },
   });
 
+  const { data: allPayments = [] } = useQuery({
+    queryKey: ["client-payments", clientProfile?.id],
+    enabled: !!clientProfile?.id && projects.length > 0,
+    queryFn: async () => {
+      const projectIds = projects.map((p: any) => p.id);
+      const { data } = await (supabase as any)
+        .from("freelance_payments")
+        .select("*")
+        .in("project_id", projectIds)
+        .order("payment_date", { ascending: false });
+      return data || [];
+    },
+  });
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
 
-  const getAssignments = (pid: string) => allAssignments.filter((a: any) => a.project_id === pid);
   const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
+  const getPayments = (pid: string) => allPayments.filter((p: any) => p.project_id === pid);
 
-  // Overall summary across all projects
   const overallSummary = projects.reduce(
     (acc: any, p: any) => {
-      const assigns = getAssignments(p.id);
-      const memberCost = assigns.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-      const paidAmount = assigns.reduce((s: number, a: any) => s + (a.is_paid ? Number(a.paid_amount || a.rate || 0) : 0), 0);
-      const unpaidAmount = memberCost - paidAmount;
+      const payments = getPayments(p.id);
+      const totalPaid = payments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
       acc.totalBudget += Number(p.total_budget || 0);
-      acc.totalExpense += Number(p.total_expense || 0);
-      acc.totalMemberCost += memberCost;
-      acc.totalPaid += paidAmount;
-      acc.totalUnpaid += unpaidAmount;
+      acc.totalPaid += totalPaid;
       acc.projectCount += 1;
       return acc;
     },
-    { totalBudget: 0, totalExpense: 0, totalMemberCost: 0, totalPaid: 0, totalUnpaid: 0, projectCount: 0 }
+    { totalBudget: 0, totalPaid: 0, projectCount: 0 }
   );
-  const overallProfit = overallSummary.totalBudget - overallSummary.totalExpense - overallSummary.totalMemberCost;
+  const overallDue = overallSummary.totalBudget - overallSummary.totalPaid;
 
   return (
     <div className="min-h-screen bg-background">
@@ -122,7 +124,7 @@ export default function ClientDashboard() {
 
         {/* Overall Summary Cards */}
         {projects.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <Card className="border-border/50">
               <CardContent className="p-4 text-center">
                 <div className="flex items-center justify-center gap-1.5 mb-1">
@@ -135,17 +137,8 @@ export default function ClientDashboard() {
             <Card className="border-border/50">
               <CardContent className="p-4 text-center">
                 <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <Wallet className="h-4 w-4 text-sky-400" />
-                  <span className="text-xs text-muted-foreground">মোট বাজেট</span>
-                </div>
-                <div className="text-2xl font-bold text-sky-400">৳{overallSummary.totalBudget.toLocaleString("bn-BD")}</div>
-              </CardContent>
-            </Card>
-            <Card className="border-border/50">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-xs text-muted-foreground">মোট পেইড</span>
+                  <span className="text-xs text-muted-foreground">মোট পেমেন্ট</span>
                 </div>
                 <div className="text-2xl font-bold text-emerald-400">৳{overallSummary.totalPaid.toLocaleString("bn-BD")}</div>
               </CardContent>
@@ -156,7 +149,7 @@ export default function ClientDashboard() {
                   <Clock className="h-4 w-4 text-amber-400" />
                   <span className="text-xs text-muted-foreground">মোট বাকি</span>
                 </div>
-                <div className="text-2xl font-bold text-amber-400">৳{overallSummary.totalUnpaid.toLocaleString("bn-BD")}</div>
+                <div className="text-2xl font-bold text-amber-400">৳{Math.max(0, overallDue).toLocaleString("bn-BD")}</div>
               </CardContent>
             </Card>
           </div>
@@ -171,12 +164,10 @@ export default function ClientDashboard() {
               <FileText className="h-5 w-5 text-primary" /> আপনার প্রজেক্ট সমূহ
             </h2>
             {projects.map((p: any) => {
-              const assigns = getAssignments(p.id);
               const scenes = getScenes(p.id);
-              const memberCost = assigns.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-              const paidAmount = assigns.reduce((s: number, a: any) => s + (a.is_paid ? Number(a.paid_amount || a.rate || 0) : 0), 0);
-              const unpaidAmount = memberCost - paidAmount;
-              const totalCost = Number(p.total_expense) + memberCost;
+              const payments = getPayments(p.id);
+              const totalPaid = payments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+              const due = Number(p.total_budget) - totalPaid;
               const st = statusMap[p.status] || statusMap.upcoming;
               const isOpen = expandedProject === p.id;
 
@@ -195,20 +186,19 @@ export default function ClientDashboard() {
                         <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
                           {p.location && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {p.location}</span>}
-                          <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {assigns.length} জন</span>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
                         <div className="text-sm font-medium text-foreground">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                         <div className="flex items-center gap-2 text-xs mt-0.5">
-                          {paidAmount > 0 && (
+                          {totalPaid > 0 && (
                             <span className="flex items-center gap-0.5 text-emerald-400">
-                              <ArrowUpRight className="h-3 w-3" /> ৳{paidAmount.toLocaleString("bn-BD")}
+                              <ArrowUpRight className="h-3 w-3" /> ৳{totalPaid.toLocaleString("bn-BD")}
                             </span>
                           )}
-                          {unpaidAmount > 0 && (
+                          {due > 0 && (
                             <span className="flex items-center gap-0.5 text-amber-400">
-                              <ArrowDownRight className="h-3 w-3" /> ৳{unpaidAmount.toLocaleString("bn-BD")}
+                              <ArrowDownRight className="h-3 w-3" /> ৳{due.toLocaleString("bn-BD")}
                             </span>
                           )}
                         </div>
@@ -230,54 +220,39 @@ export default function ClientDashboard() {
                             <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
                               <Wallet className="h-4 w-4 text-primary" /> আর্থিক সামারি
                             </h4>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-3 gap-3">
                               <div className="rounded-lg bg-sky-500/10 p-3 text-center">
                                 <div className="text-xs text-muted-foreground">বাজেট</div>
                                 <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                               </div>
-                              <div className="rounded-lg bg-amber-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">অন্যান্য খরচ</div>
-                                <div className="font-bold text-amber-400">৳{Number(p.total_expense).toLocaleString("bn-BD")}</div>
-                              </div>
                               <div className="rounded-lg bg-emerald-500/10 p-3 text-center">
-                                <div className="text-xs text-muted-foreground">পেইড</div>
-                                <div className="font-bold text-emerald-400">৳{paidAmount.toLocaleString("bn-BD")}</div>
+                                <div className="text-xs text-muted-foreground">পেমেন্ট</div>
+                                <div className="font-bold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
                               </div>
                               <div className="rounded-lg bg-red-500/10 p-3 text-center">
                                 <div className="text-xs text-muted-foreground">বাকি</div>
-                                <div className="font-bold text-red-400">৳{unpaidAmount.toLocaleString("bn-BD")}</div>
+                                <div className="font-bold text-red-400">৳{Math.max(0, due).toLocaleString("bn-BD")}</div>
                               </div>
-                            </div>
-                            <div className="mt-2 p-2.5 rounded-lg bg-secondary/30 flex items-center justify-between">
-                              <span className="text-xs text-muted-foreground">মোট খরচ (অন্যান্য + সদস্য)</span>
-                              <span className="text-sm font-bold text-foreground">৳{totalCost.toLocaleString("bn-BD")}</span>
                             </div>
                           </div>
 
-                          {/* Team */}
-                          {assigns.length > 0 && (
+                          {/* Payment History */}
+                          {payments.length > 0 && (
                             <div>
                               <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
-                                <Users className="h-4 w-4 text-primary" /> টিম সদস্য ({assigns.length} জন)
+                                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> পেমেন্ট হিস্ট্রি
                               </h4>
                               <div className="space-y-1.5">
-                                {assigns.map((a: any) => (
-                                  <div key={a.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                                    <div className="flex items-center gap-2.5">
-                                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
-                                        {a.profiles?.full_name?.charAt(0) || "?"}
-                                      </div>
-                                      <div>
-                                        <div className="text-sm font-medium text-foreground">{a.profiles?.full_name || "—"}</div>
-                                        <div className="text-xs text-muted-foreground">{a.role_label || "—"}</div>
+                                {payments.map((pay: any) => (
+                                  <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
+                                    <div>
+                                      <div className="text-sm font-medium text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
+                                      <div className="text-xs text-muted-foreground">
+                                        {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
+                                        {" • "}{paymentMethodLabel[pay.payment_method] || pay.payment_method}
                                       </div>
                                     </div>
-                                    <div className="text-right">
-                                      <div className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</div>
-                                      <Badge variant={a.is_paid ? "default" : "secondary"} className={`text-[10px] h-5 ${a.is_paid ? "bg-emerald-600" : ""}`}>
-                                        {a.is_paid ? <><CheckCircle2 className="h-3 w-3 mr-0.5" /> পেইড</> : <><Clock className="h-3 w-3 mr-0.5" /> বাকি</>}
-                                      </Badge>
-                                    </div>
+                                    {pay.notes && <span className="text-xs text-muted-foreground max-w-[150px] truncate">{pay.notes}</span>}
                                   </div>
                                 ))}
                               </div>
