@@ -422,6 +422,8 @@ export type Database = {
           client_name: string
           client_phone: string | null
           client_profile_id: string | null
+          client_script: string | null
+          client_script_images: Json | null
           created_at: string
           created_by: string | null
           id: string
@@ -438,6 +440,8 @@ export type Database = {
           client_name: string
           client_phone?: string | null
           client_profile_id?: string | null
+          client_script?: string | null
+          client_script_images?: Json | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -454,6 +458,8 @@ export type Database = {
           client_name?: string
           client_phone?: string | null
           client_profile_id?: string | null
+          client_script?: string | null
+          client_script_images?: Json | null
           created_at?: string
           created_by?: string | null
           id?: string
