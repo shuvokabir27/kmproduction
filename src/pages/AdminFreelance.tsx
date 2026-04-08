@@ -131,7 +131,7 @@ export default function AdminFreelance() {
     },
   });
 
-  const getProjectPayments = (pid: string) => projectPayments.filter((p: any) => p.project_id === pid);
+  
 
   const getClientPayments = (clientProfileId: string) => projectPayments.filter((p: any) => p.client_profile_id === clientProfileId);
 
