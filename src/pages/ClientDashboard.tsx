@@ -87,20 +87,11 @@ export default function ClientDashboard() {
   if (!user) return <Navigate to="/login" replace />;
 
   const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
-  const getPayments = (pid: string) => allPayments.filter((p: any) => p.project_id === pid);
 
-  const overallSummary = projects.reduce(
-    (acc: any, p: any) => {
-      const payments = getPayments(p.id);
-      const totalPaid = payments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-      acc.totalBudget += Number(p.total_budget || 0);
-      acc.totalPaid += totalPaid;
-      acc.projectCount += 1;
-      return acc;
-    },
-    { totalBudget: 0, totalPaid: 0, projectCount: 0 }
-  );
-  const overallDue = overallSummary.totalBudget - overallSummary.totalPaid;
+  const totalBudget = projects.reduce((s: number, p: any) => s + Number(p.total_budget || 0), 0);
+  const totalPaid = allPayments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+  const overallSummary = { totalBudget, totalPaid, projectCount: projects.length };
+  const overallDue = totalBudget - totalPaid;
 
   return (
     <div className="min-h-screen bg-background">
