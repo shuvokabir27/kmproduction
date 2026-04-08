@@ -145,6 +145,29 @@ export default function ClientDashboard() {
           </div>
         )}
 
+        {/* Payment History */}
+        {allPayments.length > 0 && (
+          <Card className="border-border/50">
+            <CardContent className="p-4 space-y-2">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> পেমেন্ট হিস্ট্রি
+              </h3>
+              {allPayments.map((pay: any) => (
+                <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
+                  <div>
+                    <div className="text-sm font-medium text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
+                      {" • "}{paymentMethodLabel[pay.payment_method] || pay.payment_method}
+                    </div>
+                  </div>
+                  {pay.notes && <span className="text-xs text-muted-foreground max-w-[150px] truncate">{pay.notes}</span>}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Projects */}
         {projects.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">কোনো প্রজেক্ট নেই</div>
