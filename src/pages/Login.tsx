@@ -184,9 +184,55 @@ const Login = () => {
                 ) : "লগইন"}
               </Button>
 
-              <p className="text-center text-xs text-muted-foreground mt-3">
-                পাসওয়ার্ড ভুলে গেছেন? <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
-              </p>
+              <div className="text-center text-xs text-muted-foreground mt-3 space-y-1">
+                <Dialog open={resetOpen} onOpenChange={setResetOpen}>
+                  <DialogTrigger asChild>
+                    <button type="button" className="text-primary hover:underline">পাসওয়ার্ড ভুলে গেছেন?</button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-sm">
+                    <DialogHeader>
+                      <DialogTitle className="text-base">পাসওয়ার্ড রিসেট</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-3 pt-2">
+                      <p className="text-xs text-muted-foreground">
+                        আপনার ইমেইল দিন — রিসেট লিংক পাঠানো হবে। অথবা এডমিনের সাথে যোগাযোগ করুন।
+                      </p>
+                      <Input
+                        type="email"
+                        placeholder="আপনার ইমেইল"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        className="bg-secondary border-border/30 h-10 text-sm"
+                      />
+                      <Button
+                        className="w-full h-10 text-sm"
+                        disabled={resetSending || !resetEmail.trim()}
+                        onClick={async () => {
+                          setResetSending(true);
+                          try {
+                            const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
+                              redirectTo: `${window.location.origin}/reset-password`,
+                            });
+                            if (error) throw error;
+                            toast.success("রিসেট লিংক পাঠানো হয়েছে। ইমেইল চেক করুন।");
+                            setResetOpen(false);
+                            setResetEmail("");
+                          } catch (err: any) {
+                            toast.error(err.message || "লিংক পাঠানো যায়নি।");
+                          } finally {
+                            setResetSending(false);
+                          }
+                        }}
+                      >
+                        {resetSending ? "পাঠানো হচ্ছে..." : "রিসেট লিংক পাঠান"}
+                      </Button>
+                      <p className="text-[10px] text-muted-foreground text-center">
+                        অথবা <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
+                      </p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </form>
           </Card>
         </motion.div>
