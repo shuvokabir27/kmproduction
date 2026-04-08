@@ -50,14 +50,13 @@ export function useMemberBalance(profileId: string | undefined) {
 
       const previousBalance = Number((profile as any)?.previous_balance || 0);
 
-      // Freelance income (paid assignments)
+      // Freelance income (assigned external work rates)
       const { data: freelanceData } = await (supabase as any)
         .from("freelance_assignments")
-        .select("paid_amount")
-        .eq("member_id", profileId!)
-        .eq("is_paid", true);
+        .select("rate")
+        .eq("member_id", profileId!);
 
-      const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
+      const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
 
       return {
         totalEarned,
