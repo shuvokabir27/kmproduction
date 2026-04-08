@@ -54,8 +54,8 @@ const AdminDashboard = () => {
     queryKey: ["admin-total-due"],
     queryFn: async () => {
       // Only count active members
-      const { data: activeProfiles } = await supabase.from("profiles").select("id, previous_balance").eq("is_active", true);
-      const activeIds = activeProfiles?.map(p => p.id) ?? [];
+      const { data: activeProfiles } = await (supabase as any).from("profiles").select("id, previous_balance, salary_type, salary_type_changed_at").eq("is_active", true);
+      const activeIds = activeProfiles?.map((p: any) => p.id) ?? [];
       if (activeIds.length === 0) return { totalEarned: 0, totalPaid: 0, due: 0 };
 
       const { data: attendance } = await supabase.from("attendance").select("daily_rate, member_id").eq("is_present", true).in("member_id", activeIds);
@@ -64,8 +64,22 @@ const AdminDashboard = () => {
       const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
       const { data: bonuses } = await (supabase as any).from("bonuses").select("amount, member_id").in("member_id", activeIds);
       const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
-      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, member_id").in("member_id", activeIds);
-      const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
+      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, member_id, credit_month").in("member_id", activeIds);
+      
+      // Build exclude map: for members changed from monthly to daily, exclude credits from change month onwards
+      const excludeMap: Record<string, string> = {};
+      activeProfiles?.forEach((p: any) => {
+        if (p.salary_type === "daily" && p.salary_type_changed_at) {
+          const d = new Date(p.salary_type_changed_at);
+          excludeMap[p.id] = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+        }
+      });
+      const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => {
+        const cutoff = excludeMap[s.member_id];
+        if (cutoff && s.credit_month >= cutoff) return sum;
+        return sum + Number(s.amount || 0);
+      }, 0) ?? 0;
+
       const totalPreviousBalance = activeProfiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
       const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("rate, member_id").in("member_id", activeIds);
       const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;

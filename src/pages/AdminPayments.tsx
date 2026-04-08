@@ -157,10 +157,24 @@ const AdminPayments = () => {
     const totalPaid = allPayments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
     const { data: bonuses } = await (supabase as any).from("bonuses").select("amount").eq("member_id", payment.member_id);
     const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
-    const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount").eq("member_id", payment.member_id);
-    const totalSalaryCredits = salaryCredits?.reduce((sum: number, s: any) => sum + Number(s.amount || 0), 0) ?? 0;
-    const { data: profile } = await (supabase as any).from("profiles").select("previous_balance").eq("id", payment.member_id).maybeSingle();
+    const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, credit_month").eq("member_id", payment.member_id);
+    const { data: profile } = await (supabase as any).from("profiles").select("previous_balance, salary_type, salary_type_changed_at").eq("id", payment.member_id).maybeSingle();
     const previousBalance = Number((profile as any)?.previous_balance || 0);
+    
+    // Filter salary credits if changed from monthly to daily
+    let totalSalaryCredits = 0;
+    if (salaryCredits) {
+      let excludeFrom: string | null = null;
+      if (profile?.salary_type === "daily" && profile?.salary_type_changed_at) {
+        const d = new Date(profile.salary_type_changed_at);
+        excludeFrom = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+      }
+      totalSalaryCredits = salaryCredits.reduce((sum: number, s: any) => {
+        if (excludeFrom && s.credit_month >= excludeFrom) return sum;
+        return sum + Number(s.amount || 0);
+      }, 0);
+    }
+    
     const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("rate").eq("member_id", payment.member_id);
     const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
 
