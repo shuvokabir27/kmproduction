@@ -45,6 +45,7 @@ const AdminMembers = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [editOriginalSalaryType, setEditOriginalSalaryType] = useState<string>("daily");
   const [form, setForm] = useState<MemberForm>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
@@ -170,6 +171,7 @@ const AdminMembers = () => {
 
   const openEdit = (member: any) => {
     setEditId(member.id);
+    setEditOriginalSalaryType(member.salary_type || "daily");
     setForm({
       full_name: member.full_name || "",
       email: member.email || "",
@@ -219,6 +221,10 @@ const AdminMembers = () => {
           daily_rate: Number(form.daily_rate) || 0,
           previous_balance: Number(form.previous_balance) || 0,
         };
+        // Track salary type change from monthly to daily
+        if (editOriginalSalaryType === "monthly" && form.salary_type === "daily") {
+          updateData.salary_type_changed_at = new Date().toISOString();
+        }
         if (photoUrl) updateData.photo_url = photoUrl;
         if (coverUrl) updateData.cover_url = coverUrl;
 

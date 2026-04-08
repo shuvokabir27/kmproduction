@@ -1213,6 +1213,7 @@ export type Database = {
           previous_balance: number | null
           public_display_order: number | null
           salary_type: Database["public"]["Enums"]["salary_type"] | null
+          salary_type_changed_at: string | null
           short_bio: string | null
           short_bio_en: string | null
           show_on_public: boolean | null
@@ -1266,6 +1267,7 @@ export type Database = {
           previous_balance?: number | null
           public_display_order?: number | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
+          salary_type_changed_at?: string | null
           short_bio?: string | null
           short_bio_en?: string | null
           show_on_public?: boolean | null
@@ -1319,6 +1321,7 @@ export type Database = {
           previous_balance?: number | null
           public_display_order?: number | null
           salary_type?: Database["public"]["Enums"]["salary_type"] | null
+          salary_type_changed_at?: string | null
           short_bio?: string | null
           short_bio_en?: string | null
           show_on_public?: boolean | null
