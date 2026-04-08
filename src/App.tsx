@@ -37,6 +37,7 @@ import News from "./pages/News";
 import PublisherProfile from "./pages/PublisherProfile";
 import AdminBookings from "./pages/AdminBookings";
 import AdminFreelance from "./pages/AdminFreelance";
+import FreelanceClientView from "./pages/FreelanceClientView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/news/:category/:postNumber" element={<News />} />
             <Route path="/news/:shortId" element={<News />} />
             <Route path="/publisher/:publisherId" element={<PublisherProfile />} />
+            <Route path="/project/:token" element={<FreelanceClientView />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

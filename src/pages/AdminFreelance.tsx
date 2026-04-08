@@ -18,6 +18,7 @@ import { bn } from "date-fns/locale";
 import {
   Plus, Briefcase, MapPin, Phone, Calendar, Users, DollarSign,
   CheckCircle2, XCircle, ChevronDown, ChevronUp, Trash2, Edit, TrendingUp,
+  Link2, FileText, Copy,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -34,6 +35,7 @@ type FreelanceProject = {
   notes: string | null;
   created_by: string | null;
   created_at: string;
+  share_token: string | null;
 };
 
 type FreelanceAssignment = {
@@ -63,6 +65,8 @@ export default function AdminFreelance() {
   const [projectDialog, setProjectDialog] = useState(false);
   const [editProject, setEditProject] = useState<FreelanceProject | null>(null);
   const [assignDialog, setAssignDialog] = useState<string | null>(null);
+  const [lineupDialog, setLineupDialog] = useState<string | null>(null);
+  const [sceneForm, setSceneForm] = useState({ scene_number: "", description: "", location: "", characters: "" });
 
   // Form state
   const [form, setForm] = useState({ name: "", client_name: "", client_phone: "", project_date: "", location: "", total_budget: "", notes: "" });
@@ -96,6 +100,14 @@ export default function AdminFreelance() {
     queryKey: ["members-list"],
     queryFn: async () => {
       const { data } = await supabase.from("profiles").select("id, full_name, photo_url").eq("is_active", true).order("full_name");
+      return data || [];
+    },
+  });
+
+  const { data: allScenes = [] } = useQuery({
+    queryKey: ["freelance-scenes"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("freelance_scenes").select("*").order("sort_order");
       return data || [];
     },
   });
@@ -193,6 +205,49 @@ export default function AdminFreelance() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-projects"] }),
   });
 
+  const addSceneMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      const projectScenes = allScenes.filter((s: any) => s.project_id === projectId);
+      const { error } = await (supabase as any).from("freelance_scenes").insert({
+        project_id: projectId,
+        scene_number: Number(sceneForm.scene_number) || (projectScenes.length + 1),
+        description: sceneForm.description || null,
+        location: sceneForm.location || null,
+        characters: sceneForm.characters || null,
+        sort_order: projectScenes.length,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["freelance-scenes"] });
+      setSceneForm({ scene_number: "", description: "", location: "", characters: "" });
+      toast({ title: "সিন যুক্ত হয়েছে" });
+    },
+  });
+
+  const deleteSceneMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any).from("freelance_scenes").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-scenes"] }),
+  });
+
+  const generateShareToken = useMutation({
+    mutationFn: async (projectId: string) => {
+      const token = crypto.randomUUID().replace(/-/g, "").substring(0, 12);
+      const { error } = await supabase.from("freelance_projects").update({ share_token: token } as any).eq("id", projectId);
+      if (error) throw error;
+      return token;
+    },
+    onSuccess: (token) => {
+      qc.invalidateQueries({ queryKey: ["freelance-projects"] });
+      const url = `${window.location.origin}/project/${token}`;
+      navigator.clipboard.writeText(url);
+      toast({ title: "লিংক কপি হয়েছে!", description: url });
+    },
+  });
+
   const openEditDialog = (p: FreelanceProject) => {
     setEditProject(p);
     setForm({
@@ -208,6 +263,7 @@ export default function AdminFreelance() {
   };
 
   const getAssignments = (projectId: string) => allAssignments.filter(a => a.project_id === projectId);
+  const getScenes = (projectId: string) => allScenes.filter((s: any) => s.project_id === projectId);
 
   const totalMemberCost = (projectId: string) => getAssignments(projectId).reduce((s, a) => s + a.rate, 0);
 
@@ -393,6 +449,26 @@ export default function AdminFreelance() {
                                   <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => openEditDialog(p)}>
                                     <Edit className="h-3 w-3" /> এডিট
                                   </Button>
+                                  <Button size="sm" variant="outline" className="h-8 text-xs gap-1" onClick={() => setLineupDialog(p.id)}>
+                                    <FileText className="h-3 w-3" /> লাইনআপ
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 text-xs gap-1"
+                                    onClick={() => {
+                                      if ((p as any).share_token) {
+                                        const url = `${window.location.origin}/project/${(p as any).share_token}`;
+                                        navigator.clipboard.writeText(url);
+                                        toast({ title: "লিংক কপি হয়েছে!", description: url });
+                                      } else {
+                                        generateShareToken.mutate(p.id);
+                                      }
+                                    }}
+                                  >
+                                    {(p as any).share_token ? <Copy className="h-3 w-3" /> : <Link2 className="h-3 w-3" />}
+                                    {(p as any).share_token ? "লিংক কপি" : "শেয়ার লিংক"}
+                                  </Button>
                                   <Button size="sm" variant="destructive" className="h-8 text-xs gap-1" onClick={() => { if (confirm("মুছে ফেলতে চান?")) deleteMutation.mutate(p.id); }}>
                                     <Trash2 className="h-3 w-3" /> মুছুন
                                   </Button>
@@ -505,6 +581,55 @@ export default function AdminFreelance() {
               <Button className="w-full" disabled={!assignForm.member_id} onClick={() => assignDialog && assignMutation.mutate(assignDialog)}>
                 যুক্ত করুন
               </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Lineup Dialog */}
+        <Dialog open={!!lineupDialog} onOpenChange={() => setLineupDialog(null)}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" /> শুটিং লাইনআপ
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {/* Existing scenes */}
+              {lineupDialog && getScenes(lineupDialog).length > 0 && (
+                <div className="space-y-2">
+                  {getScenes(lineupDialog).map((scene: any) => (
+                    <div key={scene.id} className="flex items-start gap-2 p-3 rounded-lg bg-secondary/30">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                        {scene.scene_number}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-foreground">{scene.description || "—"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {scene.location && `📍 ${scene.location}`}
+                          {scene.characters && ` • 👤 ${scene.characters}`}
+                        </p>
+                      </div>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive shrink-0" onClick={() => deleteSceneMutation.mutate(scene.id)}>
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add scene form */}
+              <div className="space-y-2 border-t border-border/30 pt-3">
+                <h4 className="text-sm font-medium text-foreground">নতুন সিন যুক্ত করুন</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><Label className="text-xs">সিন নম্বর</Label><Input type="number" value={sceneForm.scene_number} onChange={(e) => setSceneForm({ ...sceneForm, scene_number: e.target.value })} placeholder="১" /></div>
+                  <div><Label className="text-xs">লোকেশন</Label><Input value={sceneForm.location} onChange={(e) => setSceneForm({ ...sceneForm, location: e.target.value })} placeholder="লোকেশন" /></div>
+                </div>
+                <div><Label className="text-xs">বিবরণ *</Label><Input value={sceneForm.description} onChange={(e) => setSceneForm({ ...sceneForm, description: e.target.value })} placeholder="সিনের বিবরণ" /></div>
+                <div><Label className="text-xs">চরিত্র/অভিনেতা</Label><Input value={sceneForm.characters} onChange={(e) => setSceneForm({ ...sceneForm, characters: e.target.value })} placeholder="চরিত্রের নাম" /></div>
+                <Button size="sm" className="w-full" disabled={!sceneForm.description} onClick={() => lineupDialog && addSceneMutation.mutate(lineupDialog)}>
+                  <Plus className="h-3 w-3 mr-1" /> সিন যুক্ত করুন
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
