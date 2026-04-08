@@ -382,6 +382,7 @@ export default function AdminFreelance() {
         <Tabs defaultValue="projects">
           <TabsList>
             <TabsTrigger value="projects">প্রজেক্ট সমূহ</TabsTrigger>
+            <TabsTrigger value="payments">পেমেন্ট</TabsTrigger>
             <TabsTrigger value="clients">ক্লায়েন্ট</TabsTrigger>
             <TabsTrigger value="summary">মাসিক হিসাব</TabsTrigger>
           </TabsList>
@@ -820,67 +821,6 @@ export default function AdminFreelance() {
           </DialogContent>
         </Dialog>
 
-        {/* Payment Dialog */}
-        <Dialog open={!!paymentDialog} onOpenChange={() => setPaymentDialog(null)}>
-          <DialogContent className="max-w-md max-h-[85vh] overflow-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Wallet className="h-5 w-5 text-primary" /> প্রজেক্ট পেমেন্ট
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              {/* Existing payments */}
-              {paymentDialog && getProjectPayments(paymentDialog).length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-foreground">পেমেন্ট হিস্ট্রি</h4>
-                  {getProjectPayments(paymentDialog).map((pay: any) => (
-                    <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                      <div>
-                        <div className="text-sm font-bold text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
-                          {" • "}{pay.payment_method}
-                          {pay.notes && ` • ${pay.notes}`}
-                        </div>
-                      </div>
-                      <Button size="icon" variant="ghost" className="h-6 w-6 text-destructive" onClick={() => deletePaymentMutation.mutate(pay.id)}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-center">
-                    <span className="text-xs text-muted-foreground">মোট পেমেন্ট: </span>
-                    <span className="font-bold text-emerald-400">
-                      ৳{getProjectPayments(paymentDialog).reduce((s: number, p: any) => s + Number(p.amount), 0).toLocaleString("bn-BD")}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Add payment form */}
-              <div className="space-y-2 border-t border-border/30 pt-3">
-                <h4 className="text-sm font-medium text-foreground">নতুন পেমেন্ট যুক্ত করুন</h4>
-                <div><Label className="text-xs">পরিমাণ (৳) *</Label><Input type="number" value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} placeholder="0" /></div>
-                <div>
-                  <Label className="text-xs">পেমেন্ট মাধ্যম</Label>
-                  <Select value={paymentForm.payment_method} onValueChange={(v) => setPaymentForm({ ...paymentForm, payment_method: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cash">নগদ</SelectItem>
-                      <SelectItem value="bkash">বিকাশ</SelectItem>
-                      <SelectItem value="nagad">নাগাদ</SelectItem>
-                      <SelectItem value="bank">ব্যাংক</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div><Label className="text-xs">নোট</Label><Input value={paymentForm.notes} onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })} placeholder="নোট (ঐচ্ছিক)" /></div>
-                <Button size="sm" className="w-full" disabled={!paymentForm.amount || Number(paymentForm.amount) <= 0} onClick={() => paymentDialog && addPaymentMutation.mutate(paymentDialog)}>
-                  <Plus className="h-3 w-3 mr-1" /> পেমেন্ট যুক্ত করুন
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </AppLayout>
   );
