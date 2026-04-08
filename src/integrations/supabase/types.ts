@@ -224,6 +224,51 @@ export type Database = {
         }
         Relationships: []
       }
+      client_profiles: {
+        Row: {
+          address: string | null
+          client_id: string
+          company: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          photo_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          client_id: string
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          client_id?: string
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversation_members: {
         Row: {
           conversation_id: string
@@ -376,6 +421,7 @@ export type Database = {
         Row: {
           client_name: string
           client_phone: string | null
+          client_profile_id: string | null
           created_at: string
           created_by: string | null
           id: string
@@ -391,6 +437,7 @@ export type Database = {
         Insert: {
           client_name: string
           client_phone?: string | null
+          client_profile_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -406,6 +453,7 @@ export type Database = {
         Update: {
           client_name?: string
           client_phone?: string | null
+          client_profile_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -418,7 +466,15 @@ export type Database = {
           total_budget?: number
           total_expense?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "freelance_projects_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       freelance_scenes: {
         Row: {
@@ -1765,7 +1821,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "member"
+      app_role: "admin" | "member" | "client"
       bonus_type: "bonus" | "transport"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "audio" | "video"
@@ -1901,7 +1957,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "member"],
+      app_role: ["admin", "member", "client"],
       bonus_type: ["bonus", "transport"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
       call_type: ["audio", "video"],
