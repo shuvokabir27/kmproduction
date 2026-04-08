@@ -244,6 +244,30 @@ export default function AdminFreelance() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["freelance-scenes"] }),
   });
 
+  const createClientMutation = useMutation({
+    mutationFn: async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-client`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionData.session?.access_token}`,
+        },
+        body: JSON.stringify(clientForm),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      return result;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-profiles"] });
+      setClientDialog(false);
+      setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
+      toast({ title: "ক্লায়েন্ট তৈরি হয়েছে!" });
+    },
+    onError: (err: any) => toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }),
+  });
+
   const generateShareToken = useMutation({
     mutationFn: async (projectId: string) => {
       const token = crypto.randomUUID().replace(/-/g, "").substring(0, 12);
