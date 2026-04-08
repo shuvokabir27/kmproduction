@@ -104,6 +104,14 @@ export default function AdminFreelance() {
     },
   });
 
+  const { data: allScenes = [] } = useQuery({
+    queryKey: ["freelance-scenes"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("freelance_scenes").select("*").order("sort_order");
+      return data || [];
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (isEdit: boolean) => {
       const payload = {
