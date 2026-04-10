@@ -579,157 +579,362 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
   );
 }
 
-/* ─── Artist Payment Section on Dashboard ─── */
-function ArtistPaymentSection({ allProjectArtists, projects, clientName, clientProfileId }: {
+/* ─── Payment Dialog ─── */
+function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, totalBudget, totalProductionPaid }: {
   allProjectArtists: any[];
+  allPayments: any[];
   projects: any[];
   clientName: string;
   clientProfileId: string;
+  totalBudget: number;
+  totalProductionPaid: number;
 }) {
   const queryClient = useQueryClient();
-  const [payAmounts, setPayAmounts] = useState<Record<string, string>>({});
+  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<"choose" | "artist" | "production">("choose");
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedArtistId, setSelectedArtistId] = useState<string | null>(null);
+  const [payAmount, setPayAmount] = useState("");
   const [receiptData, setReceiptData] = useState<any>(null);
 
-  // Group unpaid artists by project
-  const projectGroups = useMemo(() => {
+  const handleOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      setStep("choose");
+      setSelectedProjectId(null);
+      setSelectedArtistId(null);
+      setPayAmount("");
+    }
+    setOpen(isOpen);
+  };
+
+  // Artist data grouped by project (only unpaid)
+  const artistProjectGroups = useMemo(() => {
     return projects
       .map((p: any) => {
         const artists = allProjectArtists.filter(
           (a: any) => a.project_id === p.id && !a.is_paid && Number(a.remuneration || 0) - Number(a.paid_amount || 0) > 0
         );
-        return { project: p, artists };
+        const totalDue = artists.reduce((s: number, a: any) => s + (Number(a.remuneration || 0) - Number(a.paid_amount || 0)), 0);
+        return { project: p, artists, totalDue };
       })
       .filter((g) => g.artists.length > 0);
   }, [projects, allProjectArtists]);
 
-  const handlePayArtist = async (artist: any, projectName: string) => {
-    const amount = Number(payAmounts[artist.id] || 0);
+  // Production projects with dues
+  const productionProjectGroups = useMemo(() => {
+    return projects
+      .map((p: any) => {
+        const paid = allPayments
+          .filter((pay: any) => pay.project_id === p.id)
+          .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+        const due = Number(p.total_budget || 0) - paid;
+        return { project: p, paid, due };
+      })
+      .filter((g) => g.due > 0);
+  }, [projects, allPayments]);
+
+  const totalArtistDue = artistProjectGroups.reduce((s, g) => s + g.totalDue, 0);
+  const totalProductionDue = totalBudget - totalProductionPaid;
+
+  const selectedArtist = selectedArtistId
+    ? allProjectArtists.find((a: any) => a.id === selectedArtistId)
+    : null;
+  const selectedArtistDue = selectedArtist
+    ? Number(selectedArtist.remuneration || 0) - Number(selectedArtist.paid_amount || 0)
+    : 0;
+
+  const handlePayArtist = async () => {
+    if (!selectedArtist) return;
+    const amount = Number(payAmount || 0);
     if (amount <= 0) {
       toast({ title: "পরিমাণ দিন", variant: "destructive" });
       return;
     }
-
-    const newPaid = Number(artist.paid_amount || 0) + amount;
-    const isPaid = newPaid >= Number(artist.remuneration);
+    const newPaid = Number(selectedArtist.paid_amount || 0) + amount;
+    const isPaid = newPaid >= Number(selectedArtist.remuneration);
+    const projName = projects.find((p: any) => p.id === selectedArtist.project_id)?.name || "";
 
     try {
       const { error } = await (supabase as any)
         .from("client_project_artists")
         .update({ paid_amount: newPaid, is_paid: isPaid })
-        .eq("id", artist.id);
+        .eq("id", selectedArtist.id);
       if (error) throw error;
 
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
-      setPayAmounts((prev) => ({ ...prev, [artist.id]: "" }));
 
       setReceiptData({
-        artistName: artist.artist_name,
-        projectName,
+        artistName: selectedArtist.artist_name,
+        projectName: projName,
         clientName,
         amount,
-        totalRemuneration: Number(artist.remuneration || 0),
+        totalRemuneration: Number(selectedArtist.remuneration || 0),
         totalPaid: newPaid,
-        remaining: Number(artist.remuneration || 0) - newPaid,
+        remaining: Number(selectedArtist.remuneration || 0) - newPaid,
         date: new Date().toISOString(),
       });
 
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+      setSelectedArtistId(null);
+      setPayAmount("");
+      setStep("artist");
     } catch (err: any) {
       toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
     }
   };
 
-  const handlePayAllInProject = async (projectArtists: any[]) => {
-    try {
-      for (const artist of projectArtists) {
-        const rem = Number(artist.remuneration || 0);
-        const { error } = await (supabase as any)
-          .from("client_project_artists")
-          .update({ paid_amount: rem, is_paid: true })
-          .eq("id", artist.id);
-        if (error) throw error;
-      }
-      const totalDueNow = projectArtists.reduce(
-        (s: number, a: any) => s + (Number(a.remuneration || 0) - Number(a.paid_amount || 0)), 0
-      );
-      toast({ title: `৳${totalDueNow.toLocaleString("bn-BD")} মোট পেমেন্ট সম্পন্ন ✓` });
-      queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
-      queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
-    } catch (err: any) {
-      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+  const goBack = () => {
+    if (selectedArtistId) {
+      setSelectedArtistId(null);
+      setPayAmount("");
+    } else if (selectedProjectId) {
+      setSelectedProjectId(null);
+    } else {
+      setStep("choose");
     }
   };
-
-  if (projectGroups.length === 0) return null;
 
   return (
     <>
       {receiptData && (
         <ClientArtistReceipt receiptData={receiptData} onClose={() => setReceiptData(null)} />
       )}
-      <Card className="border-border/50">
-        <CardContent className="p-4 space-y-4">
-          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Banknote className="h-4 w-4 text-primary" /> আর্টিস্ট পেমেন্ট
-          </h3>
-
-          {projectGroups.map(({ project, artists }) => (
-            <div key={project.id} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-muted-foreground">{project.name}</span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-[10px] h-6 px-2 gap-1"
-                  onClick={() => handlePayAllInProject(artists)}
-                >
-                  <Banknote className="h-3 w-3" /> সবাইকে পে
+      <Dialog open={open} onOpenChange={handleOpen}>
+        <DialogTrigger asChild>
+          <Button className="w-full gap-2 h-12 text-base font-semibold" size="lg">
+            <CreditCard className="h-5 w-5" /> পেমেন্ট করুন
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[400px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-center gap-2">
+              {step !== "choose" && (
+                <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={goBack}>
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
-              </div>
-              {artists.map((artist: any) => {
-                const rem = Number(artist.remuneration || 0);
-                const paid = Number(artist.paid_amount || 0);
-                const due = rem - paid;
-                return (
-                  <div key={artist.id} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/20">
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium text-foreground truncate">{artist.artist_name}</div>
-                      <div className="text-[10px] text-muted-foreground">
-                        বাকি: ৳{due.toLocaleString("bn-BD")} / ৳{rem.toLocaleString("bn-BD")}
-                      </div>
-                    </div>
-                    <Input
-                      type="number"
-                      placeholder="৳"
-                      value={payAmounts[artist.id] || ""}
-                      onChange={(e) => setPayAmounts((prev) => ({ ...prev, [artist.id]: e.target.value }))}
-                      min={0}
-                      max={due}
-                      className="text-xs h-7 w-20"
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setPayAmounts((prev) => ({ ...prev, [artist.id]: String(due) }))}
-                      className="text-[10px] h-7 px-1.5 shrink-0"
-                    >
-                      সব
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handlePayArtist(artist, project.name)}
-                      className="gap-1 text-[10px] h-7 px-2 shrink-0"
-                    >
-                      <Banknote className="h-3 w-3" /> পে
-                    </Button>
+              )}
+              <CreditCard className="h-4 w-4 text-primary" />
+              {step === "choose" && "পেমেন্ট ক্যাটাগরি বাছুন"}
+              {step === "artist" && (selectedArtistId ? "পেমেন্ট করুন" : selectedProjectId ? "আর্টিস্ট বাছুন" : "প্রজেক্ট বাছুন")}
+              {step === "production" && "প্রোডাকশন পেমেন্ট"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* Step 1: Choose Category */}
+          {step === "choose" && (
+            <div className="space-y-3">
+              {totalArtistDue > 0 && (
+                <button
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setStep("artist")}
+                >
+                  <div className="h-11 w-11 rounded-xl bg-violet-500/10 flex items-center justify-center shrink-0">
+                    <Users className="h-5 w-5 text-violet-400" />
                   </div>
-                );
-              })}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-foreground">আর্টিস্ট / মেম্বার</div>
+                    <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalArtistDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </button>
+              )}
+              {totalProductionDue > 0 && (
+                <button
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setStep("production")}
+                >
+                  <div className="h-11 w-11 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+                    <Banknote className="h-5 w-5 text-sky-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-foreground">প্রোডাকশন</div>
+                    <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalProductionDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </button>
+              )}
             </div>
-          ))}
-        </CardContent>
-      </Card>
+          )}
+
+          {/* Step 2a: Artist → Select Project */}
+          {step === "artist" && !selectedProjectId && (
+            <div className="space-y-2">
+              {artistProjectGroups.map(({ project, artists, totalDue }) => (
+                <button
+                  key={project.id}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/40 hover:bg-secondary/30 transition-all text-left"
+                  onClick={() => setSelectedProjectId(project.id)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground truncate">{project.name}</div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {artists.length} জন আর্টিস্ট • {format(new Date(project.project_date), "d MMM yyyy", { locale: bn })}
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-sm font-bold text-amber-400">৳{totalDue.toLocaleString("bn-BD")}</div>
+                    <div className="text-[10px] text-muted-foreground">বাকি</div>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Step 2b: Artist → Select Artist in project */}
+          {step === "artist" && selectedProjectId && !selectedArtistId && (() => {
+            const group = artistProjectGroups.find(g => g.project.id === selectedProjectId);
+            if (!group) return null;
+            return (
+              <div className="space-y-2">
+                <div className="text-xs text-muted-foreground font-medium px-1">{group.project.name}</div>
+                {group.artists.map((artist: any) => {
+                  const rem = Number(artist.remuneration || 0);
+                  const paid = Number(artist.paid_amount || 0);
+                  const due = rem - paid;
+                  const paidPercent = rem > 0 ? Math.round((paid / rem) * 100) : 0;
+                  return (
+                    <button
+                      key={artist.id}
+                      className="w-full flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/40 hover:bg-secondary/30 transition-all text-left"
+                      onClick={() => { setSelectedArtistId(artist.id); setPayAmount(String(due)); }}
+                    >
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                        {artist.artist_name?.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-foreground truncate">{artist.artist_name}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          মোট: ৳{rem.toLocaleString("bn-BD")} • পেইড: ৳{paid.toLocaleString("bn-BD")} ({paidPercent}%)
+                        </div>
+                        {/* Progress bar */}
+                        <div className="w-full h-1.5 bg-secondary rounded-full mt-1">
+                          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${paidPercent}%` }} />
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="text-sm font-bold text-amber-400">৳{due.toLocaleString("bn-BD")}</div>
+                        <div className="text-[10px] text-muted-foreground">বাকি</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })()}
+
+          {/* Step 3: Pay selected artist */}
+          {step === "artist" && selectedArtist && (
+            <div className="space-y-4">
+              {/* Artist Info Card */}
+              <div className="rounded-xl border border-border p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">
+                    {selectedArtist.artist_name?.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">{selectedArtist.artist_name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {projects.find((p: any) => p.id === selectedArtist.project_id)?.name}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-lg bg-secondary/40 p-2">
+                    <div className="text-[10px] text-muted-foreground">মোট বিল</div>
+                    <div className="text-sm font-bold text-foreground">৳{Number(selectedArtist.remuneration || 0).toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="rounded-lg bg-emerald-500/10 p-2">
+                    <div className="text-[10px] text-muted-foreground">পেইড</div>
+                    <div className="text-sm font-bold text-emerald-400">৳{Number(selectedArtist.paid_amount || 0).toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="rounded-lg bg-amber-500/10 p-2">
+                    <div className="text-[10px] text-muted-foreground">বাকি</div>
+                    <div className="text-sm font-bold text-amber-400">৳{selectedArtistDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Input */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">পেমেন্ট পরিমাণ</label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="৳ পরিমাণ লিখুন"
+                    value={payAmount}
+                    onChange={(e) => setPayAmount(e.target.value)}
+                    min={0}
+                    max={selectedArtistDue}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs shrink-0"
+                    onClick={() => setPayAmount(String(selectedArtistDue))}
+                  >
+                    সম্পূর্ণ
+                  </Button>
+                </div>
+                {Number(payAmount) > 0 && Number(payAmount) < selectedArtistDue && (
+                  <p className="text-[11px] text-muted-foreground">
+                    আংশিক পেমেন্ট • পেমেন্টের পর বাকি থাকবে: ৳{(selectedArtistDue - Number(payAmount)).toLocaleString("bn-BD")}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                className="w-full gap-2"
+                onClick={handlePayArtist}
+                disabled={Number(payAmount) <= 0}
+              >
+                <Banknote className="h-4 w-4" />
+                ৳{Number(payAmount || 0).toLocaleString("bn-BD")} পেমেন্ট করুন
+              </Button>
+            </div>
+          )}
+
+          {/* Production Payment View */}
+          {step === "production" && (
+            <div className="space-y-3">
+              <div className="rounded-xl border border-border p-4 space-y-3">
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-lg bg-secondary/40 p-2">
+                    <div className="text-[10px] text-muted-foreground">মোট বিল</div>
+                    <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="rounded-lg bg-emerald-500/10 p-2">
+                    <div className="text-[10px] text-muted-foreground">পেইড</div>
+                    <div className="text-sm font-bold text-emerald-400">৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="rounded-lg bg-amber-500/10 p-2">
+                    <div className="text-[10px] text-muted-foreground">বাকি</div>
+                    <div className="text-sm font-bold text-amber-400">৳{totalProductionDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Per-project breakdown */}
+              {productionProjectGroups.map(({ project, paid, due }) => (
+                <div key={project.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/20">
+                  <div className="min-w-0">
+                    <div className="text-xs font-medium text-foreground truncate">{project.name}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      বাজেট: ৳{Number(project.total_budget).toLocaleString("bn-BD")} • পেইড: ৳{paid.toLocaleString("bn-BD")}
+                    </div>
+                  </div>
+                  <div className="text-sm font-bold text-amber-400 shrink-0">৳{due.toLocaleString("bn-BD")}</div>
+                </div>
+              ))}
+
+              <p className="text-xs text-muted-foreground italic text-center">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
