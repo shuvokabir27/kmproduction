@@ -203,9 +203,9 @@ export default function ClientDashboard() {
               </Card>
             </div>
 
-            {/* Project Count */}
-            <div className="grid grid-cols-1">
-              <Card className="border-border/50">
+            {/* Project Count + Download All */}
+            <div className="flex items-center gap-3">
+              <Card className="border-border/50 flex-1">
                 <CardContent className="p-3 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <Briefcase className="h-4 w-4 text-primary" />
@@ -214,6 +214,40 @@ export default function ClientDashboard() {
                   <span className="text-xl font-bold text-foreground">{projects.length}</span>
                 </CardContent>
               </Card>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 h-auto py-3 px-4"
+                onClick={() => {
+                  const billData = projects.map((p: any) => {
+                    const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+                    const projPaid = allPayments
+                      .filter((pay: any) => pay.project_id === p.id)
+                      .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+                    return {
+                      projectName: p.name,
+                      projectDate: p.project_date,
+                      clientName: clientProfile?.name || "",
+                      productionBudget: Number(p.total_budget || 0),
+                      productionPaid: projPaid,
+                      artists: arts.map((a: any) => ({
+                        artist_name: a.artist_name,
+                        remuneration: Number(a.remuneration || 0),
+                        paid_amount: Number(a.paid_amount || 0),
+                      })),
+                    };
+                  });
+                  downloadAllProjectsBillPDF({
+                    clientName: clientProfile?.name || "ক্লায়েন্ট",
+                    company: clientProfile?.company || undefined,
+                    projects: billData,
+                  });
+                  toast({ title: "সকল বিল ডাউনলোড হচ্ছে..." });
+                }}
+              >
+                <Download className="h-4 w-4" />
+                <span className="text-xs">সব বিল<br/>ডাউনলোড</span>
+              </Button>
             </div>
           </div>
         )}
