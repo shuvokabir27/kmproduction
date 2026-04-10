@@ -566,7 +566,7 @@ export default function ClientDashboard() {
         )}
 
         {/* ═══ Expense Trend Chart ═══ */}
-        {projects.length > 1 && (
+        {projects.length >= 1 && (
           <ExpenseTrendChart
             projects={projects}
             allPayments={allPayments}
