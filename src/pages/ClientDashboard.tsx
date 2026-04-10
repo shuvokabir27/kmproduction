@@ -1001,7 +1001,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
   };
 
-  const goBack = () => { if (selectedArtistName) { setSelectedArtistName(null); setPayAmount(""); } else { setStep("choose"); } };
+  const goBack = () => { if (selectedArtistName) { setSelectedArtistName(null); setPayAmount(""); } else { setStep("choose"); setSelectedExpenseIds(new Set()); } };
 
   const paymentPreview = useMemo(() => {
     if (!selectedGroup || Number(payAmount || 0) <= 0) return [];
