@@ -1243,13 +1243,13 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           if (error) throw error;
         }
         const paidTotal = dueExpenses.filter((e: any) => toPay.includes(e.id)).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-        toast({ title: `৳${paidTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${toPay.length} টি আইটেম)` });
-        // Record history
+        toast({ title: `৳${amount.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${toPay.length} টি আইটেম)` });
+        // Record history with user-entered amount
         await (supabase as any).from("client_payment_history").insert({
           client_profile_id: clientProfileId,
           payment_type: "expense",
-          amount: paidTotal,
-          details: { expense_ids: toPay, expense_count: toPay.length },
+          amount: amount,
+          details: { expense_ids: toPay, expense_count: toPay.length, actual_paid: paidTotal },
         });
         queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
         queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
