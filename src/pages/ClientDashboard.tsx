@@ -712,11 +712,13 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
     if (filteredProjects.length === 0) { toast({ title: "কোনো প্রজেক্ট সিলেক্ট করা হয়নি", variant: "destructive" }); return; }
     const billData = filteredProjects.map((p: any) => {
       const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+      const exps = allProjectExpenses.filter((e: any) => e.project_id === p.id);
       const projPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
       return {
         projectName: p.name, projectDate: p.project_date, clientName: clientProfile?.name || "",
         productionBudget: Number(p.total_budget || 0), productionPaid: projPaid,
         artists: arts.map((a: any) => ({ artist_name: a.artist_name, remuneration: Number(a.remuneration || 0), paid_amount: Number(a.paid_amount || 0) })),
+        expenses: exps.map((e: any) => ({ category: e.category, amount: Number(e.amount || 0), description: e.description || "" })),
       };
     });
     downloadAllProjectsBillPDF({ clientName: clientProfile?.name || "প্রজেক্ট ডিরেক্টর", company: clientProfile?.company || undefined, projects: billData });
