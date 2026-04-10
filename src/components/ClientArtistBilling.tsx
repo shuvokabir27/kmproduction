@@ -79,21 +79,27 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     },
   });
 
+  const addedArtistNames = useMemo(() => {
+    return new Set(projectArtists.map((a: any) => a.artist_name.toLowerCase()));
+  }, [projectArtists]);
+
   const suggestions = useMemo(() => {
     const nameSet = new Set<string>();
     const results: { name: string; source: string }[] = [];
 
     savedArtists.forEach((a: any) => {
-      if (!nameSet.has(a.name.toLowerCase())) {
-        nameSet.add(a.name.toLowerCase());
+      const lower = a.name.toLowerCase();
+      if (!nameSet.has(lower) && !addedArtistNames.has(lower)) {
+        nameSet.add(lower);
         results.push({ name: a.name, source: "সেভড" });
       }
     });
 
     adminMembers.forEach((m: any) => {
       const name = m.full_name;
-      if (!nameSet.has(name.toLowerCase())) {
-        nameSet.add(name.toLowerCase());
+      const lower = name.toLowerCase();
+      if (!nameSet.has(lower) && !addedArtistNames.has(lower)) {
+        nameSet.add(lower);
         results.push({ name, source: m.designation || "সদস্য" });
       }
     });
@@ -101,7 +107,7 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     if (!searchQuery.trim()) return results;
     const q = searchQuery.toLowerCase();
     return results.filter((r) => r.name.toLowerCase().includes(q));
-  }, [savedArtists, adminMembers, searchQuery]);
+  }, [savedArtists, adminMembers, searchQuery, addedArtistNames]);
 
   const artistSummary = useMemo(() => {
     const map: Record<string, { totalProjects: number; totalRemuneration: number; totalPaid: number }> = {};
@@ -123,6 +129,10 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
   const handleAddArtist = async () => {
     if (!artistName.trim()) {
       toast({ title: "আর্টিস্টের নাম দিন", variant: "destructive" });
+      return;
+    }
+    if (addedArtistNames.has(artistName.trim().toLowerCase())) {
+      toast({ title: "এই আর্টিস্ট ইতিমধ্যে যুক্ত আছে", variant: "destructive" });
       return;
     }
     if (!remuneration || Number(remuneration) <= 0) {
