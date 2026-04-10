@@ -1845,6 +1845,91 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_approved_profile_comments: {
+        Args: { _profile_id: string }
+        Returns: {
+          commenter_name: string
+          content: string
+          created_at: string
+          id: string
+          is_approved: boolean
+          profile_id: string
+        }[]
+      }
+      get_public_profile_by_member_id: {
+        Args: { _member_id: number }
+        Returns: {
+          achievements: string
+          achievements_en: string
+          bio: string
+          bio_en: string
+          cover_url: string
+          date_of_birth: string
+          designation: string
+          designation_en: string
+          education: string
+          education_en: string
+          favorite_actor: string
+          favorite_actor_en: string
+          favorite_actress: string
+          favorite_actress_en: string
+          favorite_color: string
+          favorite_color_en: string
+          favorite_dress: string
+          favorite_dress_en: string
+          favorite_food: string
+          favorite_food_en: string
+          full_name: string
+          full_name_en: string
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          joining_date: string
+          member_id: number
+          photo_url: string
+          public_display_order: number
+          short_bio: string
+          short_bio_en: string
+          show_on_public: boolean
+        }[]
+      }
+      get_public_profiles: {
+        Args: never
+        Returns: {
+          achievements: string
+          achievements_en: string
+          bio: string
+          bio_en: string
+          cover_url: string
+          date_of_birth: string
+          designation: string
+          designation_en: string
+          education: string
+          education_en: string
+          favorite_actor: string
+          favorite_actor_en: string
+          favorite_actress: string
+          favorite_actress_en: string
+          favorite_color: string
+          favorite_color_en: string
+          favorite_dress: string
+          favorite_dress_en: string
+          favorite_food: string
+          favorite_food_en: string
+          full_name: string
+          full_name_en: string
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          joining_date: string
+          member_id: number
+          photo_url: string
+          public_display_order: number
+          short_bio: string
+          short_bio_en: string
+          show_on_public: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
