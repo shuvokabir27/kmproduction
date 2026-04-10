@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,8 @@ import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 import { ClientArtistBilling } from "@/components/ClientArtistBilling";
 import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import ClientArtistReceipt from "@/components/ClientArtistReceipt";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
