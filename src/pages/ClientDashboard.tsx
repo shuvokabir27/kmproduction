@@ -738,7 +738,8 @@ export default function ClientDashboard() {
                           onClick={(e) => {
                             if (p.status === "paid") {
                               e.stopPropagation();
-                              paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth" });
+                              setShowPaymentHistory(true);
+                              setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
                             }
                           }}
                         >{st.label}</Badge>
@@ -876,7 +877,7 @@ export default function ClientDashboard() {
               <span className="text-[10px] font-semibold text-primary">ড্যাশবোর্ড</span>
             </button>
             <button
-              onClick={() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              onClick={() => { setShowPaymentHistory(true); setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
               className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
             >
               <div className="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
