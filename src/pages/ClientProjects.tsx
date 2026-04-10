@@ -138,6 +138,42 @@ export default function ClientProjects() {
     return { bill, paid, due: bill - paid, count: arts.length };
   };
 
+  const oneMonthAgo = useMemo(() => subMonths(new Date(), 1), []);
+  const isSearchActive = searchText.trim() !== "" || !!filterDate;
+
+  const filteredProjects = useMemo(() => {
+    let list = projects as any[];
+
+    // text search
+    if (searchText.trim()) {
+      const q = searchText.trim().toLowerCase();
+      list = list.filter((p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.client_name?.toLowerCase().includes(q) ||
+        p.location?.toLowerCase().includes(q)
+      );
+    }
+
+    // date filter
+    if (filterDate) {
+      const dStr = format(filterDate, "yyyy-MM-dd");
+      list = list.filter((p: any) => p.project_date === dStr);
+    }
+
+    // if not searching and not showing all, limit to last 1 month
+    if (!isSearchActive && !showAll) {
+      list = list.filter((p: any) => {
+        try {
+          return isAfter(parseISO(p.project_date), startOfDay(oneMonthAgo));
+        } catch { return true; }
+      });
+    }
+
+    return list;
+  }, [projects, searchText, filterDate, showAll, isSearchActive, oneMonthAgo]);
+
+  const hasMoreProjects = !isSearchActive && !showAll && filteredProjects.length < projects.length;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -161,15 +197,66 @@ export default function ClientProjects() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 space-y-3 pb-24 md:pb-8">
-        {projects.length === 0 ? (
+        {/* Search & Filter Bar */}
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="নাম দিয়ে খুঁজুন..."
+              value={searchText}
+              onChange={(e) => { setSearchText(e.target.value); setShowAll(true); }}
+              className="pl-8 h-9 text-sm rounded-xl bg-secondary/30 border-border/30"
+            />
+            {searchText && (
+              <button onClick={() => setSearchText("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn("h-9 gap-1.5 rounded-xl text-xs border-border/30", filterDate && "border-primary/40 text-primary")}
+              >
+                <CalendarIcon className="h-3.5 w-3.5" />
+                {filterDate ? format(filterDate, "d MMM", { locale: bn }) : "তারিখ"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <CalendarPicker
+                mode="single"
+                selected={filterDate}
+                onSelect={(d) => { setFilterDate(d); if (d) setShowAll(true); }}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+              {filterDate && (
+                <div className="px-3 pb-3">
+                  <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => setFilterDate(undefined)}>
+                    ফিল্টার মুছুন
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {!isSearchActive && !showAll && (
+          <p className="text-[10px] text-muted-foreground text-center">শেষ ১ মাসের প্রজেক্ট দেখাচ্ছে</p>
+        )}
+
+        {filteredProjects.length === 0 ? (
           <div className="text-center py-20">
             <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <FileText className="h-8 w-8 text-primary/50" />
             </div>
-            <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
+            <p className="text-muted-foreground text-sm">{isSearchActive ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো প্রজেক্ট নেই"}</p>
           </div>
         ) : (
-          projects.map((p: any, pIdx: number) => {
+          <>
+          {filteredProjects.map((p: any, pIdx: number) => {
             const scenes = getScenes(p.id);
             const st = statusMap[p.status] || statusMap.upcoming;
             const isOpen = expandedProject === p.id;
