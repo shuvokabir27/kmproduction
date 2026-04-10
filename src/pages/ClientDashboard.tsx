@@ -913,7 +913,55 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   const totalArtistDue = artistsByName.reduce((s, g) => s + g.totalDue, 0);
   const totalProductionDue = totalBudget - totalProductionPaid;
+  const totalExpenseDue = allProjectExpenses.filter((e: any) => !e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
   const selectedGroup = selectedArtistName ? artistsByName.find(g => g.name === selectedArtistName) : null;
+
+  const expensesByProject = useMemo(() => {
+    const dueExpenses = allProjectExpenses.filter((e: any) => !e.is_paid);
+    const map = new Map<string, { project: any; expenses: any[]; totalDue: number }>();
+    dueExpenses.forEach((e: any) => {
+      const proj = projects.find((p: any) => p.id === e.project_id);
+      const existing = map.get(e.project_id) || { project: proj, expenses: [], totalDue: 0 };
+      existing.expenses.push(e);
+      existing.totalDue += Number(e.amount || 0);
+      map.set(e.project_id, existing);
+    });
+    return Array.from(map.values());
+  }, [allProjectExpenses, projects]);
+
+  const [selectedExpenseIds, setSelectedExpenseIds] = useState<Set<string>>(new Set());
+
+  const toggleExpense = (id: string) => {
+    setSelectedExpenseIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllExpenses = () => {
+    const allIds = allProjectExpenses.filter((e: any) => !e.is_paid).map((e: any) => e.id);
+    setSelectedExpenseIds(new Set(allIds));
+  };
+
+  const selectedExpenseTotal = allProjectExpenses
+    .filter((e: any) => selectedExpenseIds.has(e.id))
+    .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+
+  const handlePayExpenses = async () => {
+    if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
+    try {
+      for (const id of selectedExpenseIds) {
+        const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+        if (error) throw error;
+      }
+      toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
+      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+      setSelectedExpenseIds(new Set());
+      setStep("choose");
+    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+  };
 
   const handlePayArtist = async () => {
     if (!selectedGroup) return;
