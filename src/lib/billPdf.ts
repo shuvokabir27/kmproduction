@@ -383,6 +383,28 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
         </tbody>
       </table>
 
+      ${totalExpenses > 0 ? `
+      <h3 style="font-size:15px;font-weight:bold;margin-bottom:10px;color:#1e1e28;">শুটিং খরচ সামারি</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">
+        <thead>
+          <tr style="background:#1e1e28;color:#fff;">
+            <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">ক্যাটাগরি</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">মোট পরিমাণ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${Object.entries(expenseMap).map(([cat, amt]) => `<tr>
+            <td style="padding:8px 10px;border:1px solid #ddd;">${cat}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(amt)}</td>
+          </tr>`).join("")}
+          <tr style="background:#f0f4ff;font-weight:bold;">
+            <td style="padding:8px 10px;border:1px solid #ddd;">মোট শুটিং খরচ</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalExpenses)}</td>
+          </tr>
+        </tbody>
+      </table>
+      ` : ""}
+
       <div style="background:#1e1e28;border-radius:8px;padding:16px 20px;margin-top:10px;">
         <table style="width:100%;font-size:14px;color:#fff;">
           <tr>
