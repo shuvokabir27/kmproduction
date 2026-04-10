@@ -358,3 +358,58 @@ export default function ClientProjects() {
     </div>
   );
 }
+
+/* ═══ Collapsible Section Component ═══ */
+const COLOR_MAP: Record<string, { bg: string; border: string; text: string; iconBg: string }> = {
+  violet: { bg: "from-violet-500/8 to-violet-500/3", border: "border-violet-500/20", text: "text-violet-400", iconBg: "bg-violet-500/15" },
+  orange: { bg: "from-orange-500/8 to-orange-500/3", border: "border-orange-500/20", text: "text-orange-400", iconBg: "bg-orange-500/15" },
+  teal: { bg: "from-teal-500/8 to-teal-500/3", border: "border-teal-500/20", text: "text-teal-400", iconBg: "bg-teal-500/15" },
+  indigo: { bg: "from-indigo-500/8 to-indigo-500/3", border: "border-indigo-500/20", text: "text-indigo-400", iconBg: "bg-indigo-500/15" },
+};
+
+function CollapsibleSection({ icon, title, badge, colorClass, defaultOpen, children }: {
+  icon: React.ReactNode;
+  title: string;
+  badge?: string;
+  colorClass: string;
+  defaultOpen: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const c = COLOR_MAP[colorClass] || COLOR_MAP.violet;
+
+  return (
+    <div className={cn("rounded-xl border overflow-hidden transition-all", c.border, `bg-gradient-to-r ${c.bg}`)}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left active:opacity-80 transition-opacity"
+      >
+        <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center shrink-0", c.iconBg)}>
+          <span className={c.text}>{icon}</span>
+        </div>
+        <span className="text-[13px] font-semibold text-foreground flex-1">{title}</span>
+        {badge && (
+          <span className={cn("text-[10px] px-2 py-0.5 rounded-full border font-medium", c.border, c.text)}>
+            {badge}
+          </span>
+        )}
+        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-1 pb-3 pt-0.5">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
