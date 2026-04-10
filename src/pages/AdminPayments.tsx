@@ -487,8 +487,26 @@ const AdminPayments = () => {
 
         {/* Payment History */}
         <Card className="bg-card border-border/50 overflow-hidden">
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground">সকল পেমেন্ট হিস্ট্রি</h2>
+          <div className="p-4 border-b border-border/30 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-foreground">সকল পেমেন্ট হিস্ট্রি</h2>
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadFiltered} disabled={filteredPayments.length === 0}>
+                <FileDown className="h-3.5 w-3.5" />
+                {searchText.trim() ? "ফিল্টারড ডাউনলোড" : "সব ডাউনলোড"}
+              </Button>
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="নাম বা আইডি দিয়ে সার্চ করুন..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="pl-9 bg-secondary border-border/50"
+              />
+            </div>
+            {searchText.trim() && (
+              <p className="text-xs text-muted-foreground">{filteredPayments.length} টি রেকর্ড পাওয়া গেছে • মোট: ৳{filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0).toLocaleString("bn-BD")}</p>
+            )}
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
