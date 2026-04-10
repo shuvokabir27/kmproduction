@@ -2019,6 +2019,63 @@ export type Database = {
           profile_id: string
         }[]
       }
+      get_profiles_safe: {
+        Args: never
+        Returns: {
+          achievements: string
+          achievements_en: string
+          address: string
+          address_en: string
+          bank_account_holder: string
+          bank_account_no: string
+          bank_name: string
+          bio: string
+          bio_en: string
+          bkash_holder: string
+          bkash_no: string
+          cover_url: string
+          created_at: string
+          daily_rate: number
+          date_of_birth: string
+          designation: string
+          designation_en: string
+          education: string
+          education_en: string
+          email: string
+          favorite_actor: string
+          favorite_actor_en: string
+          favorite_actress: string
+          favorite_actress_en: string
+          favorite_color: string
+          favorite_color_en: string
+          favorite_dress: string
+          favorite_dress_en: string
+          favorite_food: string
+          favorite_food_en: string
+          full_name: string
+          full_name_en: string
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          joining_date: string
+          last_seen_at: string
+          member_id: number
+          monthly_salary: number
+          nagad_holder: string
+          nagad_no: string
+          phone: string
+          photo_url: string
+          previous_balance: number
+          public_display_order: number
+          salary_type: Database["public"]["Enums"]["salary_type"]
+          salary_type_changed_at: string
+          short_bio: string
+          short_bio_en: string
+          show_on_public: boolean
+          updated_at: string
+          user_id: string
+        }[]
+      }
       get_public_profile_by_member_id: {
         Args: { _member_id: number }
         Returns: {

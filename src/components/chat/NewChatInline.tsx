@@ -29,12 +29,10 @@ export function NewChatInline({ type, onCreated, onBack }: NewChatInlineProps) {
   const { data: members } = useQuery({
     queryKey: ["all-profiles-for-chat"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, user_id, full_name, photo_url, member_id")
-        .eq("is_active", true)
-        .order("full_name");
-      return data?.filter((p) => p.user_id !== user?.id) ?? [];
+      const { data } = await supabase.rpc("get_profiles_safe");
+      return (data ?? [])
+        .filter((p: any) => p.is_active && p.user_id !== user?.id)
+        .sort((a: any, b: any) => (a.full_name || "").localeCompare(b.full_name || ""));
     },
   });
 

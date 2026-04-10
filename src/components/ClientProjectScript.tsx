@@ -49,8 +49,8 @@ export function ClientProjectScript({ projectId, userId, initialScript, initialI
         toast.error(`আপলোড ব্যর্থ: ${file.name}`);
         continue;
       }
-      const { data: urlData } = supabase.storage.from("client-scripts").getPublicUrl(path);
-      newUrls.push(urlData.publicUrl);
+      const { data: urlData } = await supabase.storage.from("client-scripts").createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (urlData?.signedUrl) newUrls.push(urlData.signedUrl);
     }
 
     if (newUrls.length > 0) {

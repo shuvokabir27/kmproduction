@@ -41,9 +41,7 @@ export function useOnlineStatus() {
   return useQuery({
     queryKey: ["online-status"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("user_id, last_seen_at" as any);
+      const { data } = await supabase.rpc("get_profiles_safe");
       const map = new Map<string, string>();
       (data as any[])?.forEach((p) => {
         if (p.user_id && p.last_seen_at) {

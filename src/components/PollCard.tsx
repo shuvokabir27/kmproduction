@@ -53,10 +53,8 @@ export function PollCard({ poll, compact }: PollCardProps) {
     queryFn: async () => {
       if (!votes || votes.length === 0) return {};
       const userIds = [...new Set(votes.map((v: any) => v.user_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, full_name")
-        .in("user_id", userIds);
+      const { data: allProfiles } = await supabase.rpc("get_profiles_safe");
+      const profiles = (allProfiles ?? []).filter((p: any) => userIds.includes(p.user_id));
       const map: Record<string, string> = {};
       (profiles ?? []).forEach((p: any) => { map[p.user_id] = p.full_name; });
       return map;
