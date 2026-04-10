@@ -226,6 +226,12 @@ export default function ClientDashboard() {
                             </div>
                           </div>
 
+                          {/* Client Artist Billing */}
+                          <ClientArtistBilling
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
+                          />
+
                           {/* Client Scene Editor */}
                           <ClientSceneEditor
                             projectId={p.id}
