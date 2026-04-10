@@ -4,7 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, ChevronLeft, Users, Receipt, Film, ScrollText } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, ChevronLeft, Users, Receipt, Film, ScrollText, Search, X, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
