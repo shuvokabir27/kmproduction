@@ -156,11 +156,17 @@ export default function ClientDashboard() {
   const totalArtistPaid = allProjectArtists.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
   const artistDue = totalArtistBill - totalArtistPaid;
 
-  const grandTotal = totalBudget + totalArtistBill;
+  const totalExpenses = allProjectExpenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+
+  const grandTotal = totalBudget + totalArtistBill + totalExpenses;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandTotal - grandPaid;
 
   const paidPercent = grandTotal > 0 ? Math.round((grandPaid / grandTotal) * 100) : 0;
+
+  const getProjectExpenseTotal = (pid: string) => {
+    return allProjectExpenses.filter((e: any) => e.project_id === pid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  };
 
   const getProjectArtistTotals = (pid: string) => {
     const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
