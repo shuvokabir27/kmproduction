@@ -875,12 +875,12 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, allProje
 /* ═══════════════════════════════════════════
    Payment Dialog (unchanged logic)
    ═══════════════════════════════════════════ */
-function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, companyName, totalBudget, totalProductionPaid }: {
-  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; companyName: string; totalBudget: number; totalProductionPaid: number;
+function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, companyName, totalBudget, totalProductionPaid, allProjectExpenses }: {
+  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; companyName: string; totalBudget: number; totalProductionPaid: number; allProjectExpenses: any[];
 }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<"choose" | "artist" | "production">("choose");
+  const [step, setStep] = useState<"choose" | "artist" | "production" | "expense">("choose");
   const [selectedArtistName, setSelectedArtistName] = useState<string | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [receiptData, setReceiptData] = useState<any>(null);
