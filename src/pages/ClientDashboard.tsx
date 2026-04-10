@@ -59,7 +59,7 @@ export default function ClientDashboard() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   
-  const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
+  const [expandedStat, setExpandedStat] = useState<"total" | "paid" | "due" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
