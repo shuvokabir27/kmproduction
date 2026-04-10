@@ -962,9 +962,22 @@ export default function ClientDashboard() {
                             .update({ paid_amount: newPaid, is_paid: newPaid >= Number(current.remuneration || 0) }).eq("id", upd.id);
                         }
                       }
-                    } else if (ph.payment_type === "expense" && details.expense_ids) {
-                      for (const eid of details.expense_ids) {
-                        await (supabase as any).from("client_project_expenses").update({ is_paid: false }).eq("id", eid);
+                    } else if (ph.payment_type === "expense") {
+                      if (details.updates && Array.isArray(details.updates)) {
+                        for (const upd of details.updates) {
+                          const { data: current } = await (supabase as any)
+                            .from("client_project_expenses").select("paid_amount, amount").eq("id", upd.id).single();
+                          if (current) {
+                            const newPaid = Math.max(0, Number(current.paid_amount || 0) - Number(upd.amount || 0));
+                            await (supabase as any).from("client_project_expenses")
+                              .update({ paid_amount: newPaid, is_paid: newPaid >= Number(current.amount || 0) }).eq("id", upd.id);
+                          }
+                        }
+                      } else if (details.expense_ids) {
+                        for (const eid of details.expense_ids) {
+                          await (supabase as any).from("client_project_expenses")
+                            .update({ is_paid: false, paid_amount: 0 }).eq("id", eid);
+                        }
                       }
                     }
                     await (supabase as any).from("client_payment_history").delete().eq("id", ph.id);
