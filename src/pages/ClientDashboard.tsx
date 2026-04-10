@@ -929,6 +929,9 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     return Array.from(map.values());
   }, [allProjectExpenses, projects]);
 
+  const [expensePayMode, setExpensePayMode] = useState<"select" | "custom">("select");
+  const [customExpenseAmount, setCustomExpenseAmount] = useState("");
+
   const [selectedExpenseIds, setSelectedExpenseIds] = useState<Set<string>>(new Set());
 
   const toggleExpense = (id: string) => {
@@ -948,19 +951,53 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     .filter((e: any) => selectedExpenseIds.has(e.id))
     .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
 
+  const expensePayAmount = expensePayMode === "select" ? selectedExpenseTotal : Number(customExpenseAmount || 0);
+
   const handlePayExpenses = async () => {
-    if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
-    try {
-      for (const id of selectedExpenseIds) {
-        const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
-        if (error) throw error;
+    if (expensePayMode === "select") {
+      if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
+      try {
+        for (const id of selectedExpenseIds) {
+          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+          if (error) throw error;
+        }
+        toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
+        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        setSelectedExpenseIds(new Set());
+        setStep("choose");
+      } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+    } else {
+      const amount = Number(customExpenseAmount || 0);
+      if (amount <= 0) { toast({ title: "পরিমাণ দিন", variant: "destructive" }); return; }
+      // Pay expenses oldest first until amount is exhausted
+      const dueExpenses = allProjectExpenses
+        .filter((e: any) => !e.is_paid)
+        .sort((a: any, b: any) => (a.created_at || "").localeCompare(b.created_at || ""));
+      let remaining = amount;
+      const toPay: string[] = [];
+      for (const exp of dueExpenses) {
+        if (remaining <= 0) break;
+        const expAmount = Number(exp.amount || 0);
+        if (remaining >= expAmount) {
+          toPay.push(exp.id);
+          remaining -= expAmount;
+        }
       }
-      toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
-      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-      queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-      setSelectedExpenseIds(new Set());
-      setStep("choose");
-    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+      if (toPay.length === 0) { toast({ title: "এই পরিমাণে কোনো খরচ পেইড করা যায় না", variant: "destructive" }); return; }
+      try {
+        for (const id of toPay) {
+          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+          if (error) throw error;
+        }
+        const paidTotal = dueExpenses.filter((e: any) => toPay.includes(e.id)).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+        toast({ title: `৳${paidTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${toPay.length} টি আইটেম)` });
+        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        setCustomExpenseAmount("");
+        setStep("choose");
+      } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+    }
   };
 
   const handlePayArtist = async () => {
