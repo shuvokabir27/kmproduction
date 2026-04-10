@@ -697,6 +697,7 @@ export default function ClientDashboard() {
                                     category: e.category,
                                     amount: Number(e.amount || 0),
                                     description: e.description || "",
+                                    is_paid: e.is_paid,
                                   })),
                                 });
                                 toast({ title: "বিল ডাউনলোড হচ্ছে..." });
@@ -789,7 +790,7 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, allProje
         projectName: p.name, projectDate: p.project_date, clientName: clientProfile?.name || "",
         productionBudget: Number(p.total_budget || 0), productionPaid: projPaid,
         artists: arts.map((a: any) => ({ artist_name: a.artist_name, remuneration: Number(a.remuneration || 0), paid_amount: Number(a.paid_amount || 0) })),
-        expenses: exps.map((e: any) => ({ category: e.category, amount: Number(e.amount || 0), description: e.description || "" })),
+        expenses: exps.map((e: any) => ({ category: e.category, amount: Number(e.amount || 0), description: e.description || "", is_paid: e.is_paid })),
       };
     });
     downloadAllProjectsBillPDF({ clientName: clientProfile?.name || "প্রজেক্ট ডিরেক্টর", company: clientProfile?.company || undefined, projects: billData });
