@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
+import ClientArtistReceipt from "@/components/ClientArtistReceipt";
 import {
   Users,
   Plus,
@@ -16,14 +17,17 @@ import {
   ChevronDown,
   ChevronUp,
   Search,
+  Download,
 } from "lucide-react";
 
 interface ClientArtistBillingProps {
   projectId: string;
   clientProfileId: string;
+  clientName?: string;
+  projectName?: string;
 }
 
-export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtistBillingProps) {
+export function ClientArtistBilling({ projectId, clientProfileId, clientName, projectName }: ClientArtistBillingProps) {
   const queryClient = useQueryClient();
   const [showAddForm, setShowAddForm] = useState(false);
   const [artistName, setArtistName] = useState("");
@@ -32,8 +36,8 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [payAmounts, setPayAmounts] = useState<Record<string, string>>({});
   const [showSummary, setShowSummary] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
 
-  // Fetch project artists
   const { data: projectArtists = [], refetch: refetchArtists } = useQuery({
     queryKey: ["client-project-artists", projectId],
     queryFn: async () => {
@@ -46,7 +50,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     },
   });
 
-  // Fetch saved artist names for this client
   const { data: savedArtists = [] } = useQuery({
     queryKey: ["client-artists", clientProfileId],
     queryFn: async () => {
@@ -59,7 +62,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     },
   });
 
-  // Fetch admin member names for suggestions
   const { data: adminMembers = [] } = useQuery({
     queryKey: ["admin-members-for-client"],
     queryFn: async () => {
@@ -72,7 +74,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     },
   });
 
-  // Fetch all project artists across all projects for this client (for summary)
   const { data: allProjectArtists = [] } = useQuery({
     queryKey: ["all-client-project-artists", clientProfileId],
     queryFn: async () => {
@@ -84,12 +85,10 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     },
   });
 
-  // Combined suggestions: saved artists + admin members
   const suggestions = useMemo(() => {
     const nameSet = new Set<string>();
     const results: { name: string; source: string }[] = [];
 
-    // Saved artists first
     savedArtists.forEach((a: any) => {
       if (!nameSet.has(a.name.toLowerCase())) {
         nameSet.add(a.name.toLowerCase());
@@ -97,7 +96,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
       }
     });
 
-    // Admin members
     adminMembers.forEach((m: any) => {
       const name = m.full_name;
       if (!nameSet.has(name.toLowerCase())) {
@@ -111,7 +109,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     return results.filter((r) => r.name.toLowerCase().includes(q));
   }, [savedArtists, adminMembers, searchQuery]);
 
-  // Artist summary across all projects
   const artistSummary = useMemo(() => {
     const map: Record<string, { totalProjects: number; totalRemuneration: number; totalPaid: number }> = {};
     allProjectArtists.forEach((a: any) => {
@@ -140,7 +137,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     }
 
     try {
-      // Add to project artists
       const { error } = await (supabase as any)
         .from("client_project_artists")
         .insert({
@@ -151,7 +147,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
         });
       if (error) throw error;
 
-      // Save artist name for reuse (ignore duplicate)
       await (supabase as any)
         .from("client_artists")
         .upsert(
@@ -190,6 +185,19 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
 
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
       setPayAmounts((prev) => ({ ...prev, [artist.id]: "" }));
+
+      // Show receipt
+      setReceiptData({
+        artistName: artist.artist_name,
+        projectName: projectName || "প্রজেক্ট",
+        clientName: clientName || "ক্লায়েন্ট",
+        amount,
+        totalRemuneration: Number(artist.remuneration || 0),
+        totalPaid: newPaid,
+        remaining: Number(artist.remuneration || 0) - newPaid,
+        date: new Date().toISOString(),
+      });
+
       refetchArtists();
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
     } catch (err: any) {
@@ -217,6 +225,14 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
 
   return (
     <div className="space-y-3">
+      {/* Receipt Modal */}
+      {receiptData && (
+        <ClientArtistReceipt
+          receiptData={receiptData}
+          onClose={() => setReceiptData(null)}
+        />
+      )}
+
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
@@ -289,7 +305,6 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
                 />
               </div>
 
-              {/* Suggestions Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute z-50 w-full mt-1 max-h-48 overflow-y-auto rounded-lg border border-border bg-popover shadow-lg">
                   {suggestions.map((s, i) => (
@@ -364,14 +379,38 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
                         )}
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveArtist(artist.id)}
-                      className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      {/* Download last receipt */}
+                      {paid > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            setReceiptData({
+                              artistName: artist.artist_name,
+                              projectName: projectName || "প্রজেক্ট",
+                              clientName: clientName || "ক্লায়েন্ট",
+                              amount: paid,
+                              totalRemuneration: rem,
+                              totalPaid: paid,
+                              remaining: due,
+                              date: new Date().toISOString(),
+                            })
+                          }
+                          className="h-7 w-7 p-0 text-primary hover:text-primary"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveArtist(artist.id)}
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </div>
 
                   {/* Billing Info */}
