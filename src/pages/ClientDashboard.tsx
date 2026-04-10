@@ -448,6 +448,53 @@ export default function ClientDashboard() {
                   </div>
                 </motion.div>
               )}
+              {expandedBillCard === "expense" && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+                  <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-4 space-y-2">
+                    <h4 className="text-xs font-semibold text-orange-400 mb-3 flex items-center gap-1.5">
+                      <Receipt className="h-3.5 w-3.5" />
+                      প্রজেক্ট অনুযায়ী শুটিং খরচ
+                    </h4>
+                    {(() => {
+                      const projectsWithExpenses = projects.filter((p: any) => {
+                        return allProjectExpenses.some((e: any) => e.project_id === p.id);
+                      });
+                      if (projectsWithExpenses.length === 0) return <div className="text-xs text-muted-foreground text-center py-3">কোনো খরচ নেই</div>;
+                      
+                      const categoryLabels: Record<string, string> = { food: "🍛 খাবার", costume: "👔 কস্টিউম", transport: "🚌 যাতায়াত" };
+                      
+                      return projectsWithExpenses.map((p: any) => {
+                        const projExpenses = allProjectExpenses.filter((e: any) => e.project_id === p.id);
+                        const projTotal = projExpenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+                        
+                        const byCat: Record<string, number> = {};
+                        projExpenses.forEach((e: any) => {
+                          byCat[e.category] = (byCat[e.category] || 0) + Number(e.amount || 0);
+                        });
+                        
+                        return (
+                          <div key={p.id} className="p-3 rounded-xl bg-background/50 border border-border/20">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="min-w-0">
+                                <div className="text-sm font-medium text-foreground truncate">{p.name}</div>
+                                <div className="text-[10px] text-muted-foreground">{format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</div>
+                              </div>
+                              <div className="text-sm font-bold text-foreground shrink-0 ml-2">৳{projTotal.toLocaleString("bn-BD")}</div>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {Object.entries(byCat).map(([cat, amt]) => (
+                                <span key={cat} className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-300">
+                                  {categoryLabels[cat] || cat}: ৳{amt.toLocaleString("bn-BD")}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
 
             {/* Project count + Download */}
