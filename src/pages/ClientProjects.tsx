@@ -238,7 +238,8 @@ export default function ClientProjects() {
                       transition={{ duration: 0.25 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 pb-5 space-y-4 border-t border-border/20 pt-4">
+                      <div className="px-4 pb-5 space-y-3 border-t border-border/20 pt-4">
+                        {/* বাজেট হেডার ও ডাউনলোড */}
                         <div className="flex items-center justify-between">
                           <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                             <Wallet className="h-4 w-4 text-primary" /> বাজেট
@@ -282,24 +283,62 @@ export default function ClientProjects() {
                           <div className="text-xl font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                         </div>
 
-                        <ClientArtistBilling
-                          projectId={p.id}
-                          clientProfileId={clientProfile.id}
-                          clientName={clientProfile?.name || "ক্লায়েন্ট"}
-                          projectName={p.name}
-                        />
-                        <ClientProjectExpenses
-                          projectId={p.id}
-                          clientProfileId={clientProfile.id}
-                        />
-                        <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
-                        <ClientProjectScript
-                          projectId={p.id}
-                          userId={user!.id}
-                          initialScript={p.client_script}
-                          initialImages={Array.isArray(p.client_script_images) ? p.client_script_images : []}
-                          onUpdate={() => {}}
-                        />
+                        {/* ═══ আর্টিস্ট সেকশন (কলাপসিবল, ভায়োলেট) ═══ */}
+                        <CollapsibleSection
+                          icon={<Users className="h-4 w-4" />}
+                          title="আর্টিস্ট লিস্ট"
+                          badge={artTotals.count > 0 ? `${artTotals.count}জন` : undefined}
+                          colorClass="violet"
+                          defaultOpen={false}
+                        >
+                          <ClientArtistBilling
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
+                            clientName={clientProfile?.name || "ক্লায়েন্ট"}
+                            projectName={p.name}
+                          />
+                        </CollapsibleSection>
+
+                        {/* ═══ শুটিং খরচ (কলাপসিবল, অরেঞ্জ) ═══ */}
+                        <CollapsibleSection
+                          icon={<Receipt className="h-4 w-4" />}
+                          title="শুটিং খরচ"
+                          badge={projExpenseTotal > 0 ? `৳${projExpenseTotal.toLocaleString("bn-BD")}` : undefined}
+                          colorClass="orange"
+                          defaultOpen={false}
+                        >
+                          <ClientProjectExpenses
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
+                          />
+                        </CollapsibleSection>
+
+                        {/* ═══ সিন বাই সিন (কলাপসিবল, টিল) ═══ */}
+                        <CollapsibleSection
+                          icon={<Film className="h-4 w-4" />}
+                          title="সিন বাই সিন লাইনআপ"
+                          badge={scenes.length > 0 ? `${scenes.length}টি সিন` : undefined}
+                          colorClass="teal"
+                          defaultOpen={false}
+                        >
+                          <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
+                        </CollapsibleSection>
+
+                        {/* ═══ স্ক্রিপ্ট (কলাপসিবল, ইন্ডিগো) ═══ */}
+                        <CollapsibleSection
+                          icon={<ScrollText className="h-4 w-4" />}
+                          title="স্ক্রিপ্ট"
+                          colorClass="indigo"
+                          defaultOpen={false}
+                        >
+                          <ClientProjectScript
+                            projectId={p.id}
+                            userId={user!.id}
+                            initialScript={p.client_script}
+                            initialImages={Array.isArray(p.client_script_images) ? p.client_script_images : []}
+                            onUpdate={() => {}}
+                          />
+                        </CollapsibleSection>
 
                         {p.notes && (
                           <p className="text-[11px] text-muted-foreground italic border-t border-border/15 pt-3">
