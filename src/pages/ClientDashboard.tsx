@@ -678,6 +678,7 @@ export default function ClientDashboard() {
             <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
           </div>
         ) : (
+          <>
           <div ref={projectsRef} />
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
             <h2 className="text-base font-bold text-foreground flex items-center gap-2 px-1">
