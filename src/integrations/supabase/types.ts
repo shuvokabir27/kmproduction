@@ -349,6 +349,51 @@ export type Database = {
           },
         ]
       }
+      client_project_expenses: {
+        Row: {
+          amount: number
+          category: Database["public"]["Enums"]["client_expense_category"]
+          client_profile_id: string
+          created_at: string
+          description: string | null
+          id: string
+          project_id: string
+        }
+        Insert: {
+          amount?: number
+          category: Database["public"]["Enums"]["client_expense_category"]
+          client_profile_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_id: string
+        }
+        Update: {
+          amount?: number
+          category?: Database["public"]["Enums"]["client_expense_category"]
+          client_profile_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_project_expenses_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_project_expenses_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "freelance_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversation_members: {
         Row: {
           conversation_id: string
@@ -2050,6 +2095,7 @@ export type Database = {
       bonus_type: "bonus" | "transport"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "audio" | "video"
+      client_expense_category: "food" | "costume" | "transport"
       conversation_type: "personal" | "group"
       expense_category: "food" | "transport" | "props" | "other"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
@@ -2186,6 +2232,7 @@ export const Constants = {
       bonus_type: ["bonus", "transport"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
       call_type: ["audio", "video"],
+      client_expense_category: ["food", "costume", "transport"],
       conversation_type: ["personal", "group"],
       expense_category: ["food", "transport", "props", "other"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
