@@ -40,6 +40,7 @@ const paymentMethodLabel: Record<string, string> = {
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | null>(null);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
