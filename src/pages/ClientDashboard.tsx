@@ -589,6 +589,7 @@ export default function ClientDashboard() {
             </button>
           </div>
         </nav>
+      </div>
     </div>
   );
 }
