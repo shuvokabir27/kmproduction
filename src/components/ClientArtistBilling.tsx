@@ -220,8 +220,37 @@ export function ClientArtistBilling({ projectId, clientProfileId, clientName, pr
     }
   };
 
+  const handlePayAll = async () => {
+    const unpaidArtists = projectArtists.filter((a: any) => !a.is_paid && Number(a.remuneration || 0) - Number(a.paid_amount || 0) > 0);
+    if (unpaidArtists.length === 0) {
+      toast({ title: "সব আর্টিস্ট পেইড", variant: "default" });
+      return;
+    }
+
+    try {
+      for (const artist of unpaidArtists) {
+        const rem = Number(artist.remuneration || 0);
+        const { error } = await (supabase as any)
+          .from("client_project_artists")
+          .update({ paid_amount: rem, is_paid: true })
+          .eq("id", artist.id);
+        if (error) throw error;
+      }
+
+      const totalDueNow = unpaidArtists.reduce((s: number, a: any) => s + (Number(a.remuneration || 0) - Number(a.paid_amount || 0)), 0);
+      toast({ title: `৳${totalDueNow.toLocaleString("bn-BD")} মোট পেমেন্ট সম্পন্ন ✓` });
+
+      refetchArtists();
+      queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
+    } catch (err: any) {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+    }
+  };
+
   const totalRemuneration = projectArtists.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
   const totalPaid = projectArtists.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+  const totalDue = totalRemuneration - totalPaid;
+  const unpaidCount = projectArtists.filter((a: any) => !a.is_paid).length;
 
   return (
     <div className="space-y-3">
