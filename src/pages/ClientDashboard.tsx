@@ -645,6 +645,29 @@ export default function ClientDashboard() {
                                     {rec.isPaid ? "পেইড" : "আংশিক"}
                                   </Badge>
                                 )}
+                                <Button variant="ghost" size="sm"
+                                  className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                                  onClick={async () => {
+                                    if (!confirm("এই পেমেন্ট রিভার্স করতে চান? নিশ্চিত?")) return;
+                                    const realId = rec.id.replace(/^(artist|expense)-/, "");
+                                    try {
+                                      if (rec.type === "artist") {
+                                        await (supabase as any).from("client_project_artists")
+                                          .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
+                                      } else {
+                                        await (supabase as any).from("client_project_expenses")
+                                          .update({ is_paid: false }).eq("id", realId);
+                                      }
+                                      toast({ title: "পেমেন্ট রিভার্স করা হয়েছে ✓" });
+                                      queryClient.invalidateQueries({ queryKey: ["all-client-project-artists"] });
+                                      queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+                                      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+                                      queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+                                    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+                                  }}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
                               </motion.div>
                             ))}
                             {/* Client payment history table (deletable) */}
