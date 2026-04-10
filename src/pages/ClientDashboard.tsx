@@ -18,6 +18,7 @@ import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPd
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import ClientArtistReceipt from "@/components/ClientArtistReceipt";
+import ClientPaymentReceipt from "@/components/ClientPaymentReceipt";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -63,6 +64,7 @@ export default function ClientDashboard() {
   const paymentHistoryRef = useRef<HTMLDivElement>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
 
   const { data: clientProfile } = useQuery({
@@ -677,12 +679,27 @@ export default function ClientDashboard() {
                                       {details.expense_count && ` • ${details.expense_count} টি আইটেম`}
                                     </div>
                                   </div>
-                                  <Button variant="ghost" size="sm"
-                                    className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                                    onClick={() => setDeleteConfirm({ type: "history", rec: ph })}
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                  </Button>
+                                  <div className="flex gap-1 shrink-0">
+                                    <Button variant="ghost" size="sm"
+                                      className="h-7 w-7 p-0 text-primary hover:text-primary hover:bg-primary/10"
+                                      onClick={() => setHistoryReceiptData({
+                                        clientName: clientProfile?.name || "",
+                                        company: clientProfile?.company || undefined,
+                                        amount: Number(ph.amount),
+                                        paymentType: ph.payment_type,
+                                        details: details,
+                                        date: ph.created_at,
+                                      })}
+                                    >
+                                      <Download className="h-3.5 w-3.5" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm"
+                                      className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                      onClick={() => setDeleteConfirm({ type: "history", rec: ph })}
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                  </div>
                                 </motion.div>
                               );
                             })}
@@ -1003,6 +1020,12 @@ export default function ClientDashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {historyReceiptData && (
+        <ClientPaymentReceipt
+          receiptData={historyReceiptData}
+          onClose={() => setHistoryReceiptData(null)}
+        />
+      )}
     </div>
   );
 }
