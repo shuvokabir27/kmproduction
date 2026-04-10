@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -85,15 +85,46 @@ export default function ClientDashboard() {
     },
   });
 
+  // Fetch all artist billing data across all projects
+  const { data: allProjectArtists = [] } = useQuery({
+    queryKey: ["all-client-project-artists", clientProfile?.id],
+    enabled: !!clientProfile?.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("client_project_artists")
+        .select("*")
+        .eq("client_profile_id", clientProfile.id);
+      return data || [];
+    },
+  });
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
 
   const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
 
+  // Production bill (what client pays to KMP)
   const totalBudget = projects.reduce((s: number, p: any) => s + Number(p.total_budget || 0), 0);
-  const totalPaid = allPayments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-  const overallSummary = { totalBudget, totalPaid, projectCount: projects.length };
-  const overallDue = totalBudget - totalPaid;
+  const totalProductionPaid = allPayments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+  const productionDue = totalBudget - totalProductionPaid;
+
+  // Artist bill totals
+  const totalArtistBill = allProjectArtists.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
+  const totalArtistPaid = allProjectArtists.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+  const artistDue = totalArtistBill - totalArtistPaid;
+
+  // Combined totals
+  const grandTotal = totalBudget + totalArtistBill;
+  const grandPaid = totalProductionPaid + totalArtistPaid;
+  const grandDue = grandTotal - grandPaid;
+
+  // Per-project artist totals helper
+  const getProjectArtistTotals = (pid: string) => {
+    const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
+    const bill = arts.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
+    const paid = arts.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+    return { bill, paid, due: bill - paid, count: arts.length };
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,34 +147,72 @@ export default function ClientDashboard() {
 
         {/* Overall Summary Cards */}
         {projects.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="border-border/50">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <Briefcase className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground">মোট প্রজেক্ট</span>
+          <div className="space-y-3">
+            {/* Grand Total Row */}
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="p-4">
+                <h3 className="text-xs font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
+                  <Wallet className="h-3.5 w-3.5" /> সামগ্রিক হিসাব
+                </h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground">মোট বিল</div>
+                    <div className="text-lg font-bold text-foreground">৳{grandTotal.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground">মোট পেইড</div>
+                    <div className="text-lg font-bold text-emerald-400">৳{grandPaid.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground">মোট বাকি</div>
+                    <div className="text-lg font-bold text-amber-400">৳{Math.max(0, grandDue).toLocaleString("bn-BD")}</div>
+                  </div>
                 </div>
-                <div className="text-2xl font-bold text-foreground">{overallSummary.projectCount}</div>
               </CardContent>
             </Card>
-            <Card className="border-border/50">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-xs text-muted-foreground">মোট পেমেন্ট</span>
-                </div>
-                <div className="text-2xl font-bold text-emerald-400">৳{overallSummary.totalPaid.toLocaleString("bn-BD")}</div>
-              </CardContent>
-            </Card>
-            <Card className="border-border/50">
-              <CardContent className="p-4 text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <Clock className="h-4 w-4 text-amber-400" />
-                  <span className="text-xs text-muted-foreground">মোট বাকি</span>
-                </div>
-                <div className="text-2xl font-bold text-amber-400">৳{Math.max(0, overallDue).toLocaleString("bn-BD")}</div>
-              </CardContent>
-            </Card>
+
+            {/* Breakdown: Production vs Artist */}
+            <div className="grid grid-cols-2 gap-3">
+              <Card className="border-border/50">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Banknote className="h-3.5 w-3.5 text-sky-400" />
+                    <span className="text-xs font-semibold text-muted-foreground">প্রোডাকশন বিল</span>
+                  </div>
+                  <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
+                  <div className="text-xs text-emerald-400">পেইড: ৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
+                  {productionDue > 0 && (
+                    <div className="text-xs text-amber-400">বাকি: ৳{productionDue.toLocaleString("bn-BD")}</div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card className="border-border/50">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Users className="h-3.5 w-3.5 text-violet-400" />
+                    <span className="text-xs font-semibold text-muted-foreground">আর্টিস্ট বিল</span>
+                  </div>
+                  <div className="text-sm font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</div>
+                  <div className="text-xs text-emerald-400">পেইড: ৳{totalArtistPaid.toLocaleString("bn-BD")}</div>
+                  {artistDue > 0 && (
+                    <div className="text-xs text-amber-400">বাকি: ৳{artistDue.toLocaleString("bn-BD")}</div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Project Count */}
+            <div className="grid grid-cols-1">
+              <Card className="border-border/50">
+                <CardContent className="p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Briefcase className="h-4 w-4 text-primary" />
+                    <span className="text-sm text-muted-foreground">মোট প্রজেক্ট</span>
+                  </div>
+                  <span className="text-xl font-bold text-foreground">{projects.length}</span>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 
@@ -152,7 +221,7 @@ export default function ClientDashboard() {
           <Card className="border-border/50">
             <CardContent className="p-4 space-y-2">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> পেমেন্ট হিস্ট্রি
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> প্রোডাকশন পেমেন্ট হিস্ট্রি
               </h3>
               {allPayments.map((pay: any) => (
                 <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
@@ -182,6 +251,10 @@ export default function ClientDashboard() {
               const scenes = getScenes(p.id);
               const st = statusMap[p.status] || statusMap.upcoming;
               const isOpen = expandedProject === p.id;
+              const artTotals = getProjectArtistTotals(p.id);
+              const projProductionPaid = allPayments
+                .filter((pay: any) => pay.project_id === p.id)
+                .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
 
               return (
                 <Card key={p.id} className="border-border/50 overflow-hidden">
@@ -190,7 +263,7 @@ export default function ClientDashboard() {
                     onClick={() => setExpandedProject(isOpen ? null : p.id)}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-foreground">{p.name}</h3>
                           <Badge variant="outline" className={st.color}>{st.label}</Badge>
@@ -199,9 +272,22 @@ export default function ClientDashboard() {
                           <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
                           {p.location && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {p.location}</span>}
                         </div>
+                        {/* Per-project mini summary */}
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px]">
+                          <span className="text-muted-foreground">
+                            প্রোডাকশন: <span className="text-foreground font-medium">৳{Number(p.total_budget).toLocaleString("bn-BD")}</span>
+                          </span>
+                          {artTotals.count > 0 && (
+                            <span className="text-muted-foreground">
+                              আর্টিস্ট: <span className="text-foreground font-medium">৳{artTotals.bill.toLocaleString("bn-BD")}</span>
+                              {artTotals.due > 0 && <span className="text-amber-400 ml-1">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <div className="text-sm font-medium text-foreground">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
+                        <div className="text-sm font-medium text-foreground">৳{(Number(p.total_budget) + artTotals.bill).toLocaleString("bn-BD")}</div>
+                        <div className="text-[10px] text-muted-foreground">মোট বিল</div>
                       </div>
                     </div>
                   </div>
@@ -215,7 +301,7 @@ export default function ClientDashboard() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4">
-                          {/* Budget only */}
+                          {/* Budget */}
                           <div>
                             <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
                               <Wallet className="h-4 w-4 text-primary" /> বাজেট
@@ -230,6 +316,8 @@ export default function ClientDashboard() {
                           <ClientArtistBilling
                             projectId={p.id}
                             clientProfileId={clientProfile.id}
+                            clientName={clientProfile?.name || "ক্লায়েন্ট"}
+                            projectName={p.name}
                           />
 
                           {/* Client Scene Editor */}
