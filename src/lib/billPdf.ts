@@ -24,14 +24,22 @@ interface AllProjectsBillData {
   projects: ProjectBillData[];
 }
 
-function buildRowHTML(label: string, amount: string, paid: string, due: string, bold = false) {
+function buildRowHTML(label: string, amount: string, paid: string, due: string, bold = false, statusHtml = "") {
   const fw = bold ? "font-weight:bold;" : "";
   const bg = bold ? "background:#f0f4ff;" : "";
+  const paidNum = parseFloat(paid.replace(/[^\d.-]/g, "")) || 0;
+  const amountNum = parseFloat(amount.replace(/[^\d.-]/g, "")) || 0;
+  const autoStatus = statusHtml || (amountNum > 0 && paidNum >= amountNum
+    ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+    : paidNum > 0
+      ? `<span style="color:#d97706;font-weight:bold;">Partially Paid</span>`
+      : '<span style="color:#dc2626;">Unpaid</span>');
   return `<tr style="${bg}">
     <td style="padding:8px 10px;border:1px solid #ddd;${fw}">${label}</td>
     <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;${fw}">${amount}</td>
     <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;${fw}">${paid}</td>
     <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;${fw}">${due}</td>
+    <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;${fw}">${autoStatus}</td>
   </tr>`;
 }
 
@@ -63,7 +71,7 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
       <div style="font-size:11px;color:#b4b4c8;letter-spacing:3px;text-transform:uppercase;">Kuakata Multimedia</div>
       <div style="font-size:22px;font-weight:bold;color:#fff;margin-top:6px;">প্রজেক্ট বিল</div>
       <div style="font-size:16px;color:#e0e0f0;margin-top:4px;">${data.projectName}</div>
-      <div style="font-size:11px;color:#b4b4c8;margin-top:8px;">তারিখ: ${dateStr}  |  ক্লায়েন্ট: ${data.clientName}</div>
+      <div style="font-size:11px;color:#b4b4c8;margin-top:8px;">তারিখ: ${dateStr}  |  প্রজেক্ট ডিরেক্টর: ${data.clientName}</div>
     </div>
     <div style="height:3px;background:#3b82f6;"></div>
     <div style="padding:20px 30px 30px;">
@@ -94,10 +102,25 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বিল</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পেইড</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বাকি</th>
+            <th style="padding:8px 10px;text-align:center;border:1px solid #1e1e28;">স্ট্যাটাস</th>
           </tr>
         </thead>
         <tbody>
-          ${buildRowHTML("প্রোডাকশন খরচ", fmt(data.productionBudget), fmt(data.productionPaid), fmt(Math.max(0, data.productionBudget - data.productionPaid)), true)}
+          ${(() => {
+            const prodDue = data.productionBudget - data.productionPaid;
+            const status = data.productionPaid >= data.productionBudget && data.productionBudget > 0
+              ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+              : data.productionPaid > 0
+                ? '<span style="color:#d97706;font-weight:bold;">Partially Paid</span>'
+                : '<span style="color:#dc2626;">Unpaid</span>';
+            return `<tr style="background:#f0f4ff;font-weight:bold;">
+              <td style="padding:8px 10px;border:1px solid #ddd;">প্রোডাকশন খরচ</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(data.productionBudget)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(data.productionPaid)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, prodDue))}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${status}</td>
+            </tr>`;
+          })()}
         </tbody>
       </table>
       
