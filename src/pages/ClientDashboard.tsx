@@ -1658,76 +1658,143 @@ function ExpenseTrendChart({ projects, allPayments, allProjectArtists, allProjec
     chartData.some(row => row[p.name] > 0)
   );
 
-  if (activeProjects.length === 0) return null;
+  // সর্বোচ্চ খরচের প্রজেক্ট খুঁজে বের করা
+  const projectTotals = activeProjects.map((p: any, i: number) => {
+    const total = chartData.reduce((s, row) => s + (row[p.name] || 0), 0);
+    return { ...p, total, color: CHART_COLORS[i % CHART_COLORS.length] };
+  }).sort((a, b) => b.total - a.total);
+
+  const grandTotal = projectTotals.reduce((s, p) => s + p.total, 0);
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-      <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-primary" /> খরচের তুলনা
-          </h3>
-          <div className="flex items-center gap-1.5">
-            {[3, 6].map(n => (
-              <button key={n} onClick={() => { setMonthCount(n); setCustomDate(undefined); }}
-                className={cn("text-[10px] px-2 py-0.5 rounded-full border transition-colors",
-                  monthCount === n && !customDate ? "bg-primary/15 border-primary/30 text-primary" : "border-border/40 text-muted-foreground"
-                )}>
-                {n} মাস
-              </button>
-            ))}
-            <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
-              <PopoverTrigger asChild>
-                <button className={cn("text-[10px] px-2 py-0.5 rounded-full border transition-colors",
-                  customDate ? "bg-primary/15 border-primary/30 text-primary" : "border-border/40 text-muted-foreground"
-                )}>
-                  <Calendar className="h-3 w-3 inline mr-0.5" />
-                  {customDate ? format(customDate, "MMM yy", { locale: bn }) : "তারিখ"}
+      <div className="rounded-2xl border border-border/40 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-4 pt-4 pb-2">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                <TrendingUp className="h-3.5 w-3.5 text-primary" />
+              </div>
+              খরচের তুলনা
+            </h3>
+            <div className="flex items-center gap-1.5">
+              {[3, 6].map(n => (
+                <button key={n} onClick={() => { setMonthCount(n); setCustomDate(undefined); }}
+                  className={cn("text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all",
+                    monthCount === n && !customDate 
+                      ? "bg-primary/15 border-primary/30 text-primary shadow-sm" 
+                      : "border-border/30 text-muted-foreground hover:border-border/60"
+                  )}>
+                  {n} মাস
                 </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <CalendarPicker
-                  mode="single"
-                  selected={customDate}
-                  onSelect={(d) => { setCustomDate(d); setShowDatePicker(false); }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+              ))}
+              <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                <PopoverTrigger asChild>
+                  <button className={cn("text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all",
+                    customDate ? "bg-primary/15 border-primary/30 text-primary shadow-sm" : "border-border/30 text-muted-foreground hover:border-border/60"
+                  )}>
+                    <Calendar className="h-3 w-3 inline mr-0.5" />
+                    {customDate ? format(customDate, "MMM yy", { locale: bn }) : "তারিখ"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <CalendarPicker
+                    mode="single"
+                    selected={customDate}
+                    onSelect={(d) => { setCustomDate(d); setShowDatePicker(false); }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
+          {/* Grand total */}
+          <p className="text-[10px] text-muted-foreground ml-9">
+            মোট খরচ: <span className="font-bold text-foreground text-xs">৳{grandTotal.toLocaleString("bn-BD")}</span>
+          </p>
         </div>
 
-        <div className="h-[200px] -ml-2">
+        {/* Chart */}
+        <div className="h-[220px] px-2">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={40}
-                tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <defs>
+                {activeProjects.map((_: any, i: number) => (
+                  <linearGradient key={i} id={`chartGrad${i}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={CHART_COLORS[i % CHART_COLORS.length]} stopOpacity={0.02} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.15)" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))", fontWeight: 500 }} axisLine={false} tickLine={false} dy={5} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={45}
+                tickFormatter={(v) => v >= 1000 ? `৳${(v / 1000).toFixed(0)}k` : `৳${v}`} />
               <RechartsTooltip
-                contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "11px" }}
-                formatter={(value: number, name: string) => [`৳${value.toLocaleString("bn-BD")}`, name]}
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length) return null;
+                  return (
+                    <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-md shadow-xl px-3 py-2.5 min-w-[160px]">
+                      <p className="text-[10px] font-semibold text-muted-foreground mb-1.5 border-b border-border/30 pb-1">{label}</p>
+                      {payload.sort((a: any, b: any) => (b.value || 0) - (a.value || 0)).map((entry: any, idx: number) => (
+                        <div key={idx} className="flex items-center justify-between gap-3 py-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <div className="h-2.5 w-2.5 rounded-full shadow-sm" style={{ backgroundColor: entry.color }} />
+                            <span className="text-[10px] text-muted-foreground truncate max-w-[80px]">{entry.name}</span>
+                          </div>
+                          <span className="text-[11px] font-bold text-foreground tabular-nums">৳{Number(entry.value || 0).toLocaleString("bn-BD")}</span>
+                        </div>
+                      ))}
+                      <div className="border-t border-border/30 mt-1 pt-1 flex justify-between">
+                        <span className="text-[10px] text-muted-foreground font-medium">মোট</span>
+                        <span className="text-[11px] font-bold text-primary tabular-nums">
+                          ৳{payload.reduce((s: number, e: any) => s + Number(e.value || 0), 0).toLocaleString("bn-BD")}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }}
               />
-              <Legend wrapperStyle={{ fontSize: "10px" }} />
               {activeProjects.map((p: any, i: number) => (
-                <Line key={p.id} type="monotone" dataKey={p.name} stroke={CHART_COLORS[i % CHART_COLORS.length]}
-                  strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                <Area key={p.id} type="monotone" dataKey={p.name} 
+                  stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                  strokeWidth={2.5} 
+                  fill={`url(#chartGrad${i})`}
+                  dot={{ r: 4, fill: CHART_COLORS[i % CHART_COLORS.length], strokeWidth: 2, stroke: "hsl(var(--card))" }} 
+                  activeDot={{ r: 6, strokeWidth: 3, stroke: "hsl(var(--card))" }} 
+                />
               ))}
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Project legend with totals */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          {activeProjects.map((p: any, i: number) => {
-            const total = chartData.reduce((s, row) => s + (row[p.name] || 0), 0);
-            return (
-              <div key={p.id} className="flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-full bg-background/50 border border-border/20">
-                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
-                <span className="text-muted-foreground truncate max-w-[80px]">{p.name}</span>
-                <span className="font-semibold text-foreground">৳{total.toLocaleString("bn-BD")}</span>
-              </div>
-            );
-          })}
+        {/* Project cards with totals */}
+        <div className="px-4 pb-4 pt-2">
+          <div className="grid gap-1.5">
+            {projectTotals.map((p, i) => {
+              const pct = grandTotal > 0 ? Math.round((p.total / grandTotal) * 100) : 0;
+              return (
+                <div key={p.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-background/40 border border-border/15">
+                  <div className="h-3 w-3 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: p.color }} />
+                  <span className="text-[11px] text-muted-foreground truncate flex-1">{p.name}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-1.5 rounded-full bg-muted/30 overflow-hidden">
+                      <motion.div 
+                        className="h-full rounded-full" 
+                        style={{ backgroundColor: p.color }}
+                        initial={{ width: 0 }} 
+                        animate={{ width: `${pct}%` }} 
+                        transition={{ duration: 0.8, delay: i * 0.1 }} 
+                      />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground w-7 text-right">{pct}%</span>
+                    <span className="text-[11px] font-bold text-foreground tabular-nums min-w-[60px] text-right">৳{p.total.toLocaleString("bn-BD")}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </motion.div>
