@@ -278,10 +278,15 @@ export default function ClientProjects() {
                             <Download className="h-3.5 w-3.5" /> বিল ডাউনলোড
                           </Button>
                         </div>
-                        <div className="rounded-xl bg-gradient-to-r from-sky-500/10 to-sky-500/5 border border-sky-500/15 p-4 text-center">
-                          <div className="text-[10px] text-muted-foreground mb-0.5">প্রজেক্ট বাজেট</div>
-                          <div className="text-xl font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                        </div>
+                        <ProjectBudgetSummary
+                          productionBudget={Number(p.total_budget)}
+                          productionPaid={projProductionPaid}
+                          artistBill={artTotals.bill}
+                          artistPaid={artTotals.paid}
+                          expenseTotal={projExpenseTotal}
+                          expensesPaidTotal={allProjectExpenses.filter((e: any) => e.project_id === p.id).reduce((s: number, e: any) => s + Number(e.paid_amount || 0), 0)}
+                          expenses={allProjectExpenses.filter((e: any) => e.project_id === p.id)}
+                        />
 
                         {/* ═══ আর্টিস্ট সেকশন (কলাপসিবল, ভায়োলেট) ═══ */}
                         <CollapsibleSection
