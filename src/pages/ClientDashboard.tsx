@@ -158,7 +158,7 @@ export default function ClientDashboard() {
 
   const totalExpenses = allProjectExpenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
 
-  const grandTotal = totalBudget + totalArtistBill + totalExpenses;
+  const grandTotal = totalBudget + totalArtistBill;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandTotal - grandPaid;
 
