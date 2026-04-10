@@ -1235,6 +1235,58 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
               <p className="text-[11px] text-muted-foreground italic text-center pt-1">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
             </div>
           )}
+
+          {step === "expense" && (
+            <div className="space-y-3">
+              <div className="rounded-2xl border border-border/40 p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="rounded-xl bg-amber-500/8 p-2.5">
+                    <div className="text-[9px] text-amber-400/70">মোট বাকি</div>
+                    <div className="text-sm font-bold text-amber-400">৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
+                    <div className="text-[9px] text-emerald-400/70">সিলেক্টেড</div>
+                    <div className="text-sm font-bold text-emerald-400">৳{selectedExpenseTotal.toLocaleString("bn-BD")}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">বাকি খরচসমূহ সিলেক্ট করুন</span>
+                <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2" onClick={selectAllExpenses}>সব সিলেক্ট</Button>
+              </div>
+
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {expensesByProject.map(({ project, expenses, totalDue }) => (
+                  <div key={project?.id || "unknown"} className="rounded-xl border border-border/30 overflow-hidden">
+                    <div className="px-3 py-2 bg-secondary/20 text-xs font-medium text-foreground flex items-center justify-between">
+                      <span className="truncate">{project?.name || "অজানা প্রজেক্ট"}</span>
+                      <span className="text-amber-400 shrink-0 ml-2">৳{totalDue.toLocaleString("bn-BD")}</span>
+                    </div>
+                    <div className="divide-y divide-border/20">
+                      {expenses.map((exp: any) => {
+                        const catLabel: Record<string, string> = { food: "🍛 খাবার", costume: "👔 কস্টিউম", transport: "🚌 যাতায়াত" };
+                        return (
+                          <label key={exp.id} className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-secondary/30 cursor-pointer">
+                            <Checkbox checked={selectedExpenseIds.has(exp.id)} onCheckedChange={() => toggleExpense(exp.id)} />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[11px] font-medium text-foreground">{catLabel[exp.category] || exp.category}</div>
+                              {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
+                            </div>
+                            <span className="text-xs font-semibold text-foreground shrink-0">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Button className="w-full gap-2 rounded-xl h-12 text-base font-semibold" onClick={handlePayExpenses} disabled={selectedExpenseIds.size === 0}>
+                <Banknote className="h-4 w-4" /> ৳{selectedExpenseTotal.toLocaleString("bn-BD")} পেইড করুন
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
