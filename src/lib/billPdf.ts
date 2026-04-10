@@ -409,17 +409,26 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
         <thead>
           <tr style="background:#1e1e28;color:#fff;">
             <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">ক্যাটাগরি</th>
-            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">মোট পরিমাণ</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">মোট</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পেইড</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বাকি</th>
           </tr>
         </thead>
         <tbody>
-          ${Object.entries(expenseMap).map(([cat, amt]) => `<tr>
-            <td style="padding:8px 10px;border:1px solid #ddd;">${cat}</td>
-            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(amt)}</td>
-          </tr>`).join("")}
+          ${Object.entries(expenseMap).map(([cat, val]) => {
+            const due = val.total - val.paid;
+            return `<tr>
+              <td style="padding:8px 10px;border:1px solid #ddd;">${cat}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(val.total)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(val.paid)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, due))}</td>
+            </tr>`;
+          }).join("")}
           <tr style="background:#f0f4ff;font-weight:bold;">
             <td style="padding:8px 10px;border:1px solid #ddd;">মোট শুটিং খরচ</td>
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalExpenses)}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(totalExpensesPaid)}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, totalExpensesDue))}</td>
           </tr>
         </tbody>
       </table>
