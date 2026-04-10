@@ -574,6 +574,15 @@ export default function ClientDashboard() {
             allProjectExpenses={allProjectExpenses}
           />
         )}
+        {/* ═══ Category Breakdown Chart ═══ */}
+        {projects.length >= 1 && (
+          <CategoryBreakdownChart
+            projects={projects}
+            allPayments={allPayments}
+            allProjectArtists={allProjectArtists}
+            allProjectExpenses={allProjectExpenses}
+          />
+        )}
         <div className="hidden md:block">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
             <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
@@ -1595,7 +1604,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 /* ═══════════════════════════════════════════
    Expense Trend Chart
    ═══════════════════════════════════════════ */
-import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, CartesianGrid, Area, AreaChart } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, CartesianGrid, Area, AreaChart, BarChart, Bar, Cell, PieChart, Pie } from "recharts";
 import { subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from "date-fns";
 
 const CHART_COLORS = ["#6366f1", "#f43f5e", "#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#ec4899"];
@@ -1795,6 +1804,203 @@ function ExpenseTrendChart({ projects, allPayments, allProjectArtists, allProjec
               );
             })}
           </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Category Breakdown Chart
+   ═══════════════════════════════════════════ */
+const CATEGORY_COLORS = { production: "#6366f1", artist: "#f43f5e", expense: "#10b981" };
+const CATEGORY_LABELS: Record<string, string> = { production: "প্রডাকশন", artist: "আর্টিস্ট", expense: "শুটিং খরচ" };
+const EXPENSE_SUB_LABELS: Record<string, string> = { food: "খাবার", costume: "কস্টিউম", transport: "যাতায়াত" };
+
+function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allProjectExpenses }: {
+  projects: any[]; allPayments: any[]; allProjectArtists: any[]; allProjectExpenses: any[];
+}) {
+  const [chartType, setChartType] = useState<"bar" | "pie">("pie");
+  const [selectedProject, setSelectedProject] = useState<string>("all");
+
+  const filteredPayments = selectedProject === "all" ? allPayments : allPayments.filter((p: any) => p.project_id === selectedProject);
+  const filteredArtists = selectedProject === "all" ? allProjectArtists : allProjectArtists.filter((a: any) => a.project_id === selectedProject);
+  const filteredExpenses = selectedProject === "all" ? allProjectExpenses : allProjectExpenses.filter((e: any) => e.project_id === selectedProject);
+
+  const prodTotal = selectedProject === "all"
+    ? projects.reduce((s: number, p: any) => s + Number(p.total_budget || 0), 0)
+    : Number(projects.find((p: any) => p.id === selectedProject)?.total_budget || 0);
+  const artistTotal = filteredArtists.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
+  const expenseTotal = filteredExpenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const grandTotal = prodTotal + artistTotal + expenseTotal;
+
+  const categoryData = [
+    { name: "প্রডাকশন", value: prodTotal, color: CATEGORY_COLORS.production },
+    { name: "আর্টিস্ট", value: artistTotal, color: CATEGORY_COLORS.artist },
+    { name: "শুটিং খরচ", value: expenseTotal, color: CATEGORY_COLORS.expense },
+  ].filter(d => d.value > 0);
+
+  // Expense sub-categories
+  const expenseByCategory: Record<string, number> = {};
+  filteredExpenses.forEach((e: any) => {
+    const cat = e.category || "other";
+    expenseByCategory[cat] = (expenseByCategory[cat] || 0) + Number(e.amount || 0);
+  });
+
+  if (categoryData.length === 0) return null;
+
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+    if (percent < 0.05) return null;
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    return (
+      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700}>
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+      <div className="rounded-2xl border border-border/40 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-4 pt-4 pb-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-accent/15 flex items-center justify-center">
+                <Wallet className="h-3.5 w-3.5 text-accent-foreground" />
+              </div>
+              ক্যাটেগরি অনুযায়ী খরচ
+            </h3>
+            <div className="flex items-center gap-1">
+              {(["pie", "bar"] as const).map(t => (
+                <button key={t} onClick={() => setChartType(t)}
+                  className={cn("text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all",
+                    chartType === t
+                      ? "bg-primary/15 border-primary/30 text-primary shadow-sm"
+                      : "border-border/30 text-muted-foreground hover:border-border/60"
+                  )}>
+                  {t === "pie" ? "পাই" : "বার"}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Project filter */}
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            <button onClick={() => setSelectedProject("all")}
+              className={cn("text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all whitespace-nowrap shrink-0",
+                selectedProject === "all"
+                  ? "bg-primary/15 border-primary/30 text-primary"
+                  : "border-border/30 text-muted-foreground"
+              )}>সব প্রজেক্ট</button>
+            {projects.map((p: any) => (
+              <button key={p.id} onClick={() => setSelectedProject(p.id)}
+                className={cn("text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all whitespace-nowrap shrink-0",
+                  selectedProject === p.id
+                    ? "bg-primary/15 border-primary/30 text-primary"
+                    : "border-border/30 text-muted-foreground"
+                )}>{p.name}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Chart */}
+        <div className="h-[220px] px-2">
+          <ResponsiveContainer width="100%" height="100%">
+            {chartType === "pie" ? (
+              <PieChart>
+                <Pie data={categoryData} cx="50%" cy="50%" innerRadius={45} outerRadius={85}
+                  dataKey="value" nameKey="name" labelLine={false} label={renderCustomLabel}
+                  strokeWidth={2} stroke="hsl(var(--card))">
+                  {categoryData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Pie>
+                <RechartsTooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0];
+                    const pct = grandTotal > 0 ? Math.round((Number(d.value || 0) / grandTotal) * 100) : 0;
+                    return (
+                      <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-md shadow-xl px-3 py-2">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: (d.payload as any)?.color }} />
+                          <span className="text-[11px] font-semibold text-foreground">{d.name}</span>
+                        </div>
+                        <span className="text-[12px] font-bold text-foreground">৳{Number(d.value || 0).toLocaleString("bn-BD")}</span>
+                        <span className="text-[10px] text-muted-foreground ml-1">({pct}%)</span>
+                      </div>
+                    );
+                  }}
+                />
+              </PieChart>
+            ) : (
+              <BarChart data={categoryData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.15)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))", fontWeight: 500 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={45}
+                  tickFormatter={(v) => v >= 1000 ? `৳${(v / 1000).toFixed(0)}k` : `৳${v}`} />
+                <RechartsTooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0];
+                    const pct = grandTotal > 0 ? Math.round((Number(d.value || 0) / grandTotal) * 100) : 0;
+                    return (
+                      <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-md shadow-xl px-3 py-2">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: (d.payload as any)?.color }} />
+                          <span className="text-[11px] font-semibold text-foreground">{(d.payload as any)?.name}</span>
+                        </div>
+                        <span className="text-[12px] font-bold text-foreground">৳{Number(d.value || 0).toLocaleString("bn-BD")}</span>
+                        <span className="text-[10px] text-muted-foreground ml-1">({pct}%)</span>
+                      </div>
+                    );
+                  }}
+                />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={40}>
+                  {categoryData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Bar>
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+
+        {/* Category breakdown cards */}
+        <div className="px-4 pb-4 pt-1">
+          <div className="grid gap-1.5">
+            {categoryData.map((cat) => {
+              const pct = grandTotal > 0 ? Math.round((cat.value / grandTotal) * 100) : 0;
+              return (
+                <div key={cat.name} className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-background/40 border border-border/15">
+                  <div className="h-3 w-3 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: cat.color }} />
+                  <span className="text-[11px] text-muted-foreground flex-1">{cat.name}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-14 h-1.5 rounded-full bg-muted/30 overflow-hidden">
+                      <motion.div className="h-full rounded-full" style={{ backgroundColor: cat.color }}
+                        initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8 }} />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground w-7 text-right">{pct}%</span>
+                    <span className="text-[11px] font-bold text-foreground tabular-nums min-w-[55px] text-right">৳{cat.value.toLocaleString("bn-BD")}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Sub-category for shooting expenses */}
+          {Object.keys(expenseByCategory).length > 0 && (
+            <div className="mt-2 pt-2 border-t border-border/20">
+              <p className="text-[10px] font-medium text-muted-foreground mb-1.5">শুটিং খরচের বিবরণ</p>
+              <div className="grid gap-1">
+                {Object.entries(expenseByCategory).map(([cat, amt]) => (
+                  <div key={cat} className="flex items-center justify-between px-2.5 py-1 rounded-lg bg-background/30">
+                    <span className="text-[10px] text-muted-foreground">{EXPENSE_SUB_LABELS[cat] || cat}</span>
+                    <span className="text-[10px] font-semibold text-foreground">৳{amt.toLocaleString("bn-BD")}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
