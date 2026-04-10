@@ -166,30 +166,33 @@ export function ClientSceneEditor({ projectId, scenes, onUpdate }: Props) {
                 <tr key={s.id} className="border-b border-border/15">
                   {editingId === s.id ? (
                     <>
-                      <td className="p-2 font-bold text-foreground">{s.scene_number}</td>
-                      <td className="p-2">
-                        <Textarea
-                          value={editData.description}
-                          onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                          rows={2}
-                          className="text-xs resize-none"
-                        />
+                      <td className="p-2 font-bold text-foreground align-top">{s.scene_number}</td>
+                      <td className="p-2" colSpan={3}>
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editData.description}
+                            onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                            rows={2}
+                            placeholder="বিবরণ"
+                            className="text-xs resize-none"
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={editData.location}
+                              onChange={(e) => setEditData({ ...editData, location: e.target.value })}
+                              placeholder="লোকেশন"
+                              className="text-xs"
+                            />
+                            <Input
+                              value={editData.characters}
+                              onChange={(e) => setEditData({ ...editData, characters: e.target.value })}
+                              placeholder="চরিত্র"
+                              className="text-xs"
+                            />
+                          </div>
+                        </div>
                       </td>
-                      <td className="p-2 hidden sm:table-cell">
-                        <Input
-                          value={editData.location}
-                          onChange={(e) => setEditData({ ...editData, location: e.target.value })}
-                          className="text-xs"
-                        />
-                      </td>
-                      <td className="p-2 hidden sm:table-cell">
-                        <Input
-                          value={editData.characters}
-                          onChange={(e) => setEditData({ ...editData, characters: e.target.value })}
-                          className="text-xs"
-                        />
-                      </td>
-                      <td className="p-2">
+                      <td className="p-2 align-top">
                         <div className="flex gap-1">
                           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleUpdate(s.id)} disabled={saving === s.id}>
                             {saving === s.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5 text-emerald-400" />}
