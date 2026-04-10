@@ -559,7 +559,7 @@ export default function ClientDashboard() {
 
         {/* ═══ Payment History (Production + Client) ═══ */}
         <div ref={paymentHistoryRef} />
-        {(allPayments.length > 0 || clientPaymentHistory.length > 0) && (
+        
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
             <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
               <div
@@ -583,6 +583,11 @@ export default function ClientDashboard() {
                     className="overflow-hidden"
                   >
                     <div className="px-4 pb-4 space-y-2">
+                      {allPayments.length === 0 && clientPaymentHistory.length === 0 && (
+                        <div className="text-center py-6">
+                          <p className="text-xs text-muted-foreground">কোনো পেমেন্ট রেকর্ড নেই</p>
+                        </div>
+                      )}
                       {/* Production payments (admin-managed, no delete) */}
                       {allPayments.map((pay: any, idx: number) => (
                         <motion.div
@@ -682,7 +687,7 @@ export default function ClientDashboard() {
               </AnimatePresence>
             </div>
           </motion.div>
-        )}
+        
         {/* ═══ Projects ═══ */}
         {projects.length === 0 ? (
           <div className="text-center py-20">
