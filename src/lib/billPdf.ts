@@ -238,12 +238,18 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
   let artistRows = "";
   artistList.forEach((a) => {
     const due = a.totalBill - a.totalPaid;
+    const status = a.totalBill > 0 && a.totalPaid >= a.totalBill
+      ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+      : a.totalPaid > 0
+        ? '<span style="color:#d97706;font-weight:bold;">Partially Paid</span>'
+        : '<span style="color:#dc2626;">Unpaid</span>';
     artistRows += `<tr>
       <td style="padding:8px 10px;border:1px solid #ddd;">${a.name}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${a.projects}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(a.totalBill)}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(a.totalPaid)}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, due))}</td>
+      <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${status}</td>
     </tr>`;
   });
 
@@ -252,12 +258,18 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
   data.projects.forEach((p) => {
     const pDate = format(new Date(p.projectDate), "d MMM yy", { locale: bn });
     const due = p.productionBudget - p.productionPaid;
+    const status = p.productionBudget > 0 && p.productionPaid >= p.productionBudget
+      ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+      : p.productionPaid > 0
+        ? '<span style="color:#d97706;font-weight:bold;">Partially Paid</span>'
+        : '<span style="color:#dc2626;">Unpaid</span>';
     productionRows += `<tr>
       <td style="padding:8px 10px;border:1px solid #ddd;">${p.projectName}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${pDate}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(p.productionBudget)}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(p.productionPaid)}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, due))}</td>
+      <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${status}</td>
     </tr>`;
   });
 
