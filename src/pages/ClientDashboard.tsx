@@ -1348,6 +1348,10 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                   ))}
                 </div>
               )}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">নোট (ঐচ্ছিক)</label>
+                <Input placeholder="পেমেন্ট সম্পর্কে নোট লিখুন..." value={paymentNote} onChange={(e) => setPaymentNote(e.target.value)} className="rounded-xl text-sm" />
+              </div>
               <Button className="w-full gap-2 rounded-xl h-12 text-base font-semibold" onClick={handlePayArtist} disabled={Number(payAmount) <= 0}>
                 <Banknote className="h-4 w-4" /> ৳{Number(payAmount || 0).toLocaleString("bn-BD")} পেমেন্ট করুন
               </Button>
@@ -1482,6 +1486,10 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                 </>
               )}
 
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">নোট (ঐচ্ছিক)</label>
+                <Input placeholder="পেমেন্ট সম্পর্কে নোট লিখুন..." value={paymentNote} onChange={(e) => setPaymentNote(e.target.value)} className="rounded-xl text-sm" />
+              </div>
               <Button
                 className="w-full gap-2 rounded-xl h-12 text-base font-semibold"
                 onClick={handlePayExpenses}
