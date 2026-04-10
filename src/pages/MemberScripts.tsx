@@ -159,10 +159,8 @@ function ScriptComments({ scriptId }: { scriptId: string }) {
         .order("created_at", { ascending: true });
       if (!data || data.length === 0) return [];
       const userIds = [...new Set((data as any[]).map((c: any) => c.user_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, photo_url")
-        .in("user_id", userIds);
+      const { data: allProfiles } = await supabase.rpc("get_profiles_safe");
+      const profiles = (allProfiles ?? []).filter((p: any) => userIds.includes(p.user_id));
       const profileMap = Object.fromEntries((profiles ?? []).map((p: any) => [p.user_id, p]));
       return (data as any[]).map((c: any) => ({ ...c, profile: profileMap[c.user_id] }));
     },

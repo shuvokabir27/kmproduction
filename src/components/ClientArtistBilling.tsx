@@ -59,12 +59,10 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
   const { data: adminMembers = [] } = useQuery({
     queryKey: ["admin-members-for-client"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, full_name, full_name_en, designation")
-        .eq("is_active", true)
-        .order("full_name");
-      return data || [];
+      const { data } = await supabase.rpc("get_profiles_safe");
+      return (data ?? [])
+        .filter((p: any) => p.is_active)
+        .sort((a: any, b: any) => (a.full_name || "").localeCompare(b.full_name || ""));
     },
   });
 

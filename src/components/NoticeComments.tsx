@@ -29,12 +29,10 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
   const { data: members } = useQuery({
     queryKey: ["all-members-for-mention"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, photo_url")
-        .eq("is_active", true)
-        .order("full_name");
-      return data ?? [];
+      const { data } = await supabase.rpc("get_profiles_safe");
+      return (data ?? [])
+        .filter((p: any) => p.is_active)
+        .sort((a: any, b: any) => (a.full_name || "").localeCompare(b.full_name || ""));
     },
     staleTime: 5 * 60 * 1000,
   });
