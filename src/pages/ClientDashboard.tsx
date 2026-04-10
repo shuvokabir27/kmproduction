@@ -60,6 +60,11 @@ export default function ClientDashboard() {
   
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
+  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
   const dashboardRef = useRef<HTMLDivElement>(null);
   
 
