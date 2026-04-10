@@ -10,11 +10,7 @@ import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ClientProjectScript } from "@/components/ClientProjectScript";
-import { ClientSceneEditor } from "@/components/ClientSceneEditor";
-import { ClientArtistBilling } from "@/components/ClientArtistBilling";
-import { ClientProjectExpenses } from "@/components/ClientProjectExpenses";
-import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
+import { downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import ClientArtistReceipt from "@/components/ClientArtistReceipt";
@@ -57,7 +53,7 @@ export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
@@ -66,7 +62,7 @@ export default function ClientDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
+  
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
