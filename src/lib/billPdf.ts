@@ -69,8 +69,8 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
   const totalExpenses = (data.expenses || []).reduce((s, e) => s + e.amount, 0);
   const totalExpensesPaid = (data.expenses || []).filter(e => e.is_paid !== false).reduce((s, e) => s + e.amount, 0);
   const totalExpensesDue = totalExpenses - totalExpensesPaid;
-  const grandBill = data.productionBudget + totalArtistBill;
-  const grandPaid = data.productionPaid + totalArtistPaid;
+  const grandBill = data.productionBudget + totalArtistBill + totalExpenses;
+  const grandPaid = data.productionPaid + totalArtistPaid + totalExpensesPaid;
   const grandDue = grandBill - grandPaid;
 
   let artistRows = "";
