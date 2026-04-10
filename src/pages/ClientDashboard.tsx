@@ -927,9 +927,10 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
   const [selectedArtistName, setSelectedArtistName] = useState<string | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [receiptData, setReceiptData] = useState<any>(null);
+  const [paymentNote, setPaymentNote] = useState("");
 
   const handleOpen = (isOpen: boolean) => {
-    if (isOpen) { setStep("choose"); setSelectedArtistName(null); setPayAmount(""); }
+    if (isOpen) { setStep("choose"); setSelectedArtistName(null); setPayAmount(""); setPaymentNote(""); }
     setOpen(isOpen);
   };
 
@@ -1044,6 +1045,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
             expense_ids: selectedExpenses.map((e: any) => e.id),
             expense_count: selectedExpenses.length,
             updates: selectedExpenses.map((e: any) => ({ id: e.id, amount: e.dueAmount })),
+            note: paymentNote.trim() || undefined,
           },
         });
         await Promise.all([
@@ -1087,7 +1089,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           client_profile_id: clientProfileId,
           payment_type: "expense",
           amount: amount,
-          details: { expense_ids: updates.map(u => u.id), expense_count: updates.length, updates: updates.map(u => ({ id: u.id, amount: u.expAmount })) },
+          details: { expense_ids: updates.map(u => u.id), expense_count: updates.length, updates: updates.map(u => ({ id: u.id, amount: u.expAmount })), note: paymentNote.trim() || undefined },
         });
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] }),
@@ -1134,6 +1136,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
         details: {
           artist_name: selectedGroup.name,
           updates: updates.map(u => ({ id: u.id, amount: u.amount, projectName: u.projectName })),
+          note: paymentNote.trim() || undefined,
         },
       });
       setReceiptData({
@@ -1345,6 +1348,10 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                   ))}
                 </div>
               )}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">নোট (ঐচ্ছিক)</label>
+                <Input placeholder="পেমেন্ট সম্পর্কে নোট লিখুন..." value={paymentNote} onChange={(e) => setPaymentNote(e.target.value)} className="rounded-xl text-sm" />
+              </div>
               <Button className="w-full gap-2 rounded-xl h-12 text-base font-semibold" onClick={handlePayArtist} disabled={Number(payAmount) <= 0}>
                 <Banknote className="h-4 w-4" /> ৳{Number(payAmount || 0).toLocaleString("bn-BD")} পেমেন্ট করুন
               </Button>
@@ -1479,6 +1486,10 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                 </>
               )}
 
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">নোট (ঐচ্ছিক)</label>
+                <Input placeholder="পেমেন্ট সম্পর্কে নোট লিখুন..." value={paymentNote} onChange={(e) => setPaymentNote(e.target.value)} className="rounded-xl text-sm" />
+              </div>
               <Button
                 className="w-full gap-2 rounded-xl h-12 text-base font-semibold"
                 onClick={handlePayExpenses}
