@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,8 @@ import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 import { ClientArtistBilling } from "@/components/ClientArtistBilling";
 import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import ClientArtistReceipt from "@/components/ClientArtistReceipt";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -227,6 +229,16 @@ export default function ClientDashboard() {
               />
             </div>
           </div>
+        )}
+
+        {/* Artist Payment Section on Dashboard */}
+        {allProjectArtists.length > 0 && artistDue > 0 && (
+          <ArtistPaymentSection
+            allProjectArtists={allProjectArtists}
+            projects={projects}
+            clientName={clientProfile?.name || ""}
+            clientProfileId={clientProfile?.id || ""}
+          />
         )}
 
         {/* Payment History */}
@@ -561,5 +573,160 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/* ─── Artist Payment Section on Dashboard ─── */
+function ArtistPaymentSection({ allProjectArtists, projects, clientName, clientProfileId }: {
+  allProjectArtists: any[];
+  projects: any[];
+  clientName: string;
+  clientProfileId: string;
+}) {
+  const queryClient = useQueryClient();
+  const [payAmounts, setPayAmounts] = useState<Record<string, string>>({});
+  const [receiptData, setReceiptData] = useState<any>(null);
+
+  // Group unpaid artists by project
+  const projectGroups = useMemo(() => {
+    return projects
+      .map((p: any) => {
+        const artists = allProjectArtists.filter(
+          (a: any) => a.project_id === p.id && !a.is_paid && Number(a.remuneration || 0) - Number(a.paid_amount || 0) > 0
+        );
+        return { project: p, artists };
+      })
+      .filter((g) => g.artists.length > 0);
+  }, [projects, allProjectArtists]);
+
+  const handlePayArtist = async (artist: any, projectName: string) => {
+    const amount = Number(payAmounts[artist.id] || 0);
+    if (amount <= 0) {
+      toast({ title: "পরিমাণ দিন", variant: "destructive" });
+      return;
+    }
+
+    const newPaid = Number(artist.paid_amount || 0) + amount;
+    const isPaid = newPaid >= Number(artist.remuneration);
+
+    try {
+      const { error } = await (supabase as any)
+        .from("client_project_artists")
+        .update({ paid_amount: newPaid, is_paid: isPaid })
+        .eq("id", artist.id);
+      if (error) throw error;
+
+      toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
+      setPayAmounts((prev) => ({ ...prev, [artist.id]: "" }));
+
+      setReceiptData({
+        artistName: artist.artist_name,
+        projectName,
+        clientName,
+        amount,
+        totalRemuneration: Number(artist.remuneration || 0),
+        totalPaid: newPaid,
+        remaining: Number(artist.remuneration || 0) - newPaid,
+        date: new Date().toISOString(),
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
+      queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+    } catch (err: any) {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handlePayAllInProject = async (projectArtists: any[]) => {
+    try {
+      for (const artist of projectArtists) {
+        const rem = Number(artist.remuneration || 0);
+        const { error } = await (supabase as any)
+          .from("client_project_artists")
+          .update({ paid_amount: rem, is_paid: true })
+          .eq("id", artist.id);
+        if (error) throw error;
+      }
+      const totalDueNow = projectArtists.reduce(
+        (s: number, a: any) => s + (Number(a.remuneration || 0) - Number(a.paid_amount || 0)), 0
+      );
+      toast({ title: `৳${totalDueNow.toLocaleString("bn-BD")} মোট পেমেন্ট সম্পন্ন ✓` });
+      queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
+      queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+    } catch (err: any) {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+    }
+  };
+
+  if (projectGroups.length === 0) return null;
+
+  return (
+    <>
+      {receiptData && (
+        <ClientArtistReceipt receiptData={receiptData} onClose={() => setReceiptData(null)} />
+      )}
+      <Card className="border-border/50">
+        <CardContent className="p-4 space-y-4">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <Banknote className="h-4 w-4 text-primary" /> আর্টিস্ট পেমেন্ট
+          </h3>
+
+          {projectGroups.map(({ project, artists }) => (
+            <div key={project.id} className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-muted-foreground">{project.name}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-[10px] h-6 px-2 gap-1"
+                  onClick={() => handlePayAllInProject(artists)}
+                >
+                  <Banknote className="h-3 w-3" /> সবাইকে পে
+                </Button>
+              </div>
+              {artists.map((artist: any) => {
+                const rem = Number(artist.remuneration || 0);
+                const paid = Number(artist.paid_amount || 0);
+                const due = rem - paid;
+                return (
+                  <div key={artist.id} className="flex items-center gap-2 p-2 rounded-lg bg-secondary/20">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-foreground truncate">{artist.artist_name}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        বাকি: ৳{due.toLocaleString("bn-BD")} / ৳{rem.toLocaleString("bn-BD")}
+                      </div>
+                    </div>
+                    <Input
+                      type="number"
+                      placeholder="৳"
+                      value={payAmounts[artist.id] || ""}
+                      onChange={(e) => setPayAmounts((prev) => ({ ...prev, [artist.id]: e.target.value }))}
+                      min={0}
+                      max={due}
+                      className="text-xs h-7 w-20"
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setPayAmounts((prev) => ({ ...prev, [artist.id]: String(due) }))}
+                      className="text-[10px] h-7 px-1.5 shrink-0"
+                    >
+                      সব
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => handlePayArtist(artist, project.name)}
+                      className="gap-1 text-[10px] h-7 px-2 shrink-0"
+                    >
+                      <Banknote className="h-3 w-3" /> পে
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </>
   );
 }
