@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Navigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +8,7 @@ import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Us
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
@@ -60,6 +61,8 @@ export default function ClientDashboard() {
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
   const dashboardRef = useRef<HTMLDivElement>(null);
   const paymentHistoryRef = useRef<HTMLDivElement>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const projectsRef = useRef<HTMLDivElement>(null);
 
   const { data: clientProfile } = useQuery({
@@ -647,24 +650,7 @@ export default function ClientDashboard() {
                                 )}
                                 <Button variant="ghost" size="sm"
                                   className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                                  onClick={async () => {
-                                    if (!confirm("এই পেমেন্ট রিভার্স করতে চান? নিশ্চিত?")) return;
-                                    const realId = rec.id.replace(/^(artist|expense)-/, "");
-                                    try {
-                                      if (rec.type === "artist") {
-                                        await (supabase as any).from("client_project_artists")
-                                          .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
-                                      } else {
-                                        await (supabase as any).from("client_project_expenses")
-                                          .update({ is_paid: false }).eq("id", realId);
-                                      }
-                                      toast({ title: "পেমেন্ট রিভার্স করা হয়েছে ✓" });
-                                      queryClient.invalidateQueries({ queryKey: ["all-client-project-artists"] });
-                                      queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
-                                      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-                                      queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-                                    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
-                                  }}
+                                  onClick={() => setDeleteConfirm({ type: "derived", rec })}
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
@@ -692,33 +678,7 @@ export default function ClientDashboard() {
                                   </div>
                                   <Button variant="ghost" size="sm"
                                     className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                                    onClick={async () => {
-                                      if (!confirm("এই পেমেন্ট ডিলিট করলে টাকা ফেরত যাবে। নিশ্চিত?")) return;
-                                      try {
-                                        if (ph.payment_type === "artist" && details.updates) {
-                                          for (const upd of details.updates) {
-                                            const { data: current } = await (supabase as any)
-                                              .from("client_project_artists").select("paid_amount, remuneration").eq("id", upd.id).single();
-                                            if (current) {
-                                              const newPaid = Math.max(0, Number(current.paid_amount || 0) - Number(upd.amount || 0));
-                                              await (supabase as any).from("client_project_artists")
-                                                .update({ paid_amount: newPaid, is_paid: newPaid >= Number(current.remuneration || 0) }).eq("id", upd.id);
-                                            }
-                                          }
-                                        } else if (ph.payment_type === "expense" && details.expense_ids) {
-                                          for (const eid of details.expense_ids) {
-                                            await (supabase as any).from("client_project_expenses").update({ is_paid: false }).eq("id", eid);
-                                          }
-                                        }
-                                        await (supabase as any).from("client_payment_history").delete().eq("id", ph.id);
-                                        toast({ title: "পেমেন্ট ডিলিট ও রিভার্স করা হয়েছে" });
-                                        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
-                                        queryClient.invalidateQueries({ queryKey: ["all-client-project-artists"] });
-                                        queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
-                                        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-                                        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-                                      } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
-                                    }}
+                                    onClick={() => setDeleteConfirm({ type: "history", rec: ph })}
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
@@ -949,6 +909,85 @@ export default function ClientDashboard() {
           </div>
         </nav>
       </div>
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => { if (!open) setDeleteConfirm(null); }}>
+        <AlertDialogContent className="rounded-2xl border-border/50 bg-card max-w-[340px]">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-2 h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+              <Trash2 className="h-5 w-5 text-destructive" />
+            </div>
+            <AlertDialogTitle className="text-center text-base font-bold text-foreground">
+              পেমেন্ট রিভার্স করবেন?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-xs text-muted-foreground">
+              {deleteConfirm?.type === "derived"
+                ? `৳${deleteConfirm?.rec?.amount?.toLocaleString("bn-BD") || "০"} — ${deleteConfirm?.rec?.label || ""} এর পেমেন্ট রিভার্স হবে এবং স্ট্যাটাস "বাকি" হয়ে যাবে।`
+                : `৳${Number(deleteConfirm?.rec?.amount || 0).toLocaleString("bn-BD")} পেমেন্ট ডিলিট হলে টাকা ফেরত যাবে।`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
+            <AlertDialogCancel disabled={isDeleting} className="flex-1 rounded-xl text-xs h-9">
+              বাতিল
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              className="flex-1 rounded-xl text-xs h-9 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+              onClick={async (e) => {
+                e.preventDefault();
+                if (!deleteConfirm) return;
+                setIsDeleting(true);
+                try {
+                  if (deleteConfirm.type === "derived") {
+                    const rec = deleteConfirm.rec;
+                    const realId = rec.id.replace(/^(artist|expense)-/, "");
+                    if (rec.type === "artist") {
+                      await (supabase as any).from("client_project_artists")
+                        .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
+                    } else {
+                      await (supabase as any).from("client_project_expenses")
+                        .update({ is_paid: false }).eq("id", realId);
+                    }
+                    toast({ title: "পেমেন্ট রিভার্স করা হয়েছে ✓" });
+                  } else {
+                    const ph = deleteConfirm.rec;
+                    const details = ph.details || {};
+                    if (ph.payment_type === "artist" && details.updates) {
+                      for (const upd of details.updates) {
+                        const { data: current } = await (supabase as any)
+                          .from("client_project_artists").select("paid_amount, remuneration").eq("id", upd.id).single();
+                        if (current) {
+                          const newPaid = Math.max(0, Number(current.paid_amount || 0) - Number(upd.amount || 0));
+                          await (supabase as any).from("client_project_artists")
+                            .update({ paid_amount: newPaid, is_paid: newPaid >= Number(current.remuneration || 0) }).eq("id", upd.id);
+                        }
+                      }
+                    } else if (ph.payment_type === "expense" && details.expense_ids) {
+                      for (const eid of details.expense_ids) {
+                        await (supabase as any).from("client_project_expenses").update({ is_paid: false }).eq("id", eid);
+                      }
+                    }
+                    await (supabase as any).from("client_payment_history").delete().eq("id", ph.id);
+                    toast({ title: "পেমেন্ট ডিলিট ও রিভার্স করা হয়েছে" });
+                    queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
+                  }
+                  queryClient.invalidateQueries({ queryKey: ["all-client-project-artists"] });
+                  queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+                  queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+                  queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+                } catch (err: any) {
+                  toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+                } finally {
+                  setIsDeleting(false);
+                  setDeleteConfirm(null);
+                }
+              }}
+            >
+              {isDeleting ? "প্রসেসিং..." : "রিভার্স করুন"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
