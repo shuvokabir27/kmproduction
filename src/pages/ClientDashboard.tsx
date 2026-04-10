@@ -1045,6 +1045,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
             expense_ids: selectedExpenses.map((e: any) => e.id),
             expense_count: selectedExpenses.length,
             updates: selectedExpenses.map((e: any) => ({ id: e.id, amount: e.dueAmount })),
+            note: paymentNote.trim() || undefined,
           },
         });
         await Promise.all([
@@ -1088,7 +1089,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           client_profile_id: clientProfileId,
           payment_type: "expense",
           amount: amount,
-          details: { expense_ids: updates.map(u => u.id), expense_count: updates.length, updates: updates.map(u => ({ id: u.id, amount: u.expAmount })) },
+          details: { expense_ids: updates.map(u => u.id), expense_count: updates.length, updates: updates.map(u => ({ id: u.id, amount: u.expAmount })), note: paymentNote.trim() || undefined },
         });
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] }),
@@ -1135,6 +1136,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
         details: {
           artist_name: selectedGroup.name,
           updates: updates.map(u => ({ id: u.id, amount: u.amount, projectName: u.projectName })),
+          note: paymentNote.trim() || undefined,
         },
       });
       setReceiptData({
