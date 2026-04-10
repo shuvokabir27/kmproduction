@@ -1113,6 +1113,16 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
         if (error) throw error;
       }
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
+      // Record payment history
+      await (supabase as any).from("client_payment_history").insert({
+        client_profile_id: clientProfileId,
+        payment_type: "artist",
+        amount,
+        details: {
+          artist_name: selectedGroup.name,
+          updates: updates.map(u => ({ id: u.id, amount: u.amount, projectName: u.projectName })),
+        },
+      });
       setReceiptData({
         artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
         clientName, companyName, amount, totalRemuneration: selectedGroup.totalBill,
@@ -1121,6 +1131,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       });
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+      queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
       setSelectedArtistName(null); setPayAmount(""); setStep("artist");
     } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
   };
