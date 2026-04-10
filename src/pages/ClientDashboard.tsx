@@ -682,7 +682,7 @@ export default function ClientDashboard() {
                                   <div className="flex gap-1 shrink-0">
                                     <Button variant="ghost" size="sm"
                                       className="h-7 w-7 p-0 text-primary hover:text-primary hover:bg-primary/10"
-                                      onClick={() => setReceiptData({
+                                      onClick={() => setHistoryReceiptData({
                                         clientName: clientProfile?.name || "",
                                         company: clientProfile?.company || undefined,
                                         amount: Number(ph.amount),
