@@ -1,0 +1,1 @@
+ALTER TABLE public.client_project_expenses ADD COLUMN is_paid boolean NOT NULL DEFAULT true;

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Receipt, UtensilsCrossed, Shirt, Bus } from "lucide-react";
+import { Plus, Trash2, Receipt, UtensilsCrossed, Shirt, Bus, CheckCircle2, Clock } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface ClientProjectExpensesProps {
   projectId: string;
@@ -31,6 +32,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
   const [category, setCategory] = useState<string>("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [isPaid, setIsPaid] = useState(true);
 
   const { data: expenses = [], refetch } = useQuery({
     queryKey: ["client-project-expenses", projectId],
@@ -43,6 +45,11 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
       return data || [];
     },
   });
+
+  const invalidateAll = () => {
+    refetch();
+    queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+  };
 
   const handleAdd = async () => {
     if (!category) {
@@ -63,6 +70,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
           category,
           amount: Number(amount),
           description: description.trim() || null,
+          is_paid: isPaid,
         });
       if (error) throw error;
 
@@ -70,9 +78,23 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
       setCategory("");
       setAmount("");
       setDescription("");
+      setIsPaid(true);
       setShowAddForm(false);
-      refetch();
-      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+      invalidateAll();
+    } catch (err: any) {
+      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleTogglePaid = async (id: string, currentPaid: boolean) => {
+    try {
+      const { error } = await (supabase as any)
+        .from("client_project_expenses")
+        .update({ is_paid: !currentPaid })
+        .eq("id", id);
+      if (error) throw error;
+      toast({ title: !currentPaid ? "পেইড করা হয়েছে ✓" : "বাকি সেট করা হয়েছে" });
+      invalidateAll();
     } catch (err: any) {
       toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
     }
@@ -86,14 +108,15 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
         .eq("id", id);
       if (error) throw error;
       toast({ title: "খরচ সরানো হয়েছে" });
-      refetch();
-      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+      invalidateAll();
     } catch (err: any) {
       toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
     }
   };
 
   const totalExpense = expenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const totalPaid = expenses.filter((e: any) => e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const totalDue = totalExpense - totalPaid;
 
   return (
     <div className="space-y-3">
@@ -142,6 +165,32 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
               maxLength={200}
             />
 
+            {/* Paid/Due toggle */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIsPaid(true)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
+                  isPaid
+                    ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                    : "bg-secondary/30 border-border/30 text-muted-foreground"
+                }`}
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" /> পেইড
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPaid(false)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
+                  !isPaid
+                    ? "bg-amber-500/15 border-amber-500/30 text-amber-400"
+                    : "bg-secondary/30 border-border/30 text-muted-foreground"
+                }`}
+              >
+                <Clock className="h-3.5 w-3.5" /> বাকি
+              </button>
+            </div>
+
             <div className="flex gap-2">
               <Button size="sm" onClick={handleAdd} className="gap-1 text-xs flex-1">
                 <Plus className="h-3 w-3" /> যুক্ত করুন
@@ -149,7 +198,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => { setShowAddForm(false); setCategory(""); setAmount(""); setDescription(""); }}
+                onClick={() => { setShowAddForm(false); setCategory(""); setAmount(""); setDescription(""); setIsPaid(true); }}
                 className="text-xs"
               >
                 বাতিল
@@ -167,24 +216,56 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                 {expenses.map((exp: any) => {
                   const config = categoryConfig[exp.category as keyof typeof categoryConfig];
                   const Icon = config?.icon || Receipt;
+                  const paid = exp.is_paid !== false; // default true for old data
                   return (
-                    <div key={exp.id} className="flex items-center gap-3 px-3 py-2.5">
-                      <div className={`h-8 w-8 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0`}>
+                    <div key={exp.id} className="flex items-center gap-2.5 px-3 py-2.5">
+                      <div className="h-8 w-8 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0">
                         <Icon className={`h-4 w-4 ${config?.color || "text-muted-foreground"}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-foreground">{config?.label || exp.category}</div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-medium text-foreground">{config?.label || exp.category}</span>
+                          {paid ? (
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-emerald-500/30 text-emerald-400 bg-emerald-500/10">পেইড</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-amber-500/30 text-amber-400 bg-amber-500/10">বাকি</Badge>
+                          )}
+                        </div>
                         {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
                       </div>
-                      <span className="text-sm font-semibold text-foreground">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemove(exp.id)}
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                      <span className="text-sm font-semibold text-foreground shrink-0">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
+                      <div className="flex items-center gap-0.5 shrink-0">
+                        {!paid && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleTogglePaid(exp.id, paid)}
+                            className="h-7 w-7 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                            title="পেইড করুন"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {paid && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleTogglePaid(exp.id, paid)}
+                            className="h-7 w-7 p-0 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                            title="বাকি করুন"
+                          >
+                            <Clock className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemove(exp.id)}
+                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   );
                 })}
@@ -193,11 +274,21 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
           </Card>
 
           <Card className="border-primary/20 bg-primary/5">
-            <CardContent className="p-3">
+            <CardContent className="p-3 space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">মোট শুটিং খরচ</span>
                 <span className="text-sm font-bold text-foreground">৳{totalExpense.toLocaleString("bn-BD")}</span>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-emerald-400">পেইড</span>
+                <span className="text-xs font-semibold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</span>
+              </div>
+              {totalDue > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-amber-400">বাকি</span>
+                  <span className="text-xs font-semibold text-amber-400">৳{totalDue.toLocaleString("bn-BD")}</span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
