@@ -151,17 +151,29 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
             <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">ক্যাটাগরি</th>
             <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">বিবরণ</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পরিমাণ</th>
+            <th style="padding:8px 10px;text-align:center;border:1px solid #1e1e28;">স্ট্যাটাস</th>
           </tr>
         </thead>
         <tbody>
-          ${(data.expenses || []).map(e => `<tr>
-            <td style="padding:8px 10px;border:1px solid #ddd;">${expenseCategoryLabel[e.category] || e.category}</td>
-            <td style="padding:8px 10px;border:1px solid #ddd;">${e.description || "-"}</td>
-            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(e.amount)}</td>
-          </tr>`).join("")}
+          ${(data.expenses || []).map(e => {
+            const paid = e.is_paid !== false;
+            const statusHtml = paid
+              ? '<span style="color:#16a34a;font-weight:bold;">পেইড</span>'
+              : '<span style="color:#dc2626;">বাকি</span>';
+            return `<tr>
+              <td style="padding:8px 10px;border:1px solid #ddd;">${expenseCategoryLabel[e.category] || e.category}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;">${e.description || "-"}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(e.amount)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${statusHtml}</td>
+            </tr>`;
+          }).join("")}
           <tr style="background:#f0f4ff;font-weight:bold;">
             <td style="padding:8px 10px;border:1px solid #ddd;" colspan="2">মোট শুটিং খরচ</td>
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalExpenses)}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;font-size:10px;">
+              <span style="color:#16a34a;">পেইড: ${fmt(totalExpensesPaid)}</span>
+              ${totalExpensesDue > 0 ? `<br/><span style="color:#d97706;">বাকি: ${fmt(totalExpensesDue)}</span>` : ""}
+            </td>
           </tr>
         </tbody>
       </table>
