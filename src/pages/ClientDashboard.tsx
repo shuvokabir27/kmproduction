@@ -930,7 +930,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
   const [paymentNote, setPaymentNote] = useState("");
 
   const handleOpen = (isOpen: boolean) => {
-    if (isOpen) { setStep("choose"); setSelectedArtistName(null); setPayAmount(""); }
+    if (isOpen) { setStep("choose"); setSelectedArtistName(null); setPayAmount(""); setPaymentNote(""); }
     setOpen(isOpen);
   };
 
