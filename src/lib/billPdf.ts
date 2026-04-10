@@ -9,6 +9,12 @@ interface ArtistBillItem {
   paid_amount: number;
 }
 
+interface ExpenseItem {
+  category: string;
+  amount: number;
+  description?: string;
+}
+
 interface ProjectBillData {
   projectName: string;
   projectDate: string;
@@ -17,6 +23,7 @@ interface ProjectBillData {
   productionBudget: number;
   productionPaid: number;
   artists: ArtistBillItem[];
+  expenses?: ExpenseItem[];
 }
 
 interface AllProjectsBillData {
