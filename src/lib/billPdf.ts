@@ -55,6 +55,12 @@ function fmt(n: number) {
   return "৳" + n.toLocaleString("bn-BD");
 }
 
+const expenseCategoryLabel: Record<string, string> = {
+  food: "খাবার",
+  costume: "কস্টিউম",
+  transport: "যাতায়াত",
+};
+
 function buildSingleProjectHTML(data: ProjectBillData): string {
   const dateStr = format(new Date(data.projectDate), "d MMMM yyyy", { locale: bn });
   const totalArtistBill = data.artists.reduce((s, a) => s + a.remuneration, 0);
