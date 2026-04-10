@@ -32,6 +32,9 @@ export default function ClientProjects() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const [filterDate, setFilterDate] = useState<Date | undefined>(undefined);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
