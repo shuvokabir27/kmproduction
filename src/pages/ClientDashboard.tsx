@@ -292,52 +292,75 @@ export default function ClientDashboard() {
         {/* ═══ Production & Artist Bill Cards ═══ */}
         {projects.length > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {/* Production */}
               <button
                 className={cn(
-                  "rounded-2xl p-4 text-left transition-all duration-300 border",
+                  "rounded-2xl p-3 text-left transition-all duration-300 border",
                   expandedBillCard === "production"
                     ? "bg-sky-500/10 border-sky-500/30 shadow-lg shadow-sky-500/5"
                     : "bg-card/80 border-border/40 hover:border-sky-500/20"
                 )}
                 onClick={() => setExpandedBillCard(expandedBillCard === "production" ? null : "production")}
               >
-                <div className="flex items-center gap-2 mb-2.5">
-                  <div className="h-8 w-8 rounded-xl bg-sky-500/15 flex items-center justify-center">
-                    <Banknote className="h-4 w-4 text-sky-400" />
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="h-7 w-7 rounded-lg bg-sky-500/15 flex items-center justify-center">
+                    <Banknote className="h-3.5 w-3.5 text-sky-400" />
                   </div>
-                  {expandedBillCard === "production" ? <ChevronUp className="h-3.5 w-3.5 text-sky-400 ml-auto" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground ml-auto" />}
+                  {expandedBillCard === "production" ? <ChevronUp className="h-3 w-3 text-sky-400 ml-auto" /> : <ChevronDown className="h-3 w-3 text-muted-foreground ml-auto" />}
                 </div>
-                <div className="text-[10px] text-muted-foreground mb-0.5">প্রোডাকশন বিল</div>
-                <div className="text-base font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
-                <div className="flex gap-2 mt-1.5 flex-wrap">
-                  <span className="text-[10px] text-emerald-400">✓ ৳{totalProductionPaid.toLocaleString("bn-BD")}</span>
-                  {productionDue > 0 && <span className="text-[10px] text-amber-400">বাকি ৳{productionDue.toLocaleString("bn-BD")}</span>}
+                <div className="text-[9px] text-muted-foreground mb-0.5">প্রোডাকশন</div>
+                <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
+                <div className="flex flex-col gap-0.5 mt-1">
+                  <span className="text-[9px] text-emerald-400">✓ ৳{totalProductionPaid.toLocaleString("bn-BD")}</span>
+                  {productionDue > 0 && <span className="text-[9px] text-amber-400">বাকি ৳{productionDue.toLocaleString("bn-BD")}</span>}
                 </div>
               </button>
 
               {/* Artist */}
               <button
                 className={cn(
-                  "rounded-2xl p-4 text-left transition-all duration-300 border",
+                  "rounded-2xl p-3 text-left transition-all duration-300 border",
                   expandedBillCard === "artist"
                     ? "bg-violet-500/10 border-violet-500/30 shadow-lg shadow-violet-500/5"
                     : "bg-card/80 border-border/40 hover:border-violet-500/20"
                 )}
                 onClick={() => setExpandedBillCard(expandedBillCard === "artist" ? null : "artist")}
               >
-                <div className="flex items-center gap-2 mb-2.5">
-                  <div className="h-8 w-8 rounded-xl bg-violet-500/15 flex items-center justify-center">
-                    <Users className="h-4 w-4 text-violet-400" />
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="h-7 w-7 rounded-lg bg-violet-500/15 flex items-center justify-center">
+                    <Users className="h-3.5 w-3.5 text-violet-400" />
                   </div>
-                  {expandedBillCard === "artist" ? <ChevronUp className="h-3.5 w-3.5 text-violet-400 ml-auto" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground ml-auto" />}
+                  {expandedBillCard === "artist" ? <ChevronUp className="h-3 w-3 text-violet-400 ml-auto" /> : <ChevronDown className="h-3 w-3 text-muted-foreground ml-auto" />}
                 </div>
-                <div className="text-[10px] text-muted-foreground mb-0.5">আর্টিস্ট বিল</div>
-                <div className="text-base font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</div>
-                <div className="flex gap-2 mt-1.5 flex-wrap">
-                  <span className="text-[10px] text-emerald-400">✓ ৳{totalArtistPaid.toLocaleString("bn-BD")}</span>
-                  {artistDue > 0 && <span className="text-[10px] text-amber-400">বাকি ৳{artistDue.toLocaleString("bn-BD")}</span>}
+                <div className="text-[9px] text-muted-foreground mb-0.5">আর্টিস্ট</div>
+                <div className="text-sm font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</div>
+                <div className="flex flex-col gap-0.5 mt-1">
+                  <span className="text-[9px] text-emerald-400">✓ ৳{totalArtistPaid.toLocaleString("bn-BD")}</span>
+                  {artistDue > 0 && <span className="text-[9px] text-amber-400">বাকি ৳{artistDue.toLocaleString("bn-BD")}</span>}
+                </div>
+              </button>
+
+              {/* Expense */}
+              <button
+                className={cn(
+                  "rounded-2xl p-3 text-left transition-all duration-300 border",
+                  expandedBillCard === "expense"
+                    ? "bg-orange-500/10 border-orange-500/30 shadow-lg shadow-orange-500/5"
+                    : "bg-card/80 border-border/40 hover:border-orange-500/20"
+                )}
+                onClick={() => setExpandedBillCard(expandedBillCard === "expense" ? null : "expense")}
+              >
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="h-7 w-7 rounded-lg bg-orange-500/15 flex items-center justify-center">
+                    <Receipt className="h-3.5 w-3.5 text-orange-400" />
+                  </div>
+                  {expandedBillCard === "expense" ? <ChevronUp className="h-3 w-3 text-orange-400 ml-auto" /> : <ChevronDown className="h-3 w-3 text-muted-foreground ml-auto" />}
+                </div>
+                <div className="text-[9px] text-muted-foreground mb-0.5">শুটিং খরচ</div>
+                <div className="text-sm font-bold text-foreground">৳{totalExpenses.toLocaleString("bn-BD")}</div>
+                <div className="flex flex-col gap-0.5 mt-1">
+                  <span className="text-[9px] text-muted-foreground">{allProjectExpenses.length} টি খরচ</span>
                 </div>
               </button>
             </div>
