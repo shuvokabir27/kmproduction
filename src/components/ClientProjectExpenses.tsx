@@ -86,11 +86,14 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
     }
   };
 
-  const handleTogglePaid = async (id: string, currentPaid: boolean) => {
+  const handleTogglePaid = async (id: string, currentPaid: boolean, expAmount: number) => {
     try {
+      const updateData = !currentPaid 
+        ? { is_paid: true, paid_amount: expAmount } 
+        : { is_paid: false, paid_amount: 0 };
       const { error } = await (supabase as any)
         .from("client_project_expenses")
-        .update({ is_paid: !currentPaid })
+        .update(updateData)
         .eq("id", id);
       if (error) throw error;
       toast({ title: !currentPaid ? "পেইড করা হয়েছে ✓" : "বাকি সেট করা হয়েছে" });
