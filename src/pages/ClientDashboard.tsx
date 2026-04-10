@@ -680,8 +680,8 @@ export default function ClientDashboard() {
 /* ═══════════════════════════════════════════
    Bill Download Dialog (unchanged logic)
    ═══════════════════════════════════════════ */
-function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientProfile }: {
-  projects: any[]; allProjectArtists: any[]; allPayments: any[]; clientProfile: any;
+function BillDownloadDialog({ projects, allProjectArtists, allPayments, allProjectExpenses, clientProfile }: {
+  projects: any[]; allProjectArtists: any[]; allPayments: any[]; allProjectExpenses: any[]; clientProfile: any;
 }) {
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
