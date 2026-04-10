@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download, Filter } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download, Filter, CreditCard, ArrowRight, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
