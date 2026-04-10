@@ -587,6 +587,7 @@ export default function ClientDashboard() {
                                   projectName: p.name,
                                   projectDate: p.project_date,
                                   clientName: clientProfile?.name || "",
+                                  companyName: clientProfile?.company || undefined,
                                   productionBudget: Number(p.total_budget || 0),
                                   productionPaid: projProductionPaid,
                                   artists: arts.map((a: any) => ({

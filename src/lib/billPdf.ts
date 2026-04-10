@@ -13,6 +13,7 @@ interface ProjectBillData {
   projectName: string;
   projectDate: string;
   clientName: string;
+  companyName?: string;
   productionBudget: number;
   productionPaid: number;
   artists: ArtistBillItem[];
@@ -68,7 +69,7 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
 
   return `
     <div style="background:#1e1e28;padding:24px 30px 16px;text-align:center;">
-      <div style="font-size:11px;color:#b4b4c8;letter-spacing:3px;text-transform:uppercase;">Kuakata Multimedia</div>
+      <div style="font-size:11px;color:#b4b4c8;letter-spacing:3px;text-transform:uppercase;">${data.companyName || data.clientName}</div>
       <div style="font-size:22px;font-weight:bold;color:#fff;margin-top:6px;">প্রজেক্ট বিল</div>
       <div style="font-size:16px;color:#e0e0f0;margin-top:4px;">${data.projectName}</div>
       <div style="font-size:11px;color:#b4b4c8;margin-top:8px;">তারিখ: ${dateStr}  |  প্রজেক্ট ডিরেক্টর: ${data.clientName}</div>
@@ -144,6 +145,9 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
 
       <div style="text-align:center;margin-top:24px;font-size:9px;color:#999;">
         এটি একটি কম্পিউটার জেনারেটেড বিল  •  ${format(new Date(), "d MMM yyyy, h:mm a", { locale: bn })}
+      </div>
+      <div style="text-align:center;margin-top:8px;font-size:8px;color:#bbb;">
+        সফটওয়্যার ম্যানেজমেন্ট বাই Kuakata Multimedia
       </div>
     </div>
   `;
@@ -275,7 +279,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
 
   const html = `
     <div style="background:#1e1e28;padding:24px 30px 16px;text-align:center;">
-      <div style="font-size:11px;color:#b4b4c8;letter-spacing:3px;text-transform:uppercase;">Kuakata Multimedia</div>
+      <div style="font-size:11px;color:#b4b4c8;letter-spacing:3px;text-transform:uppercase;">${data.company || data.clientName}</div>
       <div style="font-size:22px;font-weight:bold;color:#fff;margin-top:6px;">সকল প্রজেক্ট বিল</div>
       <div style="font-size:13px;color:#e0e0f0;margin-top:4px;">প্রজেক্ট ডিরেক্টর: ${data.clientName}${data.company ? ` (${data.company})` : ""}</div>
       <div style="font-size:11px;color:#b4b4c8;margin-top:6px;">মোট ${data.projects.length} টি প্রজেক্ট  •  তারিখ: ${dateStr}</div>
@@ -352,6 +356,9 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
 
       <div style="text-align:center;margin-top:24px;font-size:9px;color:#999;">
         এটি একটি কম্পিউটার জেনারেটেড বিল  •  ${format(new Date(), "d MMM yyyy, h:mm a", { locale: bn })}
+      </div>
+      <div style="text-align:center;margin-top:8px;font-size:8px;color:#bbb;">
+        সফটওয়্যার ম্যানেজমেন্ট বাই Kuakata Multimedia
       </div>
     </div>
   `;
