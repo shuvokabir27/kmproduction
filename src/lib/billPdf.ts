@@ -65,7 +65,8 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
   const dateStr = format(new Date(data.projectDate), "d MMMM yyyy", { locale: bn });
   const totalArtistBill = data.artists.reduce((s, a) => s + a.remuneration, 0);
   const totalArtistPaid = data.artists.reduce((s, a) => s + a.paid_amount, 0);
-  const grandBill = data.productionBudget + totalArtistBill;
+  const totalExpenses = (data.expenses || []).reduce((s, e) => s + e.amount, 0);
+  const grandBill = data.productionBudget + totalArtistBill + totalExpenses;
   const grandPaid = data.productionPaid + totalArtistPaid;
   const grandDue = grandBill - grandPaid;
 
