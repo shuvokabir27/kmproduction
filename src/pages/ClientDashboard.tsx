@@ -766,8 +766,8 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
 /* ═══════════════════════════════════════════
    Payment Dialog (unchanged logic)
    ═══════════════════════════════════════════ */
-function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, totalBudget, totalProductionPaid }: {
-  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; totalBudget: number; totalProductionPaid: number;
+function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, companyName, totalBudget, totalProductionPaid }: {
+  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; companyName: string; totalBudget: number; totalProductionPaid: number;
 }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
