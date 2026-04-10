@@ -678,33 +678,7 @@ export default function ClientDashboard() {
                                   </div>
                                   <Button variant="ghost" size="sm"
                                     className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                                    onClick={async () => {
-                                      if (!confirm("এই পেমেন্ট ডিলিট করলে টাকা ফেরত যাবে। নিশ্চিত?")) return;
-                                      try {
-                                        if (ph.payment_type === "artist" && details.updates) {
-                                          for (const upd of details.updates) {
-                                            const { data: current } = await (supabase as any)
-                                              .from("client_project_artists").select("paid_amount, remuneration").eq("id", upd.id).single();
-                                            if (current) {
-                                              const newPaid = Math.max(0, Number(current.paid_amount || 0) - Number(upd.amount || 0));
-                                              await (supabase as any).from("client_project_artists")
-                                                .update({ paid_amount: newPaid, is_paid: newPaid >= Number(current.remuneration || 0) }).eq("id", upd.id);
-                                            }
-                                          }
-                                        } else if (ph.payment_type === "expense" && details.expense_ids) {
-                                          for (const eid of details.expense_ids) {
-                                            await (supabase as any).from("client_project_expenses").update({ is_paid: false }).eq("id", eid);
-                                          }
-                                        }
-                                        await (supabase as any).from("client_payment_history").delete().eq("id", ph.id);
-                                        toast({ title: "পেমেন্ট ডিলিট ও রিভার্স করা হয়েছে" });
-                                        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
-                                        queryClient.invalidateQueries({ queryKey: ["all-client-project-artists"] });
-                                        queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
-                                        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-                                        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-                                      } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
-                                    }}
+                                    onClick={() => setDeleteConfirm({ type: "history", rec: ph })}
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
