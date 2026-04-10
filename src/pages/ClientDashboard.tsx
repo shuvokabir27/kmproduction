@@ -520,7 +520,7 @@ export default function ClientDashboard() {
         )}
 
         {/* ═══ Payment Button ═══ */}
-        {projects.length > 0 && grandDue > 0 && (
+        {projects.length > 0 && (grandDue > 0 || allProjectExpenses.some((e: any) => !e.is_paid)) && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <PaymentDialog
               allProjectArtists={allProjectArtists}
