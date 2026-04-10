@@ -1206,72 +1206,109 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   const selectedExpenseTotal = allProjectExpenses
     .filter((e: any) => selectedExpenseIds.has(e.id))
-    .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+    .reduce((s: number, e: any) => s + Math.max(0, Number(e.amount || 0) - Number(e.paid_amount || 0)), 0);
 
   const expensePayAmount = expensePayMode === "select" ? selectedExpenseTotal : Number(customExpenseAmount || 0);
+
+  const fetchLatestExpenses = async () => {
+    const { data, error } = await (supabase as any)
+      .from("client_project_expenses")
+      .select("*")
+      .eq("client_profile_id", clientProfileId)
+      .order("created_at");
+
+    if (error) throw error;
+    return data || [];
+  };
 
   const handlePayExpenses = async () => {
     if (expensePayMode === "select") {
       if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
       try {
-        for (const id of selectedExpenseIds) {
-          const exp = allProjectExpenses.find((e: any) => e.id === id);
-          const expAmount = exp ? Number(exp.amount || 0) : 0;
-          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true, paid_amount: expAmount }).eq("id", id);
+        const latestExpenses = await fetchLatestExpenses();
+        const selectedExpenses = latestExpenses
+          .filter((e: any) => selectedExpenseIds.has(e.id))
+          .map((e: any) => ({
+            id: e.id,
+            amount: Number(e.amount || 0),
+            dueAmount: Math.max(0, Number(e.amount || 0) - Number(e.paid_amount || 0)),
+          }))
+          .filter((e: any) => e.dueAmount > 0);
+
+        if (selectedExpenses.length === 0) {
+          toast({ title: "সিলেক্ট করা খরচে বাকি নেই", variant: "destructive" });
+          return;
+        }
+
+        for (const exp of selectedExpenses) {
+          const { error } = await (supabase as any)
+            .from("client_project_expenses")
+            .update({ is_paid: true, paid_amount: exp.amount })
+            .eq("id", exp.id);
           if (error) throw error;
         }
-        toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
-        // Record history
+
+        const paidNowTotal = selectedExpenses.reduce((s: number, e: any) => s + e.dueAmount, 0);
+
+        toast({ title: `৳${paidNowTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
         await (supabase as any).from("client_payment_history").insert({
           client_profile_id: clientProfileId,
           payment_type: "expense",
-          amount: selectedExpenseTotal,
-          details: { expense_ids: Array.from(selectedExpenseIds), expense_count: selectedExpenseIds.size },
+          amount: paidNowTotal,
+          details: {
+            expense_ids: selectedExpenses.map((e: any) => e.id),
+            expense_count: selectedExpenses.length,
+            updates: selectedExpenses.map((e: any) => ({ id: e.id, amount: e.dueAmount })),
+          },
         });
-        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] }),
+          queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] }),
+          queryClient.invalidateQueries({ queryKey: ["client-payment-history"] }),
+        ]);
         setSelectedExpenseIds(new Set());
         setStep("choose");
       } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
     } else {
       const amount = Number(customExpenseAmount || 0);
       if (amount <= 0) { toast({ title: "পরিমাণ দিন", variant: "destructive" }); return; }
-      // Pay expenses oldest first until amount is exhausted, supporting partial payments
-      const dueExpenses = allProjectExpenses
-        .filter((e: any) => !e.is_paid)
-        .sort((a: any, b: any) => (a.created_at || "").localeCompare(b.created_at || ""));
-      let remaining = amount;
-      const updates: { id: string; newPaid: number; isPaid: boolean; expAmount: number }[] = [];
-      for (const exp of dueExpenses) {
-        if (remaining <= 0) break;
-        const expAmount = Number(exp.amount || 0);
-        const alreadyPaid = Number(exp.paid_amount || 0);
-        const due = expAmount - alreadyPaid;
-        if (due <= 0) continue;
-        const payNow = Math.min(remaining, due);
-        const newPaid = alreadyPaid + payNow;
-        const isPaid = newPaid >= expAmount;
-        updates.push({ id: exp.id, newPaid, isPaid, expAmount: payNow });
-        remaining -= payNow;
-      }
-      if (updates.length === 0) { toast({ title: "এই পরিমাণে কোনো খরচ পেইড করা যায় না", variant: "destructive" }); return; }
       try {
+        const latestExpenses = await fetchLatestExpenses();
+        const dueExpenses = latestExpenses
+          .filter((e: any) => Math.max(0, Number(e.amount || 0) - Number(e.paid_amount || 0)) > 0)
+          .sort((a: any, b: any) => (a.created_at || "").localeCompare(b.created_at || ""));
+        let remaining = amount;
+        const updates: { id: string; newPaid: number; isPaid: boolean; expAmount: number }[] = [];
+        for (const exp of dueExpenses) {
+          if (remaining <= 0) break;
+          const expAmount = Number(exp.amount || 0);
+          const alreadyPaid = Number(exp.paid_amount || 0);
+          const due = expAmount - alreadyPaid;
+          if (due <= 0) continue;
+          const payNow = Math.min(remaining, due);
+          const newPaid = alreadyPaid + payNow;
+          const isPaid = newPaid >= expAmount;
+          updates.push({ id: exp.id, newPaid, isPaid, expAmount: payNow });
+          remaining -= payNow;
+        }
+        if (updates.length === 0) { toast({ title: "এই পরিমাণে কোনো খরচ পেইড করা যায় না", variant: "destructive" }); return; }
+
         for (const upd of updates) {
           const { error } = await (supabase as any).from("client_project_expenses").update({ paid_amount: upd.newPaid, is_paid: upd.isPaid }).eq("id", upd.id);
           if (error) throw error;
         }
         toast({ title: `৳${amount.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${updates.length} টি আইটেম)` });
-        // Record history with user-entered amount
         await (supabase as any).from("client_payment_history").insert({
           client_profile_id: clientProfileId,
           payment_type: "expense",
           amount: amount,
           details: { expense_ids: updates.map(u => u.id), expense_count: updates.length, updates: updates.map(u => ({ id: u.id, amount: u.expAmount })) },
         });
-        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] }),
+          queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] }),
+          queryClient.invalidateQueries({ queryKey: ["client-payment-history"] }),
+        ]);
         setCustomExpenseAmount("");
         setStep("choose");
       } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
