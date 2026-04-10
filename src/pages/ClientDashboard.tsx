@@ -337,15 +337,39 @@ export default function ClientDashboard() {
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4">
-                          {/* Budget */}
-                          <div>
-                            <h4 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1.5">
+                          {/* Budget + Download Bill */}
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-medium text-foreground flex items-center gap-1.5">
                               <Wallet className="h-4 w-4 text-primary" /> বাজেট
                             </h4>
-                            <div className="rounded-lg bg-sky-500/10 p-3 text-center">
-                              <div className="text-xs text-muted-foreground">প্রজেক্ট বাজেট</div>
-                              <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-1.5 text-xs h-7"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+                                downloadProjectBillPDF({
+                                  projectName: p.name,
+                                  projectDate: p.project_date,
+                                  clientName: clientProfile?.name || "",
+                                  productionBudget: Number(p.total_budget || 0),
+                                  productionPaid: projProductionPaid,
+                                  artists: arts.map((a: any) => ({
+                                    artist_name: a.artist_name,
+                                    remuneration: Number(a.remuneration || 0),
+                                    paid_amount: Number(a.paid_amount || 0),
+                                  })),
+                                });
+                                toast({ title: "বিল ডাউনলোড হচ্ছে..." });
+                              }}
+                            >
+                              <Download className="h-3.5 w-3.5" /> বিল ডাউনলোড
+                            </Button>
+                          </div>
+                          <div className="rounded-lg bg-sky-500/10 p-3 text-center">
+                            <div className="text-xs text-muted-foreground">প্রজেক্ট বাজেট</div>
+                            <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                           </div>
 
                           {/* Client Artist Billing */}
