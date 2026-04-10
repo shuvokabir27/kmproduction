@@ -1598,7 +1598,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, CartesianGrid, Area, AreaChart } from "recharts";
 import { subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from "date-fns";
 
-const CHART_COLORS = ["#38bdf8", "#a78bfa", "#fb923c", "#34d399", "#f472b6", "#facc15", "#60a5fa"];
+const CHART_COLORS = ["#6366f1", "#f43f5e", "#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#ec4899"];
 
 function ExpenseTrendChart({ projects, allPayments, allProjectArtists, allProjectExpenses }: {
   projects: any[]; allPayments: any[]; allProjectArtists: any[]; allProjectExpenses: any[];
