@@ -1050,6 +1050,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
               {step === "choose" && "পেমেন্ট ক্যাটাগরি বাছুন"}
               {step === "artist" && (selectedArtistName ? "পেমেন্ট করুন" : "মেম্বার বাছুন")}
               {step === "production" && "প্রোডাকশন পেমেন্ট"}
+              {step === "expense" && "শুটিং খরচ পেমেন্ট"}
             </DialogTitle>
           </DialogHeader>
 
