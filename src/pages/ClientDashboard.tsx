@@ -1820,7 +1820,6 @@ const EXPENSE_SUB_LABELS: Record<string, string> = { food: "খাবার", co
 function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allProjectExpenses }: {
   projects: any[]; allPayments: any[]; allProjectArtists: any[]; allProjectExpenses: any[];
 }) {
-  const [chartType, setChartType] = useState<"bar" | "pie">("pie");
   const [selectedProject, setSelectedProject] = useState<string>("all");
 
   const filteredPayments = selectedProject === "all" ? allPayments : allPayments.filter((p: any) => p.project_id === selectedProject);
