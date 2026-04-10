@@ -168,6 +168,7 @@ const AdminPayments = () => {
     } finally { document.body.removeChild(container); }
   };
 
+  const selectedProfile = members?.find((m) => m.id === selectedMember);
   const { data: memberBalance } = useMemberBalance(selectedMember || undefined);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
