@@ -525,7 +525,8 @@ export default function ClientDashboard() {
               const isOpen = expandedProject === p.id;
               const artTotals = getProjectArtistTotals(p.id);
               const projProductionPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-              const projTotal = Number(p.total_budget) + artTotals.bill;
+              const projExpenseTotal = getProjectExpenseTotal(p.id);
+              const projTotal = Number(p.total_budget) + artTotals.bill + projExpenseTotal;
 
               return (
                 <motion.div
@@ -577,6 +578,11 @@ export default function ClientDashboard() {
                           {artTotals.due > 0 && <span className="text-amber-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
                         </span>
                       )}
+                      {projExpenseTotal > 0 && (
+                        <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/15">
+                          খরচ ৳{projExpenseTotal.toLocaleString("bn-BD")}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -602,6 +608,7 @@ export default function ClientDashboard() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+                                const exps = allProjectExpenses.filter((e: any) => e.project_id === p.id);
                                 downloadProjectBillPDF({
                                   projectName: p.name,
                                   projectDate: p.project_date,
@@ -613,6 +620,11 @@ export default function ClientDashboard() {
                                     artist_name: a.artist_name,
                                     remuneration: Number(a.remuneration || 0),
                                     paid_amount: Number(a.paid_amount || 0),
+                                  })),
+                                  expenses: exps.map((e: any) => ({
+                                    category: e.category,
+                                    amount: Number(e.amount || 0),
+                                    description: e.description || "",
                                   })),
                                 });
                                 toast({ title: "বিল ডাউনলোড হচ্ছে..." });
@@ -631,6 +643,10 @@ export default function ClientDashboard() {
                             clientProfileId={clientProfile.id}
                             clientName={clientProfile?.name || "ক্লায়েন্ট"}
                             projectName={p.name}
+                          />
+                          <ClientProjectExpenses
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
                           />
                           <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
                           <ClientProjectScript
