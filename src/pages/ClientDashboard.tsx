@@ -1157,7 +1157,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   const totalArtistDue = artistsByName.reduce((s, g) => s + g.totalDue, 0);
   const totalProductionDue = totalBudget - totalProductionPaid;
-  const totalExpenseDue = allProjectExpenses.filter((e: any) => !e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const totalExpenseDue = allProjectExpenses.filter((e: any) => !e.is_paid).reduce((s: number, e: any) => s + (Number(e.amount || 0) - Number(e.paid_amount || 0)), 0);
   const selectedGroup = selectedArtistName ? artistsByName.find(g => g.name === selectedArtistName) : null;
 
   const expensesByProject = useMemo(() => {
