@@ -7,7 +7,7 @@ import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Us
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
@@ -57,6 +57,9 @@ export default function ClientDashboard() {
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const paymentHistoryRef = useRef<HTMLDivElement>(null);
+  const projectsRef = useRef<HTMLDivElement>(null);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
@@ -235,7 +238,8 @@ export default function ClientDashboard() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 md:px-8 space-y-4 pb-8">
+      <div className="max-w-4xl mx-auto px-4 md:px-8 space-y-4 pb-24 md:pb-8">
+        <div ref={dashboardRef} />
         {/* ═══ Grand Summary Card ═══ */}
         {projects.length > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -553,6 +557,7 @@ export default function ClientDashboard() {
         )}
 
         {/* ═══ Payment History (Production + Client) ═══ */}
+        <div ref={paymentHistoryRef} />
         {(allPayments.length > 0 || clientPaymentHistory.length > 0) && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
             <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
@@ -673,6 +678,8 @@ export default function ClientDashboard() {
             <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
           </div>
         ) : (
+          <>
+          <div ref={projectsRef} />
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
             <h2 className="text-base font-bold text-foreground flex items-center gap-2 px-1">
               <FileText className="h-4.5 w-4.5 text-primary" /> আপনার প্রজেক্ট সমূহ
@@ -829,7 +836,42 @@ export default function ClientDashboard() {
               );
             })}
           </motion.div>
+          </>
         )}
+
+        {/* ═══ Client Bottom Nav ═══ */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-card/95 backdrop-blur-xl border-t border-border/20" />
+          <div className="relative flex items-center justify-around px-2 py-2 pb-safe-bottom">
+            <button
+              onClick={() => dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
+            >
+              <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-primary" />
+              </div>
+              <span className="text-[10px] font-semibold text-primary">ড্যাশবোর্ড</span>
+            </button>
+            <button
+              onClick={() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
+            >
+              <div className="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+                <History className="h-4 w-4 text-emerald-400" />
+              </div>
+              <span className="text-[10px] font-semibold text-emerald-400">পেমেন্ট হিস্ট্রি</span>
+            </button>
+            <button
+              onClick={() => projectsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
+            >
+              <div className="h-8 w-8 rounded-lg bg-violet-500/15 flex items-center justify-center">
+                <FileText className="h-4 w-4 text-violet-400" />
+              </div>
+              <span className="text-[10px] font-semibold text-violet-400">বিল লিস্ট</span>
+            </button>
+          </div>
+        </nav>
       </div>
     </div>
   );
