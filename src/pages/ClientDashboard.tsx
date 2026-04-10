@@ -520,7 +520,7 @@ export default function ClientDashboard() {
         )}
 
         {/* ═══ Payment Button ═══ */}
-        {projects.length > 0 && grandDue > 0 && (
+        {projects.length > 0 && (grandDue > 0 || allProjectExpenses.some((e: any) => !e.is_paid)) && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <PaymentDialog
               allProjectArtists={allProjectArtists}
@@ -531,6 +531,7 @@ export default function ClientDashboard() {
               companyName={clientProfile?.company || ""}
               totalBudget={totalBudget}
               totalProductionPaid={totalProductionPaid}
+              allProjectExpenses={allProjectExpenses}
             />
           </motion.div>
         )}
@@ -875,12 +876,12 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, allProje
 /* ═══════════════════════════════════════════
    Payment Dialog (unchanged logic)
    ═══════════════════════════════════════════ */
-function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, companyName, totalBudget, totalProductionPaid }: {
-  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; companyName: string; totalBudget: number; totalProductionPaid: number;
+function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, companyName, totalBudget, totalProductionPaid, allProjectExpenses }: {
+  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; companyName: string; totalBudget: number; totalProductionPaid: number; allProjectExpenses: any[];
 }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<"choose" | "artist" | "production">("choose");
+  const [step, setStep] = useState<"choose" | "artist" | "production" | "expense">("choose");
   const [selectedArtistName, setSelectedArtistName] = useState<string | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [receiptData, setReceiptData] = useState<any>(null);
@@ -912,7 +913,55 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   const totalArtistDue = artistsByName.reduce((s, g) => s + g.totalDue, 0);
   const totalProductionDue = totalBudget - totalProductionPaid;
+  const totalExpenseDue = allProjectExpenses.filter((e: any) => !e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
   const selectedGroup = selectedArtistName ? artistsByName.find(g => g.name === selectedArtistName) : null;
+
+  const expensesByProject = useMemo(() => {
+    const dueExpenses = allProjectExpenses.filter((e: any) => !e.is_paid);
+    const map = new Map<string, { project: any; expenses: any[]; totalDue: number }>();
+    dueExpenses.forEach((e: any) => {
+      const proj = projects.find((p: any) => p.id === e.project_id);
+      const existing = map.get(e.project_id) || { project: proj, expenses: [], totalDue: 0 };
+      existing.expenses.push(e);
+      existing.totalDue += Number(e.amount || 0);
+      map.set(e.project_id, existing);
+    });
+    return Array.from(map.values());
+  }, [allProjectExpenses, projects]);
+
+  const [selectedExpenseIds, setSelectedExpenseIds] = useState<Set<string>>(new Set());
+
+  const toggleExpense = (id: string) => {
+    setSelectedExpenseIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllExpenses = () => {
+    const allIds = allProjectExpenses.filter((e: any) => !e.is_paid).map((e: any) => e.id);
+    setSelectedExpenseIds(new Set(allIds));
+  };
+
+  const selectedExpenseTotal = allProjectExpenses
+    .filter((e: any) => selectedExpenseIds.has(e.id))
+    .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+
+  const handlePayExpenses = async () => {
+    if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
+    try {
+      for (const id of selectedExpenseIds) {
+        const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+        if (error) throw error;
+      }
+      toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
+      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+      setSelectedExpenseIds(new Set());
+      setStep("choose");
+    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+  };
 
   const handlePayArtist = async () => {
     if (!selectedGroup) return;
@@ -952,7 +1001,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
   };
 
-  const goBack = () => { if (selectedArtistName) { setSelectedArtistName(null); setPayAmount(""); } else { setStep("choose"); } };
+  const goBack = () => { if (selectedArtistName) { setSelectedArtistName(null); setPayAmount(""); } else { setStep("choose"); setSelectedExpenseIds(new Set()); } };
 
   const paymentPreview = useMemo(() => {
     if (!selectedGroup || Number(payAmount || 0) <= 0) return [];
@@ -1001,6 +1050,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
               {step === "choose" && "পেমেন্ট ক্যাটাগরি বাছুন"}
               {step === "artist" && (selectedArtistName ? "পেমেন্ট করুন" : "মেম্বার বাছুন")}
               {step === "production" && "প্রোডাকশন পেমেন্ট"}
+              {step === "expense" && "শুটিং খরচ পেমেন্ট"}
             </DialogTitle>
           </DialogHeader>
 
@@ -1034,6 +1084,21 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                     <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalProductionDue.toLocaleString("bn-BD")}</div>
                   </div>
                   <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-sky-400 transition-colors" />
+                </button>
+              )}
+              {totalExpenseDue > 0 && (
+                <button
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl border border-border/50 hover:border-orange-500/40 hover:bg-orange-500/5 transition-all text-left group"
+                  onClick={() => { setStep("expense"); selectAllExpenses(); }}
+                >
+                  <div className="h-12 w-12 rounded-xl bg-orange-500/15 flex items-center justify-center shrink-0">
+                    <Receipt className="h-5 w-5 text-orange-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-foreground">শুটিং খরচ</div>
+                    <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-400 transition-colors" />
                 </button>
               )}
             </div>
@@ -1168,6 +1233,58 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                 </div>
               ))}
               <p className="text-[11px] text-muted-foreground italic text-center pt-1">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
+            </div>
+          )}
+
+          {step === "expense" && (
+            <div className="space-y-3">
+              <div className="rounded-2xl border border-border/40 p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="rounded-xl bg-amber-500/8 p-2.5">
+                    <div className="text-[9px] text-amber-400/70">মোট বাকি</div>
+                    <div className="text-sm font-bold text-amber-400">৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
+                  </div>
+                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
+                    <div className="text-[9px] text-emerald-400/70">সিলেক্টেড</div>
+                    <div className="text-sm font-bold text-emerald-400">৳{selectedExpenseTotal.toLocaleString("bn-BD")}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">বাকি খরচসমূহ সিলেক্ট করুন</span>
+                <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2" onClick={selectAllExpenses}>সব সিলেক্ট</Button>
+              </div>
+
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {expensesByProject.map(({ project, expenses, totalDue }) => (
+                  <div key={project?.id || "unknown"} className="rounded-xl border border-border/30 overflow-hidden">
+                    <div className="px-3 py-2 bg-secondary/20 text-xs font-medium text-foreground flex items-center justify-between">
+                      <span className="truncate">{project?.name || "অজানা প্রজেক্ট"}</span>
+                      <span className="text-amber-400 shrink-0 ml-2">৳{totalDue.toLocaleString("bn-BD")}</span>
+                    </div>
+                    <div className="divide-y divide-border/20">
+                      {expenses.map((exp: any) => {
+                        const catLabel: Record<string, string> = { food: "🍛 খাবার", costume: "👔 কস্টিউম", transport: "🚌 যাতায়াত" };
+                        return (
+                          <label key={exp.id} className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-secondary/30 cursor-pointer">
+                            <Checkbox checked={selectedExpenseIds.has(exp.id)} onCheckedChange={() => toggleExpense(exp.id)} />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[11px] font-medium text-foreground">{catLabel[exp.category] || exp.category}</div>
+                              {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
+                            </div>
+                            <span className="text-xs font-semibold text-foreground shrink-0">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Button className="w-full gap-2 rounded-xl h-12 text-base font-semibold" onClick={handlePayExpenses} disabled={selectedExpenseIds.size === 0}>
+                <Banknote className="h-4 w-4" /> ৳{selectedExpenseTotal.toLocaleString("bn-BD")} পেইড করুন
+              </Button>
             </div>
           )}
         </DialogContent>
