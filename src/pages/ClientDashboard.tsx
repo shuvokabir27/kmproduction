@@ -56,12 +56,7 @@ export default function ClientDashboard() {
   
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
-  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
   const dashboardRef = useRef<HTMLDivElement>(null);
-  const paymentHistoryRef = useRef<HTMLDivElement>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
   
 
   const { data: clientProfile } = useQuery({
@@ -575,7 +570,7 @@ export default function ClientDashboard() {
               <span className="text-[10px] font-semibold text-primary">ড্যাশবোর্ড</span>
             </button>
             <button
-              onClick={() => { setShowPaymentHistory(true); setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
+              onClick={() => navigate("/client/payments")}
               className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
             >
               <div className="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
