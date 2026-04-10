@@ -902,16 +902,16 @@ export default function ClientDashboard() {
           <div className="absolute inset-0 bg-card/95 backdrop-blur-xl border-t border-border/20" />
           <div className="relative flex items-center justify-around px-2 py-2 pb-safe-bottom">
             <button
-              onClick={() => dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
+              onClick={() => { setActiveTab("dashboard"); setTimeout(() => dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }}
+              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform", activeTab === "dashboard" && "scale-105")}
             >
-              <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-primary" />
+              <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", activeTab === "dashboard" ? "bg-primary/25" : "bg-primary/10")}>
+                <Sparkles className={cn("h-4 w-4", activeTab === "dashboard" ? "text-primary" : "text-muted-foreground")} />
               </div>
-              <span className="text-[10px] font-semibold text-primary">ড্যাশবোর্ড</span>
+              <span className={cn("text-[10px] font-semibold", activeTab === "dashboard" ? "text-primary" : "text-muted-foreground")}>ড্যাশবোর্ড</span>
             </button>
             <button
-              onClick={() => { setShowPaymentHistory(true); setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
+              onClick={() => { setActiveTab("dashboard"); setShowPaymentHistory(true); setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
               className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
             >
               <div className="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
@@ -920,13 +920,13 @@ export default function ClientDashboard() {
               <span className="text-[10px] font-semibold text-emerald-400">পেমেন্ট হিস্ট্রি</span>
             </button>
             <button
-              onClick={() => projectsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
+              onClick={() => { setActiveTab("projects"); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50); }}
+              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform", activeTab === "projects" && "scale-105")}
             >
-              <div className="h-8 w-8 rounded-lg bg-violet-500/15 flex items-center justify-center">
-                <FileText className="h-4 w-4 text-violet-400" />
+              <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", activeTab === "projects" ? "bg-violet-500/25" : "bg-violet-500/10")}>
+                <FileText className={cn("h-4 w-4", activeTab === "projects" ? "text-violet-400" : "text-muted-foreground")} />
               </div>
-              <span className="text-[10px] font-semibold text-violet-400">বিল লিস্ট</span>
+              <span className={cn("text-[10px] font-semibold", activeTab === "projects" ? "text-violet-400" : "text-muted-foreground")}>প্রজেক্ট সমূহ</span>
             </button>
           </div>
         </nav>
