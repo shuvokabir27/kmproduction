@@ -18,6 +18,7 @@ import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPd
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import ClientArtistReceipt from "@/components/ClientArtistReceipt";
+import ClientPaymentReceipt from "@/components/ClientPaymentReceipt";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -63,6 +64,7 @@ export default function ClientDashboard() {
   const paymentHistoryRef = useRef<HTMLDivElement>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
 
   const { data: clientProfile } = useQuery({
