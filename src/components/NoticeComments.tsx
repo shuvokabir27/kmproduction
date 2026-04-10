@@ -48,10 +48,8 @@ export function NoticeComments({ noticeId }: NoticeCommentsProps) {
       if (!data) return [];
       const userIds = [...new Set(data.map((c: any) => c.user_id))];
       if (userIds.length === 0) return [];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, photo_url")
-        .in("user_id", userIds);
+      const { data: allProfiles } = await supabase.rpc("get_profiles_safe");
+      const profiles = (allProfiles ?? []).filter((p: any) => userIds.includes(p.user_id));
       const profileMap = Object.fromEntries((profiles ?? []).map((p: any) => [p.user_id, p]));
       return data.map((c: any) => ({ ...c, profile: profileMap[c.user_id] }));
     },
