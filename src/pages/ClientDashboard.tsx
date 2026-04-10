@@ -19,6 +19,7 @@ import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import ClientArtistReceipt from "@/components/ClientArtistReceipt";
 import ClientPaymentReceipt from "@/components/ClientPaymentReceipt";
+import ClientBottomNav from "@/components/ClientBottomNav";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
