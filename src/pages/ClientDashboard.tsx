@@ -531,6 +531,7 @@ export default function ClientDashboard() {
               companyName={clientProfile?.company || ""}
               totalBudget={totalBudget}
               totalProductionPaid={totalProductionPaid}
+              allProjectExpenses={allProjectExpenses}
             />
           </motion.div>
         )}
