@@ -231,13 +231,16 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* Artist Payment Section on Dashboard */}
-        {allProjectArtists.length > 0 && artistDue > 0 && (
-          <ArtistPaymentSection
+        {/* Payment Button */}
+        {projects.length > 0 && grandDue > 0 && (
+          <PaymentDialog
             allProjectArtists={allProjectArtists}
+            allPayments={allPayments}
             projects={projects}
             clientName={clientProfile?.name || ""}
             clientProfileId={clientProfile?.id || ""}
+            totalBudget={totalBudget}
+            totalProductionPaid={totalProductionPaid}
           />
         )}
 
