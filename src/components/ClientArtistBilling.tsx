@@ -385,136 +385,158 @@ export function ClientArtistBilling({ projectId, clientProfileId, clientName, pr
         </Card>
       )}
 
-      {/* Artists List */}
+      {/* Artists List - Compact Table Format */}
       {projectArtists.length > 0 && (
         <div className="space-y-2">
-          {projectArtists.map((artist: any) => {
-            const rem = Number(artist.remuneration || 0);
-            const paid = Number(artist.paid_amount || 0);
-            const due = rem - paid;
-            const progress = rem > 0 ? Math.min((paid / rem) * 100, 100) : 0;
+          {/* Payment Summary Table */}
+          <Card className="border-border/50">
+            <CardContent className="p-0">
+              <div className="divide-y divide-border/30">
+                {/* Table Header */}
+                <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-3 py-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider bg-secondary/20">
+                  <span>আর্টিস্ট</span>
+                  <span className="text-right w-16">পারিশ্রমিক</span>
+                  <span className="text-right w-14">পেইড</span>
+                  <span className="text-right w-14">বাকি</span>
+                </div>
 
-            return (
-              <Card key={artist.id} className="border-border/50">
-                <CardContent className="p-3 space-y-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-foreground">{artist.artist_name}</span>
-                        {artist.is_paid ? (
-                          <Badge className="bg-emerald-500/20 text-emerald-400 text-[10px] h-5">পেইড</Badge>
-                        ) : (
-                          <Badge variant="outline" className="text-amber-400 border-amber-400/30 text-[10px] h-5">বাকি</Badge>
+                {/* Artist Rows */}
+                {projectArtists.map((artist: any) => {
+                  const rem = Number(artist.remuneration || 0);
+                  const paid = Number(artist.paid_amount || 0);
+                  const due = rem - paid;
+
+                  return (
+                    <div key={artist.id} className="px-3 py-2 space-y-2">
+                      {/* Main Row */}
+                      <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center text-xs">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="font-medium text-foreground truncate">{artist.artist_name}</span>
+                          {artist.is_paid ? (
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                          ) : null}
+                        </div>
+                        <span className="text-right w-16 text-foreground font-medium">৳{rem.toLocaleString("bn-BD")}</span>
+                        <span className="text-right w-14 text-emerald-400">৳{paid.toLocaleString("bn-BD")}</span>
+                        <span className={`text-right w-14 font-medium ${due > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                          ৳{Math.max(0, due).toLocaleString("bn-BD")}
+                        </span>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="h-1 rounded-full bg-secondary/50 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                          style={{ width: `${rem > 0 ? Math.min((paid / rem) * 100, 100) : 0}%` }}
+                        />
+                      </div>
+
+                      {/* Actions Row */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1">
+                          {paid > 0 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                setReceiptData({
+                                  artistName: artist.artist_name,
+                                  projectName: projectName || "প্রজেক্ট",
+                                  clientName: clientName || "ক্লায়েন্ট",
+                                  amount: paid,
+                                  totalRemuneration: rem,
+                                  totalPaid: paid,
+                                  remaining: due,
+                                  date: new Date().toISOString(),
+                                })
+                              }
+                              className="h-7 px-2 text-[10px] text-primary gap-1"
+                            >
+                              <Download className="h-3 w-3" /> রিসিট
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveArtist(artist.id)}
+                            className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+
+                        {/* Inline Pay */}
+                        {!artist.is_paid && (
+                          <div className="flex gap-1.5 items-center">
+                            <Input
+                              type="number"
+                              placeholder="৳"
+                              value={payAmounts[artist.id] || ""}
+                              onChange={(e) =>
+                                setPayAmounts((prev) => ({ ...prev, [artist.id]: e.target.value }))
+                              }
+                              min={0}
+                              max={due}
+                              className="text-xs h-7 w-20"
+                            />
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                setPayAmounts((prev) => ({ ...prev, [artist.id]: String(due) }))
+                              }
+                              className="text-[10px] h-7 px-1.5 shrink-0"
+                            >
+                              সব
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handlePayArtist(artist)}
+                              className="gap-1 text-[10px] h-7 px-2 shrink-0"
+                            >
+                              <Banknote className="h-3 w-3" /> পে
+                            </Button>
+                          </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      {/* Download last receipt */}
-                      {paid > 0 && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() =>
-                            setReceiptData({
-                              artistName: artist.artist_name,
-                              projectName: projectName || "প্রজেক্ট",
-                              clientName: clientName || "ক্লায়েন্ট",
-                              amount: paid,
-                              totalRemuneration: rem,
-                              totalPaid: paid,
-                              remaining: due,
-                              date: new Date().toISOString(),
-                            })
-                          }
-                          className="h-7 w-7 p-0 text-primary hover:text-primary"
-                        >
-                          <Download className="h-3.5 w-3.5" />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveArtist(artist.id)}
-                        className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
 
-                  {/* Billing Info */}
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    <div className="rounded-md bg-secondary/30 p-2 text-center">
-                      <div className="text-muted-foreground">পারিশ্রমিক</div>
-                      <div className="font-semibold text-foreground">৳{rem.toLocaleString("bn-BD")}</div>
-                    </div>
-                    <div className="rounded-md bg-emerald-500/10 p-2 text-center">
-                      <div className="text-muted-foreground">পেইড</div>
-                      <div className="font-semibold text-emerald-400">৳{paid.toLocaleString("bn-BD")}</div>
-                    </div>
-                    <div className="rounded-md bg-amber-500/10 p-2 text-center">
-                      <div className="text-muted-foreground">বাকি</div>
-                      <div className="font-semibold text-amber-400">৳{Math.max(0, due).toLocaleString("bn-BD")}</div>
-                    </div>
-                  </div>
+          {/* Total Summary + Pay All */}
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-3 space-y-3">
+              <div className="grid grid-cols-3 gap-2 text-xs text-center">
+                <div>
+                  <div className="text-muted-foreground">মোট বিল</div>
+                  <div className="font-bold text-foreground text-sm">৳{totalRemuneration.toLocaleString("bn-BD")}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">মোট পেইড</div>
+                  <div className="font-bold text-emerald-400 text-sm">৳{totalPaid.toLocaleString("bn-BD")}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">মোট বাকি</div>
+                  <div className="font-bold text-amber-400 text-sm">৳{Math.max(0, totalDue).toLocaleString("bn-BD")}</div>
+                </div>
+              </div>
 
-                  {/* Progress Bar */}
-                  <div className="h-1.5 rounded-full bg-secondary/50 overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-
-                  {/* Pay Section */}
-                  {!artist.is_paid && (
-                    <div className="flex gap-2 items-center">
-                      <Input
-                        type="number"
-                        placeholder="পরিমাণ"
-                        value={payAmounts[artist.id] || ""}
-                        onChange={(e) =>
-                          setPayAmounts((prev) => ({ ...prev, [artist.id]: e.target.value }))
-                        }
-                        min={0}
-                        max={due}
-                        className="text-xs h-8 flex-1"
-                      />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          setPayAmounts((prev) => ({ ...prev, [artist.id]: String(due) }))
-                        }
-                        className="text-[10px] h-8 px-2 shrink-0"
-                      >
-                        সম্পূর্ণ
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => handlePayArtist(artist)}
-                        className="gap-1 text-xs h-8 shrink-0"
-                      >
-                        <Banknote className="h-3 w-3" /> পে
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-
-          {/* Total Summary */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10 text-sm">
-            <span className="text-muted-foreground">মোট আর্টিস্ট বিল:</span>
-            <div className="flex items-center gap-3">
-              <span className="text-foreground font-semibold">৳{totalRemuneration.toLocaleString("bn-BD")}</span>
-              <span className="text-emerald-400">পেইড: ৳{totalPaid.toLocaleString("bn-BD")}</span>
-              {totalRemuneration - totalPaid > 0 && (
-                <span className="text-amber-400">বাকি: ৳{(totalRemuneration - totalPaid).toLocaleString("bn-BD")}</span>
+              {/* Pay All Button */}
+              {unpaidCount > 0 && totalDue > 0 && (
+                <Button
+                  size="sm"
+                  onClick={handlePayAll}
+                  className="w-full gap-2 text-xs"
+                >
+                  <Banknote className="h-4 w-4" />
+                  সবাইকে সম্পূর্ণ পেমেন্ট করুন (৳{totalDue.toLocaleString("bn-BD")})
+                </Button>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
