@@ -946,7 +946,7 @@ export default function ClientDashboard() {
                         .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
                     } else {
                       await (supabase as any).from("client_project_expenses")
-                        .update({ is_paid: false }).eq("id", realId);
+                        .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
                     }
                     toast({ title: "পেমেন্ট রিভার্স করা হয়েছে ✓" });
                   } else {
