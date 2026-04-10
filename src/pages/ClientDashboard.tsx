@@ -412,8 +412,14 @@ export default function ClientDashboard() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
-            {/* Project count + Download */}
+        {/* Project count + Download */}
+        {projects.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
             <div className="flex items-center gap-3">
               <div className="flex-1 flex items-center gap-3 p-3.5 rounded-2xl bg-card/80 border border-border/40">
                 <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
