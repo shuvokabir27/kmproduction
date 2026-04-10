@@ -229,6 +229,16 @@ export default function ClientDashboard() {
           </div>
         )}
 
+        {/* Artist Payment Section on Dashboard */}
+        {allProjectArtists.length > 0 && artistDue > 0 && (
+          <ArtistPaymentSection
+            allProjectArtists={allProjectArtists}
+            projects={projects}
+            clientName={clientProfile?.name || ""}
+            clientProfileId={clientProfile?.id || ""}
+          />
+        )}
+
         {/* Payment History */}
         {allPayments.length > 0 && (
           <Card className="border-border/50">
