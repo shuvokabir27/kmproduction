@@ -13,6 +13,7 @@ interface ExpenseItem {
   category: string;
   amount: number;
   description?: string;
+  is_paid?: boolean;
 }
 
 interface ProjectBillData {
