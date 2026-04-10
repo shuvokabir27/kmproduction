@@ -34,6 +34,71 @@ const AdminPayments = () => {
   const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [searchText, setSearchText] = useState("");
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const filteredPayments = useMemo(() => {
+    if (!payments) return [];
+    if (!searchText.trim()) return payments;
+    const q = searchText.trim().toLowerCase();
+    return payments.filter((p: any) =>
+      p.profiles?.full_name?.toLowerCase().includes(q) ||
+      String(p.profiles?.member_id || "").includes(q)
+    );
+  }, [payments, searchText]);
+
+  const handleDownloadFiltered = async () => {
+    if (filteredPayments.length === 0) { toast.error("কোনো রেকর্ড নেই"); return; }
+    const totalAmount = filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
+    const container = document.createElement("div");
+    container.style.cssText = "position:fixed;top:-9999px;left:0;width:800px;padding:32px;background:#0a0a0a;color:#fff;font-family:sans-serif;";
+    container.innerHTML = `
+      <div style="text-align:center;margin-bottom:20px;">
+        <h2 style="font-size:20px;margin:0 0 4px;">পেমেন্ট হিস্ট্রি রিপোর্ট</h2>
+        ${searchText.trim() ? `<p style="font-size:13px;color:#aaa;margin:0;">সার্চ: "${searchText.trim()}" — ${filteredPayments.length} টি রেকর্ড</p>` : `<p style="font-size:13px;color:#aaa;margin:0;">সকল পেমেন্ট — ${filteredPayments.length} টি রেকর্ড</p>`}
+        <p style="font-size:11px;color:#888;margin:4px 0 0;">তারিখ: ${new Date().toLocaleDateString("bn-BD")}</p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:2px solid #333;">
+            <th style="text-align:left;padding:8px;color:#22d3ee;">সদস্য</th>
+            <th style="text-align:left;padding:8px;color:#22d3ee;">আইডি</th>
+            <th style="text-align:right;padding:8px;color:#10b981;">পরিমাণ</th>
+            <th style="text-align:left;padding:8px;color:#f59e0b;">মাধ্যম</th>
+            <th style="text-align:left;padding:8px;color:#ec4899;">তারিখ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredPayments.map((p: any, i: number) => `
+            <tr style="border-bottom:1px solid #222;${i % 2 === 0 ? 'background:#111;' : ''}">
+              <td style="padding:8px;">${p.profiles?.full_name || ""}</td>
+              <td style="padding:8px;color:#aaa;">${p.profiles?.member_id || ""}</td>
+              <td style="padding:8px;text-align:right;font-weight:bold;">৳${Number(p.amount).toLocaleString("bn-BD")}</td>
+              <td style="padding:8px;color:#aaa;">${methodLabel[p.payment_method] || p.payment_method}</td>
+              <td style="padding:8px;color:#aaa;">${new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid #333;">
+            <td colspan="2" style="padding:10px;font-weight:bold;font-size:14px;">মোট:</td>
+            <td style="padding:10px;text-align:right;font-weight:bold;font-size:14px;color:#10b981;">৳${totalAmount.toLocaleString("bn-BD")}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+    document.body.appendChild(container);
+    try {
+      const canvas = await html2canvas(container, { scale: 2, backgroundColor: "#0a0a0a" });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? "landscape" : "portrait", unit: "px", format: [canvas.width, canvas.height] });
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`পেমেন্ট_হিস্ট্রি${searchText.trim() ? `_${searchText.trim()}` : ""}.pdf`);
+      toast.success("PDF ডাউনলোড হয়েছে!");
+    } finally { document.body.removeChild(container); }
+  };
+
   // Delete timer countdown
   useEffect(() => {
     const activeTimers = Object.entries(deleteTimers).filter(([, v]) => v > 0);
