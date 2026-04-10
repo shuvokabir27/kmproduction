@@ -1202,7 +1202,9 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
       try {
         for (const id of selectedExpenseIds) {
-          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+          const exp = allProjectExpenses.find((e: any) => e.id === id);
+          const expAmount = exp ? Number(exp.amount || 0) : 0;
+          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true, paid_amount: expAmount }).eq("id", id);
           if (error) throw error;
         }
         toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
