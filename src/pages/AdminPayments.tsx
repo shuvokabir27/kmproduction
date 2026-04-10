@@ -9,8 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown } from "lucide-react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { format } from "date-fns";
+import { bn } from "date-fns/locale";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -29,6 +33,8 @@ const AdminPayments = () => {
   const [receiptData, setReceiptData] = useState<any>(null);
   const [deleteTimers, setDeleteTimers] = useState<Record<string, number>>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const [searchText, setSearchText] = useState("");
 
   // Delete timer countdown
   useEffect(() => {
@@ -99,6 +105,68 @@ const AdminPayments = () => {
       return data ?? [];
     },
   });
+
+  const filteredPayments = useMemo(() => {
+    if (!payments) return [];
+    if (!searchText.trim()) return payments;
+    const q = searchText.trim().toLowerCase();
+    return payments.filter((p: any) =>
+      p.profiles?.full_name?.toLowerCase().includes(q) ||
+      String(p.profiles?.member_id || "").includes(q)
+    );
+  }, [payments, searchText]);
+
+  const handleDownloadFiltered = async () => {
+    if (filteredPayments.length === 0) { toast.error("কোনো রেকর্ড নেই"); return; }
+    const totalAmount = filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
+    const container = document.createElement("div");
+    container.style.cssText = "position:fixed;top:-9999px;left:0;width:800px;padding:32px;background:#0a0a0a;color:#fff;font-family:sans-serif;";
+    container.innerHTML = `
+      <div style="text-align:center;margin-bottom:20px;">
+        <h2 style="font-size:20px;margin:0 0 4px;">পেমেন্ট হিস্ট্রি রিপোর্ট</h2>
+        ${searchText.trim() ? `<p style="font-size:13px;color:#aaa;margin:0;">সার্চ: "${searchText.trim()}" — ${filteredPayments.length} টি রেকর্ড</p>` : `<p style="font-size:13px;color:#aaa;margin:0;">সকল পেমেন্ট — ${filteredPayments.length} টি রেকর্ড</p>`}
+        <p style="font-size:11px;color:#888;margin:4px 0 0;">তারিখ: ${new Date().toLocaleDateString("bn-BD")}</p>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:2px solid #333;">
+            <th style="text-align:left;padding:8px;color:#22d3ee;">সদস্য</th>
+            <th style="text-align:left;padding:8px;color:#22d3ee;">আইডি</th>
+            <th style="text-align:right;padding:8px;color:#10b981;">পরিমাণ</th>
+            <th style="text-align:left;padding:8px;color:#f59e0b;">মাধ্যম</th>
+            <th style="text-align:left;padding:8px;color:#ec4899;">তারিখ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredPayments.map((p: any, i: number) => `
+            <tr style="border-bottom:1px solid #222;${i % 2 === 0 ? 'background:#111;' : ''}">
+              <td style="padding:8px;">${p.profiles?.full_name || ""}</td>
+              <td style="padding:8px;color:#aaa;">${p.profiles?.member_id || ""}</td>
+              <td style="padding:8px;text-align:right;font-weight:bold;">৳${Number(p.amount).toLocaleString("bn-BD")}</td>
+              <td style="padding:8px;color:#aaa;">${methodLabel[p.payment_method] || p.payment_method}</td>
+              <td style="padding:8px;color:#aaa;">${new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid #333;">
+            <td colspan="2" style="padding:10px;font-weight:bold;font-size:14px;">মোট:</td>
+            <td style="padding:10px;text-align:right;font-weight:bold;font-size:14px;color:#10b981;">৳${totalAmount.toLocaleString("bn-BD")}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+    document.body.appendChild(container);
+    try {
+      const canvas = await html2canvas(container, { scale: 2, backgroundColor: "#0a0a0a" });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? "landscape" : "portrait", unit: "px", format: [canvas.width, canvas.height] });
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`পেমেন্ট_হিস্ট্রি${searchText.trim() ? `_${searchText.trim()}` : ""}.pdf`);
+      toast.success("PDF ডাউনলোড হয়েছে!");
+    } finally { document.body.removeChild(container); }
+  };
 
   const selectedProfile = members?.find((m) => m.id === selectedMember);
   const { data: memberBalance } = useMemberBalance(selectedMember || undefined);
@@ -419,8 +487,26 @@ const AdminPayments = () => {
 
         {/* Payment History */}
         <Card className="bg-card border-border/50 overflow-hidden">
-          <div className="p-4 border-b border-border/30">
-            <h2 className="font-semibold text-foreground">সকল পেমেন্ট হিস্ট্রি</h2>
+          <div className="p-4 border-b border-border/30 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-foreground">সকল পেমেন্ট হিস্ট্রি</h2>
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadFiltered} disabled={filteredPayments.length === 0}>
+                <FileDown className="h-3.5 w-3.5" />
+                {searchText.trim() ? "ফিল্টারড ডাউনলোড" : "সব ডাউনলোড"}
+              </Button>
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="নাম বা আইডি দিয়ে সার্চ করুন..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="pl-9 bg-secondary border-border/50"
+              />
+            </div>
+            {searchText.trim() && (
+              <p className="text-xs text-muted-foreground">{filteredPayments.length} টি রেকর্ড পাওয়া গেছে • মোট: ৳{filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0).toLocaleString("bn-BD")}</p>
+            )}
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -436,7 +522,7 @@ const AdminPayments = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
-                {payments?.map((p: any) => {
+                {filteredPayments.map((p: any) => {
                   const MIcon = methodIcon[p.payment_method] || CreditCard;
                   return (
                      <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
@@ -496,8 +582,8 @@ const AdminPayments = () => {
                     </tr>
                   );
                 })}
-                {payments?.length === 0 && (
-                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
+                {filteredPayments.length === 0 && (
+                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">{searchText.trim() ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট নেই"}</td></tr>
                 )}
               </tbody>
             </table>
