@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -56,8 +56,8 @@ function AnimatedValue({ value, prefix = "৳" }: { value: number; prefix?: stri
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"dashboard" | "projects">("dashboard");
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
