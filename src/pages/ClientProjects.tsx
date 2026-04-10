@@ -4,11 +4,14 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, ChevronLeft, Users, Receipt, Film, ScrollText } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, ChevronLeft, Users, Receipt, Film, ScrollText, Search, X, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import { format, subMonths, isAfter, startOfDay, endOfDay, parseISO } from "date-fns";
 import { bn } from "date-fns/locale";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
@@ -29,6 +32,9 @@ export default function ClientProjects() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const [filterDate, setFilterDate] = useState<Date | undefined>(undefined);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
@@ -107,6 +113,46 @@ export default function ClientProjects() {
     },
   });
 
+  const oneMonthAgo = useMemo(() => subMonths(new Date(), 1), []);
+  const isSearchActive = searchText.trim() !== "" || !!filterDate;
+
+  const filteredProjects = useMemo(() => {
+    let list = projects as any[];
+    if (searchText.trim()) {
+      const q = searchText.trim().toLowerCase();
+      list = list.filter((p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.client_name?.toLowerCase().includes(q) ||
+        p.location?.toLowerCase().includes(q)
+      );
+    }
+    if (filterDate) {
+      const dStr = format(filterDate, "yyyy-MM-dd");
+      list = list.filter((p: any) => p.project_date === dStr);
+    }
+    if (!isSearchActive && !showAll) {
+      list = list.filter((p: any) => {
+        try {
+          return isAfter(parseISO(p.project_date), startOfDay(oneMonthAgo));
+        } catch { return true; }
+      });
+    }
+    return list;
+  }, [projects, searchText, filterDate, showAll, isSearchActive, oneMonthAgo]);
+
+  const hasMoreProjects = !isSearchActive && !showAll && filteredProjects.length < projects.length;
+
+  const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
+  const getProjectExpenseTotal = (pid: string) => {
+    return allProjectExpenses.filter((e: any) => e.project_id === pid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  };
+  const getProjectArtistTotals = (pid: string) => {
+    const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
+    const bill = arts.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
+    const paid = arts.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+    return { bill, paid, due: bill - paid, count: arts.length };
+  };
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3">
@@ -118,19 +164,6 @@ export default function ClientProjects() {
     </div>
   );
   if (!user) return <Navigate to="/login" replace />;
-
-  const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
-
-  const getProjectExpenseTotal = (pid: string) => {
-    return allProjectExpenses.filter((e: any) => e.project_id === pid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-  };
-
-  const getProjectArtistTotals = (pid: string) => {
-    const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
-    const bill = arts.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
-    const paid = arts.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
-    return { bill, paid, due: bill - paid, count: arts.length };
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -155,15 +188,66 @@ export default function ClientProjects() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 space-y-3 pb-24 md:pb-8">
-        {projects.length === 0 ? (
+        {/* Search & Filter Bar */}
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="নাম দিয়ে খুঁজুন..."
+              value={searchText}
+              onChange={(e) => { setSearchText(e.target.value); setShowAll(true); }}
+              className="pl-8 h-9 text-sm rounded-xl bg-secondary/30 border-border/30"
+            />
+            {searchText && (
+              <button onClick={() => setSearchText("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn("h-9 gap-1.5 rounded-xl text-xs border-border/30", filterDate && "border-primary/40 text-primary")}
+              >
+                <CalendarIcon className="h-3.5 w-3.5" />
+                {filterDate ? format(filterDate, "d MMM", { locale: bn }) : "তারিখ"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <CalendarPicker
+                mode="single"
+                selected={filterDate}
+                onSelect={(d) => { setFilterDate(d); if (d) setShowAll(true); }}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+              {filterDate && (
+                <div className="px-3 pb-3">
+                  <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => setFilterDate(undefined)}>
+                    ফিল্টার মুছুন
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {!isSearchActive && !showAll && (
+          <p className="text-[10px] text-muted-foreground text-center">শেষ ১ মাসের প্রজেক্ট দেখাচ্ছে</p>
+        )}
+
+        {filteredProjects.length === 0 ? (
           <div className="text-center py-20">
             <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <FileText className="h-8 w-8 text-primary/50" />
             </div>
-            <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
+            <p className="text-muted-foreground text-sm">{isSearchActive ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো প্রজেক্ট নেই"}</p>
           </div>
         ) : (
-          projects.map((p: any, pIdx: number) => {
+          <>
+          {filteredProjects.map((p: any, pIdx: number) => {
             const scenes = getScenes(p.id);
             const st = statusMap[p.status] || statusMap.upcoming;
             const isOpen = expandedProject === p.id;
@@ -356,7 +440,18 @@ export default function ClientProjects() {
                 </AnimatePresence>
               </motion.div>
             );
-          })
+          })}
+
+          {hasMoreProjects && (
+            <Button
+              variant="outline"
+              className="w-full rounded-xl text-xs h-10 border-border/40 gap-1.5"
+              onClick={() => setShowAll(true)}
+            >
+              <Briefcase className="h-3.5 w-3.5" /> সকল প্রজেক্ট দেখুন ({projects.length}টি)
+            </Button>
+          )}
+          </>
         )}
       </div>
       <ClientBottomNav />
