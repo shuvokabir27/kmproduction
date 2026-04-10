@@ -224,6 +224,35 @@ export type Database = {
         }
         Relationships: []
       }
+      client_artists: {
+        Row: {
+          client_profile_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          client_profile_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          client_profile_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_artists_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_profiles: {
         Row: {
           address: string | null
@@ -268,6 +297,57 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      client_project_artists: {
+        Row: {
+          artist_name: string
+          client_profile_id: string
+          created_at: string
+          id: string
+          is_paid: boolean
+          notes: string | null
+          paid_amount: number
+          project_id: string
+          remuneration: number
+        }
+        Insert: {
+          artist_name: string
+          client_profile_id: string
+          created_at?: string
+          id?: string
+          is_paid?: boolean
+          notes?: string | null
+          paid_amount?: number
+          project_id: string
+          remuneration?: number
+        }
+        Update: {
+          artist_name?: string
+          client_profile_id?: string
+          created_at?: string
+          id?: string
+          is_paid?: boolean
+          notes?: string | null
+          paid_amount?: number
+          project_id?: string
+          remuneration?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_project_artists_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_project_artists_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "freelance_projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       conversation_members: {
         Row: {

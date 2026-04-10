@@ -12,6 +12,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
+import { ClientArtistBilling } from "@/components/ClientArtistBilling";
 
 const statusMap: Record<string, { label: string; color: string }> = {
   upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400" },
@@ -224,6 +225,12 @@ export default function ClientDashboard() {
                               <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                             </div>
                           </div>
+
+                          {/* Client Artist Billing */}
+                          <ClientArtistBilling
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
+                          />
 
                           {/* Client Scene Editor */}
                           <ClientSceneEditor
