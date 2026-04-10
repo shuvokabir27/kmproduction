@@ -249,6 +249,9 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
   let totalProductionBill = 0;
   let totalProductionPaid = 0;
 
+  let totalExpenses = 0;
+  const expenseMap: Record<string, number> = {};
+
   data.projects.forEach((p) => {
     totalProductionBill += p.productionBudget;
     totalProductionPaid += p.productionPaid;
@@ -261,6 +264,11 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
       artistMap[key].totalBill += a.remuneration;
       artistMap[key].totalPaid += a.paid_amount;
     });
+    (p.expenses || []).forEach((e) => {
+      totalExpenses += e.amount;
+      const cat = expenseCategoryLabel[e.category] || e.category;
+      expenseMap[cat] = (expenseMap[cat] || 0) + e.amount;
+    });
   });
 
   const artistList = Object.entries(artistMap).map(([key, val]) => {
@@ -272,7 +280,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
 
   const totalArtistBill = artistList.reduce((s, a) => s + a.totalBill, 0);
   const totalArtistPaid = artistList.reduce((s, a) => s + a.totalPaid, 0);
-  const grandBill = totalProductionBill + totalArtistBill;
+  const grandBill = totalProductionBill + totalArtistBill + totalExpenses;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandBill - grandPaid;
 
