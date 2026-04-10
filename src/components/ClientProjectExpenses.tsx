@@ -219,8 +219,11 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                 {expenses.map((exp: any) => {
                   const config = categoryConfig[exp.category as keyof typeof categoryConfig];
                   const Icon = config?.icon || Receipt;
-                  const paid = exp.is_paid !== false; // default true for old data
-                  return (
+                   const paid = exp.is_paid !== false;
+                   const paidAmt = Number(exp.paid_amount || 0);
+                   const expAmt = Number(exp.amount || 0);
+                   const isPartial = !paid && paidAmt > 0 && paidAmt < expAmt;
+                   return (
                     <div key={exp.id} className="flex items-center gap-2.5 px-3 py-2.5">
                       <div className="h-8 w-8 rounded-lg bg-secondary/30 flex items-center justify-center shrink-0">
                         <Icon className={`h-4 w-4 ${config?.color || "text-muted-foreground"}`} />
@@ -230,13 +233,15 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                           <span className="text-xs font-medium text-foreground">{config?.label || exp.category}</span>
                           {paid ? (
                             <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-emerald-500/30 text-emerald-400 bg-emerald-500/10">পেইড</Badge>
+                          ) : isPartial ? (
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-blue-500/30 text-blue-400 bg-blue-500/10">আংশিক (৳{paidAmt.toLocaleString("bn-BD")})</Badge>
                           ) : (
                             <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-amber-500/30 text-amber-400 bg-amber-500/10">বাকি</Badge>
                           )}
                         </div>
                         {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
                       </div>
-                      <span className="text-sm font-semibold text-foreground shrink-0">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
+                      <span className="text-sm font-semibold text-foreground shrink-0">৳{expAmt.toLocaleString("bn-BD")}</span>
                       <div className="flex items-center gap-0.5 shrink-0">
                         {!paid && (
                           <Button
