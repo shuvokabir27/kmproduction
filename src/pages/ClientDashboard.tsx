@@ -438,6 +438,7 @@ export default function ClientDashboard() {
               projects={projects}
               clientName={clientProfile?.name || ""}
               clientProfileId={clientProfile?.id || ""}
+              companyName={clientProfile?.company || ""}
               totalBudget={totalBudget}
               totalProductionPaid={totalProductionPaid}
             />
@@ -765,8 +766,8 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
 /* ═══════════════════════════════════════════
    Payment Dialog (unchanged logic)
    ═══════════════════════════════════════════ */
-function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, totalBudget, totalProductionPaid }: {
-  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; totalBudget: number; totalProductionPaid: number;
+function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, companyName, totalBudget, totalProductionPaid }: {
+  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; companyName: string; totalBudget: number; totalProductionPaid: number;
 }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -832,7 +833,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
       setReceiptData({
         artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
-        clientName, amount, totalRemuneration: selectedGroup.totalBill,
+        clientName, companyName, amount, totalRemuneration: selectedGroup.totalBill,
         totalPaid: selectedGroup.totalPaid + amount, remaining: selectedGroup.totalDue - amount,
         date: new Date().toISOString(),
       });
