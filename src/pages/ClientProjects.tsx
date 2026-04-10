@@ -4,11 +4,11 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, ChevronLeft } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, ChevronLeft, Users, Receipt, Film, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
@@ -238,7 +238,8 @@ export default function ClientProjects() {
                       transition={{ duration: 0.25 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 pb-5 space-y-4 border-t border-border/20 pt-4">
+                      <div className="px-4 pb-5 space-y-3 border-t border-border/20 pt-4">
+                        {/* বাজেট হেডার ও ডাউনলোড */}
                         <div className="flex items-center justify-between">
                           <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                             <Wallet className="h-4 w-4 text-primary" /> বাজেট
@@ -282,24 +283,62 @@ export default function ClientProjects() {
                           <div className="text-xl font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                         </div>
 
-                        <ClientArtistBilling
-                          projectId={p.id}
-                          clientProfileId={clientProfile.id}
-                          clientName={clientProfile?.name || "ক্লায়েন্ট"}
-                          projectName={p.name}
-                        />
-                        <ClientProjectExpenses
-                          projectId={p.id}
-                          clientProfileId={clientProfile.id}
-                        />
-                        <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
-                        <ClientProjectScript
-                          projectId={p.id}
-                          userId={user!.id}
-                          initialScript={p.client_script}
-                          initialImages={Array.isArray(p.client_script_images) ? p.client_script_images : []}
-                          onUpdate={() => {}}
-                        />
+                        {/* ═══ আর্টিস্ট সেকশন (কলাপসিবল, ভায়োলেট) ═══ */}
+                        <CollapsibleSection
+                          icon={<Users className="h-4 w-4" />}
+                          title="আর্টিস্ট লিস্ট"
+                          badge={artTotals.count > 0 ? `${artTotals.count}জন` : undefined}
+                          colorClass="violet"
+                          defaultOpen={false}
+                        >
+                          <ClientArtistBilling
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
+                            clientName={clientProfile?.name || "ক্লায়েন্ট"}
+                            projectName={p.name}
+                          />
+                        </CollapsibleSection>
+
+                        {/* ═══ শুটিং খরচ (কলাপসিবল, অরেঞ্জ) ═══ */}
+                        <CollapsibleSection
+                          icon={<Receipt className="h-4 w-4" />}
+                          title="শুটিং খরচ"
+                          badge={projExpenseTotal > 0 ? `৳${projExpenseTotal.toLocaleString("bn-BD")}` : undefined}
+                          colorClass="orange"
+                          defaultOpen={false}
+                        >
+                          <ClientProjectExpenses
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
+                          />
+                        </CollapsibleSection>
+
+                        {/* ═══ সিন বাই সিন (কলাপসিবল, টিল) ═══ */}
+                        <CollapsibleSection
+                          icon={<Film className="h-4 w-4" />}
+                          title="সিন বাই সিন লাইনআপ"
+                          badge={scenes.length > 0 ? `${scenes.length}টি সিন` : undefined}
+                          colorClass="teal"
+                          defaultOpen={false}
+                        >
+                          <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
+                        </CollapsibleSection>
+
+                        {/* ═══ স্ক্রিপ্ট (কলাপসিবল, ইন্ডিগো) ═══ */}
+                        <CollapsibleSection
+                          icon={<ScrollText className="h-4 w-4" />}
+                          title="স্ক্রিপ্ট"
+                          colorClass="indigo"
+                          defaultOpen={false}
+                        >
+                          <ClientProjectScript
+                            projectId={p.id}
+                            userId={user!.id}
+                            initialScript={p.client_script}
+                            initialImages={Array.isArray(p.client_script_images) ? p.client_script_images : []}
+                            onUpdate={() => {}}
+                          />
+                        </CollapsibleSection>
 
                         {p.notes && (
                           <p className="text-[11px] text-muted-foreground italic border-t border-border/15 pt-3">
@@ -316,6 +355,61 @@ export default function ClientProjects() {
         )}
       </div>
       <ClientBottomNav />
+    </div>
+  );
+}
+
+/* ═══ Collapsible Section Component ═══ */
+const COLOR_MAP: Record<string, { bg: string; border: string; text: string; iconBg: string }> = {
+  violet: { bg: "from-violet-500/8 to-violet-500/3", border: "border-violet-500/20", text: "text-violet-400", iconBg: "bg-violet-500/15" },
+  orange: { bg: "from-orange-500/8 to-orange-500/3", border: "border-orange-500/20", text: "text-orange-400", iconBg: "bg-orange-500/15" },
+  teal: { bg: "from-teal-500/8 to-teal-500/3", border: "border-teal-500/20", text: "text-teal-400", iconBg: "bg-teal-500/15" },
+  indigo: { bg: "from-indigo-500/8 to-indigo-500/3", border: "border-indigo-500/20", text: "text-indigo-400", iconBg: "bg-indigo-500/15" },
+};
+
+function CollapsibleSection({ icon, title, badge, colorClass, defaultOpen, children }: {
+  icon: React.ReactNode;
+  title: string;
+  badge?: string;
+  colorClass: string;
+  defaultOpen: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const c = COLOR_MAP[colorClass] || COLOR_MAP.violet;
+
+  return (
+    <div className={cn("rounded-xl border overflow-hidden transition-all", c.border, `bg-gradient-to-r ${c.bg}`)}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left active:opacity-80 transition-opacity"
+      >
+        <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center shrink-0", c.iconBg)}>
+          <span className={c.text}>{icon}</span>
+        </div>
+        <span className="text-[13px] font-semibold text-foreground flex-1">{title}</span>
+        {badge && (
+          <span className={cn("text-[10px] px-2 py-0.5 rounded-full border font-medium", c.border, c.text)}>
+            {badge}
+          </span>
+        )}
+        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-1 pb-3 pt-0.5">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
