@@ -178,7 +178,7 @@ export default function ClientDashboard() {
   const artistDue = totalArtistBill - totalArtistPaid;
 
   const totalExpenses = allProjectExpenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-  const totalExpensesPaid = allProjectExpenses.filter((e: any) => e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const totalExpensesPaid = allProjectExpenses.reduce((s: number, e: any) => s + Number(e.paid_amount || 0), 0);
   const expenseDue = totalExpenses - totalExpensesPaid;
 
   const grandTotal = totalBudget + totalArtistBill + totalExpenses;
