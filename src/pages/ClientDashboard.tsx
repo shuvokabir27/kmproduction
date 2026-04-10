@@ -718,7 +718,16 @@ export default function ClientDashboard() {
                         <div className="flex items-center gap-2 mb-0.5">
                           <h3 className="font-semibold text-foreground text-[15px] truncate">{p.name}</h3>
                         </div>
-                        <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border", st.bg, st.color)}>{st.label}</Badge>
+                        <Badge
+                          variant="outline"
+                          className={cn("text-[9px] px-1.5 py-0 h-4 border cursor-pointer", st.bg, st.color)}
+                          onClick={(e) => {
+                            if (p.status === "paid") {
+                              e.stopPropagation();
+                              paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth" });
+                            }
+                          }}
+                        >{st.label}</Badge>
                         <div className="flex flex-wrap gap-x-3 mt-1.5 text-[11px] text-muted-foreground">
                           <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
                           {p.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {p.location}</span>}
