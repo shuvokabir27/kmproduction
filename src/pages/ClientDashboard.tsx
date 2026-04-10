@@ -57,6 +57,7 @@ export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const queryClient = useQueryClient();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"dashboard" | "projects">("dashboard");
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
