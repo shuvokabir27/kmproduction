@@ -32,7 +32,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
   const [category, setCategory] = useState<string>("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [isPaid, setIsPaid] = useState(true);
+  const [isPaid, setIsPaid] = useState(false);
 
   const { data: expenses = [], refetch } = useQuery({
     queryKey: ["client-project-expenses", projectId],
