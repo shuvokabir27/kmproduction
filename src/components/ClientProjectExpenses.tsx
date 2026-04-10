@@ -247,7 +247,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleTogglePaid(exp.id, paid)}
+                            onClick={() => handleTogglePaid(exp.id, paid, expAmt)}
                             className="h-7 w-7 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
                             title="পেইড করুন"
                           >
@@ -258,7 +258,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleTogglePaid(exp.id, paid)}
+                            onClick={() => handleTogglePaid(exp.id, paid, expAmt)}
                             className="h-7 w-7 p-0 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
                             title="বাকি করুন"
                           >
