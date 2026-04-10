@@ -384,7 +384,8 @@ export default function ClientDashboard() {
                 <div className="text-[9px] text-muted-foreground mb-0.5">শুটিং খরচ</div>
                 <div className="text-sm font-bold text-foreground">৳{totalExpenses.toLocaleString("bn-BD")}</div>
                 <div className="flex flex-col gap-0.5 mt-1">
-                  <span className="text-[9px] text-muted-foreground">{allProjectExpenses.length} টি খরচ</span>
+                  <span className="text-[9px] text-emerald-400">✓ ৳{totalExpensesPaid.toLocaleString("bn-BD")}</span>
+                  <span className="text-[9px] text-orange-400">✗ ৳{expenseDue.toLocaleString("bn-BD")}</span>
                 </div>
               </button>
             </div>
