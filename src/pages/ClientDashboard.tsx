@@ -559,7 +559,7 @@ export default function ClientDashboard() {
 
         {/* ═══ Payment History (Production + Client) ═══ */}
         <div ref={paymentHistoryRef} />
-        {(allPayments.length > 0 || clientPaymentHistory.length > 0) && (
+        {(
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
             <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
               <div
