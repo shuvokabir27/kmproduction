@@ -697,6 +697,7 @@ export default function ClientDashboard() {
                                     category: e.category,
                                     amount: Number(e.amount || 0),
                                     description: e.description || "",
+                                    is_paid: e.is_paid,
                                   })),
                                 });
                                 toast({ title: "বিল ডাউনলোড হচ্ছে..." });
