@@ -715,19 +715,20 @@ export default function ClientDashboard() {
           </motion.div>
         
         {/* ═══ Projects ═══ */}
-        {projects.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <FileText className="h-8 w-8 text-primary/50" />
-            </div>
-            <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
-          </div>
-        ) : (
+        {activeTab === "projects" && (
           <>
           <div ref={projectsRef} />
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
-            <h2 className="text-base font-bold text-foreground flex items-center gap-2 px-1">
-              <FileText className="h-4.5 w-4.5 text-primary" /> আপনার প্রজেক্ট সমূহ
+          {projects.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <FileText className="h-8 w-8 text-primary/50" />
+              </div>
+              <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
+            </div>
+          ) : (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-3">
+              <h2 className="text-base font-bold text-foreground flex items-center gap-2 px-1">
+                <FileText className="h-4.5 w-4.5 text-primary" /> আপনার প্রজেক্ট সমূহ
             </h2>
             {projects.map((p: any, pIdx: number) => {
               const scenes = getScenes(p.id);
