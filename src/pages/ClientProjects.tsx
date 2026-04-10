@@ -8,7 +8,7 @@ import { Briefcase, Calendar, MapPin, FileText, Wallet, Download, ChevronDown, C
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
