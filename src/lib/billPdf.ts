@@ -265,7 +265,8 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
   let totalProductionPaid = 0;
 
   let totalExpenses = 0;
-  const expenseMap: Record<string, number> = {};
+  let totalExpensesPaid = 0;
+  const expenseMap: Record<string, { total: number; paid: number }> = {};
 
   data.projects.forEach((p) => {
     totalProductionBill += p.productionBudget;
@@ -281,8 +282,11 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
     });
     (p.expenses || []).forEach((e) => {
       totalExpenses += e.amount;
+      if (e.is_paid !== false) totalExpensesPaid += e.amount;
       const cat = expenseCategoryLabel[e.category] || e.category;
-      expenseMap[cat] = (expenseMap[cat] || 0) + e.amount;
+      if (!expenseMap[cat]) expenseMap[cat] = { total: 0, paid: 0 };
+      expenseMap[cat].total += e.amount;
+      if (e.is_paid !== false) expenseMap[cat].paid += e.amount;
     });
   });
 
