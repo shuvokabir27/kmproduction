@@ -1167,7 +1167,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       const proj = projects.find((p: any) => p.id === e.project_id);
       const existing = map.get(e.project_id) || { project: proj, expenses: [], totalDue: 0 };
       existing.expenses.push(e);
-      existing.totalDue += Number(e.amount || 0);
+      existing.totalDue += Number(e.amount || 0) - Number(e.paid_amount || 0);
       map.set(e.project_id, existing);
     });
     return Array.from(map.values());
