@@ -4,11 +4,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download, Filter, CreditCard, ArrowRight, ChevronLeft } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download, Filter, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
@@ -40,6 +40,7 @@ const paymentMethodLabel: Record<string, string> = {
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | null>(null);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
@@ -180,13 +181,18 @@ export default function ClientDashboard() {
               </CardContent>
             </Card>
 
-            {/* Breakdown: Production vs Artist */}
+            {/* Breakdown: Production vs Artist - Clickable */}
             <div className="grid grid-cols-2 gap-3">
-              <Card className="border-border/50">
+              {/* Production Bill Card */}
+              <Card className={cn("border-border/50 cursor-pointer transition-colors hover:bg-secondary/20", expandedBillCard === "production" && "ring-1 ring-sky-400/50")}
+                onClick={() => setExpandedBillCard(expandedBillCard === "production" ? null : "production")}>
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Banknote className="h-3.5 w-3.5 text-sky-400" />
-                    <span className="text-xs font-semibold text-muted-foreground">প্রোডাকশন বিল</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Banknote className="h-3.5 w-3.5 text-sky-400" />
+                      <span className="text-xs font-semibold text-muted-foreground">প্রোডাকশন বিল</span>
+                    </div>
+                    {expandedBillCard === "production" ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />}
                   </div>
                   <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
                   <div className="text-xs text-emerald-400">পেইড: ৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
@@ -195,11 +201,16 @@ export default function ClientDashboard() {
                   )}
                 </CardContent>
               </Card>
-              <Card className="border-border/50">
+              {/* Artist Bill Card */}
+              <Card className={cn("border-border/50 cursor-pointer transition-colors hover:bg-secondary/20", expandedBillCard === "artist" && "ring-1 ring-violet-400/50")}
+                onClick={() => setExpandedBillCard(expandedBillCard === "artist" ? null : "artist")}>
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Users className="h-3.5 w-3.5 text-violet-400" />
-                    <span className="text-xs font-semibold text-muted-foreground">আর্টিস্ট বিল</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5 text-violet-400" />
+                      <span className="text-xs font-semibold text-muted-foreground">আর্টিস্ট বিল</span>
+                    </div>
+                    {expandedBillCard === "artist" ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />}
                   </div>
                   <div className="text-sm font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</div>
                   <div className="text-xs text-emerald-400">পেইড: ৳{totalArtistPaid.toLocaleString("bn-BD")}</div>
@@ -209,6 +220,85 @@ export default function ClientDashboard() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Expanded Detail: Production - per project breakdown */}
+            <AnimatePresence>
+              {expandedBillCard === "production" && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                  <Card className="border-sky-400/30 bg-sky-400/5">
+                    <CardContent className="p-3 space-y-2">
+                      <h4 className="text-xs font-semibold text-muted-foreground mb-2">প্রজেক্ট অনুযায়ী প্রোডাকশন বিল</h4>
+                      {projects.map((p: any) => {
+                        const projPaid = allPayments
+                          .filter((pay: any) => pay.project_id === p.id)
+                          .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+                        const projDue = Number(p.total_budget || 0) - projPaid;
+                        return (
+                          <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-foreground truncate">{p.name}</div>
+                              <div className="text-[11px] text-muted-foreground">
+                                {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <div className="text-sm font-bold text-foreground">৳{Number(p.total_budget || 0).toLocaleString("bn-BD")}</div>
+                              {projPaid > 0 && <div className="text-[11px] text-emerald-400">পেইড: ৳{projPaid.toLocaleString("bn-BD")}</div>}
+                              {projDue > 0 && <div className="text-[11px] text-amber-400">বাকি: ৳{projDue.toLocaleString("bn-BD")}</div>}
+                              {projDue <= 0 && Number(p.total_budget) > 0 && <div className="text-[11px] text-emerald-400 font-semibold">✓ পেইড</div>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* Expanded Detail: Artist - per member breakdown */}
+              {expandedBillCard === "artist" && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                  <Card className="border-violet-400/30 bg-violet-400/5">
+                    <CardContent className="p-3 space-y-2">
+                      <h4 className="text-xs font-semibold text-muted-foreground mb-2">আর্টিস্ট অনুযায়ী বিল</h4>
+                      {(() => {
+                        const artistMap: Record<string, { totalBill: number; totalPaid: number; projects: string[] }> = {};
+                        allProjectArtists.forEach((a: any) => {
+                          const key = a.artist_name.toLowerCase();
+                          if (!artistMap[key]) artistMap[key] = { totalBill: 0, totalPaid: 0, projects: [] };
+                          artistMap[key].totalBill += Number(a.remuneration || 0);
+                          artistMap[key].totalPaid += Number(a.paid_amount || 0);
+                          const proj = projects.find((p: any) => p.id === a.project_id);
+                          if (proj && !artistMap[key].projects.includes(proj.name)) artistMap[key].projects.push(proj.name);
+                        });
+                        const entries = Object.entries(artistMap).map(([key, val]) => {
+                          const originalName = allProjectArtists.find((a: any) => a.artist_name.toLowerCase() === key)?.artist_name || key;
+                          return { name: originalName, ...val };
+                        });
+                        if (entries.length === 0) return <div className="text-xs text-muted-foreground text-center py-2">কোনো আর্টিস্ট নেই</div>;
+                        return entries.map((artist, idx) => {
+                          const due = artist.totalBill - artist.totalPaid;
+                          return (
+                            <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium text-foreground">{artist.name}</div>
+                                <div className="text-[11px] text-muted-foreground truncate">{artist.projects.join(", ")}</div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="text-sm font-bold text-foreground">৳{artist.totalBill.toLocaleString("bn-BD")}</div>
+                                {artist.totalPaid > 0 && <div className="text-[11px] text-emerald-400">পেইড: ৳{artist.totalPaid.toLocaleString("bn-BD")}</div>}
+                                {due > 0 && <div className="text-[11px] text-amber-400">বাকি: ৳{due.toLocaleString("bn-BD")}</div>}
+                                {due <= 0 && artist.totalBill > 0 && <div className="text-[11px] text-emerald-400 font-semibold">✓ পেইড</div>}
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Project Count + Download All */}
             <div className="flex items-center gap-3">
