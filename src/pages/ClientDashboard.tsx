@@ -592,33 +592,36 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<"choose" | "artist" | "production">("choose");
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [selectedArtistId, setSelectedArtistId] = useState<string | null>(null);
+  const [selectedArtistName, setSelectedArtistName] = useState<string | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [receiptData, setReceiptData] = useState<any>(null);
 
   const handleOpen = (isOpen: boolean) => {
     if (isOpen) {
       setStep("choose");
-      setSelectedProjectId(null);
-      setSelectedArtistId(null);
+      setSelectedArtistName(null);
       setPayAmount("");
     }
     setOpen(isOpen);
   };
 
-  // Artist data grouped by project (only unpaid)
-  const artistProjectGroups = useMemo(() => {
-    return projects
-      .map((p: any) => {
-        const artists = allProjectArtists.filter(
-          (a: any) => a.project_id === p.id && !a.is_paid && Number(a.remuneration || 0) - Number(a.paid_amount || 0) > 0
-        );
-        const totalDue = artists.reduce((s: number, a: any) => s + (Number(a.remuneration || 0) - Number(a.paid_amount || 0)), 0);
-        return { project: p, artists, totalDue };
-      })
-      .filter((g) => g.artists.length > 0);
-  }, [projects, allProjectArtists]);
+  // Group all unpaid artists by name (across all projects)
+  const artistsByName = useMemo(() => {
+    const map = new Map<string, { name: string; entries: any[]; totalBill: number; totalPaid: number; totalDue: number }>();
+    allProjectArtists.forEach((a: any) => {
+      const rem = Number(a.remuneration || 0);
+      const paid = Number(a.paid_amount || 0);
+      const due = rem - paid;
+      if (due <= 0) return;
+      const existing = map.get(a.artist_name) || { name: a.artist_name, entries: [], totalBill: 0, totalPaid: 0, totalDue: 0 };
+      existing.entries.push(a);
+      existing.totalBill += rem;
+      existing.totalPaid += paid;
+      existing.totalDue += due;
+      map.set(a.artist_name, existing);
+    });
+    return Array.from(map.values()).sort((a, b) => b.totalDue - a.totalDue);
+  }, [allProjectArtists]);
 
   // Production projects with dues
   const productionProjectGroups = useMemo(() => {
@@ -633,50 +636,72 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       .filter((g) => g.due > 0);
   }, [projects, allPayments]);
 
-  const totalArtistDue = artistProjectGroups.reduce((s, g) => s + g.totalDue, 0);
+  const totalArtistDue = artistsByName.reduce((s, g) => s + g.totalDue, 0);
   const totalProductionDue = totalBudget - totalProductionPaid;
 
-  const selectedArtist = selectedArtistId
-    ? allProjectArtists.find((a: any) => a.id === selectedArtistId)
-    : null;
-  const selectedArtistDue = selectedArtist
-    ? Number(selectedArtist.remuneration || 0) - Number(selectedArtist.paid_amount || 0)
-    : 0;
+  const selectedGroup = selectedArtistName ? artistsByName.find(g => g.name === selectedArtistName) : null;
 
+  // Auto-distribute payment across projects (oldest project first)
   const handlePayArtist = async () => {
-    if (!selectedArtist) return;
+    if (!selectedGroup) return;
     const amount = Number(payAmount || 0);
     if (amount <= 0) {
       toast({ title: "পরিমাণ দিন", variant: "destructive" });
       return;
     }
-    const newPaid = Number(selectedArtist.paid_amount || 0) + amount;
-    const isPaid = newPaid >= Number(selectedArtist.remuneration);
-    const projName = projects.find((p: any) => p.id === selectedArtist.project_id)?.name || "";
+
+    // Sort entries by project date (oldest first)
+    const sorted = [...selectedGroup.entries].sort((a, b) => {
+      const dateA = projects.find((p: any) => p.id === a.project_id)?.project_date || "";
+      const dateB = projects.find((p: any) => p.id === b.project_id)?.project_date || "";
+      return dateA.localeCompare(dateB);
+    });
+
+    let remaining = amount;
+    const updates: { id: string; newPaid: number; isPaid: boolean; projectName: string; amount: number }[] = [];
+
+    for (const entry of sorted) {
+      if (remaining <= 0) break;
+      const rem = Number(entry.remuneration || 0);
+      const paid = Number(entry.paid_amount || 0);
+      const due = rem - paid;
+      if (due <= 0) continue;
+
+      const payNow = Math.min(remaining, due);
+      const newPaid = paid + payNow;
+      const isPaid = newPaid >= rem;
+      const projName = projects.find((p: any) => p.id === entry.project_id)?.name || "";
+
+      updates.push({ id: entry.id, newPaid, isPaid, projectName: projName, amount: payNow });
+      remaining -= payNow;
+    }
 
     try {
-      const { error } = await (supabase as any)
-        .from("client_project_artists")
-        .update({ paid_amount: newPaid, is_paid: isPaid })
-        .eq("id", selectedArtist.id);
-      if (error) throw error;
+      for (const upd of updates) {
+        const { error } = await (supabase as any)
+          .from("client_project_artists")
+          .update({ paid_amount: upd.newPaid, is_paid: upd.isPaid })
+          .eq("id", upd.id);
+        if (error) throw error;
+      }
 
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
 
+      // Show receipt with distribution info
       setReceiptData({
-        artistName: selectedArtist.artist_name,
-        projectName: projName,
+        artistName: selectedGroup.name,
+        projectName: updates.map(u => u.projectName).join(", "),
         clientName,
         amount,
-        totalRemuneration: Number(selectedArtist.remuneration || 0),
-        totalPaid: newPaid,
-        remaining: Number(selectedArtist.remuneration || 0) - newPaid,
+        totalRemuneration: selectedGroup.totalBill,
+        totalPaid: selectedGroup.totalPaid + amount,
+        remaining: selectedGroup.totalDue - amount,
         date: new Date().toISOString(),
       });
 
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
-      setSelectedArtistId(null);
+      setSelectedArtistName(null);
       setPayAmount("");
       setStep("artist");
     } catch (err: any) {
@@ -685,15 +710,37 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
   };
 
   const goBack = () => {
-    if (selectedArtistId) {
-      setSelectedArtistId(null);
+    if (selectedArtistName) {
+      setSelectedArtistName(null);
       setPayAmount("");
-    } else if (selectedProjectId) {
-      setSelectedProjectId(null);
     } else {
       setStep("choose");
     }
   };
+
+  // Calculate payment distribution preview
+  const paymentPreview = useMemo(() => {
+    if (!selectedGroup || Number(payAmount || 0) <= 0) return [];
+    const sorted = [...selectedGroup.entries].sort((a: any, b: any) => {
+      const dateA = projects.find((p: any) => p.id === a.project_id)?.project_date || "";
+      const dateB = projects.find((p: any) => p.id === b.project_id)?.project_date || "";
+      return dateA.localeCompare(dateB);
+    });
+    let rem = Number(payAmount || 0);
+    const result: { projectName: string; amount: number; status: string }[] = [];
+    for (const entry of sorted) {
+      if (rem <= 0) break;
+      const due = Number(entry.remuneration || 0) - Number(entry.paid_amount || 0);
+      if (due <= 0) continue;
+      const payNow = Math.min(rem, due);
+      const newPaid = Number(entry.paid_amount || 0) + payNow;
+      const projName = projects.find((p: any) => p.id === entry.project_id)?.name || "";
+      const status = newPaid >= Number(entry.remuneration || 0) ? "Paid" : "Partially Paid";
+      result.push({ projectName: projName, amount: payNow, status });
+      rem -= payNow;
+    }
+    return result;
+  }, [selectedGroup, payAmount, projects]);
 
   return (
     <>
@@ -716,7 +763,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
               )}
               <CreditCard className="h-4 w-4 text-primary" />
               {step === "choose" && "পেমেন্ট ক্যাটাগরি বাছুন"}
-              {step === "artist" && (selectedArtistId ? "পেমেন্ট করুন" : selectedProjectId ? "আর্টিস্ট বাছুন" : "প্রজেক্ট বাছুন")}
+              {step === "artist" && (selectedArtistName ? "পেমেন্ট করুন" : "মেম্বার বাছুন")}
               {step === "production" && "প্রোডাকশন পেমেন্ট"}
             </DialogTitle>
           </DialogHeader>
@@ -757,103 +804,84 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
             </div>
           )}
 
-          {/* Step 2a: Artist → Select Project */}
-          {step === "artist" && !selectedProjectId && (
+          {/* Step 2: Artist → Select by Name (grouped across projects) */}
+          {step === "artist" && !selectedArtistName && (
             <div className="space-y-2">
-              {artistProjectGroups.map(({ project, artists, totalDue }) => (
-                <button
-                  key={project.id}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/40 hover:bg-secondary/30 transition-all text-left"
-                  onClick={() => setSelectedProjectId(project.id)}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{project.name}</div>
-                    <div className="text-[11px] text-muted-foreground">
-                      {artists.length} জন আর্টিস্ট • {format(new Date(project.project_date), "d MMM yyyy", { locale: bn })}
+              {artistsByName.map((group) => {
+                const paidPercent = group.totalBill > 0 ? Math.round((group.totalPaid / group.totalBill) * 100) : 0;
+                return (
+                  <button
+                    key={group.name}
+                    className="w-full flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/40 hover:bg-secondary/30 transition-all text-left"
+                    onClick={() => { setSelectedArtistName(group.name); setPayAmount(String(group.totalDue)); }}
+                  >
+                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                      {group.name?.charAt(0)}
                     </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-sm font-bold text-amber-400">৳{totalDue.toLocaleString("bn-BD")}</div>
-                    <div className="text-[10px] text-muted-foreground">বাকি</div>
-                  </div>
-                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                </button>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-foreground truncate">{group.name}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {group.entries.length} টি প্রজেক্ট • মোট: ৳{group.totalBill.toLocaleString("bn-BD")}
+                      </div>
+                      <div className="w-full h-1.5 bg-secondary rounded-full mt-1">
+                        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${paidPercent}%` }} />
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-sm font-bold text-amber-400">৳{group.totalDue.toLocaleString("bn-BD")}</div>
+                      <div className="text-[10px] text-muted-foreground">বাকি</div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
 
-          {/* Step 2b: Artist → Select Artist in project */}
-          {step === "artist" && selectedProjectId && !selectedArtistId && (() => {
-            const group = artistProjectGroups.find(g => g.project.id === selectedProjectId);
-            if (!group) return null;
-            return (
-              <div className="space-y-2">
-                <div className="text-xs text-muted-foreground font-medium px-1">{group.project.name}</div>
-                {group.artists.map((artist: any) => {
-                  const rem = Number(artist.remuneration || 0);
-                  const paid = Number(artist.paid_amount || 0);
-                  const due = rem - paid;
-                  const paidPercent = rem > 0 ? Math.round((paid / rem) * 100) : 0;
-                  return (
-                    <button
-                      key={artist.id}
-                      className="w-full flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/40 hover:bg-secondary/30 transition-all text-left"
-                      onClick={() => { setSelectedArtistId(artist.id); setPayAmount(String(due)); }}
-                    >
-                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
-                        {artist.artist_name?.charAt(0)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-foreground truncate">{artist.artist_name}</div>
-                        <div className="text-[10px] text-muted-foreground">
-                          মোট: ৳{rem.toLocaleString("bn-BD")} • পেইড: ৳{paid.toLocaleString("bn-BD")} ({paidPercent}%)
-                        </div>
-                        {/* Progress bar */}
-                        <div className="w-full h-1.5 bg-secondary rounded-full mt-1">
-                          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${paidPercent}%` }} />
-                        </div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-sm font-bold text-amber-400">৳{due.toLocaleString("bn-BD")}</div>
-                        <div className="text-[10px] text-muted-foreground">বাকি</div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          })()}
-
-          {/* Step 3: Pay selected artist */}
-          {step === "artist" && selectedArtist && (
+          {/* Step 3: Pay selected artist (with auto project distribution) */}
+          {step === "artist" && selectedGroup && (
             <div className="space-y-4">
               {/* Artist Info Card */}
               <div className="rounded-xl border border-border p-4 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">
-                    {selectedArtist.artist_name?.charAt(0)}
+                    {selectedGroup.name?.charAt(0)}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-foreground">{selectedArtist.artist_name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {projects.find((p: any) => p.id === selectedArtist.project_id)?.name}
-                    </div>
+                    <div className="text-sm font-semibold text-foreground">{selectedGroup.name}</div>
+                    <div className="text-xs text-muted-foreground">{selectedGroup.entries.length} টি প্রজেক্টে কাজ করেছেন</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="rounded-lg bg-secondary/40 p-2">
                     <div className="text-[10px] text-muted-foreground">মোট বিল</div>
-                    <div className="text-sm font-bold text-foreground">৳{Number(selectedArtist.remuneration || 0).toLocaleString("bn-BD")}</div>
+                    <div className="text-sm font-bold text-foreground">৳{selectedGroup.totalBill.toLocaleString("bn-BD")}</div>
                   </div>
                   <div className="rounded-lg bg-emerald-500/10 p-2">
                     <div className="text-[10px] text-muted-foreground">পেইড</div>
-                    <div className="text-sm font-bold text-emerald-400">৳{Number(selectedArtist.paid_amount || 0).toLocaleString("bn-BD")}</div>
+                    <div className="text-sm font-bold text-emerald-400">৳{selectedGroup.totalPaid.toLocaleString("bn-BD")}</div>
                   </div>
                   <div className="rounded-lg bg-amber-500/10 p-2">
                     <div className="text-[10px] text-muted-foreground">বাকি</div>
-                    <div className="text-sm font-bold text-amber-400">৳{selectedArtistDue.toLocaleString("bn-BD")}</div>
+                    <div className="text-sm font-bold text-amber-400">৳{selectedGroup.totalDue.toLocaleString("bn-BD")}</div>
                   </div>
+                </div>
+
+                {/* Per-project breakdown */}
+                <div className="space-y-1.5">
+                  <div className="text-[10px] font-medium text-muted-foreground">প্রজেক্ট ভিত্তিক বিল:</div>
+                  {selectedGroup.entries.map((entry: any) => {
+                    const rem = Number(entry.remuneration || 0);
+                    const paid = Number(entry.paid_amount || 0);
+                    const due = rem - paid;
+                    const projName = projects.find((p: any) => p.id === entry.project_id)?.name || "";
+                    return (
+                      <div key={entry.id} className="flex items-center justify-between text-[11px] px-2 py-1.5 rounded bg-secondary/20">
+                        <span className="text-foreground truncate mr-2">{projName}</span>
+                        <span className="text-amber-400 shrink-0 font-medium">বাকি ৳{due.toLocaleString("bn-BD")}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -867,24 +895,39 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                     value={payAmount}
                     onChange={(e) => setPayAmount(e.target.value)}
                     min={0}
-                    max={selectedArtistDue}
+                    max={selectedGroup.totalDue}
                     className="flex-1"
                   />
                   <Button
                     variant="outline"
                     size="sm"
                     className="text-xs shrink-0"
-                    onClick={() => setPayAmount(String(selectedArtistDue))}
+                    onClick={() => setPayAmount(String(selectedGroup.totalDue))}
                   >
                     সম্পূর্ণ
                   </Button>
                 </div>
-                {Number(payAmount) > 0 && Number(payAmount) < selectedArtistDue && (
-                  <p className="text-[11px] text-muted-foreground">
-                    আংশিক পেমেন্ট • পেমেন্টের পর বাকি থাকবে: ৳{(selectedArtistDue - Number(payAmount)).toLocaleString("bn-BD")}
-                  </p>
-                )}
               </div>
+
+              {/* Auto distribution preview */}
+              {paymentPreview.length > 0 && (
+                <div className="rounded-lg border border-border/50 p-3 space-y-1.5">
+                  <div className="text-[10px] font-medium text-muted-foreground">পেমেন্ট বিতরণ প্রিভিউ:</div>
+                  {paymentPreview.map((p, i) => (
+                    <div key={i} className="flex items-center justify-between text-[11px]">
+                      <span className="text-foreground truncate mr-2">{p.projectName}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-foreground font-medium">৳{p.amount.toLocaleString("bn-BD")}</span>
+                        <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0",
+                          p.status === "Paid" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        )}>
+                          {p.status === "Paid" ? "পেইড" : "আংশিক"}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <Button
                 className="w-full gap-2"
@@ -917,7 +960,6 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                 </div>
               </div>
 
-              {/* Per-project breakdown */}
               {productionProjectGroups.map(({ project, paid, due }) => (
                 <div key={project.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/20">
                   <div className="min-w-0">
