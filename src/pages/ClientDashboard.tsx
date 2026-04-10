@@ -946,7 +946,7 @@ export default function ClientDashboard() {
                         .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
                     } else {
                       await (supabase as any).from("client_project_expenses")
-                        .update({ is_paid: false }).eq("id", realId);
+                        .update({ paid_amount: 0, is_paid: false }).eq("id", realId);
                     }
                     toast({ title: "পেমেন্ট রিভার্স করা হয়েছে ✓" });
                   } else {
@@ -1157,7 +1157,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   const totalArtistDue = artistsByName.reduce((s, g) => s + g.totalDue, 0);
   const totalProductionDue = totalBudget - totalProductionPaid;
-  const totalExpenseDue = allProjectExpenses.filter((e: any) => !e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const totalExpenseDue = allProjectExpenses.filter((e: any) => !e.is_paid).reduce((s: number, e: any) => s + (Number(e.amount || 0) - Number(e.paid_amount || 0)), 0);
   const selectedGroup = selectedArtistName ? artistsByName.find(g => g.name === selectedArtistName) : null;
 
   const expensesByProject = useMemo(() => {
@@ -1167,7 +1167,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       const proj = projects.find((p: any) => p.id === e.project_id);
       const existing = map.get(e.project_id) || { project: proj, expenses: [], totalDue: 0 };
       existing.expenses.push(e);
-      existing.totalDue += Number(e.amount || 0);
+      existing.totalDue += Number(e.amount || 0) - Number(e.paid_amount || 0);
       map.set(e.project_id, existing);
     });
     return Array.from(map.values());
@@ -1222,34 +1222,37 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     } else {
       const amount = Number(customExpenseAmount || 0);
       if (amount <= 0) { toast({ title: "পরিমাণ দিন", variant: "destructive" }); return; }
-      // Pay expenses oldest first until amount is exhausted
+      // Pay expenses oldest first until amount is exhausted, supporting partial payments
       const dueExpenses = allProjectExpenses
         .filter((e: any) => !e.is_paid)
         .sort((a: any, b: any) => (a.created_at || "").localeCompare(b.created_at || ""));
       let remaining = amount;
-      const toPay: string[] = [];
+      const updates: { id: string; newPaid: number; isPaid: boolean; expAmount: number }[] = [];
       for (const exp of dueExpenses) {
         if (remaining <= 0) break;
         const expAmount = Number(exp.amount || 0);
-        if (remaining >= expAmount) {
-          toPay.push(exp.id);
-          remaining -= expAmount;
-        }
+        const alreadyPaid = Number(exp.paid_amount || 0);
+        const due = expAmount - alreadyPaid;
+        if (due <= 0) continue;
+        const payNow = Math.min(remaining, due);
+        const newPaid = alreadyPaid + payNow;
+        const isPaid = newPaid >= expAmount;
+        updates.push({ id: exp.id, newPaid, isPaid, expAmount: payNow });
+        remaining -= payNow;
       }
-      if (toPay.length === 0) { toast({ title: "এই পরিমাণে কোনো খরচ পেইড করা যায় না", variant: "destructive" }); return; }
+      if (updates.length === 0) { toast({ title: "এই পরিমাণে কোনো খরচ পেইড করা যায় না", variant: "destructive" }); return; }
       try {
-        for (const id of toPay) {
-          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+        for (const upd of updates) {
+          const { error } = await (supabase as any).from("client_project_expenses").update({ paid_amount: upd.newPaid, is_paid: upd.isPaid }).eq("id", upd.id);
           if (error) throw error;
         }
-        const paidTotal = dueExpenses.filter((e: any) => toPay.includes(e.id)).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-        toast({ title: `৳${amount.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${toPay.length} টি আইটেম)` });
+        toast({ title: `৳${amount.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${updates.length} টি আইটেম)` });
         // Record history with user-entered amount
         await (supabase as any).from("client_payment_history").insert({
           client_profile_id: clientProfileId,
           payment_type: "expense",
           amount: amount,
-          details: { expense_ids: toPay, expense_count: toPay.length, actual_paid: paidTotal },
+          details: { expense_ids: updates.map(u => u.id), expense_count: updates.length, updates: updates.map(u => ({ id: u.id, amount: u.expAmount })) },
         });
         queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
         queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
