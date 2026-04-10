@@ -792,39 +792,7 @@ export default function ClientDashboard() {
           )}
         </div>
 
-        {/* ═══ Client Bottom Nav (mobile only) ═══ */}
-        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-card/95 backdrop-blur-xl border-t border-border/20" />
-          <div className="relative flex items-center justify-around px-2 py-2 pb-safe-bottom">
-            <button
-              onClick={() => { setTimeout(() => dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }}
-              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform scale-105")}
-            >
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-primary/25">
-                <Sparkles className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-[10px] font-semibold text-primary">ড্যাশবোর্ড</span>
-            </button>
-            <button
-              onClick={() => navigate("/client/payments")}
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
-            >
-              <div className="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                <History className="h-4 w-4 text-emerald-400" />
-              </div>
-              <span className="text-[10px] font-semibold text-emerald-400">পেমেন্ট হিস্ট্রি</span>
-            </button>
-            <button
-              onClick={() => navigate("/client/projects")}
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
-            >
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-violet-500/10">
-                <FileText className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <span className="text-[10px] font-semibold text-muted-foreground">প্রজেক্ট সমূহ</span>
-            </button>
-          </div>
-        </nav>
+        <ClientBottomNav />
       </div>
 
       {/* Delete confirmation dialog (desktop) */}
