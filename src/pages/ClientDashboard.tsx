@@ -980,11 +980,3 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     </>
   );
 }
-              <p className="text-xs text-muted-foreground italic text-center">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
-  );
-}
