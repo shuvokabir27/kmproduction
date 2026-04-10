@@ -4,17 +4,22 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 import { ClientArtistBilling } from "@/components/ClientArtistBilling";
 import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const statusMap: Record<string, { label: string; color: string }> = {
   upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400" },
@@ -214,40 +219,12 @@ export default function ClientDashboard() {
                   <span className="text-xl font-bold text-foreground">{projects.length}</span>
                 </CardContent>
               </Card>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 h-auto py-3 px-4"
-                onClick={() => {
-                  const billData = projects.map((p: any) => {
-                    const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
-                    const projPaid = allPayments
-                      .filter((pay: any) => pay.project_id === p.id)
-                      .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-                    return {
-                      projectName: p.name,
-                      projectDate: p.project_date,
-                      clientName: clientProfile?.name || "",
-                      productionBudget: Number(p.total_budget || 0),
-                      productionPaid: projPaid,
-                      artists: arts.map((a: any) => ({
-                        artist_name: a.artist_name,
-                        remuneration: Number(a.remuneration || 0),
-                        paid_amount: Number(a.paid_amount || 0),
-                      })),
-                    };
-                  });
-                  downloadAllProjectsBillPDF({
-                    clientName: clientProfile?.name || "ক্লায়েন্ট",
-                    company: clientProfile?.company || undefined,
-                    projects: billData,
-                  });
-                  toast({ title: "সকল বিল ডাউনলোড হচ্ছে..." });
-                }}
-              >
-                <Download className="h-4 w-4" />
-                <span className="text-xs">সব বিল<br/>ডাউনলোড</span>
-              </Button>
+              <BillDownloadDialog
+                projects={projects}
+                allProjectArtists={allProjectArtists}
+                allPayments={allPayments}
+                clientProfile={clientProfile}
+              />
             </div>
           </div>
         )}
@@ -408,5 +385,181 @@ export default function ClientDashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+/* ─── Bill Download Dialog with filters ─── */
+function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientProfile }: {
+  projects: any[];
+  allProjectArtists: any[];
+  allPayments: any[];
+  clientProfile: any;
+}) {
+  const [open, setOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
+
+  // Reset selections when dialog opens
+  const handleOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      setSelectedIds(new Set(projects.map((p: any) => p.id)));
+      setDateFrom(undefined);
+      setDateTo(undefined);
+    }
+    setOpen(isOpen);
+  };
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((p: any) => {
+      if (!selectedIds.has(p.id)) return false;
+      const pDate = new Date(p.project_date);
+      if (dateFrom && pDate < dateFrom) return false;
+      if (dateTo) {
+        const end = new Date(dateTo);
+        end.setHours(23, 59, 59);
+        if (pDate > end) return false;
+      }
+      return true;
+    });
+  }, [projects, selectedIds, dateFrom, dateTo]);
+
+  const toggleProject = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (selectedIds.size === projects.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(projects.map((p: any) => p.id)));
+    }
+  };
+
+  const handleDownload = () => {
+    if (filteredProjects.length === 0) {
+      toast({ title: "কোনো প্রজেক্ট সিলেক্ট করা হয়নি", variant: "destructive" });
+      return;
+    }
+    const billData = filteredProjects.map((p: any) => {
+      const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+      const projPaid = allPayments
+        .filter((pay: any) => pay.project_id === p.id)
+        .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+      return {
+        projectName: p.name,
+        projectDate: p.project_date,
+        clientName: clientProfile?.name || "",
+        productionBudget: Number(p.total_budget || 0),
+        productionPaid: projPaid,
+        artists: arts.map((a: any) => ({
+          artist_name: a.artist_name,
+          remuneration: Number(a.remuneration || 0),
+          paid_amount: Number(a.paid_amount || 0),
+        })),
+      };
+    });
+    downloadAllProjectsBillPDF({
+      clientName: clientProfile?.name || "প্রজেক্ট ডিরেক্টর",
+      company: clientProfile?.company || undefined,
+      projects: billData,
+    });
+    toast({ title: `${filteredProjects.length} টি প্রজেক্টের বিল ডাউনলোড হচ্ছে...` });
+    setOpen(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-1.5 h-auto py-3 px-4">
+          <Download className="h-4 w-4" />
+          <span className="text-xs">সব বিল<br />ডাউনলোড</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[360px] max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-base">বিল ডাউনলোড ফিল্টার</DialogTitle>
+        </DialogHeader>
+
+        {/* Date Filters */}
+        <div className="space-y-3">
+          <p className="text-xs font-medium text-muted-foreground">তারিখ ফিল্টার</p>
+          <div className="grid grid-cols-2 gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("text-xs justify-start", !dateFrom && "text-muted-foreground")}>
+                  <Calendar className="h-3 w-3 mr-1" />
+                  {dateFrom ? format(dateFrom, "d MMM yy", { locale: bn }) : "শুরু তারিখ"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarPicker mode="single" selected={dateFrom} onSelect={setDateFrom} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("text-xs justify-start", !dateTo && "text-muted-foreground")}>
+                  <Calendar className="h-3 w-3 mr-1" />
+                  {dateTo ? format(dateTo, "d MMM yy", { locale: bn }) : "শেষ তারিখ"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarPicker mode="single" selected={dateTo} onSelect={setDateTo} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+          </div>
+          {(dateFrom || dateTo) && (
+            <Button variant="ghost" size="sm" className="text-xs h-7 px-2" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
+              তারিখ ফিল্টার সরান
+            </Button>
+          )}
+        </div>
+
+        {/* Project Selection */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-medium text-muted-foreground">প্রজেক্ট সিলেক্ট করুন</p>
+            <Button variant="ghost" size="sm" className="text-xs h-6 px-2" onClick={toggleAll}>
+              {selectedIds.size === projects.length ? "সব বাদ" : "সব সিলেক্ট"}
+            </Button>
+          </div>
+          <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
+            {projects.map((p: any) => (
+              <label
+                key={p.id}
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-secondary/50 cursor-pointer"
+              >
+                <Checkbox
+                  checked={selectedIds.has(p.id)}
+                  onCheckedChange={() => toggleProject(p.id)}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium truncate">{p.name}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}
+                  </div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Summary & Download */}
+        <div className="pt-2 border-t border-border space-y-2">
+          <p className="text-xs text-muted-foreground">
+            সিলেক্টেড: <span className="font-bold text-foreground">{filteredProjects.length}</span> / {projects.length} প্রজেক্ট
+          </p>
+          <Button className="w-full gap-2" onClick={handleDownload} disabled={filteredProjects.length === 0}>
+            <Download className="h-4 w-4" />
+            বিল ডাউনলোড করুন ({filteredProjects.length})
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
