@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff, Receipt } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff, Receipt, Trash2, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -53,6 +53,7 @@ function AnimatedValue({ value, prefix = "৳" }: { value: number; prefix?: stri
 
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
+  const queryClient = useQueryClient();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
@@ -130,6 +131,19 @@ export default function ClientDashboard() {
         .from("client_project_expenses")
         .select("*")
         .eq("client_profile_id", clientProfile.id);
+      return data || [];
+    },
+  });
+
+  const { data: clientPaymentHistory = [] } = useQuery({
+    queryKey: ["client-payment-history", clientProfile?.id],
+    enabled: !!clientProfile?.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("client_payment_history")
+        .select("*")
+        .eq("client_profile_id", clientProfile.id)
+        .order("created_at", { ascending: false });
       return data || [];
     },
   });
@@ -538,19 +552,20 @@ export default function ClientDashboard() {
           </motion.div>
         )}
 
-        {/* ═══ Payment History ═══ */}
-        {allPayments.length > 0 && (
+        {/* ═══ Payment History (Production + Client) ═══ */}
+        {(allPayments.length > 0 || clientPaymentHistory.length > 0) && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
             <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
               <div className="p-4 pb-3 flex items-center gap-2">
                 <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <History className="h-3.5 w-3.5 text-emerald-400" />
                 </div>
                 <h3 className="text-sm font-semibold text-foreground">পেমেন্ট হিস্ট্রি</h3>
-                <Badge variant="outline" className="ml-auto text-[10px] h-5 border-border/50">{allPayments.length}</Badge>
+                <Badge variant="outline" className="ml-auto text-[10px] h-5 border-border/50">{allPayments.length + clientPaymentHistory.length}</Badge>
               </div>
               <div className="px-4 pb-4 space-y-2">
-                {allPayments.slice(0, 5).map((pay: any, idx: number) => (
+                {/* Production payments (admin-managed, no delete) */}
+                {allPayments.map((pay: any, idx: number) => (
                   <motion.div
                     key={pay.id}
                     initial={{ opacity: 0, x: -10 }}
@@ -558,28 +573,97 @@ export default function ClientDashboard() {
                     transition={{ delay: idx * 0.05 }}
                     className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/20"
                   >
-                    <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-                      <Wallet className="h-4 w-4 text-emerald-400" />
+                    <div className="h-9 w-9 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+                      <Banknote className="h-4 w-4 text-sky-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
                       <div className="text-[10px] text-muted-foreground">
-                        {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })} • {paymentMethodLabel[pay.payment_method] || pay.payment_method}
+                        {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })} • প্রোডাকশন • {paymentMethodLabel[pay.payment_method] || pay.payment_method}
                       </div>
                     </div>
                     {pay.notes && <span className="text-[10px] text-muted-foreground max-w-[80px] truncate">{pay.notes}</span>}
                   </motion.div>
                 ))}
-                {allPayments.length > 5 && (
-                  <div className="text-center text-[10px] text-muted-foreground pt-1">
-                    + আরো {allPayments.length - 5} টি পেমেন্ট
-                  </div>
-                )}
+                {/* Client payment history (artist/expense, deletable) */}
+                {clientPaymentHistory.map((ph: any, idx: number) => {
+                  const details = ph.details || {};
+                  const typeLabel = ph.payment_type === "artist" ? "আর্টিস্ট" : "শুটিং খরচ";
+                  const typeIcon = ph.payment_type === "artist" ? <Users className="h-4 w-4 text-violet-400" /> : <Receipt className="h-4 w-4 text-orange-400" />;
+                  const typeBg = ph.payment_type === "artist" ? "bg-violet-500/10" : "bg-orange-500/10";
+                  return (
+                    <motion.div
+                      key={ph.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/20"
+                    >
+                      <div className={`h-9 w-9 rounded-xl ${typeBg} flex items-center justify-center shrink-0`}>
+                        {typeIcon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-foreground">৳{Number(ph.amount).toLocaleString("bn-BD")}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {format(new Date(ph.created_at), "d MMM yyyy", { locale: bn })} • {typeLabel}
+                          {details.artist_name && ` • ${details.artist_name}`}
+                          {details.expense_count && ` • ${details.expense_count} টি আইটেম`}
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                        onClick={async () => {
+                          if (!confirm("এই পেমেন্ট ডিলিট করলে টাকা ফেরত যাবে। নিশ্চিত?")) return;
+                          try {
+                            // Reverse the payment
+                            if (ph.payment_type === "artist" && details.updates) {
+                              for (const upd of details.updates) {
+                                // Subtract paid amount back
+                                const { data: current } = await (supabase as any)
+                                  .from("client_project_artists")
+                                  .select("paid_amount, remuneration")
+                                  .eq("id", upd.id)
+                                  .single();
+                                if (current) {
+                                  const newPaid = Math.max(0, Number(current.paid_amount || 0) - Number(upd.amount || 0));
+                                  await (supabase as any)
+                                    .from("client_project_artists")
+                                    .update({ paid_amount: newPaid, is_paid: newPaid >= Number(current.remuneration || 0) })
+                                    .eq("id", upd.id);
+                                }
+                              }
+                            } else if (ph.payment_type === "expense" && details.expense_ids) {
+                              for (const eid of details.expense_ids) {
+                                await (supabase as any)
+                                  .from("client_project_expenses")
+                                  .update({ is_paid: false })
+                                  .eq("id", eid);
+                              }
+                            }
+                            // Delete history record
+                            await (supabase as any).from("client_payment_history").delete().eq("id", ph.id);
+                            toast({ title: "পেমেন্ট ডিলিট ও রিভার্স করা হয়েছে" });
+                            queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
+                            queryClient.invalidateQueries({ queryKey: ["all-client-project-artists"] });
+                            queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+                            queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+                            queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+                          } catch (err: any) {
+                            toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           </motion.div>
         )}
-
         {/* ═══ Projects ═══ */}
         {projects.length === 0 ? (
           <div className="text-center py-20">
@@ -965,8 +1049,16 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           if (error) throw error;
         }
         toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
+        // Record history
+        await (supabase as any).from("client_payment_history").insert({
+          client_profile_id: clientProfileId,
+          payment_type: "expense",
+          amount: selectedExpenseTotal,
+          details: { expense_ids: Array.from(selectedExpenseIds), expense_count: selectedExpenseIds.size },
+        });
         queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
         queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
         setSelectedExpenseIds(new Set());
         setStep("choose");
       } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
@@ -995,8 +1087,16 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
         }
         const paidTotal = dueExpenses.filter((e: any) => toPay.includes(e.id)).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
         toast({ title: `৳${paidTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${toPay.length} টি আইটেম)` });
+        // Record history
+        await (supabase as any).from("client_payment_history").insert({
+          client_profile_id: clientProfileId,
+          payment_type: "expense",
+          amount: paidTotal,
+          details: { expense_ids: toPay, expense_count: toPay.length },
+        });
         queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
         queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
         setCustomExpenseAmount("");
         setStep("choose");
       } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
@@ -1029,6 +1129,16 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
         if (error) throw error;
       }
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
+      // Record payment history
+      await (supabase as any).from("client_payment_history").insert({
+        client_profile_id: clientProfileId,
+        payment_type: "artist",
+        amount,
+        details: {
+          artist_name: selectedGroup.name,
+          updates: updates.map(u => ({ id: u.id, amount: u.amount, projectName: u.projectName })),
+        },
+      });
       setReceiptData({
         artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
         clientName, companyName, amount, totalRemuneration: selectedGroup.totalBill,
@@ -1037,6 +1147,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       });
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
+      queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
       setSelectedArtistName(null); setPayAmount(""); setStep("artist");
     } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
   };
