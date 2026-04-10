@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff, Receipt } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff, Receipt, Trash2, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
