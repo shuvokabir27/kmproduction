@@ -1020,6 +1020,12 @@ export default function ClientDashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {historyReceiptData && (
+        <ClientPaymentReceipt
+          receiptData={historyReceiptData}
+          onClose={() => setHistoryReceiptData(null)}
+        />
+      )}
     </div>
   );
 }
