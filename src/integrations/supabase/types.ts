@@ -253,6 +253,41 @@ export type Database = {
           },
         ]
       }
+      client_payment_history: {
+        Row: {
+          amount: number
+          client_profile_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          payment_type: Database["public"]["Enums"]["client_payment_type"]
+        }
+        Insert: {
+          amount?: number
+          client_profile_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          payment_type: Database["public"]["Enums"]["client_payment_type"]
+        }
+        Update: {
+          amount?: number
+          client_profile_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          payment_type?: Database["public"]["Enums"]["client_payment_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_payment_history_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_profiles: {
         Row: {
           address: string | null
@@ -2099,6 +2134,7 @@ export type Database = {
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "audio" | "video"
       client_expense_category: "food" | "costume" | "transport"
+      client_payment_type: "artist" | "expense"
       conversation_type: "personal" | "group"
       expense_category: "food" | "transport" | "props" | "other"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
@@ -2236,6 +2272,7 @@ export const Constants = {
       call_status: ["ringing", "active", "ended", "missed", "declined"],
       call_type: ["audio", "video"],
       client_expense_category: ["food", "costume", "transport"],
+      client_payment_type: ["artist", "expense"],
       conversation_type: ["personal", "group"],
       expense_category: ["food", "transport", "props", "other"],
       payment_method: ["bank", "bkash", "nagad", "cash"],
