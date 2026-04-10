@@ -36,18 +36,6 @@ const AdminPayments = () => {
 
   const [searchText, setSearchText] = useState("");
   const printRef = useRef<HTMLDivElement>(null);
-
-  const filteredPayments = useMemo(() => {
-    if (!payments) return [];
-    if (!searchText.trim()) return payments;
-    const q = searchText.trim().toLowerCase();
-    return payments.filter((p: any) =>
-      p.profiles?.full_name?.toLowerCase().includes(q) ||
-      String(p.profiles?.member_id || "").includes(q)
-    );
-  }, [payments, searchText]);
-
-  const handleDownloadFiltered = async () => {
     if (filteredPayments.length === 0) { toast.error("কোনো রেকর্ড নেই"); return; }
     const totalAmount = filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
     const container = document.createElement("div");
