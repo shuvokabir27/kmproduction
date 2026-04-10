@@ -64,7 +64,7 @@ export default function ClientDashboard() {
   const paymentHistoryRef = useRef<HTMLDivElement>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [receiptData, setReceiptData] = useState<any>(null);
+  const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
 
   const { data: clientProfile } = useQuery({
