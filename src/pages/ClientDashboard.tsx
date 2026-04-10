@@ -54,7 +54,7 @@ function AnimatedValue({ value, prefix = "৳" }: { value: number; prefix?: stri
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
-  const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | null>(null);
+  const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
 
   const { data: clientProfile } = useQuery({
