@@ -284,8 +284,30 @@ export default function AdminFreelance() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["client-profiles"] });
       setClientDialog(false);
+      setEditClient(null);
       setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
       toast({ title: "ক্লায়েন্ট তৈরি হয়েছে!" });
+    },
+    onError: (err: any) => toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }),
+  });
+
+  const updateClientMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await (supabase as any).from("client_profiles").update({
+        name: clientForm.name,
+        phone: clientForm.phone || null,
+        email: clientForm.email || null,
+        company: clientForm.company || null,
+        address: clientForm.address || null,
+      }).eq("id", editClient.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-profiles"] });
+      setClientDialog(false);
+      setEditClient(null);
+      setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
+      toast({ title: "ক্লায়েন্ট আপডেট হয়েছে!" });
     },
     onError: (err: any) => toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }),
   });
