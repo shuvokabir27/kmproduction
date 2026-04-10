@@ -118,7 +118,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
   };
 
   const totalExpense = expenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-  const totalPaid = expenses.filter((e: any) => e.is_paid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  const totalPaid = expenses.reduce((s: number, e: any) => s + Number(e.paid_amount || 0), 0);
   const totalDue = totalExpense - totalPaid;
 
   return (
