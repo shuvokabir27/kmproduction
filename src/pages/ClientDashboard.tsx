@@ -1049,8 +1049,16 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           if (error) throw error;
         }
         toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
+        // Record history
+        await (supabase as any).from("client_payment_history").insert({
+          client_profile_id: clientProfileId,
+          payment_type: "expense",
+          amount: selectedExpenseTotal,
+          details: { expense_ids: Array.from(selectedExpenseIds), expense_count: selectedExpenseIds.size },
+        });
         queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
         queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
         setSelectedExpenseIds(new Set());
         setStep("choose");
       } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
