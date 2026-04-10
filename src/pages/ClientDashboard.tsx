@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -13,6 +13,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 import { ClientArtistBilling } from "@/components/ClientArtistBilling";
+import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
+import { toast } from "@/hooks/use-toast";
 
 const statusMap: Record<string, { label: string; color: string }> = {
   upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400" },
