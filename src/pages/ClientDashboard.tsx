@@ -57,6 +57,9 @@ export default function ClientDashboard() {
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const paymentHistoryRef = useRef<HTMLDivElement>(null);
+  const projectsRef = useRef<HTMLDivElement>(null);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
