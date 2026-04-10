@@ -449,7 +449,18 @@ export default function ClientProjects() {
                 </AnimatePresence>
               </motion.div>
             );
-          })
+          })}
+
+          {hasMoreProjects && (
+            <Button
+              variant="outline"
+              className="w-full rounded-xl text-xs h-10 border-border/40 gap-1.5"
+              onClick={() => setShowAll(true)}
+            >
+              <Briefcase className="h-3.5 w-3.5" /> সকল প্রজেক্ট দেখুন ({projects.length}টি)
+            </Button>
+          )}
+          </>
         )}
       </div>
       <ClientBottomNav />
