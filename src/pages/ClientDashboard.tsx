@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 import { ClientArtistBilling } from "@/components/ClientArtistBilling";
+import { ClientProjectExpenses } from "@/components/ClientProjectExpenses";
 import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -115,6 +116,18 @@ export default function ClientDashboard() {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("client_project_artists")
+        .select("*")
+        .eq("client_profile_id", clientProfile.id);
+      return data || [];
+    },
+  });
+
+  const { data: allProjectExpenses = [] } = useQuery({
+    queryKey: ["all-client-project-expenses", clientProfile?.id],
+    enabled: !!clientProfile?.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("client_project_expenses")
         .select("*")
         .eq("client_profile_id", clientProfile.id);
       return data || [];
