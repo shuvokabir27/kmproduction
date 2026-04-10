@@ -113,6 +113,46 @@ export default function ClientProjects() {
     },
   });
 
+  const oneMonthAgo = useMemo(() => subMonths(new Date(), 1), []);
+  const isSearchActive = searchText.trim() !== "" || !!filterDate;
+
+  const filteredProjects = useMemo(() => {
+    let list = projects as any[];
+    if (searchText.trim()) {
+      const q = searchText.trim().toLowerCase();
+      list = list.filter((p: any) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.client_name?.toLowerCase().includes(q) ||
+        p.location?.toLowerCase().includes(q)
+      );
+    }
+    if (filterDate) {
+      const dStr = format(filterDate, "yyyy-MM-dd");
+      list = list.filter((p: any) => p.project_date === dStr);
+    }
+    if (!isSearchActive && !showAll) {
+      list = list.filter((p: any) => {
+        try {
+          return isAfter(parseISO(p.project_date), startOfDay(oneMonthAgo));
+        } catch { return true; }
+      });
+    }
+    return list;
+  }, [projects, searchText, filterDate, showAll, isSearchActive, oneMonthAgo]);
+
+  const hasMoreProjects = !isSearchActive && !showAll && filteredProjects.length < projects.length;
+
+  const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
+  const getProjectExpenseTotal = (pid: string) => {
+    return allProjectExpenses.filter((e: any) => e.project_id === pid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  };
+  const getProjectArtistTotals = (pid: string) => {
+    const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
+    const bill = arts.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
+    const paid = arts.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+    return { bill, paid, due: bill - paid, count: arts.length };
+  };
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3">
@@ -124,55 +164,6 @@ export default function ClientProjects() {
     </div>
   );
   if (!user) return <Navigate to="/login" replace />;
-
-  const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
-
-  const getProjectExpenseTotal = (pid: string) => {
-    return allProjectExpenses.filter((e: any) => e.project_id === pid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-  };
-
-  const getProjectArtistTotals = (pid: string) => {
-    const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
-    const bill = arts.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
-    const paid = arts.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
-    return { bill, paid, due: bill - paid, count: arts.length };
-  };
-
-  const oneMonthAgo = useMemo(() => subMonths(new Date(), 1), []);
-  const isSearchActive = searchText.trim() !== "" || !!filterDate;
-
-  const filteredProjects = useMemo(() => {
-    let list = projects as any[];
-
-    // text search
-    if (searchText.trim()) {
-      const q = searchText.trim().toLowerCase();
-      list = list.filter((p: any) =>
-        p.name?.toLowerCase().includes(q) ||
-        p.client_name?.toLowerCase().includes(q) ||
-        p.location?.toLowerCase().includes(q)
-      );
-    }
-
-    // date filter
-    if (filterDate) {
-      const dStr = format(filterDate, "yyyy-MM-dd");
-      list = list.filter((p: any) => p.project_date === dStr);
-    }
-
-    // if not searching and not showing all, limit to last 1 month
-    if (!isSearchActive && !showAll) {
-      list = list.filter((p: any) => {
-        try {
-          return isAfter(parseISO(p.project_date), startOfDay(oneMonthAgo));
-        } catch { return true; }
-      });
-    }
-
-    return list;
-  }, [projects, searchText, filterDate, showAll, isSearchActive, oneMonthAgo]);
-
-  const hasMoreProjects = !isSearchActive && !showAll && filteredProjects.length < projects.length;
 
   return (
     <div className="min-h-screen bg-background">
