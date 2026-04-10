@@ -28,13 +28,7 @@ export function ProfileReviews({ profileId, profileName }: ProfileReviewsProps) 
   const { data: comments } = useQuery({
     queryKey: ["profile-comments", profileId],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profile_comments" as any)
-        .select("*")
-        .eq("profile_id", profileId)
-        .eq("is_approved", true)
-        .order("created_at", { ascending: false })
-        .limit(50);
+      const { data } = await supabase.rpc("get_approved_profile_comments", { _profile_id: profileId });
       return (data ?? []) as any[];
     },
   });
