@@ -438,6 +438,7 @@ export default function ClientDashboard() {
               projects={projects}
               clientName={clientProfile?.name || ""}
               clientProfileId={clientProfile?.id || ""}
+              companyName={clientProfile?.company || ""}
               totalBudget={totalBudget}
               totalProductionPaid={totalProductionPaid}
             />
