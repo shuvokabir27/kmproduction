@@ -927,6 +927,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
   const [selectedArtistName, setSelectedArtistName] = useState<string | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [receiptData, setReceiptData] = useState<any>(null);
+  const [paymentNote, setPaymentNote] = useState("");
 
   const handleOpen = (isOpen: boolean) => {
     if (isOpen) { setStep("choose"); setSelectedArtistName(null); setPayAmount(""); }
