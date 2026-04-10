@@ -69,6 +69,7 @@ export default function AdminFreelance() {
   const [lineupDialog, setLineupDialog] = useState<string | null>(null);
   
   const [clientDialog, setClientDialog] = useState(false);
+  const [editClient, setEditClient] = useState<any>(null);
   const [clientForm, setClientForm] = useState({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [paymentForm, setPaymentForm] = useState({ amount: "", payment_method: "cash", notes: "", client_profile_id: "" });
@@ -283,8 +284,30 @@ export default function AdminFreelance() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["client-profiles"] });
       setClientDialog(false);
+      setEditClient(null);
       setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
       toast({ title: "ক্লায়েন্ট তৈরি হয়েছে!" });
+    },
+    onError: (err: any) => toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }),
+  });
+
+  const updateClientMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await (supabase as any).from("client_profiles").update({
+        name: clientForm.name,
+        phone: clientForm.phone || null,
+        email: clientForm.email || null,
+        company: clientForm.company || null,
+        address: clientForm.address || null,
+      }).eq("id", editClient.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-profiles"] });
+      setClientDialog(false);
+      setEditClient(null);
+      setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" });
+      toast({ title: "ক্লায়েন্ট আপডেট হয়েছে!" });
     },
     onError: (err: any) => toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }),
   });
@@ -659,7 +682,7 @@ export default function AdminFreelance() {
 
           <TabsContent value="clients" className="space-y-4 mt-4">
             <div className="flex justify-end">
-              <Button onClick={() => setClientDialog(true)} className="gap-2">
+              <Button onClick={() => { setEditClient(null); setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" }); setClientDialog(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> নতুন ক্লায়েন্ট
               </Button>
             </div>
@@ -686,9 +709,18 @@ export default function AdminFreelance() {
                             {c.address && <div className="flex items-center gap-1"><MapPin className="h-3 w-3" />{c.address}</div>}
                           </div>
                         </div>
-                        <Badge variant={c.is_active ? "default" : "secondary"} className="shrink-0 text-xs">
-                          {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                        </Badge>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <Badge variant={c.is_active ? "default" : "secondary"} className="text-xs">
+                            {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
+                          </Badge>
+                          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => {
+                            setEditClient(c);
+                            setClientForm({ client_id: c.client_id, name: c.name, phone: c.phone || "", email: c.email || "", company: c.company || "", address: c.address || "", password: "" });
+                            setClientDialog(true);
+                          }}>
+                            <Edit className="h-3 w-3" /> এডিট
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -892,26 +924,28 @@ export default function AdminFreelance() {
             </div>
           </DialogContent>
         </Dialog>
-        {/* Client Create Dialog */}
-        <Dialog open={clientDialog} onOpenChange={setClientDialog}>
+        {/* Client Create/Edit Dialog */}
+        <Dialog open={clientDialog} onOpenChange={(v) => { setClientDialog(v); if (!v) setEditClient(null); }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>নতুন ক্লায়েন্ট তৈরি</DialogTitle>
+              <DialogTitle>{editClient ? "ক্লায়েন্ট এডিট" : "নতুন ক্লায়েন্ট তৈরি"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              <div><Label>ক্লায়েন্ট আইডি *</Label><Input value={clientForm.client_id} onChange={(e) => setClientForm({ ...clientForm, client_id: e.target.value })} placeholder="যেমন: CLIENT-001" /></div>
+              {!editClient && <div><Label>ক্লায়েন্ট আইডি *</Label><Input value={clientForm.client_id} onChange={(e) => setClientForm({ ...clientForm, client_id: e.target.value })} placeholder="যেমন: CLIENT-001" /></div>}
               <div><Label>নাম *</Label><Input value={clientForm.name} onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })} placeholder="ক্লায়েন্টের নাম" /></div>
               <div><Label>ফোন</Label><Input value={clientForm.phone} onChange={(e) => setClientForm({ ...clientForm, phone: e.target.value })} placeholder="ফোন নম্বর" /></div>
               <div><Label>ইমেইল</Label><Input value={clientForm.email} onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })} placeholder="ইমেইল" /></div>
               <div><Label>কোম্পানি</Label><Input value={clientForm.company} onChange={(e) => setClientForm({ ...clientForm, company: e.target.value })} placeholder="কোম্পানির নাম" /></div>
               <div><Label>ঠিকানা</Label><Input value={clientForm.address} onChange={(e) => setClientForm({ ...clientForm, address: e.target.value })} placeholder="ঠিকানা" /></div>
-              <div><Label>পাসওয়ার্ড *</Label><Input type="password" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} placeholder="লগইন পাসওয়ার্ড" /></div>
+              {!editClient && <div><Label>পাসওয়ার্ড *</Label><Input type="password" value={clientForm.password} onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })} placeholder="লগইন পাসওয়ার্ড" /></div>}
               <Button
                 className="w-full"
-                disabled={!clientForm.client_id || !clientForm.name || !clientForm.password || createClientMutation.isPending}
-                onClick={() => createClientMutation.mutate()}
+                disabled={!clientForm.name || (editClient ? updateClientMutation.isPending : (!clientForm.client_id || !clientForm.password || createClientMutation.isPending))}
+                onClick={() => editClient ? updateClientMutation.mutate() : createClientMutation.mutate()}
               >
-                {createClientMutation.isPending ? "তৈরি হচ্ছে..." : "ক্লায়েন্ট তৈরি করুন"}
+                {editClient
+                  ? (updateClientMutation.isPending ? "আপডেট হচ্ছে..." : "আপডেট করুন")
+                  : (createClientMutation.isPending ? "তৈরি হচ্ছে..." : "ক্লায়েন্ট তৈরি করুন")}
               </Button>
             </div>
           </DialogContent>
