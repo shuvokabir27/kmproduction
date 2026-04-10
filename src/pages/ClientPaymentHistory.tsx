@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import ClientBottomNav from "@/components/ClientBottomNav";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -201,7 +202,7 @@ export default function ClientPaymentHistory() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 space-y-2 pb-8">
+      <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 space-y-2 pb-24 md:pb-8">
         {totalHistoryCount === 0 ? (
           <div className="text-center py-20">
             <div className="h-16 w-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
@@ -338,6 +339,7 @@ export default function ClientPaymentHistory() {
           onClose={() => setHistoryReceiptData(null)}
         />
       )}
+      <ClientBottomNav />
     </div>
   );
 }
