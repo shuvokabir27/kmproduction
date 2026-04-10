@@ -1820,7 +1820,6 @@ const EXPENSE_SUB_LABELS: Record<string, string> = { food: "খাবার", co
 function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allProjectExpenses }: {
   projects: any[]; allPayments: any[]; allProjectArtists: any[]; allProjectExpenses: any[];
 }) {
-  const [chartType, setChartType] = useState<"bar" | "pie">("pie");
   const [selectedProject, setSelectedProject] = useState<string>("all");
 
   const filteredPayments = selectedProject === "all" ? allPayments : allPayments.filter((p: any) => p.project_id === selectedProject);
@@ -1849,19 +1848,6 @@ function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allP
 
   if (categoryData.length === 0) return null;
 
-  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
-    if (percent < 0.05) return null;
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    return (
-      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700}>
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
-
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
       <div className="rounded-2xl border border-border/40 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden">
@@ -1874,18 +1860,6 @@ function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allP
               </div>
               ক্যাটেগরি অনুযায়ী খরচ
             </h3>
-            <div className="flex items-center gap-1">
-              {(["pie", "bar"] as const).map(t => (
-                <button key={t} onClick={() => setChartType(t)}
-                  className={cn("text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all",
-                    chartType === t
-                      ? "bg-primary/15 border-primary/30 text-primary shadow-sm"
-                      : "border-border/30 text-muted-foreground hover:border-border/60"
-                  )}>
-                  {t === "pie" ? "পাই" : "বার"}
-                </button>
-              ))}
-            </div>
           </div>
           {/* Project filter */}
           <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
@@ -1909,59 +1883,32 @@ function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allP
         {/* Chart */}
         <div className="h-[220px] px-2">
           <ResponsiveContainer width="100%" height="100%">
-            {chartType === "pie" ? (
-              <PieChart>
-                <Pie data={categoryData} cx="50%" cy="50%" innerRadius={45} outerRadius={85}
-                  dataKey="value" nameKey="name" labelLine={false} label={renderCustomLabel}
-                  strokeWidth={2} stroke="hsl(var(--card))">
-                  {categoryData.map((d, i) => <Cell key={i} fill={d.color} />)}
-                </Pie>
-                <RechartsTooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0];
-                    const pct = grandTotal > 0 ? Math.round((Number(d.value || 0) / grandTotal) * 100) : 0;
-                    return (
-                      <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-md shadow-xl px-3 py-2">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: (d.payload as any)?.color }} />
-                          <span className="text-[11px] font-semibold text-foreground">{d.name}</span>
-                        </div>
-                        <span className="text-[12px] font-bold text-foreground">৳{Number(d.value || 0).toLocaleString("bn-BD")}</span>
-                        <span className="text-[10px] text-muted-foreground ml-1">({pct}%)</span>
+            <BarChart data={categoryData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.15)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))", fontWeight: 500 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={45}
+                tickFormatter={(v) => v >= 1000 ? `৳${(v / 1000).toFixed(0)}k` : `৳${v}`} />
+              <RechartsTooltip
+                content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null;
+                  const d = payload[0];
+                  const pct = grandTotal > 0 ? Math.round((Number(d.value || 0) / grandTotal) * 100) : 0;
+                  return (
+                    <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-md shadow-xl px-3 py-2">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: (d.payload as any)?.color }} />
+                        <span className="text-[11px] font-semibold text-foreground">{(d.payload as any)?.name}</span>
                       </div>
-                    );
-                  }}
-                />
-              </PieChart>
-            ) : (
-              <BarChart data={categoryData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.15)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))", fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={45}
-                  tickFormatter={(v) => v >= 1000 ? `৳${(v / 1000).toFixed(0)}k` : `৳${v}`} />
-                <RechartsTooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0];
-                    const pct = grandTotal > 0 ? Math.round((Number(d.value || 0) / grandTotal) * 100) : 0;
-                    return (
-                      <div className="rounded-xl border border-border/50 bg-card/95 backdrop-blur-md shadow-xl px-3 py-2">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: (d.payload as any)?.color }} />
-                          <span className="text-[11px] font-semibold text-foreground">{(d.payload as any)?.name}</span>
-                        </div>
-                        <span className="text-[12px] font-bold text-foreground">৳{Number(d.value || 0).toLocaleString("bn-BD")}</span>
-                        <span className="text-[10px] text-muted-foreground ml-1">({pct}%)</span>
-                      </div>
-                    );
-                  }}
-                />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={40}>
-                  {categoryData.map((d, i) => <Cell key={i} fill={d.color} />)}
-                </Bar>
-              </BarChart>
-            )}
+                      <span className="text-[12px] font-bold text-foreground">৳{Number(d.value || 0).toLocaleString("bn-BD")}</span>
+                      <span className="text-[10px] text-muted-foreground ml-1">({pct}%)</span>
+                    </div>
+                  );
+                }}
+              />
+              <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={40}>
+                {categoryData.map((d, i) => <Cell key={i} fill={d.color} />)}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
