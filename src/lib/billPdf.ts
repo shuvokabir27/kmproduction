@@ -299,7 +299,8 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
 
   const totalArtistBill = artistList.reduce((s, a) => s + a.totalBill, 0);
   const totalArtistPaid = artistList.reduce((s, a) => s + a.totalPaid, 0);
-  const grandBill = totalProductionBill + totalArtistBill + totalExpenses;
+  const totalExpensesDue = totalExpenses - totalExpensesPaid;
+  const grandBill = totalProductionBill + totalArtistBill;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandBill - grandPaid;
 
