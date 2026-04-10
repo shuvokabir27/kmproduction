@@ -565,7 +565,15 @@ export default function ClientDashboard() {
           </motion.div>
         )}
 
-        {/* ═══ Desktop/Tablet: Payment History (hidden on mobile) ═══ */}
+        {/* ═══ Expense Trend Chart ═══ */}
+        {projects.length > 1 && (
+          <ExpenseTrendChart
+            projects={projects}
+            allPayments={allPayments}
+            allProjectArtists={allProjectArtists}
+            allProjectExpenses={allProjectExpenses}
+          />
+        )}
         <div className="hidden md:block">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
             <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
