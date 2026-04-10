@@ -1910,7 +1910,6 @@ function CategoryBreakdownChart({ projects, allPayments, allProjectArtists, allP
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          </ResponsiveContainer>
         </div>
 
         {/* Category breakdown cards */}
