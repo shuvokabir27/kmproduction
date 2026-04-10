@@ -364,6 +364,107 @@ export default function ClientProjects() {
   );
 }
 
+/* ═══ Project Budget Summary ═══ */
+const expenseCategoryLabels: Record<string, string> = {
+  food: "খাবার",
+  costume: "কস্টিউম",
+  transport: "যাতায়াত",
+};
+
+function ProjectBudgetSummary({ productionBudget, productionPaid, artistBill, artistPaid, expenseTotal, expensesPaidTotal, expenses }: {
+  productionBudget: number;
+  productionPaid: number;
+  artistBill: number;
+  artistPaid: number;
+  expenseTotal: number;
+  expensesPaidTotal: number;
+  expenses: any[];
+}) {
+  const [open, setOpen] = useState(false);
+  const grandTotal = productionBudget + artistBill + expenseTotal;
+  const grandPaid = productionPaid + artistPaid + expensesPaidTotal;
+  const grandDue = grandTotal - grandPaid;
+
+  // expense breakdown by category
+  const expByCategory: Record<string, number> = {};
+  expenses.forEach((e: any) => {
+    const cat = e.category || "other";
+    expByCategory[cat] = (expByCategory[cat] || 0) + Number(e.amount || 0);
+  });
+
+  const sections = [
+    { label: "প্রোডাকশন", total: productionBudget, paid: productionPaid, color: "sky" },
+    { label: "আর্টিস্ট", total: artistBill, paid: artistPaid, color: "violet" },
+    { label: "শুটিং খরচ", total: expenseTotal, paid: expensesPaidTotal, color: "orange" },
+  ].filter(s => s.total > 0);
+
+  return (
+    <div className="rounded-xl border border-primary/20 overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full p-4 active:opacity-80 transition-opacity bg-gradient-to-r from-primary/8 to-primary/3"
+      >
+        <div className="text-[10px] text-muted-foreground mb-1">সর্বমোট প্রজেক্ট বাজেট</div>
+        <div className="text-2xl font-bold text-primary">৳{grandTotal.toLocaleString("bn-BD")}</div>
+        <div className="flex items-center justify-center gap-3 mt-2">
+          <span className="text-[10px] text-emerald-400">পেইড: ৳{grandPaid.toLocaleString("bn-BD")}</span>
+          {grandDue > 0 && <span className="text-[10px] text-amber-400">বাকি: ৳{grandDue.toLocaleString("bn-BD")}</span>}
+          <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+        </div>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-3 pb-3 pt-1 space-y-2 border-t border-border/20">
+              {sections.map(s => {
+                const due = s.total - s.paid;
+                const pct = s.total > 0 ? Math.round((s.total / grandTotal) * 100) : 0;
+                return (
+                  <div key={s.label} className="rounded-lg bg-secondary/20 p-2.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-foreground">{s.label}</span>
+                      <span className="text-xs font-bold text-foreground">৳{s.total.toLocaleString("bn-BD")} <span className="text-[9px] text-muted-foreground font-normal">({pct}%)</span></span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-secondary/40 overflow-hidden mb-1">
+                      <div
+                        className={cn("h-full rounded-full transition-all",
+                          s.color === "sky" ? "bg-sky-400" : s.color === "violet" ? "bg-violet-400" : "bg-orange-400"
+                        )}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="flex gap-3 text-[10px]">
+                      <span className="text-emerald-400">পেইড: ৳{s.paid.toLocaleString("bn-BD")}</span>
+                      {due > 0 && <span className="text-amber-400">বাকি: ৳{due.toLocaleString("bn-BD")}</span>}
+                    </div>
+                    {/* শুটিং খরচের সাব-ক্যাটেগরি */}
+                    {s.label === "শুটিং খরচ" && Object.keys(expByCategory).length > 0 && (
+                      <div className="mt-1.5 pt-1.5 border-t border-border/15 space-y-0.5">
+                        {Object.entries(expByCategory).map(([cat, amt]) => (
+                          <div key={cat} className="flex items-center justify-between text-[10px]">
+                            <span className="text-muted-foreground">{expenseCategoryLabels[cat] || cat}</span>
+                            <span className="text-foreground font-medium">৳{amt.toLocaleString("bn-BD")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ═══ Collapsible Section Component ═══ */
 const COLOR_MAP: Record<string, { bg: string; border: string; text: string; iconBg: string }> = {
   violet: { bg: "from-violet-500/8 to-violet-500/3", border: "border-violet-500/20", text: "text-violet-400", iconBg: "bg-violet-500/15" },
