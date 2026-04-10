@@ -679,12 +679,27 @@ export default function ClientDashboard() {
                                       {details.expense_count && ` • ${details.expense_count} টি আইটেম`}
                                     </div>
                                   </div>
-                                  <Button variant="ghost" size="sm"
-                                    className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                                    onClick={() => setDeleteConfirm({ type: "history", rec: ph })}
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                  </Button>
+                                  <div className="flex gap-1 shrink-0">
+                                    <Button variant="ghost" size="sm"
+                                      className="h-7 w-7 p-0 text-primary hover:text-primary hover:bg-primary/10"
+                                      onClick={() => setReceiptData({
+                                        clientName: clientProfile?.name || "",
+                                        company: clientProfile?.company || undefined,
+                                        amount: Number(ph.amount),
+                                        paymentType: ph.payment_type,
+                                        details: details,
+                                        date: ph.created_at,
+                                      })}
+                                    >
+                                      <Download className="h-3.5 w-3.5" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm"
+                                      className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                      onClick={() => setDeleteConfirm({ type: "history", rec: ph })}
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                  </div>
                                 </motion.div>
                               );
                             })}
