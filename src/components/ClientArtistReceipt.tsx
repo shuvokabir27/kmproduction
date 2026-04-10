@@ -77,7 +77,7 @@ const ClientArtistReceipt = ({ receiptData, onClose }: ClientArtistReceiptProps)
             {/* Header */}
             <div className="text-center border-b-2 border-dashed border-gray-400 pb-4 mb-4">
               <p className="text-[10px] tracking-[0.3em] text-gray-500 uppercase mb-1">
-                Kuakata Multimedia
+                {receiptData.companyName || "Kuakata Multimedia"}
               </p>
               <h2 className="text-xl font-black tracking-wider">
                 আর্টিস্ট পেমেন্ট রিসিট
