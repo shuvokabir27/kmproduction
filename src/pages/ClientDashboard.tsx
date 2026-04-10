@@ -442,6 +442,7 @@ export default function ClientDashboard() {
                 projects={projects}
                 allProjectArtists={allProjectArtists}
                 allPayments={allPayments}
+                allProjectExpenses={allProjectExpenses}
                 clientProfile={clientProfile}
               />
             </div>
