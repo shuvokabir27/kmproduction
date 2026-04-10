@@ -28,10 +28,10 @@ const PublicHome = () => {
   const { data: members } = useQuery({
     queryKey: ["public-members"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").eq("is_active", true);
-      const filtered = (data as any[] ?? []).filter((m: any) => m.show_on_public !== false);
-      filtered.sort((a: any, b: any) => (a.public_display_order ?? 0) - (b.public_display_order ?? 0));
-      return filtered;
+      const { data } = await supabase.rpc("get_public_profiles");
+      const results = (data as any[] ?? []);
+      results.sort((a: any, b: any) => (a.public_display_order ?? 0) - (b.public_display_order ?? 0));
+      return results;
     },
   });
 

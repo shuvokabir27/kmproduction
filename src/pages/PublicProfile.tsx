@@ -24,8 +24,9 @@ const PublicProfile = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").eq("member_id", Number(memberId)).single();
-      return data;
+      const { data } = await supabase.rpc("get_public_profile_by_member_id", { _member_id: Number(memberId) });
+      const rows = data as any[];
+      return rows?.[0] ?? null;
     },
   });
 
