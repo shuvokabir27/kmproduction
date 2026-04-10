@@ -59,10 +59,16 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
       if (!receiptRef.current) return;
       try {
         const dataUrl = await toJpeg(receiptRef.current, { quality: 0.95, backgroundColor: "#fafaf7" });
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
         const link = document.createElement("a");
+        link.href = blobUrl;
         link.download = `receipt-${receiptNo}.jpg`;
-        link.href = dataUrl;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
       } catch (err) {
         console.error("Download failed", err);
       }
