@@ -85,6 +85,7 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পারিশ্রমিক</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পেইড</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বাকি</th>
+            <th style="padding:8px 10px;text-align:center;border:1px solid #1e1e28;">স্ট্যাটাস</th>
           </tr>
         </thead>
         <tbody>
