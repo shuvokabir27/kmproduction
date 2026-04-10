@@ -522,7 +522,7 @@ const AdminPayments = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
-                {payments?.map((p: any) => {
+                {filteredPayments.map((p: any) => {
                   const MIcon = methodIcon[p.payment_method] || CreditCard;
                   return (
                      <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
@@ -582,8 +582,8 @@ const AdminPayments = () => {
                     </tr>
                   );
                 })}
-                {payments?.length === 0 && (
-                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">কোনো পেমেন্ট নেই</td></tr>
+                {filteredPayments.length === 0 && (
+                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">{searchText.trim() ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট নেই"}</td></tr>
                 )}
               </tbody>
             </table>
