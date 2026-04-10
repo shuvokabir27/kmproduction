@@ -9,6 +9,12 @@ interface ArtistBillItem {
   paid_amount: number;
 }
 
+interface ExpenseItem {
+  category: string;
+  amount: number;
+  description?: string;
+}
+
 interface ProjectBillData {
   projectName: string;
   projectDate: string;
@@ -17,6 +23,7 @@ interface ProjectBillData {
   productionBudget: number;
   productionPaid: number;
   artists: ArtistBillItem[];
+  expenses?: ExpenseItem[];
 }
 
 interface AllProjectsBillData {
@@ -48,11 +55,18 @@ function fmt(n: number) {
   return "৳" + n.toLocaleString("bn-BD");
 }
 
+const expenseCategoryLabel: Record<string, string> = {
+  food: "খাবার",
+  costume: "কস্টিউম",
+  transport: "যাতায়াত",
+};
+
 function buildSingleProjectHTML(data: ProjectBillData): string {
   const dateStr = format(new Date(data.projectDate), "d MMMM yyyy", { locale: bn });
   const totalArtistBill = data.artists.reduce((s, a) => s + a.remuneration, 0);
   const totalArtistPaid = data.artists.reduce((s, a) => s + a.paid_amount, 0);
-  const grandBill = data.productionBudget + totalArtistBill;
+  const totalExpenses = (data.expenses || []).reduce((s, e) => s + e.amount, 0);
+  const grandBill = data.productionBudget + totalArtistBill + totalExpenses;
   const grandPaid = data.productionPaid + totalArtistPaid;
   const grandDue = grandBill - grandPaid;
 
@@ -125,6 +139,30 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
           })()}
         </tbody>
       </table>
+      
+      ${(data.expenses || []).length > 0 ? `
+      <h3 style="font-size:15px;font-weight:bold;margin-bottom:10px;color:#1e1e28;">শুটিং খরচ</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">
+        <thead>
+          <tr style="background:#1e1e28;color:#fff;">
+            <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">ক্যাটাগরি</th>
+            <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">বিবরণ</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পরিমাণ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(data.expenses || []).map(e => `<tr>
+            <td style="padding:8px 10px;border:1px solid #ddd;">${expenseCategoryLabel[e.category] || e.category}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;">${e.description || "-"}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(e.amount)}</td>
+          </tr>`).join("")}
+          <tr style="background:#f0f4ff;font-weight:bold;">
+            <td style="padding:8px 10px;border:1px solid #ddd;" colspan="2">মোট শুটিং খরচ</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalExpenses)}</td>
+          </tr>
+        </tbody>
+      </table>
+      ` : ""}
       
       <div style="background:#1e1e28;border-radius:8px;padding:16px 20px;margin-top:10px;">
         <table style="width:100%;font-size:14px;color:#fff;">
@@ -211,6 +249,9 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
   let totalProductionBill = 0;
   let totalProductionPaid = 0;
 
+  let totalExpenses = 0;
+  const expenseMap: Record<string, number> = {};
+
   data.projects.forEach((p) => {
     totalProductionBill += p.productionBudget;
     totalProductionPaid += p.productionPaid;
@@ -223,6 +264,11 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
       artistMap[key].totalBill += a.remuneration;
       artistMap[key].totalPaid += a.paid_amount;
     });
+    (p.expenses || []).forEach((e) => {
+      totalExpenses += e.amount;
+      const cat = expenseCategoryLabel[e.category] || e.category;
+      expenseMap[cat] = (expenseMap[cat] || 0) + e.amount;
+    });
   });
 
   const artistList = Object.entries(artistMap).map(([key, val]) => {
@@ -234,7 +280,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
 
   const totalArtistBill = artistList.reduce((s, a) => s + a.totalBill, 0);
   const totalArtistPaid = artistList.reduce((s, a) => s + a.totalPaid, 0);
-  const grandBill = totalProductionBill + totalArtistBill;
+  const grandBill = totalProductionBill + totalArtistBill + totalExpenses;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandBill - grandPaid;
 
@@ -336,6 +382,28 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
           </tr>
         </tbody>
       </table>
+
+      ${totalExpenses > 0 ? `
+      <h3 style="font-size:15px;font-weight:bold;margin-bottom:10px;color:#1e1e28;">শুটিং খরচ সামারি</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">
+        <thead>
+          <tr style="background:#1e1e28;color:#fff;">
+            <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">ক্যাটাগরি</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">মোট পরিমাণ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${Object.entries(expenseMap).map(([cat, amt]) => `<tr>
+            <td style="padding:8px 10px;border:1px solid #ddd;">${cat}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(amt)}</td>
+          </tr>`).join("")}
+          <tr style="background:#f0f4ff;font-weight:bold;">
+            <td style="padding:8px 10px;border:1px solid #ddd;">মোট শুটিং খরচ</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalExpenses)}</td>
+          </tr>
+        </tbody>
+      </table>
+      ` : ""}
 
       <div style="background:#1e1e28;border-radius:8px;padding:16px 20px;margin-top:10px;">
         <table style="width:100%;font-size:14px;color:#fff;">

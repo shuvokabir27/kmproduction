@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
 import { ClientArtistBilling } from "@/components/ClientArtistBilling";
+import { ClientProjectExpenses } from "@/components/ClientProjectExpenses";
 import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -121,6 +122,18 @@ export default function ClientDashboard() {
     },
   });
 
+  const { data: allProjectExpenses = [] } = useQuery({
+    queryKey: ["all-client-project-expenses", clientProfile?.id],
+    enabled: !!clientProfile?.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("client_project_expenses")
+        .select("*")
+        .eq("client_profile_id", clientProfile.id);
+      return data || [];
+    },
+  });
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3">
@@ -143,11 +156,17 @@ export default function ClientDashboard() {
   const totalArtistPaid = allProjectArtists.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
   const artistDue = totalArtistBill - totalArtistPaid;
 
-  const grandTotal = totalBudget + totalArtistBill;
+  const totalExpenses = allProjectExpenses.reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+
+  const grandTotal = totalBudget + totalArtistBill + totalExpenses;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandTotal - grandPaid;
 
   const paidPercent = grandTotal > 0 ? Math.round((grandPaid / grandTotal) * 100) : 0;
+
+  const getProjectExpenseTotal = (pid: string) => {
+    return allProjectExpenses.filter((e: any) => e.project_id === pid).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+  };
 
   const getProjectArtistTotals = (pid: string) => {
     const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
@@ -423,6 +442,7 @@ export default function ClientDashboard() {
                 projects={projects}
                 allProjectArtists={allProjectArtists}
                 allPayments={allPayments}
+                allProjectExpenses={allProjectExpenses}
                 clientProfile={clientProfile}
               />
             </div>
@@ -506,7 +526,8 @@ export default function ClientDashboard() {
               const isOpen = expandedProject === p.id;
               const artTotals = getProjectArtistTotals(p.id);
               const projProductionPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-              const projTotal = Number(p.total_budget) + artTotals.bill;
+              const projExpenseTotal = getProjectExpenseTotal(p.id);
+              const projTotal = Number(p.total_budget) + artTotals.bill + projExpenseTotal;
 
               return (
                 <motion.div
@@ -558,6 +579,11 @@ export default function ClientDashboard() {
                           {artTotals.due > 0 && <span className="text-amber-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
                         </span>
                       )}
+                      {projExpenseTotal > 0 && (
+                        <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/15">
+                          খরচ ৳{projExpenseTotal.toLocaleString("bn-BD")}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -583,6 +609,7 @@ export default function ClientDashboard() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+                                const exps = allProjectExpenses.filter((e: any) => e.project_id === p.id);
                                 downloadProjectBillPDF({
                                   projectName: p.name,
                                   projectDate: p.project_date,
@@ -594,6 +621,11 @@ export default function ClientDashboard() {
                                     artist_name: a.artist_name,
                                     remuneration: Number(a.remuneration || 0),
                                     paid_amount: Number(a.paid_amount || 0),
+                                  })),
+                                  expenses: exps.map((e: any) => ({
+                                    category: e.category,
+                                    amount: Number(e.amount || 0),
+                                    description: e.description || "",
                                   })),
                                 });
                                 toast({ title: "বিল ডাউনলোড হচ্ছে..." });
@@ -612,6 +644,10 @@ export default function ClientDashboard() {
                             clientProfileId={clientProfile.id}
                             clientName={clientProfile?.name || "ক্লায়েন্ট"}
                             projectName={p.name}
+                          />
+                          <ClientProjectExpenses
+                            projectId={p.id}
+                            clientProfileId={clientProfile.id}
                           />
                           <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
                           <ClientProjectScript
@@ -644,8 +680,8 @@ export default function ClientDashboard() {
 /* ═══════════════════════════════════════════
    Bill Download Dialog (unchanged logic)
    ═══════════════════════════════════════════ */
-function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientProfile }: {
-  projects: any[]; allProjectArtists: any[]; allPayments: any[]; clientProfile: any;
+function BillDownloadDialog({ projects, allProjectArtists, allPayments, allProjectExpenses, clientProfile }: {
+  projects: any[]; allProjectArtists: any[]; allPayments: any[]; allProjectExpenses: any[]; clientProfile: any;
 }) {
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -676,11 +712,13 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
     if (filteredProjects.length === 0) { toast({ title: "কোনো প্রজেক্ট সিলেক্ট করা হয়নি", variant: "destructive" }); return; }
     const billData = filteredProjects.map((p: any) => {
       const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
+      const exps = allProjectExpenses.filter((e: any) => e.project_id === p.id);
       const projPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
       return {
         projectName: p.name, projectDate: p.project_date, clientName: clientProfile?.name || "",
         productionBudget: Number(p.total_budget || 0), productionPaid: projPaid,
         artists: arts.map((a: any) => ({ artist_name: a.artist_name, remuneration: Number(a.remuneration || 0), paid_amount: Number(a.paid_amount || 0) })),
+        expenses: exps.map((e: any) => ({ category: e.category, amount: Number(e.amount || 0), description: e.description || "" })),
       };
     });
     downloadAllProjectsBillPDF({ clientName: clientProfile?.name || "প্রজেক্ট ডিরেক্টর", company: clientProfile?.company || undefined, projects: billData });
