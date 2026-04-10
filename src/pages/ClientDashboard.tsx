@@ -2,13 +2,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, Clock, LogOut, Wallet, Users, Banknote, Download, Filter, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClientProjectScript } from "@/components/ClientProjectScript";
 import { ClientSceneEditor } from "@/components/ClientSceneEditor";
@@ -23,11 +22,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 
-const statusMap: Record<string, { label: string; color: string }> = {
-  upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400" },
-  ongoing: { label: "চলছে", color: "bg-amber-500/20 text-amber-400" },
-  completed: { label: "সম্পন্ন", color: "bg-emerald-500/20 text-emerald-400" },
-  paid: { label: "পেইড", color: "bg-violet-500/20 text-violet-400" },
+const statusMap: Record<string, { label: string; color: string; bg: string }> = {
+  upcoming: { label: "আসন্ন", color: "text-sky-400", bg: "bg-sky-500/15 border-sky-500/20" },
+  ongoing: { label: "চলছে", color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/20" },
+  completed: { label: "সম্পন্ন", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/20" },
+  paid: { label: "পেইড", color: "text-violet-400", bg: "bg-violet-500/15 border-violet-500/20" },
 };
 
 const paymentMethodLabel: Record<string, string> = {
@@ -37,10 +36,25 @@ const paymentMethodLabel: Record<string, string> = {
   bank: "ব্যাংক",
 };
 
+/* ─── Animated Counter ─── */
+function AnimatedValue({ value, prefix = "৳" }: { value: number; prefix?: string }) {
+  return (
+    <motion.span
+      key={value}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {prefix}{value.toLocaleString("bn-BD")}
+    </motion.span>
+  );
+}
+
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | null>(null);
+  const [showBalance, setShowBalance] = useState(true);
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
@@ -95,7 +109,6 @@ export default function ClientDashboard() {
     },
   });
 
-  // Fetch all artist billing data across all projects
   const { data: allProjectArtists = [] } = useQuery({
     queryKey: ["all-client-project-artists", clientProfile?.id],
     enabled: !!clientProfile?.id,
@@ -108,27 +121,34 @@ export default function ClientDashboard() {
     },
   });
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">লোড হচ্ছে...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3">
+        <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center animate-pulse">
+          <Briefcase className="h-5 w-5 text-primary" />
+        </div>
+        <span className="text-sm text-muted-foreground">লোড হচ্ছে...</span>
+      </motion.div>
+    </div>
+  );
   if (!user) return <Navigate to="/login" replace />;
 
   const getScenes = (pid: string) => allScenes.filter((s: any) => s.project_id === pid);
 
-  // Production bill (what client pays to KMP)
   const totalBudget = projects.reduce((s: number, p: any) => s + Number(p.total_budget || 0), 0);
   const totalProductionPaid = allPayments.reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
   const productionDue = totalBudget - totalProductionPaid;
 
-  // Artist bill totals
   const totalArtistBill = allProjectArtists.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
   const totalArtistPaid = allProjectArtists.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
   const artistDue = totalArtistBill - totalArtistPaid;
 
-  // Combined totals
   const grandTotal = totalBudget + totalArtistBill;
   const grandPaid = totalProductionPaid + totalArtistPaid;
   const grandDue = grandTotal - grandPaid;
 
-  // Per-project artist totals helper
+  const paidPercent = grandTotal > 0 ? Math.round((grandPaid / grandTotal) * 100) : 0;
+
   const getProjectArtistTotals = (pid: string) => {
     const arts = allProjectArtists.filter((a: any) => a.project_id === pid);
     const bill = arts.reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
@@ -138,179 +158,267 @@ export default function ClientDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Briefcase className="h-5 w-5 text-primary" />
+      {/* Hero Header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-violet-500/5" />
+        <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-primary/5 blur-3xl" />
+        
+        <div className="relative max-w-4xl mx-auto px-4 pt-6 pb-4 md:px-8">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/10">
+                  {clientProfile?.photo_url ? (
+                    <img src={clientProfile.photo_url} alt="" className="h-full w-full rounded-2xl object-cover" />
+                  ) : (
+                    <span className="text-lg font-bold text-primary">
+                      {clientProfile?.name?.charAt(0) || "K"}
+                    </span>
+                  )}
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground leading-tight">
+                  স্বাগতম, {clientProfile?.name || "ক্লায়েন্ট"}
+                </h1>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  আইডি: {clientProfile?.client_id}
+                  {clientProfile?.company && <span className="ml-1">• {clientProfile.company}</span>}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">স্বাগতম, {clientProfile?.name || "ক্লায়েন্ট"}</h1>
-              <p className="text-xs text-muted-foreground">আইডি: {clientProfile?.client_id} {clientProfile?.company && `• ${clientProfile.company}`}</p>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => supabase.auth.signOut()}
+              className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-destructive/10"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
-          <Button variant="outline" size="sm" onClick={() => supabase.auth.signOut()} className="gap-1.5">
-            <LogOut className="h-4 w-4" /> লগআউট
-          </Button>
         </div>
+      </div>
 
-        {/* Overall Summary Cards */}
+      <div className="max-w-4xl mx-auto px-4 md:px-8 space-y-4 pb-8">
+        {/* ═══ Grand Summary Card ═══ */}
         {projects.length > 0 && (
-          <div className="space-y-3">
-            {/* Grand Total Row */}
-            <Card className="border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <h3 className="text-xs font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
-                  <Wallet className="h-3.5 w-3.5" /> সামগ্রিক হিসাব
-                </h3>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="text-center">
-                    <div className="text-xs text-muted-foreground">মোট বিল</div>
-                    <div className="text-lg font-bold text-foreground">৳{grandTotal.toLocaleString("bn-BD")}</div>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <div className="relative rounded-2xl overflow-hidden">
+              {/* Gradient BG */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/12 via-card to-violet-500/8 border border-primary/15 rounded-2xl" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/8 rounded-full blur-2xl -mr-8 -mt-8" />
+              
+              <div className="relative p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">সামগ্রিক হিসাব</span>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xs text-muted-foreground">মোট পেইড</div>
-                    <div className="text-lg font-bold text-emerald-400">৳{grandPaid.toLocaleString("bn-BD")}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xs text-muted-foreground">মোট বাকি</div>
-                    <div className="text-lg font-bold text-amber-400">৳{Math.max(0, grandDue).toLocaleString("bn-BD")}</div>
+                  <button onClick={() => setShowBalance(!showBalance)} className="text-muted-foreground hover:text-foreground p-1">
+                    {showBalance ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </button>
+                </div>
+
+                {/* Main balance */}
+                <div className="mb-4">
+                  <div className="text-xs text-muted-foreground mb-1">মোট বাকি</div>
+                  <div className="text-3xl font-bold text-foreground tracking-tight">
+                    {showBalance ? <AnimatedValue value={Math.max(0, grandDue)} /> : "৳ •••••"}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Breakdown: Production vs Artist - Clickable */}
+                {/* Progress bar */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] text-muted-foreground">পেমেন্ট অগ্রগতি</span>
+                    <span className="text-[10px] font-semibold text-primary">{paidPercent}%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-secondary/60 overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${paidPercent}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="rounded-xl bg-background/50 backdrop-blur-sm border border-border/30 p-2.5 text-center">
+                    <div className="text-[10px] text-muted-foreground mb-0.5">মোট বিল</div>
+                    <div className="text-sm font-bold text-foreground">
+                      {showBalance ? <AnimatedValue value={grandTotal} /> : "•••"}
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-emerald-500/8 border border-emerald-500/15 p-2.5 text-center">
+                    <div className="text-[10px] text-emerald-400/70 mb-0.5">পেইড</div>
+                    <div className="text-sm font-bold text-emerald-400">
+                      {showBalance ? <AnimatedValue value={grandPaid} /> : "•••"}
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-amber-500/8 border border-amber-500/15 p-2.5 text-center">
+                    <div className="text-[10px] text-amber-400/70 mb-0.5">বাকি</div>
+                    <div className="text-sm font-bold text-amber-400">
+                      {showBalance ? <AnimatedValue value={Math.max(0, grandDue)} /> : "•••"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ═══ Production & Artist Bill Cards ═══ */}
+        {projects.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              {/* Production Bill Card */}
-              <Card className={cn("border-border/50 cursor-pointer transition-colors hover:bg-secondary/20", expandedBillCard === "production" && "ring-1 ring-sky-400/50")}
-                onClick={() => setExpandedBillCard(expandedBillCard === "production" ? null : "production")}>
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <Banknote className="h-3.5 w-3.5 text-sky-400" />
-                      <span className="text-xs font-semibold text-muted-foreground">প্রোডাকশন বিল</span>
-                    </div>
-                    {expandedBillCard === "production" ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />}
+              {/* Production */}
+              <button
+                className={cn(
+                  "rounded-2xl p-4 text-left transition-all duration-300 border",
+                  expandedBillCard === "production"
+                    ? "bg-sky-500/10 border-sky-500/30 shadow-lg shadow-sky-500/5"
+                    : "bg-card/80 border-border/40 hover:border-sky-500/20"
+                )}
+                onClick={() => setExpandedBillCard(expandedBillCard === "production" ? null : "production")}
+              >
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="h-8 w-8 rounded-xl bg-sky-500/15 flex items-center justify-center">
+                    <Banknote className="h-4 w-4 text-sky-400" />
                   </div>
-                  <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
-                  <div className="text-xs text-emerald-400">পেইড: ৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
-                  {productionDue > 0 && (
-                    <div className="text-xs text-amber-400">বাকি: ৳{productionDue.toLocaleString("bn-BD")}</div>
-                  )}
-                </CardContent>
-              </Card>
-              {/* Artist Bill Card */}
-              <Card className={cn("border-border/50 cursor-pointer transition-colors hover:bg-secondary/20", expandedBillCard === "artist" && "ring-1 ring-violet-400/50")}
-                onClick={() => setExpandedBillCard(expandedBillCard === "artist" ? null : "artist")}>
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5 text-violet-400" />
-                      <span className="text-xs font-semibold text-muted-foreground">আর্টিস্ট বিল</span>
-                    </div>
-                    {expandedBillCard === "artist" ? <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />}
+                  {expandedBillCard === "production" ? <ChevronUp className="h-3.5 w-3.5 text-sky-400 ml-auto" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground ml-auto" />}
+                </div>
+                <div className="text-[10px] text-muted-foreground mb-0.5">প্রোডাকশন বিল</div>
+                <div className="text-base font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
+                <div className="flex gap-2 mt-1.5 flex-wrap">
+                  <span className="text-[10px] text-emerald-400">✓ ৳{totalProductionPaid.toLocaleString("bn-BD")}</span>
+                  {productionDue > 0 && <span className="text-[10px] text-amber-400">বাকি ৳{productionDue.toLocaleString("bn-BD")}</span>}
+                </div>
+              </button>
+
+              {/* Artist */}
+              <button
+                className={cn(
+                  "rounded-2xl p-4 text-left transition-all duration-300 border",
+                  expandedBillCard === "artist"
+                    ? "bg-violet-500/10 border-violet-500/30 shadow-lg shadow-violet-500/5"
+                    : "bg-card/80 border-border/40 hover:border-violet-500/20"
+                )}
+                onClick={() => setExpandedBillCard(expandedBillCard === "artist" ? null : "artist")}
+              >
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="h-8 w-8 rounded-xl bg-violet-500/15 flex items-center justify-center">
+                    <Users className="h-4 w-4 text-violet-400" />
                   </div>
-                  <div className="text-sm font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</div>
-                  <div className="text-xs text-emerald-400">পেইড: ৳{totalArtistPaid.toLocaleString("bn-BD")}</div>
-                  {artistDue > 0 && (
-                    <div className="text-xs text-amber-400">বাকি: ৳{artistDue.toLocaleString("bn-BD")}</div>
-                  )}
-                </CardContent>
-              </Card>
+                  {expandedBillCard === "artist" ? <ChevronUp className="h-3.5 w-3.5 text-violet-400 ml-auto" /> : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground ml-auto" />}
+                </div>
+                <div className="text-[10px] text-muted-foreground mb-0.5">আর্টিস্ট বিল</div>
+                <div className="text-base font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</div>
+                <div className="flex gap-2 mt-1.5 flex-wrap">
+                  <span className="text-[10px] text-emerald-400">✓ ৳{totalArtistPaid.toLocaleString("bn-BD")}</span>
+                  {artistDue > 0 && <span className="text-[10px] text-amber-400">বাকি ৳{artistDue.toLocaleString("bn-BD")}</span>}
+                </div>
+              </button>
             </div>
 
-            {/* Expanded Detail: Production - per project breakdown */}
+            {/* Expanded breakdowns */}
             <AnimatePresence>
               {expandedBillCard === "production" && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <Card className="border-sky-400/30 bg-sky-400/5">
-                    <CardContent className="p-3 space-y-2">
-                      <h4 className="text-xs font-semibold text-muted-foreground mb-2">প্রজেক্ট অনুযায়ী প্রোডাকশন বিল</h4>
-                      {projects.map((p: any) => {
-                        const projPaid = allPayments
-                          .filter((pay: any) => pay.project_id === p.id)
-                          .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-                        const projDue = Number(p.total_budget || 0) - projPaid;
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+                  <div className="rounded-2xl border border-sky-500/20 bg-sky-500/5 p-4 space-y-2">
+                    <h4 className="text-xs font-semibold text-sky-400 mb-3 flex items-center gap-1.5">
+                      <TrendingUp className="h-3.5 w-3.5" />
+                      প্রজেক্ট অনুযায়ী প্রোডাকশন বিল
+                    </h4>
+                    {projects.map((p: any) => {
+                      const projPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+                      const projDue = Number(p.total_budget || 0) - projPaid;
+                      return (
+                        <div key={p.id} className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border/20">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-foreground truncate">{p.name}</div>
+                            <div className="text-[10px] text-muted-foreground">{format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</div>
+                          </div>
+                          <div className="text-right shrink-0 ml-2">
+                            <div className="text-sm font-bold text-foreground">৳{Number(p.total_budget || 0).toLocaleString("bn-BD")}</div>
+                            {projPaid > 0 && <div className="text-[10px] text-emerald-400">পেইড: ৳{projPaid.toLocaleString("bn-BD")}</div>}
+                            {projDue > 0 ? <div className="text-[10px] text-amber-400">বাকি: ৳{projDue.toLocaleString("bn-BD")}</div>
+                              : Number(p.total_budget) > 0 && <div className="text-[10px] text-emerald-400 font-semibold">✓ পেইড</div>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+              {expandedBillCard === "artist" && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+                  <div className="rounded-2xl border border-violet-500/20 bg-violet-500/5 p-4 space-y-2">
+                    <h4 className="text-xs font-semibold text-violet-400 mb-3 flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5" />
+                      আর্টিস্ট অনুযায়ী বিল
+                    </h4>
+                    {(() => {
+                      const artistMap: Record<string, { totalBill: number; totalPaid: number; projects: string[] }> = {};
+                      allProjectArtists.forEach((a: any) => {
+                        const key = a.artist_name.toLowerCase();
+                        if (!artistMap[key]) artistMap[key] = { totalBill: 0, totalPaid: 0, projects: [] };
+                        artistMap[key].totalBill += Number(a.remuneration || 0);
+                        artistMap[key].totalPaid += Number(a.paid_amount || 0);
+                        const proj = projects.find((p: any) => p.id === a.project_id);
+                        if (proj && !artistMap[key].projects.includes(proj.name)) artistMap[key].projects.push(proj.name);
+                      });
+                      const entries = Object.entries(artistMap).map(([key, val]) => {
+                        const originalName = allProjectArtists.find((a: any) => a.artist_name.toLowerCase() === key)?.artist_name || key;
+                        return { name: originalName, ...val };
+                      });
+                      if (entries.length === 0) return <div className="text-xs text-muted-foreground text-center py-3">কোনো আর্টিস্ট নেই</div>;
+                      return entries.map((artist, idx) => {
+                        const due = artist.totalBill - artist.totalPaid;
+                        const pct = artist.totalBill > 0 ? Math.round((artist.totalPaid / artist.totalBill) * 100) : 0;
                         return (
-                          <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-foreground truncate">{p.name}</div>
-                              <div className="text-[11px] text-muted-foreground">
-                                {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}
+                          <div key={idx} className="p-3 rounded-xl bg-background/50 border border-border/20">
+                            <div className="flex items-center justify-between mb-1.5">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="h-8 w-8 rounded-full bg-violet-500/15 flex items-center justify-center text-xs font-bold text-violet-400 shrink-0">
+                                  {artist.name?.charAt(0)}
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="text-sm font-medium text-foreground truncate">{artist.name}</div>
+                                  <div className="text-[10px] text-muted-foreground truncate">{artist.projects.join(", ")}</div>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0 ml-2">
+                                <div className="text-sm font-bold text-foreground">৳{artist.totalBill.toLocaleString("bn-BD")}</div>
+                                {due > 0 ? <div className="text-[10px] text-amber-400">বাকি ৳{due.toLocaleString("bn-BD")}</div>
+                                  : artist.totalBill > 0 && <div className="text-[10px] text-emerald-400 font-semibold">✓ পেইড</div>}
                               </div>
                             </div>
-                            <div className="text-right shrink-0">
-                              <div className="text-sm font-bold text-foreground">৳{Number(p.total_budget || 0).toLocaleString("bn-BD")}</div>
-                              {projPaid > 0 && <div className="text-[11px] text-emerald-400">পেইড: ৳{projPaid.toLocaleString("bn-BD")}</div>}
-                              {projDue > 0 && <div className="text-[11px] text-amber-400">বাকি: ৳{projDue.toLocaleString("bn-BD")}</div>}
-                              {projDue <= 0 && Number(p.total_budget) > 0 && <div className="text-[11px] text-emerald-400 font-semibold">✓ পেইড</div>}
+                            <div className="h-1 rounded-full bg-secondary/50 overflow-hidden">
+                              <div className="h-full bg-violet-500/60 rounded-full" style={{ width: `${pct}%` }} />
                             </div>
                           </div>
                         );
-                      })}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-
-              {/* Expanded Detail: Artist - per member breakdown */}
-              {expandedBillCard === "artist" && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <Card className="border-violet-400/30 bg-violet-400/5">
-                    <CardContent className="p-3 space-y-2">
-                      <h4 className="text-xs font-semibold text-muted-foreground mb-2">আর্টিস্ট অনুযায়ী বিল</h4>
-                      {(() => {
-                        const artistMap: Record<string, { totalBill: number; totalPaid: number; projects: string[] }> = {};
-                        allProjectArtists.forEach((a: any) => {
-                          const key = a.artist_name.toLowerCase();
-                          if (!artistMap[key]) artistMap[key] = { totalBill: 0, totalPaid: 0, projects: [] };
-                          artistMap[key].totalBill += Number(a.remuneration || 0);
-                          artistMap[key].totalPaid += Number(a.paid_amount || 0);
-                          const proj = projects.find((p: any) => p.id === a.project_id);
-                          if (proj && !artistMap[key].projects.includes(proj.name)) artistMap[key].projects.push(proj.name);
-                        });
-                        const entries = Object.entries(artistMap).map(([key, val]) => {
-                          const originalName = allProjectArtists.find((a: any) => a.artist_name.toLowerCase() === key)?.artist_name || key;
-                          return { name: originalName, ...val };
-                        });
-                        if (entries.length === 0) return <div className="text-xs text-muted-foreground text-center py-2">কোনো আর্টিস্ট নেই</div>;
-                        return entries.map((artist, idx) => {
-                          const due = artist.totalBill - artist.totalPaid;
-                          return (
-                            <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                              <div className="flex-1 min-w-0">
-                                <div className="text-sm font-medium text-foreground">{artist.name}</div>
-                                <div className="text-[11px] text-muted-foreground truncate">{artist.projects.join(", ")}</div>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <div className="text-sm font-bold text-foreground">৳{artist.totalBill.toLocaleString("bn-BD")}</div>
-                                {artist.totalPaid > 0 && <div className="text-[11px] text-emerald-400">পেইড: ৳{artist.totalPaid.toLocaleString("bn-BD")}</div>}
-                                {due > 0 && <div className="text-[11px] text-amber-400">বাকি: ৳{due.toLocaleString("bn-BD")}</div>}
-                                {due <= 0 && artist.totalBill > 0 && <div className="text-[11px] text-emerald-400 font-semibold">✓ পেইড</div>}
-                              </div>
-                            </div>
-                          );
-                        });
-                      })()}
-                    </CardContent>
-                  </Card>
+                      });
+                    })()}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Project Count + Download All */}
+            {/* Project count + Download */}
             <div className="flex items-center gap-3">
-              <Card className="border-border/50 flex-1">
-                <CardContent className="p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Briefcase className="h-4 w-4 text-primary" />
-                    <span className="text-sm text-muted-foreground">মোট প্রজেক্ট</span>
-                  </div>
-                  <span className="text-xl font-bold text-foreground">{projects.length}</span>
-                </CardContent>
-              </Card>
+              <div className="flex-1 flex items-center gap-3 p-3.5 rounded-2xl bg-card/80 border border-border/40">
+                <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <div className="text-[10px] text-muted-foreground">মোট প্রজেক্ট</div>
+                  <div className="text-xl font-bold text-foreground">{projects.length}</div>
+                </div>
+              </div>
               <BillDownloadDialog
                 projects={projects}
                 allProjectArtists={allProjectArtists}
@@ -318,95 +426,137 @@ export default function ClientDashboard() {
                 clientProfile={clientProfile}
               />
             </div>
-          </div>
+          </motion.div>
         )}
 
-        {/* Payment Button */}
+        {/* ═══ Payment Button ═══ */}
         {projects.length > 0 && grandDue > 0 && (
-          <PaymentDialog
-            allProjectArtists={allProjectArtists}
-            allPayments={allPayments}
-            projects={projects}
-            clientName={clientProfile?.name || ""}
-            clientProfileId={clientProfile?.id || ""}
-            totalBudget={totalBudget}
-            totalProductionPaid={totalProductionPaid}
-          />
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <PaymentDialog
+              allProjectArtists={allProjectArtists}
+              allPayments={allPayments}
+              projects={projects}
+              clientName={clientProfile?.name || ""}
+              clientProfileId={clientProfile?.id || ""}
+              totalBudget={totalBudget}
+              totalProductionPaid={totalProductionPaid}
+            />
+          </motion.div>
         )}
 
-        {/* Payment History */}
+        {/* ═══ Payment History ═══ */}
         {allPayments.length > 0 && (
-          <Card className="border-border/50">
-            <CardContent className="p-4 space-y-2">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" /> প্রোডাকশন পেমেন্ট হিস্ট্রি
-              </h3>
-              {allPayments.map((pay: any) => (
-                <div key={pay.id} className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/30">
-                  <div>
-                    <div className="text-sm font-medium text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })}
-                      {" • "}{paymentMethodLabel[pay.payment_method] || pay.payment_method}
-                    </div>
-                  </div>
-                  {pay.notes && <span className="text-xs text-muted-foreground max-w-[150px] truncate">{pay.notes}</span>}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+            <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden">
+              <div className="p-4 pb-3 flex items-center gap-2">
+                <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+                <h3 className="text-sm font-semibold text-foreground">পেমেন্ট হিস্ট্রি</h3>
+                <Badge variant="outline" className="ml-auto text-[10px] h-5 border-border/50">{allPayments.length}</Badge>
+              </div>
+              <div className="px-4 pb-4 space-y-2">
+                {allPayments.slice(0, 5).map((pay: any, idx: number) => (
+                  <motion.div
+                    key={pay.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/20"
+                  >
+                    <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                      <Wallet className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-foreground">৳{Number(pay.amount).toLocaleString("bn-BD")}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {format(new Date(pay.payment_date), "d MMM yyyy", { locale: bn })} • {paymentMethodLabel[pay.payment_method] || pay.payment_method}
+                      </div>
+                    </div>
+                    {pay.notes && <span className="text-[10px] text-muted-foreground max-w-[80px] truncate">{pay.notes}</span>}
+                  </motion.div>
+                ))}
+                {allPayments.length > 5 && (
+                  <div className="text-center text-[10px] text-muted-foreground pt-1">
+                    + আরো {allPayments.length - 5} টি পেমেন্ট
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
         )}
 
-        {/* Projects */}
+        {/* ═══ Projects ═══ */}
         {projects.length === 0 ? (
-          <div className="text-center py-16 text-muted-foreground">কোনো প্রজেক্ট নেই</div>
+          <div className="text-center py-20">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <FileText className="h-8 w-8 text-primary/50" />
+            </div>
+            <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
+          </div>
         ) : (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" /> আপনার প্রজেক্ট সমূহ
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
+            <h2 className="text-base font-bold text-foreground flex items-center gap-2 px-1">
+              <FileText className="h-4.5 w-4.5 text-primary" /> আপনার প্রজেক্ট সমূহ
             </h2>
-            {projects.map((p: any) => {
+            {projects.map((p: any, pIdx: number) => {
               const scenes = getScenes(p.id);
               const st = statusMap[p.status] || statusMap.upcoming;
               const isOpen = expandedProject === p.id;
               const artTotals = getProjectArtistTotals(p.id);
-              const projProductionPaid = allPayments
-                .filter((pay: any) => pay.project_id === p.id)
-                .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+              const projProductionPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+              const projTotal = Number(p.total_budget) + artTotals.bill;
 
               return (
-                <Card key={p.id} className="border-border/50 overflow-hidden">
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 * pIdx }}
+                  className={cn(
+                    "rounded-2xl border overflow-hidden transition-all duration-300",
+                    isOpen ? "border-primary/25 bg-card/90 shadow-lg shadow-primary/5" : "border-border/40 bg-card/60"
+                  )}
+                >
                   <div
-                    className="p-4 cursor-pointer hover:bg-secondary/30 transition-colors"
+                    className="p-4 cursor-pointer active:bg-secondary/20 transition-colors"
                     onClick={() => setExpandedProject(isOpen ? null : p.id)}
                   >
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      {/* Status indicator */}
+                      <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border", st.bg)}>
+                        <Briefcase className={cn("h-4.5 w-4.5", st.color)} />
+                      </div>
+                      
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-foreground">{p.name}</h3>
-                          <Badge variant="outline" className={st.color}>{st.label}</Badge>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-semibold text-foreground text-[15px] truncate">{p.name}</h3>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
-                          {p.location && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {p.location}</span>}
-                        </div>
-                        {/* Per-project mini summary */}
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px]">
-                          <span className="text-muted-foreground">
-                            প্রোডাকশন: <span className="text-foreground font-medium">৳{Number(p.total_budget).toLocaleString("bn-BD")}</span>
-                          </span>
-                          {artTotals.count > 0 && (
-                            <span className="text-muted-foreground">
-                              আর্টিস্ট: <span className="text-foreground font-medium">৳{artTotals.bill.toLocaleString("bn-BD")}</span>
-                              {artTotals.due > 0 && <span className="text-amber-400 ml-1">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
-                            </span>
-                          )}
+                        <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 border", st.bg, st.color)}>{st.label}</Badge>
+                        <div className="flex flex-wrap gap-x-3 mt-1.5 text-[11px] text-muted-foreground">
+                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
+                          {p.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {p.location}</span>}
                         </div>
                       </div>
+
                       <div className="text-right shrink-0">
-                        <div className="text-sm font-medium text-foreground">৳{(Number(p.total_budget) + artTotals.bill).toLocaleString("bn-BD")}</div>
-                        <div className="text-[10px] text-muted-foreground">মোট বিল</div>
+                        <div className="text-sm font-bold text-foreground">৳{projTotal.toLocaleString("bn-BD")}</div>
+                        <div className="text-[9px] text-muted-foreground">মোট বিল</div>
+                        <ChevronDown className={cn("h-4 w-4 text-muted-foreground mt-1 mx-auto transition-transform duration-300", isOpen && "rotate-180")} />
                       </div>
+                    </div>
+
+                    {/* Mini summary tags */}
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/15">
+                        প্রোডাকশন ৳{Number(p.total_budget).toLocaleString("bn-BD")}
+                      </span>
+                      {artTotals.count > 0 && (
+                        <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/15">
+                          আর্টিস্ট ৳{artTotals.bill.toLocaleString("bn-BD")}
+                          {artTotals.due > 0 && <span className="text-amber-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -416,18 +566,19 @@ export default function ClientDashboard() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-4 pb-4 space-y-4 border-t border-border/30 pt-4">
-                          {/* Budget + Download Bill */}
+                        <div className="px-4 pb-5 space-y-4 border-t border-border/20 pt-4">
+                          {/* Budget + Download */}
                           <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                            <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                               <Wallet className="h-4 w-4 text-primary" /> বাজেট
                             </h4>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="gap-1.5 text-xs h-7"
+                              className="gap-1.5 text-[11px] h-8 rounded-xl border-border/50"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
@@ -449,27 +600,18 @@ export default function ClientDashboard() {
                               <Download className="h-3.5 w-3.5" /> বিল ডাউনলোড
                             </Button>
                           </div>
-                          <div className="rounded-lg bg-sky-500/10 p-3 text-center">
-                            <div className="text-xs text-muted-foreground">প্রজেক্ট বাজেট</div>
-                            <div className="font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
+                          <div className="rounded-xl bg-gradient-to-r from-sky-500/10 to-sky-500/5 border border-sky-500/15 p-4 text-center">
+                            <div className="text-[10px] text-muted-foreground mb-0.5">প্রজেক্ট বাজেট</div>
+                            <div className="text-xl font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
                           </div>
 
-                          {/* Client Artist Billing */}
                           <ClientArtistBilling
                             projectId={p.id}
                             clientProfileId={clientProfile.id}
                             clientName={clientProfile?.name || "ক্লায়েন্ট"}
                             projectName={p.name}
                           />
-
-                          {/* Client Scene Editor */}
-                          <ClientSceneEditor
-                            projectId={p.id}
-                            scenes={scenes}
-                            onUpdate={() => refetchScenes()}
-                          />
-
-                          {/* Client Script Writing */}
+                          <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
                           <ClientProjectScript
                             projectId={p.id}
                             userId={user!.id}
@@ -478,40 +620,38 @@ export default function ClientDashboard() {
                             onUpdate={() => {}}
                           />
 
-                          {p.notes && <p className="text-xs text-muted-foreground italic border-t border-border/20 pt-2">নোট: {p.notes}</p>}
+                          {p.notes && (
+                            <p className="text-[11px] text-muted-foreground italic border-t border-border/15 pt-3">
+                              📝 নোট: {p.notes}
+                            </p>
+                          )}
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </Card>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
   );
 }
 
-/* ─── Bill Download Dialog with filters ─── */
+/* ═══════════════════════════════════════════
+   Bill Download Dialog (unchanged logic)
+   ═══════════════════════════════════════════ */
 function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientProfile }: {
-  projects: any[];
-  allProjectArtists: any[];
-  allPayments: any[];
-  clientProfile: any;
+  projects: any[]; allProjectArtists: any[]; allPayments: any[]; clientProfile: any;
 }) {
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
-  // Reset selections when dialog opens
   const handleOpen = (isOpen: boolean) => {
-    if (isOpen) {
-      setSelectedIds(new Set(projects.map((p: any) => p.id)));
-      setDateFrom(undefined);
-      setDateTo(undefined);
-    }
+    if (isOpen) { setSelectedIds(new Set(projects.map((p: any) => p.id))); setDateFrom(undefined); setDateTo(undefined); }
     setOpen(isOpen);
   };
 
@@ -520,60 +660,28 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
       if (!selectedIds.has(p.id)) return false;
       const pDate = new Date(p.project_date);
       if (dateFrom && pDate < dateFrom) return false;
-      if (dateTo) {
-        const end = new Date(dateTo);
-        end.setHours(23, 59, 59);
-        if (pDate > end) return false;
-      }
+      if (dateTo) { const end = new Date(dateTo); end.setHours(23, 59, 59); if (pDate > end) return false; }
       return true;
     });
   }, [projects, selectedIds, dateFrom, dateTo]);
 
   const toggleProject = (id: string) => {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+    setSelectedIds(prev => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; });
   };
-
-  const toggleAll = () => {
-    if (selectedIds.size === projects.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(projects.map((p: any) => p.id)));
-    }
-  };
+  const toggleAll = () => { selectedIds.size === projects.length ? setSelectedIds(new Set()) : setSelectedIds(new Set(projects.map((p: any) => p.id))); };
 
   const handleDownload = () => {
-    if (filteredProjects.length === 0) {
-      toast({ title: "কোনো প্রজেক্ট সিলেক্ট করা হয়নি", variant: "destructive" });
-      return;
-    }
+    if (filteredProjects.length === 0) { toast({ title: "কোনো প্রজেক্ট সিলেক্ট করা হয়নি", variant: "destructive" }); return; }
     const billData = filteredProjects.map((p: any) => {
       const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
-      const projPaid = allPayments
-        .filter((pay: any) => pay.project_id === p.id)
-        .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+      const projPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
       return {
-        projectName: p.name,
-        projectDate: p.project_date,
-        clientName: clientProfile?.name || "",
-        productionBudget: Number(p.total_budget || 0),
-        productionPaid: projPaid,
-        artists: arts.map((a: any) => ({
-          artist_name: a.artist_name,
-          remuneration: Number(a.remuneration || 0),
-          paid_amount: Number(a.paid_amount || 0),
-        })),
+        projectName: p.name, projectDate: p.project_date, clientName: clientProfile?.name || "",
+        productionBudget: Number(p.total_budget || 0), productionPaid: projPaid,
+        artists: arts.map((a: any) => ({ artist_name: a.artist_name, remuneration: Number(a.remuneration || 0), paid_amount: Number(a.paid_amount || 0) })),
       };
     });
-    downloadAllProjectsBillPDF({
-      clientName: clientProfile?.name || "প্রজেক্ট ডিরেক্টর",
-      company: clientProfile?.company || undefined,
-      projects: billData,
-    });
+    downloadAllProjectsBillPDF({ clientName: clientProfile?.name || "প্রজেক্ট ডিরেক্টর", company: clientProfile?.company || undefined, projects: billData });
     toast({ title: `${filteredProjects.length} টি প্রজেক্টের বিল ডাউনলোড হচ্ছে...` });
     setOpen(false);
   };
@@ -581,40 +689,38 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 h-auto py-3 px-4">
-          <Download className="h-4 w-4" />
-          <span className="text-xs">সব বিল<br />ডাউনলোড</span>
-        </Button>
+        <button className="h-full flex flex-col items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl bg-card/80 border border-border/40 hover:border-primary/30 transition-colors">
+          <Download className="h-5 w-5 text-primary" />
+          <span className="text-[10px] text-muted-foreground font-medium">বিল ডাউনলোড</span>
+        </button>
       </DialogTrigger>
-      <DialogContent className="max-w-[360px] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-[360px] max-h-[85vh] overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-base">বিল ডাউনলোড ফিল্টার</DialogTitle>
         </DialogHeader>
-
-        {/* Date Filters */}
         <div className="space-y-3">
           <p className="text-xs font-medium text-muted-foreground">তারিখ ফিল্টার</p>
           <div className="grid grid-cols-2 gap-2">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn("text-xs justify-start", !dateFrom && "text-muted-foreground")}>
+                <Button variant="outline" size="sm" className={cn("text-xs justify-start rounded-xl", !dateFrom && "text-muted-foreground")}>
                   <Calendar className="h-3 w-3 mr-1" />
                   {dateFrom ? format(dateFrom, "d MMM yy", { locale: bn }) : "শুরু তারিখ"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <CalendarPicker mode="single" selected={dateFrom} onSelect={setDateFrom} className={cn("p-3 pointer-events-auto")} />
+                <CalendarPicker mode="single" selected={dateFrom} onSelect={setDateFrom} className="p-3 pointer-events-auto" />
               </PopoverContent>
             </Popover>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn("text-xs justify-start", !dateTo && "text-muted-foreground")}>
+                <Button variant="outline" size="sm" className={cn("text-xs justify-start rounded-xl", !dateTo && "text-muted-foreground")}>
                   <Calendar className="h-3 w-3 mr-1" />
                   {dateTo ? format(dateTo, "d MMM yy", { locale: bn }) : "শেষ তারিখ"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <CalendarPicker mode="single" selected={dateTo} onSelect={setDateTo} className={cn("p-3 pointer-events-auto")} />
+                <CalendarPicker mode="single" selected={dateTo} onSelect={setDateTo} className="p-3 pointer-events-auto" />
               </PopoverContent>
             </Popover>
           </div>
@@ -624,8 +730,6 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
             </Button>
           )}
         </div>
-
-        {/* Project Selection */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <p className="text-xs font-medium text-muted-foreground">প্রজেক্ট সিলেক্ট করুন</p>
@@ -635,33 +739,22 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
           </div>
           <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
             {projects.map((p: any) => (
-              <label
-                key={p.id}
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-secondary/50 cursor-pointer"
-              >
-                <Checkbox
-                  checked={selectedIds.has(p.id)}
-                  onCheckedChange={() => toggleProject(p.id)}
-                />
+              <label key={p.id} className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-secondary/50 cursor-pointer">
+                <Checkbox checked={selectedIds.has(p.id)} onCheckedChange={() => toggleProject(p.id)} />
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-medium truncate">{p.name}</div>
-                  <div className="text-[10px] text-muted-foreground">
-                    {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}
-                  </div>
+                  <div className="text-[10px] text-muted-foreground">{format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</div>
                 </div>
               </label>
             ))}
           </div>
         </div>
-
-        {/* Summary & Download */}
         <div className="pt-2 border-t border-border space-y-2">
           <p className="text-xs text-muted-foreground">
             সিলেক্টেড: <span className="font-bold text-foreground">{filteredProjects.length}</span> / {projects.length} প্রজেক্ট
           </p>
-          <Button className="w-full gap-2" onClick={handleDownload} disabled={filteredProjects.length === 0}>
-            <Download className="h-4 w-4" />
-            বিল ডাউনলোড করুন ({filteredProjects.length})
+          <Button className="w-full gap-2 rounded-xl" onClick={handleDownload} disabled={filteredProjects.length === 0}>
+            <Download className="h-4 w-4" /> বিল ডাউনলোড করুন ({filteredProjects.length})
           </Button>
         </div>
       </DialogContent>
@@ -669,15 +762,11 @@ function BillDownloadDialog({ projects, allProjectArtists, allPayments, clientPr
   );
 }
 
-/* ─── Payment Dialog ─── */
+/* ═══════════════════════════════════════════
+   Payment Dialog (unchanged logic)
+   ═══════════════════════════════════════════ */
 function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, clientProfileId, totalBudget, totalProductionPaid }: {
-  allProjectArtists: any[];
-  allPayments: any[];
-  projects: any[];
-  clientName: string;
-  clientProfileId: string;
-  totalBudget: number;
-  totalProductionPaid: number;
+  allProjectArtists: any[]; allPayments: any[]; projects: any[]; clientName: string; clientProfileId: string; totalBudget: number; totalProductionPaid: number;
 }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -687,128 +776,74 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
   const [receiptData, setReceiptData] = useState<any>(null);
 
   const handleOpen = (isOpen: boolean) => {
-    if (isOpen) {
-      setStep("choose");
-      setSelectedArtistName(null);
-      setPayAmount("");
-    }
+    if (isOpen) { setStep("choose"); setSelectedArtistName(null); setPayAmount(""); }
     setOpen(isOpen);
   };
 
-  // Group all unpaid artists by name (across all projects)
   const artistsByName = useMemo(() => {
     const map = new Map<string, { name: string; entries: any[]; totalBill: number; totalPaid: number; totalDue: number }>();
     allProjectArtists.forEach((a: any) => {
-      const rem = Number(a.remuneration || 0);
-      const paid = Number(a.paid_amount || 0);
-      const due = rem - paid;
+      const rem = Number(a.remuneration || 0); const paid = Number(a.paid_amount || 0); const due = rem - paid;
       if (due <= 0) return;
       const existing = map.get(a.artist_name) || { name: a.artist_name, entries: [], totalBill: 0, totalPaid: 0, totalDue: 0 };
-      existing.entries.push(a);
-      existing.totalBill += rem;
-      existing.totalPaid += paid;
-      existing.totalDue += due;
+      existing.entries.push(a); existing.totalBill += rem; existing.totalPaid += paid; existing.totalDue += due;
       map.set(a.artist_name, existing);
     });
     return Array.from(map.values()).sort((a, b) => b.totalDue - a.totalDue);
   }, [allProjectArtists]);
 
-  // Production projects with dues
   const productionProjectGroups = useMemo(() => {
-    return projects
-      .map((p: any) => {
-        const paid = allPayments
-          .filter((pay: any) => pay.project_id === p.id)
-          .reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-        const due = Number(p.total_budget || 0) - paid;
-        return { project: p, paid, due };
-      })
-      .filter((g) => g.due > 0);
+    return projects.map((p: any) => {
+      const paid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
+      const due = Number(p.total_budget || 0) - paid;
+      return { project: p, paid, due };
+    }).filter((g) => g.due > 0);
   }, [projects, allPayments]);
 
   const totalArtistDue = artistsByName.reduce((s, g) => s + g.totalDue, 0);
   const totalProductionDue = totalBudget - totalProductionPaid;
-
   const selectedGroup = selectedArtistName ? artistsByName.find(g => g.name === selectedArtistName) : null;
 
-  // Auto-distribute payment across projects (oldest project first)
   const handlePayArtist = async () => {
     if (!selectedGroup) return;
     const amount = Number(payAmount || 0);
-    if (amount <= 0) {
-      toast({ title: "পরিমাণ দিন", variant: "destructive" });
-      return;
-    }
-
-    // Sort entries by project date (oldest first)
+    if (amount <= 0) { toast({ title: "পরিমাণ দিন", variant: "destructive" }); return; }
     const sorted = [...selectedGroup.entries].sort((a, b) => {
       const dateA = projects.find((p: any) => p.id === a.project_id)?.project_date || "";
       const dateB = projects.find((p: any) => p.id === b.project_id)?.project_date || "";
       return dateA.localeCompare(dateB);
     });
-
     let remaining = amount;
     const updates: { id: string; newPaid: number; isPaid: boolean; projectName: string; amount: number }[] = [];
-
     for (const entry of sorted) {
       if (remaining <= 0) break;
-      const rem = Number(entry.remuneration || 0);
-      const paid = Number(entry.paid_amount || 0);
-      const due = rem - paid;
+      const rem = Number(entry.remuneration || 0); const paid = Number(entry.paid_amount || 0); const due = rem - paid;
       if (due <= 0) continue;
-
-      const payNow = Math.min(remaining, due);
-      const newPaid = paid + payNow;
-      const isPaid = newPaid >= rem;
+      const payNow = Math.min(remaining, due); const newPaid = paid + payNow; const isPaid = newPaid >= rem;
       const projName = projects.find((p: any) => p.id === entry.project_id)?.name || "";
-
       updates.push({ id: entry.id, newPaid, isPaid, projectName: projName, amount: payNow });
       remaining -= payNow;
     }
-
     try {
       for (const upd of updates) {
-        const { error } = await (supabase as any)
-          .from("client_project_artists")
-          .update({ paid_amount: upd.newPaid, is_paid: upd.isPaid })
-          .eq("id", upd.id);
+        const { error } = await (supabase as any).from("client_project_artists").update({ paid_amount: upd.newPaid, is_paid: upd.isPaid }).eq("id", upd.id);
         if (error) throw error;
       }
-
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
-
-      // Show receipt with distribution info
       setReceiptData({
-        artistName: selectedGroup.name,
-        projectName: updates.map(u => u.projectName).join(", "),
-        clientName,
-        amount,
-        totalRemuneration: selectedGroup.totalBill,
-        totalPaid: selectedGroup.totalPaid + amount,
-        remaining: selectedGroup.totalDue - amount,
+        artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
+        clientName, amount, totalRemuneration: selectedGroup.totalBill,
+        totalPaid: selectedGroup.totalPaid + amount, remaining: selectedGroup.totalDue - amount,
         date: new Date().toISOString(),
       });
-
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
-      setSelectedArtistName(null);
-      setPayAmount("");
-      setStep("artist");
-    } catch (err: any) {
-      toast({ title: "ত্রুটি", description: err.message, variant: "destructive" });
-    }
+      setSelectedArtistName(null); setPayAmount(""); setStep("artist");
+    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
   };
 
-  const goBack = () => {
-    if (selectedArtistName) {
-      setSelectedArtistName(null);
-      setPayAmount("");
-    } else {
-      setStep("choose");
-    }
-  };
+  const goBack = () => { if (selectedArtistName) { setSelectedArtistName(null); setPayAmount(""); } else { setStep("choose"); } };
 
-  // Calculate payment distribution preview
   const paymentPreview = useMemo(() => {
     if (!selectedGroup || Number(payAmount || 0) <= 0) return [];
     const sorted = [...selectedGroup.entries].sort((a: any, b: any) => {
@@ -825,8 +860,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       const payNow = Math.min(rem, due);
       const newPaid = Number(entry.paid_amount || 0) + payNow;
       const projName = projects.find((p: any) => p.id === entry.project_id)?.name || "";
-      const status = newPaid >= Number(entry.remuneration || 0) ? "Paid" : "Partially Paid";
-      result.push({ projectName: projName, amount: payNow, status });
+      result.push({ projectName: projName, amount: payNow, status: newPaid >= Number(entry.remuneration || 0) ? "Paid" : "Partially Paid" });
       rem -= payNow;
     }
     return result;
@@ -834,20 +868,22 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   return (
     <>
-      {receiptData && (
-        <ClientArtistReceipt receiptData={receiptData} onClose={() => setReceiptData(null)} />
-      )}
+      {receiptData && <ClientArtistReceipt receiptData={receiptData} onClose={() => setReceiptData(null)} />}
       <Dialog open={open} onOpenChange={handleOpen}>
         <DialogTrigger asChild>
-          <Button className="w-full gap-2 h-12 text-base font-semibold" size="lg">
-            <CreditCard className="h-5 w-5" /> পেমেন্ট করুন
-          </Button>
+          <button className="w-full relative overflow-hidden rounded-2xl p-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            <div className="relative flex items-center justify-center gap-2">
+              <CreditCard className="h-5 w-5" />
+              <span className="text-base font-bold">পেমেন্ট করুন</span>
+            </div>
+          </button>
         </DialogTrigger>
-        <DialogContent className="max-w-[400px] max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-[400px] max-h-[85vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-base flex items-center gap-2">
               {step !== "choose" && (
-                <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={goBack}>
+                <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-lg" onClick={goBack}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
               )}
@@ -858,68 +894,64 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
             </DialogTitle>
           </DialogHeader>
 
-          {/* Step 1: Choose Category */}
           {step === "choose" && (
             <div className="space-y-3">
               {totalArtistDue > 0 && (
                 <button
-                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl border border-border/50 hover:border-violet-500/40 hover:bg-violet-500/5 transition-all text-left group"
                   onClick={() => setStep("artist")}
                 >
-                  <div className="h-11 w-11 rounded-xl bg-violet-500/10 flex items-center justify-center shrink-0">
+                  <div className="h-12 w-12 rounded-xl bg-violet-500/15 flex items-center justify-center shrink-0">
                     <Users className="h-5 w-5 text-violet-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-foreground">আর্টিস্ট / মেম্বার</div>
                     <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalArtistDue.toLocaleString("bn-BD")}</div>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-violet-400 transition-colors" />
                 </button>
               )}
               {totalProductionDue > 0 && (
                 <button
-                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl border border-border/50 hover:border-sky-500/40 hover:bg-sky-500/5 transition-all text-left group"
                   onClick={() => setStep("production")}
                 >
-                  <div className="h-11 w-11 rounded-xl bg-sky-500/10 flex items-center justify-center shrink-0">
+                  <div className="h-12 w-12 rounded-xl bg-sky-500/15 flex items-center justify-center shrink-0">
                     <Banknote className="h-5 w-5 text-sky-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-foreground">প্রোডাকশন</div>
                     <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalProductionDue.toLocaleString("bn-BD")}</div>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-sky-400 transition-colors" />
                 </button>
               )}
             </div>
           )}
 
-          {/* Step 2: Artist → Select by Name (grouped across projects) */}
           {step === "artist" && !selectedArtistName && (
             <div className="space-y-2">
               {artistsByName.map((group) => {
-                const paidPercent = group.totalBill > 0 ? Math.round((group.totalPaid / group.totalBill) * 100) : 0;
+                const paidPct = group.totalBill > 0 ? Math.round((group.totalPaid / group.totalBill) * 100) : 0;
                 return (
                   <button
                     key={group.name}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/40 hover:bg-secondary/30 transition-all text-left"
+                    className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border/40 hover:border-primary/30 hover:bg-secondary/20 transition-all text-left"
                     onClick={() => { setSelectedArtistName(group.name); setPayAmount(String(group.totalDue)); }}
                   >
-                    <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/15 flex items-center justify-center text-sm font-bold text-primary shrink-0">
                       {group.name?.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-foreground truncate">{group.name}</div>
-                      <div className="text-[10px] text-muted-foreground">
-                        {group.entries.length} টি প্রজেক্ট • মোট: ৳{group.totalBill.toLocaleString("bn-BD")}
-                      </div>
-                      <div className="w-full h-1.5 bg-secondary rounded-full mt-1">
-                        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${paidPercent}%` }} />
+                      <div className="text-[10px] text-muted-foreground">{group.entries.length} টি প্রজেক্ট • ৳{group.totalBill.toLocaleString("bn-BD")}</div>
+                      <div className="w-full h-1.5 bg-secondary/50 rounded-full mt-1.5">
+                        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${paidPct}%` }} />
                       </div>
                     </div>
                     <div className="text-right shrink-0">
                       <div className="text-sm font-bold text-amber-400">৳{group.totalDue.toLocaleString("bn-BD")}</div>
-                      <div className="text-[10px] text-muted-foreground">বাকি</div>
+                      <div className="text-[9px] text-muted-foreground">বাকি</div>
                     </div>
                   </button>
                 );
@@ -927,81 +959,55 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
             </div>
           )}
 
-          {/* Step 3: Pay selected artist (with auto project distribution) */}
           {step === "artist" && selectedGroup && (
             <div className="space-y-4">
-              {/* Artist Info Card */}
-              <div className="rounded-xl border border-border p-4 space-y-3">
+              <div className="rounded-2xl border border-border/40 p-4 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">
+                  <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/15 flex items-center justify-center text-lg font-bold text-primary">
                     {selectedGroup.name?.charAt(0)}
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-foreground">{selectedGroup.name}</div>
-                    <div className="text-xs text-muted-foreground">{selectedGroup.entries.length} টি প্রজেক্টে কাজ করেছেন</div>
+                    <div className="text-[11px] text-muted-foreground">{selectedGroup.entries.length} টি প্রজেক্টে কাজ করেছেন</div>
                   </div>
                 </div>
-
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-lg bg-secondary/40 p-2">
-                    <div className="text-[10px] text-muted-foreground">মোট বিল</div>
+                  <div className="rounded-xl bg-secondary/30 p-2.5">
+                    <div className="text-[9px] text-muted-foreground">মোট বিল</div>
                     <div className="text-sm font-bold text-foreground">৳{selectedGroup.totalBill.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-lg bg-emerald-500/10 p-2">
-                    <div className="text-[10px] text-muted-foreground">পেইড</div>
+                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
+                    <div className="text-[9px] text-emerald-400/70">পেইড</div>
                     <div className="text-sm font-bold text-emerald-400">৳{selectedGroup.totalPaid.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-lg bg-amber-500/10 p-2">
-                    <div className="text-[10px] text-muted-foreground">বাকি</div>
+                  <div className="rounded-xl bg-amber-500/8 p-2.5">
+                    <div className="text-[9px] text-amber-400/70">বাকি</div>
                     <div className="text-sm font-bold text-amber-400">৳{selectedGroup.totalDue.toLocaleString("bn-BD")}</div>
                   </div>
                 </div>
-
-                {/* Per-project breakdown */}
                 <div className="space-y-1.5">
                   <div className="text-[10px] font-medium text-muted-foreground">প্রজেক্ট ভিত্তিক বিল:</div>
                   {selectedGroup.entries.map((entry: any) => {
-                    const rem = Number(entry.remuneration || 0);
-                    const paid = Number(entry.paid_amount || 0);
-                    const due = rem - paid;
+                    const rem = Number(entry.remuneration || 0); const paid = Number(entry.paid_amount || 0);
                     const projName = projects.find((p: any) => p.id === entry.project_id)?.name || "";
                     return (
-                      <div key={entry.id} className="flex items-center justify-between text-[11px] px-2 py-1.5 rounded bg-secondary/20">
+                      <div key={entry.id} className="flex items-center justify-between text-[11px] px-3 py-2 rounded-lg bg-secondary/15">
                         <span className="text-foreground truncate mr-2">{projName}</span>
-                        <span className="text-amber-400 shrink-0 font-medium">বাকি ৳{due.toLocaleString("bn-BD")}</span>
+                        <span className="text-amber-400 shrink-0 font-medium">বাকি ৳{(rem - paid).toLocaleString("bn-BD")}</span>
                       </div>
                     );
                   })}
                 </div>
               </div>
-
-              {/* Payment Input */}
               <div className="space-y-2">
                 <label className="text-xs font-medium text-muted-foreground">পেমেন্ট পরিমাণ</label>
                 <div className="flex gap-2">
-                  <Input
-                    type="number"
-                    placeholder="৳ পরিমাণ লিখুন"
-                    value={payAmount}
-                    onChange={(e) => setPayAmount(e.target.value)}
-                    min={0}
-                    max={selectedGroup.totalDue}
-                    className="flex-1"
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs shrink-0"
-                    onClick={() => setPayAmount(String(selectedGroup.totalDue))}
-                  >
-                    সম্পূর্ণ
-                  </Button>
+                  <Input type="number" placeholder="৳ পরিমাণ লিখুন" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} min={0} max={selectedGroup.totalDue} className="flex-1 rounded-xl" />
+                  <Button variant="outline" size="sm" className="text-xs shrink-0 rounded-xl" onClick={() => setPayAmount(String(selectedGroup.totalDue))}>সম্পূর্ণ</Button>
                 </div>
               </div>
-
-              {/* Auto distribution preview */}
               {paymentPreview.length > 0 && (
-                <div className="rounded-lg border border-border/50 p-3 space-y-1.5">
+                <div className="rounded-xl border border-border/40 p-3.5 space-y-1.5">
                   <div className="text-[10px] font-medium text-muted-foreground">পেমেন্ট বিতরণ প্রিভিউ:</div>
                   {paymentPreview.map((p, i) => (
                     <div key={i} className="flex items-center justify-between text-[11px]">
@@ -1010,48 +1016,38 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                         <span className="text-foreground font-medium">৳{p.amount.toLocaleString("bn-BD")}</span>
                         <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0",
                           p.status === "Paid" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                        )}>
-                          {p.status === "Paid" ? "পেইড" : "আংশিক"}
-                        </Badge>
+                        )}>{p.status === "Paid" ? "পেইড" : "আংশিক"}</Badge>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-
-              <Button
-                className="w-full gap-2"
-                onClick={handlePayArtist}
-                disabled={Number(payAmount) <= 0}
-              >
-                <Banknote className="h-4 w-4" />
-                ৳{Number(payAmount || 0).toLocaleString("bn-BD")} পেমেন্ট করুন
+              <Button className="w-full gap-2 rounded-xl h-12 text-base font-semibold" onClick={handlePayArtist} disabled={Number(payAmount) <= 0}>
+                <Banknote className="h-4 w-4" /> ৳{Number(payAmount || 0).toLocaleString("bn-BD")} পেমেন্ট করুন
               </Button>
             </div>
           )}
 
-          {/* Production Payment View */}
           {step === "production" && (
             <div className="space-y-3">
-              <div className="rounded-xl border border-border p-4 space-y-3">
+              <div className="rounded-2xl border border-border/40 p-4 space-y-3">
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-lg bg-secondary/40 p-2">
-                    <div className="text-[10px] text-muted-foreground">মোট বিল</div>
+                  <div className="rounded-xl bg-secondary/30 p-2.5">
+                    <div className="text-[9px] text-muted-foreground">মোট বিল</div>
                     <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-lg bg-emerald-500/10 p-2">
-                    <div className="text-[10px] text-muted-foreground">পেইড</div>
+                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
+                    <div className="text-[9px] text-emerald-400/70">পেইড</div>
                     <div className="text-sm font-bold text-emerald-400">৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-lg bg-amber-500/10 p-2">
-                    <div className="text-[10px] text-muted-foreground">বাকি</div>
+                  <div className="rounded-xl bg-amber-500/8 p-2.5">
+                    <div className="text-[9px] text-amber-400/70">বাকি</div>
                     <div className="text-sm font-bold text-amber-400">৳{totalProductionDue.toLocaleString("bn-BD")}</div>
                   </div>
                 </div>
               </div>
-
               {productionProjectGroups.map(({ project, paid, due }) => (
-                <div key={project.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/20">
+                <div key={project.id} className="flex items-center justify-between p-3.5 rounded-xl bg-secondary/15 border border-border/20">
                   <div className="min-w-0">
                     <div className="text-xs font-medium text-foreground truncate">{project.name}</div>
                     <div className="text-[10px] text-muted-foreground">
@@ -1061,8 +1057,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                   <div className="text-sm font-bold text-amber-400 shrink-0">৳{due.toLocaleString("bn-BD")}</div>
                 </div>
               ))}
-
-              <p className="text-xs text-muted-foreground italic text-center">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
+              <p className="text-[11px] text-muted-foreground italic text-center pt-1">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
             </div>
           )}
         </DialogContent>
