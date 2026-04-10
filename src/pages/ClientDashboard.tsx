@@ -833,7 +833,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
       toast({ title: `৳${amount.toLocaleString("bn-BD")} পেমেন্ট সম্পন্ন ✓` });
       setReceiptData({
         artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
-        clientName, amount, totalRemuneration: selectedGroup.totalBill,
+        clientName, companyName, amount, totalRemuneration: selectedGroup.totalBill,
         totalPaid: selectedGroup.totalPaid + amount, remaining: selectedGroup.totalDue - amount,
         date: new Date().toISOString(),
       });

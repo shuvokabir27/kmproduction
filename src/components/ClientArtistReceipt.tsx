@@ -7,6 +7,7 @@ interface ClientArtistReceiptProps {
     artistName: string;
     projectName: string;
     clientName: string;
+    companyName?: string;
     amount: number;
     totalRemuneration: number;
     totalPaid: number;
