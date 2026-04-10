@@ -892,7 +892,8 @@ export default function ClientDashboard() {
                 </motion.div>
               );
             })}
-          </motion.div>
+            </motion.div>
+          )}
           </>
         )}
 
