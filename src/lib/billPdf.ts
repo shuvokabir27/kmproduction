@@ -14,6 +14,7 @@ interface ExpenseItem {
   amount: number;
   description?: string;
   is_paid?: boolean;
+  paid_amount?: number;
 }
 
 interface ProjectBillData {
@@ -67,7 +68,7 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
   const totalArtistBill = data.artists.reduce((s, a) => s + a.remuneration, 0);
   const totalArtistPaid = data.artists.reduce((s, a) => s + a.paid_amount, 0);
   const totalExpenses = (data.expenses || []).reduce((s, e) => s + e.amount, 0);
-  const totalExpensesPaid = (data.expenses || []).filter(e => e.is_paid !== false).reduce((s, e) => s + e.amount, 0);
+  const totalExpensesPaid = (data.expenses || []).reduce((s, e) => s + Number(e.paid_amount || 0), 0);
   const totalExpensesDue = totalExpenses - totalExpensesPaid;
   const grandBill = data.productionBudget + totalArtistBill + totalExpenses;
   const grandPaid = data.productionPaid + totalArtistPaid + totalExpensesPaid;
@@ -151,29 +152,34 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
             <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">ক্যাটাগরি</th>
             <th style="padding:8px 10px;text-align:left;border:1px solid #1e1e28;">বিবরণ</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পরিমাণ</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পেইড</th>
+            <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বাকি</th>
             <th style="padding:8px 10px;text-align:center;border:1px solid #1e1e28;">স্ট্যাটাস</th>
           </tr>
         </thead>
         <tbody>
           ${(data.expenses || []).map(e => {
-            const paid = e.is_paid !== false;
-            const statusHtml = paid
+            const paidAmt = Number(e.paid_amount || 0);
+            const dueAmt = Math.max(0, e.amount - paidAmt);
+            const statusHtml = e.is_paid
               ? '<span style="color:#16a34a;font-weight:bold;">পেইড</span>'
-              : '<span style="color:#dc2626;">বাকি</span>';
+              : paidAmt > 0
+                ? '<span style="color:#d97706;font-weight:bold;">আংশিক পেইড</span>'
+                : '<span style="color:#dc2626;">বাকি</span>';
             return `<tr>
               <td style="padding:8px 10px;border:1px solid #ddd;">${expenseCategoryLabel[e.category] || e.category}</td>
               <td style="padding:8px 10px;border:1px solid #ddd;">${e.description || "-"}</td>
               <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(e.amount)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(paidAmt)}</td>
+              <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(dueAmt)}</td>
               <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${statusHtml}</td>
             </tr>`;
           }).join("")}
           <tr style="background:#f0f4ff;font-weight:bold;">
-            <td style="padding:8px 10px;border:1px solid #ddd;" colspan="2">মোট শুটিং খরচ</td>
-            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalExpenses)}</td>
-            <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;font-size:10px;">
-              <span style="color:#16a34a;">পেইড: ${fmt(totalExpensesPaid)}</span>
-              ${totalExpensesDue > 0 ? `<br/><span style="color:#d97706;">বাকি: ${fmt(totalExpensesDue)}</span>` : ""}
-            </td>
+            <td style="padding:8px 10px;border:1px solid #ddd;" colspan="3">মোট শুটিং খরচ</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(totalExpensesPaid)}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, totalExpensesDue))}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;"></td>
           </tr>
         </tbody>
       </table>
@@ -281,12 +287,13 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
       artistMap[key].totalPaid += a.paid_amount;
     });
     (p.expenses || []).forEach((e) => {
+      const paidAmt = Number(e.paid_amount || 0);
       totalExpenses += e.amount;
-      if (e.is_paid !== false) totalExpensesPaid += e.amount;
+      totalExpensesPaid += paidAmt;
       const cat = expenseCategoryLabel[e.category] || e.category;
       if (!expenseMap[cat]) expenseMap[cat] = { total: 0, paid: 0 };
       expenseMap[cat].total += e.amount;
-      if (e.is_paid !== false) expenseMap[cat].paid += e.amount;
+      expenseMap[cat].paid += paidAmt;
     });
   });
 
