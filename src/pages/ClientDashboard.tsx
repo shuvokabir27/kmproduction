@@ -1633,16 +1633,17 @@ function ExpenseTrendChart({ projects, allPayments, allProjectArtists, allProjec
   }
 
   const getExpenseInRange = (projectId: string, start: Date, end: Date) => {
-    // প্রডাকশন পেমেন্ট
-    const prodPay = allPayments.filter((p: any) => p.project_id === projectId && isWithinInterval(parseISO(p.payment_date), { start, end }))
-      .reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
-    // আর্টিস্ট মোট বিল (remuneration) — paid_amount নয়, পুরো খরচ
+    // প্রডাকশন বাজেট (প্রজেক্ট তারিখ অনুযায়ী)
+    const project = projects.find((p: any) => p.id === projectId);
+    const projectDate = project ? parseISO(project.project_date) : null;
+    const prodBudget = projectDate && isWithinInterval(projectDate, { start, end }) ? Number(project?.total_budget || 0) : 0;
+    // আর্টিস্ট মোট বিল (remuneration) — পেইড বা বাকি সব
     const artPay = allProjectArtists.filter((a: any) => a.project_id === projectId && isWithinInterval(parseISO(a.created_at), { start, end }))
       .reduce((s: number, a: any) => s + Number(a.remuneration || 0), 0);
-    // শুটিং খরচ (মোট amount)
+    // শুটিং খরচ (মোট amount — পেইড বা বাকি সব)
     const expPay = allProjectExpenses.filter((e: any) => e.project_id === projectId && isWithinInterval(parseISO(e.created_at), { start, end }))
       .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
-    return prodPay + artPay + expPay;
+    return prodBudget + artPay + expPay;
   };
 
   const chartData = months.map(m => {
