@@ -393,6 +393,7 @@ export type Database = {
           description: string | null
           id: string
           is_paid: boolean
+          paid_amount: number
           project_id: string
         }
         Insert: {
@@ -403,6 +404,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_paid?: boolean
+          paid_amount?: number
           project_id: string
         }
         Update: {
@@ -413,6 +415,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_paid?: boolean
+          paid_amount?: number
           project_id?: string
         }
         Relationships: [
