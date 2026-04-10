@@ -682,7 +682,7 @@ export default function AdminFreelance() {
 
           <TabsContent value="clients" className="space-y-4 mt-4">
             <div className="flex justify-end">
-              <Button onClick={() => setClientDialog(true)} className="gap-2">
+              <Button onClick={() => { setEditClient(null); setClientForm({ client_id: "", name: "", phone: "", email: "", company: "", address: "", password: "" }); setClientDialog(true); }} className="gap-2">
                 <Plus className="h-4 w-4" /> নতুন ক্লায়েন্ট
               </Button>
             </div>
@@ -709,9 +709,18 @@ export default function AdminFreelance() {
                             {c.address && <div className="flex items-center gap-1"><MapPin className="h-3 w-3" />{c.address}</div>}
                           </div>
                         </div>
-                        <Badge variant={c.is_active ? "default" : "secondary"} className="shrink-0 text-xs">
-                          {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                        </Badge>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <Badge variant={c.is_active ? "default" : "secondary"} className="text-xs">
+                            {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
+                          </Badge>
+                          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => {
+                            setEditClient(c);
+                            setClientForm({ client_id: c.client_id, name: c.name, phone: c.phone || "", email: c.email || "", company: c.company || "", address: c.address || "", password: "" });
+                            setClientDialog(true);
+                          }}>
+                            <Edit className="h-3 w-3" /> এডিট
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
