@@ -1595,7 +1595,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 /* ═══════════════════════════════════════════
    Expense Trend Chart
    ═══════════════════════════════════════════ */
-import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, CartesianGrid, Area, AreaChart } from "recharts";
 import { subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from "date-fns";
 
 const CHART_COLORS = ["#38bdf8", "#a78bfa", "#fb923c", "#34d399", "#f472b6", "#facc15", "#60a5fa"];
