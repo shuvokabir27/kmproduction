@@ -57,13 +57,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "attendance_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "attendance_shooting_id_fkey"
             columns: ["shooting_id"]
             isOneToOne: false
@@ -109,13 +102,6 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bonuses_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
             referencedColumns: ["id"]
           },
         ]
@@ -541,13 +527,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "favorite_works_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
-            referencedColumns: ["id"]
-          },
         ]
       }
       freelance_assignments: {
@@ -590,13 +569,6 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "freelance_assignments_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
             referencedColumns: ["id"]
           },
           {
@@ -1150,13 +1122,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "payments_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
-            referencedColumns: ["id"]
-          },
         ]
       }
       poll_options: {
@@ -1326,13 +1291,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "profile_comments_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
-            referencedColumns: ["id"]
-          },
         ]
       }
       profile_ratings: {
@@ -1366,13 +1324,6 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_ratings_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
             referencedColumns: ["id"]
           },
         ]
@@ -1599,13 +1550,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "salary_credits_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
-            referencedColumns: ["id"]
-          },
         ]
       }
       script_comments: {
@@ -1665,13 +1609,6 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "script_permissions_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
             referencedColumns: ["id"]
           },
           {
@@ -1890,13 +1827,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "shooting_participants_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_safe"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "shooting_participants_shooting_id_fkey"
             columns: ["shooting_id"]
             isOneToOne: false
@@ -2075,171 +2005,7 @@ export type Database = {
       }
     }
     Views: {
-      profiles_safe: {
-        Row: {
-          achievements: string | null
-          achievements_en: string | null
-          address: string | null
-          address_en: string | null
-          bank_account_holder: string | null
-          bank_account_no: string | null
-          bank_name: string | null
-          bio: string | null
-          bio_en: string | null
-          bkash_holder: string | null
-          bkash_no: string | null
-          cover_url: string | null
-          created_at: string | null
-          daily_rate: number | null
-          date_of_birth: string | null
-          designation: string | null
-          designation_en: string | null
-          education: string | null
-          education_en: string | null
-          email: string | null
-          favorite_actor: string | null
-          favorite_actor_en: string | null
-          favorite_actress: string | null
-          favorite_actress_en: string | null
-          favorite_color: string | null
-          favorite_color_en: string | null
-          favorite_dress: string | null
-          favorite_dress_en: string | null
-          favorite_food: string | null
-          favorite_food_en: string | null
-          full_name: string | null
-          full_name_en: string | null
-          id: string | null
-          is_active: boolean | null
-          is_verified: boolean | null
-          joining_date: string | null
-          last_seen_at: string | null
-          member_id: number | null
-          monthly_salary: number | null
-          nagad_holder: string | null
-          nagad_no: string | null
-          phone: string | null
-          photo_url: string | null
-          previous_balance: number | null
-          public_display_order: number | null
-          salary_type: Database["public"]["Enums"]["salary_type"] | null
-          salary_type_changed_at: string | null
-          short_bio: string | null
-          short_bio_en: string | null
-          show_on_public: boolean | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          achievements?: string | null
-          achievements_en?: string | null
-          address?: never
-          address_en?: never
-          bank_account_holder?: never
-          bank_account_no?: never
-          bank_name?: never
-          bio?: string | null
-          bio_en?: string | null
-          bkash_holder?: never
-          bkash_no?: never
-          cover_url?: string | null
-          created_at?: string | null
-          daily_rate?: never
-          date_of_birth?: string | null
-          designation?: string | null
-          designation_en?: string | null
-          education?: string | null
-          education_en?: string | null
-          email?: never
-          favorite_actor?: string | null
-          favorite_actor_en?: string | null
-          favorite_actress?: string | null
-          favorite_actress_en?: string | null
-          favorite_color?: string | null
-          favorite_color_en?: string | null
-          favorite_dress?: string | null
-          favorite_dress_en?: string | null
-          favorite_food?: string | null
-          favorite_food_en?: string | null
-          full_name?: string | null
-          full_name_en?: string | null
-          id?: string | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
-          joining_date?: string | null
-          last_seen_at?: string | null
-          member_id?: number | null
-          monthly_salary?: never
-          nagad_holder?: never
-          nagad_no?: never
-          phone?: never
-          photo_url?: string | null
-          previous_balance?: never
-          public_display_order?: number | null
-          salary_type?: Database["public"]["Enums"]["salary_type"] | null
-          salary_type_changed_at?: string | null
-          short_bio?: string | null
-          short_bio_en?: string | null
-          show_on_public?: boolean | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          achievements?: string | null
-          achievements_en?: string | null
-          address?: never
-          address_en?: never
-          bank_account_holder?: never
-          bank_account_no?: never
-          bank_name?: never
-          bio?: string | null
-          bio_en?: string | null
-          bkash_holder?: never
-          bkash_no?: never
-          cover_url?: string | null
-          created_at?: string | null
-          daily_rate?: never
-          date_of_birth?: string | null
-          designation?: string | null
-          designation_en?: string | null
-          education?: string | null
-          education_en?: string | null
-          email?: never
-          favorite_actor?: string | null
-          favorite_actor_en?: string | null
-          favorite_actress?: string | null
-          favorite_actress_en?: string | null
-          favorite_color?: string | null
-          favorite_color_en?: string | null
-          favorite_dress?: string | null
-          favorite_dress_en?: string | null
-          favorite_food?: string | null
-          favorite_food_en?: string | null
-          full_name?: string | null
-          full_name_en?: string | null
-          id?: string | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
-          joining_date?: string | null
-          last_seen_at?: string | null
-          member_id?: number | null
-          monthly_salary?: never
-          nagad_holder?: never
-          nagad_no?: never
-          phone?: never
-          photo_url?: string | null
-          previous_balance?: never
-          public_display_order?: number | null
-          salary_type?: Database["public"]["Enums"]["salary_type"] | null
-          salary_type_changed_at?: string | null
-          short_bio?: string | null
-          short_bio_en?: string | null
-          show_on_public?: boolean | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_approved_profile_comments: {
@@ -2251,6 +2017,63 @@ export type Database = {
           id: string
           is_approved: boolean
           profile_id: string
+        }[]
+      }
+      get_profiles_safe: {
+        Args: never
+        Returns: {
+          achievements: string
+          achievements_en: string
+          address: string
+          address_en: string
+          bank_account_holder: string
+          bank_account_no: string
+          bank_name: string
+          bio: string
+          bio_en: string
+          bkash_holder: string
+          bkash_no: string
+          cover_url: string
+          created_at: string
+          daily_rate: number
+          date_of_birth: string
+          designation: string
+          designation_en: string
+          education: string
+          education_en: string
+          email: string
+          favorite_actor: string
+          favorite_actor_en: string
+          favorite_actress: string
+          favorite_actress_en: string
+          favorite_color: string
+          favorite_color_en: string
+          favorite_dress: string
+          favorite_dress_en: string
+          favorite_food: string
+          favorite_food_en: string
+          full_name: string
+          full_name_en: string
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          joining_date: string
+          last_seen_at: string
+          member_id: number
+          monthly_salary: number
+          nagad_holder: string
+          nagad_no: string
+          phone: string
+          photo_url: string
+          previous_balance: number
+          public_display_order: number
+          salary_type: Database["public"]["Enums"]["salary_type"]
+          salary_type_changed_at: string
+          short_bio: string
+          short_bio_en: string
+          show_on_public: boolean
+          updated_at: string
+          user_id: string
         }[]
       }
       get_public_profile_by_member_id: {
