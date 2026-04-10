@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -10,11 +10,7 @@ import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ClientProjectScript } from "@/components/ClientProjectScript";
-import { ClientSceneEditor } from "@/components/ClientSceneEditor";
-import { ClientArtistBilling } from "@/components/ClientArtistBilling";
-import { ClientProjectExpenses } from "@/components/ClientProjectExpenses";
-import { downloadProjectBillPDF, downloadAllProjectsBillPDF } from "@/lib/billPdf";
+import { downloadAllProjectsBillPDF } from "@/lib/billPdf";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import ClientArtistReceipt from "@/components/ClientArtistReceipt";
@@ -56,8 +52,8 @@ function AnimatedValue({ value, prefix = "৳" }: { value: number; prefix?: stri
 export default function ClientDashboard() {
   const { user, loading } = useAuth();
   const queryClient = useQueryClient();
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"dashboard" | "projects">("dashboard");
+  const navigate = useNavigate();
+  
   const [expandedBillCard, setExpandedBillCard] = useState<"production" | "artist" | "expense" | null>(null);
   const [showBalance, setShowBalance] = useState(true);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
@@ -66,7 +62,7 @@ export default function ClientDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
+  
 
   const { data: clientProfile } = useQuery({
     queryKey: ["client-profile", user?.id],
@@ -248,7 +244,7 @@ export default function ClientDashboard() {
       <div className="max-w-4xl mx-auto px-4 md:px-8 space-y-4 pb-24 md:pb-8">
         <div ref={dashboardRef} />
         {/* ═══ Grand Summary Card ═══ */}
-        {activeTab === "dashboard" && projects.length > 0 && (
+        {projects.length > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <div className="relative rounded-2xl overflow-hidden">
               {/* Gradient BG */}
@@ -715,203 +711,22 @@ export default function ClientDashboard() {
           </motion.div>
         
         {/* ═══ Projects ═══ */}
-        {activeTab === "projects" && (
-          <>
-          <div ref={projectsRef} />
-          {projects.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <FileText className="h-8 w-8 text-primary/50" />
-              </div>
-              <p className="text-muted-foreground text-sm">কোনো প্রজেক্ট নেই</p>
-            </div>
-          ) : (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-3">
-              <h2 className="text-base font-bold text-foreground flex items-center gap-2 px-1">
-                <FileText className="h-4.5 w-4.5 text-primary" /> আপনার প্রজেক্ট সমূহ
-            </h2>
-            {projects.map((p: any, pIdx: number) => {
-              const scenes = getScenes(p.id);
-              const st = statusMap[p.status] || statusMap.upcoming;
-              const isOpen = expandedProject === p.id;
-              const artTotals = getProjectArtistTotals(p.id);
-              const projProductionPaid = allPayments.filter((pay: any) => pay.project_id === p.id).reduce((s: number, pay: any) => s + Number(pay.amount || 0), 0);
-              const projExpenseTotal = getProjectExpenseTotal(p.id);
-              const projTotal = Number(p.total_budget) + artTotals.bill + projExpenseTotal;
-
-              return (
-                <motion.div
-                  key={p.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * pIdx }}
-                  className={cn(
-                    "rounded-2xl border overflow-hidden transition-all duration-300",
-                    isOpen ? "border-primary/25 bg-card/90 shadow-lg shadow-primary/5" : "border-border/40 bg-card/60"
-                  )}
-                >
-                  <div
-                    className="p-4 cursor-pointer active:bg-secondary/20 transition-colors"
-                    onClick={() => setExpandedProject(isOpen ? null : p.id)}
-                  >
-                    <div className="flex items-start gap-3">
-                      {/* Status indicator */}
-                      <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border", st.bg)}>
-                        <Briefcase className={cn("h-4.5 w-4.5", st.color)} />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="font-semibold text-foreground text-[15px] truncate">{p.name}</h3>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className={cn("text-[9px] px-1.5 py-0 h-4 border cursor-pointer", st.bg, st.color)}
-                          onClick={(e) => {
-                            if (p.status === "paid") {
-                              e.stopPropagation();
-                              setShowPaymentHistory(true);
-                              setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-                            }
-                          }}
-                        >{st.label}</Badge>
-                        <div className="flex flex-wrap gap-x-3 mt-1.5 text-[11px] text-muted-foreground">
-                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(new Date(p.project_date), "d MMM yyyy", { locale: bn })}</span>
-                          {p.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {p.location}</span>}
-                        </div>
-                      </div>
-
-                      <div className="text-right shrink-0">
-                        <div className="text-sm font-bold text-foreground">৳{projTotal.toLocaleString("bn-BD")}</div>
-                        <div className="text-[9px] text-muted-foreground">মোট বিল</div>
-                        <ChevronDown className={cn("h-4 w-4 text-muted-foreground mt-1 mx-auto transition-transform duration-300", isOpen && "rotate-180")} />
-                      </div>
-                    </div>
-
-                    {/* Mini summary tags */}
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/15">
-                        প্রোডাকশন ৳{Number(p.total_budget).toLocaleString("bn-BD")}
-                      </span>
-                      {artTotals.count > 0 && (
-                        <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/15">
-                          আর্টিস্ট ৳{artTotals.bill.toLocaleString("bn-BD")}
-                          {artTotals.due > 0 && <span className="text-amber-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
-                        </span>
-                      )}
-                      {projExpenseTotal > 0 && (
-                        <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/15">
-                          খরচ ৳{projExpenseTotal.toLocaleString("bn-BD")}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="px-4 pb-5 space-y-4 border-t border-border/20 pt-4">
-                          {/* Budget + Download */}
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                              <Wallet className="h-4 w-4 text-primary" /> বাজেট
-                            </h4>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="gap-1.5 text-[11px] h-8 rounded-xl border-border/50"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                const arts = allProjectArtists.filter((a: any) => a.project_id === p.id);
-                                const exps = allProjectExpenses.filter((e: any) => e.project_id === p.id);
-                                downloadProjectBillPDF({
-                                  projectName: p.name,
-                                  projectDate: p.project_date,
-                                  clientName: clientProfile?.name || "",
-                                  companyName: clientProfile?.company || undefined,
-                                  productionBudget: Number(p.total_budget || 0),
-                                  productionPaid: projProductionPaid,
-                                  artists: arts.map((a: any) => ({
-                                    artist_name: a.artist_name,
-                                    remuneration: Number(a.remuneration || 0),
-                                    paid_amount: Number(a.paid_amount || 0),
-                                  })),
-                                  expenses: exps.map((e: any) => ({
-                                    category: e.category,
-                                    amount: Number(e.amount || 0),
-                                    description: e.description || "",
-                                    is_paid: e.is_paid,
-                                    paid_amount: Number(e.paid_amount || 0),
-                                  })),
-                                });
-                                toast({ title: "বিল ডাউনলোড হচ্ছে..." });
-                              }}
-                            >
-                              <Download className="h-3.5 w-3.5" /> বিল ডাউনলোড
-                            </Button>
-                          </div>
-                          <div className="rounded-xl bg-gradient-to-r from-sky-500/10 to-sky-500/5 border border-sky-500/15 p-4 text-center">
-                            <div className="text-[10px] text-muted-foreground mb-0.5">প্রজেক্ট বাজেট</div>
-                            <div className="text-xl font-bold text-sky-400">৳{Number(p.total_budget).toLocaleString("bn-BD")}</div>
-                          </div>
-
-                          <ClientArtistBilling
-                            projectId={p.id}
-                            clientProfileId={clientProfile.id}
-                            clientName={clientProfile?.name || "ক্লায়েন্ট"}
-                            projectName={p.name}
-                          />
-                          <ClientProjectExpenses
-                            projectId={p.id}
-                            clientProfileId={clientProfile.id}
-                          />
-                          <ClientSceneEditor projectId={p.id} scenes={scenes} onUpdate={() => refetchScenes()} />
-                          <ClientProjectScript
-                            projectId={p.id}
-                            userId={user!.id}
-                            initialScript={p.client_script}
-                            initialImages={Array.isArray(p.client_script_images) ? p.client_script_images : []}
-                            onUpdate={() => {}}
-                          />
-
-                          {p.notes && (
-                            <p className="text-[11px] text-muted-foreground italic border-t border-border/15 pt-3">
-                              📝 নোট: {p.notes}
-                            </p>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-            </motion.div>
-          )}
-          </>
-        )}
 
         {/* ═══ Client Bottom Nav ═══ */}
         <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-card/95 backdrop-blur-xl border-t border-border/20" />
           <div className="relative flex items-center justify-around px-2 py-2 pb-safe-bottom">
             <button
-              onClick={() => { setActiveTab("dashboard"); setTimeout(() => dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }}
-              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform", activeTab === "dashboard" && "scale-105")}
+              onClick={() => { setTimeout(() => dashboardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }}
+              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform scale-105")}
             >
-              <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", activeTab === "dashboard" ? "bg-primary/25" : "bg-primary/10")}>
-                <Sparkles className={cn("h-4 w-4", activeTab === "dashboard" ? "text-primary" : "text-muted-foreground")} />
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-primary/25">
+                <Sparkles className="h-4 w-4 text-primary" />
               </div>
-              <span className={cn("text-[10px] font-semibold", activeTab === "dashboard" ? "text-primary" : "text-muted-foreground")}>ড্যাশবোর্ড</span>
+              <span className="text-[10px] font-semibold text-primary">ড্যাশবোর্ড</span>
             </button>
             <button
-              onClick={() => { setActiveTab("dashboard"); setShowPaymentHistory(true); setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
+              onClick={() => { setShowPaymentHistory(true); setTimeout(() => paymentHistoryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100); }}
               className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
             >
               <div className="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
@@ -920,13 +735,13 @@ export default function ClientDashboard() {
               <span className="text-[10px] font-semibold text-emerald-400">পেমেন্ট হিস্ট্রি</span>
             </button>
             <button
-              onClick={() => { setActiveTab("projects"); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50); }}
-              className={cn("flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform", activeTab === "projects" && "scale-105")}
+              onClick={() => navigate("/client/projects")}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl active:scale-90 transition-transform"
             >
-              <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", activeTab === "projects" ? "bg-violet-500/25" : "bg-violet-500/10")}>
-                <FileText className={cn("h-4 w-4", activeTab === "projects" ? "text-violet-400" : "text-muted-foreground")} />
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-violet-500/10">
+                <FileText className="h-4 w-4 text-muted-foreground" />
               </div>
-              <span className={cn("text-[10px] font-semibold", activeTab === "projects" ? "text-violet-400" : "text-muted-foreground")}>প্রজেক্ট সমূহ</span>
+              <span className="text-[10px] font-semibold text-muted-foreground">প্রজেক্ট সমূহ</span>
             </button>
           </div>
         </nav>

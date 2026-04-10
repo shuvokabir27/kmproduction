@@ -40,6 +40,7 @@ import AdminBookings from "./pages/AdminBookings";
 import AdminFreelance from "./pages/AdminFreelance";
 import FreelanceClientView from "./pages/FreelanceClientView";
 import ClientDashboard from "./pages/ClientDashboard";
+import ClientProjects from "./pages/ClientProjects";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -96,6 +97,7 @@ const App = () => (
 
             {/* Client route — client only */}
             <Route path="/client" element={<RouteGuard allowedRoles={["client"]}><ClientDashboard /></RouteGuard>} />
+            <Route path="/client/projects" element={<RouteGuard allowedRoles={["client"]}><ClientProjects /></RouteGuard>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
