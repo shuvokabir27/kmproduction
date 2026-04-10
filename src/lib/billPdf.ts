@@ -39,10 +39,10 @@ function buildRowHTML(label: string, amount: string, paid: string, due: string, 
   const paidNum = parseFloat(paid.replace(/[^\d.-]/g, "")) || 0;
   const amountNum = parseFloat(amount.replace(/[^\d.-]/g, "")) || 0;
   const autoStatus = statusHtml || (amountNum > 0 && paidNum >= amountNum
-    ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+    ? '<span style="color:#16a34a;font-weight:bold;">পেইড</span>'
     : paidNum > 0
-      ? `<span style="color:#d97706;font-weight:bold;">Partially Paid</span>`
-      : '<span style="color:#dc2626;">Unpaid</span>');
+      ? `<span style="color:#d97706;font-weight:bold;">আংশিক পেইড</span>`
+      : '<span style="color:#dc2626;">বাকি</span>');
   return `<tr style="${bg}">
     <td style="padding:8px 10px;border:1px solid #ddd;${fw}">${label}</td>
     <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;${fw}">${amount}</td>
@@ -128,10 +128,10 @@ function buildSingleProjectHTML(data: ProjectBillData): string {
           ${(() => {
             const prodDue = data.productionBudget - data.productionPaid;
             const status = data.productionPaid >= data.productionBudget && data.productionBudget > 0
-              ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+              ? '<span style="color:#16a34a;font-weight:bold;">পেইড</span>'
               : data.productionPaid > 0
-                ? '<span style="color:#d97706;font-weight:bold;">Partially Paid</span>'
-                : '<span style="color:#dc2626;">Unpaid</span>';
+                ? '<span style="color:#d97706;font-weight:bold;">আংশিক পেইড</span>'
+                : '<span style="color:#dc2626;">বাকি</span>';
             return `<tr style="background:#f0f4ff;font-weight:bold;">
               <td style="padding:8px 10px;border:1px solid #ddd;">প্রোডাকশন খরচ</td>
               <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(data.productionBudget)}</td>
@@ -309,10 +309,10 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
   artistList.forEach((a) => {
     const due = a.totalBill - a.totalPaid;
     const status = a.totalBill > 0 && a.totalPaid >= a.totalBill
-      ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+      ? '<span style="color:#16a34a;font-weight:bold;">পেইড</span>'
       : a.totalPaid > 0
-        ? '<span style="color:#d97706;font-weight:bold;">Partially Paid</span>'
-        : '<span style="color:#dc2626;">Unpaid</span>';
+        ? '<span style="color:#d97706;font-weight:bold;">আংশিক পেইড</span>'
+        : '<span style="color:#dc2626;">বাকি</span>';
     artistRows += `<tr>
       <td style="padding:8px 10px;border:1px solid #ddd;">${a.name}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${a.projects}</td>
@@ -329,10 +329,10 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
     const pDate = format(new Date(p.projectDate), "d MMM yy", { locale: bn });
     const due = p.productionBudget - p.productionPaid;
     const status = p.productionBudget > 0 && p.productionPaid >= p.productionBudget
-      ? '<span style="color:#16a34a;font-weight:bold;">Paid</span>'
+      ? '<span style="color:#16a34a;font-weight:bold;">পেইড</span>'
       : p.productionPaid > 0
-        ? '<span style="color:#d97706;font-weight:bold;">Partially Paid</span>'
-        : '<span style="color:#dc2626;">Unpaid</span>';
+        ? '<span style="color:#d97706;font-weight:bold;">আংশিক পেইড</span>'
+        : '<span style="color:#dc2626;">বাকি</span>';
     productionRows += `<tr>
       <td style="padding:8px 10px;border:1px solid #ddd;">${p.projectName}</td>
       <td style="padding:8px 10px;border:1px solid #ddd;text-align:center;">${pDate}</td>
