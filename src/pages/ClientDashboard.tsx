@@ -929,6 +929,9 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     return Array.from(map.values());
   }, [allProjectExpenses, projects]);
 
+  const [expensePayMode, setExpensePayMode] = useState<"select" | "custom">("select");
+  const [customExpenseAmount, setCustomExpenseAmount] = useState("");
+
   const [selectedExpenseIds, setSelectedExpenseIds] = useState<Set<string>>(new Set());
 
   const toggleExpense = (id: string) => {
@@ -948,19 +951,53 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     .filter((e: any) => selectedExpenseIds.has(e.id))
     .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
 
+  const expensePayAmount = expensePayMode === "select" ? selectedExpenseTotal : Number(customExpenseAmount || 0);
+
   const handlePayExpenses = async () => {
-    if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
-    try {
-      for (const id of selectedExpenseIds) {
-        const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
-        if (error) throw error;
+    if (expensePayMode === "select") {
+      if (selectedExpenseIds.size === 0) { toast({ title: "খরচ সিলেক্ট করুন", variant: "destructive" }); return; }
+      try {
+        for (const id of selectedExpenseIds) {
+          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+          if (error) throw error;
+        }
+        toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
+        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        setSelectedExpenseIds(new Set());
+        setStep("choose");
+      } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+    } else {
+      const amount = Number(customExpenseAmount || 0);
+      if (amount <= 0) { toast({ title: "পরিমাণ দিন", variant: "destructive" }); return; }
+      // Pay expenses oldest first until amount is exhausted
+      const dueExpenses = allProjectExpenses
+        .filter((e: any) => !e.is_paid)
+        .sort((a: any, b: any) => (a.created_at || "").localeCompare(b.created_at || ""));
+      let remaining = amount;
+      const toPay: string[] = [];
+      for (const exp of dueExpenses) {
+        if (remaining <= 0) break;
+        const expAmount = Number(exp.amount || 0);
+        if (remaining >= expAmount) {
+          toPay.push(exp.id);
+          remaining -= expAmount;
+        }
       }
-      toast({ title: `৳${selectedExpenseTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓` });
-      queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
-      queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
-      setSelectedExpenseIds(new Set());
-      setStep("choose");
-    } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+      if (toPay.length === 0) { toast({ title: "এই পরিমাণে কোনো খরচ পেইড করা যায় না", variant: "destructive" }); return; }
+      try {
+        for (const id of toPay) {
+          const { error } = await (supabase as any).from("client_project_expenses").update({ is_paid: true }).eq("id", id);
+          if (error) throw error;
+        }
+        const paidTotal = dueExpenses.filter((e: any) => toPay.includes(e.id)).reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+        toast({ title: `৳${paidTotal.toLocaleString("bn-BD")} খরচ পেইড করা হয়েছে ✓ (${toPay.length} টি আইটেম)` });
+        queryClient.invalidateQueries({ queryKey: ["all-client-project-expenses"] });
+        queryClient.invalidateQueries({ queryKey: ["client-project-expenses"] });
+        setCustomExpenseAmount("");
+        setStep("choose");
+      } catch (err: any) { toast({ title: "ত্রুটি", description: err.message, variant: "destructive" }); }
+    }
   };
 
   const handlePayArtist = async () => {
@@ -1245,45 +1282,98 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                     <div className="text-sm font-bold text-amber-400">৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
                   </div>
                   <div className="rounded-xl bg-emerald-500/8 p-2.5">
-                    <div className="text-[9px] text-emerald-400/70">সিলেক্টেড</div>
-                    <div className="text-sm font-bold text-emerald-400">৳{selectedExpenseTotal.toLocaleString("bn-BD")}</div>
+                    <div className="text-[9px] text-emerald-400/70">{expensePayMode === "select" ? "সিলেক্টেড" : "কাস্টম"}</div>
+                    <div className="text-sm font-bold text-emerald-400">৳{expensePayAmount.toLocaleString("bn-BD")}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">বাকি খরচসমূহ সিলেক্ট করুন</span>
-                <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2" onClick={selectAllExpenses}>সব সিলেক্ট</Button>
+              {/* Mode toggle */}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setExpensePayMode("select")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
+                    expensePayMode === "select"
+                      ? "bg-primary/15 border-primary/30 text-primary"
+                      : "bg-secondary/30 border-border/30 text-muted-foreground"
+                  }`}
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" /> আইটেম সিলেক্ট
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpensePayMode("custom")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
+                    expensePayMode === "custom"
+                      ? "bg-primary/15 border-primary/30 text-primary"
+                      : "bg-secondary/30 border-border/30 text-muted-foreground"
+                  }`}
+                >
+                  <Banknote className="h-3.5 w-3.5" /> কাস্টম টাকা
+                </button>
               </div>
 
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                {expensesByProject.map(({ project, expenses, totalDue }) => (
-                  <div key={project?.id || "unknown"} className="rounded-xl border border-border/30 overflow-hidden">
-                    <div className="px-3 py-2 bg-secondary/20 text-xs font-medium text-foreground flex items-center justify-between">
-                      <span className="truncate">{project?.name || "অজানা প্রজেক্ট"}</span>
-                      <span className="text-amber-400 shrink-0 ml-2">৳{totalDue.toLocaleString("bn-BD")}</span>
-                    </div>
-                    <div className="divide-y divide-border/20">
-                      {expenses.map((exp: any) => {
-                        const catLabel: Record<string, string> = { food: "🍛 খাবার", costume: "👔 কস্টিউম", transport: "🚌 যাতায়াত" };
-                        return (
-                          <label key={exp.id} className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-secondary/30 cursor-pointer">
-                            <Checkbox checked={selectedExpenseIds.has(exp.id)} onCheckedChange={() => toggleExpense(exp.id)} />
-                            <div className="flex-1 min-w-0">
-                              <div className="text-[11px] font-medium text-foreground">{catLabel[exp.category] || exp.category}</div>
-                              {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
-                            </div>
-                            <span className="text-xs font-semibold text-foreground shrink-0">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
+              {expensePayMode === "custom" && (
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground">পেমেন্ট পরিমাণ</label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="৳ পরিমাণ লিখুন"
+                      value={customExpenseAmount}
+                      onChange={(e) => setCustomExpenseAmount(e.target.value)}
+                      min={0}
+                      max={totalExpenseDue}
+                      className="flex-1 rounded-xl"
+                    />
+                    <Button variant="outline" size="sm" className="text-xs shrink-0 rounded-xl" onClick={() => setCustomExpenseAmount(String(totalExpenseDue))}>সম্পূর্ণ</Button>
                   </div>
-                ))}
-              </div>
+                  <p className="text-[10px] text-muted-foreground">পুরনো খরচ থেকে শুরু করে যতটুকু সম্ভব পেইড হবে</p>
+                </div>
+              )}
 
-              <Button className="w-full gap-2 rounded-xl h-12 text-base font-semibold" onClick={handlePayExpenses} disabled={selectedExpenseIds.size === 0}>
-                <Banknote className="h-4 w-4" /> ৳{selectedExpenseTotal.toLocaleString("bn-BD")} পেইড করুন
+              {expensePayMode === "select" && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">বাকি খরচসমূহ সিলেক্ট করুন</span>
+                    <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2" onClick={selectAllExpenses}>সব সিলেক্ট</Button>
+                  </div>
+
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                    {expensesByProject.map(({ project, expenses, totalDue }) => (
+                      <div key={project?.id || "unknown"} className="rounded-xl border border-border/30 overflow-hidden">
+                        <div className="px-3 py-2 bg-secondary/20 text-xs font-medium text-foreground flex items-center justify-between">
+                          <span className="truncate">{project?.name || "অজানা প্রজেক্ট"}</span>
+                          <span className="text-amber-400 shrink-0 ml-2">৳{totalDue.toLocaleString("bn-BD")}</span>
+                        </div>
+                        <div className="divide-y divide-border/20">
+                          {expenses.map((exp: any) => {
+                            const catLabel: Record<string, string> = { food: "🍛 খাবার", costume: "👔 কস্টিউম", transport: "🚌 যাতায়াত" };
+                            return (
+                              <label key={exp.id} className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-secondary/30 cursor-pointer">
+                                <Checkbox checked={selectedExpenseIds.has(exp.id)} onCheckedChange={() => toggleExpense(exp.id)} />
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-[11px] font-medium text-foreground">{catLabel[exp.category] || exp.category}</div>
+                                  {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
+                                </div>
+                                <span className="text-xs font-semibold text-foreground shrink-0">৳{Number(exp.amount).toLocaleString("bn-BD")}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              <Button
+                className="w-full gap-2 rounded-xl h-12 text-base font-semibold"
+                onClick={handlePayExpenses}
+                disabled={expensePayMode === "select" ? selectedExpenseIds.size === 0 : expensePayAmount <= 0}
+              >
+                <Banknote className="h-4 w-4" /> ৳{expensePayAmount.toLocaleString("bn-BD")} পেইড করুন
               </Button>
             </div>
           )}
