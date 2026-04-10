@@ -277,7 +277,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
     <div style="background:#1e1e28;padding:24px 30px 16px;text-align:center;">
       <div style="font-size:11px;color:#b4b4c8;letter-spacing:3px;text-transform:uppercase;">Kuakata Multimedia</div>
       <div style="font-size:22px;font-weight:bold;color:#fff;margin-top:6px;">সকল প্রজেক্ট বিল</div>
-      <div style="font-size:13px;color:#e0e0f0;margin-top:4px;">ক্লায়েন্ট: ${data.clientName}${data.company ? ` (${data.company})` : ""}</div>
+      <div style="font-size:13px;color:#e0e0f0;margin-top:4px;">প্রজেক্ট ডিরেক্টর: ${data.clientName}${data.company ? ` (${data.company})` : ""}</div>
       <div style="font-size:11px;color:#b4b4c8;margin-top:6px;">মোট ${data.projects.length} টি প্রজেক্ট  •  তারিখ: ${dateStr}</div>
     </div>
     <div style="height:3px;background:#3b82f6;"></div>
@@ -293,6 +293,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">মোট বিল</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পেইড</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বাকি</th>
+            <th style="padding:8px 10px;text-align:center;border:1px solid #1e1e28;">স্ট্যাটাস</th>
           </tr>
         </thead>
         <tbody>
@@ -302,6 +303,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalArtistBill)}</td>
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(totalArtistPaid)}</td>
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, totalArtistBill - totalArtistPaid))}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;"></td>
           </tr>
         </tbody>
       </table>
@@ -316,6 +318,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বিল</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">পেইড</th>
             <th style="padding:8px 10px;text-align:right;border:1px solid #1e1e28;">বাকি</th>
+            <th style="padding:8px 10px;text-align:center;border:1px solid #1e1e28;">স্ট্যাটাস</th>
           </tr>
         </thead>
         <tbody>
@@ -325,6 +328,7 @@ export async function downloadAllProjectsBillPDF(data: AllProjectsBillData) {
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;">${fmt(totalProductionBill)}</td>
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#16a34a;">${fmt(totalProductionPaid)}</td>
             <td style="padding:8px 10px;border:1px solid #ddd;text-align:right;color:#d97706;">${fmt(Math.max(0, totalProductionBill - totalProductionPaid))}</td>
+            <td style="padding:8px 10px;border:1px solid #ddd;"></td>
           </tr>
         </tbody>
       </table>
