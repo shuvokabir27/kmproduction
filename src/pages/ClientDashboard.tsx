@@ -1591,3 +1591,141 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
     </>
   );
 }
+
+/* ═══════════════════════════════════════════
+   Expense Trend Chart
+   ═══════════════════════════════════════════ */
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from "recharts";
+import { subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from "date-fns";
+
+const CHART_COLORS = ["#38bdf8", "#a78bfa", "#fb923c", "#34d399", "#f472b6", "#facc15", "#60a5fa"];
+
+function ExpenseTrendChart({ projects, allPayments, allProjectArtists, allProjectExpenses }: {
+  projects: any[]; allPayments: any[]; allProjectArtists: any[]; allProjectExpenses: any[];
+}) {
+  const [monthCount, setMonthCount] = useState(3);
+  const [customDate, setCustomDate] = useState<Date | undefined>();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const now = new Date();
+  const months: { start: Date; end: Date; label: string }[] = [];
+  for (let i = monthCount - 1; i >= 0; i--) {
+    const d = subMonths(now, i);
+    months.push({
+      start: startOfMonth(d),
+      end: endOfMonth(d),
+      label: format(d, "MMM yy", { locale: bn }),
+    });
+  }
+
+  // If custom date selected and outside current range, prepend/append that month
+  if (customDate) {
+    const cm = startOfMonth(customDate);
+    const alreadyIn = months.some(m => m.start.getTime() === cm.getTime());
+    if (!alreadyIn) {
+      months.push({
+        start: cm,
+        end: endOfMonth(customDate),
+        label: format(customDate, "MMM yy", { locale: bn }),
+      });
+      months.sort((a, b) => a.start.getTime() - b.start.getTime());
+    }
+  }
+
+  const getExpenseInRange = (projectId: string, start: Date, end: Date) => {
+    const prodPay = allPayments.filter((p: any) => p.project_id === projectId && isWithinInterval(parseISO(p.payment_date), { start, end }))
+      .reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
+    const artPay = allProjectArtists.filter((a: any) => a.project_id === projectId && Number(a.paid_amount || 0) > 0 && isWithinInterval(parseISO(a.created_at), { start, end }))
+      .reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+    const expPay = allProjectExpenses.filter((e: any) => e.project_id === projectId && isWithinInterval(parseISO(e.created_at), { start, end }))
+      .reduce((s: number, e: any) => s + Number(e.amount || 0), 0);
+    return prodPay + artPay + expPay;
+  };
+
+  const chartData = months.map(m => {
+    const row: any = { month: m.label };
+    projects.forEach((p: any) => {
+      row[p.name] = getExpenseInRange(p.id, m.start, m.end);
+    });
+    return row;
+  });
+
+  const activeProjects = projects.filter((p: any) =>
+    chartData.some(row => row[p.name] > 0)
+  );
+
+  if (activeProjects.length === 0) return null;
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+      <div className="rounded-2xl border border-border/40 bg-card/60 overflow-hidden p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" /> খরচের তুলনা
+          </h3>
+          <div className="flex items-center gap-1.5">
+            {[3, 6].map(n => (
+              <button key={n} onClick={() => { setMonthCount(n); setCustomDate(undefined); }}
+                className={cn("text-[10px] px-2 py-0.5 rounded-full border transition-colors",
+                  monthCount === n && !customDate ? "bg-primary/15 border-primary/30 text-primary" : "border-border/40 text-muted-foreground"
+                )}>
+                {n} মাস
+              </button>
+            ))}
+            <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+              <PopoverTrigger asChild>
+                <button className={cn("text-[10px] px-2 py-0.5 rounded-full border transition-colors",
+                  customDate ? "bg-primary/15 border-primary/30 text-primary" : "border-border/40 text-muted-foreground"
+                )}>
+                  <Calendar className="h-3 w-3 inline mr-0.5" />
+                  {customDate ? format(customDate, "MMM yy", { locale: bn }) : "তারিখ"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <CalendarPicker
+                  mode="single"
+                  selected={customDate}
+                  onSelect={(d) => { setCustomDate(d); setShowDatePicker(false); }}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <div className="h-[200px] -ml-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={40}
+                tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+              <RechartsTooltip
+                contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "11px" }}
+                formatter={(value: number, name: string) => [`৳${value.toLocaleString("bn-BD")}`, name]}
+              />
+              <Legend wrapperStyle={{ fontSize: "10px" }} />
+              {activeProjects.map((p: any, i: number) => (
+                <Line key={p.id} type="monotone" dataKey={p.name} stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                  strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Project legend with totals */}
+        <div className="flex flex-wrap gap-2 mt-3">
+          {activeProjects.map((p: any, i: number) => {
+            const total = chartData.reduce((s, row) => s + (row[p.name] || 0), 0);
+            return (
+              <div key={p.id} className="flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-full bg-background/50 border border-border/20">
+                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                <span className="text-muted-foreground truncate max-w-[80px]">{p.name}</span>
+                <span className="font-semibold text-foreground">৳{total.toLocaleString("bn-BD")}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
