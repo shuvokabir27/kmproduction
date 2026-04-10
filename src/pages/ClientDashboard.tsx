@@ -134,6 +134,19 @@ export default function ClientDashboard() {
     },
   });
 
+  const { data: clientPaymentHistory = [] } = useQuery({
+    queryKey: ["client-payment-history", clientProfile?.id],
+    enabled: !!clientProfile?.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("client_payment_history")
+        .select("*")
+        .eq("client_profile_id", clientProfile.id)
+        .order("created_at", { ascending: false });
+      return data || [];
+    },
+  });
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3">
