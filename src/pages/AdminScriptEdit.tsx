@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo } from "lucide-react";
+import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo, Maximize, Minimize } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Type } from "lucide-react";
@@ -23,6 +23,7 @@ const AdminScriptEdit = () => {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [permDialogOpen, setPermDialogOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const [wordCount, setWordCount] = useState(0);
 
@@ -174,16 +175,16 @@ const AdminScriptEdit = () => {
     printWindow.document.close();
   };
 
-  return (
-    <AppLayout>
-      <div className="max-w-5xl mx-auto space-y-3 relative">
+  const editorContent = (
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-muted overflow-auto' : ''}`}>
+      <div className={`${isFullscreen ? 'max-w-6xl' : 'max-w-5xl'} mx-auto space-y-3 relative`}>
         {/* Toolbar - fixed in edit mode */}
         {isEditMode && (
-          <div className="fixed top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)] right-0 z-40 bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg">
-            <div className="max-w-5xl mx-auto px-2 md:px-4 py-1.5 space-y-1">
+          <div className={`fixed ${isFullscreen ? 'top-0 left-0' : 'top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)]'} right-0 z-[51] bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg`}>
+            <div className={`${isFullscreen ? 'max-w-6xl' : 'max-w-5xl'} mx-auto px-2 md:px-4 py-1.5 space-y-1`}>
               {/* Title row */}
               <div className="flex items-center gap-2 min-w-0">
-                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => navigate("/admin/scripts")}>
+                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => { if (isFullscreen) setIsFullscreen(false); else navigate("/admin/scripts"); }}>
                   <ArrowLeft className="h-3.5 w-3.5" />
                 </Button>
                 <h1 className="text-sm font-bold text-foreground truncate flex items-center gap-1.5 flex-1 min-w-0">
@@ -191,6 +192,9 @@ const AdminScriptEdit = () => {
                   <span className="truncate">{script.title}</span>
                 </h1>
                 <div className="flex items-center gap-1 shrink-0">
+                  <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={() => setIsFullscreen(!isFullscreen)} title={isFullscreen ? "ফুলস্ক্রিন বন্ধ" : "ফুলস্ক্রিন"}>
+                    {isFullscreen ? <Minimize className="h-3 w-3" /> : <Maximize className="h-3 w-3" />}
+                  </Button>
                   <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={() => setPermDialogOpen(true)}>
                     <Users className="h-3 w-3" />
                   </Button>
@@ -251,7 +255,7 @@ const AdminScriptEdit = () => {
         {!isEditMode && (
           <div className="space-y-3">
             <div className="flex items-center gap-3 min-w-0">
-              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => navigate("/admin/scripts")}>
+              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => { if (isFullscreen) setIsFullscreen(false); else navigate("/admin/scripts"); }}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="min-w-0 flex-1">
@@ -262,6 +266,10 @@ const AdminScriptEdit = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setIsFullscreen(!isFullscreen)}>
+                {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
+                {isFullscreen ? "ছোট করুন" : "ফুলস্ক্রিন"}
+              </Button>
               <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setPermDialogOpen(true)}>
                 <Users className="h-3.5 w-3.5" /> পারমিশন {permissions?.length ? `(${permissions.length})` : ""}
               </Button>
@@ -278,15 +286,14 @@ const AdminScriptEdit = () => {
         {/* Word-like Document Page */}
         <div className="flex justify-center pb-8">
           <div 
-            className="w-full max-w-[816px] bg-white shadow-2xl border border-gray-200/50 rounded-sm"
-            style={{ minHeight: "1056px" }}
+            className={`w-full ${isFullscreen ? 'max-w-[960px]' : 'max-w-[816px]'} bg-white shadow-2xl border border-gray-200/50 rounded-sm transition-all duration-300`}
+            style={{ minHeight: isFullscreen ? "calc(100vh - 120px)" : "1056px" }}
           >
-            {/* Page content area - like A4 paper */}
             <div
               ref={editorRef}
               contentEditable={isEditMode}
               className={`
-                w-full min-h-[1056px] px-[60px] md:px-[80px] py-[60px] 
+                w-full px-[60px] md:px-[80px] py-[60px] 
                 text-gray-900 focus:outline-none
                 text-[15px] leading-[1.8]
                 [&_h1]:text-[24px] [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h1]:text-gray-900 [&_h1]:leading-tight
@@ -298,10 +305,10 @@ const AdminScriptEdit = () => {
                 [&_strong]:font-bold [&_em]:italic [&_u]:underline
                 selection:bg-blue-200
               `}
+              style={{ fontFamily: "'Noto Sans Bengali', 'Kalpurush', sans-serif", wordBreak: "break-word", minHeight: isFullscreen ? "calc(100vh - 120px)" : "1056px" }}
               suppressContentEditableWarning
               onInput={updateWordCount}
               onKeyDown={isEditMode ? handleKeyDown : undefined}
-              style={{ fontFamily: "'Noto Sans Bengali', 'Kalpurush', sans-serif", wordBreak: "break-word" }}
             />
           </div>
         </div>
@@ -366,6 +373,14 @@ const AdminScriptEdit = () => {
           </div>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+
+  if (isFullscreen) return editorContent;
+
+  return (
+    <AppLayout>
+      {editorContent}
     </AppLayout>
   );
 };
