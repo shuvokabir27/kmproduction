@@ -27,6 +27,40 @@ const AdminScriptEdit = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const savedContentRef = useRef<string>("");
   const [wordCount, setWordCount] = useState(0);
+  const savedSelectionRef = useRef<Range | null>(null);
+
+  // Save selection whenever it changes inside editor
+  useEffect(() => {
+    const saveSelection = () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
+        savedSelectionRef.current = sel.getRangeAt(0).cloneRange();
+      }
+    };
+    document.addEventListener("selectionchange", saveSelection);
+    return () => document.removeEventListener("selectionchange", saveSelection);
+  }, []);
+
+  const restoreSelection = useCallback(() => {
+    const range = savedSelectionRef.current;
+    if (range) {
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  }, []);
+
+  const applyFontSize = useCallback((px: string) => {
+    restoreSelection();
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && editorRef.current?.contains(sel.anchorNode)) {
+      const range = sel.getRangeAt(0);
+      const span = document.createElement("span");
+      span.style.fontSize = `${px}px`;
+      try { range.surroundContents(span); } catch { /* partial selection */ }
+    }
+    editorRef.current?.focus();
+  }, [restoreSelection]);
 
   const { data: script, isLoading: scriptLoading } = useQuery({
     queryKey: ["script-detail", id],
