@@ -27,14 +27,22 @@ const AdminScriptEdit = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const savedContentRef = useRef<string>("");
   const [wordCount, setWordCount] = useState(0);
+  const [currentFontSize, setCurrentFontSize] = useState("");
   const savedSelectionRef = useRef<Range | null>(null);
 
-  // Save selection whenever it changes inside editor
+  // Save selection and detect font size whenever selection changes inside editor
   useEffect(() => {
     const saveSelection = () => {
       const sel = window.getSelection();
       if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
         savedSelectionRef.current = sel.getRangeAt(0).cloneRange();
+        // Detect current font size
+        const node = sel.anchorNode;
+        const el = node?.nodeType === 3 ? node.parentElement : (node as HTMLElement);
+        if (el) {
+          const size = Math.round(parseFloat(window.getComputedStyle(el).fontSize));
+          setCurrentFontSize(String(size));
+        }
       }
     };
     document.addEventListener("selectionchange", saveSelection);
