@@ -25,6 +25,7 @@ const AdminScriptEdit = () => {
   const [permDialogOpen, setPermDialogOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
+  const savedContentRef = useRef<string>("");
   const [wordCount, setWordCount] = useState(0);
 
   const { data: script, isLoading: scriptLoading } = useQuery({
