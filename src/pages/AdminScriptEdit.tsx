@@ -176,8 +176,8 @@ const AdminScriptEdit = () => {
   };
 
   const editorContent = (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-muted overflow-auto' : ''}`}>
-      <div className={`${isFullscreen ? 'max-w-6xl' : 'max-w-5xl'} mx-auto space-y-3 relative`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-muted overflow-auto pt-0' : ''}`} id="fullscreen-container">
+      <div className={`${isFullscreen ? 'max-w-6xl px-4' : 'max-w-5xl'} mx-auto space-y-3 relative`}>
         {/* Toolbar - fixed in edit mode */}
         {isEditMode && (
           <div className={`fixed ${isFullscreen ? 'top-0 left-0' : 'top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)]'} right-0 z-[51] bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg`}>
