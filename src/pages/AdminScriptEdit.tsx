@@ -23,6 +23,7 @@ const AdminScriptEdit = () => {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [permDialogOpen, setPermDialogOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const [wordCount, setWordCount] = useState(0);
 
