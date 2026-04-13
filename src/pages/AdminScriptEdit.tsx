@@ -281,11 +281,6 @@ const AdminScriptEdit = () => {
                     max={96}
                     placeholder="সাইজ"
                     className="h-7 w-14 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onFocus={(e) => {
-                      // Allow typing but don't steal selection
-                      (e.target as HTMLInputElement).removeAttribute("readonly");
-                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
