@@ -27,14 +27,22 @@ const AdminScriptEdit = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const savedContentRef = useRef<string>("");
   const [wordCount, setWordCount] = useState(0);
+  const [currentFontSize, setCurrentFontSize] = useState("");
   const savedSelectionRef = useRef<Range | null>(null);
 
-  // Save selection whenever it changes inside editor
+  // Save selection and detect font size whenever selection changes inside editor
   useEffect(() => {
     const saveSelection = () => {
       const sel = window.getSelection();
       if (sel && sel.rangeCount > 0 && editorRef.current?.contains(sel.anchorNode)) {
         savedSelectionRef.current = sel.getRangeAt(0).cloneRange();
+        // Detect current font size
+        const node = sel.anchorNode;
+        const el = node?.nodeType === 3 ? node.parentElement : (node as HTMLElement);
+        if (el) {
+          const size = Math.round(parseFloat(window.getComputedStyle(el).fontSize));
+          setCurrentFontSize(String(size));
+        }
       }
     };
     document.addEventListener("selectionchange", saveSelection);
@@ -280,13 +288,14 @@ const AdminScriptEdit = () => {
                     min={8}
                     max={96}
                     placeholder="সাইজ"
+                    value={currentFontSize}
+                    onChange={(e) => setCurrentFontSize(e.target.value)}
                     className="h-7 w-14 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
                         const val = (e.target as HTMLInputElement).value;
                         if (val) applyFontSize(val);
-                        (e.target as HTMLInputElement).value = "";
                       }
                     }}
                     title="ফন্ট সাইজ (px) — সাইজ লিখে Enter চাপুন"
