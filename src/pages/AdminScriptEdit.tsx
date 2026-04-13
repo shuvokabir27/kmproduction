@@ -281,60 +281,46 @@ const AdminScriptEdit = () => {
                     max={96}
                     placeholder="সাইজ"
                     className="h-7 w-14 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onFocus={(e) => {
+                      // Allow typing but don't steal selection
+                      (e.target as HTMLInputElement).removeAttribute("readonly");
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
                         const val = (e.target as HTMLInputElement).value;
-                        if (val) {
-                          const sel = window.getSelection();
-                          if (sel && !sel.isCollapsed) {
-                            const range = sel.getRangeAt(0);
-                            const span = document.createElement("span");
-                            span.style.fontSize = `${val}px`;
-                            range.surroundContents(span);
-                            sel.removeAllRanges();
-                          }
-                          editorRef.current?.focus();
-                        }
+                        if (val) applyFontSize(val);
+                        (e.target as HTMLInputElement).value = "";
                       }
                     }}
-                    onBlur={(e) => {
-                      const val = e.target.value;
-                      if (val) {
-                        const sel = window.getSelection();
-                        if (sel && !sel.isCollapsed && editorRef.current?.contains(sel.anchorNode)) {
-                          const range = sel.getRangeAt(0);
-                          const span = document.createElement("span");
-                          span.style.fontSize = `${val}px`;
-                          range.surroundContents(span);
-                        }
-                      }
-                    }}
-                    title="ফন্ট সাইজ (px)"
+                    title="ফন্ট সাইজ (px) — সাইজ লিখে Enter চাপুন"
                   />
                   <span className="text-[9px] text-muted-foreground">px</span>
                 </div>
                 <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
                 <div className="flex items-center gap-1">
-                  <label className="relative cursor-pointer" title="টেক্সট রং">
+                  <label className="relative cursor-pointer" title="টেক্সট রং" onMouseDown={(e) => e.preventDefault()}>
                     <span className="text-[10px] text-muted-foreground">A</span>
                     <input
                       type="color"
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       defaultValue="#ffffff"
                       onChange={(e) => {
+                        restoreSelection();
                         execCmd("foreColor", e.target.value);
                       }}
                     />
                     <div className="h-1 w-4 rounded-full bg-primary mt-[-2px]" id="text-color-indicator" />
                   </label>
-                  <label className="relative cursor-pointer" title="ব্যাকগ্রাউন্ড রং">
+                  <label className="relative cursor-pointer" title="ব্যাকগ্রাউন্ড রং" onMouseDown={(e) => e.preventDefault()}>
                     <span className="text-[10px] text-muted-foreground px-1 bg-primary/20 rounded">A</span>
                     <input
                       type="color"
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       defaultValue="#000000"
                       onChange={(e) => {
+                        restoreSelection();
                         execCmd("hiliteColor", e.target.value);
                       }}
                     />
