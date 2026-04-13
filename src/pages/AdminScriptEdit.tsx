@@ -198,7 +198,7 @@ const AdminScriptEdit = () => {
             <div className={`${isFullscreen ? 'max-w-6xl' : 'max-w-5xl'} mx-auto px-2 md:px-4 py-1.5 space-y-1`}>
               {/* Title row */}
               <div className="flex items-center gap-2 min-w-0">
-                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => { if (isFullscreen) setIsFullscreen(false); else navigate("/admin/scripts"); }}>
+                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => { if (isFullscreen) toggleFullscreen(); else navigate("/admin/scripts"); }}>
                   <ArrowLeft className="h-3.5 w-3.5" />
                 </Button>
                 <h1 className="text-sm font-bold text-foreground truncate flex items-center gap-1.5 flex-1 min-w-0">
