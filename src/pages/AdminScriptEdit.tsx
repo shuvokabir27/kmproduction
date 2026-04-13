@@ -269,7 +269,7 @@ const AdminScriptEdit = () => {
         {!isEditMode && (
           <div className="space-y-3">
             <div className="flex items-center gap-3 min-w-0">
-              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => { if (isFullscreen) setIsFullscreen(false); else navigate("/admin/scripts"); }}>
+              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => { if (isFullscreen) toggleFullscreen(); else navigate("/admin/scripts"); }}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="min-w-0 flex-1">
