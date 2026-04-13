@@ -240,22 +240,72 @@ const AdminScriptEdit = () => {
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("insertUnorderedList")}><List className="h-3.5 w-3.5" /></Button>
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("insertOrderedList")}><span className="text-[10px] font-mono">1.</span></Button>
                 <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
-                <select className="h-7 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground" onChange={(e) => { if (e.target.value) execCmd("fontSize", e.target.value); }} defaultValue="">
-                  <option value="" disabled>সাইজ</option>
-                  <option value="1">ছোট</option>
-                  <option value="3">সাধারণ</option>
-                  <option value="5">বড়</option>
-                  <option value="7">অনেক বড়</option>
-                </select>
-                <select className="h-7 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground" onChange={(e) => { if (e.target.value) execCmd("foreColor", e.target.value); }} defaultValue="">
-                  <option value="" disabled>রং</option>
-                  <option value="#ffffff">সাদা</option>
-                  <option value="#ef4444">লাল</option>
-                  <option value="#3b82f6">নীল</option>
-                  <option value="#22c55e">সবুজ</option>
-                  <option value="#eab308">হলুদ</option>
-                  <option value="#a855f7">বেগুনি</option>
-                </select>
+                <div className="flex items-center gap-0.5">
+                  <input
+                    type="number"
+                    min={8}
+                    max={96}
+                    placeholder="সাইজ"
+                    className="h-7 w-14 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const val = (e.target as HTMLInputElement).value;
+                        if (val) {
+                          const sel = window.getSelection();
+                          if (sel && !sel.isCollapsed) {
+                            const range = sel.getRangeAt(0);
+                            const span = document.createElement("span");
+                            span.style.fontSize = `${val}px`;
+                            range.surroundContents(span);
+                            sel.removeAllRanges();
+                          }
+                          editorRef.current?.focus();
+                        }
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const val = e.target.value;
+                      if (val) {
+                        const sel = window.getSelection();
+                        if (sel && !sel.isCollapsed && editorRef.current?.contains(sel.anchorNode)) {
+                          const range = sel.getRangeAt(0);
+                          const span = document.createElement("span");
+                          span.style.fontSize = `${val}px`;
+                          range.surroundContents(span);
+                        }
+                      }
+                    }}
+                    title="ফন্ট সাইজ (px)"
+                  />
+                  <span className="text-[9px] text-muted-foreground">px</span>
+                </div>
+                <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
+                <div className="flex items-center gap-1">
+                  <label className="relative cursor-pointer" title="টেক্সট রং">
+                    <span className="text-[10px] text-muted-foreground">A</span>
+                    <input
+                      type="color"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      defaultValue="#ffffff"
+                      onChange={(e) => {
+                        execCmd("foreColor", e.target.value);
+                      }}
+                    />
+                    <div className="h-1 w-4 rounded-full bg-primary mt-[-2px]" id="text-color-indicator" />
+                  </label>
+                  <label className="relative cursor-pointer" title="ব্যাকগ্রাউন্ড রং">
+                    <span className="text-[10px] text-muted-foreground px-1 bg-primary/20 rounded">A</span>
+                    <input
+                      type="color"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      defaultValue="#000000"
+                      onChange={(e) => {
+                        execCmd("hiliteColor", e.target.value);
+                      }}
+                    />
+                  </label>
+                </div>
                 <div className="ml-auto text-[10px] text-muted-foreground hidden md:block">
                   {toBn(wordCount)} শব্দ · Ctrl+S সেভ
                 </div>
