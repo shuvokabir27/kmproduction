@@ -25,6 +25,7 @@ const AdminScriptEdit = () => {
   const [permDialogOpen, setPermDialogOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
+  const savedContentRef = useRef<string>("");
   const [wordCount, setWordCount] = useState(0);
 
   const { data: script, isLoading: scriptLoading } = useQuery({
@@ -54,11 +55,24 @@ const AdminScriptEdit = () => {
 
   useEffect(() => {
     if (editorRef.current && script) {
-      const content = getInitialContent();
-      editorRef.current.innerHTML = content || '<p><br></p>';
+      // If we have saved content from fullscreen toggle, use that
+      if (savedContentRef.current) {
+        editorRef.current.innerHTML = savedContentRef.current;
+        savedContentRef.current = "";
+      } else {
+        const content = getInitialContent();
+        editorRef.current.innerHTML = content || '<p><br></p>';
+      }
       updateWordCount();
     }
-  }, [script, isEditMode]);
+  }, [script, isEditMode, isFullscreen]);
+
+  const toggleFullscreen = () => {
+    if (editorRef.current) {
+      savedContentRef.current = editorRef.current.innerHTML;
+    }
+    setIsFullscreen(!isFullscreen);
+  };
 
   const updateWordCount = () => {
     if (!editorRef.current) return;
@@ -176,15 +190,15 @@ const AdminScriptEdit = () => {
   };
 
   const editorContent = (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-muted overflow-auto' : ''}`}>
-      <div className={`${isFullscreen ? 'max-w-6xl' : 'max-w-5xl'} mx-auto space-y-3 relative`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-muted overflow-auto pt-0' : ''}`} id="fullscreen-container">
+      <div className={`${isFullscreen ? 'max-w-6xl px-4' : 'max-w-5xl'} mx-auto space-y-3 relative`}>
         {/* Toolbar - fixed in edit mode */}
         {isEditMode && (
           <div className={`fixed ${isFullscreen ? 'top-0 left-0' : 'top-12 md:top-14 left-0 md:left-[var(--sidebar-width,0px)]'} right-0 z-[51] bg-card/95 backdrop-blur-md border-b border-border/30 shadow-lg`}>
             <div className={`${isFullscreen ? 'max-w-6xl' : 'max-w-5xl'} mx-auto px-2 md:px-4 py-1.5 space-y-1`}>
               {/* Title row */}
               <div className="flex items-center gap-2 min-w-0">
-                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => { if (isFullscreen) setIsFullscreen(false); else navigate("/admin/scripts"); }}>
+                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => { if (isFullscreen) toggleFullscreen(); else navigate("/admin/scripts"); }}>
                   <ArrowLeft className="h-3.5 w-3.5" />
                 </Button>
                 <h1 className="text-sm font-bold text-foreground truncate flex items-center gap-1.5 flex-1 min-w-0">
@@ -192,7 +206,7 @@ const AdminScriptEdit = () => {
                   <span className="truncate">{script.title}</span>
                 </h1>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={() => setIsFullscreen(!isFullscreen)} title={isFullscreen ? "ফুলস্ক্রিন বন্ধ" : "ফুলস্ক্রিন"}>
+                  <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={toggleFullscreen} title={isFullscreen ? "ফুলস্ক্রিন বন্ধ" : "ফুলস্ক্রিন"}>
                     {isFullscreen ? <Minimize className="h-3 w-3" /> : <Maximize className="h-3 w-3" />}
                   </Button>
                   <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={() => setPermDialogOpen(true)}>
@@ -255,7 +269,7 @@ const AdminScriptEdit = () => {
         {!isEditMode && (
           <div className="space-y-3">
             <div className="flex items-center gap-3 min-w-0">
-              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => { if (isFullscreen) setIsFullscreen(false); else navigate("/admin/scripts"); }}>
+              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => { if (isFullscreen) toggleFullscreen(); else navigate("/admin/scripts"); }}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="min-w-0 flex-1">
@@ -266,7 +280,7 @@ const AdminScriptEdit = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setIsFullscreen(!isFullscreen)}>
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={toggleFullscreen}>
                 {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
                 {isFullscreen ? "ছোট করুন" : "ফুলস্ক্রিন"}
               </Button>
