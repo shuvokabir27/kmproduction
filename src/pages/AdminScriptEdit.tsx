@@ -280,7 +280,7 @@ const AdminScriptEdit = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => setIsFullscreen(!isFullscreen)}>
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={toggleFullscreen}>
                 {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
                 {isFullscreen ? "ছোট করুন" : "ফুলস্ক্রিন"}
               </Button>
