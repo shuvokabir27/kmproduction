@@ -55,11 +55,24 @@ const AdminScriptEdit = () => {
 
   useEffect(() => {
     if (editorRef.current && script) {
-      const content = getInitialContent();
-      editorRef.current.innerHTML = content || '<p><br></p>';
+      // If we have saved content from fullscreen toggle, use that
+      if (savedContentRef.current) {
+        editorRef.current.innerHTML = savedContentRef.current;
+        savedContentRef.current = "";
+      } else {
+        const content = getInitialContent();
+        editorRef.current.innerHTML = content || '<p><br></p>';
+      }
       updateWordCount();
     }
-  }, [script, isEditMode]);
+  }, [script, isEditMode, isFullscreen]);
+
+  const toggleFullscreen = () => {
+    if (editorRef.current) {
+      savedContentRef.current = editorRef.current.innerHTML;
+    }
+    setIsFullscreen(!isFullscreen);
+  };
 
   const updateWordCount = () => {
     if (!editorRef.current) return;
