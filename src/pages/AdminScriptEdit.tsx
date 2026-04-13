@@ -206,7 +206,7 @@ const AdminScriptEdit = () => {
                   <span className="truncate">{script.title}</span>
                 </h1>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={() => setIsFullscreen(!isFullscreen)} title={isFullscreen ? "ফুলস্ক্রিন বন্ধ" : "ফুলস্ক্রিন"}>
+                  <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={toggleFullscreen} title={isFullscreen ? "ফুলস্ক্রিন বন্ধ" : "ফুলস্ক্রিন"}>
                     {isFullscreen ? <Minimize className="h-3 w-3" /> : <Maximize className="h-3 w-3" />}
                   </Button>
                   <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7 px-2" onClick={() => setPermDialogOpen(true)}>
