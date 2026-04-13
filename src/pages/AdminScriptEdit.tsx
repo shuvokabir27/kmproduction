@@ -288,13 +288,14 @@ const AdminScriptEdit = () => {
                     min={8}
                     max={96}
                     placeholder="সাইজ"
+                    value={currentFontSize}
+                    onChange={(e) => setCurrentFontSize(e.target.value)}
                     className="h-7 w-14 text-[10px] bg-secondary border border-border/50 rounded px-1.5 text-foreground text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
                         const val = (e.target as HTMLInputElement).value;
                         if (val) applyFontSize(val);
-                        (e.target as HTMLInputElement).value = "";
                       }
                     }}
                     title="ফন্ট সাইজ (px) — সাইজ লিখে Enter চাপুন"
