@@ -12,9 +12,93 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut } from "lucide-react";
+import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut, Tag, Percent } from "lucide-react";
 import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
+
+const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
+
+const LandingPriceRow = ({ product, hasDiscount, discountPercent, onUpdate }: {
+  product: any;
+  hasDiscount: boolean;
+  discountPercent: number;
+  onUpdate: () => void;
+}) => {
+  const [editing, setEditing] = useState(false);
+  const [price, setPrice] = useState(String(product.price || 0));
+  const [discountPrice, setDiscountPrice] = useState(String(product.discount_price || ""));
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("products").update({
+      price: Number(price) || 0,
+      discount_price: discountPrice ? Number(discountPrice) : null,
+    }).eq("id", product.id);
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${product.name} — মূল্য আপডেট হয়েছে`);
+    setEditing(false);
+    onUpdate();
+  };
+
+  if (editing) {
+    return (
+      <div className="bg-card border border-primary/30 rounded-xl p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-1">
+          {product.image_url && <img src={product.image_url} alt="" className="h-8 w-8 rounded object-cover" />}
+          <span className="font-semibold text-foreground text-sm">{product.name}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label className="text-xs">রেগুলার মূল্য (৳)</Label>
+            <Input type="number" value={price} onChange={e => setPrice(e.target.value)} className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs">ডিসকাউন্ট মূল্য (৳)</Label>
+            <Input type="number" value={discountPrice} onChange={e => setDiscountPrice(e.target.value)} placeholder="খালি রাখুন" className="mt-1" />
+          </div>
+        </div>
+        {discountPrice && Number(discountPrice) < Number(price) && (
+          <p className="text-xs text-muted-foreground">
+            ছাড়: <span className="text-destructive font-bold">{toBn(Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100))}%</span>
+          </p>
+        )}
+        <div className="flex gap-2">
+          <Button size="sm" onClick={handleSave} disabled={saving} className="flex-1">
+            {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setEditing(false)}>বাতিল</Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-card border border-border/30 rounded-xl p-4 flex items-center gap-3">
+      {product.image_url && <img src={product.image_url} alt="" className="h-10 w-10 rounded-lg object-cover flex-shrink-0" />}
+      <div className="flex-1 min-w-0">
+        <span className="font-medium text-foreground text-sm block truncate">{product.name}</span>
+        <div className="flex items-center gap-2 mt-0.5">
+          {hasDiscount ? (
+            <>
+              <span className="text-xs text-muted-foreground line-through">৳{toBn(product.price)}</span>
+              <span className="text-sm font-bold text-primary">৳{toBn(product.discount_price)}</span>
+              <span className="text-[10px] bg-destructive/15 text-destructive px-1.5 py-0.5 rounded-full font-semibold">
+                {toBn(discountPercent)}% ছাড়
+              </span>
+            </>
+          ) : (
+            <span className="text-sm font-bold text-primary">৳{toBn(product.price)}</span>
+          )}
+        </div>
+      </div>
+      <Button variant="outline" size="sm" className="gap-1 flex-shrink-0" onClick={() => setEditing(true)}>
+        <Tag className="h-3 w-3" /> মূল্য এডিট
+      </Button>
+    </div>
+  );
+};
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
