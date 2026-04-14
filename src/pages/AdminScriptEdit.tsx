@@ -30,8 +30,9 @@ const AdminScriptEdit = () => {
   const [currentFontSize, setCurrentFontSize] = useState("");
   const savedSelectionRef = useRef<Range | null>(null);
 
-  // Scene completion tracking
-  const [completedScenes, setCompletedScenes] = useState<Set<string>>(new Set());
+  // Scene tracking: 'done' = shot taken, 'skipped' = not shot (X)
+  const [sceneStatus, setSceneStatus] = useState<Record<string, 'done' | 'skipped'>>({});
+  const [totalScenes, setTotalScenes] = useState(0);
 
   // Mention system state
   const [mentionOpen, setMentionOpen] = useState(false);
