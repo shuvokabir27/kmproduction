@@ -148,7 +148,17 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
             </select>
             <select
               className="h-8 text-xs bg-secondary border border-border/50 rounded px-2 text-foreground"
-              onChange={(e) => { if (e.target.value) execCmd("foreColor", e.target.value); }}
+              onChange={(e) => {
+                const val = e.target.value;
+                e.target.value = "";
+                if (val === "remove") {
+                  execCmd("removeFormat");
+                  // Re-apply to just remove color: set to default foreground
+                  execCmd("foreColor", "");
+                } else if (val) {
+                  execCmd("foreColor", val);
+                }
+              }}
               defaultValue=""
             >
               <option value="" disabled>রং</option>
@@ -159,6 +169,7 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
               <option value="#eab308">হলুদ</option>
               <option value="#a855f7">বেগুনি</option>
               <option value="#f97316">কমলা</option>
+              <option value="remove">❌ রং মুছুন</option>
             </select>
             <Separator orientation="vertical" className="h-6 mx-1" />
             <select
