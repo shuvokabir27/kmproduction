@@ -44,6 +44,8 @@ import ClientDashboard from "./pages/ClientDashboard";
 import ClientProjects from "./pages/ClientProjects";
 import ClientPaymentHistory from "./pages/ClientPaymentHistory";
 import NotFound from "./pages/NotFound";
+import Products from "./pages/Products";
+import AdminProducts from "./pages/AdminProducts";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +63,7 @@ const App = () => (
             <Route path="/member/:memberId" element={<PublicProfile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/products" element={<Products />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
@@ -97,6 +100,7 @@ const App = () => (
             <Route path="/admin/bookings" element={<RouteGuard allowedRoles={["admin"]}><AdminBookings /></RouteGuard>} />
             <Route path="/admin/freelance" element={<RouteGuard allowedRoles={["admin"]}><AdminFreelance /></RouteGuard>} />
             <Route path="/admin/news" element={<RouteGuard allowedRoles={["admin"]}><AdminNews /></RouteGuard>} />
+            <Route path="/admin/products" element={<RouteGuard allowedRoles={["admin"]}><AdminProducts /></RouteGuard>} />
 
             {/* Client route — client only */}
             <Route path="/client" element={<RouteGuard allowedRoles={["client"]}><ClientDashboard /></RouteGuard>} />

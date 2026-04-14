@@ -21,6 +21,7 @@ import {
   Newspaper,
   Receipt,
   ClipboardList,
+  ShoppingBag,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -60,6 +61,7 @@ const publicSiteItems = [
   { title: "নিউজ", url: "/admin/news", icon: Newspaper, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play, color: "text-pink-400", bg: "bg-pink-500/10" },
   { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles, color: "text-yellow-400", bg: "bg-yellow-500/10" },
+  { title: "প্রডাক্ট", url: "/admin/products", icon: ShoppingBag, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "বুকিং", url: "/admin/bookings", icon: ClipboardList, color: "text-emerald-400", bg: "bg-emerald-500/10" },
   { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon, color: "text-indigo-400", bg: "bg-indigo-500/10" },
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv, color: "text-lime-400", bg: "bg-lime-500/10" },
