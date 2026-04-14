@@ -1122,6 +1122,74 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          customer_address: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_date: string | null
+          id: string
+          notes: string | null
+          order_number: number
+          payment_method: string | null
+          payment_status: Database["public"]["Enums"]["order_payment_status"]
+          product_id: string | null
+          product_name: string
+          quantity: number
+          status: Database["public"]["Enums"]["order_status"]
+          total_amount: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_address?: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: number
+          payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["order_payment_status"]
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          total_amount?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_address?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: number
+          payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["order_payment_status"]
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          total_amount?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -2337,6 +2405,14 @@ export type Database = {
       client_payment_type: "artist" | "expense"
       conversation_type: "personal" | "group"
       expense_category: "food" | "transport" | "props" | "other"
+      order_payment_status: "unpaid" | "partial" | "paid"
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "processing"
+        | "shipped"
+        | "delivered"
+        | "cancelled"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
       pricing_type: "hourly" | "per_minute" | "event" | "fixed"
       salary_type: "daily" | "monthly"
@@ -2475,6 +2551,15 @@ export const Constants = {
       client_payment_type: ["artist", "expense"],
       conversation_type: ["personal", "group"],
       expense_category: ["food", "transport", "props", "other"],
+      order_payment_status: ["unpaid", "partial", "paid"],
+      order_status: [
+        "pending",
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
       payment_method: ["bank", "bkash", "nagad", "cash"],
       pricing_type: ["hourly", "per_minute", "event", "fixed"],
       salary_type: ["daily", "monthly"],
