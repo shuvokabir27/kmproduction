@@ -1028,6 +1028,13 @@ const AdminShootings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ShootingSceneTracker
+        shootingId={sceneTrackerShootingId}
+        shootingName={sceneTrackerShootingName}
+        open={sceneTrackerOpen}
+        onOpenChange={setSceneTrackerOpen}
+      />
     </AppLayout>
   );
 };
