@@ -569,6 +569,9 @@ const AdminShootings = () => {
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
                                <FileText className="h-3.5 w-3.5" />
                              </Button>
+                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-amber-400" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                               <Clapperboard className="h-3.5 w-3.5" />
+                             </Button>
                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
                                <Edit className="h-3.5 w-3.5" />
                              </Button>
