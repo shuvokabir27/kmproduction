@@ -157,7 +157,59 @@ const AdminScriptEdit = () => {
   if (!script) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">স্ক্রিপ্ট পাওয়া যায়নি</div>;
 
   const execCmd = (command: string, value?: string) => {
+    editorRef.current?.focus();
     restoreSelection();
+
+    const alignmentMap: Record<string, "left" | "center" | "right" | "justify"> = {
+      justifyLeft: "left",
+      justifyCenter: "center",
+      justifyRight: "right",
+      justifyFull: "justify",
+    };
+
+    const alignment = alignmentMap[command];
+
+    if (alignment && editorRef.current) {
+      const selection = window.getSelection();
+      if (selection?.rangeCount) {
+        const range = selection.getRangeAt(0);
+        const getBlockElement = (node: Node | null): HTMLElement | null => {
+          let current = node instanceof HTMLElement ? node : node?.parentElement ?? null;
+          while (current && current !== editorRef.current) {
+            if (["P", "DIV", "H1", "H2", "LI", "UL", "OL", "BLOCKQUOTE"].includes(current.tagName)) {
+              return current;
+            }
+            current = current.parentElement;
+          }
+          return null;
+        };
+
+        const selectedBlocks = Array.from(
+          editorRef.current.querySelectorAll<HTMLElement>("p, div, h1, h2, li, ul, ol, blockquote")
+        ).filter((block) => {
+          const blockRange = document.createRange();
+          blockRange.selectNodeContents(block);
+          return (
+            range.compareBoundaryPoints(Range.END_TO_START, blockRange) > 0 &&
+            range.compareBoundaryPoints(Range.START_TO_END, blockRange) < 0
+          );
+        });
+
+        const blocksToAlign = selectedBlocks.length
+          ? selectedBlocks
+          : [getBlockElement(range.startContainer), getBlockElement(range.endContainer)].filter(Boolean) as HTMLElement[];
+
+        if (blocksToAlign.length) {
+          blocksToAlign.forEach((block) => {
+            block.style.textAlign = alignment;
+          });
+          savedSelectionRef.current = range.cloneRange();
+          editorRef.current.focus();
+          return;
+        }
+      }
+    }
+
     document.execCommand(command, false, value);
     editorRef.current?.focus();
   };
