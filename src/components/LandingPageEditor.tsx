@@ -123,6 +123,7 @@ const ProductPriceEditor = () => {
   );
 };
 
+const LandingPageEditor = () => {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
