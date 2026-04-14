@@ -4,12 +4,12 @@ import React from "react";
 
 type Props = {
   children: React.ReactNode;
-  allowedRoles: ("admin" | "member" | "client")[];
+  allowedRoles: ("admin" | "member" | "client" | "product_admin")[];
   redirectTo?: string;
 };
 
 export function RouteGuard({ children, allowedRoles, redirectTo }: Props) {
-  const { user, loading, isAdmin, isClient } = useAuth();
+  const { user, loading, isAdmin, isClient, isProductAdmin } = useAuth();
 
   if (loading) {
     return (
@@ -21,10 +21,17 @@ export function RouteGuard({ children, allowedRoles, redirectTo }: Props) {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  const userRole: "admin" | "member" | "client" = isAdmin ? "admin" : isClient ? "client" : "member";
+  // Check roles - a user can have multiple roles
+  const userRoles: string[] = [];
+  if (isAdmin) userRoles.push("admin");
+  if (isClient) userRoles.push("client");
+  if (isProductAdmin) userRoles.push("product_admin");
+  if (!isAdmin && !isClient && !isProductAdmin) userRoles.push("member");
 
-  if (!allowedRoles.includes(userRole)) {
-    const fallback = redirectTo || (isClient ? "/client" : isAdmin ? "/admin" : "/dashboard");
+  const hasAccess = allowedRoles.some((role) => userRoles.includes(role));
+
+  if (!hasAccess) {
+    const fallback = redirectTo || (isProductAdmin ? "/admin/products" : isClient ? "/client" : isAdmin ? "/admin" : "/dashboard");
     return <Navigate to={fallback} replace />;
   }
 

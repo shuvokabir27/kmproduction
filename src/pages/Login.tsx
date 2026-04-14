@@ -13,7 +13,7 @@ import { AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Login = () => {
-  const { user, isAdmin, isClient, loading } = useAuth();
+  const { user, isAdmin, isClient, isProductAdmin, loading } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +30,7 @@ const Login = () => {
     );
   }
 
-  if (user) return <Navigate to={isAdmin ? "/admin" : isClient ? "/client" : "/dashboard"} replace />;
+  if (user) return <Navigate to={isAdmin ? "/admin" : isProductAdmin ? "/admin/products" : isClient ? "/client" : "/dashboard"} replace />;
 
   const getErrorMessage = (err: any): string => {
     const msg = err?.message?.toLowerCase() || "";
