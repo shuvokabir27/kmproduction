@@ -176,6 +176,7 @@ const OrderManagement = () => {
     { key: "shipped", label: "শিপড", count: orders?.filter((o: any) => o.status === "shipped").length || 0 },
     { key: "delivered", label: "ডেলিভারড", count: stats.delivered },
     { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0 },
+    { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0 },
   ];
 
   return (

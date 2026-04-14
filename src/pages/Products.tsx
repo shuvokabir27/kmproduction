@@ -443,7 +443,7 @@ const Products = () => {
                         <p className="text-white/60 text-xs">তথ্য দিয়ে অর্ডার কনফার্ম করুন</p>
                       </div>
                     </div>
-                    <button onClick={() => setOrderOpen(false)} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25 hover:text-white transition-all">
+                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25 hover:text-white transition-all">
                       <X className="h-4 w-4" />
                     </button>
                   </div>
