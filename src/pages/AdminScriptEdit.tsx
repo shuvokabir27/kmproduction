@@ -784,6 +784,21 @@ const AdminScriptEdit = () => {
                 </div>
               );
             })()}
+            {/* Tab switcher for ongoing vs done scenes */}
+            {totalScenes > 0 && (
+              <Tabs value={previewTab} onValueChange={(v) => setPreviewTab(v as 'ongoing' | 'done')} className="w-full">
+                <TabsList className="w-full">
+                  <TabsTrigger value="ongoing" className="flex-1 gap-1.5 text-xs">
+                    🎬 শুটিং চলমান
+                    <span className="text-[10px] opacity-70">({toBn(totalScenes - Object.values(sceneStatus).filter(s => s === 'done').length)})</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="done" className="flex-1 gap-1.5 text-xs">
+                    ✅ শুটিং হয়েছে
+                    <span className="text-[10px] opacity-70">({toBn(Object.values(sceneStatus).filter(s => s === 'done').length)})</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
           </div>
         )}
 
