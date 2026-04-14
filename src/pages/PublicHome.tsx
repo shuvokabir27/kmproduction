@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -82,6 +82,7 @@ const PublicHome = () => {
     { label: t("টিম", "Team"), href: "#team", icon: Users, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
     { label: t("জনপ্রিয়", "Popular"), href: "#popular", icon: Play, gradient: "from-rose-500 to-pink-600", bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
     { label: t("সেবা", "Services"), href: "/services", isPage: true, icon: Film, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
+    { label: t("প্রডাক্ট", "Products"), href: "/products", isPage: true, icon: ShoppingBag, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/15", border: "border-orange-500/30", text: "text-orange-400" },
     { label: t("নিউজ", "News"), href: "/news", isPage: true, icon: Newspaper, gradient: "from-red-500 to-orange-600", bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-400" },
     { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
     { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
