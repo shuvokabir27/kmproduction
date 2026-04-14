@@ -11,7 +11,7 @@ import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJusti
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -42,7 +42,7 @@ const AdminScriptEdit = () => {
     return {};
   });
   const [totalScenes, setTotalScenes] = useState(0);
-  const [previewTab, setPreviewTab] = useState<'ongoing' | 'done'>('ongoing');
+  
 
   // Auto-save scene status to localStorage
   useEffect(() => {
@@ -405,19 +405,6 @@ const AdminScriptEdit = () => {
       }
     });
     
-    // Show/hide based on tab
-    // Pre-scene elements (before any দৃশ্য) are always visible
-    preSceneElements.forEach(el => { el.style.display = ''; });
-    
-    sceneRanges.forEach((range) => {
-      if (!range) return;
-      const status = sceneStatus[range.key];
-      const isDone = status === 'done';
-      const shouldShow = previewTab === 'ongoing' ? !isDone : isDone;
-      range.elements.forEach(el => {
-        el.style.display = shouldShow ? '' : 'none';
-      });
-    });
     
     // Third pass: add checkboxes to visible scene headings
     sceneHeadings.forEach(({ el: htmlEl, key }) => {
@@ -457,12 +444,12 @@ const AdminScriptEdit = () => {
       });
       htmlEl.appendChild(btn);
     });
-  }, [isEditMode, sceneStatus, previewTab]);
+  }, [isEditMode, sceneStatus]);
 
   useEffect(() => {
     const timer = setTimeout(renderSceneCheckboxes, 150);
     return () => clearTimeout(timer);
-  }, [renderSceneCheckboxes, script, isEditMode, previewTab]);
+  }, [renderSceneCheckboxes, script, isEditMode]);
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -784,21 +771,6 @@ const AdminScriptEdit = () => {
                 </div>
               );
             })()}
-            {/* Tab switcher for ongoing vs done scenes */}
-            {totalScenes > 0 && (
-              <Tabs value={previewTab} onValueChange={(v) => setPreviewTab(v as 'ongoing' | 'done')} className="w-full">
-                <TabsList className="w-full">
-                  <TabsTrigger value="ongoing" className="flex-1 gap-1.5 text-xs">
-                    🎬 শুটিং চলমান
-                    <span className="text-[10px] opacity-70">({toBn(totalScenes - Object.values(sceneStatus).filter(s => s === 'done').length)})</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="done" className="flex-1 gap-1.5 text-xs">
-                    ✅ শুটিং হয়েছে
-                    <span className="text-[10px] opacity-70">({toBn(Object.values(sceneStatus).filter(s => s === 'done').length)})</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            )}
           </div>
         )}
 
