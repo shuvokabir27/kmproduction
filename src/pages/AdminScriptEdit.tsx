@@ -162,7 +162,7 @@ const AdminScriptEdit = () => {
   // Filtered members for mention dropdown
   const filteredMentionMembers = (members ?? []).filter((m: any) =>
     mentionQuery ? m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery) : true
-  ).slice(0, 8);
+  );
 
   const insertMention = useCallback(async (member: any) => {
     const range = mentionRangeRef.current;
