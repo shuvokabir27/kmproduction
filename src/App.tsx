@@ -46,6 +46,7 @@ import ClientPaymentHistory from "./pages/ClientPaymentHistory";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import AdminProducts from "./pages/AdminProducts";
+import TalerGurLanding from "./pages/TalerGurLanding";
 
 const queryClient = new QueryClient();
 
