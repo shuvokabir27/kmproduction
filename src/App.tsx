@@ -101,6 +101,7 @@ const App = () => (
             <Route path="/admin/freelance" element={<RouteGuard allowedRoles={["admin"]}><AdminFreelance /></RouteGuard>} />
             <Route path="/admin/news" element={<RouteGuard allowedRoles={["admin"]}><AdminNews /></RouteGuard>} />
             <Route path="/admin/products" element={<RouteGuard allowedRoles={["product_admin"]}><AdminProducts /></RouteGuard>} />
+            <Route path="/products/admin" element={<RouteGuard allowedRoles={["product_admin"]}><AdminProducts /></RouteGuard>} />
 
             {/* Client route — client only */}
             <Route path="/client" element={<RouteGuard allowedRoles={["client"]}><ClientDashboard /></RouteGuard>} />
