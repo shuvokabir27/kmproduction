@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo, Maximize, Minimize } from "lucide-react";
+import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo, Maximize, Minimize, PenTool } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJustify, List, Heading1, Heading2, Type } from "lucide-react";
@@ -582,6 +582,9 @@ const AdminScriptEdit = () => {
               </Button>
               <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={handleDownloadPDF}>
                 <Download className="h-3.5 w-3.5" /> PDF
+              </Button>
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => navigate(`/admin/scripts/${id}/draw`)}>
+                <PenTool className="h-3.5 w-3.5" /> ড্রয়িং
               </Button>
               <Button size="sm" className="gap-1.5 text-xs" onClick={() => setSearchParams({ mode: "edit" })}>
                 <Edit className="h-3.5 w-3.5" /> এডিট করুন
