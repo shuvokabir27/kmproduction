@@ -171,12 +171,13 @@ const AdminScriptEdit = () => {
 
     if (alignment && editorRef.current) {
       const selection = window.getSelection();
-      if (selection?.rangeCount) {
+      if (selection && selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
+
         const getBlockElement = (node: Node | null): HTMLElement | null => {
           let current = node instanceof HTMLElement ? node : node?.parentElement ?? null;
           while (current && current !== editorRef.current) {
-            if (["P", "DIV", "H1", "H2", "LI", "UL", "OL", "BLOCKQUOTE"].includes(current.tagName)) {
+            if (["P", "DIV", "H1", "H2", "LI", "BLOCKQUOTE"].includes(current.tagName)) {
               return current;
             }
             current = current.parentElement;
@@ -184,26 +185,29 @@ const AdminScriptEdit = () => {
           return null;
         };
 
-        const selectedBlocks = Array.from(
-          editorRef.current.querySelectorAll<HTMLElement>("p, div, h1, h2, li, ul, ol, blockquote")
+        // Always get block from cursor position first
+        const cursorBlock = getBlockElement(range.startContainer);
+
+        if (range.collapsed && cursorBlock) {
+          // Cursor only (no selection) — align the current block
+          cursorBlock.style.textAlign = alignment;
+          editorRef.current.focus();
+          return;
+        }
+
+        // Has selection — find all blocks in range
+        const allBlocks = Array.from(
+          editorRef.current.querySelectorAll<HTMLElement>("p, div, h1, h2, li, blockquote")
         ).filter((block) => {
-          const blockRange = document.createRange();
-          blockRange.selectNodeContents(block);
-          return (
-            range.compareBoundaryPoints(Range.END_TO_START, blockRange) > 0 &&
-            range.compareBoundaryPoints(Range.START_TO_END, blockRange) < 0
-          );
+          return range.intersectsNode(block);
         });
 
-        const blocksToAlign = selectedBlocks.length
-          ? selectedBlocks
-          : [getBlockElement(range.startContainer), getBlockElement(range.endContainer)].filter(Boolean) as HTMLElement[];
+        const blocksToAlign = allBlocks.length ? allBlocks : [cursorBlock].filter(Boolean) as HTMLElement[];
 
         if (blocksToAlign.length) {
           blocksToAlign.forEach((block) => {
             block.style.textAlign = alignment;
           });
-          savedSelectionRef.current = range.cloneRange();
           editorRef.current.focus();
           return;
         }
