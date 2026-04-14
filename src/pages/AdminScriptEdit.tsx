@@ -174,7 +174,7 @@ const AdminScriptEdit = () => {
     mentionSpan.setAttribute("data-member-name", member.full_name);
     mentionSpan.contentEditable = "false";
     mentionSpan.style.cssText = "background: #dbeafe; color: #1d4ed8; padding: 1px 6px; border-radius: 4px; font-weight: 500; cursor: default; display: inline-block; margin: 0 2px;";
-    mentionSpan.textContent = `@${member.full_name}`;
+    mentionSpan.textContent = member.full_name;
     range.insertNode(mentionSpan);
     const spaceNode = document.createTextNode("\u00A0");
     mentionSpan.after(spaceNode);
