@@ -1258,6 +1258,60 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          category: string | null
+          contact_info: string | null
+          created_at: string
+          description: string | null
+          discount_price: number | null
+          id: string
+          image_url: string | null
+          images: Json | null
+          is_active: boolean
+          is_featured: boolean
+          name: string
+          price: number
+          sort_order: number | null
+          stock_status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          contact_info?: string | null
+          created_at?: string
+          description?: string | null
+          discount_price?: number | null
+          id?: string
+          image_url?: string | null
+          images?: Json | null
+          is_active?: boolean
+          is_featured?: boolean
+          name: string
+          price?: number
+          sort_order?: number | null
+          stock_status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          contact_info?: string | null
+          created_at?: string
+          description?: string | null
+          discount_price?: number | null
+          id?: string
+          image_url?: string | null
+          images?: Json | null
+          is_active?: boolean
+          is_featured?: boolean
+          name?: string
+          price?: number
+          sort_order?: number | null
+          stock_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profile_comments: {
         Row: {
           commenter_email: string | null
