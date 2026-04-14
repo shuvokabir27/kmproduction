@@ -32,11 +32,9 @@ const AdminScriptEdit = () => {
 
   // Scene tracking: 'done' = shot taken, 'skipped' = not shot (X)
   const [sceneStatus, setSceneStatus] = useState<Record<string, 'done' | 'skipped'>>(() => {
-    if (!id) return {};
-    try {
-      const saved = localStorage.getItem(`scene-status-${id}`);
-      return saved ? JSON.parse(saved) : {};
-    } catch { return {}; }
+    // Clear all previous scene data for fresh start
+    if (id) localStorage.removeItem(`scene-status-${id}`);
+    return {};
   });
   const [totalScenes, setTotalScenes] = useState(0);
 
