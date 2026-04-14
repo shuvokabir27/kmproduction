@@ -138,6 +138,25 @@ const AdminScripts = () => {
     return 1;
   };
 
+  const getEpisodeCount = (content: string) => {
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        const episodes = new Set<string>();
+        parsed.forEach((s: any) => {
+          const match = s.title?.match(/পর্ব\s*[:\-–—]?\s*(.+)/i);
+          if (match) episodes.add(match[1].trim());
+          else {
+            const epMatch = s.title?.match(/ep(?:isode)?\s*[:\-–—]?\s*(\d+)/i);
+            if (epMatch) episodes.add(epMatch[1]);
+          }
+        });
+        return episodes.size;
+      }
+    } catch {}
+    return 0;
+  };
+
   const toBn = (n: number) => String(n).replace(/\d/g, (d: string) => "০১২৩৪৫৬৭৮৯"[+d]);
 
   const ScriptCard = ({ script, isTrashed = false }: { script: any; isTrashed?: boolean }) => (
