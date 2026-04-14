@@ -220,6 +220,32 @@ const AdminProducts = () => {
           </div>
         )}
 
+        {/* Landing Page Price & Discount Quick Editor */}
+        {products && products.length > 0 && (
+          <div className="border-t border-border/30 pt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">💰</span>
+              <h2 className="text-lg font-semibold text-foreground">ল্যান্ডিং পেজ মূল্য ও অফার</h2>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">এখান থেকে দ্রুত প্রডাক্টের দাম ও ডিসকাউন্ট পরিবর্তন করুন। পরিবর্তন সাথে সাথে ল্যান্ডিং পেজে দেখাবে।</p>
+            <div className="space-y-3">
+              {products.map((p: any) => {
+                const hasDiscount = p.discount_price && p.discount_price < p.price;
+                const discountPercent = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
+                return (
+                  <LandingPriceRow
+                    key={p.id}
+                    product={p}
+                    hasDiscount={hasDiscount}
+                    discountPercent={discountPercent}
+                    onUpdate={() => queryClient.invalidateQueries({ queryKey: ["admin-products"] })}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Order Management */}
         <div className="border-t border-border/30 pt-6">
           <OrderManagement />
