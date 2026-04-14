@@ -159,6 +159,106 @@ const AdminScriptEdit = () => {
     queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
   };
 
+  // Filtered members for mention dropdown
+  const filteredMentionMembers = (members ?? []).filter((m: any) =>
+    mentionQuery ? m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery) : true
+  ).slice(0, 8);
+
+  const insertMention = useCallback(async (member: any) => {
+    const range = mentionRangeRef.current;
+    if (!range || !editorRef.current) return;
+    range.deleteContents();
+    const mentionSpan = document.createElement("span");
+    mentionSpan.className = "mention-tag";
+    mentionSpan.setAttribute("data-member-id", member.id);
+    mentionSpan.setAttribute("data-member-name", member.full_name);
+    mentionSpan.contentEditable = "false";
+    mentionSpan.style.cssText = "background: #dbeafe; color: #1d4ed8; padding: 1px 6px; border-radius: 4px; font-weight: 500; cursor: default; display: inline-block; margin: 0 2px;";
+    mentionSpan.textContent = `@${member.full_name}`;
+    range.insertNode(mentionSpan);
+    const spaceNode = document.createTextNode("\u00A0");
+    mentionSpan.after(spaceNode);
+    const newRange = document.createRange();
+    newRange.setStartAfter(spaceNode);
+    newRange.collapse(true);
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(newRange);
+    setMentionOpen(false);
+    setMentionQuery("");
+    setMentionIndex(0);
+    const alreadyHasPermission = permissions?.find((p: any) => p.member_id === member.id);
+    if (!alreadyHasPermission) {
+      await supabase.from("script_permissions" as any).insert({ script_id: id, member_id: member.id } as any);
+      refetchPerms();
+      queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
+      toast.success(`${member.full_name} কে স্ক্রিপ্ট পারমিশন দেওয়া হয়েছে`);
+    }
+  }, [id, permissions, queryClient, refetchPerms]);
+
+  const handleEditorInput = useCallback(() => {
+    updateWordCount();
+    if (!editorRef.current) return;
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (!range.collapsed) return;
+    const node = sel.anchorNode;
+    if (node?.nodeType !== 3) return;
+    const text = node.textContent?.substring(0, sel.anchorOffset) || "";
+    const atIndex = text.lastIndexOf("@");
+    if (atIndex >= 0) {
+      const query = text.substring(atIndex + 1);
+      if (atIndex === 0 || /[\s\n]/.test(text[atIndex - 1])) {
+        const caretRange = document.createRange();
+        caretRange.setStart(node, atIndex);
+        caretRange.setEnd(node, sel.anchorOffset);
+        const rect = caretRange.getBoundingClientRect();
+        const editorRect = editorRef.current.getBoundingClientRect();
+        mentionRangeRef.current = caretRange.cloneRange();
+        setMentionQuery(query);
+        setMentionPos({
+          top: rect.bottom - editorRect.top + editorRef.current.scrollTop + 4,
+          left: rect.left - editorRect.left,
+        });
+        setMentionOpen(true);
+        setMentionIndex(0);
+        return;
+      }
+    }
+    if (mentionOpen) {
+      setMentionOpen(false);
+      setMentionQuery("");
+    }
+  }, [mentionOpen]);
+
+  const handleMentionKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!mentionOpen) return false;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setMentionIndex((i) => Math.min(i + 1, filteredMentionMembers.length - 1));
+      return true;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setMentionIndex((i) => Math.max(i - 1, 0));
+      return true;
+    }
+    if (e.key === "Enter" || e.key === "Tab") {
+      e.preventDefault();
+      if (filteredMentionMembers[mentionIndex]) {
+        insertMention(filteredMentionMembers[mentionIndex]);
+      }
+      return true;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setMentionOpen(false);
+      return true;
+    }
+    return false;
+  }, [mentionOpen, filteredMentionMembers, mentionIndex, insertMention]);
+
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
