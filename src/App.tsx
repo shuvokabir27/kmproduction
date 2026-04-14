@@ -39,6 +39,7 @@ import PublisherProfile from "./pages/PublisherProfile";
 import AdminBookings from "./pages/AdminBookings";
 import AdminFreelance from "./pages/AdminFreelance";
 import FreelanceClientView from "./pages/FreelanceClientView";
+import ScriptDrawing from "./pages/ScriptDrawing";
 import ClientDashboard from "./pages/ClientDashboard";
 import ClientProjects from "./pages/ClientProjects";
 import ClientPaymentHistory from "./pages/ClientPaymentHistory";
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/admin/channels" element={<RouteGuard allowedRoles={["admin"]}><AdminChannels /></RouteGuard>} />
             <Route path="/admin/scripts" element={<RouteGuard allowedRoles={["admin"]}><AdminScripts /></RouteGuard>} />
             <Route path="/admin/scripts/:id" element={<RouteGuard allowedRoles={["admin"]}><AdminScriptEdit /></RouteGuard>} />
+            <Route path="/admin/scripts/:id/draw" element={<RouteGuard allowedRoles={["admin"]}><ScriptDrawing /></RouteGuard>} />
             <Route path="/admin/bonuses" element={<RouteGuard allowedRoles={["admin"]}><AdminBonuses /></RouteGuard>} />
             <Route path="/admin/notices" element={<RouteGuard allowedRoles={["admin"]}><AdminNotices /></RouteGuard>} />
             <Route path="/admin/public-profiles" element={<RouteGuard allowedRoles={["admin"]}><AdminPublicProfiles /></RouteGuard>} />
