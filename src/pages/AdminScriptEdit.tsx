@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo, Maximize, Minimize } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Type } from "lucide-react";
+import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJustify, List, Heading1, Heading2, Type } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -279,6 +279,7 @@ const AdminScriptEdit = () => {
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyLeft")}><AlignLeft className="h-3.5 w-3.5" /></Button>
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyCenter")}><AlignCenter className="h-3.5 w-3.5" /></Button>
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyRight")}><AlignRight className="h-3.5 w-3.5" /></Button>
+                <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("justifyFull")}><AlignJustify className="h-3.5 w-3.5" /></Button>
                 <Separator orientation="vertical" className="h-5 mx-0.5 hidden md:block" />
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("insertUnorderedList")}><List className="h-3.5 w-3.5" /></Button>
                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => execCmd("insertOrderedList")}><span className="text-[10px] font-mono">1.</span></Button>
