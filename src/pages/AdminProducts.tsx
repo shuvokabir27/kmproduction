@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut } from "lucide-react";
 
 const AdminProducts = () => {
-  const { user, isProductAdmin, loading } = useAuth();
+  const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
