@@ -295,7 +295,7 @@ const AdminProducts = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </AppLayout>
+    </ProductLayout>
   );
 };
 
