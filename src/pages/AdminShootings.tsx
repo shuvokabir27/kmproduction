@@ -384,7 +384,11 @@ const AdminShootings = () => {
     }
   };
   const openScriptEditor = (shooting: any) => {
-    setScriptEditShooting(shooting);
+    // If shooting has linked script content from scripts table, use it as initial content
+    const linkedScriptContent = shooting.scripts?.content || "";
+    const shootingScript = shooting.script_content || "";
+    const initialContent = shootingScript || linkedScriptContent;
+    setScriptEditShooting({ ...shooting, script_content: initialContent });
     setScriptEditorOpen(true);
   };
 
