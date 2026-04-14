@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock, Clapperboard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useCallback } from "react";
@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ShootingSceneTracker } from "@/components/ShootingSceneTracker";
 
 const statusOptions = [
   { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "text-violet-400 bg-violet-500/10 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300 border border-violet-500/20" },
@@ -75,6 +76,10 @@ const AdminShootings = () => {
   const [revertShootingId, setRevertShootingId] = useState<string>("");
   const [revertNewStatus, setRevertNewStatus] = useState<string>("");
   const [revertVerifying, setRevertVerifying] = useState(false);
+  // Scene tracker
+  const [sceneTrackerOpen, setSceneTrackerOpen] = useState(false);
+  const [sceneTrackerShootingId, setSceneTrackerShootingId] = useState("");
+  const [sceneTrackerShootingName, setSceneTrackerShootingName] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -564,6 +569,9 @@ const AdminShootings = () => {
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
                                <FileText className="h-3.5 w-3.5" />
                              </Button>
+                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-amber-400" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                               <Clapperboard className="h-3.5 w-3.5" />
+                             </Button>
                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
                                <Edit className="h-3.5 w-3.5" />
                              </Button>
@@ -689,6 +697,9 @@ const AdminShootings = () => {
                                        <Users className="h-4 w-4" />
                                      </Button>
                                    )}
+                                   <Button variant="ghost" size="sm" className="text-amber-400 hover:text-amber-300" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                                     <Clapperboard className="h-4 w-4" />
+                                   </Button>
                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
                                      <Edit className="h-4 w-4" />
                                    </Button>
@@ -1017,6 +1028,13 @@ const AdminShootings = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ShootingSceneTracker
+        shootingId={sceneTrackerShootingId}
+        shootingName={sceneTrackerShootingName}
+        open={sceneTrackerOpen}
+        onOpenChange={setSceneTrackerOpen}
+      />
     </AppLayout>
   );
 };
