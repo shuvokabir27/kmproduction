@@ -300,75 +300,55 @@ const AdminScriptEdit = () => {
     return false;
   }, [mentionOpen, visibleMentionMembers, mentionIndex, insertMention]);
 
-  // Long-press scene completion toggle (preview mode)
-  const getSceneKey = (el: HTMLElement): string | null => {
-    const text = el.textContent?.trim() || "";
-    if (/দৃশ্য/i.test(text)) return text;
-    return null;
-  };
-
-  const toggleSceneDone = useCallback((sceneEl: HTMLElement, key: string) => {
-    setCompletedScenes(prev => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-        const badge = sceneEl.querySelector(".scene-done-badge");
-        badge?.remove();
-      } else {
-        next.add(key);
-        if (!sceneEl.querySelector(".scene-done-badge")) {
-          const check = document.createElement("span");
-          check.className = "scene-done-badge";
-          check.style.cssText = "display:inline-flex;align-items:center;gap:4px;margin-left:8px;color:#16a34a;font-size:14px;vertical-align:middle;pointer-events:none;";
-          check.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span style="font-size:11px;font-weight:600;">সম্পন্ন</span>`;
-          sceneEl.appendChild(check);
-        }
-      }
-      return next;
+  // Scene completion: render checkboxes in preview mode
+  const renderSceneCheckboxes = useCallback(() => {
+    if (isEditMode || !editorRef.current) return;
+    editorRef.current.querySelectorAll(".scene-check-btn").forEach(el => el.remove());
+    // Reset padding
+    editorRef.current.querySelectorAll("[data-scene-padded]").forEach(el => {
+      (el as HTMLElement).style.paddingLeft = "";
+      el.removeAttribute("data-scene-padded");
     });
-  }, []);
-
-  const handleEditorPointerDown = useCallback((e: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
-    if (isEditMode) return;
-    const target = e.target as HTMLElement;
-    const sceneEl = target.closest("h1, h2, p, div") as HTMLElement;
-    if (!sceneEl) return;
-    const key = getSceneKey(sceneEl);
-    if (!key) return;
-
-    // Prevent text selection on long press
-    e.preventDefault();
-    longPressTargetRef.current = sceneEl;
-    longPressTimerRef.current = setTimeout(() => {
-      toggleSceneDone(sceneEl, key);
-      longPressTimerRef.current = null;
-      longPressTargetRef.current = null;
-    }, 600);
-  }, [isEditMode, toggleSceneDone]);
-
-  const handleEditorPointerUp = useCallback(() => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-    longPressTargetRef.current = null;
-  }, []);
-
-  // Restore scene completion badges after content load in preview
-  useEffect(() => {
-    if (isEditMode || !editorRef.current || completedScenes.size === 0) return;
-    const allEls = editorRef.current.querySelectorAll("h1, h2, p, div");
+    
+    const allEls = editorRef.current.querySelectorAll("h1, h2, p, div, b");
     allEls.forEach((el) => {
-      const key = getSceneKey(el as HTMLElement);
-      if (key && completedScenes.has(key) && !el.querySelector(".scene-done-badge")) {
-        const check = document.createElement("span");
-        check.className = "scene-done-badge";
-        check.style.cssText = "display:inline-flex;align-items:center;gap:4px;margin-left:8px;color:#16a34a;font-size:14px;vertical-align:middle;";
-        check.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span style="font-size:11px;font-weight:600;">সম্পন্ন</span>`;
-        el.appendChild(check);
+      const text = el.textContent?.trim() || "";
+      if (!/দৃশ্য/i.test(text)) return;
+      if ((el as HTMLElement).closest(".scene-check-btn")) return;
+      // Skip if a child already has a checkbox
+      if (el.querySelector(".scene-check-btn")) return;
+      const htmlEl = el as HTMLElement;
+      if (window.getComputedStyle(htmlEl).position === "static") {
+        htmlEl.style.position = "relative";
       }
+      htmlEl.style.paddingLeft = "32px";
+      htmlEl.setAttribute("data-scene-padded", "true");
+      
+      const key = text.replace(/\s*সম্পন্ন\s*/g, "").trim();
+      const isDone = completedScenes.has(key);
+      const btn = document.createElement("button");
+      btn.className = "scene-check-btn";
+      btn.type = "button";
+      btn.style.cssText = `position:absolute;left:2px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:2px solid ${isDone ? '#16a34a' : '#9ca3af'};background:${isDone ? '#16a34a' : 'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;padding:0;z-index:5;`;
+      btn.innerHTML = isDone ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '';
+      btn.setAttribute("data-scene-key", key);
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setCompletedScenes(prev => {
+          const next = new Set(prev);
+          if (next.has(key)) next.delete(key); else next.add(key);
+          return next;
+        });
+      });
+      htmlEl.insertBefore(btn, htmlEl.firstChild);
     });
   }, [isEditMode, completedScenes]);
+
+  useEffect(() => {
+    const timer = setTimeout(renderSceneCheckboxes, 150);
+    return () => clearTimeout(timer);
+  }, [renderSceneCheckboxes, script, isEditMode]);
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
