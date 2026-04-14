@@ -159,56 +159,34 @@ const AdminScriptEdit = () => {
     queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
   };
 
-  // Get member IDs already mentioned in the current scene block (between two headings)
-  const getMentionedInCurrentScene = useCallback(() => {
+  // Get member IDs already mentioned on the current line (same block element)
+  const getMentionedInCurrentLine = useCallback(() => {
     if (!editorRef.current) return new Set<string>();
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return new Set<string>();
 
-    // Create a range at cursor position to compare positions
-    const cursorRange = sel.getRangeAt(0);
-
-    // Get all top-level children of the editor (paragraphs, headings, divs etc.)
-    const topChildren = Array.from(editorRef.current.childNodes);
-
-    // Find which "section" the cursor is in by looking at heading boundaries
-    let sectionStartIdx = 0;
-    let sectionEndIdx = topChildren.length;
-
-    for (let i = 0; i < topChildren.length; i++) {
-      const child = topChildren[i];
-      const el = child.nodeType === 1 ? (child as HTMLElement) : null;
-      const isHeading = el && /^H[12]$/i.test(el.tagName);
-      // Also detect headings like <p><b>দৃশ্য</b></p> — check text content for দৃশ্য pattern
-      const isSceneLabel = el && /দৃশ্য/i.test(el.textContent || "");
-
-      if (isHeading || isSceneLabel) {
-        // Is the cursor after this heading?
-        const headingRange = document.createRange();
-        headingRange.selectNode(child);
-        if (cursorRange.compareBoundaryPoints(Range.START_TO_START, headingRange) >= 0) {
-          sectionStartIdx = i;
-        } else {
-          // Cursor is before this heading, so this is the end boundary
-          sectionEndIdx = i;
+    // Find the closest block-level parent (p, div, h1, h2, li, etc.)
+    let node: Node | null = sel.anchorNode;
+    let blockEl: HTMLElement | null = null;
+    while (node && node !== editorRef.current) {
+      if (node.nodeType === 1) {
+        const el = node as HTMLElement;
+        const display = window.getComputedStyle(el).display;
+        if (display === "block" || display === "list-item" || /^(P|DIV|H[1-6]|LI|BLOCKQUOTE)$/i.test(el.tagName)) {
+          blockEl = el;
           break;
         }
       }
+      node = node.parentNode;
     }
 
-    // Collect mention-tags within the section range
     const mentionedIds = new Set<string>();
-    for (let i = sectionStartIdx; i < sectionEndIdx; i++) {
-      const child = topChildren[i];
-      if (child.nodeType === 1) {
-        const mentions = (child as HTMLElement).querySelectorAll(".mention-tag");
-        mentions.forEach((tag) => {
-          const memberId = tag.getAttribute("data-member-id");
-          if (memberId) mentionedIds.add(memberId);
-        });
-      }
+    if (blockEl) {
+      blockEl.querySelectorAll(".mention-tag").forEach((tag) => {
+        const memberId = tag.getAttribute("data-member-id");
+        if (memberId) mentionedIds.add(memberId);
+      });
     }
-
     return mentionedIds;
   }, []);
 
