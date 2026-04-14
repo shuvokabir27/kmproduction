@@ -84,7 +84,7 @@ const AdminShootings = () => {
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*, channels(name, platform)" as any).order("shoot_date", { ascending: false });
+      const { data } = await supabase.from("shootings").select("*, channels(name, platform), scripts(id, title, content)" as any).order("shoot_date", { ascending: false });
       return (data ?? []) as any[];
     },
   });
@@ -384,7 +384,11 @@ const AdminShootings = () => {
     }
   };
   const openScriptEditor = (shooting: any) => {
-    setScriptEditShooting(shooting);
+    // If shooting has linked script content from scripts table, use it as initial content
+    const linkedScriptContent = shooting.scripts?.content || "";
+    const shootingScript = shooting.script_content || "";
+    const initialContent = shootingScript || linkedScriptContent;
+    setScriptEditShooting({ ...shooting, script_content: initialContent });
     setScriptEditorOpen(true);
   };
 
@@ -544,7 +548,7 @@ const AdminShootings = () => {
                   )}
                   {filtered?.map((s) => {
                     const info = getStatusInfo(s.status);
-                    const hasScript = !!(s as any).script_content || !!(s as any).script_url;
+                    const hasScript = !!(s as any).script_content || !!(s as any).script_url || !!(s as any).scripts?.content;
                     return (
                       <Card key={s.id} className="bg-card border-border/30 p-3 active:scale-[0.99] transition-transform">
                         <div className="flex items-start justify-between gap-2">
@@ -639,7 +643,7 @@ const AdminShootings = () => {
                         )}
                         {filtered?.map((s) => {
                           const info = getStatusInfo(s.status);
-                          const hasScript = !!(s as any).script_content || !!(s as any).script_url;
+                          const hasScript = !!(s as any).script_content || !!(s as any).script_url || !!(s as any).scripts?.content;
                           return (
                             <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
                               <td className="p-3">
@@ -652,7 +656,7 @@ const AdminShootings = () => {
                               <td className="p-3">
                                 <div className="flex items-center gap-2">
                                   <Button variant="ghost" size="sm" className={`h-7 text-xs gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
-                                    <FileText className="h-3.5 w-3.5" /> {hasScript ? "এডিট" : "লিখুন"}
+                                    <FileText className="h-3.5 w-3.5" /> {hasScript ? ((s as any).scripts?.title || "এডিট") : "লিখুন"}
                                   </Button>
                                 </div>
                               </td>
