@@ -2413,6 +2413,7 @@ export type Database = {
         | "shipped"
         | "delivered"
         | "cancelled"
+        | "abandoned"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
       pricing_type: "hourly" | "per_minute" | "event" | "fixed"
       salary_type: "daily" | "monthly"
@@ -2559,6 +2560,7 @@ export const Constants = {
         "shipped",
         "delivered",
         "cancelled",
+        "abandoned",
       ],
       payment_method: ["bank", "bkash", "nagad", "cash"],
       pricing_type: ["hourly", "per_minute", "event", "fixed"],

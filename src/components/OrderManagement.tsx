@@ -24,6 +24,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: any }> 
   shipped: { label: "শিপড", color: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20", icon: Truck },
   delivered: { label: "ডেলিভারড", color: "bg-green-500/10 text-green-600 border-green-500/20", icon: CheckCircle2 },
   cancelled: { label: "ক্যান্সেলড", color: "bg-red-500/10 text-red-600 border-red-500/20", icon: XCircle },
+  abandoned: { label: "অসম্পূর্ণ", color: "bg-orange-500/10 text-orange-600 border-orange-500/20", icon: Clock },
 };
 
 const paymentStatusConfig: Record<string, { label: string; color: string }> = {
@@ -175,6 +176,7 @@ const OrderManagement = () => {
     { key: "shipped", label: "শিপড", count: orders?.filter((o: any) => o.status === "shipped").length || 0 },
     { key: "delivered", label: "ডেলিভারড", count: stats.delivered },
     { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0 },
+    { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0 },
   ];
 
   return (
@@ -360,6 +362,18 @@ const OrderManagement = () => {
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
                       onClick={() => quickStatusUpdate(order.id, "delivered")}>
                       <CheckCircle2 className="h-3 w-3" /> ডেলিভারড
+                    </Button>
+                  </div>
+                )}
+                {order.status === "abandoned" && (
+                  <div className="flex gap-2 mt-3 pt-2 border-t border-orange-200/50 bg-orange-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
+                      onClick={() => quickStatusUpdate(order.id, "pending")}>
+                      <CheckCircle2 className="h-3 w-3" /> পেন্ডিং করুন
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1"
+                      onClick={() => openEdit(order)}>
+                      <Phone className="h-3 w-3" /> ফলোআপ
                     </Button>
                   </div>
                 )}

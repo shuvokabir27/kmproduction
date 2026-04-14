@@ -99,6 +99,27 @@ const Products = () => {
     }
   };
 
+  // Save abandoned order when user closes popup with phone number entered
+  const closeOrderDialog = async () => {
+    if (!orderSuccess && orderForm.phone.length === 11) {
+      try {
+        const productName = products?.[0]?.name || "প্রডাক্ট";
+        await supabase.from("orders").insert({
+          customer_name: orderForm.name.trim() || "অজানা",
+          customer_phone: orderForm.phone,
+          customer_address: orderForm.address.trim() || null,
+          product_name: productName,
+          quantity: 1,
+          unit_price: 0,
+          total_amount: 0,
+          status: "abandoned" as any,
+        });
+      } catch (_) {}
+    }
+    setOrderOpen(false);
+    setOrderForm({ name: "", phone: "", address: "" });
+  };
+
   const openOrderDialog = () => {
     setOrderSuccess(false);
     setPhoneError("");
@@ -388,7 +409,7 @@ const Products = () => {
 
       {/* Order Popup */}
       {orderOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setOrderOpen(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
           <div
             className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
@@ -422,7 +443,7 @@ const Products = () => {
                         <p className="text-white/60 text-xs">তথ্য দিয়ে অর্ডার কনফার্ম করুন</p>
                       </div>
                     </div>
-                    <button onClick={() => setOrderOpen(false)} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25 hover:text-white transition-all">
+                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25 hover:text-white transition-all">
                       <X className="h-4 w-4" />
                     </button>
                   </div>
