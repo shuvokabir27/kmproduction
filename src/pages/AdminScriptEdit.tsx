@@ -159,10 +159,64 @@ const AdminScriptEdit = () => {
     queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
   };
 
+  // Get member IDs already mentioned in the current scene block
+  const getMentionedInCurrentScene = useCallback(() => {
+    if (!editorRef.current) return new Set<string>();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return new Set<string>();
+    
+    // Walk up from cursor to find the scene boundary (h1/h2 or start of editor)
+    let node: Node | null = sel.anchorNode;
+    let sceneStart: Node | null = null;
+    let sceneEnd: Node | null = null;
+    
+    // Find the previous heading (scene start)
+    while (node && node !== editorRef.current) {
+      const el = node.nodeType === 1 ? (node as HTMLElement) : node.parentElement;
+      if (el && /^H[12]$/i.test(el.tagName)) {
+        sceneStart = el;
+        break;
+      }
+      node = node.previousSibling || node.parentNode;
+    }
+    
+    // Collect all mention-tags between the scene heading and the next heading
+    const allChildren = Array.from(editorRef.current.querySelectorAll("*"));
+    const startIdx = sceneStart ? allChildren.indexOf(sceneStart as Element) : -1;
+    
+    const mentionedIds = new Set<string>();
+    const mentionTags = editorRef.current.querySelectorAll(".mention-tag");
+    mentionTags.forEach((tag) => {
+      const tagIdx = allChildren.indexOf(tag);
+      if (startIdx === -1 || tagIdx > startIdx) {
+        // Check if there's another heading between sceneStart and this tag
+        let hasNextHeading = false;
+        for (let i = startIdx + 1; i < tagIdx; i++) {
+          if (/^H[12]$/i.test(allChildren[i].tagName)) {
+            hasNextHeading = true;
+            break;
+          }
+        }
+        if (!hasNextHeading) {
+          const memberId = tag.getAttribute("data-member-id");
+          if (memberId) mentionedIds.add(memberId);
+        }
+      }
+    });
+    
+    return mentionedIds;
+  }, []);
+
   // Filtered members for mention dropdown
-  const filteredMentionMembers = (members ?? []).filter((m: any) =>
-    mentionQuery ? m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery) : true
-  );
+  const filteredMentionMembers = (members ?? []).filter((m: any) => {
+    if (mentionQuery && !(m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery))) return false;
+    return true;
+  });
+
+  // State for scene-scoped exclusion
+  const [sceneMentionedIds, setSceneMentionedIds] = useState<Set<string>>(new Set());
+  
+  const visibleMentionMembers = filteredMentionMembers.filter((m: any) => !sceneMentionedIds.has(m.id));
 
   const insertMention = useCallback(async (member: any) => {
     const range = mentionRangeRef.current;
@@ -221,6 +275,7 @@ const AdminScriptEdit = () => {
           top: rect.bottom - editorRect.top + editorRef.current.scrollTop + 4,
           left: rect.left - editorRect.left,
         });
+        setSceneMentionedIds(getMentionedInCurrentScene());
         setMentionOpen(true);
         setMentionIndex(0);
         return;
@@ -236,7 +291,7 @@ const AdminScriptEdit = () => {
     if (!mentionOpen) return false;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setMentionIndex((i) => Math.min(i + 1, filteredMentionMembers.length - 1));
+      setMentionIndex((i) => Math.min(i + 1, visibleMentionMembers.length - 1));
       return true;
     }
     if (e.key === "ArrowUp") {
@@ -246,8 +301,8 @@ const AdminScriptEdit = () => {
     }
     if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault();
-      if (filteredMentionMembers[mentionIndex]) {
-        insertMention(filteredMentionMembers[mentionIndex]);
+      if (visibleMentionMembers[mentionIndex]) {
+        insertMention(visibleMentionMembers[mentionIndex]);
       }
       return true;
     }
@@ -257,7 +312,7 @@ const AdminScriptEdit = () => {
       return true;
     }
     return false;
-  }, [mentionOpen, filteredMentionMembers, mentionIndex, insertMention]);
+  }, [mentionOpen, visibleMentionMembers, mentionIndex, insertMention]);
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -580,14 +635,14 @@ const AdminScriptEdit = () => {
             />
 
             {/* Mention Dropdown */}
-            {mentionOpen && isEditMode && filteredMentionMembers.length > 0 && (
+            {mentionOpen && isEditMode && visibleMentionMembers.length > 0 && (
               <div
                 ref={mentionListRef}
                 className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl max-h-[360px] overflow-y-auto w-[260px]"
                 style={{ top: mentionPos.top, left: Math.min(mentionPos.left, 500) }}
               >
                 <div className="px-3 py-1.5 text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100">সদস্য সিলেক্ট করুন</div>
-                {filteredMentionMembers.map((m: any, idx: number) => (
+                {visibleMentionMembers.map((m: any, idx: number) => (
                   <button
                     key={m.id}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-blue-50 transition-colors ${idx === mentionIndex ? "bg-blue-50" : ""}`}
