@@ -1838,6 +1838,47 @@ export type Database = {
           },
         ]
       }
+      shooting_scenes: {
+        Row: {
+          created_at: string
+          id: string
+          is_shot: boolean
+          notes: string | null
+          scene_label: string
+          shooting_id: string
+          shot_at: string | null
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_shot?: boolean
+          notes?: string | null
+          scene_label: string
+          shooting_id: string
+          shot_at?: string | null
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_shot?: boolean
+          notes?: string | null
+          scene_label?: string
+          shooting_id?: string
+          shot_at?: string | null
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shooting_scenes_shooting_id_fkey"
+            columns: ["shooting_id"]
+            isOneToOne: false
+            referencedRelation: "shootings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shootings: {
         Row: {
           call_time: string | null
