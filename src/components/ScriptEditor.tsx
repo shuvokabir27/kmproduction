@@ -117,33 +117,56 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
             <select
               className="h-8 text-xs bg-secondary border border-border/50 rounded px-2 text-foreground"
               onChange={(e) => {
-                if (e.target.value === "remove") {
-                  execCmd("hiliteColor", "transparent");
-                  // Also try removing via removeFormat for hilite
+                const val = e.target.value;
+                if (val === "remove") {
+                  // Remove highlight by clearing background on selected spans
                   const sel = window.getSelection();
                   if (sel && sel.rangeCount > 0) {
                     const range = sel.getRangeAt(0);
-                    const fragment = range.cloneContents();
-                    const spans = fragment.querySelectorAll('span');
-                    // Re-apply without background
-                    if (spans.length > 0 || range.toString()) {
-                      execCmd("hiliteColor", "rgba(0,0,0,0)");
+                    const container = range.commonAncestorContainer;
+                    const parent = container.nodeType === 3 ? container.parentElement : container as HTMLElement;
+                    if (parent) {
+                      // Find all spans with background in selection
+                      const allSpans = parent.querySelectorAll ? 
+                        Array.from(parent.querySelectorAll('span[style*="background"]')) : [];
+                      allSpans.forEach((span) => {
+                        if (sel.containsNode(span, true)) {
+                          (span as HTMLElement).style.backgroundColor = '';
+                          (span as HTMLElement).style.background = '';
+                          // If no other styles, unwrap span
+                          if (!(span as HTMLElement).getAttribute('style')?.trim()) {
+                            const parentNode = span.parentNode;
+                            while (span.firstChild) {
+                              parentNode?.insertBefore(span.firstChild, span);
+                            }
+                            parentNode?.removeChild(span);
+                          }
+                        }
+                      });
+                      // Also handle if parent itself is a highlighted span
+                      if (parent.tagName === 'SPAN' && parent.style.backgroundColor) {
+                        parent.style.backgroundColor = '';
+                        parent.style.background = '';
+                      }
                     }
+                    // Fallback: try execCommand
+                    execCmd("hiliteColor", "rgba(0,0,0,0)");
                   }
-                } else if (e.target.value) {
-                  execCmd("hiliteColor", e.target.value);
+                } else if (val) {
+                  execCmd("hiliteColor", val);
                 }
                 e.target.value = "";
               }}
               defaultValue=""
             >
               <option value="" disabled>হাইলাইট</option>
-              <option value="#fef08a">হলুদ</option>
-              <option value="#bbf7d0">সবুজ</option>
-              <option value="#bfdbfe">নীল</option>
-              <option value="#fecaca">লাল</option>
-              <option value="#e9d5ff">বেগুনি</option>
-              <option value="#fed7aa">কমলা</option>
+              <option value="#fef08a">🟡 হলুদ</option>
+              <option value="#bbf7d0">🟢 সবুজ</option>
+              <option value="#bfdbfe">🔵 নীল</option>
+              <option value="#fecaca">🔴 লাল</option>
+              <option value="#e9d5ff">🟣 বেগুনি</option>
+              <option value="#fed7aa">🟠 কমলা</option>
+              <option value="remove">❌ হাইলাইট মুছুন</option>
               <option value="remove">❌ হাইলাইট মুছুন</option>
             </select>
           </div>
