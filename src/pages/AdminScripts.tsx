@@ -7,11 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FileText, Plus, Edit, Trash2, Search, Clock } from "lucide-react";
+import { FileText, Plus, Edit, Trash2, Search, Clock, RotateCcw, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdminScripts = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -22,6 +23,7 @@ const AdminScripts = () => {
   const [newTitle, setNewTitle] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [permanentDeleteId, setPermanentDeleteId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const { data: scripts } = useQuery({
@@ -39,9 +41,16 @@ const AdminScripts = () => {
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
 
-  const filtered = scripts?.filter((s: any) =>
+  const activeScripts = scripts?.filter((s: any) => !s.is_deleted) ?? [];
+  const trashedScripts = scripts?.filter((s: any) => s.is_deleted) ?? [];
+
+  const filtered = activeScripts.filter((s: any) =>
     s.title?.toLowerCase().includes(search.toLowerCase())
-  ) ?? [];
+  );
+
+  const filteredTrashed = trashedScripts.filter((s: any) =>
+    s.title?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const openNewScript = () => {
     setEditingId(null);
@@ -80,18 +89,36 @@ const AdminScripts = () => {
     }
   };
 
-  const handleDelete = async () => {
+  // Soft delete — move to trash
+  const handleSoftDelete = async () => {
     if (!deleteId) return;
-    const { error } = await supabase.from("scripts" as any).delete().eq("id", deleteId);
+    const { error } = await (supabase as any).from("scripts").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", deleteId);
     if (error) { toast.error(error.message); return; }
-    toast.success("স্ক্রিপ্ট মুছে ফেলা হয়েছে!");
+    toast.success("স্ক্রিপ্ট ট্র্যাশে সরানো হয়েছে!");
     setDeleteId(null);
+    queryClient.invalidateQueries({ queryKey: ["admin-scripts"] });
+  };
+
+  // Restore from trash
+  const handleRestore = async (scriptId: string) => {
+    const { error } = await (supabase as any).from("scripts").update({ is_deleted: false, deleted_at: null }).eq("id", scriptId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("স্ক্রিপ্ট পুনরুদ্ধার হয়েছে!");
+    queryClient.invalidateQueries({ queryKey: ["admin-scripts"] });
+  };
+
+  // Permanent delete
+  const handlePermanentDelete = async () => {
+    if (!permanentDeleteId) return;
+    const { error } = await supabase.from("scripts" as any).delete().eq("id", permanentDeleteId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("স্ক্রিপ্ট চিরতরে মুছে ফেলা হয়েছে!");
+    setPermanentDeleteId(null);
     queryClient.invalidateQueries({ queryKey: ["admin-scripts"] });
   };
 
   const getPreview = (content: string) => {
     if (!content) return "খালি স্ক্রিপ্ট";
-    // Try parsing sequence format
     try {
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed)) {
@@ -111,6 +138,52 @@ const AdminScripts = () => {
     return 1;
   };
 
+  const toBn = (n: number) => String(n).replace(/\d/g, (d: string) => "০১২৩৪৫৬৭৮৯"[+d]);
+
+  const ScriptCard = ({ script, isTrashed = false }: { script: any; isTrashed?: boolean }) => (
+    <Card
+      key={script.id}
+      className={`bg-card border-border/30 p-4 transition-colors group ${isTrashed ? "opacity-70" : "hover:border-primary/30 cursor-pointer"}`}
+      onClick={() => !isTrashed && navigate(`/admin/scripts/${script.id}`)}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <FileText className={`h-4 w-4 shrink-0 ${isTrashed ? "text-muted-foreground" : "text-primary"}`} />
+            <h3 className={`font-semibold text-sm truncate ${isTrashed ? "text-muted-foreground line-through" : "text-foreground"}`}>{script.title}</h3>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{getPreview(script.content)}</p>
+          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(isTrashed ? script.deleted_at : script.updated_at).toLocaleDateString("bn-BD")}</span>
+            {!isTrashed && <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{toBn(getSeqCount(script.content))} দৃশ্য</span>}
+            {isTrashed && <span className="px-1.5 py-0.5 rounded bg-destructive/10 text-destructive text-[10px]">ট্র্যাশে আছে</span>}
+          </div>
+        </div>
+        <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+          {isTrashed ? (
+            <>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary hover:text-primary" onClick={() => handleRestore(script.id)} title="পুনরুদ্ধার">
+                <RotateCcw className="h-3.5 w-3.5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setPermanentDeleteId(script.id)} title="চিরতরে মুছুন">
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => openRenameScript(script)}>
+                <Edit className="h-3.5 w-3.5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setDeleteId(script.id)}>
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-6">
@@ -128,42 +201,44 @@ const AdminScripts = () => {
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="স্ক্রিপ্ট খুঁজুন..." className="pl-9 bg-secondary border-border/50" />
         </div>
 
-        <div className="grid gap-3">
-          {filtered.length === 0 && (
-            <Card className="bg-card border-border/30 p-8 text-center text-muted-foreground">
-              {search ? "কোনো স্ক্রিপ্ট পাওয়া যায়নি" : "কোনো স্ক্রিপ্ট নেই। নতুন স্ক্রিপ্ট তৈরি করুন।"}
-            </Card>
-          )}
-          {filtered.map((script: any) => (
-            <Card
-              key={script.id}
-              className="bg-card border-border/30 p-4 hover:border-primary/30 transition-colors cursor-pointer group"
-              onClick={() => navigate(`/admin/scripts/${script.id}`)}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-primary shrink-0" />
-                    <h3 className="text-foreground font-semibold text-sm truncate">{script.title}</h3>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{getPreview(script.content)}</p>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(script.updated_at).toLocaleDateString("bn-BD")}</span>
-                    <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{getSeqCount(script.content).toString().replace(/\d/g, (d: string) => "০১২৩৪৫৬৭৮৯"[+d])} দৃশ্য</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => openRenameScript(script)}>
-                    <Edit className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setDeleteId(script.id)}>
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <Tabs defaultValue="active">
+          <TabsList className="bg-secondary/50 border border-border/20">
+            <TabsTrigger value="active" className="gap-1.5 text-xs data-[state=active]:bg-primary/10">
+              <FileText className="h-3.5 w-3.5" /> স্ক্রিপ্ট ({toBn(activeScripts.length)})
+            </TabsTrigger>
+            <TabsTrigger value="trash" className="gap-1.5 text-xs data-[state=active]:bg-destructive/10 data-[state=active]:text-destructive">
+              <Trash className="h-3.5 w-3.5" /> ট্র্যাশ ({toBn(trashedScripts.length)})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="active">
+            <div className="grid gap-3 mt-3">
+              {filtered.length === 0 && (
+                <Card className="bg-card border-border/30 p-8 text-center text-muted-foreground">
+                  {search ? "কোনো স্ক্রিপ্ট পাওয়া যায়নি" : "কোনো স্ক্রিপ্ট নেই। নতুন স্ক্রিপ্ট তৈরি করুন।"}
+                </Card>
+              )}
+              {filtered.map((script: any) => (
+                <ScriptCard key={script.id} script={script} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="trash">
+            <div className="grid gap-3 mt-3">
+              {filteredTrashed.length === 0 && (
+                <Card className="bg-card border-border/30 p-8 text-center text-muted-foreground">
+                  <Trash className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                  <p>ট্র্যাশ খালি</p>
+                  <p className="text-xs mt-1">মুছে ফেলা স্ক্রিপ্ট এখানে দেখা যাবে</p>
+                </Card>
+              )}
+              {filteredTrashed.map((script: any) => (
+                <ScriptCard key={script.id} script={script} isTrashed />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       <Dialog open={titleDialogOpen} onOpenChange={setTitleDialogOpen}>
@@ -183,15 +258,30 @@ const AdminScripts = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Soft delete confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={(v) => { if (!v) setDeleteId(null); }}>
         <AlertDialogContent className="bg-card border-border/50">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">স্ক্রিপ্ট মুছে ফেলুন?</AlertDialogTitle>
-            <AlertDialogDescription>এটি মুছে ফেললে আর ফিরিয়ে আনা যাবে না।</AlertDialogDescription>
+            <AlertDialogTitle className="text-foreground">স্ক্রিপ্ট ট্র্যাশে সরান?</AlertDialogTitle>
+            <AlertDialogDescription>স্ক্রিপ্টটি ট্র্যাশে সরানো হবে। পরে ট্র্যাশ থেকে পুনরুদ্ধার করা যাবে।</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="border-border/50">বাতিল</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">মুছে ফেলুন</AlertDialogAction>
+            <AlertDialogAction onClick={handleSoftDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">ট্র্যাশে সরান</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Permanent delete confirmation */}
+      <AlertDialog open={!!permanentDeleteId} onOpenChange={(v) => { if (!v) setPermanentDeleteId(null); }}>
+        <AlertDialogContent className="bg-card border-border/50">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">চিরতরে মুছে ফেলুন?</AlertDialogTitle>
+            <AlertDialogDescription>এটি মুছে ফেললে আর কখনো ফিরিয়ে আনা যাবে না। আপনি কি নিশ্চিত?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-border/50">বাতিল</AlertDialogCancel>
+            <AlertDialogAction onClick={handlePermanentDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">চিরতরে মুছুন</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
