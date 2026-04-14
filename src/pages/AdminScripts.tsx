@@ -198,14 +198,9 @@ const AdminScripts = () => {
           </div>
           <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
             {isTrashed ? (
-              <>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary hover:text-primary" onClick={() => handleRestore(script.id)} title="পুনরুদ্ধার">
-                  <RotateCcw className="h-3.5 w-3.5" />
-                </Button>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setPermanentDeleteId(script.id)} title="চিরতরে মুছুন">
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary hover:text-primary" onClick={() => handleRestore(script.id)} title="পুনরুদ্ধার">
+                <RotateCcw className="h-3.5 w-3.5" />
+              </Button>
             ) : (
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setDeleteId(script.id)}>
                 <Trash2 className="h-3.5 w-3.5" />
