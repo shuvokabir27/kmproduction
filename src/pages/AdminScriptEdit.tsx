@@ -666,6 +666,16 @@ const AdminScriptEdit = () => {
                 <Edit className="h-3.5 w-3.5" /> এডিট করুন
               </Button>
             </div>
+            {/* Scene tracking stats */}
+            {totalScenes > 0 && (
+              <div className="flex items-center gap-3 flex-wrap text-xs bg-secondary/50 rounded-lg px-3 py-2 border border-border/30">
+                <span className="text-muted-foreground font-medium">🎬 দৃশ্য ট্র্যাকার:</span>
+                <span className="text-foreground">মোট <strong>{toBn(totalScenes)}</strong></span>
+                <span className="text-green-600">✅ শুট সম্পন্ন <strong>{toBn(Object.values(sceneStatus).filter(s => s === 'done').length)}</strong></span>
+                <span className="text-red-500">❌ শুট হয়নি <strong>{toBn(Object.values(sceneStatus).filter(s => s === 'skipped').length)}</strong></span>
+                <span className="text-muted-foreground">⏳ বাকি <strong>{toBn(totalScenes - Object.keys(sceneStatus).length)}</strong></span>
+              </div>
+            )}
           </div>
         )}
 
