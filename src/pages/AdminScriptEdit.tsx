@@ -304,33 +304,22 @@ const AdminScriptEdit = () => {
   const renderSceneCheckboxes = useCallback(() => {
     if (isEditMode || !editorRef.current) return;
     editorRef.current.querySelectorAll(".scene-check-btn").forEach(el => el.remove());
-    // Reset padding
-    editorRef.current.querySelectorAll("[data-scene-padded]").forEach(el => {
-      (el as HTMLElement).style.paddingLeft = "";
-      el.removeAttribute("data-scene-padded");
-    });
     
     const allEls = editorRef.current.querySelectorAll("h1, h2, p, div, b");
     allEls.forEach((el) => {
       const text = el.textContent?.trim() || "";
       if (!/দৃশ্য/i.test(text)) return;
       if ((el as HTMLElement).closest(".scene-check-btn")) return;
-      // Skip if a child already has a checkbox
       if (el.querySelector(".scene-check-btn")) return;
       const htmlEl = el as HTMLElement;
-      if (window.getComputedStyle(htmlEl).position === "static") {
-        htmlEl.style.position = "relative";
-      }
-      htmlEl.style.paddingLeft = "32px";
-      htmlEl.setAttribute("data-scene-padded", "true");
       
       const key = text.replace(/\s*সম্পন্ন\s*/g, "").trim();
       const isDone = completedScenes.has(key);
       const btn = document.createElement("button");
       btn.className = "scene-check-btn";
       btn.type = "button";
-      btn.style.cssText = `position:absolute;left:2px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:2px solid ${isDone ? '#16a34a' : '#9ca3af'};background:${isDone ? '#16a34a' : 'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;padding:0;z-index:5;`;
-      btn.innerHTML = isDone ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '';
+      btn.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:2px solid ${isDone ? '#16a34a' : '#9ca3af'};background:${isDone ? '#16a34a' : 'transparent'};cursor:pointer;margin-left:8px;vertical-align:middle;padding:0;transition:all 0.2s;flex-shrink:0;`;
+      btn.innerHTML = isDone ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '';
       btn.setAttribute("data-scene-key", key);
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -341,7 +330,7 @@ const AdminScriptEdit = () => {
           return next;
         });
       });
-      htmlEl.insertBefore(btn, htmlEl.firstChild);
+      htmlEl.appendChild(btn);
     });
   }, [isEditMode, completedScenes]);
 
