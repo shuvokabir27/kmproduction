@@ -548,7 +548,7 @@ const AdminShootings = () => {
                   )}
                   {filtered?.map((s) => {
                     const info = getStatusInfo(s.status);
-                    const hasScript = !!(s as any).script_content || !!(s as any).script_url;
+                    const hasScript = !!(s as any).script_content || !!(s as any).script_url || !!(s as any).scripts?.content;
                     return (
                       <Card key={s.id} className="bg-card border-border/30 p-3 active:scale-[0.99] transition-transform">
                         <div className="flex items-start justify-between gap-2">
@@ -643,7 +643,7 @@ const AdminShootings = () => {
                         )}
                         {filtered?.map((s) => {
                           const info = getStatusInfo(s.status);
-                          const hasScript = !!(s as any).script_content || !!(s as any).script_url;
+                          const hasScript = !!(s as any).script_content || !!(s as any).script_url || !!(s as any).scripts?.content;
                           return (
                             <tr key={s.id} className="hover:bg-secondary/30 transition-colors">
                               <td className="p-3">
