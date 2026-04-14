@@ -76,6 +76,10 @@ const AdminShootings = () => {
   const [revertShootingId, setRevertShootingId] = useState<string>("");
   const [revertNewStatus, setRevertNewStatus] = useState<string>("");
   const [revertVerifying, setRevertVerifying] = useState(false);
+  // Scene tracker
+  const [sceneTrackerOpen, setSceneTrackerOpen] = useState(false);
+  const [sceneTrackerShootingId, setSceneTrackerShootingId] = useState("");
+  const [sceneTrackerShootingName, setSceneTrackerShootingName] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
