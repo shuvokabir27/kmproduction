@@ -694,6 +694,9 @@ const AdminShootings = () => {
                                        <Users className="h-4 w-4" />
                                      </Button>
                                    )}
+                                   <Button variant="ghost" size="sm" className="text-amber-400 hover:text-amber-300" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                                     <Clapperboard className="h-4 w-4" />
+                                   </Button>
                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
                                      <Edit className="h-4 w-4" />
                                    </Button>
