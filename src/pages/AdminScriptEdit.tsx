@@ -551,7 +551,7 @@ const AdminScriptEdit = () => {
         {/* Word-like Document Page */}
         <div className="flex justify-center pb-8">
           <div 
-            className={`w-full ${isFullscreen ? 'max-w-[960px]' : 'max-w-[816px]'} bg-white shadow-2xl border border-gray-200/50 rounded-sm transition-all duration-300`}
+            className={`w-full ${isFullscreen ? 'max-w-[960px]' : 'max-w-[816px]'} bg-white shadow-2xl border border-gray-200/50 rounded-sm transition-all duration-300 relative`}
             style={{ minHeight: isFullscreen ? "calc(100vh - 120px)" : "1056px" }}
           >
             <div
@@ -572,9 +572,46 @@ const AdminScriptEdit = () => {
               `}
               style={{ fontFamily: "'Noto Sans Bengali', 'Kalpurush', sans-serif", wordBreak: "break-word", minHeight: isFullscreen ? "calc(100vh - 120px)" : "1056px" }}
               suppressContentEditableWarning
-              onInput={updateWordCount}
-              onKeyDown={isEditMode ? handleKeyDown : undefined}
+              onInput={handleEditorInput}
+              onKeyDown={isEditMode ? (e) => {
+                if (handleMentionKeyDown(e)) return;
+                handleKeyDown(e);
+              } : undefined}
             />
+
+            {/* Mention Dropdown */}
+            {mentionOpen && isEditMode && filteredMentionMembers.length > 0 && (
+              <div
+                ref={mentionListRef}
+                className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl max-h-[240px] overflow-y-auto w-[260px]"
+                style={{ top: mentionPos.top, left: Math.min(mentionPos.left, 500) }}
+              >
+                <div className="px-3 py-1.5 text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100">সদস্য সিলেক্ট করুন</div>
+                {filteredMentionMembers.map((m: any, idx: number) => (
+                  <button
+                    key={m.id}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-blue-50 transition-colors ${idx === mentionIndex ? "bg-blue-50" : ""}`}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      insertMention(m);
+                    }}
+                    onMouseEnter={() => setMentionIndex(idx)}
+                  >
+                    {m.photo_url ? (
+                      <img src={m.photo_url} alt="" className="w-7 h-7 rounded-full object-cover border border-gray-200" />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
+                        {m.full_name?.[0]}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-gray-900 font-medium text-[13px] truncate">{m.full_name}</div>
+                      <div className="text-gray-400 text-[10px]">ID: {m.member_id}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
