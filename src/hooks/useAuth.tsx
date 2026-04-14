@@ -7,6 +7,7 @@ interface AuthContextType {
   session: Session | null;
   isAdmin: boolean;
   isClient: boolean;
+  isProductAdmin: boolean;
   profile: any | null;
   loading: boolean;
   signOut: () => Promise<void>;
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   isAdmin: false,
   isClient: false,
+  isProductAdmin: false,
   profile: null,
   loading: true,
   signOut: async () => {},
@@ -29,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isProductAdmin, setIsProductAdmin] = useState(false);
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
         setIsAdmin(false);
         setIsClient(false);
+        setIsProductAdmin(false);
         setLoading(false);
         return;
       }
@@ -66,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(profileRes.data ?? null);
       setIsAdmin(roleRes.data?.some((r) => r.role === "admin") ?? false);
       setIsClient(roleRes.data?.some((r) => r.role === "client") ?? false);
+      setIsProductAdmin(roleRes.data?.some((r) => r.role === "product_admin") ?? false);
       setLoading(false);
     };
 
@@ -90,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, isClient, profile, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, isClient, isProductAdmin, profile, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
