@@ -59,6 +59,26 @@ const AdminAttendance = () => {
     },
   });
 
+  // Fetch latest attendance rates per member (from any previous shooting)
+  const { data: lastRates } = useQuery({
+    queryKey: ["last-attendance-rates"],
+    queryFn: async () => {
+      // Get the most recent attendance record per member with a non-zero rate
+      const { data } = await supabase
+        .from("attendance")
+        .select("member_id, daily_rate, shooting_id, created_at")
+        .gt("daily_rate", 0)
+        .order("created_at", { ascending: false });
+      const map: Record<string, number> = {};
+      (data ?? []).forEach((a) => {
+        if (!map[a.member_id]) {
+          map[a.member_id] = Number(a.daily_rate);
+        }
+      });
+      return map;
+    },
+  });
+
   const { data: existingAttendance } = useQuery({
     queryKey: ["existing-attendance", selectedShooting],
     enabled: !!selectedShooting,
@@ -71,10 +91,14 @@ const AdminAttendance = () => {
           map[a.member_id] = { present: a.is_present ?? false, rate: String(a.daily_rate || 0) };
         });
       } else {
-        // New attendance — pre-fill daily_rate from profile for daily members
+        // New attendance — pre-fill from last attendance rate, fallback to profile daily_rate
         members?.forEach((m: any) => {
-          if (m.salary_type === "daily" && Number(m.daily_rate || 0) > 0) {
-            map[m.id] = { present: false, rate: String(m.daily_rate) };
+          if (m.salary_type === "daily") {
+            const lastRate = lastRates?.[m.id];
+            const rate = lastRate ?? Number(m.daily_rate || 0);
+            if (rate > 0) {
+              map[m.id] = { present: false, rate: String(rate) };
+            }
           }
         });
       }
