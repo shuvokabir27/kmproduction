@@ -31,25 +31,6 @@ const AdminScriptEdit = () => {
   const [currentFontSize, setCurrentFontSize] = useState("");
   const savedSelectionRef = useRef<Range | null>(null);
 
-  // Scene tracking: 'done' = shot taken, 'skipped' = not shot (X)
-  const [sceneStatus, setSceneStatus] = useState<Record<string, 'done' | 'skipped'>>(() => {
-    if (id) {
-      try {
-        const saved = localStorage.getItem(`scene-status-${id}`);
-        if (saved) return JSON.parse(saved);
-      } catch {}
-    }
-    return {};
-  });
-  const [totalScenes, setTotalScenes] = useState(0);
-  
-
-  // Auto-save scene status to localStorage
-  useEffect(() => {
-    if (id) {
-      localStorage.setItem(`scene-status-${id}`, JSON.stringify(sceneStatus));
-    }
-  }, [id, sceneStatus]);
 
   // Mention system state
   const [mentionOpen, setMentionOpen] = useState(false);
@@ -318,138 +299,6 @@ const AdminScriptEdit = () => {
     return false;
   }, [mentionOpen, visibleMentionMembers, mentionIndex, insertMention]);
 
-  // Scene completion: render checkboxes in preview mode
-  const renderSceneCheckboxes = useCallback(() => {
-    if (isEditMode || !editorRef.current) return;
-    editorRef.current.querySelectorAll(".scene-check-btn").forEach(el => el.remove());
-    
-    const allEls = editorRef.current.querySelectorAll("h1, h2, h3, p, div, b, strong, span");
-    const processed = new Set<HTMLElement>();
-    let sceneCount = 0;
-    
-    // First pass: identify all scene heading elements and their keys
-    const sceneHeadings: { el: HTMLElement; key: string }[] = [];
-    
-    allEls.forEach((el) => {
-      const htmlEl = el as HTMLElement;
-      if (processed.has(htmlEl)) return;
-      
-      let ownText = "";
-      for (const node of Array.from(htmlEl.childNodes)) {
-        if (node.nodeType === 3) ownText += node.textContent;
-      }
-      
-      const fullText = htmlEl.textContent?.trim() || "";
-      const isLeaf = !htmlEl.querySelector("h1, h2, h3, p, div, b, strong, span");
-      const ownMatch = /দৃশ্য\s*[০-৯0-9]+/.test(ownText.trim());
-      const leafMatch = isLeaf && /^দৃশ্য\s*[০-৯0-9]+/.test(fullText) && fullText.length < 30;
-      
-      if (!ownMatch && !leafMatch) return;
-      
-      if (!isLeaf && htmlEl.querySelector("b, strong, span")) {
-        const childTexts = Array.from(htmlEl.querySelectorAll("b, strong, span"))
-          .some(c => /^দৃশ্য\s*[০-৯0-9]+/.test(c.textContent?.trim() || ""));
-        if (childTexts) return;
-      }
-      
-      processed.add(htmlEl);
-      sceneCount++;
-      const key = `scene-${sceneCount}`;
-      sceneHeadings.push({ el: htmlEl, key });
-    });
-    
-    setTotalScenes(sceneCount);
-    
-    // Second pass: for each scene heading, collect all elements until the next scene heading
-    // and show/hide based on tab
-    const allChildren = Array.from(editorRef.current.children) as HTMLElement[];
-    
-    // Build a map: for each top-level child, determine which scene it belongs to
-    const sceneRanges: { key: string; elements: HTMLElement[] }[] = [];
-    let currentSceneIdx = -1;
-    let preSceneElements: HTMLElement[] = [];
-    
-    // Find top-level parent of each scene heading
-    const getTopLevelParent = (el: HTMLElement): HTMLElement | null => {
-      let current: HTMLElement | null = el;
-      while (current && current.parentElement !== editorRef.current) {
-        current = current.parentElement;
-      }
-      return current;
-    };
-    
-    const sceneTopParents = sceneHeadings.map(sh => ({
-      ...sh,
-      topParent: getTopLevelParent(sh.el)
-    }));
-    
-    const topParentToScene = new Map<HTMLElement, number>();
-    sceneTopParents.forEach((sh, idx) => {
-      if (sh.topParent) topParentToScene.set(sh.topParent, idx);
-    });
-    
-    allChildren.forEach((child) => {
-      if (topParentToScene.has(child)) {
-        currentSceneIdx = topParentToScene.get(child)!;
-        if (!sceneRanges[currentSceneIdx]) {
-          sceneRanges[currentSceneIdx] = { key: sceneTopParents[currentSceneIdx].key, elements: [] };
-        }
-      }
-      if (currentSceneIdx >= 0) {
-        if (!sceneRanges[currentSceneIdx]) {
-          sceneRanges[currentSceneIdx] = { key: sceneTopParents[currentSceneIdx].key, elements: [] };
-        }
-        sceneRanges[currentSceneIdx].elements.push(child);
-      } else {
-        preSceneElements.push(child);
-      }
-    });
-    
-    
-    // Third pass: add checkboxes to visible scene headings
-    sceneHeadings.forEach(({ el: htmlEl, key }) => {
-      const status = sceneStatus[key];
-      
-      const btn = document.createElement("button");
-      btn.className = "scene-check-btn";
-      btn.type = "button";
-      
-      let borderColor = '#9ca3af';
-      let bgColor = 'transparent';
-      let icon = '';
-      if (status === 'done') {
-        borderColor = '#16a34a';
-        bgColor = '#16a34a';
-        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-      } else if (status === 'skipped') {
-        borderColor = '#dc2626';
-        bgColor = '#dc2626';
-        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-      }
-      
-      btn.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:2px solid ${borderColor};background:${bgColor};cursor:pointer;margin-left:8px;vertical-align:middle;padding:0;transition:all 0.2s;flex-shrink:0;`;
-      btn.innerHTML = icon;
-      btn.setAttribute("data-scene-key", key);
-      btn.title = status === 'done' ? 'শুট সম্পন্ন' : status === 'skipped' ? 'শুট হয়নি' : 'ক্লিক করুন';
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (status === 'done') return;
-        setSceneStatus(prev => {
-          const next = { ...prev };
-          if (!next[key]) next[key] = 'done';
-          else if (next[key] === 'skipped') next[key] = 'done';
-          return next;
-        });
-      });
-      htmlEl.appendChild(btn);
-    });
-  }, [isEditMode, sceneStatus]);
-
-  useEffect(() => {
-    const timer = setTimeout(renderSceneCheckboxes, 150);
-    return () => clearTimeout(timer);
-  }, [renderSceneCheckboxes, script, isEditMode]);
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -737,40 +586,6 @@ const AdminScriptEdit = () => {
                 <Edit className="h-3.5 w-3.5" /> এডিট করুন
               </Button>
             </div>
-            {/* Scene tracking stats */}
-            {totalScenes > 0 && (() => {
-              const doneCount = Object.values(sceneStatus).filter(s => s === 'done').length;
-              const skippedCount = Object.values(sceneStatus).filter(s => s === 'skipped').length;
-              const remaining = totalScenes - Object.keys(sceneStatus).length;
-              return (
-                <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <span>🎬</span>
-                    <span>দৃশ্য ট্র্যাকার</span>
-                    <span className="ml-auto text-xs font-normal text-muted-foreground">মোট {toBn(totalScenes)} টি দৃশ্য</span>
-                  </div>
-                  {/* Progress bar */}
-                  <div className="flex h-2.5 rounded-full overflow-hidden bg-muted">
-                    {doneCount > 0 && <div className="bg-green-500 transition-all" style={{ width: `${(doneCount / totalScenes) * 100}%` }} />}
-                    {skippedCount > 0 && <div className="bg-red-500 transition-all" style={{ width: `${(skippedCount / totalScenes) * 100}%` }} />}
-                  </div>
-                  <div className="grid grid-cols-3 gap-1 text-center">
-                    <div className="rounded-lg bg-green-500/15 py-1.5 px-1">
-                      <div className="text-base font-bold text-green-500">{toBn(doneCount)}</div>
-                      <div className="text-[10px] text-green-600">✅ সম্পন্ন</div>
-                    </div>
-                    <div className="rounded-lg bg-red-500/15 py-1.5 px-1">
-                      <div className="text-base font-bold text-red-500">{toBn(skippedCount)}</div>
-                      <div className="text-[10px] text-red-500">❌ হয়নি</div>
-                    </div>
-                    <div className="rounded-lg bg-muted py-1.5 px-1">
-                      <div className="text-base font-bold text-muted-foreground">{toBn(remaining)}</div>
-                      <div className="text-[10px] text-muted-foreground">⏳ বাকি</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
           </div>
         )}
 
