@@ -88,6 +88,24 @@ const TalerGurLanding = () => {
         </section>
       )}
 
+      {/* Product Images after Hero */}
+      {products && products.length > 0 && products.some((p: any) => p.image_url) && (
+        <section className="py-10 md:py-16">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {products.filter((p: any) => p.image_url).map((p: any) => (
+                <div key={p.id} className="rounded-2xl overflow-hidden border border-border/30 shadow-lg">
+                  <img src={p.image_url} alt={p.name} className="w-full h-56 md:h-64 object-cover" />
+                  <div className="p-3 bg-card text-center">
+                    <h3 className="font-semibold text-foreground text-sm">{p.name}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Benefits Section */}
       {benefits.length > 0 && (
         <section className="py-16 md:py-24 bg-gradient-to-b from-background to-card/50">
