@@ -375,11 +375,12 @@ const AdminScriptEdit = () => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
+        // Once marked done, it cannot be removed
+        if (status === 'done') return;
         setSceneStatus(prev => {
           const next = { ...prev };
           if (!next[key]) next[key] = 'done';
-          else if (next[key] === 'done') next[key] = 'skipped';
-          else delete next[key];
+          else if (next[key] === 'skipped') next[key] = 'done';
           return next;
         });
       });
