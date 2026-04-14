@@ -689,6 +689,8 @@ const AdminScriptEdit = () => {
               onPointerDown={handleEditorPointerDown}
               onPointerUp={handleEditorPointerUp}
               onPointerCancel={handleEditorPointerUp}
+              onPointerLeave={handleEditorPointerUp}
+              onContextMenu={!isEditMode ? (e) => e.preventDefault() : undefined}
               onKeyDown={isEditMode ? (e) => {
                 if (handleMentionKeyDown(e)) return;
                 handleKeyDown(e);
