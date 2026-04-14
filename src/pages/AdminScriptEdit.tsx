@@ -327,6 +327,9 @@ const AdminScriptEdit = () => {
     const processed = new Set<HTMLElement>();
     let sceneCount = 0;
     
+    // First pass: identify all scene heading elements and their keys
+    const sceneHeadings: { el: HTMLElement; key: string }[] = [];
+    
     allEls.forEach((el) => {
       const htmlEl = el as HTMLElement;
       if (processed.has(htmlEl)) return;
@@ -351,10 +354,74 @@ const AdminScriptEdit = () => {
       
       processed.add(htmlEl);
       sceneCount++;
-      
-      // Use sceneCount as unique index to avoid duplicate scene labels (e.g. "দৃশ্য ১" in multiple পর্ব)
       const key = `scene-${sceneCount}`;
-      const status = sceneStatus[key]; // undefined | 'done' | 'skipped'
+      sceneHeadings.push({ el: htmlEl, key });
+    });
+    
+    setTotalScenes(sceneCount);
+    
+    // Second pass: for each scene heading, collect all elements until the next scene heading
+    // and show/hide based on tab
+    const allChildren = Array.from(editorRef.current.children) as HTMLElement[];
+    
+    // Build a map: for each top-level child, determine which scene it belongs to
+    const sceneRanges: { key: string; elements: HTMLElement[] }[] = [];
+    let currentSceneIdx = -1;
+    let preSceneElements: HTMLElement[] = [];
+    
+    // Find top-level parent of each scene heading
+    const getTopLevelParent = (el: HTMLElement): HTMLElement | null => {
+      let current: HTMLElement | null = el;
+      while (current && current.parentElement !== editorRef.current) {
+        current = current.parentElement;
+      }
+      return current;
+    };
+    
+    const sceneTopParents = sceneHeadings.map(sh => ({
+      ...sh,
+      topParent: getTopLevelParent(sh.el)
+    }));
+    
+    const topParentToScene = new Map<HTMLElement, number>();
+    sceneTopParents.forEach((sh, idx) => {
+      if (sh.topParent) topParentToScene.set(sh.topParent, idx);
+    });
+    
+    allChildren.forEach((child) => {
+      if (topParentToScene.has(child)) {
+        currentSceneIdx = topParentToScene.get(child)!;
+        if (!sceneRanges[currentSceneIdx]) {
+          sceneRanges[currentSceneIdx] = { key: sceneTopParents[currentSceneIdx].key, elements: [] };
+        }
+      }
+      if (currentSceneIdx >= 0) {
+        if (!sceneRanges[currentSceneIdx]) {
+          sceneRanges[currentSceneIdx] = { key: sceneTopParents[currentSceneIdx].key, elements: [] };
+        }
+        sceneRanges[currentSceneIdx].elements.push(child);
+      } else {
+        preSceneElements.push(child);
+      }
+    });
+    
+    // Show/hide based on tab
+    // Pre-scene elements (before any দৃশ্য) are always visible
+    preSceneElements.forEach(el => { el.style.display = ''; });
+    
+    sceneRanges.forEach((range) => {
+      if (!range) return;
+      const status = sceneStatus[range.key];
+      const isDone = status === 'done';
+      const shouldShow = previewTab === 'ongoing' ? !isDone : isDone;
+      range.elements.forEach(el => {
+        el.style.display = shouldShow ? '' : 'none';
+      });
+    });
+    
+    // Third pass: add checkboxes to visible scene headings
+    sceneHeadings.forEach(({ el: htmlEl, key }) => {
+      const status = sceneStatus[key];
       
       const btn = document.createElement("button");
       btn.className = "scene-check-btn";
@@ -380,7 +447,6 @@ const AdminScriptEdit = () => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        // Once marked done, it cannot be removed
         if (status === 'done') return;
         setSceneStatus(prev => {
           const next = { ...prev };
@@ -391,13 +457,12 @@ const AdminScriptEdit = () => {
       });
       htmlEl.appendChild(btn);
     });
-    setTotalScenes(sceneCount);
-  }, [isEditMode, sceneStatus]);
+  }, [isEditMode, sceneStatus, previewTab]);
 
   useEffect(() => {
     const timer = setTimeout(renderSceneCheckboxes, 150);
     return () => clearTimeout(timer);
-  }, [renderSceneCheckboxes, script, isEditMode]);
+  }, [renderSceneCheckboxes, script, isEditMode, previewTab]);
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
