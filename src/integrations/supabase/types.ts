@@ -767,6 +767,45 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_page_sections: {
+        Row: {
+          content: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          section_key: string
+          sort_order: number | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          section_key: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          section_key?: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       login_attempts: {
         Row: {
           attempt_count: number

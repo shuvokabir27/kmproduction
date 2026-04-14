@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut } from "lucide-react";
+import LandingPageEditor from "@/components/LandingPageEditor";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
@@ -217,6 +218,11 @@ const AdminProducts = () => {
             ))}
           </div>
         )}
+
+        {/* Landing Page Editor */}
+        <div className="border-t border-border/30 pt-6">
+          <LandingPageEditor />
+        </div>
 
         {/* Create/Edit Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

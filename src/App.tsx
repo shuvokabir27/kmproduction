@@ -46,6 +46,7 @@ import ClientPaymentHistory from "./pages/ClientPaymentHistory";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import AdminProducts from "./pages/AdminProducts";
+import TalerGurLanding from "./pages/TalerGurLanding";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
