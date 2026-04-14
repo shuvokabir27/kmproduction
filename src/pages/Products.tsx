@@ -99,6 +99,27 @@ const Products = () => {
     }
   };
 
+  // Save abandoned order when user closes popup with phone number entered
+  const closeOrderDialog = async () => {
+    if (!orderSuccess && orderForm.phone.length === 11) {
+      try {
+        const productName = products?.[0]?.name || "প্রডাক্ট";
+        await supabase.from("orders").insert({
+          customer_name: orderForm.name.trim() || "অজানা",
+          customer_phone: orderForm.phone,
+          customer_address: orderForm.address.trim() || null,
+          product_name: productName,
+          quantity: 1,
+          unit_price: 0,
+          total_amount: 0,
+          status: "abandoned" as any,
+        });
+      } catch (_) {}
+    }
+    setOrderOpen(false);
+    setOrderForm({ name: "", phone: "", address: "" });
+  };
+
   const openOrderDialog = () => {
     setOrderSuccess(false);
     setPhoneError("");
