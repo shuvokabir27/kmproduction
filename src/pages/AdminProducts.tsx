@@ -228,35 +228,19 @@ const AdminProducts = () => {
   if (!user) return <Navigate to="/login" replace />;
   if (!isProductAdmin && !isAdmin) return <Navigate to="/dashboard" replace />;
 
-  const ProductLayout = isProductAdmin && !isAdmin ? ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5 text-primary" />
-            <span className="font-bold text-foreground">KM Products</span>
-          </div>
-          <Button variant="ghost" size="sm" onClick={() => signOut()} className="gap-1 text-muted-foreground">
-            <LogOut className="h-4 w-4" /> লগআউট
-          </Button>
-        </div>
-      </header>
-      <main>{children}</main>
-    </div>
-  ) : AppLayout;
+  const useProductLayout = isProductAdmin && !isAdmin;
 
-  return (
-    <ProductLayout>
-      <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <ShoppingBag className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">প্রডাক্ট ম্যানেজমেন্ট</h1>
-          </div>
-          <Button onClick={openCreate} className="gap-2">
-            <Plus className="h-4 w-4" /> নতুন প্রডাক্ট
-          </Button>
+  const content = (
+    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <ShoppingBag className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">প্রডাক্ট ম্যানেজমেন্ট</h1>
         </div>
+        <Button onClick={openCreate} className="gap-2">
+          <Plus className="h-4 w-4" /> নতুন প্রডাক্ট
+        </Button>
+      </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
