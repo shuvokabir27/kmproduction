@@ -159,10 +159,64 @@ const AdminScriptEdit = () => {
     queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
   };
 
+  // Get member IDs already mentioned in the current scene block
+  const getMentionedInCurrentScene = useCallback(() => {
+    if (!editorRef.current) return new Set<string>();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return new Set<string>();
+    
+    // Walk up from cursor to find the scene boundary (h1/h2 or start of editor)
+    let node: Node | null = sel.anchorNode;
+    let sceneStart: Node | null = null;
+    let sceneEnd: Node | null = null;
+    
+    // Find the previous heading (scene start)
+    while (node && node !== editorRef.current) {
+      const el = node.nodeType === 1 ? (node as HTMLElement) : node.parentElement;
+      if (el && /^H[12]$/i.test(el.tagName)) {
+        sceneStart = el;
+        break;
+      }
+      node = node.previousSibling || node.parentNode;
+    }
+    
+    // Collect all mention-tags between the scene heading and the next heading
+    const allChildren = Array.from(editorRef.current.querySelectorAll("*"));
+    const startIdx = sceneStart ? allChildren.indexOf(sceneStart as Element) : -1;
+    
+    const mentionedIds = new Set<string>();
+    const mentionTags = editorRef.current.querySelectorAll(".mention-tag");
+    mentionTags.forEach((tag) => {
+      const tagIdx = allChildren.indexOf(tag);
+      if (startIdx === -1 || tagIdx > startIdx) {
+        // Check if there's another heading between sceneStart and this tag
+        let hasNextHeading = false;
+        for (let i = startIdx + 1; i < tagIdx; i++) {
+          if (/^H[12]$/i.test(allChildren[i].tagName)) {
+            hasNextHeading = true;
+            break;
+          }
+        }
+        if (!hasNextHeading) {
+          const memberId = tag.getAttribute("data-member-id");
+          if (memberId) mentionedIds.add(memberId);
+        }
+      }
+    });
+    
+    return mentionedIds;
+  }, []);
+
   // Filtered members for mention dropdown
-  const filteredMentionMembers = (members ?? []).filter((m: any) =>
-    mentionQuery ? m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery) : true
-  );
+  const filteredMentionMembers = (members ?? []).filter((m: any) => {
+    if (mentionQuery && !(m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery))) return false;
+    return true;
+  });
+
+  // State for scene-scoped exclusion
+  const [sceneMentionedIds, setSceneMentionedIds] = useState<Set<string>>(new Set());
+  
+  const visibleMentionMembers = filteredMentionMembers.filter((m: any) => !sceneMentionedIds.has(m.id));
 
   const insertMention = useCallback(async (member: any) => {
     const range = mentionRangeRef.current;
