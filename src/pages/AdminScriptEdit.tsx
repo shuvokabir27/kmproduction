@@ -235,11 +235,22 @@ const AdminScriptEdit = () => {
     }
   };
 
-  // Keyboard shortcut for save
+  // Keyboard shortcuts
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const key = e.key.toLowerCase();
+    const shortcuts: Record<string, () => void> = {
+      s: () => handleSave(),
+      b: () => execCmd("bold"),
+      u: () => execCmd("underline"),
+      e: () => execCmd("justifyCenter"),
+      l: () => execCmd("justifyLeft"),
+      r: () => execCmd("justifyRight"),
+      j: () => execCmd("justifyFull"),
+    };
+    if (shortcuts[key]) {
       e.preventDefault();
-      handleSave();
+      shortcuts[key]();
     }
   };
 
