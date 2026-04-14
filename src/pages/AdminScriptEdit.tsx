@@ -309,46 +309,51 @@ const AdminScriptEdit = () => {
     return null;
   };
 
-  const handleEditorPointerDown = useCallback((e: React.PointerEvent) => {
+  const toggleSceneDone = useCallback((sceneEl: HTMLElement, key: string) => {
+    setCompletedScenes(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+        const badge = sceneEl.querySelector(".scene-done-badge");
+        badge?.remove();
+      } else {
+        next.add(key);
+        if (!sceneEl.querySelector(".scene-done-badge")) {
+          const check = document.createElement("span");
+          check.className = "scene-done-badge";
+          check.style.cssText = "display:inline-flex;align-items:center;gap:4px;margin-left:8px;color:#16a34a;font-size:14px;vertical-align:middle;pointer-events:none;";
+          check.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span style="font-size:11px;font-weight:600;">সম্পন্ন</span>`;
+          sceneEl.appendChild(check);
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  const handleEditorPointerDown = useCallback((e: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
     if (isEditMode) return;
     const target = e.target as HTMLElement;
-    // Find if clicked on or near a scene heading
-    const sceneEl = target.closest("h1, h2, p, div");
+    const sceneEl = target.closest("h1, h2, p, div") as HTMLElement;
     if (!sceneEl) return;
-    const key = getSceneKey(sceneEl as HTMLElement);
+    const key = getSceneKey(sceneEl);
     if (!key) return;
 
-    longPressTargetRef.current = sceneEl as HTMLElement;
+    // Prevent text selection on long press
+    e.preventDefault();
+    longPressTargetRef.current = sceneEl;
     longPressTimerRef.current = setTimeout(() => {
-      setCompletedScenes(prev => {
-        const next = new Set(prev);
-        if (next.has(key)) {
-          next.delete(key);
-          // Remove visual indicator
-          const badge = (sceneEl as HTMLElement).querySelector(".scene-done-badge");
-          badge?.remove();
-        } else {
-          next.add(key);
-          // Add visual indicator if not already present
-          if (!(sceneEl as HTMLElement).querySelector(".scene-done-badge")) {
-            const check = document.createElement("span");
-            check.className = "scene-done-badge";
-            check.style.cssText = "display:inline-flex;align-items:center;gap:4px;margin-left:8px;color:#16a34a;font-size:14px;vertical-align:middle;";
-            check.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span style="font-size:11px;font-weight:600;">সম্পন্ন</span>`;
-            (sceneEl as HTMLElement).appendChild(check);
-          }
-        }
-        return next;
-      });
+      toggleSceneDone(sceneEl, key);
+      longPressTimerRef.current = null;
       longPressTargetRef.current = null;
     }, 600);
-  }, [isEditMode]);
+  }, [isEditMode, toggleSceneDone]);
 
   const handleEditorPointerUp = useCallback(() => {
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
+    longPressTargetRef.current = null;
   }, []);
 
   // Restore scene completion badges after content load in preview
@@ -684,6 +689,8 @@ const AdminScriptEdit = () => {
               onPointerDown={handleEditorPointerDown}
               onPointerUp={handleEditorPointerUp}
               onPointerCancel={handleEditorPointerUp}
+              onPointerLeave={handleEditorPointerUp}
+              onContextMenu={!isEditMode ? (e) => e.preventDefault() : undefined}
               onKeyDown={isEditMode ? (e) => {
                 if (handleMentionKeyDown(e)) return;
                 handleKeyDown(e);
