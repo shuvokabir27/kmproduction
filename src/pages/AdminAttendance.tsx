@@ -290,18 +290,22 @@ const AdminAttendance = () => {
                                <span className="text-primary text-xs font-medium">{m.full_name?.charAt(0) || "M"}</span>
                              )}
                            </div>
-                           <div className="min-w-0">
-                             <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
-                             <p className="text-[10px] text-muted-foreground">ID: {m.member_id}</p>
-                           </div>
-                         </div>
-                          <Input
-                            type="number"
-                            value={attendanceData[m.id]?.rate || ((m as any).salary_type === "daily" && Number((m as any).daily_rate || 0) > 0 ? String((m as any).daily_rate) : "0")}
-                            onChange={(e) => setRate(m.id, e.target.value)}
-                            className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
-                            placeholder="৳"
-                          />
+                          <div className="min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
+                              <p className="text-[10px] text-muted-foreground">ID: {m.member_id} • {m.salary_type === "monthly" ? "মাসিক" : "দৈনিক"}</p>
+                            </div>
+                          </div>
+                           {m.salary_type === "monthly" ? (
+                             <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium shrink-0">মাসিক</span>
+                           ) : (
+                             <Input
+                               type="number"
+                               value={attendanceData[m.id]?.rate || "0"}
+                               onChange={(e) => setRate(m.id, e.target.value)}
+                               className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
+                               placeholder="৳"
+                             />
+                           )}
                         </div>
                       </Card>
                     ))}
