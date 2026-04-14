@@ -31,8 +31,21 @@ const AdminScriptEdit = () => {
   const savedSelectionRef = useRef<Range | null>(null);
 
   // Scene tracking: 'done' = shot taken, 'skipped' = not shot (X)
-  const [sceneStatus, setSceneStatus] = useState<Record<string, 'done' | 'skipped'>>({});
+  const [sceneStatus, setSceneStatus] = useState<Record<string, 'done' | 'skipped'>>(() => {
+    if (!id) return {};
+    try {
+      const saved = localStorage.getItem(`scene-status-${id}`);
+      return saved ? JSON.parse(saved) : {};
+    } catch { return {}; }
+  });
   const [totalScenes, setTotalScenes] = useState(0);
+
+  // Auto-save scene status to localStorage
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem(`scene-status-${id}`, JSON.stringify(sceneStatus));
+    }
+  }, [id, sceneStatus]);
 
   // Mention system state
   const [mentionOpen, setMentionOpen] = useState(false);
