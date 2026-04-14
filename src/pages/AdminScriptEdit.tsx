@@ -667,15 +667,39 @@ const AdminScriptEdit = () => {
               </Button>
             </div>
             {/* Scene tracking stats */}
-            {totalScenes > 0 && (
-              <div className="flex items-center gap-3 flex-wrap text-xs bg-secondary/50 rounded-lg px-3 py-2 border border-border/30">
-                <span className="text-muted-foreground font-medium">🎬 দৃশ্য ট্র্যাকার:</span>
-                <span className="text-foreground">মোট <strong>{toBn(totalScenes)}</strong></span>
-                <span className="text-green-600">✅ শুট সম্পন্ন <strong>{toBn(Object.values(sceneStatus).filter(s => s === 'done').length)}</strong></span>
-                <span className="text-red-500">❌ শুট হয়নি <strong>{toBn(Object.values(sceneStatus).filter(s => s === 'skipped').length)}</strong></span>
-                <span className="text-muted-foreground">⏳ বাকি <strong>{toBn(totalScenes - Object.keys(sceneStatus).length)}</strong></span>
-              </div>
-            )}
+            {totalScenes > 0 && (() => {
+              const doneCount = Object.values(sceneStatus).filter(s => s === 'done').length;
+              const skippedCount = Object.values(sceneStatus).filter(s => s === 'skipped').length;
+              const remaining = totalScenes - Object.keys(sceneStatus).length;
+              return (
+                <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <span>🎬</span>
+                    <span>দৃশ্য ট্র্যাকার</span>
+                    <span className="ml-auto text-xs font-normal text-muted-foreground">মোট {toBn(totalScenes)} টি দৃশ্য</span>
+                  </div>
+                  {/* Progress bar */}
+                  <div className="flex h-2.5 rounded-full overflow-hidden bg-muted">
+                    {doneCount > 0 && <div className="bg-green-500 transition-all" style={{ width: `${(doneCount / totalScenes) * 100}%` }} />}
+                    {skippedCount > 0 && <div className="bg-red-500 transition-all" style={{ width: `${(skippedCount / totalScenes) * 100}%` }} />}
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 text-center">
+                    <div className="rounded-lg bg-green-500/15 py-1.5 px-1">
+                      <div className="text-base font-bold text-green-500">{toBn(doneCount)}</div>
+                      <div className="text-[10px] text-green-600">✅ সম্পন্ন</div>
+                    </div>
+                    <div className="rounded-lg bg-red-500/15 py-1.5 px-1">
+                      <div className="text-base font-bold text-red-500">{toBn(skippedCount)}</div>
+                      <div className="text-[10px] text-red-500">❌ হয়নি</div>
+                    </div>
+                    <div className="rounded-lg bg-muted py-1.5 px-1">
+                      <div className="text-base font-bold text-muted-foreground">{toBn(remaining)}</div>
+                      <div className="text-[10px] text-muted-foreground">⏳ বাকি</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 
