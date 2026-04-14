@@ -61,7 +61,7 @@ const publicSiteItems = [
   { title: "নিউজ", url: "/admin/news", icon: Newspaper, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play, color: "text-pink-400", bg: "bg-pink-500/10" },
   { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles, color: "text-yellow-400", bg: "bg-yellow-500/10" },
-  { title: "প্রডাক্ট", url: "/admin/products", icon: ShoppingBag, color: "text-orange-400", bg: "bg-orange-500/10" },
+  
   { title: "বুকিং", url: "/admin/bookings", icon: ClipboardList, color: "text-emerald-400", bg: "bg-emerald-500/10" },
   { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon, color: "text-indigo-400", bg: "bg-indigo-500/10" },
   { title: "চ্যানেল", url: "/admin/channels", icon: Tv, color: "text-lime-400", bg: "bg-lime-500/10" },
@@ -77,7 +77,7 @@ const memberItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const { isAdmin, profile, signOut } = useAuth();
+  const { isAdmin, isProductAdmin, profile, signOut } = useAuth();
   const location = useLocation();
 
   const isActive = (path: string) =>
@@ -119,7 +119,31 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {isAdmin ? (
+        {isProductAdmin && !isAdmin ? (
+          /* Product Admin only sidebar */
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+              প্রডাক্ট ম্যানেজমেন্ট
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              {renderItems([
+                { title: "প্রডাক্ট", url: "/admin/products", icon: ShoppingBag, color: "text-orange-400", bg: "bg-orange-500/10" },
+              ])}
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink to="/" className="hover:bg-secondary/80 transition-colors" activeClassName="">
+                      <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center mr-2 shrink-0">
+                        <Home className="h-3.5 w-3.5 text-emerald-400" />
+                      </div>
+                      {!collapsed && <span>সাইট দেখুন</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : isAdmin ? (
           <>
             {/* Team Management */}
             <SidebarGroup>
