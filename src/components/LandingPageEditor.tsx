@@ -267,7 +267,7 @@ const ProductPriceEditor = () => {
       {/* Product Price & Discount Editor */}
       <ProductPriceEditor />
 
-
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "সেকশন এডিট" : "নতুন সেকশন"}</DialogTitle>
