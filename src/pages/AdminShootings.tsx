@@ -84,7 +84,7 @@ const AdminShootings = () => {
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
     queryFn: async () => {
-      const { data } = await supabase.from("shootings").select("*, channels(name, platform)" as any).order("shoot_date", { ascending: false });
+      const { data } = await supabase.from("shootings").select("*, channels(name, platform), scripts(id, title, content)" as any).order("shoot_date", { ascending: false });
       return (data ?? []) as any[];
     },
   });
