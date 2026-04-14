@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Save, X, Type } from "lucide-react";
+import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Save, X, Type, Highlighter, RemoveFormatting } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
@@ -112,6 +112,39 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
               <option value="#eab308">হলুদ</option>
               <option value="#a855f7">বেগুনি</option>
               <option value="#f97316">কমলা</option>
+            </select>
+            <Separator orientation="vertical" className="h-6 mx-1" />
+            <select
+              className="h-8 text-xs bg-secondary border border-border/50 rounded px-2 text-foreground"
+              onChange={(e) => {
+                if (e.target.value === "remove") {
+                  execCmd("hiliteColor", "transparent");
+                  // Also try removing via removeFormat for hilite
+                  const sel = window.getSelection();
+                  if (sel && sel.rangeCount > 0) {
+                    const range = sel.getRangeAt(0);
+                    const fragment = range.cloneContents();
+                    const spans = fragment.querySelectorAll('span');
+                    // Re-apply without background
+                    if (spans.length > 0 || range.toString()) {
+                      execCmd("hiliteColor", "rgba(0,0,0,0)");
+                    }
+                  }
+                } else if (e.target.value) {
+                  execCmd("hiliteColor", e.target.value);
+                }
+                e.target.value = "";
+              }}
+              defaultValue=""
+            >
+              <option value="" disabled>হাইলাইট</option>
+              <option value="#fef08a">হলুদ</option>
+              <option value="#bbf7d0">সবুজ</option>
+              <option value="#bfdbfe">নীল</option>
+              <option value="#fecaca">লাল</option>
+              <option value="#e9d5ff">বেগুনি</option>
+              <option value="#fed7aa">কমলা</option>
+              <option value="remove">❌ হাইলাইট মুছুন</option>
             </select>
           </div>
         )}
