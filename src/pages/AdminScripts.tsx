@@ -138,51 +138,84 @@ const AdminScripts = () => {
     return 1;
   };
 
+  const getEpisodeCount = (content: string) => {
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        const episodes = new Set<string>();
+        parsed.forEach((s: any) => {
+          const match = s.title?.match(/পর্ব\s*[:\-–—]?\s*(.+)/i);
+          if (match) episodes.add(match[1].trim());
+          else {
+            const epMatch = s.title?.match(/ep(?:isode)?\s*[:\-–—]?\s*(\d+)/i);
+            if (epMatch) episodes.add(epMatch[1]);
+          }
+        });
+        return episodes.size;
+      }
+    } catch {}
+    return 0;
+  };
+
   const toBn = (n: number) => String(n).replace(/\d/g, (d: string) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-  const ScriptCard = ({ script, isTrashed = false }: { script: any; isTrashed?: boolean }) => (
-    <Card
-      key={script.id}
-      className={`bg-card border-border/30 p-4 transition-colors group ${isTrashed ? "opacity-70" : "hover:border-primary/30 cursor-pointer"}`}
-      onClick={() => !isTrashed && navigate(`/admin/scripts/${script.id}`)}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <FileText className={`h-4 w-4 shrink-0 ${isTrashed ? "text-muted-foreground" : "text-primary"}`} />
-            <h3 className={`font-semibold text-sm truncate ${isTrashed ? "text-muted-foreground line-through" : "text-foreground"}`}>{script.title}</h3>
+  const ScriptCard = ({ script, isTrashed = false }: { script: any; isTrashed?: boolean }) => {
+    const sceneCount = getSeqCount(script.content);
+    const episodeCount = getEpisodeCount(script.content);
+
+    return (
+      <Card
+        key={script.id}
+        className={`bg-card border-border/30 p-4 transition-colors group ${isTrashed ? "opacity-70" : "hover:border-primary/30 cursor-pointer"}`}
+        onClick={() => !isTrashed && navigate(`/admin/scripts/${script.id}`)}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <FileText className={`h-4 w-4 shrink-0 ${isTrashed ? "text-muted-foreground" : "text-primary"}`} />
+              <h3 className={`font-semibold text-sm truncate ${isTrashed ? "text-muted-foreground line-through" : "text-foreground"}`}>{script.title}</h3>
+              {!isTrashed && (
+                <button
+                  className="p-1 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={(e) => { e.stopPropagation(); openRenameScript(script); }}
+                  title="শিরোনাম পরিবর্তন"
+                >
+                  <Edit className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{getPreview(script.content)}</p>
+            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground flex-wrap">
+              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(isTrashed ? script.deleted_at : script.updated_at).toLocaleDateString("bn-BD")}</span>
+              {!isTrashed && (
+                <>
+                  <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">দৃশ্য {toBn(sceneCount)} টা</span>
+                  {episodeCount > 0 && <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px]">পর্ব {toBn(episodeCount)} টা</span>}
+                </>
+              )}
+              {isTrashed && <span className="px-1.5 py-0.5 rounded bg-destructive/10 text-destructive text-[10px]">ট্র্যাশে আছে</span>}
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{getPreview(script.content)}</p>
-          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(isTrashed ? script.deleted_at : script.updated_at).toLocaleDateString("bn-BD")}</span>
-            {!isTrashed && <span className="px-1.5 py-0.5 rounded bg-secondary text-[10px]">{toBn(getSeqCount(script.content))} দৃশ্য</span>}
-            {isTrashed && <span className="px-1.5 py-0.5 rounded bg-destructive/10 text-destructive text-[10px]">ট্র্যাশে আছে</span>}
-          </div>
-        </div>
-        <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-          {isTrashed ? (
-            <>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary hover:text-primary" onClick={() => handleRestore(script.id)} title="পুনরুদ্ধার">
-                <RotateCcw className="h-3.5 w-3.5" />
-              </Button>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setPermanentDeleteId(script.id)} title="চিরতরে মুছুন">
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground" onClick={() => openRenameScript(script)}>
-                <Edit className="h-3.5 w-3.5" />
-              </Button>
+          <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+            {isTrashed ? (
+              <>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-primary hover:text-primary" onClick={() => handleRestore(script.id)} title="পুনরুদ্ধার">
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setPermanentDeleteId(script.id)} title="চিরতরে মুছুন">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </>
+            ) : (
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive" onClick={() => setDeleteId(script.id)}>
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
-            </>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    </Card>
-  );
+      </Card>
+    );
+  };
 
   return (
     <AppLayout>
