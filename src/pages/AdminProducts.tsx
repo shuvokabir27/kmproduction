@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut } from "lucide-react";
 import LandingPageEditor from "@/components/LandingPageEditor";
+import OrderManagement from "@/components/OrderManagement";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
