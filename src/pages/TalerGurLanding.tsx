@@ -1,9 +1,33 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingBag, Phone } from "lucide-react";
+import { ShoppingBag, Phone, Clock, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 const TalerGurLanding = () => {
+  // Countdown timer state
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 7);
+    targetDate.setHours(23, 59, 59, 0);
+
+    const tick = () => {
+      const now = new Date().getTime();
+      const diff = targetDate.getTime() - now;
+      if (diff <= 0) return;
+      setTimeLeft({
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diff / (1000 * 60)) % 60),
+        seconds: Math.floor((diff / 1000) % 60),
+      });
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, []);
   const { data: sections, isLoading } = useQuery({
     queryKey: ["landing-sections"],
     queryFn: async () => {
@@ -126,51 +150,90 @@ const TalerGurLanding = () => {
         </section>
       )}
 
-      {/* Products Section */}
+      {/* Pricing / Offer Section */}
       {products && products.length > 0 && (
-        <section className="py-16 md:py-24 bg-gradient-to-b from-background to-card/30">
-          <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12 font-['Hind_Siliguri']">
-              আমাদের প্রডাক্ট
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((p: any) => (
-                <div key={p.id} className="bg-card border border-border/30 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all">
-                  {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} className="w-full h-48 object-cover" />
-                  ) : (
-                    <div className="w-full h-48 bg-muted flex items-center justify-center">
-                      <ShoppingBag className="h-12 w-12 text-muted-foreground/20" />
-                    </div>
-                  )}
-                  <div className="p-5">
-                    <h3 className="text-lg font-semibold text-foreground mb-1">{p.name}</h3>
-                    {p.description && <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{p.description}</p>}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {p.discount_price && p.discount_price < p.price ? (
+        <section className="py-12 md:py-20">
+          <div className="max-w-5xl mx-auto px-4">
+            {/* Urgency Header */}
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-destructive flex items-center justify-center gap-2 font-['Hind_Siliguri'] mb-2">
+                <Clock className="h-6 w-6" /> এখনই অর্ডার করুন — অফার শেষ হচ্ছে!
+              </h2>
+              <p className="text-muted-foreground text-sm">ডেলিভারির সময় টেষ্ট করে পছন্দ হলে পে করুন। কোনো ঝুঁকি নেই!</p>
+            </div>
+
+            {/* Countdown Timer */}
+            <div className="flex justify-center gap-3 mb-10">
+              {[
+                { val: timeLeft.days, label: "দিন" },
+                { val: timeLeft.hours, label: "ঘণ্টা" },
+                { val: timeLeft.minutes, label: "মিনিট" },
+                { val: timeLeft.seconds, label: "সেকেন্ড" },
+              ].map((t, i) => (
+                <div key={i} className="bg-card border border-border/40 rounded-xl w-16 h-16 flex flex-col items-center justify-center shadow-sm">
+                  <span className="text-xl font-bold text-foreground">{toBn(t.val).padStart(2, "০")}</span>
+                  <span className="text-[10px] text-muted-foreground">{t.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Product Price Cards */}
+            <div className="space-y-6">
+              {products.map((p: any) => {
+                const hasDiscount = p.discount_price && p.discount_price < p.price;
+                const discountPercent = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
+                return (
+                  <div key={p.id} className="bg-card border-2 border-amber-500/30 rounded-3xl overflow-hidden shadow-lg">
+                    {p.image_url && (
+                      <img src={p.image_url} alt={p.name} className="w-full h-48 md:h-64 object-cover" />
+                    )}
+                    <div className="p-6 md:p-8 text-center">
+                      <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4 font-['Hind_Siliguri']">{p.name}</h3>
+                      {p.description && <p className="text-muted-foreground text-sm mb-6 max-w-md mx-auto">{p.description}</p>}
+
+                      {/* Price Display */}
+                      <div className="bg-accent/30 border border-border/30 rounded-2xl p-6 mb-6 max-w-sm mx-auto">
+                        {hasDiscount ? (
                           <>
-                            <span className="text-xl font-bold text-amber-400">৳{toBn(p.discount_price)}</span>
-                            <span className="text-sm text-muted-foreground line-through">৳{toBn(p.price)}</span>
-                            <span className="text-xs bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full font-medium">
-                              {toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}% ছাড়
+                            <p className="text-muted-foreground text-sm mb-1">
+                              রেগুলার মূল্য <span className="line-through text-destructive font-bold text-lg">৳{toBn(p.price)}</span> টাকা
+                            </p>
+                            <p className="text-xl md:text-2xl font-bold text-foreground mt-2 font-['Hind_Siliguri']">
+                              সীমিত সময়ের অফার মূল্য
+                            </p>
+                            <div className="mt-2 flex items-center justify-center gap-2">
+                              <span className="text-4xl md:text-5xl font-extrabold text-[#1a7a2e] border-2 border-[#1a7a2e] rounded-full px-5 py-1">
+                                ৳{toBn(p.discount_price)}
+                              </span>
+                              <span className="text-xl font-bold text-foreground">টাকা মাত্র</span>
+                            </div>
+                            <span className="inline-block mt-3 text-xs bg-destructive/15 text-destructive px-3 py-1 rounded-full font-semibold">
+                              🔥 {toBn(discountPercent)}% ছাড়
                             </span>
                           </>
                         ) : (
-                          <span className="text-xl font-bold text-amber-400">৳{toBn(p.price)}</span>
+                          <>
+                            <p className="text-muted-foreground text-sm mb-1">মূল্য</p>
+                            <span className="text-4xl md:text-5xl font-extrabold text-amber-500">৳{toBn(p.price)}</span>
+                            <span className="text-xl font-bold text-foreground ml-2">টাকা</span>
+                          </>
                         )}
                       </div>
+
+                      {/* Order Button */}
                       {p.contact_info && (
                         <a href={`tel:${p.contact_info}`}>
-                          <Button size="sm" variant="outline" className="gap-1 border-amber-500/30 text-amber-400 hover:bg-amber-500/10">
-                            <Phone className="h-3 w-3" /> কল
+                          <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg">
+                            <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই 🔥
                           </Button>
                         </a>
                       )}
+
+                      <p className="mt-4 text-xs text-destructive font-medium">🔴 🔴 অফার আর কিছুক্ষণ!</p>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
