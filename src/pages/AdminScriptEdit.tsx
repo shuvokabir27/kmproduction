@@ -305,15 +305,42 @@ const AdminScriptEdit = () => {
     if (isEditMode || !editorRef.current) return;
     editorRef.current.querySelectorAll(".scene-check-btn").forEach(el => el.remove());
     
-    const allEls = editorRef.current.querySelectorAll("h1, h2, p, div, b");
+    // Walk through all elements and find ones whose OWN direct text matches "দৃশ্য"
+    const allEls = editorRef.current.querySelectorAll("h1, h2, h3, p, div, b, strong, span");
+    const processed = new Set<HTMLElement>();
+    
     allEls.forEach((el) => {
-      const text = el.textContent?.trim() || "";
-      if (!/দৃশ্য/i.test(text)) return;
-      if ((el as HTMLElement).closest(".scene-check-btn")) return;
-      if (el.querySelector(".scene-check-btn")) return;
       const htmlEl = el as HTMLElement;
+      // Skip if already processed or is inside a processed parent
+      if (processed.has(htmlEl)) return;
       
-      const key = text.replace(/\s*সম্পন্ন\s*/g, "").trim();
+      // Get only the element's own direct text (not children's text)
+      let ownText = "";
+      for (const node of Array.from(htmlEl.childNodes)) {
+        if (node.nodeType === 3) ownText += node.textContent;
+      }
+      
+      // Also check if it's a leaf element (b, strong, span) with দৃশ্য
+      const fullText = htmlEl.textContent?.trim() || "";
+      const isLeaf = !htmlEl.querySelector("h1, h2, h3, p, div, b, strong, span");
+      
+      // Match: own text contains দৃশ্য, OR it's a leaf element whose full text is short and contains দৃশ্য
+      const ownMatch = /দৃশ্য\s*[০-৯0-9]+/.test(ownText.trim());
+      const leafMatch = isLeaf && /^দৃশ্য\s*[০-৯0-9]+/.test(fullText) && fullText.length < 30;
+      
+      if (!ownMatch && !leafMatch) return;
+      
+      // Don't add to parent if a child already qualifies
+      if (!isLeaf && htmlEl.querySelector("b, strong, span")) {
+        const childTexts = Array.from(htmlEl.querySelectorAll("b, strong, span"))
+          .some(c => /^দৃশ্য\s*[০-৯0-9]+/.test(c.textContent?.trim() || ""));
+        if (childTexts) return;
+      }
+      
+      // Mark as processed
+      processed.add(htmlEl);
+      
+      const key = fullText.replace(/\s*সম্পন্ন\s*/g, "").trim();
       const isDone = completedScenes.has(key);
       const btn = document.createElement("button");
       btn.className = "scene-check-btn";
