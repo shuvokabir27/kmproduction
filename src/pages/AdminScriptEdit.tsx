@@ -681,6 +681,9 @@ const AdminScriptEdit = () => {
               style={{ fontFamily: "'Noto Sans Bengali', 'Kalpurush', sans-serif", wordBreak: "break-word", minHeight: isFullscreen ? "calc(100vh - 120px)" : "1056px" }}
               suppressContentEditableWarning
               onInput={handleEditorInput}
+              onPointerDown={handleEditorPointerDown}
+              onPointerUp={handleEditorPointerUp}
+              onPointerCancel={handleEditorPointerUp}
               onKeyDown={isEditMode ? (e) => {
                 if (handleMentionKeyDown(e)) return;
                 handleKeyDown(e);
