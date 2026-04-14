@@ -291,7 +291,7 @@ const AdminScriptEdit = () => {
     if (!mentionOpen) return false;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setMentionIndex((i) => Math.min(i + 1, filteredMentionMembers.length - 1));
+      setMentionIndex((i) => Math.min(i + 1, visibleMentionMembers.length - 1));
       return true;
     }
     if (e.key === "ArrowUp") {
@@ -301,8 +301,8 @@ const AdminScriptEdit = () => {
     }
     if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault();
-      if (filteredMentionMembers[mentionIndex]) {
-        insertMention(filteredMentionMembers[mentionIndex]);
+      if (visibleMentionMembers[mentionIndex]) {
+        insertMention(visibleMentionMembers[mentionIndex]);
       }
       return true;
     }
@@ -312,7 +312,7 @@ const AdminScriptEdit = () => {
       return true;
     }
     return false;
-  }, [mentionOpen, filteredMentionMembers, mentionIndex, insertMention]);
+  }, [mentionOpen, visibleMentionMembers, mentionIndex, insertMention]);
 
   if (loading || scriptLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -635,14 +635,14 @@ const AdminScriptEdit = () => {
             />
 
             {/* Mention Dropdown */}
-            {mentionOpen && isEditMode && filteredMentionMembers.length > 0 && (
+            {mentionOpen && isEditMode && visibleMentionMembers.length > 0 && (
               <div
                 ref={mentionListRef}
                 className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl max-h-[360px] overflow-y-auto w-[260px]"
                 style={{ top: mentionPos.top, left: Math.min(mentionPos.left, 500) }}
               >
                 <div className="px-3 py-1.5 text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100">সদস্য সিলেক্ট করুন</div>
-                {filteredMentionMembers.map((m: any, idx: number) => (
+                {visibleMentionMembers.map((m: any, idx: number) => (
                   <button
                     key={m.id}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-blue-50 transition-colors ${idx === mentionIndex ? "bg-blue-50" : ""}`}
