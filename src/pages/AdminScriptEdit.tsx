@@ -162,7 +162,7 @@ const AdminScriptEdit = () => {
   // Filtered members for mention dropdown
   const filteredMentionMembers = (members ?? []).filter((m: any) =>
     mentionQuery ? m.full_name?.toLowerCase().includes(mentionQuery.toLowerCase()) || String(m.member_id).includes(mentionQuery) : true
-  ).slice(0, 8);
+  );
 
   const insertMention = useCallback(async (member: any) => {
     const range = mentionRangeRef.current;
@@ -583,7 +583,7 @@ const AdminScriptEdit = () => {
             {mentionOpen && isEditMode && filteredMentionMembers.length > 0 && (
               <div
                 ref={mentionListRef}
-                className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl max-h-[240px] overflow-y-auto w-[260px]"
+                className="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl max-h-[360px] overflow-y-auto w-[260px]"
                 style={{ top: mentionPos.top, left: Math.min(mentionPos.left, 500) }}
               >
                 <div className="px-3 py-1.5 text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100">সদস্য সিলেক্ট করুন</div>
