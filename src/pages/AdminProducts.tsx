@@ -232,14 +232,20 @@ const AdminProducts = () => {
 
   const content = (
     <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <ShoppingBag className="h-6 w-6 text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">প্রডাক্ট ম্যানেজমেন্ট</h1>
+      {/* Hero Header - Landing page style */}
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-amber-900/30 via-background to-amber-800/10 border border-amber-500/20 p-6 md:p-8">
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🌴</span>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground font-['Hind_Siliguri']">প্রডাক্ট ম্যানেজমেন্ট</h1>
+              <p className="text-sm text-muted-foreground mt-0.5">প্রডাক্ট, মূল্য ও ল্যান্ডিং পেজ পরিচালনা করুন</p>
+            </div>
+          </div>
+          <Button onClick={openCreate} className="gap-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white border-0 shadow-lg">
+            <Plus className="h-4 w-4" /> নতুন প্রডাক্ট
+          </Button>
         </div>
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> নতুন প্রডাক্ট
-        </Button>
       </div>
 
         {isLoading ? (
@@ -254,31 +260,42 @@ const AdminProducts = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map((p: any) => (
-              <div key={p.id} className="bg-card border border-border/50 rounded-lg overflow-hidden">
-                <div className="h-40 bg-muted relative">
+               <div key={p.id} className="bg-card border-2 border-amber-500/20 rounded-2xl overflow-hidden hover:border-amber-500/40 transition-all duration-300 shadow-md hover:shadow-lg group">
+                <div className="h-44 bg-gradient-to-br from-amber-900/10 to-muted relative">
                   {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                    <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Image className="h-10 w-10 text-muted-foreground/20" />
                     </div>
                   )}
                   {!p.is_active && (
-                    <div className="absolute top-2 right-2 bg-destructive/80 text-destructive-foreground text-xs px-2 py-0.5 rounded">নিষ্ক্রিয়</div>
+                    <div className="absolute top-2 right-2 bg-destructive/90 text-destructive-foreground text-xs px-2.5 py-1 rounded-full font-semibold">নিষ্ক্রিয়</div>
+                  )}
+                  {p.discount_price && p.discount_price < p.price && (
+                    <div className="absolute top-2 left-2 bg-destructive/90 text-destructive-foreground text-xs px-2.5 py-1 rounded-full font-bold">
+                      {Math.round(((p.price - p.discount_price) / p.price) * 100)}% ছাড়
+                    </div>
                   )}
                 </div>
-                <div className="p-3 space-y-1">
-                  <h3 className="font-semibold text-foreground">{p.name}</h3>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-primary font-bold">৳{p.price}</span>
-                    {p.discount_price && <span className="text-muted-foreground line-through text-xs">৳{p.discount_price}</span>}
-                    {p.category && <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded">{p.category}</span>}
+                <div className="p-4 space-y-2">
+                  <h3 className="font-bold text-foreground text-base font-['Hind_Siliguri']">{p.name}</h3>
+                  <div className="flex items-center gap-2">
+                    {p.discount_price && p.discount_price < p.price ? (
+                      <>
+                        <span className="text-muted-foreground line-through text-sm">৳{p.price}</span>
+                        <span className="text-lg font-extrabold text-[hsl(var(--chart-2))]">৳{p.discount_price}</span>
+                      </>
+                    ) : (
+                      <span className="text-lg font-extrabold text-[hsl(var(--chart-2))]">৳{p.price}</span>
+                    )}
+                    {p.category && <span className="text-[10px] text-muted-foreground bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">{p.category}</span>}
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button variant="outline" size="sm" className="flex-1 gap-1" onClick={() => openEdit(p)}>
+                    <Button size="sm" className="flex-1 gap-1 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white border-0" onClick={() => openEdit(p)}>
                       <Pencil className="h-3 w-3" /> এডিট
                     </Button>
-                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive gap-1" onClick={() => handleDelete(p.id)}>
+                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-1 border-destructive/30" onClick={() => handleDelete(p.id)}>
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
@@ -291,11 +308,11 @@ const AdminProducts = () => {
         {/* Landing Page Price & Discount Quick Editor */}
         {products && products.length > 0 && (
           <div className="border-t border-border/30 pt-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">💰</span>
-              <h2 className="text-lg font-semibold text-foreground">ল্যান্ডিং পেজ মূল্য ও অফার</h2>
+           <div className="flex items-center gap-2 mb-4">
+              <span className="text-2xl">💰</span>
+              <h2 className="text-lg font-bold text-foreground font-['Hind_Siliguri']">ল্যান্ডিং পেজ মূল্য ও অফার</h2>
             </div>
-            <p className="text-xs text-muted-foreground mb-4">এখান থেকে দ্রুত প্রডাক্টের দাম ও ডিসকাউন্ট পরিবর্তন করুন। পরিবর্তন সাথে সাথে ল্যান্ডিং পেজে দেখাবে।</p>
+            <p className="text-xs text-muted-foreground mb-4 bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2">এখান থেকে দ্রুত প্রডাক্টের দাম ও ডিসকাউন্ট পরিবর্তন করুন। পরিবর্তন সাথে সাথে ল্যান্ডিং পেজে দেখাবে।</p>
             <div className="space-y-3">
               {products.map((p: any) => {
                 const hasDiscount = p.discount_price && p.discount_price < p.price;
