@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Save, X, Type, Highlighter, RemoveFormatting } from "lucide-react";
+import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Save, X, Type, RemoveFormatting } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
@@ -21,6 +21,53 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
   const execCmd = useCallback((command: string, value?: string) => {
     document.execCommand(command, false, value);
     editorRef.current?.focus();
+  }, []);
+
+  const clearHighlight = useCallback(() => {
+    const root = editorRef.current;
+    const selection = window.getSelection();
+    if (!root || !selection || selection.rangeCount === 0) return;
+
+    const unwrapIfEmpty = (element: HTMLElement) => {
+      const styleValue = element.getAttribute("style")?.trim();
+      if (!styleValue) {
+        const parent = element.parentNode;
+        while (element.firstChild) {
+          parent?.insertBefore(element.firstChild, element);
+        }
+        parent?.removeChild(element);
+      }
+    };
+
+    const clearElementBackground = (element: HTMLElement) => {
+      element.style.removeProperty("background");
+      element.style.removeProperty("background-color");
+      unwrapIfEmpty(element);
+    };
+
+    const highlightedNodes = Array.from(
+      root.querySelectorAll<HTMLElement>('[style*="background"], [style*="background-color"]')
+    );
+
+    highlightedNodes.forEach((element) => {
+      if (selection.containsNode(element, true)) {
+        clearElementBackground(element);
+      }
+    });
+
+    let current =
+      selection.anchorNode?.nodeType === Node.TEXT_NODE
+        ? selection.anchorNode.parentElement
+        : (selection.anchorNode as HTMLElement | null);
+
+    while (current && current !== root) {
+      if (current.style.background || current.style.backgroundColor) {
+        clearElementBackground(current);
+      }
+      current = current.parentElement;
+    }
+
+    root.focus();
   }, []);
 
   useEffect(() => {
@@ -117,61 +164,9 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
             <select
               className="h-8 text-xs bg-secondary border border-border/50 rounded px-2 text-foreground"
               onChange={(e) => {
-                const val = e.target.value;
-                e.target.value = "";
-                if (val === "remove") {
-                  const sel = window.getSelection();
-                  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
-                  const range = sel.getRangeAt(0);
-                  
-                  // Walk through all nodes in the selection and remove background
-                  const walker = document.createTreeWalker(
-                    range.commonAncestorContainer.nodeType === 1 
-                      ? range.commonAncestorContainer 
-                      : range.commonAncestorContainer.parentElement!,
-                    NodeFilter.SHOW_ELEMENT,
-                    null
-                  );
-                  
-                  const spansToClean: HTMLElement[] = [];
-                  let node: Node | null = walker.currentNode;
-                  while (node) {
-                    if (node instanceof HTMLElement && sel.containsNode(node, true)) {
-                      if (node.style.backgroundColor || node.style.background) {
-                        spansToClean.push(node);
-                      }
-                    }
-                    node = walker.nextNode();
-                  }
-                  
-                  // Also check direct parent if cursor is inside a highlighted span
-                  let check: HTMLElement | null = sel.anchorNode?.nodeType === 3 
-                    ? sel.anchorNode.parentElement 
-                    : sel.anchorNode as HTMLElement;
-                  while (check && check !== editorRef.current) {
-                    if (check.style.backgroundColor || check.style.background) {
-                      if (!spansToClean.includes(check)) spansToClean.push(check);
-                    }
-                    check = check.parentElement;
-                  }
-                  
-                  spansToClean.forEach((el) => {
-                    el.style.backgroundColor = '';
-                    el.style.background = '';
-                    el.style.removeProperty('background-color');
-                    el.style.removeProperty('background');
-                    // Unwrap span if no styles left
-                    const styleVal = el.getAttribute('style');
-                    if (!styleVal || !styleVal.trim() || styleVal.trim() === ';') {
-                      const parent = el.parentNode;
-                      while (el.firstChild) parent?.insertBefore(el.firstChild, el);
-                      parent?.removeChild(el);
-                    }
-                  });
-                  
-                  editorRef.current?.focus();
-                } else if (val) {
-                  execCmd("hiliteColor", val);
+                if (e.target.value) {
+                  execCmd("hiliteColor", e.target.value);
+                  e.target.value = "";
                 }
               }}
               defaultValue=""
@@ -183,8 +178,18 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
               <option value="#fecaca">🔴 লাল</option>
               <option value="#e9d5ff">🟣 বেগুনি</option>
               <option value="#fed7aa">🟠 কমলা</option>
-              <option value="remove">❌ হাইলাইট মুছুন</option>
             </select>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1 px-2 text-xs"
+              onClick={clearHighlight}
+              title="হাইলাইট মুছুন"
+            >
+              <RemoveFormatting className="h-3.5 w-3.5" />
+              <span>❌ হাইলাইট মুছুন</span>
+            </Button>
           </div>
         )}
 
