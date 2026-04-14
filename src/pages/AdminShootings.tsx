@@ -570,12 +570,14 @@ const AdminShootings = () => {
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)} title={(s as any).show_on_public ? "পাবলিক সাইটে দেখাচ্ছে" : "পাবলিক সাইটে লুকানো"}>
                                {(s as any).show_on_public ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                              </Button>
-                             <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
-                               <FileText className="h-3.5 w-3.5" />
-                             </Button>
-                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-amber-400" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
-                               <Clapperboard className="h-3.5 w-3.5" />
-                             </Button>
+                              <Button variant="ghost" size="sm" className={`h-7 px-2 text-[10px] gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
+                                <FileText className="h-3.5 w-3.5" />
+                                <span>স্ক্রিপ্ট</span>
+                              </Button>
+                              <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1 text-amber-400" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                                <Clapperboard className="h-3.5 w-3.5" />
+                                <span>দৃশ্য</span>
+                              </Button>
                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground" onClick={() => openEdit(s)}>
                                <Edit className="h-3.5 w-3.5" />
                              </Button>
@@ -701,9 +703,10 @@ const AdminShootings = () => {
                                        <Users className="h-4 w-4" />
                                      </Button>
                                    )}
-                                   <Button variant="ghost" size="sm" className="text-amber-400 hover:text-amber-300" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
-                                     <Clapperboard className="h-4 w-4" />
-                                   </Button>
+                                    <Button variant="ghost" size="sm" className="text-amber-400 hover:text-amber-300 gap-1" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                                      <Clapperboard className="h-4 w-4" />
+                                      <span className="text-xs">দৃশ্য</span>
+                                    </Button>
                                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(s)}>
                                      <Edit className="h-4 w-4" />
                                    </Button>
@@ -727,10 +730,11 @@ const AdminShootings = () => {
 
       {scriptEditShooting && (
         <ScriptEditor
+          key={(scriptEditShooting as any).id || "shooting-script-editor"}
           open={scriptEditorOpen}
           onOpenChange={setScriptEditorOpen}
           title={`স্ক্রিপ্ট — ${scriptEditShooting.name}`}
-          initialContent={(scriptEditShooting as any).script_content || ""}
+          initialContent={(scriptEditShooting as any).script_content || (scriptEditShooting as any).scripts?.content || ""}
           onSave={saveScript}
         />
       )}

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, Heading1, Heading2, Save, X, Type } from "lucide-react";
@@ -22,6 +22,11 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
     document.execCommand(command, false, value);
     editorRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (!editorRef.current || !open) return;
+    editorRef.current.innerHTML = initialContent || (readOnly ? '<p class="text-muted-foreground">কোনো স্ক্রিপ্ট নেই</p>' : '<p>এখানে স্ক্রিপ্ট লিখুন...</p>');
+  }, [initialContent, open, readOnly]);
 
   const handleSave = async () => {
     if (!editorRef.current) return;
