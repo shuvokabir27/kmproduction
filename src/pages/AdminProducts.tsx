@@ -332,6 +332,18 @@ const AdminProducts = () => {
             </DialogHeader>
             <div className="space-y-4">
               <div>
+                <Label>ছবি</Label>
+                <div className="flex items-center gap-3">
+                  {form.image_url && (
+                    <img src={form.image_url} alt="" className="h-16 w-16 object-cover rounded border border-border" />
+                  )}
+                  <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleUpload} />
+                  <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="gap-1">
+                    <Upload className="h-3 w-3" /> {uploading ? "আপলোড হচ্ছে..." : "ছবি আপলোড"}
+                  </Button>
+                </div>
+              </div>
+              <div>
                 <Label>প্রডাক্টের নাম *</Label>
                 <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="প্রডাক্টের নাম" />
               </div>
@@ -352,18 +364,6 @@ const AdminProducts = () => {
               <div>
                 <Label>ক্যাটাগরি</Label>
                 <Input value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} placeholder="যেমন: পোশাক, ইলেক্ট্রনিক্স" />
-              </div>
-              <div>
-                <Label>ছবি</Label>
-                <div className="flex items-center gap-3">
-                  {form.image_url && (
-                    <img src={form.image_url} alt="" className="h-16 w-16 object-cover rounded border border-border" />
-                  )}
-                  <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleUpload} />
-                  <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="gap-1">
-                    <Upload className="h-3 w-3" /> {uploading ? "আপলোড হচ্ছে..." : "ছবি আপলোড"}
-                  </Button>
-                </div>
               </div>
               <div>
                 <Label>স্টক স্ট্যাটাস</Label>
