@@ -348,7 +348,8 @@ const AdminScriptEdit = () => {
       processed.add(htmlEl);
       sceneCount++;
       
-      const key = fullText.replace(/\s*(সম্পন্ন|বাকি)\s*/g, "").trim();
+      // Use sceneCount as unique index to avoid duplicate scene labels (e.g. "দৃশ্য ১" in multiple পর্ব)
+      const key = `scene-${sceneCount}`;
       const status = sceneStatus[key]; // undefined | 'done' | 'skipped'
       
       const btn = document.createElement("button");
