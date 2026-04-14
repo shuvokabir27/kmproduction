@@ -253,13 +253,13 @@ const AdminAttendance = () => {
                     <SelectValue placeholder="শুটিং নির্বাচন করুন" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border/30">
-                    {shootings?.filter(s => !shootingsWithAttendance?.has(s.id)).map((s) => (
+                    {shootings?.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
-                        {s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")}) 🆕
+                        {s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")}) {shootingsWithAttendance?.has(s.id) ? "✏️" : "🆕"}
                       </SelectItem>
                     ))}
-                    {shootings?.filter(s => !shootingsWithAttendance?.has(s.id)).length === 0 && (
-                      <div className="p-3 text-center text-xs text-muted-foreground">নতুন কোনো শুটিং নেই</div>
+                    {(!shootings || shootings.length === 0) && (
+                      <div className="p-3 text-center text-xs text-muted-foreground">চলমান/শেষ কোনো শুটিং নেই</div>
                     )}
                   </SelectContent>
                 </Select>
