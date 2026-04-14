@@ -12,7 +12,117 @@ import { Plus, Pencil, Trash2, FileText, GripVertical, Tag, Save } from "lucide-
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const LandingPageEditor = () => {
+const ProductPriceEditor = () => {
+  const queryClient = useQueryClient();
+  const { data: products } = useQuery({
+    queryKey: ["landing-price-products"],
+    queryFn: async () => {
+      const { data } = await supabase.from("products").select("id, name, price, discount_price, image_url, is_active").order("sort_order");
+      return data ?? [];
+    },
+  });
+
+  const [editId, setEditId] = useState<string | null>(null);
+  const [price, setPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const startEdit = (p: any) => {
+    setEditId(p.id);
+    setPrice(String(p.price || 0));
+    setDiscountPrice(String(p.discount_price || ""));
+  };
+
+  const handleSave = async () => {
+    if (!editId) return;
+    setSaving(true);
+    const { error } = await supabase.from("products").update({
+      price: Number(price) || 0,
+      discount_price: discountPrice ? Number(discountPrice) : null,
+    }).eq("id", editId);
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("মূল্য আপডেট হয়েছে");
+    setEditId(null);
+    queryClient.invalidateQueries({ queryKey: ["landing-price-products"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+  };
+
+  if (!products?.length) return null;
+
+  return (
+    <div className="mt-6 pt-5 border-t border-border/30">
+      <div className="flex items-center gap-2 mb-3">
+        <Tag className="h-4 w-4 text-primary" />
+        <h3 className="text-sm font-semibold text-foreground">প্রডাক্ট মূল্য ও ডিসকাউন্ট</h3>
+      </div>
+      <div className="space-y-2">
+        {products.map((p: any) => {
+          const hasDiscount = p.discount_price && p.discount_price < p.price;
+          const isEditing = editId === p.id;
+
+          if (isEditing) {
+            return (
+              <div key={p.id} className="bg-card border border-primary/30 rounded-xl p-3 space-y-3">
+                <div className="flex items-center gap-2">
+                  {p.image_url && <img src={p.image_url} alt="" className="h-7 w-7 rounded object-cover" />}
+                  <span className="font-medium text-foreground text-sm">{p.name}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-[11px]">রেগুলার মূল্য (৳)</Label>
+                    <Input type="number" value={price} onChange={e => setPrice(e.target.value)} className="mt-0.5 h-9" />
+                  </div>
+                  <div>
+                    <Label className="text-[11px]">ডিসকাউন্ট মূল্য (৳)</Label>
+                    <Input type="number" value={discountPrice} onChange={e => setDiscountPrice(e.target.value)} placeholder="খালি = ছাড় নেই" className="mt-0.5 h-9" />
+                  </div>
+                </div>
+                {discountPrice && Number(discountPrice) < Number(price) && (
+                  <p className="text-xs text-muted-foreground">
+                    ছাড়: <span className="text-destructive font-bold">{toBn(Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100))}%</span>
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={handleSave} disabled={saving} className="flex-1 h-8 gap-1">
+                    <Save className="h-3 w-3" /> {saving ? "সেভ হচ্ছে..." : "সেভ"}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditId(null)} className="h-8">বাতিল</Button>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div key={p.id} className="bg-card border border-border/30 rounded-lg p-3 flex items-center gap-3">
+              {p.image_url && <img src={p.image_url} alt="" className="h-9 w-9 rounded-lg object-cover flex-shrink-0" />}
+              <div className="flex-1 min-w-0">
+                <span className="font-medium text-foreground text-sm truncate block">{p.name}</span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  {hasDiscount ? (
+                    <>
+                      <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>
+                      <span className="text-sm font-bold text-primary">৳{toBn(p.discount_price)}</span>
+                      <span className="text-[10px] bg-destructive/15 text-destructive px-1.5 py-0.5 rounded-full font-semibold">
+                        {toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}% ছাড়
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-sm font-bold text-primary">৳{toBn(p.price)}</span>
+                  )}
+                </div>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => startEdit(p)} className="flex-shrink-0 h-8 gap-1 text-xs">
+                <Pencil className="h-3 w-3" /> মূল্য
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
