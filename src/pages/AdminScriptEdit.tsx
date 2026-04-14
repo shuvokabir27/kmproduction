@@ -30,6 +30,14 @@ const AdminScriptEdit = () => {
   const [currentFontSize, setCurrentFontSize] = useState("");
   const savedSelectionRef = useRef<Range | null>(null);
 
+  // Mention system state
+  const [mentionOpen, setMentionOpen] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [mentionPos, setMentionPos] = useState({ top: 0, left: 0 });
+  const [mentionIndex, setMentionIndex] = useState(0);
+  const mentionRangeRef = useRef<Range | null>(null);
+  const mentionListRef = useRef<HTMLDivElement>(null);
+
   // Save selection and detect font size whenever selection changes inside editor
   useEffect(() => {
     const saveSelection = () => {
