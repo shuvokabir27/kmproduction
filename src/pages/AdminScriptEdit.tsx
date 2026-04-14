@@ -159,51 +159,56 @@ const AdminScriptEdit = () => {
     queryClient.invalidateQueries({ queryKey: ["script-permissions", id] });
   };
 
-  // Get member IDs already mentioned in the current scene block
+  // Get member IDs already mentioned in the current scene block (between two headings)
   const getMentionedInCurrentScene = useCallback(() => {
     if (!editorRef.current) return new Set<string>();
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return new Set<string>();
-    
-    // Walk up from cursor to find the scene boundary (h1/h2 or start of editor)
-    let node: Node | null = sel.anchorNode;
-    let sceneStart: Node | null = null;
-    let sceneEnd: Node | null = null;
-    
-    // Find the previous heading (scene start)
-    while (node && node !== editorRef.current) {
-      const el = node.nodeType === 1 ? (node as HTMLElement) : node.parentElement;
-      if (el && /^H[12]$/i.test(el.tagName)) {
-        sceneStart = el;
-        break;
-      }
-      node = node.previousSibling || node.parentNode;
-    }
-    
-    // Collect all mention-tags between the scene heading and the next heading
-    const allChildren = Array.from(editorRef.current.querySelectorAll("*"));
-    const startIdx = sceneStart ? allChildren.indexOf(sceneStart as Element) : -1;
-    
-    const mentionedIds = new Set<string>();
-    const mentionTags = editorRef.current.querySelectorAll(".mention-tag");
-    mentionTags.forEach((tag) => {
-      const tagIdx = allChildren.indexOf(tag);
-      if (startIdx === -1 || tagIdx > startIdx) {
-        // Check if there's another heading between sceneStart and this tag
-        let hasNextHeading = false;
-        for (let i = startIdx + 1; i < tagIdx; i++) {
-          if (/^H[12]$/i.test(allChildren[i].tagName)) {
-            hasNextHeading = true;
-            break;
-          }
+
+    // Create a range at cursor position to compare positions
+    const cursorRange = sel.getRangeAt(0);
+
+    // Get all top-level children of the editor (paragraphs, headings, divs etc.)
+    const topChildren = Array.from(editorRef.current.childNodes);
+
+    // Find which "section" the cursor is in by looking at heading boundaries
+    let sectionStartIdx = 0;
+    let sectionEndIdx = topChildren.length;
+
+    for (let i = 0; i < topChildren.length; i++) {
+      const child = topChildren[i];
+      const el = child.nodeType === 1 ? (child as HTMLElement) : null;
+      const isHeading = el && /^H[12]$/i.test(el.tagName);
+      // Also detect headings like <p><b>দৃশ্য</b></p> — check text content for দৃশ্য pattern
+      const isSceneLabel = el && /দৃশ্য/i.test(el.textContent || "");
+
+      if (isHeading || isSceneLabel) {
+        // Is the cursor after this heading?
+        const headingRange = document.createRange();
+        headingRange.selectNode(child);
+        if (cursorRange.compareBoundaryPoints(Range.START_TO_START, headingRange) >= 0) {
+          sectionStartIdx = i;
+        } else {
+          // Cursor is before this heading, so this is the end boundary
+          sectionEndIdx = i;
+          break;
         }
-        if (!hasNextHeading) {
+      }
+    }
+
+    // Collect mention-tags within the section range
+    const mentionedIds = new Set<string>();
+    for (let i = sectionStartIdx; i < sectionEndIdx; i++) {
+      const child = topChildren[i];
+      if (child.nodeType === 1) {
+        const mentions = (child as HTMLElement).querySelectorAll(".mention-tag");
+        mentions.forEach((tag) => {
           const memberId = tag.getAttribute("data-member-id");
           if (memberId) mentionedIds.add(memberId);
-        }
+        });
       }
-    });
-    
+    }
+
     return mentionedIds;
   }, []);
 
