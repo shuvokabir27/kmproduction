@@ -157,6 +157,7 @@ const AdminScriptEdit = () => {
   if (!script) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">স্ক্রিপ্ট পাওয়া যায়নি</div>;
 
   const execCmd = (command: string, value?: string) => {
+    restoreSelection();
     document.execCommand(command, false, value);
     editorRef.current?.focus();
   };
