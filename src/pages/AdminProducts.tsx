@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut } from "lucide-react";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, loading } = useAuth();
