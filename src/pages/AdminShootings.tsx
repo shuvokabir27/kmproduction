@@ -656,7 +656,7 @@ const AdminShootings = () => {
                               <td className="p-3">
                                 <div className="flex items-center gap-2">
                                   <Button variant="ghost" size="sm" className={`h-7 text-xs gap-1 ${hasScript ? "text-primary" : "text-muted-foreground"}`} onClick={() => openScriptEditor(s)}>
-                                    <FileText className="h-3.5 w-3.5" /> {hasScript ? "এডিট" : "লিখুন"}
+                                    <FileText className="h-3.5 w-3.5" /> {hasScript ? ((s as any).scripts?.title || "এডিট") : "লিখুন"}
                                   </Button>
                                 </div>
                               </td>
