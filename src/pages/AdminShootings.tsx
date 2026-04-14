@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ShootingSceneTracker } from "@/components/ShootingSceneTracker";
 
 const statusOptions = [
   { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "text-violet-400 bg-violet-500/10 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300 border border-violet-500/20" },
