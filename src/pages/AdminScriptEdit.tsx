@@ -258,7 +258,7 @@ const AdminScriptEdit = () => {
           top: rect.bottom - editorRect.top + editorRef.current.scrollTop + 4,
           left: rect.left - editorRect.left,
         });
-        setSceneMentionedIds(getMentionedInCurrentScene());
+        setSceneMentionedIds(getMentionedInCurrentLine());
         setMentionOpen(true);
         setMentionIndex(0);
         return;
