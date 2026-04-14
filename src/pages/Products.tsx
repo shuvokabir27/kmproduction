@@ -27,9 +27,6 @@ const Products = () => {
       {/* Header */}
       <div className="bg-gradient-to-br from-primary/20 via-background to-primary/5 border-b border-border/30">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4">
-            <ArrowLeft className="h-4 w-4" /> হোমে ফিরুন
-          </Link>
           <div className="flex items-center gap-3">
             <ShoppingBag className="h-8 w-8 text-primary" />
             <div>
