@@ -30,10 +30,8 @@ const AdminScriptEdit = () => {
   const [currentFontSize, setCurrentFontSize] = useState("");
   const savedSelectionRef = useRef<Range | null>(null);
 
-  // Scene completion tracking (long-press toggle in preview)
+  // Scene completion tracking
   const [completedScenes, setCompletedScenes] = useState<Set<string>>(new Set());
-  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const longPressTargetRef = useRef<HTMLElement | null>(null);
 
   // Mention system state
   const [mentionOpen, setMentionOpen] = useState(false);
