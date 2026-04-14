@@ -148,9 +148,16 @@ const TalerGurLanding = () => {
                     {p.description && <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{p.description}</p>}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-xl font-bold text-amber-400">৳{toBn(p.price)}</span>
-                        {p.discount_price && (
-                          <span className="text-sm text-muted-foreground line-through">৳{toBn(p.discount_price)}</span>
+                        {p.discount_price && p.discount_price < p.price ? (
+                          <>
+                            <span className="text-xl font-bold text-amber-400">৳{toBn(p.discount_price)}</span>
+                            <span className="text-sm text-muted-foreground line-through">৳{toBn(p.price)}</span>
+                            <span className="text-xs bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full font-medium">
+                              {toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}% ছাড়
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-xl font-bold text-amber-400">৳{toBn(p.price)}</span>
                         )}
                       </div>
                       {p.contact_info && (
