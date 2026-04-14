@@ -218,6 +218,11 @@ const AdminProducts = () => {
           </div>
         )}
 
+        {/* Landing Page Editor */}
+        <div className="border-t border-border/30 pt-6">
+          <LandingPageEditor />
+        </div>
+
         {/* Create/Edit Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
