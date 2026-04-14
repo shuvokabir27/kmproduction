@@ -365,6 +365,18 @@ const OrderManagement = () => {
                     </Button>
                   </div>
                 )}
+                {order.status === "abandoned" && (
+                  <div className="flex gap-2 mt-3 pt-2 border-t border-orange-200/50 bg-orange-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
+                      onClick={() => quickStatusUpdate(order.id, "pending")}>
+                      <CheckCircle2 className="h-3 w-3" /> পেন্ডিং করুন
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1"
+                      onClick={() => openEdit(order)}>
+                      <Phone className="h-3 w-3" /> ফলোআপ
+                    </Button>
+                  </div>
+                )}
               </div>
             );
           })}
