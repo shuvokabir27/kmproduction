@@ -220,6 +220,11 @@ const AdminProducts = () => {
           </div>
         )}
 
+        {/* Order Management */}
+        <div className="border-t border-border/30 pt-6">
+          <OrderManagement />
+        </div>
+
         {/* Landing Page Editor */}
         <div className="border-t border-border/30 pt-6">
           <LandingPageEditor />
