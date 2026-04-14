@@ -30,7 +30,7 @@ const Products = () => {
           <div className="flex items-center gap-3">
             <ShoppingBag className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">আমাদের প্রডাক্ট</h1>
+              <h1 className="text-3xl font-bold text-foreground">কে এম প্রডাক্ট</h1>
               <p className="text-muted-foreground mt-1">আমাদের বিভিন্ন প্রডাক্ট দেখুন</p>
             </div>
           </div>
