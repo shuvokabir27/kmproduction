@@ -21,6 +21,11 @@ const Login = () => {
   const [resetEmail, setResetEmail] = useState("");
   const [resetSending, setResetSending] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
+  const [isSignup, setIsSignup] = useState(false);
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupName, setSignupName] = useState("");
+  const [signupSubmitting, setSignupSubmitting] = useState(false);
 
   if (loading) {
     return (
@@ -184,7 +189,11 @@ const Login = () => {
                 ) : "লগইন"}
               </Button>
 
-              <div className="text-center text-xs text-muted-foreground mt-3 space-y-1">
+              <div className="text-center text-xs text-muted-foreground mt-3 space-y-2">
+                <button type="button" className="text-primary hover:underline" onClick={() => setIsSignup(true)}>
+                  নতুন অ্যাকাউন্ট তৈরি করুন
+                </button>
+                <br />
                 <Dialog open={resetOpen} onOpenChange={setResetOpen}>
                   <DialogTrigger asChild>
                     <button type="button" className="text-primary hover:underline">পাসওয়ার্ড ভুলে গেছেন?</button>
@@ -235,6 +244,79 @@ const Login = () => {
               </div>
             </form>
           </Card>
+
+          {/* Signup Dialog */}
+          <Dialog open={isSignup} onOpenChange={setIsSignup}>
+            <DialogContent className="max-w-sm">
+              <DialogHeader>
+                <DialogTitle className="text-base">নতুন অ্যাকাউন্ট তৈরি</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 pt-2">
+                <div>
+                  <Label className="text-xs">নাম</Label>
+                  <Input
+                    value={signupName}
+                    onChange={(e) => setSignupName(e.target.value)}
+                    placeholder="আপনার নাম"
+                    className="bg-secondary border-border/30 h-10 text-sm"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">ইমেইল</Label>
+                  <Input
+                    type="email"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    placeholder="আপনার ইমেইল"
+                    className="bg-secondary border-border/30 h-10 text-sm"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">পাসওয়ার্ড</Label>
+                  <Input
+                    type="password"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    placeholder="কমপক্ষে ৬ অক্ষর"
+                    minLength={6}
+                    className="bg-secondary border-border/30 h-10 text-sm"
+                  />
+                </div>
+                <Button
+                  className="w-full h-10 text-sm"
+                  disabled={signupSubmitting || !signupEmail.trim() || !signupPassword.trim() || !signupName.trim()}
+                  onClick={async () => {
+                    setSignupSubmitting(true);
+                    try {
+                      const { error } = await supabase.auth.signUp({
+                        email: signupEmail.trim(),
+                        password: signupPassword,
+                        options: {
+                          data: { full_name: signupName.trim() },
+                          emailRedirectTo: window.location.origin,
+                        },
+                      });
+                      if (error) throw error;
+                      toast.success("অ্যাকাউন্ট তৈরি হয়েছে! ইমেইল ভেরিফাই করুন।");
+                      setIsSignup(false);
+                      setSignupEmail("");
+                      setSignupPassword("");
+                      setSignupName("");
+                    } catch (err: any) {
+                      toast.error(err.message || "অ্যাকাউন্ট তৈরি করা যায়নি।");
+                    } finally {
+                      setSignupSubmitting(false);
+                    }
+                  }}
+                >
+                  {signupSubmitting ? "তৈরি হচ্ছে..." : "অ্যাকাউন্ট তৈরি করুন"}
+                </Button>
+                <p className="text-[10px] text-muted-foreground text-center">
+                  ইমেইলে ভেরিফিকেশন লিংক পাঠানো হবে
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
         </motion.div>
       </div>
     </div>
