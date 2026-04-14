@@ -1,7 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Phone, Tag } from "lucide-react";
+import { ShoppingBag, Phone, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
