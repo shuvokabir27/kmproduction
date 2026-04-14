@@ -400,9 +400,29 @@ const AdminProducts = () => {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
-    </ProductLayout>
+    </div>
   );
+
+  if (useProductLayout) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-30">
+          <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              <span className="font-bold text-foreground">KM Products</span>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => signOut()} className="gap-1 text-muted-foreground">
+              <LogOut className="h-4 w-4" /> লগআউট
+            </Button>
+          </div>
+        </header>
+        <main>{content}</main>
+      </div>
+    );
+  }
+
+  return <AppLayout>{content}</AppLayout>;
 };
 
 export default AdminProducts;
