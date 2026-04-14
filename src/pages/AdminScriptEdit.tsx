@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo, Maximize, Minimize, PenTool } from "lucide-react";
+import { ArrowLeft, Save, Download, FileText, Edit, Eye, Users, X, Undo, Redo, Maximize, Minimize, PenTool, RemoveFormatting } from "lucide-react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, AlignJustify, List, Heading1, Heading2, Type } from "lucide-react";
@@ -536,6 +536,16 @@ const AdminScriptEdit = () => {
                     />
                     <div className="h-1 w-4 rounded-full bg-primary mt-[-2px]" id="text-color-indicator" />
                   </label>
+                  <button
+                    type="button"
+                    className="text-[9px] text-muted-foreground hover:text-destructive px-0.5"
+                    title="টেক্সট রং মুছুন"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      restoreSelection();
+                      execCmd("removeFormat");
+                    }}
+                  >✕</button>
                   <label className="relative cursor-pointer" title="ব্যাকগ্রাউন্ড রং" onMouseDown={(e) => e.preventDefault()}>
                     <span className="text-[10px] text-muted-foreground px-1 bg-primary/20 rounded">A</span>
                     <input
@@ -548,6 +558,44 @@ const AdminScriptEdit = () => {
                       }}
                     />
                   </label>
+                  <button
+                    type="button"
+                    className="text-[9px] text-muted-foreground hover:text-destructive px-0.5"
+                    title="হাইলাইট মুছুন"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      restoreSelection();
+                      const sel = window.getSelection();
+                      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+                      const root = editorRef.current;
+                      if (!root) return;
+                      const highlighted = Array.from(
+                        root.querySelectorAll<HTMLElement>('[style*="background"]')
+                      );
+                      highlighted.forEach((el) => {
+                        if (sel.containsNode(el, true)) {
+                          el.style.removeProperty("background");
+                          el.style.removeProperty("background-color");
+                          const s = el.getAttribute("style")?.trim();
+                          if (!s) {
+                            const p = el.parentNode;
+                            while (el.firstChild) p?.insertBefore(el.firstChild, el);
+                            p?.removeChild(el);
+                          }
+                        }
+                      });
+                      // Check parent chain
+                      let cur = sel.anchorNode?.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode as HTMLElement | null;
+                      while (cur && cur !== root) {
+                        if (cur.style.backgroundColor || cur.style.background) {
+                          cur.style.removeProperty("background");
+                          cur.style.removeProperty("background-color");
+                        }
+                        cur = cur.parentElement;
+                      }
+                      root.focus();
+                    }}
+                  >✕</button>
                 </div>
                 <div className="ml-auto text-[10px] text-muted-foreground hidden md:block">
                   {toBn(wordCount)} শব্দ · Ctrl+S সেভ
