@@ -27,7 +27,7 @@ const Products = () => {
       {/* Header */}
       <div className="bg-gradient-to-br from-primary/20 via-background to-primary/5 border-b border-border/30">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center gap-3 text-center">
             <ShoppingBag className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold text-foreground">কে এম প্রডাক্ট</h1>
