@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock, Clapperboard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useCallback } from "react";
