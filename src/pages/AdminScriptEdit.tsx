@@ -306,61 +306,74 @@ const AdminScriptEdit = () => {
     if (isEditMode || !editorRef.current) return;
     editorRef.current.querySelectorAll(".scene-check-btn").forEach(el => el.remove());
     
-    // Walk through all elements and find ones whose OWN direct text matches "দৃশ্য"
     const allEls = editorRef.current.querySelectorAll("h1, h2, h3, p, div, b, strong, span");
     const processed = new Set<HTMLElement>();
+    let sceneCount = 0;
     
     allEls.forEach((el) => {
       const htmlEl = el as HTMLElement;
-      // Skip if already processed or is inside a processed parent
       if (processed.has(htmlEl)) return;
       
-      // Get only the element's own direct text (not children's text)
       let ownText = "";
       for (const node of Array.from(htmlEl.childNodes)) {
         if (node.nodeType === 3) ownText += node.textContent;
       }
       
-      // Also check if it's a leaf element (b, strong, span) with দৃশ্য
       const fullText = htmlEl.textContent?.trim() || "";
       const isLeaf = !htmlEl.querySelector("h1, h2, h3, p, div, b, strong, span");
-      
-      // Match: own text contains দৃশ্য, OR it's a leaf element whose full text is short and contains দৃশ্য
       const ownMatch = /দৃশ্য\s*[০-৯0-9]+/.test(ownText.trim());
       const leafMatch = isLeaf && /^দৃশ্য\s*[০-৯0-9]+/.test(fullText) && fullText.length < 30;
       
       if (!ownMatch && !leafMatch) return;
       
-      // Don't add to parent if a child already qualifies
       if (!isLeaf && htmlEl.querySelector("b, strong, span")) {
         const childTexts = Array.from(htmlEl.querySelectorAll("b, strong, span"))
           .some(c => /^দৃশ্য\s*[০-৯0-9]+/.test(c.textContent?.trim() || ""));
         if (childTexts) return;
       }
       
-      // Mark as processed
       processed.add(htmlEl);
+      sceneCount++;
       
-      const key = fullText.replace(/\s*সম্পন্ন\s*/g, "").trim();
-      const isDone = completedScenes.has(key);
+      const key = fullText.replace(/\s*(সম্পন্ন|বাকি)\s*/g, "").trim();
+      const status = sceneStatus[key]; // undefined | 'done' | 'skipped'
+      
       const btn = document.createElement("button");
       btn.className = "scene-check-btn";
       btn.type = "button";
-      btn.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:2px solid ${isDone ? '#16a34a' : '#9ca3af'};background:${isDone ? '#16a34a' : 'transparent'};cursor:pointer;margin-left:8px;vertical-align:middle;padding:0;transition:all 0.2s;flex-shrink:0;`;
-      btn.innerHTML = isDone ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '';
+      
+      let borderColor = '#9ca3af';
+      let bgColor = 'transparent';
+      let icon = '';
+      if (status === 'done') {
+        borderColor = '#16a34a';
+        bgColor = '#16a34a';
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+      } else if (status === 'skipped') {
+        borderColor = '#dc2626';
+        bgColor = '#dc2626';
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      }
+      
+      btn.style.cssText = `display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:2px solid ${borderColor};background:${bgColor};cursor:pointer;margin-left:8px;vertical-align:middle;padding:0;transition:all 0.2s;flex-shrink:0;`;
+      btn.innerHTML = icon;
       btn.setAttribute("data-scene-key", key);
+      btn.title = status === 'done' ? 'শুট সম্পন্ন' : status === 'skipped' ? 'শুট হয়নি' : 'ক্লিক করুন';
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setCompletedScenes(prev => {
-          const next = new Set(prev);
-          if (next.has(key)) next.delete(key); else next.add(key);
+        setSceneStatus(prev => {
+          const next = { ...prev };
+          if (!next[key]) next[key] = 'done';
+          else if (next[key] === 'done') next[key] = 'skipped';
+          else delete next[key];
           return next;
         });
       });
       htmlEl.appendChild(btn);
     });
-  }, [isEditMode, completedScenes]);
+    setTotalScenes(sceneCount);
+  }, [isEditMode, sceneStatus]);
 
   useEffect(() => {
     const timer = setTimeout(renderSceneCheckboxes, 150);
