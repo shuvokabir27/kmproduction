@@ -8,7 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, FileText, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, FileText, GripVertical, Tag, Save } from "lucide-react";
+
+const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const LandingPageEditor = () => {
   const queryClient = useQueryClient();
