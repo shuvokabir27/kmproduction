@@ -192,8 +192,6 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
             </Button>
           </div>
         )}
-          </div>
-        )}
 
         <div className="flex-1 overflow-auto px-4 pb-2">
           <div
