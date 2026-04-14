@@ -118,44 +118,61 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
               className="h-8 text-xs bg-secondary border border-border/50 rounded px-2 text-foreground"
               onChange={(e) => {
                 const val = e.target.value;
+                e.target.value = "";
                 if (val === "remove") {
-                  // Remove highlight by clearing background on selected spans
                   const sel = window.getSelection();
-                  if (sel && sel.rangeCount > 0) {
-                    const range = sel.getRangeAt(0);
-                    const container = range.commonAncestorContainer;
-                    const parent = container.nodeType === 3 ? container.parentElement : container as HTMLElement;
-                    if (parent) {
-                      // Find all spans with background in selection
-                      const allSpans = parent.querySelectorAll ? 
-                        Array.from(parent.querySelectorAll('span[style*="background"]')) : [];
-                      allSpans.forEach((span) => {
-                        if (sel.containsNode(span, true)) {
-                          (span as HTMLElement).style.backgroundColor = '';
-                          (span as HTMLElement).style.background = '';
-                          // If no other styles, unwrap span
-                          if (!(span as HTMLElement).getAttribute('style')?.trim()) {
-                            const parentNode = span.parentNode;
-                            while (span.firstChild) {
-                              parentNode?.insertBefore(span.firstChild, span);
-                            }
-                            parentNode?.removeChild(span);
-                          }
-                        }
-                      });
-                      // Also handle if parent itself is a highlighted span
-                      if (parent.tagName === 'SPAN' && parent.style.backgroundColor) {
-                        parent.style.backgroundColor = '';
-                        parent.style.background = '';
+                  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+                  const range = sel.getRangeAt(0);
+                  
+                  // Walk through all nodes in the selection and remove background
+                  const walker = document.createTreeWalker(
+                    range.commonAncestorContainer.nodeType === 1 
+                      ? range.commonAncestorContainer 
+                      : range.commonAncestorContainer.parentElement!,
+                    NodeFilter.SHOW_ELEMENT,
+                    null
+                  );
+                  
+                  const spansToClean: HTMLElement[] = [];
+                  let node: Node | null = walker.currentNode;
+                  while (node) {
+                    if (node instanceof HTMLElement && sel.containsNode(node, true)) {
+                      if (node.style.backgroundColor || node.style.background) {
+                        spansToClean.push(node);
                       }
                     }
-                    // Fallback: try execCommand
-                    execCmd("hiliteColor", "rgba(0,0,0,0)");
+                    node = walker.nextNode();
                   }
+                  
+                  // Also check direct parent if cursor is inside a highlighted span
+                  let check: HTMLElement | null = sel.anchorNode?.nodeType === 3 
+                    ? sel.anchorNode.parentElement 
+                    : sel.anchorNode as HTMLElement;
+                  while (check && check !== editorRef.current) {
+                    if (check.style.backgroundColor || check.style.background) {
+                      if (!spansToClean.includes(check)) spansToClean.push(check);
+                    }
+                    check = check.parentElement;
+                  }
+                  
+                  spansToClean.forEach((el) => {
+                    el.style.backgroundColor = '';
+                    el.style.background = '';
+                    el.style.removeProperty('background-color');
+                    el.style.removeProperty('background');
+                    // Unwrap span if no styles left
+                    const styleVal = el.getAttribute('style');
+                    if (!styleVal || !styleVal.trim() || styleVal.trim() === ';') {
+                      const parent = el.parentNode;
+                      while (el.firstChild) parent?.insertBefore(el.firstChild, el);
+                      parent?.removeChild(el);
+                    }
+                  });
+                  
+                  editorRef.current?.focus();
                 } else if (val) {
                   execCmd("hiliteColor", val);
                 }
-                e.target.value = "";
               }}
               defaultValue=""
             >
@@ -166,7 +183,6 @@ export function ScriptEditor({ open, onOpenChange, title, initialContent, onSave
               <option value="#fecaca">🔴 লাল</option>
               <option value="#e9d5ff">🟣 বেগুনি</option>
               <option value="#fed7aa">🟠 কমলা</option>
-              <option value="remove">❌ হাইলাইট মুছুন</option>
               <option value="remove">❌ হাইলাইট মুছুন</option>
             </select>
           </div>
