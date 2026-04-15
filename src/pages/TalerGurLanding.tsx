@@ -130,7 +130,8 @@ const TalerGurLanding = () => {
         product_name: productName,
         quantity: qty,
         unit_price: unitPrice,
-        total_amount: unitPrice * qty,
+        total_amount: unitPrice * qty + deliveryCharge,
+        notes: !freeDelivery && deliveryCharge > 0 ? `ডেলিভারি চার্জ: ৳${deliveryCharge}` : null,
         payment_method: orderForm.payment_method,
       });
       if (error) throw error;
