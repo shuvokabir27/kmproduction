@@ -20,10 +20,10 @@ const TalerGurLanding = () => {
   const [selectedPackage, setSelectedPackage] = useState<number>(1);
 
   const weightPackages = [
-    { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক" },
-    { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক" },
-    { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার" },
-    { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক" },
+    { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", discount: 0 },
+    { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক", discount: 0 },
+    { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার", discount: 8 },
+    { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক", discount: 12 },
   ];
 
   // Fetch offer end date from site_settings
