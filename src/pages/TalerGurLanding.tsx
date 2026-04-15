@@ -578,8 +578,8 @@ const TalerGurLanding = () => {
       {/* Sticky Bottom CTA */}
       {products && products.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a7a2e] shadow-[0_-4px_20px_rgba(0,0,0,0.2)] py-3 px-4">
-          <Button onClick={openOrderDialog} className="w-full max-w-lg mx-auto block gap-2 bg-amber-500 hover:bg-amber-600 text-white py-5 text-base rounded-full font-bold shadow-lg">
-            <ShoppingCart className="h-5 w-5" /> অর্ডার করুন — ৳{toBn(products[0]?.discount_price || products[0]?.price || 0)}
+          <Button onClick={openOrderDialog} className="w-full max-w-lg mx-auto flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white h-12 text-base rounded-full font-bold shadow-lg">
+            <ShoppingCart className="h-5 w-5 shrink-0" /> অর্ডার করুন — ৳{toBn(products[0]?.discount_price || products[0]?.price || 0)}
           </Button>
         </div>
       )}
