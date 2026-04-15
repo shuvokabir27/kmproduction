@@ -7,135 +7,209 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, FileText, GripVertical, Tag, Save } from "lucide-react";
+import {
+  FileText, Pencil, Check, X, Plus, Trash2, ChevronDown, ChevronUp,
+  Eye, EyeOff, GripVertical, Sparkles, Star, Shield, HelpCircle, Phone
+} from "lucide-react";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const ProductPriceEditor = () => {
-  const queryClient = useQueryClient();
-  const { data: products } = useQuery({
-    queryKey: ["landing-price-products"],
-    queryFn: async () => {
-      const { data } = await supabase.from("products").select("id, name, price, discount_price, image_url, is_active").order("sort_order");
-      return data ?? [];
-    },
-  });
+// Friendly names and icons for section types
+const SECTION_TYPES: Record<string, { label: string; icon: string; description: string }> = {
+  hero: { label: "🌴 হিরো সেকশন", icon: "🌴", description: "পেজের সবার উপরে — ব্র্যান্ড নাম ও প্রধান বর্ণনা" },
+  benefit_1: { label: "✅ উপকারিতা ১", icon: "✅", description: "প্রথম উপকারিতা কার্ড" },
+  benefit_2: { label: "✅ উপকারিতা ২", icon: "✅", description: "দ্বিতীয় উপকারিতা কার্ড" },
+  benefit_3: { label: "✅ উপকারিতা ৩", icon: "✅", description: "তৃতীয় উপকারিতা কার্ড" },
+  benefit_4: { label: "✅ উপকারিতা ৪", icon: "✅", description: "চতুর্থ উপকারিতা কার্ড" },
+  benefit_5: { label: "✅ উপকারিতা ৫", icon: "✅", description: "পঞ্চম উপকারিতা কার্ড" },
+  quality_1: { label: "⭐ গুণাগুণ ১", icon: "⭐", description: "প্রথম গুণাগুণ কার্ড" },
+  quality_2: { label: "⭐ গুণাগুণ ২", icon: "⭐", description: "দ্বিতীয় গুণাগুণ কার্ড" },
+  quality_3: { label: "⭐ গুণাগুণ ৩", icon: "⭐", description: "তৃতীয় গুণাগুণ কার্ড" },
+  quality_4: { label: "⭐ গুণাগুণ ৪", icon: "⭐", description: "চতুর্থ গুণাগুণ কার্ড" },
+  cta: { label: "📞 যোগাযোগ সেকশন", icon: "📞", description: "কল-টু-অ্যাকশন — অর্ডার করতে যোগাযোগ" },
+};
 
-  const [editId, setEditId] = useState<string | null>(null);
-  const [price, setPrice] = useState("");
-  const [discountPrice, setDiscountPrice] = useState("");
+const getSectionInfo = (key: string) => {
+  if (SECTION_TYPES[key]) return SECTION_TYPES[key];
+  if (key.startsWith("benefit_")) return { label: `✅ উপকারিতা ${key.split("_")[1]}`, icon: "✅", description: "উপকারিতা কার্ড" };
+  if (key.startsWith("quality_")) return { label: `⭐ গুণাগুণ ${key.split("_")[1]}`, icon: "⭐", description: "গুণাগুণ কার্ড" };
+  return { label: key, icon: "📄", description: "" };
+};
+
+// Available section keys for adding new sections
+const ADD_OPTIONS = [
+  { key: "hero", label: "🌴 হিরো সেকশন" },
+  { key: "benefit_1", label: "✅ উপকারিতা ১" },
+  { key: "benefit_2", label: "✅ উপকারিতা ২" },
+  { key: "benefit_3", label: "✅ উপকারিতা ৩" },
+  { key: "benefit_4", label: "✅ উপকারিতা ৪" },
+  { key: "benefit_5", label: "✅ উপকারিতা ৫" },
+  { key: "quality_1", label: "⭐ গুণাগুণ ১" },
+  { key: "quality_2", label: "⭐ গুণাগুণ ২" },
+  { key: "quality_3", label: "⭐ গুণাগুণ ৩" },
+  { key: "quality_4", label: "⭐ গুণাগুণ ৪" },
+  { key: "cta", label: "📞 যোগাযোগ সেকশন" },
+];
+
+// Inline editable section card
+const SectionCard = ({ section, onSaved, onDelete }: {
+  section: any;
+  onSaved: () => void;
+  onDelete: (id: string) => void;
+}) => {
+  const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [title, setTitle] = useState(section.title || "");
+  const [content, setContent] = useState(section.content || "");
+  const [icon, setIcon] = useState(section.icon || "");
+  const [imageUrl, setImageUrl] = useState(section.image_url || "");
+  const [isActive, setIsActive] = useState(section.is_active);
 
-  const startEdit = (p: any) => {
-    setEditId(p.id);
-    setPrice(String(p.price || 0));
-    setDiscountPrice(String(p.discount_price || ""));
-  };
+  const info = getSectionInfo(section.section_key);
 
   const handleSave = async () => {
-    if (!editId) return;
     setSaving(true);
-    const { error } = await supabase.from("products").update({
-      price: Number(price) || 0,
-      discount_price: discountPrice ? Number(discountPrice) : null,
-    }).eq("id", editId);
+    const { error } = await supabase.from("landing_page_sections").update({
+      title: title.trim() || null,
+      content: content.trim() || null,
+      icon: icon.trim() || null,
+      image_url: imageUrl.trim() || null,
+      is_active: isActive,
+    }).eq("id", section.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("মূল্য আপডেট হয়েছে");
-    setEditId(null);
-    queryClient.invalidateQueries({ queryKey: ["landing-price-products"] });
-    queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+    toast.success("সেভ হয়েছে ✓");
+    setEditing(false);
+    onSaved();
   };
 
-  if (!products?.length) return null;
+  const handleCancel = () => {
+    setTitle(section.title || "");
+    setContent(section.content || "");
+    setIcon(section.icon || "");
+    setImageUrl(section.image_url || "");
+    setIsActive(section.is_active);
+    setEditing(false);
+  };
+
+  const toggleActive = async () => {
+    const newVal = !isActive;
+    setIsActive(newVal);
+    await supabase.from("landing_page_sections").update({ is_active: newVal }).eq("id", section.id);
+    toast.success(newVal ? "সক্রিয় করা হয়েছে" : "নিষ্ক্রিয় করা হয়েছে");
+    onSaved();
+  };
 
   return (
-    <div className="mt-6 pt-5 border-t border-border/30">
-      <div className="flex items-center gap-2 mb-3">
-        <Tag className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold text-foreground">প্রডাক্ট মূল্য ও ডিসকাউন্ট</h3>
+    <div className={`bg-card border rounded-xl transition-all ${editing ? "border-primary/50 shadow-lg shadow-primary/5" : "border-border/30 hover:border-border/50"} ${!isActive ? "opacity-60" : ""}`}>
+      {/* Header - always visible */}
+      <div className="flex items-center gap-3 p-3 cursor-pointer" onClick={() => !editing && setExpanded(!expanded)}>
+        <span className="text-xl flex-shrink-0">{section.icon || info.icon}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-foreground text-sm">{section.title || info.label}</span>
+            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{info.label.replace(/^[^\s]+\s/, "")}</span>
+          </div>
+          {!expanded && section.content && (
+            <p className="text-xs text-muted-foreground truncate mt-0.5 max-w-[300px]">{section.content}</p>
+          )}
+        </div>
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => { e.stopPropagation(); toggleActive(); }}>
+            {isActive ? <Eye className="h-3.5 w-3.5 text-emerald-400" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => { e.stopPropagation(); setEditing(true); setExpanded(true); }}>
+            <Pencil className="h-3.5 w-3.5 text-primary" />
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => { e.stopPropagation(); onDelete(section.id); }}>
+            <Trash2 className="h-3.5 w-3.5 text-destructive/70" />
+          </Button>
+          {!editing && (
+            expanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          )}
+        </div>
       </div>
-      <div className="space-y-2">
-        {products.map((p: any) => {
-          const hasDiscount = p.discount_price && p.discount_price < p.price;
-          const isEditing = editId === p.id;
 
-          if (isEditing) {
-            return (
-              <div key={p.id} className="bg-card border border-primary/30 rounded-xl p-3 space-y-3">
+      {/* Expanded / Edit view */}
+      {(expanded || editing) && (
+        <div className="px-3 pb-3 space-y-3 border-t border-border/20 pt-3">
+          {editing ? (
+            <>
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground">শিরোনাম</Label>
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="সেকশনের শিরোনাম"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground">বিবরণ / লেখা</Label>
+                <Textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="সেকশনের বিবরণ লিখুন..."
+                  rows={3}
+                  className="mt-1"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">আইকন (ইমোজি)</Label>
+                  <Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="🌴" className="mt-1" />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">ছবির URL</Label>
+                  <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." className="mt-1" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1">
                 <div className="flex items-center gap-2">
-                  {p.image_url && <img src={p.image_url} alt="" className="h-7 w-7 rounded object-cover" />}
-                  <span className="font-medium text-foreground text-sm">{p.name}</span>
+                  <Switch checked={isActive} onCheckedChange={setIsActive} />
+                  <span className="text-xs text-muted-foreground">{isActive ? "সক্রিয়" : "নিষ্ক্রিয়"}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="text-[11px]">রেগুলার মূল্য (৳)</Label>
-                    <Input type="number" value={price} onChange={e => setPrice(e.target.value)} className="mt-0.5 h-9" />
-                  </div>
-                  <div>
-                    <Label className="text-[11px]">ডিসকাউন্ট মূল্য (৳)</Label>
-                    <Input type="number" value={discountPrice} onChange={e => setDiscountPrice(e.target.value)} placeholder="খালি = ছাড় নেই" className="mt-0.5 h-9" />
-                  </div>
-                </div>
-                {discountPrice && Number(discountPrice) < Number(price) && (
-                  <p className="text-xs text-muted-foreground">
-                    ছাড়: <span className="text-destructive font-bold">{toBn(Math.round(((Number(price) - Number(discountPrice)) / Number(price)) * 100))}%</span>
-                  </p>
-                )}
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={handleSave} disabled={saving} className="flex-1 h-8 gap-1">
-                    <Save className="h-3 w-3" /> {saving ? "সেভ হচ্ছে..." : "সেভ"}
+                  <Button size="sm" variant="outline" onClick={handleCancel} className="h-8 gap-1">
+                    <X className="h-3 w-3" /> বাতিল
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditId(null)} className="h-8">বাতিল</Button>
+                  <Button size="sm" onClick={handleSave} disabled={saving} className="h-8 gap-1">
+                    <Check className="h-3 w-3" /> {saving ? "সেভ হচ্ছে..." : "সেভ"}
+                  </Button>
                 </div>
               </div>
-            );
-          }
-
-          return (
-            <div key={p.id} className="bg-card border border-border/30 rounded-lg p-3 flex items-center gap-3">
-              {p.image_url && <img src={p.image_url} alt="" className="h-9 w-9 rounded-lg object-cover flex-shrink-0" />}
-              <div className="flex-1 min-w-0">
-                <span className="font-medium text-foreground text-sm truncate block">{p.name}</span>
-                <div className="flex items-center gap-2 mt-0.5">
-                  {hasDiscount ? (
-                    <>
-                      <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>
-                      <span className="text-sm font-bold text-primary">৳{toBn(p.discount_price)}</span>
-                      <span className="text-[10px] bg-destructive/15 text-destructive px-1.5 py-0.5 rounded-full font-semibold">
-                        {toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}% ছাড়
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-sm font-bold text-primary">৳{toBn(p.price)}</span>
-                  )}
+            </>
+          ) : (
+            <div className="space-y-2 text-sm">
+              {section.content && (
+                <div>
+                  <span className="text-[11px] text-muted-foreground font-medium">বিবরণ:</span>
+                  <p className="text-foreground mt-0.5">{section.content}</p>
                 </div>
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => startEdit(p)} className="flex-shrink-0 h-8 gap-1 text-xs">
-                <Pencil className="h-3 w-3" /> মূল্য
-              </Button>
+              )}
+              {section.image_url && (
+                <div>
+                  <span className="text-[11px] text-muted-foreground font-medium">ছবি:</span>
+                  <img src={section.image_url} alt="" className="h-16 w-24 object-cover rounded-lg mt-1 border border-border/30" />
+                </div>
+              )}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 const LandingPageEditor = () => {
   const queryClient = useQueryClient();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState({
-    section_key: "",
-    title: "",
-    content: "",
-    image_url: "",
-    icon: "",
-    sort_order: "0",
-    is_active: true,
-  });
+  const [addOpen, setAddOpen] = useState(false);
+  const [addKey, setAddKey] = useState("");
+  const [addTitle, setAddTitle] = useState("");
+  const [addContent, setAddContent] = useState("");
+  const [addIcon, setAddIcon] = useState("");
+  const [addSaving, setAddSaving] = useState(false);
 
   const { data: sections, isLoading } = useQuery({
     queryKey: ["admin-landing-sections"],
@@ -148,165 +222,123 @@ const LandingPageEditor = () => {
     },
   });
 
-  const resetForm = () => {
-    setForm({ section_key: "", title: "", content: "", image_url: "", icon: "", sort_order: "0", is_active: true });
-    setEditing(null);
-  };
-
-  const openCreate = () => { resetForm(); setDialogOpen(true); };
-
-  const openEdit = (s: any) => {
-    setEditing(s);
-    setForm({
-      section_key: s.section_key || "",
-      title: s.title || "",
-      content: s.content || "",
-      image_url: s.image_url || "",
-      icon: s.icon || "",
-      sort_order: String(s.sort_order || 0),
-      is_active: s.is_active ?? true,
-    });
-    setDialogOpen(true);
-  };
-
-  const handleSave = async () => {
-    if (!form.section_key.trim()) { toast.error("সেকশন কী দিন"); return; }
-    const payload = {
-      section_key: form.section_key.trim(),
-      title: form.title.trim() || null,
-      content: form.content.trim() || null,
-      image_url: form.image_url.trim() || null,
-      icon: form.icon.trim() || null,
-      sort_order: Number(form.sort_order) || 0,
-      is_active: form.is_active,
-    };
-    try {
-      if (editing) {
-        const { error } = await supabase.from("landing_page_sections").update(payload).eq("id", editing.id);
-        if (error) throw error;
-        toast.success("সেকশন আপডেট হয়েছে");
-      } else {
-        const { error } = await supabase.from("landing_page_sections").insert(payload);
-        if (error) throw error;
-        toast.success("সেকশন যোগ হয়েছে");
-      }
-      queryClient.invalidateQueries({ queryKey: ["admin-landing-sections"] });
-      setDialogOpen(false);
-      resetForm();
-    } catch (err: any) {
-      toast.error(err.message);
-    }
-  };
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-landing-sections"] });
 
   const handleDelete = async (id: string) => {
     if (!confirm("এই সেকশন মুছে ফেলতে চান?")) return;
     const { error } = await supabase.from("landing_page_sections").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("সেকশন মুছে ফেলা হয়েছে");
-    queryClient.invalidateQueries({ queryKey: ["admin-landing-sections"] });
+    invalidate();
   };
 
-  const sectionKeyLabels: Record<string, string> = {
-    hero: "হিরো সেকশন",
-    benefit_: "উপকারিতা",
-    quality_: "গুণাগুণ",
-    cta: "যোগাযোগ সেকশন",
+  const handleAdd = async () => {
+    if (!addKey) { toast.error("সেকশন টাইপ বাছুন"); return; }
+    setAddSaving(true);
+    const info = getSectionInfo(addKey);
+    const maxSort = sections?.reduce((max, s: any) => Math.max(max, s.sort_order || 0), 0) || 0;
+    const { error } = await supabase.from("landing_page_sections").insert({
+      section_key: addKey,
+      title: addTitle.trim() || info.label.replace(/^[^\s]+\s/, ""),
+      content: addContent.trim() || null,
+      icon: addIcon.trim() || info.icon,
+      sort_order: maxSort + 1,
+      is_active: true,
+    });
+    setAddSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("নতুন সেকশন যোগ হয়েছে");
+    setAddOpen(false);
+    setAddKey("");
+    setAddTitle("");
+    setAddContent("");
+    setAddIcon("");
+    invalidate();
   };
 
-  const getSectionLabel = (key: string) => {
-    for (const [prefix, label] of Object.entries(sectionKeyLabels)) {
-      if (key === prefix || key.startsWith(prefix)) return label;
-    }
-    return key;
-  };
+  // Existing keys
+  const existingKeys = new Set(sections?.map((s: any) => s.section_key) || []);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FileText className="h-5 w-5 text-amber-400" />
-          <h2 className="text-lg font-semibold text-foreground">ল্যান্ডিং পেজ কন্টেন্ট</h2>
+          <h2 className="text-lg font-bold text-foreground">ল্যান্ডিং পেজ কন্টেন্ট</h2>
         </div>
-        <Button onClick={openCreate} size="sm" className="gap-1">
-          <Plus className="h-4 w-4" /> নতুন সেকশন
+        <Button size="sm" onClick={() => setAddOpen(!addOpen)} className="gap-1.5">
+          <Plus className="h-4 w-4" /> সেকশন যোগ
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-card animate-pulse rounded-lg" />)}
-        </div>
-      ) : !sections?.length ? (
-        <p className="text-muted-foreground text-center py-8">কোনো কন্টেন্ট নেই</p>
-      ) : (
-        <div className="space-y-2">
-          {sections.map((s: any) => (
-            <div key={s.id} className="bg-card border border-border/30 rounded-lg p-4 flex items-center gap-3">
-              <GripVertical className="h-4 w-4 text-muted-foreground/30 flex-shrink-0" />
-              <span className="text-2xl flex-shrink-0">{s.icon || "📄"}</span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground text-sm truncate">{s.title || s.section_key}</span>
-                  <span className="text-xs bg-secondary px-2 py-0.5 rounded text-muted-foreground">{getSectionLabel(s.section_key)}</span>
-                  {!s.is_active && <span className="text-xs bg-destructive/20 text-destructive px-2 py-0.5 rounded">নিষ্ক্রিয়</span>}
-                </div>
-                <p className="text-xs text-muted-foreground truncate mt-0.5">{s.content}</p>
-              </div>
-              <div className="flex gap-1 flex-shrink-0">
-                <Button variant="ghost" size="sm" onClick={() => openEdit(s)}>
-                  <Pencil className="h-3 w-3" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleDelete(s.id)}>
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
+      <p className="text-xs text-muted-foreground bg-muted/50 border border-border/30 rounded-lg px-3 py-2">
+        প্রতিটি সেকশনের পাশের ✏️ বাটনে ক্লিক করে শিরোনাম, বিবরণ ও আইকন সরাসরি পরিবর্তন করুন। 👁️ দিয়ে দেখান/লুকান।
+      </p>
+
+      {/* Add New Section Panel */}
+      {addOpen && (
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
+          <h4 className="font-semibold text-foreground text-sm">নতুন সেকশন যোগ করুন</h4>
+          <div>
+            <Label className="text-xs">সেকশন টাইপ বাছুন</Label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+              {ADD_OPTIONS.filter(o => !existingKeys.has(o.key)).map(opt => (
+                <button
+                  key={opt.key}
+                  onClick={() => {
+                    setAddKey(opt.key);
+                    const info = getSectionInfo(opt.key);
+                    setAddIcon(info.icon);
+                  }}
+                  className={`text-left p-2.5 rounded-lg border text-xs font-medium transition-all ${
+                    addKey === opt.key
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border/30 bg-card text-foreground hover:border-border"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
-          ))}
+            {ADD_OPTIONS.filter(o => !existingKeys.has(o.key)).length === 0 && (
+              <p className="text-xs text-muted-foreground mt-2">সব সেকশন টাইপ ইতিমধ্যে যোগ করা আছে</p>
+            )}
+          </div>
+          {addKey && (
+            <>
+              <div>
+                <Label className="text-xs">শিরোনাম</Label>
+                <Input value={addTitle} onChange={e => setAddTitle(e.target.value)} placeholder="সেকশনের শিরোনাম" className="mt-1" />
+              </div>
+              <div>
+                <Label className="text-xs">বিবরণ</Label>
+                <Textarea value={addContent} onChange={e => setAddContent(e.target.value)} placeholder="বিবরণ লিখুন..." rows={2} className="mt-1" />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleAdd} disabled={addSaving} className="gap-1">
+                  <Check className="h-3 w-3" /> {addSaving ? "যোগ হচ্ছে..." : "যোগ করুন"}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setAddOpen(false); setAddKey(""); }}>বাতিল</Button>
+              </div>
+            </>
+          )}
         </div>
       )}
 
-      {/* Product Price & Discount Editor */}
-      <ProductPriceEditor />
-
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editing ? "সেকশন এডিট" : "নতুন সেকশন"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>সেকশন কী *</Label>
-              <Input value={form.section_key} onChange={(e) => setForm((f) => ({ ...f, section_key: e.target.value }))} placeholder="যেমন: hero, benefit_1, quality_1, cta" />
-              <p className="text-xs text-muted-foreground mt-1">hero = হিরো, benefit_X = উপকারিতা, quality_X = গুণাগুণ, cta = যোগাযোগ</p>
-            </div>
-            <div>
-              <Label>শিরোনাম</Label>
-              <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
-            </div>
-            <div>
-              <Label>বিবরণ</Label>
-              <Textarea value={form.content} onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))} rows={3} />
-            </div>
-            <div>
-              <Label>আইকন (ইমোজি)</Label>
-              <Input value={form.icon} onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))} placeholder="🌴" />
-            </div>
-            <div>
-              <Label>ছবির URL (ঐচ্ছিক)</Label>
-              <Input value={form.image_url} onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))} placeholder="https://..." />
-            </div>
-            <div>
-              <Label>সর্ট অর্ডার</Label>
-              <Input type="number" value={form.sort_order} onChange={(e) => setForm((f) => ({ ...f, sort_order: e.target.value }))} />
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.is_active} onCheckedChange={(v) => setForm((f) => ({ ...f, is_active: v }))} />
-              <Label>সক্রিয়</Label>
-            </div>
-            <Button onClick={handleSave} className="w-full">{editing ? "আপডেট করুন" : "যোগ করুন"}</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Section List */}
+      {isLoading ? (
+        <div className="space-y-2">
+          {[1, 2, 3].map(i => <div key={i} className="h-14 bg-card animate-pulse rounded-xl" />)}
+        </div>
+      ) : !sections?.length ? (
+        <p className="text-muted-foreground text-center py-8">কোনো কন্টেন্ট নেই — উপরের বাটন দিয়ে সেকশন যোগ করুন</p>
+      ) : (
+        <div className="space-y-2">
+          {sections.map((s: any) => (
+            <SectionCard key={s.id} section={s} onSaved={invalidate} onDelete={handleDelete} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
