@@ -153,11 +153,18 @@ const OrderManagement = () => {
     return match ? match[1] : null;
   };
 
+  // Helper: extract trx ID from order notes
+  const getTrxId = (notes: string | null) => {
+    if (!notes) return null;
+    const match = notes.match(/ট্রানজেকশন আইডি: (\S+)/);
+    return match ? match[1] : null;
+  };
+
   // Helper: get payment method label from notes
   const getPaymentLabel = (notes: string | null) => {
     if (!notes) return null;
-    if (notes.includes("বিকাশ লাস্ট")) return "বিকাশ";
-    if (notes.includes("নগদ লাস্ট")) return "নগদ";
+    if (notes.includes("বিকাশ লাস্ট") || notes.includes("বিকাশ") && notes.includes("ট্রানজেকশন")) return "বিকাশ";
+    if (notes.includes("নগদ লাস্ট") || notes.includes("নগদ") && notes.includes("ট্রানজেকশন")) return "নগদ";
     return null;
   };
 
@@ -167,10 +174,19 @@ const OrderManagement = () => {
     return pm === "bkash" || pm === "nagad";
   });
 
-  // Verify search: match last 4 digits of entered number
-  const verifyLast4 = verifySearch.replace(/\D/g, "").slice(-4);
-  const verifiedOrders = verifyLast4.length === 4
-    ? mobilePaymentOrders.filter((o: any) => getLast4(o.notes) === verifyLast4)
+  // Verify search: match by last 4 digits OR transaction ID
+  const verifyInput = verifySearch.trim();
+  const verifyLast4 = verifyInput.replace(/\D/g, "").slice(-4);
+  const verifiedOrders = verifyInput.length >= 4
+    ? mobilePaymentOrders.filter((o: any) => {
+        const last4 = getLast4(o.notes);
+        const trxId = getTrxId(o.notes);
+        // Match last 4 digits
+        if (verifyLast4.length === 4 && last4 === verifyLast4) return true;
+        // Match transaction ID (case-insensitive partial match)
+        if (trxId && trxId.toLowerCase().includes(verifyInput.toLowerCase())) return true;
+        return false;
+      })
     : [];
 
   // Filter orders
