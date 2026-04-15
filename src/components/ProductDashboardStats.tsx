@@ -154,6 +154,22 @@ const ProductDashboardStats = () => {
 
   return (
     <div className="space-y-6">
+      {/* Quick Settings */}
+      <div className="bg-card border border-border/30 rounded-2xl p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Truck className="h-5 w-5 text-emerald-400" />
+          <div>
+            <p className="font-semibold text-foreground text-sm">ফ্রি ডেলিভারি</p>
+            <p className="text-[11px] text-muted-foreground">চালু থাকলে ল্যান্ডিং পেজে ডেলিভারি সংক্রান্ত লেখা দেখাবে</p>
+          </div>
+        </div>
+        <Switch
+          checked={siteSettings?.free_delivery ?? true}
+          onCheckedChange={toggleFreeDelivery}
+          disabled={togglingDelivery || !siteSettings}
+        />
+      </div>
+
       {/* Daily Focus */}
       <div className="bg-gradient-to-r from-emerald-900/30 to-amber-900/20 border border-emerald-500/20 rounded-2xl p-4 md:p-5">
         <div className="flex items-center gap-2 mb-3">
