@@ -344,7 +344,33 @@ const LandingPageEditor = () => {
         />
       </div>
 
-      {/* Add New Section Panel */}
+      {/* Offer Countdown Timer Control */}
+      <div className="bg-card border border-border/30 rounded-xl p-3 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <span className="text-sm">⏰</span>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">অফার কাউন্টডাউন টাইমার</p>
+            <p className="text-[11px] text-muted-foreground">অফারের শেষ তারিখ ও সময় সেট করুন</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="text-xs">তারিখ</Label>
+            <Input type="date" value={offerDate} onChange={e => setOfferDate(e.target.value)} className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs">সময়</Label>
+            <Input type="time" value={offerTime} onChange={e => setOfferTime(e.target.value)} className="mt-1" />
+          </div>
+        </div>
+        <Button size="sm" onClick={saveOfferEndDate} disabled={savingOffer || !offerDate} className="w-full gap-1">
+          <Check className="h-3 w-3" /> {savingOffer ? "সেভ হচ্ছে..." : "কাউন্টডাউন আপডেট করুন"}
+        </Button>
+      </div>
+
+
       {addOpen && (
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
           <h4 className="font-semibold text-foreground text-sm">নতুন সেকশন যোগ করুন</h4>
