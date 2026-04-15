@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Package, Plus, Eye, Pencil, Trash2, Phone, MapPin, Calendar,
   Clock, Search, Filter, TrendingUp, ShoppingCart, CheckCircle2,
-  Truck, XCircle, Ban, CreditCard
+  Truck, XCircle, Ban, CreditCard, MessageCircle, PhoneCall
 } from "lucide-react";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
