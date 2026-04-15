@@ -746,59 +746,47 @@ const TalerGurLanding = () => {
                   </div>
                 </div>
 
-                {/* Cart Summary */}
+                {/* Kg Quantity Selector */}
                 <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4">
-                  <p className="text-gray-500 text-xs mb-2 text-center font-semibold">🛒 আপনার অর্ডার</p>
-                  {cartEntries.length === 0 ? (
-                    <p className="text-center text-gray-400 text-sm py-2">কোনো প্যাকেজ সিলেক্ট করা হয়নি</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {cartEntries.map(entry => (
-                        <div key={entry.kg} className="flex items-center justify-between bg-white rounded-xl px-3 py-2 border border-[#bbf7d0]">
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-gray-800">{entry.weight}</p>
-                            <p className="text-[10px] text-gray-400">{entry.label}{entry.discount > 0 ? ` (${toBn(entry.discount)}% ছাড়)` : ""}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setCart(prev => {
-                                const newQty = (prev[entry.kg] || 1) - 1;
-                                if (newQty <= 0) { const { [entry.kg]: _, ...rest } = prev; return rest; }
-                                return { ...prev, [entry.kg]: newQty };
-                              })}
-                              className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 hover:border-red-300 hover:text-red-500 transition-all"
-                            >−</button>
-                            <span className="text-sm font-bold text-gray-900 w-5 text-center">{toBn(entry.qty)}</span>
-                            <button
-                              onClick={() => setCart(prev => ({ ...prev, [entry.kg]: Math.min(10, (prev[entry.kg] || 0) + 1) }))}
-                              className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
-                            >+</button>
-                          </div>
-                          <p className="text-sm font-bold text-[#1a7a2e] ml-3 w-16 text-right">৳{toBn(entry.lineTotal)}</p>
-                        </div>
-                      ))}
+                  <p className="text-gray-500 text-xs mb-3 text-center font-semibold">🛒 পরিমাণ</p>
+                  
+                  {/* Kg selector */}
+                  <div className="flex items-center justify-center gap-4 mb-3">
+                    <button
+                      onClick={() => setOrderKg(prev => Math.max(0.5, +(prev - 0.5).toFixed(1)))}
+                      className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-500 hover:border-red-300 hover:text-red-500 transition-all bg-white"
+                    >−</button>
+                    <div className="text-center min-w-[80px]">
+                      <span className="text-2xl font-extrabold text-gray-900">{toBn(orderKg)}</span>
+                      <p className="text-xs text-gray-500 font-medium">কেজি</p>
+                    </div>
+                    <button
+                      onClick={() => setOrderKg(prev => Math.min(10, +(prev + 0.5).toFixed(1)))}
+                      className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-500 hover:border-[#22a83a] hover:text-[#22a83a] transition-all bg-white"
+                    >+</button>
+                  </div>
 
-                      {/* Add more packages */}
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {weightPackages.filter(pkg => !cart[pkg.kg]).map(pkg => (
-                          <button
-                            key={pkg.kg}
-                            onClick={() => setCart(prev => ({ ...prev, [pkg.kg]: 1 }))}
-                            className="text-[10px] bg-[#1a7a2e]/10 text-[#1a7a2e] font-semibold px-2.5 py-1 rounded-full hover:bg-[#1a7a2e]/20 transition-all"
-                          >
-                            + {pkg.weight}
-                          </button>
-                        ))}
-                      </div>
+                  {/* Discount badge */}
+                  {orderDiscount > 0 && (
+                    <div className="text-center mb-3">
+                      <span className="inline-block bg-[#c0392b] text-white text-xs font-bold px-3 py-1 rounded-full">
+                        🔥 {toBn(orderDiscount)}% ডিসকাউন্ট!
+                      </span>
                     </div>
                   )}
 
-                  {/* Totals */}
-                  {cartEntries.length > 0 && (
+                  {/* Price breakdown */}
+                  {orderKg > 0 && (
                     <div className="mt-3 pt-3 border-t border-[#bbf7d0] space-y-1">
+                      {orderDiscount > 0 && (
+                        <div className="flex justify-between text-xs text-gray-400">
+                          <span>মূল্য ({toBn(orderKg)} কেজি)</span>
+                          <span className="line-through">৳{toBn(beforeDiscount)}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-xs text-gray-500">
-                        <span>সাবটোটাল ({toBn(cartTotalKg)} কেজি)</span>
-                        <span>৳{toBn(cartSubTotal)}</span>
+                        <span>সাবটোটাল ({toBn(orderKg)} কেজি){orderDiscount > 0 ? ` — ${toBn(orderDiscount)}% ছাড়` : ""}</span>
+                        <span>৳{toBn(orderSubTotal)}</span>
                       </div>
                       {!freeDelivery && deliveryCharge > 0 && (
                         <div className="flex justify-between text-xs text-gray-500">
@@ -814,10 +802,27 @@ const TalerGurLanding = () => {
                       )}
                       <div className="flex justify-between text-sm font-bold text-gray-900 pt-1">
                         <span>মোট</span>
-                        <span className="text-[#1a7a2e] text-lg">৳{toBn(cartGrandTotal)}</span>
+                        <span className="text-[#1a7a2e] text-lg">৳{toBn(orderGrandTotal)}</span>
                       </div>
                     </div>
                   )}
+
+                  {/* Quick weight buttons */}
+                  <div className="flex flex-wrap justify-center gap-1.5 mt-3">
+                    {weightPackages.map(pkg => (
+                      <button
+                        key={pkg.kg}
+                        onClick={() => setOrderKg(pkg.kg)}
+                        className={`text-[10px] font-semibold px-2.5 py-1 rounded-full transition-all ${
+                          orderKg === pkg.kg
+                            ? "bg-[#1a7a2e] text-white"
+                            : "bg-[#1a7a2e]/10 text-[#1a7a2e] hover:bg-[#1a7a2e]/20"
+                        }`}
+                      >
+                        {pkg.weight}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="p-5 space-y-5">
