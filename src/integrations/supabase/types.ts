@@ -2123,6 +2123,7 @@ export type Database = {
           facebook_pages: Json | null
           facebook_url: string | null
           favicon_url: string | null
+          free_delivery: boolean
           id: string
           instagram_url: string | null
           logo_url: string | null
@@ -2142,6 +2143,7 @@ export type Database = {
           facebook_pages?: Json | null
           facebook_url?: string | null
           favicon_url?: string | null
+          free_delivery?: boolean
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
@@ -2161,6 +2163,7 @@ export type Database = {
           facebook_pages?: Json | null
           facebook_url?: string | null
           favicon_url?: string | null
+          free_delivery?: boolean
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
