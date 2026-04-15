@@ -290,6 +290,68 @@ const OrderManagement = () => {
         </div>
       </div>
 
+      {/* Payment Verify Section */}
+      {activeTab === "payment_verify" && (
+        <div className="bg-card border border-border/50 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-primary" />
+            <div>
+              <h3 className="font-bold text-foreground text-sm">পেমেন্ট ভেরিফাই</h3>
+              <p className="text-[11px] text-muted-foreground">ফুল ট্রানজেকশন নম্বর দিয়ে অর্ডার খুঁজুন</p>
+            </div>
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="ফুল নম্বর দিন (লাস্ট ৪ ডিজিট ম্যাচ হবে)..."
+              value={verifySearch}
+              onChange={e => setVerifySearch(e.target.value)}
+              className="pl-9 text-lg tracking-wider"
+            />
+          </div>
+          {verifyLast4.length === 4 && (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                🔍 লাস্ট ৪ ডিজিট: <span className="font-bold text-primary text-sm">{verifyLast4}</span>
+                {verifiedOrders.length > 0
+                  ? <span className="text-green-600 ml-2">✅ {toBn(verifiedOrders.length)}টি অর্ডার পাওয়া গেছে</span>
+                  : <span className="text-red-500 ml-2">❌ কোনো ম্যাচ নেই</span>
+                }
+              </p>
+              {verifiedOrders.map((o: any) => (
+                <div key={o.id} className="bg-green-500/5 border border-green-500/20 rounded-xl p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">#{toBn(o.order_number)}</span>
+                    <Badge variant="outline" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20">
+                      ✅ ম্যাচ
+                    </Badge>
+                  </div>
+                  <h4 className="font-bold text-foreground text-sm">{o.customer_name}</h4>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+                    <span><Phone className="h-3 w-3 inline mr-0.5" />{o.customer_phone}</span>
+                    <span className="font-bold text-primary">৳{toBn(Number(o.total_amount))}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Button size="sm" variant="outline" className="text-xs h-7 gap-1 text-green-600 border-green-500/30"
+                      onClick={() => {
+                        quickStatusUpdate(o.id, "confirmed");
+                        supabase.from("orders").update({ payment_status: "paid" } as any).eq("id", o.id).then(() => {
+                          queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+                        });
+                      }}>
+                      <CheckCircle2 className="h-3 w-3" /> ভেরিফাই ও কনফার্ম
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => setViewDialog(o)}>
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Orders List */}
       {isLoading ? (
         <div className="space-y-3">
