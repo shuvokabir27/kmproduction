@@ -97,13 +97,26 @@ const TalerGurLanding = () => {
   const baseDeliveryCharge = siteSettings?.delivery_charge ?? 130;
   const extraPerKg = siteSettings?.delivery_charge_per_extra_kg ?? 50;
 
-  // Calculate delivery charge based on selected package weight
-  const calcDeliveryCharge = (kg: number) => {
+  // Calculate delivery charge based on total weight
+  const calcDeliveryCharge = (totalKg: number) => {
     if (freeDelivery) return 0;
-    if (kg <= 1) return baseDeliveryCharge;
-    return Math.round(baseDeliveryCharge + extraPerKg * (kg - 1));
+    if (totalKg <= 1) return baseDeliveryCharge;
+    return Math.round(baseDeliveryCharge + extraPerKg * (totalKg - 1));
   };
-  const deliveryCharge = calcDeliveryCharge(selectedPackage);
+
+  // Cart helpers
+  const cartEntries = Object.entries(cart).filter(([_, qty]) => qty > 0).map(([kg, qty]) => {
+    const kgNum = Number(kg);
+    const pkg = weightPackages.find(p => p.kg === kgNum) || weightPackages[1];
+    const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+    const beforeDiscount = Math.round(basePrice * kgNum);
+    const unitPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
+    return { ...pkg, qty, unitPrice, lineTotal: unitPrice * qty };
+  });
+  const cartTotalKg = cartEntries.reduce((s, e) => s + e.kg * e.qty, 0);
+  const cartSubTotal = cartEntries.reduce((s, e) => s + e.lineTotal, 0);
+  const deliveryCharge = calcDeliveryCharge(cartTotalKg);
+  const cartGrandTotal = cartSubTotal + deliveryCharge;
 
   const hero = sections?.find((s: any) => s.section_key === "hero");
   const benefits = sections?.filter((s: any) => s.section_key.startsWith("benefit_")) ?? [];
