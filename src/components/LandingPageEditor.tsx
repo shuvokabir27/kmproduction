@@ -220,7 +220,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg").limit(1).single();
       return data;
     },
   });
