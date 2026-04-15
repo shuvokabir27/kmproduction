@@ -87,12 +87,13 @@ const TalerGurLanding = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["landing-site-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("free_delivery").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge").limit(1).single();
       return data;
     },
   });
 
   const freeDelivery = siteSettings?.free_delivery ?? true;
+  const deliveryCharge = freeDelivery ? 0 : (siteSettings?.delivery_charge ?? 0);
 
   const hero = sections?.find((s: any) => s.section_key === "hero");
   const benefits = sections?.filter((s: any) => s.section_key.startsWith("benefit_")) ?? [];
