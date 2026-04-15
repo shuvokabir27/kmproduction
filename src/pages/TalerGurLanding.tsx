@@ -270,6 +270,50 @@ const TalerGurLanding = () => {
               ))}
             </div>
 
+            {/* Weight Package Cards */}
+            <div className="grid grid-cols-2 gap-3 mb-10">
+              {weightPackages.map((pkg) => {
+                const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+                const originalPrice = products?.[0]?.price || 0;
+                const pkgPrice = Math.round(basePrice * pkg.kg);
+                const pkgOriginal = Math.round(originalPrice * pkg.kg);
+                const isSelected = selectedPackage === pkg.kg;
+                return (
+                  <button
+                    key={pkg.kg}
+                    onClick={() => {
+                      setSelectedPackage(pkg.kg);
+                      openOrderDialog();
+                    }}
+                    className={`relative rounded-2xl p-4 text-center transition-all border-2 ${
+                      isSelected
+                        ? "border-[#1a7a2e] bg-[#1a7a2e]/5 shadow-lg scale-[1.02]"
+                        : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
+                    }`}
+                  >
+                    {pkg.kg === 2 && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        🔥 বেস্ট ভ্যালু
+                      </span>
+                    )}
+                    <p className="text-2xl font-extrabold text-[#1a7a2e] mb-1">{pkg.weight}</p>
+                    <p className="text-xs text-[#888] mb-2">{pkg.label}</p>
+                    {pkgOriginal > pkgPrice ? (
+                      <div>
+                        <span className="text-xs line-through text-[#999]">৳{toBn(pkgOriginal)}</span>
+                        <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkgPrice)}</p>
+                      </div>
+                    ) : (
+                      <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(pkgPrice)}</p>
+                    )}
+                    <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">
+                      {isSelected ? "✅ সিলেক্টেড" : "অর্ডার করুন →"}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Product Price Cards */}
             <div className="space-y-6">
               {products.map((p: any) => {
