@@ -10,22 +10,36 @@ import { toast } from "sonner";
 
 const TalerGurLanding = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [offerExpired, setOfferExpired] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
   const [phoneError, setPhoneError] = useState("");
 
 
+  // Fetch offer end date from site_settings
+  const { data: offerSettings } = useQuery({
+    queryKey: ["offer-end-date"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("offer_end_date").limit(1).single();
+      return data;
+    },
+  });
+
   useEffect(() => {
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 7);
-    targetDate.setHours(23, 59, 59, 0);
+    if (!offerSettings?.offer_end_date) return;
+    const targetDate = new Date(offerSettings.offer_end_date);
     const tick = () => {
       const now = new Date().getTime();
       const diff = targetDate.getTime() - now;
-      if (diff <= 0) return;
+      if (diff <= 0) {
+        setOfferExpired(true);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+      setOfferExpired(false);
       setTimeLeft({
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
@@ -36,7 +50,7 @@ const TalerGurLanding = () => {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [offerSettings?.offer_end_date]);
 
   const { data: sections, isLoading } = useQuery({
     queryKey: ["landing-sections"],
