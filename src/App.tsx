@@ -64,7 +64,7 @@ const App = () => (
             <Route path="/member/:memberId" element={<PublicProfile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
-            <Route path="/products" element={<Products />} />
+            <Route path="/products" element={<TalerGurLanding />} />
             <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />
