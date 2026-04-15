@@ -21,6 +21,7 @@ import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
 import CustomerCRM from "@/components/CustomerCRM";
+import WeightPricingEditor from "@/components/WeightPricingEditor";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
