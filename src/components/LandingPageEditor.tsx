@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -220,7 +220,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date").limit(1).single();
       return data;
     },
   });
@@ -235,6 +235,31 @@ const LandingPageEditor = () => {
     toast.success(newVal ? "ফ্রি ডেলিভারি চালু" : "ফ্রি ডেলিভারি বন্ধ");
     queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
     queryClient.invalidateQueries({ queryKey: ["site-settings-delivery"] });
+  };
+
+  const [offerDate, setOfferDate] = useState("");
+  const [offerTime, setOfferTime] = useState("");
+  const [savingOffer, setSavingOffer] = useState(false);
+
+  // Sync offer date/time from settings
+  useEffect(() => {
+    if (siteSettings?.offer_end_date) {
+      const d = new Date(siteSettings.offer_end_date);
+      setOfferDate(d.toISOString().split("T")[0]);
+      setOfferTime(d.toTimeString().slice(0, 5));
+    }
+  }, [siteSettings?.offer_end_date]);
+
+  const saveOfferEndDate = async () => {
+    if (!siteSettings || !offerDate) return;
+    setSavingOffer(true);
+    const datetime = new Date(`${offerDate}T${offerTime || "23:59"}:00`);
+    const { error } = await supabase.from("site_settings").update({ offer_end_date: datetime.toISOString() }).eq("id", siteSettings.id);
+    setSavingOffer(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("অফারের শেষ তারিখ আপডেট হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+    queryClient.invalidateQueries({ queryKey: ["offer-end-date"] });
   };
 
   const { data: sections, isLoading } = useQuery({
@@ -319,7 +344,33 @@ const LandingPageEditor = () => {
         />
       </div>
 
-      {/* Add New Section Panel */}
+      {/* Offer Countdown Timer Control */}
+      <div className="bg-card border border-border/30 rounded-xl p-3 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <span className="text-sm">⏰</span>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">অফার কাউন্টডাউন টাইমার</p>
+            <p className="text-[11px] text-muted-foreground">অফারের শেষ তারিখ ও সময় সেট করুন</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="text-xs">তারিখ</Label>
+            <Input type="date" value={offerDate} onChange={e => setOfferDate(e.target.value)} className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs">সময়</Label>
+            <Input type="time" value={offerTime} onChange={e => setOfferTime(e.target.value)} className="mt-1" />
+          </div>
+        </div>
+        <Button size="sm" onClick={saveOfferEndDate} disabled={savingOffer || !offerDate} className="w-full gap-1">
+          <Check className="h-3 w-3" /> {savingOffer ? "সেভ হচ্ছে..." : "কাউন্টডাউন আপডেট করুন"}
+        </Button>
+      </div>
+
+
       {addOpen && (
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
           <h4 className="font-semibold text-foreground text-sm">নতুন সেকশন যোগ করুন</h4>

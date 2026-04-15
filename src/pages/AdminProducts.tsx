@@ -15,11 +15,12 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
-  LayoutDashboard, Package, FileText, BarChart3, Weight
+  LayoutDashboard, Package, FileText, BarChart3, Weight, Users
 } from "lucide-react";
 import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
+import CustomerCRM from "@/components/CustomerCRM";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
@@ -168,7 +169,7 @@ const AdminProducts = () => {
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-5 h-11 bg-muted/50 rounded-xl">
+        <TabsList className="w-full grid grid-cols-6 h-11 bg-muted/50 rounded-xl">
           <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <LayoutDashboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ড্যাশবোর্ড</span>
@@ -180,6 +181,10 @@ const AdminProducts = () => {
           <TabsTrigger value="orders" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <ShoppingBag className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">অর্ডার</span>
+          </TabsTrigger>
+          <TabsTrigger value="customers" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <Users className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">কাস্টমার</span>
           </TabsTrigger>
           <TabsTrigger value="landing" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <FileText className="h-3.5 w-3.5" />
@@ -302,6 +307,11 @@ const AdminProducts = () => {
         {/* Orders Tab */}
         <TabsContent value="orders" className="mt-4">
           <OrderManagement />
+        </TabsContent>
+
+        {/* Customers Tab */}
+        <TabsContent value="customers" className="mt-4">
+          <CustomerCRM />
         </TabsContent>
 
         {/* Landing Page Tab */}

@@ -2127,6 +2127,7 @@ export type Database = {
           id: string
           instagram_url: string | null
           logo_url: string | null
+          offer_end_date: string | null
           site_description: string | null
           site_name: string | null
           ticker_enabled: boolean | null
@@ -2147,6 +2148,7 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
+          offer_end_date?: string | null
           site_description?: string | null
           site_name?: string | null
           ticker_enabled?: boolean | null
@@ -2167,6 +2169,7 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
+          offer_end_date?: string | null
           site_description?: string | null
           site_name?: string | null
           ticker_enabled?: boolean | null

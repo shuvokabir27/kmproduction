@@ -10,22 +10,36 @@ import { toast } from "sonner";
 
 const TalerGurLanding = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [offerExpired, setOfferExpired] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
   const [phoneError, setPhoneError] = useState("");
 
 
+  // Fetch offer end date from site_settings
+  const { data: offerSettings } = useQuery({
+    queryKey: ["offer-end-date"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("offer_end_date").limit(1).single();
+      return data;
+    },
+  });
+
   useEffect(() => {
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 7);
-    targetDate.setHours(23, 59, 59, 0);
+    if (!offerSettings?.offer_end_date) return;
+    const targetDate = new Date(offerSettings.offer_end_date);
     const tick = () => {
       const now = new Date().getTime();
       const diff = targetDate.getTime() - now;
-      if (diff <= 0) return;
+      if (diff <= 0) {
+        setOfferExpired(true);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+      setOfferExpired(false);
       setTimeLeft({
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
@@ -36,7 +50,7 @@ const TalerGurLanding = () => {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [offerSettings?.offer_end_date]);
 
   const { data: sections, isLoading } = useQuery({
     queryKey: ["landing-sections"],
@@ -98,18 +112,20 @@ const TalerGurLanding = () => {
     try {
       const productName = products?.[0]?.name || "প্রডাক্ট";
       const unitPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+      const qty = orderForm.quantity || 1;
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
         product_name: productName,
-        quantity: 1,
+        quantity: qty,
         unit_price: unitPrice,
-        total_amount: unitPrice,
+        total_amount: unitPrice * qty,
+        payment_method: orderForm.payment_method,
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "" });
+      setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
@@ -134,7 +150,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "" });
+    setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
   };
 
   const openOrderDialog = () => {
@@ -714,6 +730,51 @@ const TalerGurLanding = () => {
                       className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all resize-none"
                     />
                   </div>
+
+                  {/* Quantity Selector */}
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পরিমাণ</Label>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.max(1, f.quantity - 1) }))}
+                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
+                      >−</button>
+                      <span className="text-xl font-bold text-gray-900 w-8 text-center">{toBn(orderForm.quantity)}</span>
+                      <button
+                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.min(10, f.quantity + 1) }))}
+                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
+                      >+</button>
+                      {products && products[0] && (
+                        <span className="text-sm text-gray-500 ml-2">
+                          = ৳{toBn((products[0].discount_price || products[0].price || 0) * orderForm.quantity)} টাকা
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Payment Method */}
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পেমেন্ট পদ্ধতি</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { val: "cod", label: "🚚 ক্যাশ অন ডেলিভারি" },
+                        { val: "bkash", label: "📱 বিকাশ/নগদ" },
+                      ].map(pm => (
+                        <button
+                          key={pm.val}
+                          onClick={() => setOrderForm(f => ({ ...f, payment_method: pm.val }))}
+                          className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                            orderForm.payment_method === pm.val
+                              ? "border-[#22a83a] bg-green-50 text-[#1a7a2e]"
+                              : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          }`}
+                        >
+                          {pm.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <Button
                     onClick={handleOrderSubmit}
                     disabled={submitting}
