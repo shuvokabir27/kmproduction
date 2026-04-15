@@ -617,6 +617,26 @@ const OrderManagement = () => {
                     </Button>
                   </div>
                 )}
+                {order.status === "returned" && (
+                  <div className="flex gap-2 mt-3 pt-2 border-t border-rose-200/50 bg-rose-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
+                    <div className="w-full">
+                      <p className="text-[10px] text-rose-600 mb-2">রিটার্ন মূল্য: ৳{toBn(Number(order.return_amount || order.total_amount || 0))}</p>
+                      <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10"
+                        onClick={() => {
+                          supabase.from("orders").update({
+                            status: "pending",
+                            returned_at: null,
+                            return_amount: 0,
+                          } as any).eq("id", order.id).then(() => {
+                            queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+                            toast.success("অর্ডার পেন্ডিংয়ে ফেরানো হয়েছে");
+                          });
+                        }}>
+                        <Clock className="h-3 w-3" /> পেন্ডিংয়ে ফেরাও
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 {order.status === "abandoned" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-orange-200/50 bg-orange-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
