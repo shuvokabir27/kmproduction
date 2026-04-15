@@ -307,16 +307,16 @@ const TalerGurLanding = () => {
                 const beforeDiscount = Math.round(basePrice * pkg.kg);
                 const pkgPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
                 const pkgOriginal = Math.round(originalPrice * pkg.kg);
-                const isSelected = selectedPackage === pkg.kg;
+                const inCart = (cart[pkg.kg] || 0) > 0;
                 return (
                   <button
                     key={pkg.kg}
                     onClick={() => {
-                      setSelectedPackage(pkg.kg);
+                      setCart(prev => ({ ...prev, [pkg.kg]: (prev[pkg.kg] || 0) + 1 }));
                       openOrderDialog();
                     }}
                     className={`relative rounded-2xl p-4 text-center transition-all border-2 ${
-                      isSelected
+                      inCart
                         ? "border-[#1a7a2e] bg-[#1a7a2e]/5 shadow-lg scale-[1.02]"
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
@@ -336,9 +336,11 @@ const TalerGurLanding = () => {
                     ) : (
                       <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(pkgPrice)}</p>
                     )}
-                    <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">
-                      {isSelected ? "✅ সিলেক্টেড" : "অর্ডার করুন →"}
-                    </p>
+                    {inCart ? (
+                      <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">✅ কার্টে আছে ({toBn(cart[pkg.kg])}টি)</p>
+                    ) : (
+                      <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">অর্ডার করুন →</p>
+                    )}
                   </button>
                 );
               })}
