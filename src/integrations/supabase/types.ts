@@ -2117,6 +2117,8 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          bkash_enabled: boolean
+          bkash_payment_no: string | null
           contact_address: string | null
           contact_email: string | null
           contact_phone: string | null
@@ -2130,6 +2132,8 @@ export type Database = {
           id: string
           instagram_url: string | null
           logo_url: string | null
+          nagad_enabled: boolean
+          nagad_payment_no: string | null
           offer_end_date: string | null
           site_description: string | null
           site_name: string | null
@@ -2141,6 +2145,8 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          bkash_enabled?: boolean
+          bkash_payment_no?: string | null
           contact_address?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -2154,6 +2160,8 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
+          nagad_enabled?: boolean
+          nagad_payment_no?: string | null
           offer_end_date?: string | null
           site_description?: string | null
           site_name?: string | null
@@ -2165,6 +2173,8 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          bkash_enabled?: boolean
+          bkash_payment_no?: string | null
           contact_address?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -2178,6 +2188,8 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
+          nagad_enabled?: boolean
+          nagad_payment_no?: string | null
           offer_end_date?: string | null
           site_description?: string | null
           site_name?: string | null

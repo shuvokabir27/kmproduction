@@ -220,7 +220,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg, bkash_enabled, bkash_payment_no, nagad_enabled, nagad_payment_no").limit(1).single();
       return data;
     },
   });
@@ -429,6 +429,78 @@ const LandingPageEditor = () => {
           <p className="text-[10px] text-muted-foreground bg-muted/50 rounded-lg px-2.5 py-1.5">
             💡 উদাহরণ: ১ কেজি = ৳{siteSettings.delivery_charge ?? 130}, ১.৫ কেজি = ৳{Math.round((siteSettings.delivery_charge ?? 130) + (siteSettings.delivery_charge_per_extra_kg ?? 50) * 0.5)}, ২ কেজি = ৳{Math.round((siteSettings.delivery_charge ?? 130) + (siteSettings.delivery_charge_per_extra_kg ?? 50) * 1)}, {(siteSettings as any).free_delivery_min_kg ?? 5}+ কেজি = ফ্রি 🚚
           </p>
+        </div>
+      )}
+
+      {/* Payment Methods Control */}
+      {siteSettings && (
+        <div className="bg-card border border-border/30 rounded-xl p-3 space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center">
+              <span className="text-sm">💳</span>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground text-sm">পেমেন্ট অপশন</p>
+              <p className="text-[11px] text-muted-foreground">বিকাশ ও নগদ পেমেন্ট চালু/বন্ধ করুন</p>
+            </div>
+          </div>
+
+          <div className="bg-muted/30 rounded-lg p-3 space-y-3">
+            {/* bKash */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-base">📱</span>
+                <p className="text-xs font-semibold text-foreground">বিকাশ</p>
+              </div>
+              <Switch
+                checked={(siteSettings as any).bkash_enabled ?? false}
+                onCheckedChange={async (val) => {
+                  await supabase.from("site_settings").update({ bkash_enabled: val } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+              />
+            </div>
+            {(siteSettings as any).bkash_enabled && (
+              <Input
+                placeholder="বিকাশ নম্বর (যেমন: 01XXXXXXXXX)"
+                value={(siteSettings as any).bkash_payment_no ?? ""}
+                onChange={async (e) => {
+                  await supabase.from("site_settings").update({ bkash_payment_no: e.target.value } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+                className="h-8 text-sm"
+              />
+            )}
+
+            <div className="border-t border-border/30 pt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-base">📲</span>
+                <p className="text-xs font-semibold text-foreground">নগদ</p>
+              </div>
+              <Switch
+                checked={(siteSettings as any).nagad_enabled ?? false}
+                onCheckedChange={async (val) => {
+                  await supabase.from("site_settings").update({ nagad_enabled: val } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+              />
+            </div>
+            {(siteSettings as any).nagad_enabled && (
+              <Input
+                placeholder="নগদ নম্বর (যেমন: 01XXXXXXXXX)"
+                value={(siteSettings as any).nagad_payment_no ?? ""}
+                onChange={async (e) => {
+                  await supabase.from("site_settings").update({ nagad_payment_no: e.target.value } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+                className="h-8 text-sm"
+              />
+            )}
+          </div>
         </div>
       )}
 

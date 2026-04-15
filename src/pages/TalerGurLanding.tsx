@@ -95,7 +95,7 @@ const TalerGurLanding = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["landing-site-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg, bkash_enabled, bkash_payment_no, nagad_enabled, nagad_payment_no").limit(1).single();
       return data;
     },
   });
@@ -836,24 +836,48 @@ const TalerGurLanding = () => {
                   </div>
 
                   {/* Payment - inline */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
+                  {(() => {
+                    const bkashOn = (siteSettings as any)?.bkash_enabled;
+                    const nagadOn = (siteSettings as any)?.nagad_enabled;
+                    const paymentOptions = [
                       { val: "cod", label: "🚚 ক্যাশ অন ডেলিভারি" },
-                      { val: "bkash", label: "📱 বিকাশ/নগদ" },
-                    ].map(pm => (
-                      <button
-                        key={pm.val}
-                        onClick={() => setOrderForm(f => ({ ...f, payment_method: pm.val }))}
-                        className={`py-2 px-2 rounded-xl border text-xs font-medium transition-all ${
-                          orderForm.payment_method === pm.val
-                            ? "border-[#22a83a] bg-green-50 text-[#1a7a2e]"
-                            : "border-gray-200 text-gray-600"
-                        }`}
-                      >
-                        {pm.label}
-                      </button>
-                    ))}
-                  </div>
+                      ...(bkashOn ? [{ val: "bkash", label: "📱 বিকাশ" }] : []),
+                      ...(nagadOn ? [{ val: "nagad", label: "📲 নগদ" }] : []),
+                    ];
+                    const bkashNo = (siteSettings as any)?.bkash_payment_no;
+                    const nagadNo = (siteSettings as any)?.nagad_payment_no;
+                    return (
+                      <>
+                        <div className={`grid gap-2 ${paymentOptions.length >= 3 ? "grid-cols-3" : "grid-cols-2"}`}>
+                          {paymentOptions.map(pm => (
+                            <button
+                              key={pm.val}
+                              onClick={() => setOrderForm(f => ({ ...f, payment_method: pm.val }))}
+                              className={`py-2 px-2 rounded-xl border text-xs font-medium transition-all ${
+                                orderForm.payment_method === pm.val
+                                  ? "border-[#22a83a] bg-green-50 text-[#1a7a2e]"
+                                  : "border-gray-200 text-gray-600"
+                              }`}
+                            >
+                              {pm.label}
+                            </button>
+                          ))}
+                        </div>
+                        {orderForm.payment_method === "bkash" && bkashNo && (
+                          <div className="bg-pink-50 border border-pink-200 rounded-xl px-3 py-2 text-xs text-pink-800">
+                            <span className="font-bold">বিকাশ নম্বর:</span> {bkashNo}
+                            <p className="text-[10px] text-pink-600 mt-0.5">এই নম্বরে সেন্ড মানি করে অর্ডার কনফার্ম করুন</p>
+                          </div>
+                        )}
+                        {orderForm.payment_method === "nagad" && nagadNo && (
+                          <div className="bg-orange-50 border border-orange-200 rounded-xl px-3 py-2 text-xs text-orange-800">
+                            <span className="font-bold">নগদ নম্বর:</span> {nagadNo}
+                            <p className="text-[10px] text-orange-600 mt-0.5">এই নম্বরে সেন্ড মানি করে অর্ডার কনফার্ম করুন</p>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
 
                   <Button
                     onClick={handleOrderSubmit}
