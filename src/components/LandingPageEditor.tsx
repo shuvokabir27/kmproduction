@@ -52,8 +52,9 @@ const ADD_OPTIONS = [
 ];
 
 // Inline editable section card
-const SectionCard = ({ section, onSaved, onDelete }: {
+const SectionCard = ({ section, index, onSaved, onDelete }: {
   section: any;
+  index: number;
   onSaved: () => void;
   onDelete: (id: string) => void;
 }) => {
@@ -105,6 +106,10 @@ const SectionCard = ({ section, onSaved, onDelete }: {
     <div className={`bg-card border rounded-xl transition-all ${editing ? "border-primary/50 shadow-lg shadow-primary/5" : "border-border/30 hover:border-border/50"} ${!isActive ? "opacity-60" : ""}`}>
       {/* Header - always visible */}
       <div className="flex items-center gap-3 p-3 cursor-pointer" onClick={() => !editing && setExpanded(!expanded)}>
+        {/* Serial Number */}
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span className="text-sm font-bold text-primary">{toBn(index)}</span>
+        </div>
         <span className="text-xl flex-shrink-0">{section.icon || info.icon}</span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -334,8 +339,8 @@ const LandingPageEditor = () => {
         <p className="text-muted-foreground text-center py-8">কোনো কন্টেন্ট নেই — উপরের বাটন দিয়ে সেকশন যোগ করুন</p>
       ) : (
         <div className="space-y-2">
-          {sections.map((s: any) => (
-            <SectionCard key={s.id} section={s} onSaved={invalidate} onDelete={handleDelete} />
+          {sections.map((s: any, i: number) => (
+            <SectionCard key={s.id} section={s} index={i + 1} onSaved={invalidate} onDelete={handleDelete} />
           ))}
         </div>
       )}
