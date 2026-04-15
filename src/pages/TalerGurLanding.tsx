@@ -277,7 +277,8 @@ const TalerGurLanding = () => {
               {weightPackages.map((pkg) => {
                 const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
                 const originalPrice = products?.[0]?.price || 0;
-                const pkgPrice = Math.round(basePrice * pkg.kg);
+                const beforeDiscount = Math.round(basePrice * pkg.kg);
+                const pkgPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
                 const pkgOriginal = Math.round(originalPrice * pkg.kg);
                 const isSelected = selectedPackage === pkg.kg;
                 return (
@@ -293,16 +294,16 @@ const TalerGurLanding = () => {
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
                   >
-                    {pkg.kg === 2 && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        🔥 বেস্ট ভ্যালু
+                    {pkg.discount > 0 && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                        🔥 {toBn(pkg.discount)}% ছাড়
                       </span>
                     )}
                     <p className="text-2xl font-extrabold text-[#1a7a2e] mb-1">{pkg.weight}</p>
                     <p className="text-xs text-[#888] mb-2">{pkg.label}</p>
-                    {pkgOriginal > pkgPrice ? (
+                    {(pkgOriginal > pkgPrice || pkg.discount > 0) ? (
                       <div>
-                        <span className="text-xs line-through text-[#999]">৳{toBn(pkgOriginal)}</span>
+                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.discount > 0 ? beforeDiscount : pkgOriginal)}</span>
                         <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkgPrice)}</p>
                       </div>
                     ) : (
