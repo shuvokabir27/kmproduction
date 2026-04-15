@@ -140,31 +140,28 @@ const TalerGurLanding = () => {
     if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
-    if (cartEntries.length === 0) { toast.error("অন্তত একটি প্যাকেজ সিলেক্ট করুন"); return; }
+    if (orderKg <= 0) { toast.error("পরিমাণ নির্বাচন করুন"); return; }
     setSubmitting(true);
     try {
-      const itemNames = cartEntries.map(e => `${e.weight}×${e.qty}`).join(", ");
-      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${itemNames})`;
+      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${toBn(orderKg)} কেজি)`;
       const noteParts: string[] = [];
-      cartEntries.forEach(e => {
-        if (e.discount > 0) noteParts.push(`${e.weight}: ${e.discount}% ডিসকাউন্ট`);
-      });
-      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(cartTotalKg)} কেজি)`);
+      if (orderDiscount > 0) noteParts.push(`${orderDiscount}% ডিসকাউন্ট`);
+      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(orderKg)} কেজি)`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
         product_name: productName,
-        quantity: cartEntries.reduce((s, e) => s + e.qty, 0),
-        unit_price: cartSubTotal,
-        total_amount: cartGrandTotal,
+        quantity: orderKg,
+        unit_price: orderSubTotal,
+        total_amount: orderGrandTotal,
         notes: noteParts.length > 0 ? noteParts.join(" | ") : null,
         payment_method: orderForm.payment_method,
       });
       if (error) throw error;
       setOrderSuccess(true);
       setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
-      setCart({ 1: 1 });
+      setOrderKg(1);
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
