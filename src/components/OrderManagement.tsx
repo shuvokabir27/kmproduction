@@ -37,6 +37,7 @@ const OrderManagement = () => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
+  const [verifySearch, setVerifySearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewDialog, setViewDialog] = useState<any>(null);
   const [editing, setEditing] = useState<any>(null);
