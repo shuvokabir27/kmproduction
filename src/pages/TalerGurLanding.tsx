@@ -158,29 +158,12 @@ const TalerGurLanding = () => {
       {/* Header */}
       <header className="bg-white shadow-sm py-3 px-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          {contactNumber && (
-            <a href={`tel:${contactNumber}`} className="flex items-center gap-2 text-[#1a7a2e] font-semibold text-sm md:text-base">
-              <Phone className="h-4 w-4" /> {contactNumber}
-            </a>
-          )}
-          {contactNumber && (
-            <a href={`tel:${contactNumber}`}>
-              <Button size="sm" className="bg-[#c0392b] hover:bg-[#a93226] text-white rounded-full px-5 text-sm font-bold shadow">
-                অর্ডার করুন
-              </Button>
-            </a>
-          )}
+          <span className="text-[#1a7a2e] font-semibold text-sm md:text-base">কে এম প্রডাক্ট</span>
+          <Button onClick={openOrderDialog} size="sm" className="bg-[#c0392b] hover:bg-[#a93226] text-white rounded-full px-5 text-sm font-bold shadow">
+            অর্ডার করুন
+          </Button>
         </div>
       </header>
-
-      {/* Call Button Bar */}
-      {contactNumber && (
-        <div className="bg-white border-b py-2 text-center">
-          <a href={`tel:${contactNumber}`} className="inline-flex items-center gap-2 border border-[#ccc] rounded-full px-6 py-2 text-sm text-[#555] hover:bg-gray-50 transition">
-            <Phone className="h-4 w-4" /> কল করুন — {contactNumber}
-          </a>
-        </div>
-      )}
 
       {/* Hero Section */}
       {hero && (
