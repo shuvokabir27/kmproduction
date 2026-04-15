@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
   FileText, Pencil, Check, X, Plus, Trash2, ChevronDown, ChevronUp,
-  Eye, EyeOff, GripVertical, Sparkles, Star, Shield, HelpCircle, Phone
+  Eye, EyeOff, GripVertical, Sparkles, Star, Shield, HelpCircle, Phone, Truck
 } from "lucide-react";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
