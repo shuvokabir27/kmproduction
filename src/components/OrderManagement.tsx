@@ -451,6 +451,29 @@ const OrderManagement = () => {
                   </Button>
                 </a>
               </div>
+              <Button variant="outline" className="w-full gap-1" onClick={() => {
+                const inv = document.getElementById("invoice-print");
+                if (inv) {
+                  const w = window.open("", "_blank", "width=400,height=600");
+                  if (w) {
+                    w.document.write(`<html><head><title>ইনভয়েস #${viewDialog.order_number}</title><style>body{font-family:sans-serif;padding:20px;font-size:14px}h2{text-align:center;margin-bottom:4px}table{width:100%;border-collapse:collapse;margin:12px 0}td{padding:6px 4px;border-bottom:1px solid #eee}.right{text-align:right}.bold{font-weight:bold}.center{text-align:center}.footer{margin-top:20px;text-align:center;color:#888;font-size:12px}</style></head><body>`);
+                    w.document.write(`<h2>কে এম প্রডাক্ট</h2><p class="center" style="color:#888;font-size:12px">ইনভয়েস #${viewDialog.order_number}</p><hr/>`);
+                    w.document.write(`<table><tr><td class="bold">কাস্টমার</td><td class="right">${viewDialog.customer_name}</td></tr>`);
+                    w.document.write(`<tr><td class="bold">ফোন</td><td class="right">${viewDialog.customer_phone}</td></tr>`);
+                    if (viewDialog.customer_address) w.document.write(`<tr><td class="bold">ঠিকানা</td><td class="right">${viewDialog.customer_address}</td></tr>`);
+                    w.document.write(`<tr><td class="bold">প্রডাক্ট</td><td class="right">${viewDialog.product_name}</td></tr>`);
+                    w.document.write(`<tr><td class="bold">পরিমাণ</td><td class="right">${viewDialog.quantity} পিস</td></tr>`);
+                    w.document.write(`<tr><td class="bold">একক মূল্য</td><td class="right">৳${viewDialog.unit_price}</td></tr>`);
+                    w.document.write(`<tr style="border-top:2px solid #333"><td class="bold" style="font-size:16px">মোট</td><td class="right bold" style="font-size:16px">৳${viewDialog.total_amount}</td></tr></table>`);
+                    w.document.write(`<p class="footer">তারিখ: ${new Date(viewDialog.created_at).toLocaleDateString("bn-BD")}<br/>ধন্যবাদ!</p>`);
+                    w.document.write(`</body></html>`);
+                    w.document.close();
+                    w.print();
+                  }
+                }
+              }}>
+                🖨️ ইনভয়েস প্রিন্ট
+              </Button>
             </div>
           )}
         </DialogContent>
