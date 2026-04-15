@@ -125,10 +125,10 @@ const TalerGurLanding = () => {
                   <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">PREMIUM</span>
                   <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">১০০% অর্গানিক</span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-3xl mx-auto">
+                <div className="flex flex-col items-center gap-4 max-w-lg mx-auto">
                   {products.filter((p: any) => p.image_url).map((p: any) => (
-                    <div key={p.id} className="rounded-xl overflow-hidden border-2 border-white/20 shadow-lg">
-                      <img src={p.image_url} alt={p.name} className="w-full h-40 md:h-52 object-cover" />
+                    <div key={p.id} className="rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl w-full">
+                      <img src={p.image_url} alt={p.name} className="w-full h-56 sm:h-72 md:h-80 object-cover" />
                     </div>
                   ))}
                 </div>
