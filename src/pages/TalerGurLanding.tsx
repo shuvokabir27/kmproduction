@@ -20,19 +20,36 @@ const TalerGurLanding = () => {
   // Simple kg quantity selector
   const [orderKg, setOrderKg] = useState(1);
 
-  const weightPackages = [
-    { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", discount: 0 },
-    { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক", discount: 0 },
-    { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার", discount: 8 },
-    { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক", discount: 12 },
-  ];
+  // Fetch dynamic weight prices from DB
+  const { data: dbWeightPrices } = useQuery({
+    queryKey: ["landing-weight-prices"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("product_weight_prices" as any)
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
+    },
+  });
 
-  // Discount tiers based on total kg
-  const getDiscount = (kg: number) => {
-    if (kg >= 2) return 12;
-    if (kg > 1) return 8;
-    return 0;
-  };
+  const weightPackages = (dbWeightPrices && dbWeightPrices.length > 0)
+    ? dbWeightPrices.map((wp: any) => ({
+        weight: wp.weight_label,
+        kg: Number(wp.weight_kg),
+        label: wp.label || "",
+        price: Number(wp.price),
+        discount_price: wp.discount_price ? Number(wp.discount_price) : null,
+      }))
+    : [
+        { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", price: 375, discount_price: 245 },
+        { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক", price: 700, discount_price: 490 },
+        { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার", price: 1050, discount_price: 680 },
+        { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক", price: 1400, discount_price: 860 },
+      ];
+
+  // Find price for selected kg from weight packages
+  const getSelectedPkg = () => weightPackages.find((p: any) => p.kg === orderKg) || weightPackages[0];
 
   // Fetch offer end date from site_settings
   const { data: offerSettings } = useQuery({
@@ -114,11 +131,11 @@ const TalerGurLanding = () => {
   };
   const isFreeDeliveryActive = freeDelivery || (!freeDelivery && orderKg >= freeDeliveryMinKg);
 
-  // Order price calculation based on kg
-  const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-  const orderDiscount = getDiscount(orderKg);
-  const beforeDiscount = Math.round(basePrice * orderKg);
-  const orderSubTotal = orderDiscount > 0 ? Math.round(beforeDiscount * (1 - orderDiscount / 100)) : beforeDiscount;
+  // Order price calculation based on selected weight package
+  const selectedPkg = getSelectedPkg();
+  const beforeDiscount = selectedPkg.price;
+  const orderSubTotal = selectedPkg.discount_price || selectedPkg.price;
+  const orderDiscount = beforeDiscount > orderSubTotal ? Math.round(((beforeDiscount - orderSubTotal) / beforeDiscount) * 100) : 0;
   const deliveryCharge = calcDeliveryCharge(orderKg);
   const orderGrandTotal = orderSubTotal + deliveryCharge;
 
@@ -310,12 +327,10 @@ const TalerGurLanding = () => {
 
             {/* Weight Package Cards */}
             <div className="grid grid-cols-2 gap-3 mb-10">
-              {weightPackages.map((pkg) => {
-                const bPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-                const originalPrice = products?.[0]?.price || 0;
-                const bDiscount = Math.round(bPrice * pkg.kg);
-                const pkgPrice = pkg.discount > 0 ? Math.round(bDiscount * (1 - pkg.discount / 100)) : bDiscount;
-                const pkgOriginal = Math.round(originalPrice * pkg.kg);
+              {weightPackages.map((pkg: any) => {
+                const hasDiscount = pkg.discount_price && pkg.discount_price < pkg.price;
+                const discountPercent = hasDiscount ? Math.round(((pkg.price - pkg.discount_price) / pkg.price) * 100) : 0;
+                const displayPrice = hasDiscount ? pkg.discount_price : pkg.price;
                 const isSelected = orderKg === pkg.kg;
                 return (
                   <button
@@ -330,20 +345,20 @@ const TalerGurLanding = () => {
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
                   >
-                    {pkg.discount > 0 && (
+                    {discountPercent > 0 && (
                       <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
-                        🔥 {toBn(pkg.discount)}% ছাড়
+                        🔥 {toBn(discountPercent)}% ছাড়
                       </span>
                     )}
                     <p className="text-2xl font-extrabold text-[#1a7a2e] mb-1">{pkg.weight}</p>
                     <p className="text-xs text-[#888] mb-2">{pkg.label}</p>
-                    {(pkgOriginal > pkgPrice || pkg.discount > 0) ? (
+                    {hasDiscount ? (
                       <div>
-                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.discount > 0 ? bDiscount : pkgOriginal)}</span>
-                        <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkgPrice)}</p>
+                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.price)}</span>
+                        <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkg.discount_price)}</p>
                       </div>
                     ) : (
-                      <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(pkgPrice)}</p>
+                      <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(displayPrice)}</p>
                     )}
                     <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">
                       {isSelected ? "✅ সিলেক্টেড" : "অর্ডার করুন →"}
