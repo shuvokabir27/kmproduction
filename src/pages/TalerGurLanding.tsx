@@ -9,8 +9,12 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const TalerGurLanding = () => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [phoneError, setPhoneError] = useState("");
+
 
   useEffect(() => {
     const targetDate = new Date();
