@@ -15,7 +15,7 @@ const TalerGurLanding = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
   const [phoneError, setPhoneError] = useState("");
   // Simple kg quantity selector
   const [orderKg, setOrderKg] = useState(1);
@@ -144,12 +144,16 @@ const TalerGurLanding = () => {
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
     if (orderKg <= 0) { toast.error("পরিমাণ নির্বাচন করুন"); return; }
+    if ((orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && orderForm.trx_last4.length !== 4) {
+      toast.error("সেন্ড মানির লাস্ট ৪ ডিজিট দিন"); return;
+    }
     setSubmitting(true);
     try {
       const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${toBn(orderKg)} কেজি)`;
       const noteParts: string[] = [];
       if (orderDiscount > 0) noteParts.push(`${orderDiscount}% ডিসকাউন্ট`);
       if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(orderKg)} কেজি)`);
+      if (orderForm.trx_last4) noteParts.push(`${orderForm.payment_method === "bkash" ? "বিকাশ" : "নগদ"} লাস্ট ৪ ডিজিট: ${orderForm.trx_last4}`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
@@ -163,7 +167,7 @@ const TalerGurLanding = () => {
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
       setOrderKg(1);
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
