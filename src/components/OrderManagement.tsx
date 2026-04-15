@@ -297,7 +297,41 @@ const OrderManagement = () => {
           </div>
           <span className="text-xl font-bold text-primary">৳{toBn(stats.totalRevenue)}</span>
         </div>
+        {stats.returned > 0 && (
+          <div className="bg-card border border-rose-500/20 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <RotateCcw className="h-4 w-4 text-rose-500" />
+              <span className="text-xs text-muted-foreground">রিটার্ন লস</span>
+            </div>
+            <span className="text-xl font-bold text-rose-600">-৳{toBn(stats.returnAmount)}</span>
+          </div>
+        )}
       </div>
+
+      {/* Return stats panel */}
+      {activeTab === "returned" && stats.returned > 0 && (
+        <div className="bg-card border border-rose-500/20 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="h-4 w-4 text-rose-600" />
+            <h3 className="font-bold text-foreground text-sm">রিটার্ন হিসাব</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-rose-500/5 rounded-lg p-3 text-center">
+              <p className="text-[10px] text-muted-foreground mb-1">এই সপ্তাহ</p>
+              <span className="text-sm font-bold text-rose-600">-৳{toBn(returnStats.weekly)}</span>
+            </div>
+            <div className="bg-rose-500/5 rounded-lg p-3 text-center">
+              <p className="text-[10px] text-muted-foreground mb-1">এই মাস</p>
+              <span className="text-sm font-bold text-rose-600">-৳{toBn(returnStats.monthly)}</span>
+            </div>
+            <div className="bg-rose-500/5 rounded-lg p-3 text-center">
+              <p className="text-[10px] text-muted-foreground mb-1">এই বছর</p>
+              <span className="text-sm font-bold text-rose-600">-৳{toBn(returnStats.yearly)}</span>
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2">মোট {toBn(stats.returned)}টি অর্ডার রিটার্ন হয়েছে</p>
+        </div>
+      )}
 
       {/* Search + Tabs */}
       <div className="space-y-3">
