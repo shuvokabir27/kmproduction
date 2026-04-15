@@ -38,6 +38,7 @@ const OrderManagement = () => {
   const [activeTab, setActiveTab] = useState("pending");
   const [search, setSearch] = useState("");
   const [verifySearch, setVerifySearch] = useState("");
+  const [verifyAmounts, setVerifyAmounts] = useState<Record<string, string>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewDialog, setViewDialog] = useState<any>(null);
   const [editing, setEditing] = useState<any>(null);
@@ -334,7 +335,13 @@ const OrderManagement = () => {
                   : <span className="text-red-500 ml-2">❌ কোনো ম্যাচ নেই</span>
                 }
               </p>
-              {verifiedOrders.map((o: any) => (
+              {verifiedOrders.map((o: any) => {
+                const totalAmt = Number(o.total_amount || 0);
+                const paidInput = verifyAmounts[o.id] ?? String(totalAmt);
+                const paidNum = Number(paidInput) || 0;
+                const remaining = totalAmt - paidNum;
+                const payStatus = paidNum >= totalAmt ? "paid" : paidNum > 0 ? "partial" : "unpaid";
+                return (
                 <div key={o.id} className="bg-green-500/5 border border-green-500/20 rounded-xl p-3">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">#{toBn(o.order_number)}</span>
@@ -345,24 +352,47 @@ const OrderManagement = () => {
                   <h4 className="font-bold text-foreground text-sm">{o.customer_name}</h4>
                   <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                     <span><Phone className="h-3 w-3 inline mr-0.5" />{o.customer_phone}</span>
-                    <span className="font-bold text-primary">৳{toBn(Number(o.total_amount))}</span>
+                    <span className="font-bold text-primary">মোট: ৳{toBn(totalAmt)}</span>
+                  </div>
+                  {/* Payment amount input */}
+                  <div className="mt-2 space-y-1.5">
+                    <Label className="text-[11px] text-muted-foreground">পেমেন্টের পরিমাণ (৳)</Label>
+                    <Input
+                      type="number"
+                      value={paidInput}
+                      onChange={e => setVerifyAmounts(prev => ({ ...prev, [o.id]: e.target.value }))}
+                      className="h-8 text-sm font-bold"
+                      min={0}
+                      max={totalAmt}
+                    />
+                    {remaining > 0 && paidNum > 0 && (
+                      <p className="text-[10px] text-yellow-600">⚠️ বাকি থাকবে: ৳{toBn(remaining)}</p>
+                    )}
+                    {paidNum >= totalAmt && (
+                      <p className="text-[10px] text-green-600">✅ সম্পূর্ণ পেইড</p>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <Button size="sm" variant="outline" className="text-xs h-7 gap-1 text-green-600 border-green-500/30"
+                    <Button size="sm" variant="outline" className={`text-xs h-7 gap-1 ${payStatus === "paid" ? "text-green-600 border-green-500/30" : "text-yellow-600 border-yellow-500/30"}`}
                       onClick={() => {
                         quickStatusUpdate(o.id, "confirmed");
-                        supabase.from("orders").update({ payment_status: "paid" } as any).eq("id", o.id).then(() => {
+                        const notes = paidNum < totalAmt
+                          ? `${o.notes || ""} | পেইড: ৳${paidNum}, বাকি: ৳${remaining}`.trim()
+                          : o.notes;
+                        supabase.from("orders").update({ payment_status: payStatus, notes } as any).eq("id", o.id).then(() => {
                           queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
                         });
                       }}>
-                      <CheckCircle2 className="h-3 w-3" /> ভেরিফাই ও কনফার্ম
+                      <CheckCircle2 className="h-3 w-3" />
+                      {payStatus === "paid" ? "ভেরিফাই ও কনফার্ম" : "আংশিক পেমেন্ট কনফার্ম"}
                     </Button>
                     <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => setViewDialog(o)}>
                       <Eye className="h-3 w-3" />
                     </Button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
