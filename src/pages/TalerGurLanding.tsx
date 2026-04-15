@@ -806,11 +806,15 @@ const TalerGurLanding = () => {
                         onClick={() => setOrderForm(f => ({ ...f, quantity: Math.min(10, f.quantity + 1) }))}
                         className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
                       >+</button>
-                      {products && products[0] && (
-                        <span className="text-sm text-gray-500 ml-2">
-                          = ৳{toBn((products[0].discount_price || products[0].price || 0) * orderForm.quantity)} টাকা
-                        </span>
-                      )}
+                      {products && products[0] && (() => {
+                        const subTotal = (products[0].discount_price || products[0].price || 0) * selectedPackage * orderForm.quantity;
+                        const total = subTotal + deliveryCharge;
+                        return (
+                          <span className="text-sm text-gray-500 ml-2">
+                            = ৳{toBn(subTotal)}{!freeDelivery && deliveryCharge > 0 ? ` + ৳${toBn(deliveryCharge)} ডেলিভারি = ৳${toBn(total)}` : ""} টাকা
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
 
