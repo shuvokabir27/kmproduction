@@ -319,16 +319,16 @@ const OrderManagement = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="ফুল নম্বর দিন (লাস্ট ৪ ডিজিট ম্যাচ হবে)..."
+              placeholder="লাস্ট ৪ ডিজিট বা ট্রানজেকশন আইডি দিন..."
               value={verifySearch}
               onChange={e => setVerifySearch(e.target.value)}
               className="pl-9 text-lg tracking-wider"
             />
           </div>
-          {verifyLast4.length === 4 && (
+          {verifyInput.length >= 4 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                🔍 লাস্ট ৪ ডিজিট: <span className="font-bold text-primary text-sm">{verifyLast4}</span>
+                🔍 সার্চ: <span className="font-bold text-primary text-sm">{verifyInput}</span>
                 {verifiedOrders.length > 0
                   ? <span className="text-green-600 ml-2">✅ {toBn(verifiedOrders.length)}টি অর্ডার পাওয়া গেছে</span>
                   : <span className="text-red-500 ml-2">❌ কোনো ম্যাচ নেই</span>
