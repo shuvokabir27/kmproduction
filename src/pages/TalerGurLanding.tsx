@@ -300,21 +300,21 @@ const TalerGurLanding = () => {
             {/* Weight Package Cards */}
             <div className="grid grid-cols-2 gap-3 mb-10">
               {weightPackages.map((pkg) => {
-                const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+                const bPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
                 const originalPrice = products?.[0]?.price || 0;
-                const beforeDiscount = Math.round(basePrice * pkg.kg);
-                const pkgPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
+                const bDiscount = Math.round(bPrice * pkg.kg);
+                const pkgPrice = pkg.discount > 0 ? Math.round(bDiscount * (1 - pkg.discount / 100)) : bDiscount;
                 const pkgOriginal = Math.round(originalPrice * pkg.kg);
-                const inCart = (cart[pkg.kg] || 0) > 0;
+                const isSelected = orderKg === pkg.kg;
                 return (
                   <button
                     key={pkg.kg}
                     onClick={() => {
-                      setCart(prev => ({ ...prev, [pkg.kg]: (prev[pkg.kg] || 0) + 1 }));
+                      setOrderKg(pkg.kg);
                       openOrderDialog();
                     }}
                     className={`relative rounded-2xl p-4 text-center transition-all border-2 ${
-                      inCart
+                      isSelected
                         ? "border-[#1a7a2e] bg-[#1a7a2e]/5 shadow-lg scale-[1.02]"
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
@@ -328,17 +328,15 @@ const TalerGurLanding = () => {
                     <p className="text-xs text-[#888] mb-2">{pkg.label}</p>
                     {(pkgOriginal > pkgPrice || pkg.discount > 0) ? (
                       <div>
-                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.discount > 0 ? beforeDiscount : pkgOriginal)}</span>
+                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.discount > 0 ? bDiscount : pkgOriginal)}</span>
                         <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkgPrice)}</p>
                       </div>
                     ) : (
                       <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(pkgPrice)}</p>
                     )}
-                    {inCart ? (
-                      <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">✅ কার্টে আছে ({toBn(cart[pkg.kg])}টি)</p>
-                    ) : (
-                      <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">অর্ডার করুন →</p>
-                    )}
+                    <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">
+                      {isSelected ? "✅ সিলেক্টেড" : "অর্ডার করুন →"}
+                    </p>
                   </button>
                 );
               })}
