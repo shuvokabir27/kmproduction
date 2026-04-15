@@ -319,6 +319,11 @@ const AdminProducts = () => {
           <CustomerCRM />
         </TabsContent>
 
+        {/* Pricing Tab */}
+        <TabsContent value="pricing" className="mt-4">
+          <WeightPricingEditor />
+        </TabsContent>
+
         {/* Landing Page Tab */}
         <TabsContent value="landing" className="mt-4">
           <LandingPageEditor />
