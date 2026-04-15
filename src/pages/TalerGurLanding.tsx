@@ -868,6 +868,7 @@ const TalerGurLanding = () => {
                       rows={3}
                       className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all resize-none"
                     />
+                  </div>
 
                   {/* Payment Method */}
                   <div>
