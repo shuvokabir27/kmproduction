@@ -87,13 +87,22 @@ const TalerGurLanding = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["landing-site-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge, delivery_charge_per_extra_kg").limit(1).single();
       return data;
     },
   });
 
   const freeDelivery = siteSettings?.free_delivery ?? true;
-  const deliveryCharge = freeDelivery ? 0 : (siteSettings?.delivery_charge ?? 0);
+  const baseDeliveryCharge = siteSettings?.delivery_charge ?? 130;
+  const extraPerKg = siteSettings?.delivery_charge_per_extra_kg ?? 50;
+
+  // Calculate delivery charge based on selected package weight
+  const calcDeliveryCharge = (kg: number) => {
+    if (freeDelivery) return 0;
+    if (kg <= 1) return baseDeliveryCharge;
+    return Math.round(baseDeliveryCharge + extraPerKg * (kg - 1));
+  };
+  const deliveryCharge = calcDeliveryCharge(selectedPackage);
 
   const hero = sections?.find((s: any) => s.section_key === "hero");
   const benefits = sections?.filter((s: any) => s.section_key.startsWith("benefit_")) ?? [];

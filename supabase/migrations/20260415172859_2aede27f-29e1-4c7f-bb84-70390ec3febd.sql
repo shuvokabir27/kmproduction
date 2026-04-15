@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN delivery_charge_per_extra_kg numeric NOT NULL DEFAULT 50;
