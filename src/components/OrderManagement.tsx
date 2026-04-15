@@ -35,7 +35,7 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
 
 const OrderManagement = () => {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("pending");
   const [search, setSearch] = useState("");
   const [verifySearch, setVerifySearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -217,7 +217,6 @@ const OrderManagement = () => {
   };
 
   const tabs = [
-    { key: "all", label: "সকল", count: stats.total },
     { key: "pending", label: "পেন্ডিং", count: stats.pending },
     { key: "confirmed", label: "কনফার্মড", count: orders?.filter((o: any) => o.status === "confirmed").length || 0 },
     { key: "processing", label: "প্রসেসিং", count: orders?.filter((o: any) => o.status === "processing").length || 0 },
@@ -226,6 +225,7 @@ const OrderManagement = () => {
     { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0 },
     { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0 },
     { key: "payment_verify", label: "💳 পেমেন্ট চেক", count: mobilePaymentOrders.length },
+    { key: "all", label: "সকল", count: stats.total },
   ];
 
   return (
