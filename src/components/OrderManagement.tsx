@@ -146,8 +146,39 @@ const OrderManagement = () => {
     setForm(f => ({ ...f, quantity: qty, unit_price: price, total_amount: String(total) }));
   };
 
+  // Helper: extract last 4 digits from order notes
+  const getLast4 = (notes: string | null) => {
+    if (!notes) return null;
+    const match = notes.match(/লাস্ট ৪ ডিজিট: (\d{4})/);
+    return match ? match[1] : null;
+  };
+
+  // Helper: get payment method label from notes
+  const getPaymentLabel = (notes: string | null) => {
+    if (!notes) return null;
+    if (notes.includes("বিকাশ লাস্ট")) return "বিকাশ";
+    if (notes.includes("নগদ লাস্ট")) return "নগদ";
+    return null;
+  };
+
+  // Orders with mobile payment (bKash/Nagad)
+  const mobilePaymentOrders = (orders ?? []).filter((o: any) => {
+    const pm = o.payment_method;
+    return pm === "bkash" || pm === "nagad";
+  });
+
+  // Verify search: match last 4 digits of entered number
+  const verifyLast4 = verifySearch.replace(/\D/g, "").slice(-4);
+  const verifiedOrders = verifyLast4.length === 4
+    ? mobilePaymentOrders.filter((o: any) => getLast4(o.notes) === verifyLast4)
+    : [];
+
   // Filter orders
   const filtered = (orders ?? []).filter((o: any) => {
+    if (activeTab === "payment_verify") {
+      const pm = o.payment_method;
+      return pm === "bkash" || pm === "nagad";
+    }
     if (activeTab !== "all" && o.status !== activeTab) return false;
     if (search) {
       const s = search.toLowerCase();
