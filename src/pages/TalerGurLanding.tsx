@@ -150,58 +150,6 @@ const TalerGurLanding = () => {
         </section>
       )}
 
-      {/* Trust Badges */}
-      <section className="bg-white py-6 border-b">
-        <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-4 text-center">
-          <div className="flex flex-col items-center gap-1">
-            <Truck className="h-6 w-6 text-[#1a7a2e]" />
-            <p className="font-bold text-sm text-[#333]">ফ্রি ডেলিভারি</p>
-            <p className="text-xs text-[#888]">সারাদেশে বিনামূল্যে</p>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <RotateCcw className="h-6 w-6 text-[#1a7a2e]" />
-            <p className="font-bold text-sm text-[#333]">ইজি রিটার্ন</p>
-            <p className="text-xs text-[#888]">পছন্দ না হলে ফেরত</p>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <ShieldCheck className="h-6 w-6 text-[#1a7a2e]" />
-            <p className="font-bold text-sm text-[#333]">১০০% গ্যারান্টি</p>
-            <p className="text-xs text-[#888]">মান নিশ্চিত</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Bar */}
-      <section className="bg-[#f0ebe3] py-4 border-b">
-        <div className="max-w-4xl mx-auto px-4 flex justify-center gap-8 text-center">
-          <div>
-            <p className="text-xl font-bold text-[#1a7a2e]">৪.৯/৫</p>
-            <p className="text-xs text-[#888]">কাস্টমার রিভিউ</p>
-          </div>
-          <div>
-            <p className="text-xl font-bold text-[#1a7a2e]">১০০০+</p>
-            <p className="text-xs text-[#888]">সফল ডেলিভারি</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Qualities / Feature Grid */}
-      {qualities.length > 0 && (
-        <section className="py-12 md:py-16 bg-white">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {qualities.map((q: any) => (
-                <div key={q.id} className="bg-[#f8f5f0] border border-[#e8e0d4] rounded-xl p-5 text-center hover:shadow-md transition-all">
-                  <span className="text-3xl block mb-2">{q.icon}</span>
-                  <h3 className="text-sm font-bold text-[#333] mb-1">{q.title}</h3>
-                  <p className="text-xs text-[#888] leading-relaxed">{q.content}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Countdown + Offer Section */}
       {products && products.length > 0 && (
         <section className="py-12 md:py-16 bg-[#fdf6ee]">
