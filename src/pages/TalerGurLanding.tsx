@@ -193,7 +193,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
   };
 
   const openOrderDialog = () => {
