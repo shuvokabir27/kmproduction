@@ -69,17 +69,76 @@ const TalerGurLanding = () => {
 
   const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-  const contactNumber = products?.[0]?.contact_info || "";
+  const handlePhoneChange = (val: string) => {
+    const digits = val.replace(/\D/g, "");
+    setOrderForm(f => ({ ...f, phone: digits }));
+    if (digits.length > 0 && digits.length !== 11) {
+      setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে");
+    } else {
+      setPhoneError("");
+    }
+  };
 
-  const SectionOrderButton = () => contactNumber ? (
+  const handleOrderSubmit = async () => {
+    if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
+    if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
+    if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
+    setSubmitting(true);
+    try {
+      const productName = products?.[0]?.name || "প্রডাক্ট";
+      const unitPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+      const { error } = await supabase.from("orders").insert({
+        customer_name: orderForm.name.trim(),
+        customer_phone: orderForm.phone,
+        customer_address: orderForm.address.trim(),
+        product_name: productName,
+        quantity: 1,
+        unit_price: unitPrice,
+        total_amount: unitPrice,
+      });
+      if (error) throw error;
+      setOrderSuccess(true);
+      setOrderForm({ name: "", phone: "", address: "" });
+    } catch {
+      toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const closeOrderDialog = async () => {
+    if (!orderSuccess && orderForm.phone.length === 11) {
+      try {
+        const productName = products?.[0]?.name || "প্রডাক্ট";
+        await supabase.from("orders").insert({
+          customer_name: orderForm.name.trim() || "অজানা",
+          customer_phone: orderForm.phone,
+          customer_address: orderForm.address.trim() || null,
+          product_name: productName,
+          quantity: 1,
+          unit_price: 0,
+          total_amount: 0,
+          status: "abandoned" as any,
+        });
+      } catch (_) {}
+    }
+    setOrderOpen(false);
+    setOrderForm({ name: "", phone: "", address: "" });
+  };
+
+  const openOrderDialog = () => {
+    setOrderSuccess(false);
+    setPhoneError("");
+    setOrderOpen(true);
+  };
+
+  const SectionOrderButton = () => (
     <div className="text-center mt-8">
-      <a href={`tel:${contactNumber}`}>
-        <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
-          <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
-        </Button>
-      </a>
+      <Button onClick={openOrderDialog} size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
+        <ShoppingCart className="h-5 w-5" /> অর্ডার করতে চাই
+      </Button>
     </div>
-  ) : null;
+  );
 
   if (isLoading) {
     return (
