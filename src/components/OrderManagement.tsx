@@ -602,16 +602,20 @@ const OrderManagement = () => {
                       <CheckCircle2 className="h-3 w-3" /> ডেলিভারড
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-rose-600 border-rose-500/30 hover:bg-rose-500/10"
-                      onClick={() => {
+                      onClick={async () => {
                         const amt = Number(order.total_amount || 0);
-                        supabase.from("orders").update({
-                          status: "returned",
+                        const { error } = await supabase.from("orders").update({
+                          status: "returned" as any,
                           returned_at: new Date().toISOString(),
                           return_amount: amt,
-                        } as any).eq("id", order.id).then(() => {
+                        }).eq("id", order.id);
+                        if (error) {
+                          console.error("Return error:", error);
+                          toast.error("রিটার্ন করতে সমস্যা: " + error.message);
+                        } else {
                           queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
                           toast.success(`অর্ডার রিটার্ন হয়েছে। ৳${amt} মাইনাস।`);
-                        });
+                        }
                       }}>
                       <RotateCcw className="h-3 w-3" /> রিটার্ন
                     </Button>
