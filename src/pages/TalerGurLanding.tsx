@@ -95,7 +95,7 @@ const TalerGurLanding = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["landing-site-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge, delivery_charge_per_extra_kg").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("free_delivery, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg").limit(1).single();
       return data;
     },
   });
@@ -103,10 +103,12 @@ const TalerGurLanding = () => {
   const freeDelivery = siteSettings?.free_delivery ?? true;
   const baseDeliveryCharge = siteSettings?.delivery_charge ?? 130;
   const extraPerKg = siteSettings?.delivery_charge_per_extra_kg ?? 50;
+  const freeDeliveryMinKg = (siteSettings as any)?.free_delivery_min_kg ?? 5;
 
   // Calculate delivery charge based on total weight
   const calcDeliveryCharge = (totalKg: number) => {
     if (freeDelivery) return 0;
+    if (totalKg >= freeDeliveryMinKg) return 0;
     if (totalKg <= 1) return baseDeliveryCharge;
     return Math.round(baseDeliveryCharge + extraPerKg * (totalKg - 1));
   };
@@ -790,7 +792,8 @@ const TalerGurLanding = () => {
                         {orderDiscount > 0 && <span className="line-through mr-1.5">৳{toBn(beforeDiscount)}</span>}
                         <span>৳{toBn(orderSubTotal)}</span>
                         {!freeDelivery && deliveryCharge > 0 && <span className="text-gray-400"> + ৳{toBn(deliveryCharge)} ডেলি.</span>}
-                        {freeDelivery && <span className="text-[#1a7a2e]"> + 🚚 ফ্রি</span>}
+                        {(freeDelivery || (!freeDelivery && orderKg >= freeDeliveryMinKg)) && <span className="text-[#1a7a2e]"> + 🚚 ফ্রি</span>}
+                        {!freeDelivery && orderKg < freeDeliveryMinKg && <span className="text-[10px] text-gray-400 block">{toBn(freeDeliveryMinKg)}+ কেজিতে ডেলিভারি ফ্রি!</span>}
                       </div>
                       <span className="text-base font-bold text-[#1a7a2e]">৳{toBn(orderGrandTotal)}</span>
                     </div>

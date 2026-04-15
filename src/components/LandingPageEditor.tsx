@@ -220,7 +220,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg").limit(1).single();
       return data;
     },
   });
@@ -401,10 +401,33 @@ const LandingPageEditor = () => {
                 />
               </div>
             </div>
+
+            <div className="border-t border-border/30 pt-3 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-foreground">ফ্রি ডেলিভারি (মিনিমাম কেজি)</p>
+                <p className="text-[10px] text-muted-foreground">এত কেজি বা বেশি হলে ডেলিভারি ফ্রি</p>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={(siteSettings as any).free_delivery_min_kg ?? 5}
+                  onChange={async (e) => {
+                    const val = Number(e.target.value) || 0;
+                    await supabase.from("site_settings").update({ free_delivery_min_kg: val } as any).eq("id", siteSettings.id);
+                    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                    queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                  }}
+                  className="h-8 w-24 text-center"
+                />
+                <span className="text-sm font-bold text-muted-foreground">কেজি</span>
+              </div>
+            </div>
           </div>
 
           <p className="text-[10px] text-muted-foreground bg-muted/50 rounded-lg px-2.5 py-1.5">
-            💡 উদাহরণ: ১ কেজি = ৳{siteSettings.delivery_charge ?? 130}, ১.৫ কেজি = ৳{Math.round((siteSettings.delivery_charge ?? 130) + (siteSettings.delivery_charge_per_extra_kg ?? 50) * 0.5)}, ২ কেজি = ৳{Math.round((siteSettings.delivery_charge ?? 130) + (siteSettings.delivery_charge_per_extra_kg ?? 50) * 1)}
+            💡 উদাহরণ: ১ কেজি = ৳{siteSettings.delivery_charge ?? 130}, ১.৫ কেজি = ৳{Math.round((siteSettings.delivery_charge ?? 130) + (siteSettings.delivery_charge_per_extra_kg ?? 50) * 0.5)}, ২ কেজি = ৳{Math.round((siteSettings.delivery_charge ?? 130) + (siteSettings.delivery_charge_per_extra_kg ?? 50) * 1)}, {(siteSettings as any).free_delivery_min_kg ?? 5}+ কেজি = ফ্রি 🚚
           </p>
         </div>
       )}
