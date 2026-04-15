@@ -131,11 +131,11 @@ const TalerGurLanding = () => {
   };
   const isFreeDeliveryActive = freeDelivery || (!freeDelivery && orderKg >= freeDeliveryMinKg);
 
-  // Order price calculation based on kg
-  const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-  const orderDiscount = getDiscount(orderKg);
-  const beforeDiscount = Math.round(basePrice * orderKg);
-  const orderSubTotal = orderDiscount > 0 ? Math.round(beforeDiscount * (1 - orderDiscount / 100)) : beforeDiscount;
+  // Order price calculation based on selected weight package
+  const selectedPkg = getSelectedPkg();
+  const beforeDiscount = selectedPkg.price;
+  const orderSubTotal = selectedPkg.discount_price || selectedPkg.price;
+  const orderDiscount = beforeDiscount > orderSubTotal ? Math.round(((beforeDiscount - orderSubTotal) / beforeDiscount) * 100) : 0;
   const deliveryCharge = calcDeliveryCharge(orderKg);
   const orderGrandTotal = orderSubTotal + deliveryCharge;
 
