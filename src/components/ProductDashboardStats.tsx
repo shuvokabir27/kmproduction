@@ -16,6 +16,7 @@ import {
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const ProductDashboardStats = () => {
+  const queryClient = useQueryClient();
   const { data: orders } = useQuery({
     queryKey: ["dashboard-orders-analytics"],
     queryFn: async () => {
@@ -26,6 +27,26 @@ const ProductDashboardStats = () => {
       return data ?? [];
     },
   });
+
+  const { data: siteSettings } = useQuery({
+    queryKey: ["site-settings-delivery"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("id, free_delivery").limit(1).single();
+      return data;
+    },
+  });
+
+  const [togglingDelivery, setTogglingDelivery] = useState(false);
+  const toggleFreeDelivery = async () => {
+    if (!siteSettings) return;
+    setTogglingDelivery(true);
+    const newVal = !siteSettings.free_delivery;
+    const { error } = await supabase.from("site_settings").update({ free_delivery: newVal }).eq("id", siteSettings.id);
+    setTogglingDelivery(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(newVal ? "ফ্রি ডেলিভারি চালু হয়েছে" : "ফ্রি ডেলিভারি বন্ধ হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery"] });
+  };
 
   if (!orders) return <DashboardSkeleton />;
 
