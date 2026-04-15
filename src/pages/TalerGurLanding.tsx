@@ -893,14 +893,30 @@ const TalerGurLanding = () => {
                         {orderForm.payment_method === "bkash" && bkashNo && (
                           <div className="bg-pink-50 border border-pink-200 rounded-xl px-3 py-2 text-xs text-pink-800">
                             <span className="font-bold">বিকাশ নম্বর:</span> {bkashNo}
-                            <p className="text-[10px] text-pink-600 mt-0.5">এই নম্বরে সেন্ড মানি করে অর্ডার কনফার্ম করুন</p>
+                            <p className="text-[10px] text-pink-600 mt-0.5">এই নম্বরে সেন্ড মানি করে নিচে লাস্ট ৪ ডিজিট দিন</p>
                           </div>
                         )}
                         {orderForm.payment_method === "nagad" && nagadNo && (
                           <div className="bg-orange-50 border border-orange-200 rounded-xl px-3 py-2 text-xs text-orange-800">
                             <span className="font-bold">নগদ নম্বর:</span> {nagadNo}
-                            <p className="text-[10px] text-orange-600 mt-0.5">এই নম্বরে সেন্ড মানি করে অর্ডার কনফার্ম করুন</p>
+                            <p className="text-[10px] text-orange-600 mt-0.5">এই নম্বরে সেন্ড মানি করে নিচে লাস্ট ৪ ডিজিট দিন</p>
                           </div>
+                        )}
+                        {(orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && (
+                          <Input
+                            value={orderForm.trx_last4}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                              setOrderForm(f => ({ ...f, trx_last4: v }));
+                            }}
+                            placeholder="সেন্ড মানির লাস্ট ৪ ডিজিট"
+                            maxLength={4}
+                            className={`h-10 rounded-xl border text-center text-lg font-bold tracking-[0.3em] placeholder:text-xs placeholder:tracking-normal placeholder:font-normal ${
+                              orderForm.payment_method === "bkash"
+                                ? "border-pink-300 bg-pink-50/50 focus:border-pink-500 focus:ring-pink-500/20"
+                                : "border-orange-300 bg-orange-50/50 focus:border-orange-500 focus:ring-orange-500/20"
+                            }`}
+                          />
                         )}
                       </>
                     );
