@@ -173,7 +173,7 @@ const OrderManagement = () => {
   // Orders with mobile payment (bKash/Nagad)
   const mobilePaymentOrders = (orders ?? []).filter((o: any) => {
     const pm = o.payment_method;
-    return pm === "bkash" || pm === "nagad";
+    return (pm === "bkash" || pm === "nagad") && o.payment_status !== "paid" && o.payment_status !== "partial";
   });
 
   // Verify search: match by last 4 digits OR transaction ID
