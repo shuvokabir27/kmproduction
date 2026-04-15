@@ -209,6 +209,7 @@ const OrderManagement = () => {
     { key: "delivered", label: "ডেলিভারড", count: stats.delivered },
     { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0 },
     { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0 },
+    { key: "payment_verify", label: "💳 পেমেন্ট চেক", count: mobilePaymentOrders.length },
   ];
 
   return (
