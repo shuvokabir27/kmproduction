@@ -900,7 +900,7 @@ const TalerGurLanding = () => {
                     className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg shadow-green-500/25 transition-all disabled:opacity-60"
                   >
                     <ShoppingCart className="h-5 w-5" />
-                    {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন — ৳${toBn(cartGrandTotal)}`}
+                    {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন — ৳${toBn(orderGrandTotal)}`}
                   </Button>
                   <p className="text-center text-gray-400 text-xs">
                     🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ
