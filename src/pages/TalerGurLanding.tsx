@@ -735,6 +735,14 @@ const TalerGurLanding = () => {
                         <span className="text-sm font-medium text-gray-600">টাকা</span>
                       </div>
                       <p className="text-[10px] text-gray-400 mt-1">{p.name}</p>
+                      {!freeDelivery && deliveryCharge > 0 && (
+                        <div className="mt-2 pt-2 border-t border-[#bbf7d0]">
+                          <p className="text-xs text-gray-500">+ ডেলিভারি চার্জ: <span className="font-bold text-gray-700">৳{toBn(deliveryCharge)}</span> টাকা</p>
+                        </div>
+                      )}
+                      {freeDelivery && (
+                        <p className="mt-1 text-[10px] text-[#1a7a2e] font-semibold">🚚 ফ্রি ডেলিভারি</p>
+                      )}
                     </div>
                   );
                 })()}
