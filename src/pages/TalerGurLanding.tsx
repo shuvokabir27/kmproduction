@@ -750,33 +750,79 @@ const TalerGurLanding = () => {
                   </div>
                 </div>
 
-                {products && products.length > 0 && (() => {
-                  const p = products[0] as any;
-                  const hasDiscount = p.discount_price && p.discount_price < p.price;
-                  return (
-                    <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 text-center">
-                      <p className="text-gray-500 text-xs mb-1">অর্ডার মূল্য</p>
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-2xl font-extrabold text-[#1a7a2e]">
-                          ৳{toBn(hasDiscount ? p.discount_price : p.price)}
-                        </span>
-                        {hasDiscount && (
-                          <span className="line-through text-gray-400 text-sm">৳{toBn(p.price)}</span>
-                        )}
-                        <span className="text-sm font-medium text-gray-600">টাকা</span>
+                {/* Cart Summary */}
+                <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4">
+                  <p className="text-gray-500 text-xs mb-2 text-center font-semibold">🛒 আপনার অর্ডার</p>
+                  {cartEntries.length === 0 ? (
+                    <p className="text-center text-gray-400 text-sm py-2">কোনো প্যাকেজ সিলেক্ট করা হয়নি</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {cartEntries.map(entry => (
+                        <div key={entry.kg} className="flex items-center justify-between bg-white rounded-xl px-3 py-2 border border-[#bbf7d0]">
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-gray-800">{entry.weight}</p>
+                            <p className="text-[10px] text-gray-400">{entry.label}{entry.discount > 0 ? ` (${toBn(entry.discount)}% ছাড়)` : ""}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setCart(prev => {
+                                const newQty = (prev[entry.kg] || 1) - 1;
+                                if (newQty <= 0) { const { [entry.kg]: _, ...rest } = prev; return rest; }
+                                return { ...prev, [entry.kg]: newQty };
+                              })}
+                              className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 hover:border-red-300 hover:text-red-500 transition-all"
+                            >−</button>
+                            <span className="text-sm font-bold text-gray-900 w-5 text-center">{toBn(entry.qty)}</span>
+                            <button
+                              onClick={() => setCart(prev => ({ ...prev, [entry.kg]: Math.min(10, (prev[entry.kg] || 0) + 1) }))}
+                              className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
+                            >+</button>
+                          </div>
+                          <p className="text-sm font-bold text-[#1a7a2e] ml-3 w-16 text-right">৳{toBn(entry.lineTotal)}</p>
+                        </div>
+                      ))}
+
+                      {/* Add more packages */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {weightPackages.filter(pkg => !cart[pkg.kg]).map(pkg => (
+                          <button
+                            key={pkg.kg}
+                            onClick={() => setCart(prev => ({ ...prev, [pkg.kg]: 1 }))}
+                            className="text-[10px] bg-[#1a7a2e]/10 text-[#1a7a2e] font-semibold px-2.5 py-1 rounded-full hover:bg-[#1a7a2e]/20 transition-all"
+                          >
+                            + {pkg.weight}
+                          </button>
+                        ))}
                       </div>
-                      <p className="text-[10px] text-gray-400 mt-1">{p.name}</p>
+                    </div>
+                  )}
+
+                  {/* Totals */}
+                  {cartEntries.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-[#bbf7d0] space-y-1">
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>সাবটোটাল ({toBn(cartTotalKg)} কেজি)</span>
+                        <span>৳{toBn(cartSubTotal)}</span>
+                      </div>
                       {!freeDelivery && deliveryCharge > 0 && (
-                        <div className="mt-2 pt-2 border-t border-[#bbf7d0]">
-                          <p className="text-xs text-gray-500">+ ডেলিভারি চার্জ: <span className="font-bold text-gray-700">৳{toBn(deliveryCharge)}</span> টাকা</p>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>ডেলিভারি চার্জ</span>
+                          <span>৳{toBn(deliveryCharge)}</span>
                         </div>
                       )}
                       {freeDelivery && (
-                        <p className="mt-1 text-[10px] text-[#1a7a2e] font-semibold">🚚 ফ্রি ডেলিভারি</p>
+                        <div className="flex justify-between text-xs text-[#1a7a2e]">
+                          <span>ডেলিভারি</span>
+                          <span className="font-semibold">🚚 ফ্রি</span>
+                        </div>
                       )}
+                      <div className="flex justify-between text-sm font-bold text-gray-900 pt-1">
+                        <span>মোট</span>
+                        <span className="text-[#1a7a2e] text-lg">৳{toBn(cartGrandTotal)}</span>
+                      </div>
                     </div>
-                  );
-                })()}
+                  )}
+                </div>
 
                 <div className="p-5 space-y-5">
                   <div>
@@ -822,35 +868,6 @@ const TalerGurLanding = () => {
                       rows={3}
                       className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all resize-none"
                     />
-                  </div>
-
-                  {/* Quantity Selector */}
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পরিমাণ</Label>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.max(1, f.quantity - 1) }))}
-                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
-                      >−</button>
-                      <span className="text-xl font-bold text-gray-900 w-8 text-center">{toBn(orderForm.quantity)}</span>
-                      <button
-                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.min(10, f.quantity + 1) }))}
-                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
-                      >+</button>
-                      {products && products[0] && (() => {
-                        const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
-                        const base = (products[0].discount_price || products[0].price || 0) * selectedPackage;
-                        const afterPkgDiscount = pkg.discount > 0 ? Math.round(base * (1 - pkg.discount / 100)) : Math.round(base);
-                        const subTotal = afterPkgDiscount * orderForm.quantity;
-                        const total = subTotal + deliveryCharge;
-                        return (
-                          <span className="text-sm text-gray-500 ml-2">
-                            = ৳{toBn(subTotal)}{!freeDelivery && deliveryCharge > 0 ? ` + ৳${toBn(deliveryCharge)} = ৳${toBn(total)}` : ""} টাকা
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
 
                   {/* Payment Method */}
                   <div>
