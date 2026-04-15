@@ -153,11 +153,18 @@ const OrderManagement = () => {
     return match ? match[1] : null;
   };
 
+  // Helper: extract trx ID from order notes
+  const getTrxId = (notes: string | null) => {
+    if (!notes) return null;
+    const match = notes.match(/ট্রানজেকশন আইডি: (\S+)/);
+    return match ? match[1] : null;
+  };
+
   // Helper: get payment method label from notes
   const getPaymentLabel = (notes: string | null) => {
     if (!notes) return null;
-    if (notes.includes("বিকাশ লাস্ট")) return "বিকাশ";
-    if (notes.includes("নগদ লাস্ট")) return "নগদ";
+    if (notes.includes("বিকাশ লাস্ট") || notes.includes("বিকাশ") && notes.includes("ট্রানজেকশন")) return "বিকাশ";
+    if (notes.includes("নগদ লাস্ট") || notes.includes("নগদ") && notes.includes("ট্রানজেকশন")) return "নগদ";
     return null;
   };
 
@@ -167,10 +174,19 @@ const OrderManagement = () => {
     return pm === "bkash" || pm === "nagad";
   });
 
-  // Verify search: match last 4 digits of entered number
-  const verifyLast4 = verifySearch.replace(/\D/g, "").slice(-4);
-  const verifiedOrders = verifyLast4.length === 4
-    ? mobilePaymentOrders.filter((o: any) => getLast4(o.notes) === verifyLast4)
+  // Verify search: match by last 4 digits OR transaction ID
+  const verifyInput = verifySearch.trim();
+  const verifyLast4 = verifyInput.replace(/\D/g, "").slice(-4);
+  const verifiedOrders = verifyInput.length >= 4
+    ? mobilePaymentOrders.filter((o: any) => {
+        const last4 = getLast4(o.notes);
+        const trxId = getTrxId(o.notes);
+        // Match last 4 digits
+        if (verifyLast4.length === 4 && last4 === verifyLast4) return true;
+        // Match transaction ID (case-insensitive partial match)
+        if (trxId && trxId.toLowerCase().includes(verifyInput.toLowerCase())) return true;
+        return false;
+      })
     : [];
 
   // Filter orders
@@ -303,16 +319,16 @@ const OrderManagement = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="ফুল নম্বর দিন (লাস্ট ৪ ডিজিট ম্যাচ হবে)..."
+              placeholder="লাস্ট ৪ ডিজিট বা ট্রানজেকশন আইডি দিন..."
               value={verifySearch}
               onChange={e => setVerifySearch(e.target.value)}
               className="pl-9 text-lg tracking-wider"
             />
           </div>
-          {verifyLast4.length === 4 && (
+          {verifyInput.length >= 4 && (
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                🔍 লাস্ট ৪ ডিজিট: <span className="font-bold text-primary text-sm">{verifyLast4}</span>
+                🔍 সার্চ: <span className="font-bold text-primary text-sm">{verifyInput}</span>
                 {verifiedOrders.length > 0
                   ? <span className="text-green-600 ml-2">✅ {toBn(verifiedOrders.length)}টি অর্ডার পাওয়া গেছে</span>
                   : <span className="text-red-500 ml-2">❌ কোনো ম্যাচ নেই</span>
@@ -369,6 +385,7 @@ const OrderManagement = () => {
             const pc = paymentStatusConfig[order.payment_status] || paymentStatusConfig.unpaid;
             const StatusIcon = sc.icon;
             const orderLast4 = getLast4(order.notes);
+            const orderTrxId = getTrxId(order.notes);
             const orderPayLabel = getPaymentLabel(order.notes);
             return (
               <div key={order.id} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/20 transition-all">
@@ -404,13 +421,22 @@ const OrderManagement = () => {
                   )}
                 </div>
                 {/* Mobile payment badge */}
-                {orderLast4 && (
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                      orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
-                    }`}>
-                      {orderPayLabel === "বিকাশ" ? "📱" : "📲"} {orderPayLabel} • লাস্ট ৪: <span className="tracking-wider">{orderLast4}</span>
-                    </span>
+                {(orderLast4 || orderTrxId) && (
+                  <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                    {orderLast4 && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                      }`}>
+                        {orderPayLabel === "বিকাশ" ? "📱" : "📲"} {orderPayLabel} • লাস্ট ৪: <span className="tracking-wider">{orderLast4}</span>
+                      </span>
+                    )}
+                    {orderTrxId && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                      }`}>
+                        🔑 TrxID: <span className="tracking-wider">{orderTrxId}</span>
+                      </span>
+                    )}
                   </div>
                 )}
 
