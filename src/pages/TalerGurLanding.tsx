@@ -139,31 +139,31 @@ const TalerGurLanding = () => {
     if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
+    if (cartEntries.length === 0) { toast.error("অন্তত একটি প্যাকেজ সিলেক্ট করুন"); return; }
     setSubmitting(true);
     try {
-      const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
-      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${pkg.weight})`;
-      const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-      const beforeDiscount = Math.round(basePrice * selectedPackage);
-      const unitPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
-      const qty = orderForm.quantity || 1;
+      const itemNames = cartEntries.map(e => `${e.weight}×${e.qty}`).join(", ");
+      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${itemNames})`;
       const noteParts: string[] = [];
-      if (pkg.discount > 0) noteParts.push(`${pkg.discount}% প্যাকেজ ডিসকাউন্ট`);
-      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge}`);
+      cartEntries.forEach(e => {
+        if (e.discount > 0) noteParts.push(`${e.weight}: ${e.discount}% ডিসকাউন্ট`);
+      });
+      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(cartTotalKg)} কেজি)`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
         product_name: productName,
-        quantity: qty,
-        unit_price: unitPrice,
-        total_amount: unitPrice * qty + deliveryCharge,
+        quantity: cartEntries.reduce((s, e) => s + e.qty, 0),
+        unit_price: cartSubTotal,
+        total_amount: cartGrandTotal,
         notes: noteParts.length > 0 ? noteParts.join(" | ") : null,
         payment_method: orderForm.payment_method,
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
+      setCart({ 1: 1 });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
@@ -188,7 +188,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
   };
 
   const openOrderDialog = () => {
