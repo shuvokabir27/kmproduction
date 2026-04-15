@@ -2121,6 +2121,7 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           delivery_charge: number
+          delivery_charge_per_extra_kg: number
           facebook_pages: Json | null
           facebook_url: string | null
           favicon_url: string | null
@@ -2143,6 +2144,7 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           delivery_charge?: number
+          delivery_charge_per_extra_kg?: number
           facebook_pages?: Json | null
           facebook_url?: string | null
           favicon_url?: string | null
@@ -2165,6 +2167,7 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           delivery_charge?: number
+          delivery_charge_per_extra_kg?: number
           facebook_pages?: Json | null
           facebook_url?: string | null
           favicon_url?: string | null
