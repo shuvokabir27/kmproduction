@@ -368,6 +368,8 @@ const OrderManagement = () => {
             const sc = statusConfig[order.status] || statusConfig.pending;
             const pc = paymentStatusConfig[order.payment_status] || paymentStatusConfig.unpaid;
             const StatusIcon = sc.icon;
+            const orderLast4 = getLast4(order.notes);
+            const orderPayLabel = getPaymentLabel(order.notes);
             return (
               <div key={order.id} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/20 transition-all">
                 {/* Top row */}
@@ -401,6 +403,16 @@ const OrderManagement = () => {
                     </div>
                   )}
                 </div>
+                {/* Mobile payment badge */}
+                {orderLast4 && (
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                      orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                    }`}>
+                      {orderPayLabel === "বিকাশ" ? "📱" : "📲"} {orderPayLabel} • লাস্ট ৪: <span className="tracking-wider">{orderLast4}</span>
+                    </span>
+                  </div>
+                )}
 
                 {/* Bottom row */}
                 <div className="flex items-center justify-between pt-2 border-t border-border/30">
