@@ -449,6 +449,27 @@ const Products = () => {
                   </div>
                 </div>
 
+                {/* Product Price Summary */}
+                {products && products.length > 0 && (() => {
+                  const p = products[0];
+                  const hasDiscount = p.discount_price && p.discount_price < p.price;
+                  return (
+                    <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 text-center">
+                      <p className="text-gray-500 text-xs mb-1">অর্ডার মূল্য</p>
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-2xl font-extrabold text-[#1a7a2e]">
+                          ৳{toBn(hasDiscount ? p.discount_price : p.price)}
+                        </span>
+                        {hasDiscount && (
+                          <span className="line-through text-gray-400 text-sm">৳{toBn(p.price)}</span>
+                        )}
+                        <span className="text-sm font-medium text-gray-600">টাকা</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-1">{p.name}</p>
+                    </div>
+                  );
+                })()}
+
                 {/* Form */}
                 <div className="p-5 space-y-5">
                   <div>
