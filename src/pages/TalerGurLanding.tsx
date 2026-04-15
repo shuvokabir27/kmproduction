@@ -61,6 +61,16 @@ const TalerGurLanding = () => {
 
   const contactNumber = products?.[0]?.contact_info || "";
 
+  const SectionOrderButton = () => contactNumber ? (
+    <div className="text-center mt-8">
+      <a href={`tel:${contactNumber}`}>
+        <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
+          <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
+        </Button>
+      </a>
+    </div>
+  ) : null;
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#f8f5f0] flex items-center justify-center">
@@ -268,6 +278,7 @@ const TalerGurLanding = () => {
             <p className="text-xs text-[#888]">সফল ডেলিভারি</p>
           </div>
         </div>
+        <SectionOrderButton />
       </section>
 
       {/* Qualities / Feature Grid */}
@@ -283,6 +294,7 @@ const TalerGurLanding = () => {
                 </div>
               ))}
             </div>
+            <SectionOrderButton />
           </div>
         </section>
       )}
@@ -361,10 +373,11 @@ const TalerGurLanding = () => {
                 {products.filter((p: any) => p.image_url).slice(0, 3).map((p: any) => (
                   <div key={p.id} className="rounded-xl overflow-hidden shadow-md border border-[#e8e0d4]">
                     <img src={p.image_url} alt={p.name} className="w-full h-32 md:h-44 object-cover" />
-                  </div>
+                </div>
                 ))}
               </div>
             )}
+            <SectionOrderButton />
           </div>
         </section>
       )}
@@ -401,6 +414,7 @@ const TalerGurLanding = () => {
               </div>
             ))}
           </div>
+          <SectionOrderButton />
         </div>
       </section>
 
@@ -501,6 +515,7 @@ const TalerGurLanding = () => {
               </div>
             ))}
           </div>
+          <SectionOrderButton />
         </div>
       </section>
 
