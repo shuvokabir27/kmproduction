@@ -215,6 +215,27 @@ const LandingPageEditor = () => {
   const [addContent, setAddContent] = useState("");
   const [addIcon, setAddIcon] = useState("");
   const [addSaving, setAddSaving] = useState(false);
+  const [togglingDelivery, setTogglingDelivery] = useState(false);
+
+  const { data: siteSettings } = useQuery({
+    queryKey: ["site-settings-delivery-editor"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("id, free_delivery").limit(1).single();
+      return data;
+    },
+  });
+
+  const toggleFreeDelivery = async () => {
+    if (!siteSettings) return;
+    setTogglingDelivery(true);
+    const newVal = !siteSettings.free_delivery;
+    const { error } = await supabase.from("site_settings").update({ free_delivery: newVal }).eq("id", siteSettings.id);
+    setTogglingDelivery(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(newVal ? "ফ্রি ডেলিভারি চালু" : "ফ্রি ডেলিভারি বন্ধ");
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery"] });
+  };
 
   const { data: sections, isLoading } = useQuery({
     queryKey: ["admin-landing-sections"],
