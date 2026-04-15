@@ -1,8 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   ShoppingCart, Package, Truck, TrendingUp, Users, UserPlus, RotateCcw,
-  Calendar, Clock
+  Calendar, Clock, Settings
 } from "lucide-react";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -12,6 +16,7 @@ import {
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const ProductDashboardStats = () => {
+  const queryClient = useQueryClient();
   const { data: orders } = useQuery({
     queryKey: ["dashboard-orders-analytics"],
     queryFn: async () => {
@@ -22,6 +27,26 @@ const ProductDashboardStats = () => {
       return data ?? [];
     },
   });
+
+  const { data: siteSettings } = useQuery({
+    queryKey: ["site-settings-delivery"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("id, free_delivery").limit(1).single();
+      return data;
+    },
+  });
+
+  const [togglingDelivery, setTogglingDelivery] = useState(false);
+  const toggleFreeDelivery = async () => {
+    if (!siteSettings) return;
+    setTogglingDelivery(true);
+    const newVal = !siteSettings.free_delivery;
+    const { error } = await supabase.from("site_settings").update({ free_delivery: newVal }).eq("id", siteSettings.id);
+    setTogglingDelivery(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(newVal ? "ফ্রি ডেলিভারি চালু হয়েছে" : "ফ্রি ডেলিভারি বন্ধ হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery"] });
+  };
 
   if (!orders) return <DashboardSkeleton />;
 
@@ -129,6 +154,22 @@ const ProductDashboardStats = () => {
 
   return (
     <div className="space-y-6">
+      {/* Quick Settings */}
+      <div className="bg-card border border-border/30 rounded-2xl p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Truck className="h-5 w-5 text-emerald-400" />
+          <div>
+            <p className="font-semibold text-foreground text-sm">ফ্রি ডেলিভারি</p>
+            <p className="text-[11px] text-muted-foreground">চালু থাকলে ল্যান্ডিং পেজে ডেলিভারি সংক্রান্ত লেখা দেখাবে</p>
+          </div>
+        </div>
+        <Switch
+          checked={siteSettings?.free_delivery ?? true}
+          onCheckedChange={toggleFreeDelivery}
+          disabled={togglingDelivery || !siteSettings}
+        />
+      </div>
+
       {/* Daily Focus */}
       <div className="bg-gradient-to-r from-emerald-900/30 to-amber-900/20 border border-emerald-500/20 rounded-2xl p-4 md:p-5">
         <div className="flex items-center gap-2 mb-3">

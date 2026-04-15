@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN free_delivery boolean NOT NULL DEFAULT true;
