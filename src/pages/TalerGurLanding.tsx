@@ -707,204 +707,160 @@ const TalerGurLanding = () => {
 
       {/* Order Popup */}
       {orderOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
           <div
-            className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[95vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
             {orderSuccess ? (
-              <div className="p-8 text-center">
-                <div className="relative w-20 h-20 mx-auto mb-5">
+              <div className="p-6 text-center">
+                <div className="relative w-16 h-16 mx-auto mb-3">
                   <div className="absolute inset-0 bg-[#22a83a]/20 rounded-full animate-ping" />
-                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#22a83a] to-[#1b8a30] flex items-center justify-center shadow-lg">
-                    <CheckCircle className="h-10 w-10 text-white" />
+                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#22a83a] to-[#1b8a30] flex items-center justify-center shadow-lg">
+                    <CheckCircle className="h-8 w-8 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">অর্ডার সফল হয়েছে! 🎉</h3>
-                <p className="text-gray-500 text-sm mb-6 leading-relaxed">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।<br/>ধন্যবাদ আমাদের বেছে নেওয়ার জন্য!</p>
-                <Button onClick={() => setOrderOpen(false)} className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold py-4 rounded-2xl text-base shadow-lg">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">অর্ডার সফল হয়েছে! 🎉</h3>
+                <p className="text-gray-500 text-xs mb-4">আমরা শীঘ্রই যোগাযোগ করবো। ধন্যবাদ!</p>
+                <Button onClick={() => setOrderOpen(false)} className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] text-white font-bold py-3 rounded-2xl text-sm">
                   ঠিক আছে
                 </Button>
               </div>
             ) : (
               <>
-                <div className="relative bg-gradient-to-r from-[#1a7a2e] via-[#1f9535] to-[#22a83a] px-5 py-5">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full translate-x-1/2 -translate-y-1/2" />
-                  <div className="flex items-center justify-between relative">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                        <ShoppingCart className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-white">অর্ডার করুন</h3>
-                        <p className="text-white/60 text-xs">তথ্য দিয়ে অর্ডার কনফার্ম করুন</p>
-                      </div>
+                {/* Header - compact */}
+                <div className="relative bg-gradient-to-r from-[#1a7a2e] via-[#1f9535] to-[#22a83a] px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ShoppingCart className="h-4 w-4 text-white" />
+                      <h3 className="text-base font-bold text-white">অর্ডার করুন</h3>
                     </div>
-                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25 hover:text-white transition-all">
-                      <X className="h-4 w-4" />
+                    <button onClick={closeOrderDialog} className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25">
+                      <X className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Kg Quantity Selector */}
-                <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4">
-                  <p className="text-gray-500 text-xs mb-3 text-center font-semibold">🛒 পরিমাণ</p>
-                  
-                  {/* Kg selector */}
-                  <div className="flex items-center justify-center gap-4 mb-3">
-                    <button
-                      onClick={() => setOrderKg(prev => Math.max(0.5, +(prev - 0.5).toFixed(1)))}
-                      className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-500 hover:border-red-300 hover:text-red-500 transition-all bg-white"
-                    >−</button>
-                    <div className="text-center min-w-[80px]">
-                      <span className="text-2xl font-extrabold text-gray-900">{toBn(orderKg)}</span>
-                      <p className="text-xs text-gray-500 font-medium">কেজি</p>
-                    </div>
-                    <button
-                      onClick={() => setOrderKg(prev => Math.min(10, +(prev + 0.5).toFixed(1)))}
-                      className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-500 hover:border-[#22a83a] hover:text-[#22a83a] transition-all bg-white"
-                    >+</button>
-                  </div>
-
-                  {/* Discount badge */}
-                  {orderDiscount > 0 && (
-                    <div className="text-center mb-3">
-                      <span className="inline-block bg-[#c0392b] text-white text-xs font-bold px-3 py-1 rounded-full">
-                        🔥 {toBn(orderDiscount)}% ডিসকাউন্ট!
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Price breakdown */}
-                  {orderKg > 0 && (
-                    <div className="mt-3 pt-3 border-t border-[#bbf7d0] space-y-1">
-                      {orderDiscount > 0 && (
-                        <div className="flex justify-between text-xs text-gray-400">
-                          <span>মূল্য ({toBn(orderKg)} কেজি)</span>
-                          <span className="line-through">৳{toBn(beforeDiscount)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>সাবটোটাল ({toBn(orderKg)} কেজি){orderDiscount > 0 ? ` — ${toBn(orderDiscount)}% ছাড়` : ""}</span>
-                        <span>৳{toBn(orderSubTotal)}</span>
-                      </div>
-                      {!freeDelivery && deliveryCharge > 0 && (
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>ডেলিভারি চার্জ</span>
-                          <span>৳{toBn(deliveryCharge)}</span>
-                        </div>
-                      )}
-                      {freeDelivery && (
-                        <div className="flex justify-between text-xs text-[#1a7a2e]">
-                          <span>ডেলিভারি</span>
-                          <span className="font-semibold">🚚 ফ্রি</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-sm font-bold text-gray-900 pt-1">
-                        <span>মোট</span>
-                        <span className="text-[#1a7a2e] text-lg">৳{toBn(orderGrandTotal)}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Quick weight buttons */}
-                  <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-                    {weightPackages.map(pkg => (
-                      <button
-                        key={pkg.kg}
-                        onClick={() => setOrderKg(pkg.kg)}
-                        className={`text-[10px] font-semibold px-2.5 py-1 rounded-full transition-all ${
-                          orderKg === pkg.kg
-                            ? "bg-[#1a7a2e] text-white"
-                            : "bg-[#1a7a2e]/10 text-[#1a7a2e] hover:bg-[#1a7a2e]/20"
-                        }`}
-                      >
-                        {pkg.weight}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-5 space-y-5">
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
-                    <Input
-                      value={orderForm.name}
-                      onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))}
-                      placeholder="আপনার পুরো নাম লিখুন"
-                      className="h-12 rounded-2xl border-2 border-gray-200 bg-gray-50/50 pl-4 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
-                    <Input
-                      value={orderForm.phone}
-                      onChange={e => handlePhoneChange(e.target.value)}
-                      placeholder="01XXXXXXXXX"
-                      maxLength={11}
-                      className={`h-12 rounded-2xl border-2 bg-gray-50/50 pl-4 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-2 transition-all ${
-                        phoneError ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-[#22a83a] focus:ring-[#22a83a]/20'
-                      }`}
-                    />
-                    {phoneError && (
-                      <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                        <span className="w-1 h-1 bg-red-500 rounded-full" /> {phoneError}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between mt-1.5">
-                      <p className="text-gray-400 text-xs">১১ ডিজিটের মোবাইল নম্বর দিন</p>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        orderForm.phone.length === 11 ? 'bg-green-100 text-green-700' : orderForm.phone.length > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'
-                      }`}>
-                        {toBn(orderForm.phone.length)}/১১
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
-                    <Textarea
-                      value={orderForm.address}
-                      onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))}
-                      placeholder="আপনার সম্পূর্ণ ঠিকানা লিখুন"
-                      rows={3}
-                      className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all resize-none"
-                    />
-                  </div>
-
-                  {/* Payment Method */}
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পেমেন্ট পদ্ধতি</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { val: "cod", label: "🚚 ক্যাশ অন ডেলিভারি" },
-                        { val: "bkash", label: "📱 বিকাশ/নগদ" },
-                      ].map(pm => (
+                <div className="px-4 py-3 space-y-3">
+                  {/* Kg Selector - inline compact */}
+                  <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-gray-600">পরিমাণ</span>
+                      <div className="flex items-center gap-3">
                         <button
-                          key={pm.val}
-                          onClick={() => setOrderForm(f => ({ ...f, payment_method: pm.val }))}
-                          className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
-                            orderForm.payment_method === pm.val
-                              ? "border-[#22a83a] bg-green-50 text-[#1a7a2e]"
-                              : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          onClick={() => setOrderKg(prev => Math.max(0.5, +(prev - 0.5).toFixed(1)))}
+                          className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-base font-bold text-gray-500 hover:border-red-300 hover:text-red-500 bg-white"
+                        >−</button>
+                        <div className="text-center min-w-[50px]">
+                          <span className="text-xl font-extrabold text-gray-900">{toBn(orderKg)}</span>
+                          <span className="text-xs text-gray-500 ml-1">কেজি</span>
+                        </div>
+                        <button
+                          onClick={() => setOrderKg(prev => Math.min(10, +(prev + 0.5).toFixed(1)))}
+                          className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-base font-bold text-gray-500 hover:border-[#22a83a] hover:text-[#22a83a] bg-white"
+                        >+</button>
+                      </div>
+                    </div>
+                    {/* Quick weight chips */}
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {weightPackages.map(pkg => (
+                        <button
+                          key={pkg.kg}
+                          onClick={() => setOrderKg(pkg.kg)}
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full transition-all ${
+                            orderKg === pkg.kg
+                              ? "bg-[#1a7a2e] text-white"
+                              : "bg-[#1a7a2e]/10 text-[#1a7a2e]"
                           }`}
                         >
-                          {pm.label}
+                          {pkg.weight}
                         </button>
                       ))}
                     </div>
+                    {orderDiscount > 0 && (
+                      <p className="text-center mt-1.5">
+                        <span className="text-[10px] bg-[#c0392b] text-white font-bold px-2 py-0.5 rounded-full">
+                          🔥 {toBn(orderDiscount)}% ডিসকাউন্ট!
+                        </span>
+                      </p>
+                    )}
+                    {/* Price summary inline */}
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#bbf7d0]">
+                      <div className="text-xs text-gray-500">
+                        {orderDiscount > 0 && <span className="line-through mr-1.5">৳{toBn(beforeDiscount)}</span>}
+                        <span>৳{toBn(orderSubTotal)}</span>
+                        {!freeDelivery && deliveryCharge > 0 && <span className="text-gray-400"> + ৳{toBn(deliveryCharge)} ডেলি.</span>}
+                        {freeDelivery && <span className="text-[#1a7a2e]"> + 🚚 ফ্রি</span>}
+                      </div>
+                      <span className="text-base font-bold text-[#1a7a2e]">৳{toBn(orderGrandTotal)}</span>
+                    </div>
+                  </div>
+
+                  {/* Form fields - compact */}
+                  <div className="grid grid-cols-1 gap-2.5">
+                    <div>
+                      <Label className="text-gray-700 font-semibold text-xs mb-1 block">নাম <span className="text-red-500">*</span></Label>
+                      <Input
+                        value={orderForm.name}
+                        onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))}
+                        placeholder="আপনার পুরো নাম"
+                        className="h-10 rounded-xl border border-gray-200 bg-gray-50/50 pl-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:ring-1 focus:ring-[#22a83a]/20"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-700 font-semibold text-xs mb-1 block">মোবাইল <span className="text-red-500">*</span></Label>
+                      <Input
+                        value={orderForm.phone}
+                        onChange={e => handlePhoneChange(e.target.value)}
+                        placeholder="01XXXXXXXXX"
+                        maxLength={11}
+                        className={`h-10 rounded-xl border bg-gray-50/50 pl-3 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-1 ${
+                          phoneError ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-[#22a83a] focus:ring-[#22a83a]/20'
+                        }`}
+                      />
+                      {phoneError && <p className="text-red-500 text-[10px] mt-0.5">{phoneError}</p>}
+                    </div>
+                    <div>
+                      <Label className="text-gray-700 font-semibold text-xs mb-1 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                      <Textarea
+                        value={orderForm.address}
+                        onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))}
+                        placeholder="সম্পূর্ণ ঠিকানা"
+                        rows={2}
+                        className="rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:ring-1 focus:ring-[#22a83a]/20 resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Payment - inline */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { val: "cod", label: "🚚 ক্যাশ অন ডেলিভারি" },
+                      { val: "bkash", label: "📱 বিকাশ/নগদ" },
+                    ].map(pm => (
+                      <button
+                        key={pm.val}
+                        onClick={() => setOrderForm(f => ({ ...f, payment_method: pm.val }))}
+                        className={`py-2 px-2 rounded-xl border text-xs font-medium transition-all ${
+                          orderForm.payment_method === pm.val
+                            ? "border-[#22a83a] bg-green-50 text-[#1a7a2e]"
+                            : "border-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {pm.label}
+                      </button>
+                    ))}
                   </div>
 
                   <Button
                     onClick={handleOrderSubmit}
                     disabled={submitting}
-                    className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg shadow-green-500/25 transition-all disabled:opacity-60"
+                    className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold text-sm h-12 rounded-2xl gap-2 shadow-lg shadow-green-500/25 disabled:opacity-60"
                   >
-                    <ShoppingCart className="h-5 w-5" />
-                    {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন — ৳${toBn(orderGrandTotal)}`}
+                    <ShoppingCart className="h-4 w-4" />
+                    {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম — ৳${toBn(orderGrandTotal)}`}
                   </Button>
-                  <p className="text-center text-gray-400 text-xs">
-                    🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ
-                  </p>
+                  <p className="text-center text-gray-400 text-[10px] pb-1">🔒 তথ্য সম্পূর্ণ নিরাপদ</p>
                 </div>
               </>
             )}
