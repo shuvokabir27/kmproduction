@@ -17,8 +17,8 @@ const TalerGurLanding = () => {
   const [submitting, setSubmitting] = useState(false);
   const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" });
   const [phoneError, setPhoneError] = useState("");
-  // Cart: map of kg -> quantity
-  const [cart, setCart] = useState<Record<number, number>>({ 1: 1 });
+  // Simple kg quantity selector
+  const [orderKg, setOrderKg] = useState(1);
 
   const weightPackages = [
     { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", discount: 0 },
@@ -26,6 +26,13 @@ const TalerGurLanding = () => {
     { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার", discount: 8 },
     { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক", discount: 12 },
   ];
+
+  // Discount tiers based on total kg
+  const getDiscount = (kg: number) => {
+    if (kg >= 2) return 12;
+    if (kg > 1) return 8;
+    return 0;
+  };
 
   // Fetch offer end date from site_settings
   const { data: offerSettings } = useQuery({
