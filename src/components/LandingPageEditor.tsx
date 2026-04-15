@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
   FileText, Pencil, Check, X, Plus, Trash2, ChevronDown, ChevronUp,
-  Eye, EyeOff, GripVertical, Sparkles, Star, Shield, HelpCircle, Phone
+  Eye, EyeOff, GripVertical, Sparkles, Star, Shield, HelpCircle, Phone, Truck
 } from "lucide-react";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -215,6 +215,27 @@ const LandingPageEditor = () => {
   const [addContent, setAddContent] = useState("");
   const [addIcon, setAddIcon] = useState("");
   const [addSaving, setAddSaving] = useState(false);
+  const [togglingDelivery, setTogglingDelivery] = useState(false);
+
+  const { data: siteSettings } = useQuery({
+    queryKey: ["site-settings-delivery-editor"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("id, free_delivery").limit(1).single();
+      return data;
+    },
+  });
+
+  const toggleFreeDelivery = async () => {
+    if (!siteSettings) return;
+    setTogglingDelivery(true);
+    const newVal = !siteSettings.free_delivery;
+    const { error } = await supabase.from("site_settings").update({ free_delivery: newVal }).eq("id", siteSettings.id);
+    setTogglingDelivery(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(newVal ? "ফ্রি ডেলিভারি চালু" : "ফ্রি ডেলিভারি বন্ধ");
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery"] });
+  };
 
   const { data: sections, isLoading } = useQuery({
     queryKey: ["admin-landing-sections"],
@@ -279,6 +300,24 @@ const LandingPageEditor = () => {
       <p className="text-xs text-muted-foreground bg-muted/50 border border-border/30 rounded-lg px-3 py-2">
         প্রতিটি সেকশনের পাশের ✏️ বাটনে ক্লিক করে শিরোনাম, বিবরণ ও আইকন সরাসরি পরিবর্তন করুন। 👁️ দিয়ে দেখান/লুকান।
       </p>
+
+      {/* Free Delivery Toggle */}
+      <div className="bg-card border border-border/30 rounded-xl p-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+            <Truck className="h-4 w-4 text-emerald-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">ফ্রি ডেলিভারি</p>
+            <p className="text-[11px] text-muted-foreground">বন্ধ করলে ল্যান্ডিং পেজ থেকে ডেলিভারি সংক্রান্ত সব লেখা হাইড হবে</p>
+          </div>
+        </div>
+        <Switch
+          checked={siteSettings?.free_delivery ?? true}
+          onCheckedChange={toggleFreeDelivery}
+          disabled={togglingDelivery || !siteSettings}
+        />
+      </div>
 
       {/* Add New Section Panel */}
       {addOpen && (
