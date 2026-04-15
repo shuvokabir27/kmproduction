@@ -125,7 +125,7 @@ const CustomerCRM = () => {
 
     let message = currentOfferMsg;
     if (currentOfferImg) {
-      message = message ? `${message}\n\n🖼️ প্রডাক্ট দেখুন: ${currentOfferImg}` : `🖼️ প্রডাক্ট দেখুন: ${currentOfferImg}`;
+      message = message ? `${message}\n\n${currentOfferImg}` : currentOfferImg;
     }
     const url = `https://wa.me/${bdPhone}${message ? "?text=" + encodeURIComponent(message) : ""}`;
     window.open(url, "_blank");
