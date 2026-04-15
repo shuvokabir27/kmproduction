@@ -385,6 +385,7 @@ const OrderManagement = () => {
             const pc = paymentStatusConfig[order.payment_status] || paymentStatusConfig.unpaid;
             const StatusIcon = sc.icon;
             const orderLast4 = getLast4(order.notes);
+            const orderTrxId = getTrxId(order.notes);
             const orderPayLabel = getPaymentLabel(order.notes);
             return (
               <div key={order.id} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/20 transition-all">
@@ -420,13 +421,22 @@ const OrderManagement = () => {
                   )}
                 </div>
                 {/* Mobile payment badge */}
-                {orderLast4 && (
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                      orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
-                    }`}>
-                      {orderPayLabel === "বিকাশ" ? "📱" : "📲"} {orderPayLabel} • লাস্ট ৪: <span className="tracking-wider">{orderLast4}</span>
-                    </span>
+                {(orderLast4 || orderTrxId) && (
+                  <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                    {orderLast4 && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                      }`}>
+                        {orderPayLabel === "বিকাশ" ? "📱" : "📲"} {orderPayLabel} • লাস্ট ৪: <span className="tracking-wider">{orderLast4}</span>
+                      </span>
+                    )}
+                    {orderTrxId && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                      }`}>
+                        🔑 TrxID: <span className="tracking-wider">{orderTrxId}</span>
+                      </span>
+                    )}
                   </div>
                 )}
 
