@@ -15,7 +15,7 @@ const TalerGurLanding = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "", trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
   // Simple kg quantity selector
   const [orderKg, setOrderKg] = useState(1);
@@ -144,8 +144,11 @@ const TalerGurLanding = () => {
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
     if (orderKg <= 0) { toast.error("পরিমাণ নির্বাচন করুন"); return; }
-    if ((orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && orderForm.trx_last4.length !== 4) {
-      toast.error("সেন্ড মানির লাস্ট ৪ ডিজিট দিন"); return;
+    if ((orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && !orderForm.trx_last4 && !orderForm.trx_id) {
+      toast.error("লাস্ট ৪ ডিজিট অথবা ট্রানজেকশন আইডি দিন"); return;
+    }
+    if ((orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && orderForm.trx_last4 && orderForm.trx_last4.length !== 4) {
+      toast.error("লাস্ট ৪ ডিজিট সঠিকভাবে দিন"); return;
     }
     setSubmitting(true);
     try {
@@ -154,6 +157,7 @@ const TalerGurLanding = () => {
       if (orderDiscount > 0) noteParts.push(`${orderDiscount}% ডিসকাউন্ট`);
       if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(orderKg)} কেজি)`);
       if (orderForm.trx_last4) noteParts.push(`${orderForm.payment_method === "bkash" ? "বিকাশ" : "নগদ"} লাস্ট ৪ ডিজিট: ${orderForm.trx_last4}`);
+      if (orderForm.trx_id) noteParts.push(`ট্রানজেকশন আইডি: ${orderForm.trx_id}`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
@@ -167,7 +171,7 @@ const TalerGurLanding = () => {
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "", trx_id: "" });
       setOrderKg(1);
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
@@ -193,7 +197,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "", trx_id: "" });
   };
 
   const openOrderDialog = () => {
@@ -903,20 +907,33 @@ const TalerGurLanding = () => {
                           </div>
                         )}
                         {(orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && (
-                          <Input
-                            value={orderForm.trx_last4}
-                            onChange={e => {
-                              const v = e.target.value.replace(/\D/g, "").slice(0, 4);
-                              setOrderForm(f => ({ ...f, trx_last4: v }));
-                            }}
-                            placeholder="সেন্ড মানির লাস্ট ৪ ডিজিট"
-                            maxLength={4}
-                            className={`h-10 rounded-xl border text-center text-lg font-bold tracking-[0.3em] placeholder:text-xs placeholder:tracking-normal placeholder:font-normal ${
-                              orderForm.payment_method === "bkash"
-                                ? "border-pink-300 bg-pink-50/50 focus:border-pink-500 focus:ring-pink-500/20"
-                                : "border-orange-300 bg-orange-50/50 focus:border-orange-500 focus:ring-orange-500/20"
-                            }`}
-                          />
+                          <div className="space-y-2">
+                            <p className="text-[10px] text-muted-foreground text-center">লাস্ট ৪ ডিজিট অথবা ট্রানজেকশন আইডি — যেকোনো একটি দিন</p>
+                            <Input
+                              value={orderForm.trx_last4}
+                              onChange={e => {
+                                const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                setOrderForm(f => ({ ...f, trx_last4: v }));
+                              }}
+                              placeholder="লাস্ট ৪ ডিজিট"
+                              maxLength={4}
+                              className={`h-10 rounded-xl border text-center text-lg font-bold tracking-[0.3em] placeholder:text-xs placeholder:tracking-normal placeholder:font-normal ${
+                                orderForm.payment_method === "bkash"
+                                  ? "border-pink-300 bg-pink-50/50 focus:border-pink-500 focus:ring-pink-500/20"
+                                  : "border-orange-300 bg-orange-50/50 focus:border-orange-500 focus:ring-orange-500/20"
+                              }`}
+                            />
+                            <Input
+                              value={orderForm.trx_id}
+                              onChange={e => setOrderForm(f => ({ ...f, trx_id: e.target.value.trim() }))}
+                              placeholder="ট্রানজেকশন আইডি (TrxID)"
+                              className={`h-10 rounded-xl border text-center text-sm font-medium placeholder:text-xs placeholder:font-normal ${
+                                orderForm.payment_method === "bkash"
+                                  ? "border-pink-300 bg-pink-50/50 focus:border-pink-500 focus:ring-pink-500/20"
+                                  : "border-orange-300 bg-orange-50/50 focus:border-orange-500 focus:ring-orange-500/20"
+                              }`}
+                            />
+                          </div>
                         )}
                       </>
                     );
