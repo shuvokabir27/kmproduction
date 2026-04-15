@@ -17,7 +17,14 @@ const TalerGurLanding = () => {
   const [submitting, setSubmitting] = useState(false);
   const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
   const [phoneError, setPhoneError] = useState("");
+  const [selectedPackage, setSelectedPackage] = useState<number>(1);
 
+  const weightPackages = [
+    { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক" },
+    { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক" },
+    { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার" },
+    { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক" },
+  ];
 
   // Fetch offer end date from site_settings
   const { data: offerSettings } = useQuery({
