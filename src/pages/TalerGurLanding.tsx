@@ -15,7 +15,7 @@ const TalerGurLanding = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
   const [phoneError, setPhoneError] = useState("");
   // Simple kg quantity selector
   const [orderKg, setOrderKg] = useState(1);
@@ -144,12 +144,16 @@ const TalerGurLanding = () => {
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
     if (orderKg <= 0) { toast.error("পরিমাণ নির্বাচন করুন"); return; }
+    if ((orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && orderForm.trx_last4.length !== 4) {
+      toast.error("সেন্ড মানির লাস্ট ৪ ডিজিট দিন"); return;
+    }
     setSubmitting(true);
     try {
       const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${toBn(orderKg)} কেজি)`;
       const noteParts: string[] = [];
       if (orderDiscount > 0) noteParts.push(`${orderDiscount}% ডিসকাউন্ট`);
       if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(orderKg)} কেজি)`);
+      if (orderForm.trx_last4) noteParts.push(`${orderForm.payment_method === "bkash" ? "বিকাশ" : "নগদ"} লাস্ট ৪ ডিজিট: ${orderForm.trx_last4}`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
@@ -163,7 +167,7 @@ const TalerGurLanding = () => {
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
       setOrderKg(1);
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
@@ -189,7 +193,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", trx_last4: "" });
   };
 
   const openOrderDialog = () => {
@@ -889,14 +893,30 @@ const TalerGurLanding = () => {
                         {orderForm.payment_method === "bkash" && bkashNo && (
                           <div className="bg-pink-50 border border-pink-200 rounded-xl px-3 py-2 text-xs text-pink-800">
                             <span className="font-bold">বিকাশ নম্বর:</span> {bkashNo}
-                            <p className="text-[10px] text-pink-600 mt-0.5">এই নম্বরে সেন্ড মানি করে অর্ডার কনফার্ম করুন</p>
+                            <p className="text-[10px] text-pink-600 mt-0.5">এই নম্বরে সেন্ড মানি করে নিচে লাস্ট ৪ ডিজিট দিন</p>
                           </div>
                         )}
                         {orderForm.payment_method === "nagad" && nagadNo && (
                           <div className="bg-orange-50 border border-orange-200 rounded-xl px-3 py-2 text-xs text-orange-800">
                             <span className="font-bold">নগদ নম্বর:</span> {nagadNo}
-                            <p className="text-[10px] text-orange-600 mt-0.5">এই নম্বরে সেন্ড মানি করে অর্ডার কনফার্ম করুন</p>
+                            <p className="text-[10px] text-orange-600 mt-0.5">এই নম্বরে সেন্ড মানি করে নিচে লাস্ট ৪ ডিজিট দিন</p>
                           </div>
+                        )}
+                        {(orderForm.payment_method === "bkash" || orderForm.payment_method === "nagad") && (
+                          <Input
+                            value={orderForm.trx_last4}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                              setOrderForm(f => ({ ...f, trx_last4: v }));
+                            }}
+                            placeholder="সেন্ড মানির লাস্ট ৪ ডিজিট"
+                            maxLength={4}
+                            className={`h-10 rounded-xl border text-center text-lg font-bold tracking-[0.3em] placeholder:text-xs placeholder:tracking-normal placeholder:font-normal ${
+                              orderForm.payment_method === "bkash"
+                                ? "border-pink-300 bg-pink-50/50 focus:border-pink-500 focus:ring-pink-500/20"
+                                : "border-orange-300 bg-orange-50/50 focus:border-orange-500 focus:ring-orange-500/20"
+                            }`}
+                          />
                         )}
                       </>
                     );
