@@ -1371,6 +1371,42 @@ export type Database = {
         }
         Relationships: []
       }
+      product_weight_prices: {
+        Row: {
+          created_at: string
+          discount_price: number | null
+          id: string
+          is_active: boolean | null
+          label: string | null
+          price: number
+          sort_order: number | null
+          weight_kg: number
+          weight_label: string
+        }
+        Insert: {
+          created_at?: string
+          discount_price?: number | null
+          id?: string
+          is_active?: boolean | null
+          label?: string | null
+          price?: number
+          sort_order?: number | null
+          weight_kg?: number
+          weight_label: string
+        }
+        Update: {
+          created_at?: string
+          discount_price?: number | null
+          id?: string
+          is_active?: boolean | null
+          label?: string | null
+          price?: number
+          sort_order?: number | null
+          weight_kg?: number
+          weight_label?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
