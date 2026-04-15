@@ -117,8 +117,10 @@ const TalerGurLanding = () => {
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
     setSubmitting(true);
     try {
-      const productName = products?.[0]?.name || "প্রডাক্ট";
-      const unitPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+      const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
+      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${pkg.weight})`;
+      const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+      const unitPrice = Math.round(basePrice * selectedPackage);
       const qty = orderForm.quantity || 1;
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
