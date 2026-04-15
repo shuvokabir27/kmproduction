@@ -15,9 +15,10 @@ const TalerGurLanding = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" });
   const [phoneError, setPhoneError] = useState("");
-  const [selectedPackage, setSelectedPackage] = useState<number>(1);
+  // Cart: map of kg -> quantity
+  const [cart, setCart] = useState<Record<number, number>>({ 1: 1 });
 
   const weightPackages = [
     { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", discount: 0 },
@@ -96,13 +97,26 @@ const TalerGurLanding = () => {
   const baseDeliveryCharge = siteSettings?.delivery_charge ?? 130;
   const extraPerKg = siteSettings?.delivery_charge_per_extra_kg ?? 50;
 
-  // Calculate delivery charge based on selected package weight
-  const calcDeliveryCharge = (kg: number) => {
+  // Calculate delivery charge based on total weight
+  const calcDeliveryCharge = (totalKg: number) => {
     if (freeDelivery) return 0;
-    if (kg <= 1) return baseDeliveryCharge;
-    return Math.round(baseDeliveryCharge + extraPerKg * (kg - 1));
+    if (totalKg <= 1) return baseDeliveryCharge;
+    return Math.round(baseDeliveryCharge + extraPerKg * (totalKg - 1));
   };
-  const deliveryCharge = calcDeliveryCharge(selectedPackage);
+
+  // Cart helpers
+  const cartEntries = Object.entries(cart).filter(([_, qty]) => qty > 0).map(([kg, qty]) => {
+    const kgNum = Number(kg);
+    const pkg = weightPackages.find(p => p.kg === kgNum) || weightPackages[1];
+    const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+    const beforeDiscount = Math.round(basePrice * kgNum);
+    const unitPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
+    return { ...pkg, qty, unitPrice, lineTotal: unitPrice * qty };
+  });
+  const cartTotalKg = cartEntries.reduce((s, e) => s + e.kg * e.qty, 0);
+  const cartSubTotal = cartEntries.reduce((s, e) => s + e.lineTotal, 0);
+  const deliveryCharge = calcDeliveryCharge(cartTotalKg);
+  const cartGrandTotal = cartSubTotal + deliveryCharge;
 
   const hero = sections?.find((s: any) => s.section_key === "hero");
   const benefits = sections?.filter((s: any) => s.section_key.startsWith("benefit_")) ?? [];
@@ -125,31 +139,31 @@ const TalerGurLanding = () => {
     if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
+    if (cartEntries.length === 0) { toast.error("অন্তত একটি প্যাকেজ সিলেক্ট করুন"); return; }
     setSubmitting(true);
     try {
-      const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
-      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${pkg.weight})`;
-      const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-      const beforeDiscount = Math.round(basePrice * selectedPackage);
-      const unitPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
-      const qty = orderForm.quantity || 1;
+      const itemNames = cartEntries.map(e => `${e.weight}×${e.qty}`).join(", ");
+      const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${itemNames})`;
       const noteParts: string[] = [];
-      if (pkg.discount > 0) noteParts.push(`${pkg.discount}% প্যাকেজ ডিসকাউন্ট`);
-      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge}`);
+      cartEntries.forEach(e => {
+        if (e.discount > 0) noteParts.push(`${e.weight}: ${e.discount}% ডিসকাউন্ট`);
+      });
+      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge} (${toBn(cartTotalKg)} কেজি)`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
         product_name: productName,
-        quantity: qty,
-        unit_price: unitPrice,
-        total_amount: unitPrice * qty + deliveryCharge,
+        quantity: cartEntries.reduce((s, e) => s + e.qty, 0),
+        unit_price: cartSubTotal,
+        total_amount: cartGrandTotal,
         notes: noteParts.length > 0 ? noteParts.join(" | ") : null,
         payment_method: orderForm.payment_method,
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
+      setCart({ 1: 1 });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
@@ -174,7 +188,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod" });
   };
 
   const openOrderDialog = () => {
@@ -293,16 +307,16 @@ const TalerGurLanding = () => {
                 const beforeDiscount = Math.round(basePrice * pkg.kg);
                 const pkgPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
                 const pkgOriginal = Math.round(originalPrice * pkg.kg);
-                const isSelected = selectedPackage === pkg.kg;
+                const inCart = (cart[pkg.kg] || 0) > 0;
                 return (
                   <button
                     key={pkg.kg}
                     onClick={() => {
-                      setSelectedPackage(pkg.kg);
+                      setCart(prev => ({ ...prev, [pkg.kg]: (prev[pkg.kg] || 0) + 1 }));
                       openOrderDialog();
                     }}
                     className={`relative rounded-2xl p-4 text-center transition-all border-2 ${
-                      isSelected
+                      inCart
                         ? "border-[#1a7a2e] bg-[#1a7a2e]/5 shadow-lg scale-[1.02]"
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
@@ -322,9 +336,11 @@ const TalerGurLanding = () => {
                     ) : (
                       <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(pkgPrice)}</p>
                     )}
-                    <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">
-                      {isSelected ? "✅ সিলেক্টেড" : "অর্ডার করুন →"}
-                    </p>
+                    {inCart ? (
+                      <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">✅ কার্টে আছে ({toBn(cart[pkg.kg])}টি)</p>
+                    ) : (
+                      <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">অর্ডার করুন →</p>
+                    )}
                   </button>
                 );
               })}
@@ -734,33 +750,79 @@ const TalerGurLanding = () => {
                   </div>
                 </div>
 
-                {products && products.length > 0 && (() => {
-                  const p = products[0] as any;
-                  const hasDiscount = p.discount_price && p.discount_price < p.price;
-                  return (
-                    <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 text-center">
-                      <p className="text-gray-500 text-xs mb-1">অর্ডার মূল্য</p>
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-2xl font-extrabold text-[#1a7a2e]">
-                          ৳{toBn(hasDiscount ? p.discount_price : p.price)}
-                        </span>
-                        {hasDiscount && (
-                          <span className="line-through text-gray-400 text-sm">৳{toBn(p.price)}</span>
-                        )}
-                        <span className="text-sm font-medium text-gray-600">টাকা</span>
+                {/* Cart Summary */}
+                <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4">
+                  <p className="text-gray-500 text-xs mb-2 text-center font-semibold">🛒 আপনার অর্ডার</p>
+                  {cartEntries.length === 0 ? (
+                    <p className="text-center text-gray-400 text-sm py-2">কোনো প্যাকেজ সিলেক্ট করা হয়নি</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {cartEntries.map(entry => (
+                        <div key={entry.kg} className="flex items-center justify-between bg-white rounded-xl px-3 py-2 border border-[#bbf7d0]">
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-gray-800">{entry.weight}</p>
+                            <p className="text-[10px] text-gray-400">{entry.label}{entry.discount > 0 ? ` (${toBn(entry.discount)}% ছাড়)` : ""}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setCart(prev => {
+                                const newQty = (prev[entry.kg] || 1) - 1;
+                                if (newQty <= 0) { const { [entry.kg]: _, ...rest } = prev; return rest; }
+                                return { ...prev, [entry.kg]: newQty };
+                              })}
+                              className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 hover:border-red-300 hover:text-red-500 transition-all"
+                            >−</button>
+                            <span className="text-sm font-bold text-gray-900 w-5 text-center">{toBn(entry.qty)}</span>
+                            <button
+                              onClick={() => setCart(prev => ({ ...prev, [entry.kg]: Math.min(10, (prev[entry.kg] || 0) + 1) }))}
+                              className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
+                            >+</button>
+                          </div>
+                          <p className="text-sm font-bold text-[#1a7a2e] ml-3 w-16 text-right">৳{toBn(entry.lineTotal)}</p>
+                        </div>
+                      ))}
+
+                      {/* Add more packages */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {weightPackages.filter(pkg => !cart[pkg.kg]).map(pkg => (
+                          <button
+                            key={pkg.kg}
+                            onClick={() => setCart(prev => ({ ...prev, [pkg.kg]: 1 }))}
+                            className="text-[10px] bg-[#1a7a2e]/10 text-[#1a7a2e] font-semibold px-2.5 py-1 rounded-full hover:bg-[#1a7a2e]/20 transition-all"
+                          >
+                            + {pkg.weight}
+                          </button>
+                        ))}
                       </div>
-                      <p className="text-[10px] text-gray-400 mt-1">{p.name}</p>
+                    </div>
+                  )}
+
+                  {/* Totals */}
+                  {cartEntries.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-[#bbf7d0] space-y-1">
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>সাবটোটাল ({toBn(cartTotalKg)} কেজি)</span>
+                        <span>৳{toBn(cartSubTotal)}</span>
+                      </div>
                       {!freeDelivery && deliveryCharge > 0 && (
-                        <div className="mt-2 pt-2 border-t border-[#bbf7d0]">
-                          <p className="text-xs text-gray-500">+ ডেলিভারি চার্জ: <span className="font-bold text-gray-700">৳{toBn(deliveryCharge)}</span> টাকা</p>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>ডেলিভারি চার্জ</span>
+                          <span>৳{toBn(deliveryCharge)}</span>
                         </div>
                       )}
                       {freeDelivery && (
-                        <p className="mt-1 text-[10px] text-[#1a7a2e] font-semibold">🚚 ফ্রি ডেলিভারি</p>
+                        <div className="flex justify-between text-xs text-[#1a7a2e]">
+                          <span>ডেলিভারি</span>
+                          <span className="font-semibold">🚚 ফ্রি</span>
+                        </div>
                       )}
+                      <div className="flex justify-between text-sm font-bold text-gray-900 pt-1">
+                        <span>মোট</span>
+                        <span className="text-[#1a7a2e] text-lg">৳{toBn(cartGrandTotal)}</span>
+                      </div>
                     </div>
-                  );
-                })()}
+                  )}
+                </div>
 
                 <div className="p-5 space-y-5">
                   <div>
@@ -808,34 +870,6 @@ const TalerGurLanding = () => {
                     />
                   </div>
 
-                  {/* Quantity Selector */}
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পরিমাণ</Label>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.max(1, f.quantity - 1) }))}
-                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
-                      >−</button>
-                      <span className="text-xl font-bold text-gray-900 w-8 text-center">{toBn(orderForm.quantity)}</span>
-                      <button
-                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.min(10, f.quantity + 1) }))}
-                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
-                      >+</button>
-                      {products && products[0] && (() => {
-                        const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
-                        const base = (products[0].discount_price || products[0].price || 0) * selectedPackage;
-                        const afterPkgDiscount = pkg.discount > 0 ? Math.round(base * (1 - pkg.discount / 100)) : Math.round(base);
-                        const subTotal = afterPkgDiscount * orderForm.quantity;
-                        const total = subTotal + deliveryCharge;
-                        return (
-                          <span className="text-sm text-gray-500 ml-2">
-                            = ৳{toBn(subTotal)}{!freeDelivery && deliveryCharge > 0 ? ` + ৳${toBn(deliveryCharge)} = ৳${toBn(total)}` : ""} টাকা
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
                   {/* Payment Method */}
                   <div>
                     <Label className="text-gray-800 font-bold text-sm mb-2 block">পেমেন্ট পদ্ধতি</Label>
@@ -865,7 +899,7 @@ const TalerGurLanding = () => {
                     className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg shadow-green-500/25 transition-all disabled:opacity-60"
                   >
                     <ShoppingCart className="h-5 w-5" />
-                    {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
+                    {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন — ৳${toBn(cartGrandTotal)}`}
                   </Button>
                   <p className="text-center text-gray-400 text-xs">
                     🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ
