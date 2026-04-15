@@ -38,6 +38,7 @@ const OrderManagement = () => {
   const [activeTab, setActiveTab] = useState("pending");
   const [search, setSearch] = useState("");
   const [verifySearch, setVerifySearch] = useState("");
+  const [verifyAmounts, setVerifyAmounts] = useState<Record<string, string>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewDialog, setViewDialog] = useState<any>(null);
   const [editing, setEditing] = useState<any>(null);
