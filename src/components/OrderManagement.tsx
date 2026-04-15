@@ -481,6 +481,7 @@ const OrderManagement = () => {
                       <Clock className="h-3 w-3" /> পেন্ডিংয়ে ফেরাও
                     </Button>
                   </div>
+                )}
                 {order.status === "confirmed" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1"
