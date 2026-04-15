@@ -201,13 +201,9 @@ const TalerGurLanding = () => {
             )}
 
             {/* Hero CTA */}
-            {contactNumber && (
-              <a href={`tel:${contactNumber}`}>
-                <Button size="lg" className="mt-8 gap-2 bg-amber-500 hover:bg-amber-600 text-white px-10 py-6 text-lg rounded-full shadow-xl font-bold">
-                  <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
-                </Button>
-              </a>
-            )}
+            <Button onClick={openOrderDialog} size="lg" className="mt-8 gap-2 bg-amber-500 hover:bg-amber-600 text-white px-10 py-6 text-lg rounded-full shadow-xl font-bold">
+              <ShoppingCart className="h-5 w-5" /> অর্ডার করতে চাই
+            </Button>
           </div>
         </section>
       )}
