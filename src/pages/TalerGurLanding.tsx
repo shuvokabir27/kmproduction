@@ -62,6 +62,16 @@ const TalerGurLanding = () => {
     },
   });
 
+  const { data: siteSettings } = useQuery({
+    queryKey: ["landing-site-settings"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("free_delivery").limit(1).single();
+      return data;
+    },
+  });
+
+  const freeDelivery = siteSettings?.free_delivery ?? true;
+
   const hero = sections?.find((s: any) => s.section_key === "hero");
   const benefits = sections?.filter((s: any) => s.section_key.startsWith("benefit_")) ?? [];
   const qualities = sections?.filter((s: any) => s.section_key.startsWith("quality_")) ?? [];
