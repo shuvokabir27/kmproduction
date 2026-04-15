@@ -327,12 +327,10 @@ const TalerGurLanding = () => {
 
             {/* Weight Package Cards */}
             <div className="grid grid-cols-2 gap-3 mb-10">
-              {weightPackages.map((pkg) => {
-                const bPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-                const originalPrice = products?.[0]?.price || 0;
-                const bDiscount = Math.round(bPrice * pkg.kg);
-                const pkgPrice = pkg.discount > 0 ? Math.round(bDiscount * (1 - pkg.discount / 100)) : bDiscount;
-                const pkgOriginal = Math.round(originalPrice * pkg.kg);
+              {weightPackages.map((pkg: any) => {
+                const hasDiscount = pkg.discount_price && pkg.discount_price < pkg.price;
+                const discountPercent = hasDiscount ? Math.round(((pkg.price - pkg.discount_price) / pkg.price) * 100) : 0;
+                const displayPrice = hasDiscount ? pkg.discount_price : pkg.price;
                 const isSelected = orderKg === pkg.kg;
                 return (
                   <button
@@ -347,20 +345,20 @@ const TalerGurLanding = () => {
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
                   >
-                    {pkg.discount > 0 && (
+                    {discountPercent > 0 && (
                       <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
-                        🔥 {toBn(pkg.discount)}% ছাড়
+                        🔥 {toBn(discountPercent)}% ছাড়
                       </span>
                     )}
                     <p className="text-2xl font-extrabold text-[#1a7a2e] mb-1">{pkg.weight}</p>
                     <p className="text-xs text-[#888] mb-2">{pkg.label}</p>
-                    {(pkgOriginal > pkgPrice || pkg.discount > 0) ? (
+                    {hasDiscount ? (
                       <div>
-                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.discount > 0 ? bDiscount : pkgOriginal)}</span>
-                        <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkgPrice)}</p>
+                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.price)}</span>
+                        <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkg.discount_price)}</p>
                       </div>
                     ) : (
-                      <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(pkgPrice)}</p>
+                      <p className="text-lg font-bold text-[#1a7a2e]">৳{toBn(displayPrice)}</p>
                     )}
                     <p className="mt-2 text-[10px] font-semibold text-[#1a7a2e]">
                       {isSelected ? "✅ সিলেক্টেড" : "অর্ডার করুন →"}
