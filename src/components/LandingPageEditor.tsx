@@ -301,6 +301,24 @@ const LandingPageEditor = () => {
         প্রতিটি সেকশনের পাশের ✏️ বাটনে ক্লিক করে শিরোনাম, বিবরণ ও আইকন সরাসরি পরিবর্তন করুন। 👁️ দিয়ে দেখান/লুকান।
       </p>
 
+      {/* Free Delivery Toggle */}
+      <div className="bg-card border border-border/30 rounded-xl p-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+            <Truck className="h-4 w-4 text-emerald-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">ফ্রি ডেলিভারি</p>
+            <p className="text-[11px] text-muted-foreground">বন্ধ করলে ল্যান্ডিং পেজ থেকে ডেলিভারি সংক্রান্ত সব লেখা হাইড হবে</p>
+          </div>
+        </div>
+        <Switch
+          checked={siteSettings?.free_delivery ?? true}
+          onCheckedChange={toggleFreeDelivery}
+          disabled={togglingDelivery || !siteSettings}
+        />
+      </div>
+
       {/* Add New Section Panel */}
       {addOpen && (
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
