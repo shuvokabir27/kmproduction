@@ -278,6 +278,7 @@ const TalerGurLanding = () => {
             <p className="text-xs text-[#888]">সফল ডেলিভারি</p>
           </div>
         </div>
+        <SectionOrderButton />
       </section>
 
       {/* Qualities / Feature Grid */}
@@ -293,6 +294,7 @@ const TalerGurLanding = () => {
                 </div>
               ))}
             </div>
+            <SectionOrderButton />
           </div>
         </section>
       )}
@@ -371,10 +373,11 @@ const TalerGurLanding = () => {
                 {products.filter((p: any) => p.image_url).slice(0, 3).map((p: any) => (
                   <div key={p.id} className="rounded-xl overflow-hidden shadow-md border border-[#e8e0d4]">
                     <img src={p.image_url} alt={p.name} className="w-full h-32 md:h-44 object-cover" />
-                  </div>
+                </div>
                 ))}
               </div>
             )}
+            <SectionOrderButton />
           </div>
         </section>
       )}
@@ -411,6 +414,7 @@ const TalerGurLanding = () => {
               </div>
             ))}
           </div>
+          <SectionOrderButton />
         </div>
       </section>
 
@@ -511,6 +515,7 @@ const TalerGurLanding = () => {
               </div>
             ))}
           </div>
+          <SectionOrderButton />
         </div>
       </section>
 
