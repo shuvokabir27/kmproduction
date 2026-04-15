@@ -220,7 +220,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge").limit(1).single();
       return data;
     },
   });
@@ -343,6 +343,38 @@ const LandingPageEditor = () => {
           disabled={togglingDelivery || !siteSettings}
         />
       </div>
+
+      {/* Delivery Charge Input - only when free delivery is OFF */}
+      {siteSettings && !siteSettings.free_delivery && (
+        <div className="bg-card border border-border/30 rounded-xl p-3">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <span className="text-sm">💰</span>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground text-sm">ডেলিভারি চার্জ</p>
+              <p className="text-[11px] text-muted-foreground">ফ্রি ডেলিভারি বন্ধ থাকলে এই চার্জ যুক্ত হবে</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-muted-foreground">৳</span>
+            <Input
+              type="number"
+              min={0}
+              value={siteSettings.delivery_charge ?? 0}
+              onChange={async (e) => {
+                const val = Number(e.target.value) || 0;
+                await supabase.from("site_settings").update({ delivery_charge: val }).eq("id", siteSettings.id);
+                queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+              }}
+              className="h-9 w-32"
+              placeholder="0"
+            />
+            <span className="text-xs text-muted-foreground">টাকা</span>
+          </div>
+        </div>
+      )}
 
       {/* Offer Countdown Timer Control */}
       <div className="bg-card border border-border/30 rounded-xl p-3 space-y-3">
