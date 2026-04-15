@@ -377,15 +377,7 @@ const TalerGurLanding = () => {
             </div>
 
             {/* CTA after benefits */}
-            {contactNumber && (
-              <div className="text-center mt-10">
-                <a href={`tel:${contactNumber}`}>
-                  <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
-                    <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
-                  </Button>
-                </a>
-              </div>
-            )}
+            <SectionOrderButton />
           </div>
         </section>
       )}
