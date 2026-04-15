@@ -121,8 +121,12 @@ const TalerGurLanding = () => {
       const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
       const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${pkg.weight})`;
       const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-      const unitPrice = Math.round(basePrice * selectedPackage);
+      const beforeDiscount = Math.round(basePrice * selectedPackage);
+      const unitPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
       const qty = orderForm.quantity || 1;
+      const noteParts: string[] = [];
+      if (pkg.discount > 0) noteParts.push(`${pkg.discount}% প্যাকেজ ডিসকাউন্ট`);
+      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge}`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
@@ -131,7 +135,7 @@ const TalerGurLanding = () => {
         quantity: qty,
         unit_price: unitPrice,
         total_amount: unitPrice * qty + deliveryCharge,
-        notes: !freeDelivery && deliveryCharge > 0 ? `ডেলিভারি চার্জ: ৳${deliveryCharge}` : null,
+        notes: noteParts.length > 0 ? noteParts.join(" | ") : null,
         payment_method: orderForm.payment_method,
       });
       if (error) throw error;
