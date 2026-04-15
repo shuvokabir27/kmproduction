@@ -15,9 +15,10 @@ const TalerGurLanding = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" });
   const [phoneError, setPhoneError] = useState("");
-  const [selectedPackage, setSelectedPackage] = useState<number>(1);
+  // Cart: map of kg -> quantity
+  const [cart, setCart] = useState<Record<number, number>>({ 1: 1 });
 
   const weightPackages = [
     { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", discount: 0 },
