@@ -196,71 +196,107 @@ const AdminProducts = () => {
           <ProductDashboardStats />
         </TabsContent>
 
-        {/* Products Tab */}
         <TabsContent value="products" className="mt-4 space-y-4">
+          {/* Product Category Sub-tabs */}
+          <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-xl w-fit">
+            <button
+              onClick={() => setProductCategory("taler_gur")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                productCategory === "taler_gur"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🌴 তালের গুড়
+            </button>
+            <button
+              onClick={() => setProductCategory("other")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                productCategory === "other"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              📦 অন্যান্য প্রডাক্ট
+            </button>
+          </div>
+
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-foreground">প্রডাক্ট লিস্ট</h2>
-            <Button onClick={openCreate} size="sm" className="gap-1.5">
+            <h2 className="text-lg font-bold text-foreground">
+              {productCategory === "taler_gur" ? "তালের গুড় প্রডাক্ট" : "অন্যান্য প্রডাক্ট"}
+            </h2>
+            <Button onClick={() => {
+              resetForm();
+              setForm(f => ({ ...f, category: productCategory === "taler_gur" ? "taler_gur" : "" }));
+              setDialogOpen(true);
+            }} size="sm" className="gap-1.5">
               <Plus className="h-4 w-4" /> নতুন প্রডাক্ট
             </Button>
           </div>
 
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1, 2].map((i) => <div key={i} className="h-40 bg-card animate-pulse rounded-xl" />)}
-            </div>
-          ) : !products?.length ? (
-            <div className="text-center py-16 text-muted-foreground">
-              <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>কোনো প্রডাক্ট নেই</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((p: any) => (
-                <div key={p.id} className="bg-card border border-border/30 rounded-2xl overflow-hidden hover:border-primary/30 transition-all group">
-                  <div className="h-40 bg-muted relative">
-                    {p.image_url ? (
-                      <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Image className="h-10 w-10 text-muted-foreground/20" />
-                      </div>
-                    )}
-                    {!p.is_active && (
-                      <div className="absolute top-2 right-2 bg-destructive/90 text-destructive-foreground text-xs px-2 py-0.5 rounded-full">নিষ্ক্রিয়</div>
-                    )}
-                    {p.discount_price && p.discount_price < p.price && (
-                      <div className="absolute top-2 left-2 bg-destructive/90 text-destructive-foreground text-xs px-2 py-0.5 rounded-full font-bold">
-                        {Math.round(((p.price - p.discount_price) / p.price) * 100)}% ছাড়
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3.5 space-y-2">
-                    <h3 className="font-bold text-foreground text-sm">{p.name}</h3>
-                    <div className="flex items-center gap-2">
-                      {p.discount_price && p.discount_price < p.price ? (
-                        <>
-                          <span className="text-muted-foreground line-through text-xs">৳{p.price}</span>
-                          <span className="text-base font-extrabold text-primary">৳{p.discount_price}</span>
-                        </>
+          {(() => {
+            const filtered = products?.filter((p: any) =>
+              productCategory === "taler_gur"
+                ? p.category === "taler_gur"
+                : p.category !== "taler_gur"
+            ) ?? [];
+
+            return isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2].map((i) => <div key={i} className="h-40 bg-card animate-pulse rounded-xl" />)}
+              </div>
+            ) : !filtered.length ? (
+              <div className="text-center py-16 text-muted-foreground">
+                <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <p>{productCategory === "taler_gur" ? "তালের গুড়ের কোনো প্রডাক্ট নেই" : "অন্যান্য কোনো প্রডাক্ট নেই"}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filtered.map((p: any) => (
+                  <div key={p.id} className="bg-card border border-border/30 rounded-2xl overflow-hidden hover:border-primary/30 transition-all group">
+                    <div className="h-40 bg-muted relative">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <span className="text-base font-extrabold text-primary">৳{p.price}</span>
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Image className="h-10 w-10 text-muted-foreground/20" />
+                        </div>
                       )}
-                      {p.category && <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{p.category}</span>}
+                      {!p.is_active && (
+                        <div className="absolute top-2 right-2 bg-destructive/90 text-destructive-foreground text-xs px-2 py-0.5 rounded-full">নিষ্ক্রিয়</div>
+                      )}
+                      {p.discount_price && p.discount_price < p.price && (
+                        <div className="absolute top-2 left-2 bg-destructive/90 text-destructive-foreground text-xs px-2 py-0.5 rounded-full font-bold">
+                          {Math.round(((p.price - p.discount_price) / p.price) * 100)}% ছাড়
+                        </div>
+                      )}
                     </div>
-                    <div className="flex gap-2 pt-1">
-                      <Button size="sm" className="flex-1 gap-1" onClick={() => openEdit(p)}>
-                        <Pencil className="h-3 w-3" /> এডিট
-                      </Button>
-                      <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleDelete(p.id)}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
+                    <div className="p-3.5 space-y-2">
+                      <h3 className="font-bold text-foreground text-sm">{p.name}</h3>
+                      <div className="flex items-center gap-2">
+                        {p.discount_price && p.discount_price < p.price ? (
+                          <>
+                            <span className="text-muted-foreground line-through text-xs">৳{p.price}</span>
+                            <span className="text-base font-extrabold text-primary">৳{p.discount_price}</span>
+                          </>
+                        ) : (
+                          <span className="text-base font-extrabold text-primary">৳{p.price}</span>
+                        )}
+                      </div>
+                      <div className="flex gap-2 pt-1">
+                        <Button size="sm" className="flex-1 gap-1" onClick={() => openEdit(p)}>
+                          <Pencil className="h-3 w-3" /> এডিট
+                        </Button>
+                        <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleDelete(p.id)}>
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            );
+          })()}
         </TabsContent>
 
         {/* Orders Tab */}
