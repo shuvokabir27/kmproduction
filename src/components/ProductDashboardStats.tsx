@@ -91,11 +91,15 @@ const ProductDashboardStats = () => {
     const h = new Date(o.created_at).getHours();
     hourCounts[h]++;
   });
-  const peakHourData = hourCounts.map((count, h) => ({
-    hour: `${h}:00`,
-    label: h < 12 ? `সকাল ${toBn(h === 0 ? 12 : h)}` : h === 12 ? `দুপুর ১২` : `${h < 17 ? "বিকাল" : h < 20 ? "সন্ধ্যা" : "রাত"} ${toBn(h - 12)}`,
-    orders: count,
-  })).filter(d => d.orders > 0);
+  const peakHourData = hourCounts.map((count, h) => {
+    const ampm = h < 12 ? "AM" : "PM";
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return {
+      hour: `${h12} ${ampm}`,
+      label: h < 12 ? `সকাল ${toBn(h === 0 ? 12 : h)}` : h === 12 ? `দুপুর ১২` : `${h < 17 ? "বিকাল" : h < 20 ? "সন্ধ্যা" : "রাত"} ${toBn(h - 12)}`,
+      orders: count,
+    };
+  }).filter(d => d.orders > 0);
 
   // Weekly data (last 7 days)
   const weeklyData = [];
