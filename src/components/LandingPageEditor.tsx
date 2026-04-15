@@ -220,7 +220,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date").limit(1).single();
       return data;
     },
   });
@@ -235,6 +235,31 @@ const LandingPageEditor = () => {
     toast.success(newVal ? "ফ্রি ডেলিভারি চালু" : "ফ্রি ডেলিভারি বন্ধ");
     queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
     queryClient.invalidateQueries({ queryKey: ["site-settings-delivery"] });
+  };
+
+  const [offerDate, setOfferDate] = useState("");
+  const [offerTime, setOfferTime] = useState("");
+  const [savingOffer, setSavingOffer] = useState(false);
+
+  // Sync offer date/time from settings
+  useEffect(() => {
+    if (siteSettings?.offer_end_date) {
+      const d = new Date(siteSettings.offer_end_date);
+      setOfferDate(d.toISOString().split("T")[0]);
+      setOfferTime(d.toTimeString().slice(0, 5));
+    }
+  }, [siteSettings?.offer_end_date]);
+
+  const saveOfferEndDate = async () => {
+    if (!siteSettings || !offerDate) return;
+    setSavingOffer(true);
+    const datetime = new Date(`${offerDate}T${offerTime || "23:59"}:00`);
+    const { error } = await supabase.from("site_settings").update({ offer_end_date: datetime.toISOString() }).eq("id", siteSettings.id);
+    setSavingOffer(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("অফারের শেষ তারিখ আপডেট হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+    queryClient.invalidateQueries({ queryKey: ["offer-end-date"] });
   };
 
   const { data: sections, isLoading } = useQuery({
