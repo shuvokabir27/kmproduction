@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Package, Plus, Eye, Pencil, Trash2, Phone, MapPin, Calendar,
   Clock, Search, Filter, TrendingUp, ShoppingCart, CheckCircle2,
-  Truck, XCircle, Ban, CreditCard, MessageCircle, PhoneCall
+  Truck, XCircle, Ban, CreditCard, MessageCircle, PhoneCall, RotateCcw, BarChart3
 } from "lucide-react";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -24,6 +24,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: any }> 
   shipped: { label: "শিপড", color: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20", icon: Truck },
   delivered: { label: "ডেলিভারড", color: "bg-green-500/10 text-green-600 border-green-500/20", icon: CheckCircle2 },
   cancelled: { label: "ক্যান্সেলড", color: "bg-red-500/10 text-red-600 border-red-500/20", icon: XCircle },
+  returned: { label: "রিটার্নড", color: "bg-rose-500/10 text-rose-700 border-rose-500/20", icon: RotateCcw },
   abandoned: { label: "অসম্পূর্ণ", color: "bg-orange-500/10 text-orange-600 border-orange-500/20", icon: Clock },
 };
 
@@ -215,6 +216,24 @@ const OrderManagement = () => {
     delivered: orders?.filter((o: any) => o.status === "delivered").length || 0,
     totalRevenue: orders?.filter((o: any) => o.status === "delivered")
       .reduce((sum: number, o: any) => sum + Number(o.total_amount || 0), 0) || 0,
+    returned: orders?.filter((o: any) => o.status === "returned").length || 0,
+    returnAmount: orders?.filter((o: any) => o.status === "returned")
+      .reduce((sum: number, o: any) => sum + Number(o.return_amount || o.total_amount || 0), 0) || 0,
+  };
+
+  // Return stats by period
+  const now = new Date();
+  const returnedOrders = (orders ?? []).filter((o: any) => o.status === "returned");
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const yearStart = new Date(now.getFullYear(), 0, 1);
+  const returnStats = {
+    weekly: returnedOrders.filter((o: any) => new Date(o.returned_at || o.updated_at) >= weekStart)
+      .reduce((s: number, o: any) => s + Number(o.return_amount || o.total_amount || 0), 0),
+    monthly: returnedOrders.filter((o: any) => new Date(o.returned_at || o.updated_at) >= monthStart)
+      .reduce((s: number, o: any) => s + Number(o.return_amount || o.total_amount || 0), 0),
+    yearly: returnedOrders.filter((o: any) => new Date(o.returned_at || o.updated_at) >= yearStart)
+      .reduce((s: number, o: any) => s + Number(o.return_amount || o.total_amount || 0), 0),
   };
 
   const tabs = [
@@ -224,6 +243,7 @@ const OrderManagement = () => {
     { key: "shipped", label: "শিপড", count: orders?.filter((o: any) => o.status === "shipped").length || 0 },
     { key: "delivered", label: "ডেলিভারড", count: stats.delivered },
     { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0 },
+    { key: "returned", label: "🔄 রিটার্নড", count: stats.returned },
     { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0 },
     { key: "payment_verify", label: "💳 পেমেন্ট চেক", count: mobilePaymentOrders.length },
     { key: "all", label: "সকল", count: stats.total },
@@ -277,7 +297,41 @@ const OrderManagement = () => {
           </div>
           <span className="text-xl font-bold text-primary">৳{toBn(stats.totalRevenue)}</span>
         </div>
+        {stats.returned > 0 && (
+          <div className="bg-card border border-rose-500/20 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <RotateCcw className="h-4 w-4 text-rose-500" />
+              <span className="text-xs text-muted-foreground">রিটার্ন লস</span>
+            </div>
+            <span className="text-xl font-bold text-rose-600">-৳{toBn(stats.returnAmount)}</span>
+          </div>
+        )}
       </div>
+
+      {/* Return stats panel */}
+      {activeTab === "returned" && stats.returned > 0 && (
+        <div className="bg-card border border-rose-500/20 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="h-4 w-4 text-rose-600" />
+            <h3 className="font-bold text-foreground text-sm">রিটার্ন হিসাব</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-rose-500/5 rounded-lg p-3 text-center">
+              <p className="text-[10px] text-muted-foreground mb-1">এই সপ্তাহ</p>
+              <span className="text-sm font-bold text-rose-600">-৳{toBn(returnStats.weekly)}</span>
+            </div>
+            <div className="bg-rose-500/5 rounded-lg p-3 text-center">
+              <p className="text-[10px] text-muted-foreground mb-1">এই মাস</p>
+              <span className="text-sm font-bold text-rose-600">-৳{toBn(returnStats.monthly)}</span>
+            </div>
+            <div className="bg-rose-500/5 rounded-lg p-3 text-center">
+              <p className="text-[10px] text-muted-foreground mb-1">এই বছর</p>
+              <span className="text-sm font-bold text-rose-600">-৳{toBn(returnStats.yearly)}</span>
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2">মোট {toBn(stats.returned)}টি অর্ডার রিটার্ন হয়েছে</p>
+        </div>
+      )}
 
       {/* Search + Tabs */}
       <div className="space-y-3">
@@ -547,6 +601,40 @@ const OrderManagement = () => {
                       onClick={() => quickStatusUpdate(order.id, "delivered")}>
                       <CheckCircle2 className="h-3 w-3" /> ডেলিভারড
                     </Button>
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-rose-600 border-rose-500/30 hover:bg-rose-500/10"
+                      onClick={() => {
+                        const amt = Number(order.total_amount || 0);
+                        supabase.from("orders").update({
+                          status: "returned",
+                          returned_at: new Date().toISOString(),
+                          return_amount: amt,
+                        } as any).eq("id", order.id).then(() => {
+                          queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+                          toast.success(`অর্ডার রিটার্ন হয়েছে। ৳${amt} মাইনাস।`);
+                        });
+                      }}>
+                      <RotateCcw className="h-3 w-3" /> রিটার্ন
+                    </Button>
+                  </div>
+                )}
+                {order.status === "returned" && (
+                  <div className="flex gap-2 mt-3 pt-2 border-t border-rose-200/50 bg-rose-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
+                    <div className="w-full">
+                      <p className="text-[10px] text-rose-600 mb-2">রিটার্ন মূল্য: ৳{toBn(Number(order.return_amount || order.total_amount || 0))}</p>
+                      <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10"
+                        onClick={() => {
+                          supabase.from("orders").update({
+                            status: "pending",
+                            returned_at: null,
+                            return_amount: 0,
+                          } as any).eq("id", order.id).then(() => {
+                            queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+                            toast.success("অর্ডার পেন্ডিংয়ে ফেরানো হয়েছে");
+                          });
+                        }}>
+                        <Clock className="h-3 w-3" /> পেন্ডিংয়ে ফেরাও
+                      </Button>
+                    </div>
                   </div>
                 )}
                 {order.status === "abandoned" && (
