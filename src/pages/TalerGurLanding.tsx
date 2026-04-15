@@ -792,7 +792,8 @@ const TalerGurLanding = () => {
                         {orderDiscount > 0 && <span className="line-through mr-1.5">৳{toBn(beforeDiscount)}</span>}
                         <span>৳{toBn(orderSubTotal)}</span>
                         {!freeDelivery && deliveryCharge > 0 && <span className="text-gray-400"> + ৳{toBn(deliveryCharge)} ডেলি.</span>}
-                        {freeDelivery && <span className="text-[#1a7a2e]"> + 🚚 ফ্রি</span>}
+                        {(freeDelivery || (!freeDelivery && orderKg >= freeDeliveryMinKg)) && <span className="text-[#1a7a2e]"> + 🚚 ফ্রি</span>}
+                        {!freeDelivery && orderKg < freeDeliveryMinKg && <span className="text-[10px] text-gray-400 block">{toBn(freeDeliveryMinKg)}+ কেজিতে ডেলিভারি ফ্রি!</span>}
                       </div>
                       <span className="text-base font-bold text-[#1a7a2e]">৳{toBn(orderGrandTotal)}</span>
                     </div>
