@@ -1,0 +1,1 @@
+ALTER TABLE public.orders ALTER COLUMN quantity TYPE numeric USING quantity::numeric;
