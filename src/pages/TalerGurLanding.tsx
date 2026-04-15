@@ -226,7 +226,7 @@ const TalerGurLanding = () => {
               <h2 className="text-2xl md:text-3xl font-bold text-[#c0392b] flex items-center justify-center gap-2 mb-2">
                 <Clock className="h-6 w-6" /> এখনই অর্ডার করুন — অফার শেষ হচ্ছে!
               </h2>
-              <p className="text-[#888] text-sm">ডেলিভারির সময় টেস্ট করে পছন্দ হলে পে করুন। কোনো ঝুঁকি নেই!</p>
+              {freeDelivery && <p className="text-[#888] text-sm">ডেলিভারির সময় টেস্ট করে পছন্দ হলে পে করুন। কোনো ঝুঁকি নেই!</p>}
             </div>
 
             {/* Countdown Timer */}
@@ -305,12 +305,14 @@ const TalerGurLanding = () => {
 
       {/* Trust Badges */}
       <section className="bg-white py-6 border-b">
-        <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-4 text-center">
-          <div className="flex flex-col items-center gap-1">
-            <Truck className="h-6 w-6 text-[#1a7a2e]" />
-            <p className="font-bold text-sm text-[#333]">ফ্রি ডেলিভারি</p>
-            <p className="text-xs text-[#888]">সারাদেশে বিনামূল্যে</p>
-          </div>
+        <div className={`max-w-4xl mx-auto px-4 grid ${freeDelivery ? "grid-cols-3" : "grid-cols-2"} gap-4 text-center`}>
+          {freeDelivery && (
+            <div className="flex flex-col items-center gap-1">
+              <Truck className="h-6 w-6 text-[#1a7a2e]" />
+              <p className="font-bold text-sm text-[#333]">ফ্রি ডেলিভারি</p>
+              <p className="text-xs text-[#888]">সারাদেশে বিনামূল্যে</p>
+            </div>
+          )}
           <div className="flex flex-col items-center gap-1">
             <RotateCcw className="h-6 w-6 text-[#1a7a2e]" />
             <p className="font-bold text-sm text-[#333]">ইজি রিটার্ন</p>
@@ -331,10 +333,12 @@ const TalerGurLanding = () => {
             <p className="text-xl font-bold text-[#1a7a2e]">৪.৯/৫</p>
             <p className="text-xs text-[#888]">কাস্টমার রিভিউ</p>
           </div>
-          <div>
-            <p className="text-xl font-bold text-[#1a7a2e]">১০০০+</p>
-            <p className="text-xs text-[#888]">সফল ডেলিভারি</p>
-          </div>
+          {freeDelivery && (
+            <div>
+              <p className="text-xl font-bold text-[#1a7a2e]">১০০০+</p>
+              <p className="text-xs text-[#888]">সফল ডেলিভারি</p>
+            </div>
+          )}
         </div>
         <SectionOrderButton />
       </section>
@@ -509,12 +513,14 @@ const TalerGurLanding = () => {
             })}
 
             {/* Trust badges repeated */}
-            <div className="grid grid-cols-3 gap-4 mt-8 text-center">
-              <div>
-                <Truck className="h-5 w-5 mx-auto mb-1 text-amber-300" />
-                <p className="text-xs font-semibold">ফ্রি ডেলিভারি</p>
-                <p className="text-[10px] text-white/60">সারাদেশে বিনামূল্যে</p>
-              </div>
+            <div className={`grid ${freeDelivery ? "grid-cols-3" : "grid-cols-2"} gap-4 mt-8 text-center`}>
+              {freeDelivery && (
+                <div>
+                  <Truck className="h-5 w-5 mx-auto mb-1 text-amber-300" />
+                  <p className="text-xs font-semibold">ফ্রি ডেলিভারি</p>
+                  <p className="text-[10px] text-white/60">সারাদেশে বিনামূল্যে</p>
+                </div>
+              )}
               <div>
                 <RotateCcw className="h-5 w-5 mx-auto mb-1 text-amber-300" />
                 <p className="text-xs font-semibold">ইজি রিটার্ন</p>
@@ -527,9 +533,11 @@ const TalerGurLanding = () => {
               </div>
             </div>
 
-            <p className="mt-6 text-white/70 text-xs max-w-md mx-auto leading-relaxed">
-              প্রোডাক্ট হাতে পেয়ে ভালো লাগলে রেখে দিন, আর ভালো না লাগলে কেবল ডেলিভারি চার্জ দিয়ে রিটার্ন করে দিন — একদম নিশ্চিন্তে অর্ডার করুন! ✅
-            </p>
+            {freeDelivery && (
+              <p className="mt-6 text-white/70 text-xs max-w-md mx-auto leading-relaxed">
+                প্রোডাক্ট হাতে পেয়ে ভালো লাগলে রেখে দিন, আর ভালো না লাগলে কেবল ডেলিভারি চার্জ দিয়ে রিটার্ন করে দিন — একদম নিশ্চিন্তে অর্ডার করুন! ✅
+              </p>
+            )}
           </div>
         </section>
       )}
