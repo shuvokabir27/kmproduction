@@ -29,6 +29,7 @@ const AdminProducts = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [productCategory, setProductCategory] = useState<"taler_gur" | "other">("taler_gur");
 
   const [form, setForm] = useState({
     name: "",
