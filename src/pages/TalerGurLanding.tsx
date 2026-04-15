@@ -566,32 +566,21 @@ const TalerGurLanding = () => {
             <span className="text-5xl block mb-4">{cta.icon}</span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#333] mb-3">{cta.title}</h2>
             <p className="text-[#888] text-base mb-6">{cta.content}</p>
-            {contactNumber && (
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href={`tel:${contactNumber}`}>
-                  <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-8 py-6 text-lg rounded-full font-bold">
-                    <Phone className="h-5 w-5" /> কল করুন
-                  </Button>
-                </a>
-                <a href={`https://wa.me/${contactNumber.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="gap-2 border-[#1a7a2e] text-[#1a7a2e] hover:bg-[#1a7a2e] hover:text-white px-8 py-6 text-lg rounded-full font-bold">
-                    হোয়াটসঅ্যাপ
-                  </Button>
-                </a>
-              </div>
-            )}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button onClick={openOrderDialog} size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-8 py-6 text-lg rounded-full font-bold">
+                <ShoppingCart className="h-5 w-5" /> অর্ডার করুন
+              </Button>
+            </div>
           </div>
         </section>
       )}
 
       {/* Sticky Bottom CTA */}
-      {contactNumber && products && products.length > 0 && (
+      {products && products.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a7a2e] shadow-[0_-4px_20px_rgba(0,0,0,0.2)] py-3 px-4">
-          <a href={`tel:${contactNumber}`} className="block max-w-lg mx-auto">
-            <Button className="w-full gap-2 bg-amber-500 hover:bg-amber-600 text-white py-5 text-base rounded-full font-bold shadow-lg">
-              <ClipboardCheck className="h-5 w-5" /> অর্ডার করুন — ৳{toBn(products[0]?.discount_price || products[0]?.price || 0)}
-            </Button>
-          </a>
+          <Button onClick={openOrderDialog} className="w-full max-w-lg mx-auto block gap-2 bg-amber-500 hover:bg-amber-600 text-white py-5 text-base rounded-full font-bold shadow-lg">
+            <ShoppingCart className="h-5 w-5" /> অর্ডার করুন — ৳{toBn(products[0]?.discount_price || products[0]?.price || 0)}
+          </Button>
         </div>
       )}
 
