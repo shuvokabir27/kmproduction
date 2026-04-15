@@ -112,6 +112,7 @@ const TalerGurLanding = () => {
     if (totalKg <= 1) return baseDeliveryCharge;
     return Math.round(baseDeliveryCharge + extraPerKg * (totalKg - 1));
   };
+  const isFreeDeliveryActive = freeDelivery || (!freeDelivery && orderKg >= freeDeliveryMinKg);
 
   // Order price calculation based on kg
   const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
@@ -709,9 +710,13 @@ const TalerGurLanding = () => {
 
       {/* Order Popup */}
       {orderOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-colors duration-500 ${isFreeDeliveryActive ? "bg-green-900/40" : "bg-black/50"}`} onClick={closeOrderDialog}>
           <div
-            className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200"
+            className={`bg-white w-full max-w-md rounded-3xl overflow-hidden max-h-[90vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200 transition-shadow duration-500 ${
+              isFreeDeliveryActive
+                ? "shadow-[0_0_40px_rgba(34,168,58,0.5),0_0_80px_rgba(34,168,58,0.25)] ring-2 ring-[#22a83a]/40"
+                : "shadow-2xl"
+            }`}
             onClick={e => e.stopPropagation()}
           >
             {orderSuccess ? (
@@ -730,9 +735,16 @@ const TalerGurLanding = () => {
               </div>
             ) : (
               <>
-                {/* Header - compact */}
-                <div className="relative bg-gradient-to-r from-[#1a7a2e] via-[#1f9535] to-[#22a83a] px-4 py-3">
-                  <div className="flex items-center justify-between">
+                {/* Header */}
+                <div className={`relative px-4 py-3 transition-all duration-500 ${
+                  isFreeDeliveryActive
+                    ? "bg-gradient-to-r from-[#0f7b1f] via-[#16a34a] to-[#22c55e]"
+                    : "bg-gradient-to-r from-[#1a7a2e] via-[#1f9535] to-[#22a83a]"
+                }`}>
+                  {isFreeDeliveryActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
+                  )}
+                  <div className="relative flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <ShoppingCart className="h-4 w-4 text-white" />
                       <h3 className="text-base font-bold text-white">অর্ডার করুন</h3>
@@ -741,6 +753,13 @@ const TalerGurLanding = () => {
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </div>
+                  {isFreeDeliveryActive && (
+                    <div className="relative mt-1.5 flex items-center gap-1.5 bg-white/20 rounded-full px-2.5 py-1 w-fit">
+                      <span className="text-sm">🚚</span>
+                      <span className="text-[11px] font-bold text-white tracking-wide">ফ্রি ডেলিভারি!</span>
+                      <span className="text-[10px]">✨</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="px-4 py-3 space-y-3">
@@ -792,10 +811,14 @@ const TalerGurLanding = () => {
                         {orderDiscount > 0 && <span className="line-through mr-1.5">৳{toBn(beforeDiscount)}</span>}
                         <span>৳{toBn(orderSubTotal)}</span>
                         {!freeDelivery && deliveryCharge > 0 && <span className="text-gray-400"> + ৳{toBn(deliveryCharge)} ডেলি.</span>}
-                        {(freeDelivery || (!freeDelivery && orderKg >= freeDeliveryMinKg)) && <span className="text-[#1a7a2e]"> + 🚚 ফ্রি</span>}
-                        {!freeDelivery && orderKg < freeDeliveryMinKg && <span className="text-[10px] text-gray-400 block">{toBn(freeDeliveryMinKg)}+ কেজিতে ডেলিভারি ফ্রি!</span>}
+                        {isFreeDeliveryActive && (
+                          <span className="ml-1 inline-flex items-center gap-0.5 bg-green-100 text-green-700 font-bold text-[10px] px-1.5 py-0.5 rounded-full animate-pulse">
+                            🚚 ফ্রি ডেলিভারি
+                          </span>
+                        )}
+                        {!freeDelivery && orderKg < freeDeliveryMinKg && <span className="text-[10px] text-amber-600 block font-medium">🎯 আরো {toBn(+(freeDeliveryMinKg - orderKg).toFixed(1))} কেজি নিলে ডেলিভারি ফ্রি!</span>}
                       </div>
-                      <span className="text-base font-bold text-[#1a7a2e]">৳{toBn(orderGrandTotal)}</span>
+                      <span className={`text-base font-bold transition-colors duration-300 ${isFreeDeliveryActive ? "text-green-600" : "text-[#1a7a2e]"}`}>৳{toBn(orderGrandTotal)}</span>
                     </div>
                   </div>
 
