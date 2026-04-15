@@ -1,12 +1,22 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Phone, Clock, ClipboardCheck, Truck, RotateCcw, ShieldCheck, Star, ChevronDown } from "lucide-react";
+import { Phone, Clock, ClipboardCheck, Truck, RotateCcw, ShieldCheck, Star, ChevronDown, ShoppingCart, X, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const TalerGurLanding = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [phoneError, setPhoneError] = useState("");
+
 
   useEffect(() => {
     const targetDate = new Date();
@@ -59,17 +69,76 @@ const TalerGurLanding = () => {
 
   const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-  const contactNumber = products?.[0]?.contact_info || "";
+  const handlePhoneChange = (val: string) => {
+    const digits = val.replace(/\D/g, "");
+    setOrderForm(f => ({ ...f, phone: digits }));
+    if (digits.length > 0 && digits.length !== 11) {
+      setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে");
+    } else {
+      setPhoneError("");
+    }
+  };
 
-  const SectionOrderButton = () => contactNumber ? (
+  const handleOrderSubmit = async () => {
+    if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
+    if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
+    if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
+    setSubmitting(true);
+    try {
+      const productName = products?.[0]?.name || "প্রডাক্ট";
+      const unitPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+      const { error } = await supabase.from("orders").insert({
+        customer_name: orderForm.name.trim(),
+        customer_phone: orderForm.phone,
+        customer_address: orderForm.address.trim(),
+        product_name: productName,
+        quantity: 1,
+        unit_price: unitPrice,
+        total_amount: unitPrice,
+      });
+      if (error) throw error;
+      setOrderSuccess(true);
+      setOrderForm({ name: "", phone: "", address: "" });
+    } catch {
+      toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const closeOrderDialog = async () => {
+    if (!orderSuccess && orderForm.phone.length === 11) {
+      try {
+        const productName = products?.[0]?.name || "প্রডাক্ট";
+        await supabase.from("orders").insert({
+          customer_name: orderForm.name.trim() || "অজানা",
+          customer_phone: orderForm.phone,
+          customer_address: orderForm.address.trim() || null,
+          product_name: productName,
+          quantity: 1,
+          unit_price: 0,
+          total_amount: 0,
+          status: "abandoned" as any,
+        });
+      } catch (_) {}
+    }
+    setOrderOpen(false);
+    setOrderForm({ name: "", phone: "", address: "" });
+  };
+
+  const openOrderDialog = () => {
+    setOrderSuccess(false);
+    setPhoneError("");
+    setOrderOpen(true);
+  };
+
+  const SectionOrderButton = () => (
     <div className="text-center mt-8">
-      <a href={`tel:${contactNumber}`}>
-        <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
-          <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
-        </Button>
-      </a>
+      <Button onClick={openOrderDialog} size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
+        <ShoppingCart className="h-5 w-5" /> অর্ডার করতে চাই
+      </Button>
     </div>
-  ) : null;
+  );
 
   if (isLoading) {
     return (
@@ -89,29 +158,12 @@ const TalerGurLanding = () => {
       {/* Header */}
       <header className="bg-white shadow-sm py-3 px-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          {contactNumber && (
-            <a href={`tel:${contactNumber}`} className="flex items-center gap-2 text-[#1a7a2e] font-semibold text-sm md:text-base">
-              <Phone className="h-4 w-4" /> {contactNumber}
-            </a>
-          )}
-          {contactNumber && (
-            <a href={`tel:${contactNumber}`}>
-              <Button size="sm" className="bg-[#c0392b] hover:bg-[#a93226] text-white rounded-full px-5 text-sm font-bold shadow">
-                অর্ডার করুন
-              </Button>
-            </a>
-          )}
+          <span className="text-[#1a7a2e] font-semibold text-sm md:text-base">কে এম প্রডাক্ট</span>
+          <Button onClick={openOrderDialog} size="sm" className="bg-[#c0392b] hover:bg-[#a93226] text-white rounded-full px-5 text-sm font-bold shadow">
+            অর্ডার করুন
+          </Button>
         </div>
       </header>
-
-      {/* Call Button Bar */}
-      {contactNumber && (
-        <div className="bg-white border-b py-2 text-center">
-          <a href={`tel:${contactNumber}`} className="inline-flex items-center gap-2 border border-[#ccc] rounded-full px-6 py-2 text-sm text-[#555] hover:bg-gray-50 transition">
-            <Phone className="h-4 w-4" /> কল করুন — {contactNumber}
-          </a>
-        </div>
-      )}
 
       {/* Hero Section */}
       {hero && (
@@ -149,13 +201,9 @@ const TalerGurLanding = () => {
             )}
 
             {/* Hero CTA */}
-            {contactNumber && (
-              <a href={`tel:${contactNumber}`}>
-                <Button size="lg" className="mt-8 gap-2 bg-amber-500 hover:bg-amber-600 text-white px-10 py-6 text-lg rounded-full shadow-xl font-bold">
-                  <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
-                </Button>
-              </a>
-            )}
+            <Button onClick={openOrderDialog} size="lg" className="mt-8 gap-2 bg-amber-500 hover:bg-amber-600 text-white px-10 py-6 text-lg rounded-full shadow-xl font-bold">
+              <ShoppingCart className="h-5 w-5" /> অর্ডার করতে চাই
+            </Button>
           </div>
         </section>
       )}
@@ -329,15 +377,7 @@ const TalerGurLanding = () => {
             </div>
 
             {/* CTA after benefits */}
-            {contactNumber && (
-              <div className="text-center mt-10">
-                <a href={`tel:${contactNumber}`}>
-                  <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-10 py-6 text-lg rounded-full shadow-lg font-bold">
-                    <ClipboardCheck className="h-5 w-5" /> অর্ডার করতে চাই
-                  </Button>
-                </a>
-              </div>
-            )}
+            <SectionOrderButton />
           </div>
         </section>
       )}
@@ -526,32 +566,21 @@ const TalerGurLanding = () => {
             <span className="text-5xl block mb-4">{cta.icon}</span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#333] mb-3">{cta.title}</h2>
             <p className="text-[#888] text-base mb-6">{cta.content}</p>
-            {contactNumber && (
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href={`tel:${contactNumber}`}>
-                  <Button size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-8 py-6 text-lg rounded-full font-bold">
-                    <Phone className="h-5 w-5" /> কল করুন
-                  </Button>
-                </a>
-                <a href={`https://wa.me/${contactNumber.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="gap-2 border-[#1a7a2e] text-[#1a7a2e] hover:bg-[#1a7a2e] hover:text-white px-8 py-6 text-lg rounded-full font-bold">
-                    হোয়াটসঅ্যাপ
-                  </Button>
-                </a>
-              </div>
-            )}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button onClick={openOrderDialog} size="lg" className="gap-2 bg-[#1a7a2e] hover:bg-[#15661f] text-white px-8 py-6 text-lg rounded-full font-bold">
+                <ShoppingCart className="h-5 w-5" /> অর্ডার করুন
+              </Button>
+            </div>
           </div>
         </section>
       )}
 
       {/* Sticky Bottom CTA */}
-      {contactNumber && products && products.length > 0 && (
+      {products && products.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a7a2e] shadow-[0_-4px_20px_rgba(0,0,0,0.2)] py-3 px-4">
-          <a href={`tel:${contactNumber}`} className="block max-w-lg mx-auto">
-            <Button className="w-full gap-2 bg-amber-500 hover:bg-amber-600 text-white py-5 text-base rounded-full font-bold shadow-lg">
-              <ClipboardCheck className="h-5 w-5" /> অর্ডার করুন — ৳{toBn(products[0]?.discount_price || products[0]?.price || 0)}
-            </Button>
-          </a>
+          <Button onClick={openOrderDialog} className="w-full max-w-lg mx-auto block gap-2 bg-amber-500 hover:bg-amber-600 text-white py-5 text-base rounded-full font-bold shadow-lg">
+            <ShoppingCart className="h-5 w-5" /> অর্ডার করুন — ৳{toBn(products[0]?.discount_price || products[0]?.price || 0)}
+          </Button>
         </div>
       )}
 
@@ -559,6 +588,130 @@ const TalerGurLanding = () => {
       <footer className="border-t border-[#e8e0d4] py-6 pb-20 text-center text-[#888] text-sm bg-white">
         © কে এম প্রডাক্ট
       </footer>
+
+      {/* Order Popup */}
+      {orderOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
+          <div
+            className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            {orderSuccess ? (
+              <div className="p-8 text-center">
+                <div className="relative w-20 h-20 mx-auto mb-5">
+                  <div className="absolute inset-0 bg-[#22a83a]/20 rounded-full animate-ping" />
+                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#22a83a] to-[#1b8a30] flex items-center justify-center shadow-lg">
+                    <CheckCircle className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">অর্ডার সফল হয়েছে! 🎉</h3>
+                <p className="text-gray-500 text-sm mb-6 leading-relaxed">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।<br/>ধন্যবাদ আমাদের বেছে নেওয়ার জন্য!</p>
+                <Button onClick={() => setOrderOpen(false)} className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold py-4 rounded-2xl text-base shadow-lg">
+                  ঠিক আছে
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="relative bg-gradient-to-r from-[#1a7a2e] via-[#1f9535] to-[#22a83a] px-5 py-5">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full translate-x-1/2 -translate-y-1/2" />
+                  <div className="flex items-center justify-between relative">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <ShoppingCart className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white">অর্ডার করুন</h3>
+                        <p className="text-white/60 text-xs">তথ্য দিয়ে অর্ডার কনফার্ম করুন</p>
+                      </div>
+                    </div>
+                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25 hover:text-white transition-all">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {products && products.length > 0 && (() => {
+                  const p = products[0] as any;
+                  const hasDiscount = p.discount_price && p.discount_price < p.price;
+                  return (
+                    <div className="mx-5 mt-4 mb-0 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 text-center">
+                      <p className="text-gray-500 text-xs mb-1">অর্ডার মূল্য</p>
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-2xl font-extrabold text-[#1a7a2e]">
+                          ৳{toBn(hasDiscount ? p.discount_price : p.price)}
+                        </span>
+                        {hasDiscount && (
+                          <span className="line-through text-gray-400 text-sm">৳{toBn(p.price)}</span>
+                        )}
+                        <span className="text-sm font-medium text-gray-600">টাকা</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-1">{p.name}</p>
+                    </div>
+                  );
+                })()}
+
+                <div className="p-5 space-y-5">
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                    <Input
+                      value={orderForm.name}
+                      onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))}
+                      placeholder="আপনার পুরো নাম লিখুন"
+                      className="h-12 rounded-2xl border-2 border-gray-200 bg-gray-50/50 pl-4 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
+                    <Input
+                      value={orderForm.phone}
+                      onChange={e => handlePhoneChange(e.target.value)}
+                      placeholder="01XXXXXXXXX"
+                      maxLength={11}
+                      className={`h-12 rounded-2xl border-2 bg-gray-50/50 pl-4 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-2 transition-all ${
+                        phoneError ? 'border-red-300 focus:border-red-400 focus:ring-red-100' : 'border-gray-200 focus:border-[#22a83a] focus:ring-[#22a83a]/20'
+                      }`}
+                    />
+                    {phoneError && (
+                      <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-red-500 rounded-full" /> {phoneError}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between mt-1.5">
+                      <p className="text-gray-400 text-xs">১১ ডিজিটের মোবাইল নম্বর দিন</p>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        orderForm.phone.length === 11 ? 'bg-green-100 text-green-700' : orderForm.phone.length > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {toBn(orderForm.phone.length)}/১১
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                    <Textarea
+                      value={orderForm.address}
+                      onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))}
+                      placeholder="আপনার সম্পূর্ণ ঠিকানা লিখুন"
+                      rows={3}
+                      className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all resize-none"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleOrderSubmit}
+                    disabled={submitting}
+                    className="w-full bg-gradient-to-r from-[#1a7a2e] to-[#22a83a] hover:from-[#166d27] hover:to-[#1b8a30] text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg shadow-green-500/25 transition-all disabled:opacity-60"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
+                  </Button>
+                  <p className="text-center text-gray-400 text-xs">
+                    🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
