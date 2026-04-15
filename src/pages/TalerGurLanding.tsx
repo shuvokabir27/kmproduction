@@ -123,7 +123,7 @@ const TalerGurLanding = () => {
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "" });
+      setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
@@ -148,7 +148,7 @@ const TalerGurLanding = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "" });
+    setOrderForm({ name: "", phone: "", address: "", quantity: 1, payment_method: "cod" });
   };
 
   const openOrderDialog = () => {
