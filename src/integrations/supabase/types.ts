@@ -1137,6 +1137,8 @@ export type Database = {
           product_id: string | null
           product_name: string
           quantity: number
+          return_amount: number | null
+          returned_at: string | null
           status: Database["public"]["Enums"]["order_status"]
           total_amount: number
           unit_price: number
@@ -1156,6 +1158,8 @@ export type Database = {
           product_id?: string | null
           product_name: string
           quantity?: number
+          return_amount?: number | null
+          returned_at?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           total_amount?: number
           unit_price?: number
@@ -1175,6 +1179,8 @@ export type Database = {
           product_id?: string | null
           product_name?: string
           quantity?: number
+          return_amount?: number | null
+          returned_at?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           total_amount?: number
           unit_price?: number
@@ -2441,6 +2447,7 @@ export type Database = {
         | "delivered"
         | "cancelled"
         | "abandoned"
+        | "returned"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
       pricing_type: "hourly" | "per_minute" | "event" | "fixed"
       salary_type: "daily" | "monthly"
@@ -2588,6 +2595,7 @@ export const Constants = {
         "delivered",
         "cancelled",
         "abandoned",
+        "returned",
       ],
       payment_method: ["bank", "bkash", "nagad", "cash"],
       pricing_type: ["hourly", "per_minute", "event", "fixed"],
