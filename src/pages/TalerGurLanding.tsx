@@ -20,10 +20,10 @@ const TalerGurLanding = () => {
   const [selectedPackage, setSelectedPackage] = useState<number>(1);
 
   const weightPackages = [
-    { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক" },
-    { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক" },
-    { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার" },
-    { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক" },
+    { weight: "৫০০ গ্রাম", kg: 0.5, label: "ট্রায়াল প্যাক", discount: 0 },
+    { weight: "১ কেজি", kg: 1, label: "ফ্যামিলি প্যাক", discount: 0 },
+    { weight: "১.৫ কেজি", kg: 1.5, label: "সুপার সেভার", discount: 8 },
+    { weight: "২ কেজি", kg: 2, label: "মেগা প্যাক", discount: 12 },
   ];
 
   // Fetch offer end date from site_settings
@@ -121,8 +121,12 @@ const TalerGurLanding = () => {
       const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
       const productName = (products?.[0]?.name || "প্রডাক্ট") + ` (${pkg.weight})`;
       const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
-      const unitPrice = Math.round(basePrice * selectedPackage);
+      const beforeDiscount = Math.round(basePrice * selectedPackage);
+      const unitPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
       const qty = orderForm.quantity || 1;
+      const noteParts: string[] = [];
+      if (pkg.discount > 0) noteParts.push(`${pkg.discount}% প্যাকেজ ডিসকাউন্ট`);
+      if (!freeDelivery && deliveryCharge > 0) noteParts.push(`ডেলিভারি চার্জ: ৳${deliveryCharge}`);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
@@ -131,7 +135,7 @@ const TalerGurLanding = () => {
         quantity: qty,
         unit_price: unitPrice,
         total_amount: unitPrice * qty + deliveryCharge,
-        notes: !freeDelivery && deliveryCharge > 0 ? `ডেলিভারি চার্জ: ৳${deliveryCharge}` : null,
+        notes: noteParts.length > 0 ? noteParts.join(" | ") : null,
         payment_method: orderForm.payment_method,
       });
       if (error) throw error;
@@ -277,7 +281,8 @@ const TalerGurLanding = () => {
               {weightPackages.map((pkg) => {
                 const basePrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
                 const originalPrice = products?.[0]?.price || 0;
-                const pkgPrice = Math.round(basePrice * pkg.kg);
+                const beforeDiscount = Math.round(basePrice * pkg.kg);
+                const pkgPrice = pkg.discount > 0 ? Math.round(beforeDiscount * (1 - pkg.discount / 100)) : beforeDiscount;
                 const pkgOriginal = Math.round(originalPrice * pkg.kg);
                 const isSelected = selectedPackage === pkg.kg;
                 return (
@@ -293,16 +298,16 @@ const TalerGurLanding = () => {
                         : "border-[#e0d8cc] bg-white hover:border-[#1a7a2e]/50 hover:shadow-md"
                     }`}
                   >
-                    {pkg.kg === 2 && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        🔥 বেস্ট ভ্যালু
+                    {pkg.discount > 0 && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#c0392b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                        🔥 {toBn(pkg.discount)}% ছাড়
                       </span>
                     )}
                     <p className="text-2xl font-extrabold text-[#1a7a2e] mb-1">{pkg.weight}</p>
                     <p className="text-xs text-[#888] mb-2">{pkg.label}</p>
-                    {pkgOriginal > pkgPrice ? (
+                    {(pkgOriginal > pkgPrice || pkg.discount > 0) ? (
                       <div>
-                        <span className="text-xs line-through text-[#999]">৳{toBn(pkgOriginal)}</span>
+                        <span className="text-xs line-through text-[#999]">৳{toBn(pkg.discount > 0 ? beforeDiscount : pkgOriginal)}</span>
                         <p className="text-lg font-bold text-[#c0392b]">৳{toBn(pkgPrice)}</p>
                       </div>
                     ) : (
@@ -808,11 +813,14 @@ const TalerGurLanding = () => {
                         className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
                       >+</button>
                       {products && products[0] && (() => {
-                        const subTotal = (products[0].discount_price || products[0].price || 0) * selectedPackage * orderForm.quantity;
+                        const pkg = weightPackages.find(p => p.kg === selectedPackage) || weightPackages[1];
+                        const base = (products[0].discount_price || products[0].price || 0) * selectedPackage;
+                        const afterPkgDiscount = pkg.discount > 0 ? Math.round(base * (1 - pkg.discount / 100)) : Math.round(base);
+                        const subTotal = afterPkgDiscount * orderForm.quantity;
                         const total = subTotal + deliveryCharge;
                         return (
                           <span className="text-sm text-gray-500 ml-2">
-                            = ৳{toBn(subTotal)}{!freeDelivery && deliveryCharge > 0 ? ` + ৳${toBn(deliveryCharge)} ডেলিভারি = ৳${toBn(total)}` : ""} টাকা
+                            = ৳{toBn(subTotal)}{!freeDelivery && deliveryCharge > 0 ? ` + ৳${toBn(deliveryCharge)} = ৳${toBn(total)}` : ""} টাকা
                           </span>
                         );
                       })()}
