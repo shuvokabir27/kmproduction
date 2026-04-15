@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN free_delivery_min_kg numeric NOT NULL DEFAULT 5;
