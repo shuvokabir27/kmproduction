@@ -461,7 +461,20 @@ const OrderManagement = () => {
                   </div>
                 </div>
 
-                {/* Quick status actions for pending */}
+                {/* Follow-up buttons */}
+                <div className="flex gap-2 mt-2">
+                  <a href={`https://wa.me/88${order.customer_phone?.replace(/\D/g, "")}?text=${encodeURIComponent(`আসসালামু আলাইকুম ${order.customer_name}, আপনার অর্ডার #${order.order_number} সম্পর্কে জানাচ্ছি।`)}`} target="_blank" rel="noopener noreferrer" className="flex-1">
+                    <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10">
+                      <MessageCircle className="h-3 w-3" /> WhatsApp
+                    </Button>
+                  </a>
+                  <a href={`tel:${order.customer_phone}`} className="flex-1">
+                    <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-blue-600 border-blue-500/30 hover:bg-blue-500/10">
+                      <PhoneCall className="h-3 w-3" /> কল
+                    </Button>
+                  </a>
+                </div>
+
                 {order.status === "pending" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
