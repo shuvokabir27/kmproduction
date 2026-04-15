@@ -57,6 +57,7 @@ const TalerGurLanding = () => {
         .from("products")
         .select("*")
         .eq("is_active", true)
+        .eq("category", "taler_gur")
         .order("sort_order", { ascending: true });
       return data ?? [];
     },
