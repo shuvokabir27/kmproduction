@@ -359,11 +359,8 @@ const AdminProducts = () => {
                   <SelectTrigger><SelectValue placeholder="বাছুন" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">কোনোটি নয়</SelectItem>
-                    <SelectItem value="500gm">৫০০ গ্রাম</SelectItem>
-                    <SelectItem value="1kg">১ কেজি</SelectItem>
-                    <SelectItem value="2kg">২ কেজি</SelectItem>
-                    <SelectItem value="5kg">৫ কেজি</SelectItem>
-                    <SelectItem value="custom">কাস্টম</SelectItem>
+                    <SelectItem value="taler_gur">🌴 তালের গুড়</SelectItem>
+                    <SelectItem value="other">📦 অন্যান্য</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
