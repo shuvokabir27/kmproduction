@@ -2148,6 +2148,8 @@ export type Database = {
           tiktok_url: string | null
           updated_at: string
           whatsapp_no: string | null
+          whatsapp_offer_image: string | null
+          whatsapp_offer_message: string | null
           youtube_url: string | null
         }
         Insert: {
@@ -2176,6 +2178,8 @@ export type Database = {
           tiktok_url?: string | null
           updated_at?: string
           whatsapp_no?: string | null
+          whatsapp_offer_image?: string | null
+          whatsapp_offer_message?: string | null
           youtube_url?: string | null
         }
         Update: {
@@ -2204,6 +2208,8 @@ export type Database = {
           tiktok_url?: string | null
           updated_at?: string
           whatsapp_no?: string | null
+          whatsapp_offer_image?: string | null
+          whatsapp_offer_message?: string | null
           youtube_url?: string | null
         }
         Relationships: []
