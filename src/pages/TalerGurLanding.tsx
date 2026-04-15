@@ -730,6 +730,51 @@ const TalerGurLanding = () => {
                       className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-[#22a83a] focus:bg-white focus:ring-2 focus:ring-[#22a83a]/20 transition-all resize-none"
                     />
                   </div>
+
+                  {/* Quantity Selector */}
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পরিমাণ</Label>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.max(1, f.quantity - 1) }))}
+                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
+                      >−</button>
+                      <span className="text-xl font-bold text-gray-900 w-8 text-center">{toBn(orderForm.quantity)}</span>
+                      <button
+                        onClick={() => setOrderForm(f => ({ ...f, quantity: Math.min(10, f.quantity + 1) }))}
+                        className="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600 hover:border-[#22a83a] hover:text-[#22a83a] transition-all"
+                      >+</button>
+                      {products && products[0] && (
+                        <span className="text-sm text-gray-500 ml-2">
+                          = ৳{toBn((products[0].discount_price || products[0].price || 0) * orderForm.quantity)} টাকা
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Payment Method */}
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">পেমেন্ট পদ্ধতি</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { val: "cod", label: "🚚 ক্যাশ অন ডেলিভারি" },
+                        { val: "bkash", label: "📱 বিকাশ/নগদ" },
+                      ].map(pm => (
+                        <button
+                          key={pm.val}
+                          onClick={() => setOrderForm(f => ({ ...f, payment_method: pm.val }))}
+                          className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                            orderForm.payment_method === pm.val
+                              ? "border-[#22a83a] bg-green-50 text-[#1a7a2e]"
+                              : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          }`}
+                        >
+                          {pm.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <Button
                     onClick={handleOrderSubmit}
                     disabled={submitting}
