@@ -112,14 +112,16 @@ const TalerGurLanding = () => {
     try {
       const productName = products?.[0]?.name || "প্রডাক্ট";
       const unitPrice = products?.[0]?.discount_price || products?.[0]?.price || 0;
+      const qty = orderForm.quantity || 1;
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
         product_name: productName,
-        quantity: 1,
+        quantity: qty,
         unit_price: unitPrice,
-        total_amount: unitPrice,
+        total_amount: unitPrice * qty,
+        payment_method: orderForm.payment_method,
       });
       if (error) throw error;
       setOrderSuccess(true);
