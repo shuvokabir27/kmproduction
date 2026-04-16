@@ -494,13 +494,15 @@ const TalerGurLanding = () => {
                 const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
                 const ytId = ytMatch ? ytMatch[1] : null;
                 const isYtShort = /youtube\.com\/shorts\//.test(url);
-                // Facebook: only the canonical /watch/?v= or /<page>/videos/<id>/ URLs work in the plugin.
-                // The share links (fb.watch, /share/v/, /share/r/) are NOT embeddable — show a fallback link.
-                const isFbShare = /fb\.watch|facebook\.com\/share\//.test(url);
-                const isFbEmbeddable = !isFbShare && /facebook\.com\/(watch|.+\/videos\/)/.test(url);
+                // Any Facebook URL (including share / fb.watch / reels) — embed via plugin.
+                // Reels and share/v/ links are portrait, so use 9:16 aspect.
+                const isFacebook = /facebook\.com|fb\.watch/.test(url);
+                const isFbReel = /facebook\.com\/(reel|share\/(v|r)\/)|fb\.watch/.test(url);
                 const aspectClass = ytId
                   ? (isYtShort ? "aspect-[9/16]" : "aspect-video")
-                  : "aspect-video";
+                  : isFacebook
+                    ? (isFbReel ? "aspect-[9/16]" : "aspect-video")
+                    : "aspect-video";
 
                 return (
                   <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border-4 border-[#2e7d32] ring-2 ring-[#a5d6a7] shadow-lg hover:shadow-2xl hover:border-[#1b5e20] transition-all duration-300">
@@ -513,12 +515,14 @@ const TalerGurLanding = () => {
                           allowFullScreen
                           className="absolute inset-0 w-full h-full"
                         />
-                      ) : isFbEmbeddable ? (
+                      ) : isFacebook ? (
                         <iframe
-                          src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`}
+                          src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&autoplay=false`}
                           title={v.title}
                           allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                           allowFullScreen
+                          scrolling="no"
+                          frameBorder="0"
                           className="absolute inset-0 w-full h-full"
                         />
                       ) : (
@@ -526,13 +530,12 @@ const TalerGurLanding = () => {
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#c0392b]/90 to-[#8b1a1a]/90 text-white"
+                          className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#2e7d32]/90 to-[#1b5e20]/90 text-white"
                         >
                           <div className="w-16 h-16 rounded-full bg-white/25 backdrop-blur flex items-center justify-center shadow-lg">
                             <Play className="h-8 w-8 fill-white text-white" />
                           </div>
                           <span className="text-sm font-semibold">ভিডিও দেখুন</span>
-                          <span className="text-[11px] opacity-80">ফেসবুকে খুলবে</span>
                         </a>
                       )}
                     </div>
