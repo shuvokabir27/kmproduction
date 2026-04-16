@@ -531,6 +531,19 @@ const LandingPageEditor = () => {
         </Button>
       </div>
 
+      {/* Product Videos Section */}
+      <div className="bg-card border border-border/30 rounded-xl p-3 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+            <Play className="h-4 w-4 text-red-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">ল্যান্ডিং পেজের ভিডিও</p>
+            <p className="text-[11px] text-muted-foreground">YouTube বা Facebook ভিডিও লিংক যোগ করুন — ল্যান্ডিং পেজে দেখাবে</p>
+          </div>
+        </div>
+        <ProductVideoManager />
+      </div>
 
       {addOpen && (
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
