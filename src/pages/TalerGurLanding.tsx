@@ -490,14 +490,21 @@ const TalerGurLanding = () => {
             <p className="text-[#888] text-center mb-8 text-xs">আমাদের পণ্য সম্পর্কে বিস্তারিত ভিডিও</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {popularVideos.map((v: any) => {
-                const ytMatch = v.video_url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+                const url: string = v.video_url || "";
+                const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
                 const ytId = ytMatch ? ytMatch[1] : null;
-                const fbMatch = v.video_url?.match(/facebook\.com|fb\.watch/);
-                const isFb = !!fbMatch;
+                const isYtShort = /youtube\.com\/shorts\//.test(url);
+                // Facebook: only the canonical /watch/?v= or /<page>/videos/<id>/ URLs work in the plugin.
+                // The share links (fb.watch, /share/v/, /share/r/) are NOT embeddable — show a fallback link.
+                const isFbShare = /fb\.watch|facebook\.com\/share\//.test(url);
+                const isFbEmbeddable = !isFbShare && /facebook\.com\/(watch|.+\/videos\/)/.test(url);
+                const aspectClass = ytId
+                  ? (isYtShort ? "aspect-[9/16]" : "aspect-video")
+                  : "aspect-video";
 
                 return (
                   <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border border-[#e8e0d4] shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="relative aspect-[9/16] md:aspect-video w-full bg-black">
+                    <div className={`relative ${aspectClass} w-full bg-black`}>
                       {ytId ? (
                         <iframe
                           src={`https://www.youtube.com/embed/${ytId}?rel=0`}
@@ -506,23 +513,27 @@ const TalerGurLanding = () => {
                           allowFullScreen
                           className="absolute inset-0 w-full h-full"
                         />
-                      ) : isFb ? (
+                      ) : isFbEmbeddable ? (
                         <iframe
-                          src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(v.video_url)}&show_text=false`}
+                          src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`}
                           title={v.title}
                           allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
                           allowFullScreen
                           className="absolute inset-0 w-full h-full"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <a href={v.video_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 text-white/80 hover:text-white">
-                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                              <Play className="h-8 w-8 fill-white text-white" />
-                            </div>
-                            <span className="text-sm font-medium">ভিডিও দেখুন</span>
-                          </a>
-                        </div>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#c0392b]/90 to-[#8b1a1a]/90 text-white"
+                        >
+                          <div className="w-16 h-16 rounded-full bg-white/25 backdrop-blur flex items-center justify-center shadow-lg">
+                            <Play className="h-8 w-8 fill-white text-white" />
+                          </div>
+                          <span className="text-sm font-semibold">ভিডিও দেখুন</span>
+                          <span className="text-[11px] opacity-80">ফেসবুকে খুলবে</span>
+                        </a>
                       )}
                     </div>
                     {v.title && (
