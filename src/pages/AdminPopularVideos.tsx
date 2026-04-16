@@ -205,8 +205,8 @@ const AdminPopularVideos = () => {
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-secondary border-border/50" placeholder="সংক্ষিপ্ত বিবরণ" />
             </div>
             <div>
-              <Label className="text-foreground">ভিডিও লিংক (YouTube)</Label>
-              <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required className="bg-secondary border-border/50" placeholder="https://youtu.be/..." />
+              <Label className="text-foreground">ভিডিও লিংক (YouTube / Facebook)</Label>
+              <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required className="bg-secondary border-border/50" placeholder="https://youtu.be/... বা https://fb.watch/..." />
               {videoUrl && extractYouTubeId(videoUrl) && (
                 <div className="mt-2 rounded-lg overflow-hidden aspect-video">
                   <img src={`https://img.youtube.com/vi/${extractYouTubeId(videoUrl)}/mqdefault.jpg`} alt="Preview" className="w-full h-full object-cover" />

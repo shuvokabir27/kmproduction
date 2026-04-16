@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Phone, Clock, ClipboardCheck, Truck, RotateCcw, ShieldCheck, Star, ChevronDown, ShoppingCart, X, CheckCircle } from "lucide-react";
+import { Phone, Clock, ClipboardCheck, Truck, RotateCcw, ShieldCheck, Star, ChevronDown, ShoppingCart, X, CheckCircle, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -106,6 +106,18 @@ const TalerGurLanding = () => {
         .eq("category", "taler_gur")
         .order("sort_order", { ascending: true });
       return data ?? [];
+    },
+  });
+
+  const { data: popularVideos } = useQuery({
+    queryKey: ["landing-popular-videos"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("popular_videos" as any)
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
     },
   });
 
@@ -466,6 +478,66 @@ const TalerGurLanding = () => {
         </div>
         <SectionOrderButton />
       </section>
+
+      {/* Premium Video Section */}
+      {popularVideos && popularVideos.length > 0 && (
+        <section className="py-10 md:py-16 bg-gradient-to-b from-[#faf8f5] to-white">
+          <div className="max-w-5xl mx-auto px-4">
+            <h2 className="text-xl md:text-2xl font-bold text-[#333] text-center mb-2 flex items-center justify-center gap-2">
+              <Play className="h-5 w-5 text-[#c0392b] fill-[#c0392b]" /> বিস্তারিত জানতে ভিডিও দেখুন
+            </h2>
+            <p className="text-[#888] text-center mb-8 text-xs">আমাদের পণ্য সম্পর্কে বিস্তারিত ভিডিও</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {popularVideos.map((v: any) => {
+                const ytMatch = v.video_url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+                const ytId = ytMatch ? ytMatch[1] : null;
+                const fbMatch = v.video_url?.match(/facebook\.com|fb\.watch/);
+                const isFb = !!fbMatch;
+
+                return (
+                  <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border border-[#e8e0d4] shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div className="relative aspect-[9/16] md:aspect-video w-full bg-black">
+                      {ytId ? (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${ytId}?rel=0`}
+                          title={v.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full"
+                        />
+                      ) : isFb ? (
+                        <iframe
+                          src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(v.video_url)}&show_text=false`}
+                          title={v.title}
+                          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <a href={v.video_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 text-white/80 hover:text-white">
+                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+                              <Play className="h-8 w-8 fill-white text-white" />
+                            </div>
+                            <span className="text-sm font-medium">ভিডিও দেখুন</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                    {v.title && (
+                      <div className="p-3 border-t border-[#e8e0d4]">
+                        <h3 className="font-semibold text-sm text-[#333] truncate">{v.title}</h3>
+                        {v.description && <p className="text-xs text-[#888] mt-0.5 line-clamp-1">{v.description}</p>}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <SectionOrderButton />
+          </div>
+        </section>
+      )}
 
       {/* Qualities / Feature Grid */}
       {qualities.length > 0 && (
