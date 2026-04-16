@@ -1347,6 +1347,7 @@ export type Database = {
           description: string | null
           id: string
           is_active: boolean | null
+          location: string
           sort_order: number | null
           title: string
           video_url: string
@@ -1356,6 +1357,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
+          location?: string
           sort_order?: number | null
           title: string
           video_url: string
@@ -1365,6 +1367,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
+          location?: string
           sort_order?: number | null
           title?: string
           video_url?: string
