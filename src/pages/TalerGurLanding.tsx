@@ -109,6 +109,18 @@ const TalerGurLanding = () => {
     },
   });
 
+  const { data: popularVideos } = useQuery({
+    queryKey: ["landing-popular-videos"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("popular_videos" as any)
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      return (data ?? []) as any[];
+    },
+  });
+
   const { data: siteSettings } = useQuery({
     queryKey: ["landing-site-settings"],
     queryFn: async () => {
