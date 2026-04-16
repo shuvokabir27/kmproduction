@@ -221,10 +221,10 @@ export function MobileBottomNav() {
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-        <div className="absolute inset-0 bg-card/95 backdrop-blur-xl border-t border-border/20" />
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe-bottom">
+        <div className="absolute inset-x-0 bottom-0 top-3 bg-card/95 backdrop-blur-xl border-t border-border/20" />
 
-        <div className="relative flex items-end justify-around px-1 pb-safe-bottom">
+        <div className="relative flex items-end justify-around px-1 pt-3">
           {tabs.map((tab) => {
             const active = isActive(tab.path);
             const isMore = tab.path === "__more__";
@@ -244,47 +244,64 @@ export function MobileBottomNav() {
                   }
                 }}
                 animate={{
-                  scale: isPressed ? 0.85 : 1,
-                  y: isPressed ? 2 : 0,
+                  scale: isPressed ? 0.9 : 1,
                 }}
                 transition={{ type: "spring", stiffness: 600, damping: 20 }}
-                className="relative flex min-w-[60px] flex-col items-center px-2 pb-1.5 pt-2"
+                className="relative flex min-w-[60px] flex-1 flex-col items-center pb-1.5"
               >
+                {/* Curved cutout behind active icon */}
                 {active && (
                   <motion.div
-                    layoutId="mobile-tab-indicator"
-                    className="absolute left-1/2 top-0 h-[3px] w-10 -translate-x-1/2 rounded-full"
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                    style={{
-                      background: "var(--tw-gradient-stops, currentColor)",
-                      backgroundColor: "currentColor",
-                    }}
+                    layoutId="mobile-tab-cutout"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 h-14 w-20 pointer-events-none"
                   >
-                    <div className={`h-full w-full rounded-full ${tab.bg}`} style={{ opacity: 1, background: "inherit" }} />
+                    <svg viewBox="0 0 80 56" className="h-full w-full" preserveAspectRatio="none">
+                      <path
+                        d="M0,15 Q0,15 8,15 Q20,15 22,5 Q26,-2 40,-2 Q54,-2 58,5 Q60,15 72,15 Q80,15 80,15 L80,56 L0,56 Z"
+                        fill="hsl(var(--card))"
+                        opacity="0.95"
+                      />
+                    </svg>
                   </motion.div>
                 )}
+
+                {/* Icon container — lifts when active */}
                 <motion.div
                   animate={{
-                    scale: isPressed ? 1.2 : active ? 1.1 : 1,
-                    y: active ? -2 : 0,
+                    y: active ? -18 : 0,
+                    scale: isPressed ? 1.15 : 1,
                   }}
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                  className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? tab.bg : ""}`}
+                  className={`relative z-10 flex items-center justify-center rounded-full transition-colors ${
+                    active
+                      ? `h-12 w-12 ${tab.bg} shadow-lg ring-2 ring-card`
+                      : "h-9 w-9"
+                  }`}
+                  style={
+                    active
+                      ? { boxShadow: `0 6px 16px -4px hsl(var(--foreground) / 0.25)` }
+                      : undefined
+                  }
                 >
-                  <tab.icon className={`h-[22px] w-[22px] transition-colors duration-150 ${tab.color}`} />
-                </motion.div>
-                <span className={`mt-0.5 text-[11px] font-semibold transition-colors duration-150 ${tab.color}`}>
-                  {tab.label}
-                </span>
-
-                {isPressed && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 0.12, scale: 1.5 }}
-                    className={`absolute inset-0 rounded-xl ${tab.bg}`}
-                    style={{ filter: "blur(8px)" }}
+                  <tab.icon
+                    className={`transition-all duration-200 ${tab.color} ${
+                      active ? "h-6 w-6" : "h-[22px] w-[22px]"
+                    }`}
                   />
-                )}
+                </motion.div>
+
+                {/* Label — hidden when active (icon takes its place) */}
+                <motion.span
+                  animate={{
+                    opacity: active ? 0 : 1,
+                    height: active ? 0 : "auto",
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`mt-0.5 text-[11px] font-semibold ${tab.color} overflow-hidden`}
+                >
+                  {tab.label}
+                </motion.span>
               </motion.button>
             );
           })}
