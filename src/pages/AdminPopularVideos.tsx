@@ -33,9 +33,9 @@ const AdminPopularVideos = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const { data: videos } = useQuery({
-    queryKey: ["admin-popular-videos"],
+    queryKey: ["admin-popular-videos", "home"],
     queryFn: async () => {
-      const { data } = await supabase.from("popular_videos" as any).select("*").order("sort_order", { ascending: true });
+      const { data } = await supabase.from("popular_videos" as any).select("*").eq("location", "home").order("sort_order", { ascending: true });
       return (data ?? []) as any[];
     },
   });
@@ -74,7 +74,7 @@ const AdminPopularVideos = () => {
     if (!videoUrl.trim()) { toast.error("ভিডিও লিংক দিন"); return; }
     setSubmitting(true);
     try {
-      const payload = { title, description: description || null, video_url: videoUrl, sort_order: sortOrder, is_active: isActive };
+      const payload = { title, description: description || null, video_url: videoUrl, sort_order: sortOrder, is_active: isActive, location: "home" };
       if (editId) {
         const { error } = await supabase.from("popular_videos" as any).update(payload).eq("id", editId);
         if (error) throw error;
