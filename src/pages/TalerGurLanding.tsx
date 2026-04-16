@@ -503,8 +503,8 @@ const TalerGurLanding = () => {
                   : "aspect-video";
 
                 return (
-                  <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border border-[#e8e0d4] shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className={`relative ${aspectClass} w-full bg-black`}>
+                  <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border-4 border-[#2e7d32] ring-2 ring-[#a5d6a7] shadow-lg hover:shadow-2xl hover:border-[#1b5e20] transition-all duration-300">
+                    <div className={`relative ${aspectClass} w-full bg-black border-b-4 border-[#2e7d32]`}>
                       {ytId ? (
                         <iframe
                           src={`https://www.youtube.com/embed/${ytId}?rel=0`}
