@@ -540,7 +540,7 @@ const TalerGurLanding = () => {
                       )}
                     </div>
                     {v.title && (
-                      <div className="p-3 border-t border-[#e8e0d4]">
+                      <div className="p-3 border-t border-[#e8e0d4] text-center">
                         <h3 className="font-semibold text-sm text-[#333] truncate">{v.title}</h3>
                         {v.description && <p className="text-xs text-[#888] mt-0.5 line-clamp-1">{v.description}</p>}
                       </div>
