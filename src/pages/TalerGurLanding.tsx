@@ -116,6 +116,7 @@ const TalerGurLanding = () => {
         .from("popular_videos" as any)
         .select("*")
         .eq("is_active", true)
+        .eq("location", "landing")
         .order("sort_order", { ascending: true });
       return (data ?? []) as any[];
     },

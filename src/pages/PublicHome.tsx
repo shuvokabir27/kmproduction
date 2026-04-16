@@ -54,7 +54,7 @@ const PublicHome = () => {
   const { data: popularVideos } = useQuery({
     queryKey: ["popular-videos"],
     queryFn: async () => {
-      const { data } = await supabase.from("popular_videos" as any).select("*").eq("is_active", true).order("sort_order", { ascending: true });
+      const { data } = await supabase.from("popular_videos" as any).select("*").eq("is_active", true).eq("location", "home").order("sort_order", { ascending: true });
       return (data ?? []) as any[];
     },
   });

@@ -17,8 +17,15 @@ const extractYouTubeId = (url: string): string | null => {
   return match ? match[1] : null;
 };
 
-const ProductVideoManager = () => {
+interface ProductVideoManagerProps {
+  /** 'home' = shows on products/home page, 'landing' = shows on landing page only */
+  location?: "home" | "landing";
+  heading?: string;
+}
+
+const ProductVideoManager = ({ location = "home", heading }: ProductVideoManagerProps = {}) => {
   const queryClient = useQueryClient();
+  const queryKey = ["admin-popular-videos", location];
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -29,9 +36,13 @@ const ProductVideoManager = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const { data: videos } = useQuery({
-    queryKey: ["admin-popular-videos"],
+    queryKey,
     queryFn: async () => {
-      const { data } = await supabase.from("popular_videos" as any).select("*").order("sort_order", { ascending: true });
+      const { data } = await supabase
+        .from("popular_videos" as any)
+        .select("*")
+        .eq("location", location)
+        .order("sort_order", { ascending: true });
       return (data ?? []) as any[];
     },
   });
@@ -66,7 +77,7 @@ const ProductVideoManager = () => {
     if (!videoUrl.trim()) { toast.error("ভিডিও লিংক দিন"); return; }
     setSubmitting(true);
     try {
-      const payload = { title, description: description || null, video_url: videoUrl, sort_order: sortOrder, is_active: isActive };
+      const payload = { title, description: description || null, video_url: videoUrl, sort_order: sortOrder, is_active: isActive, location };
       if (editId) {
         const { error } = await supabase.from("popular_videos" as any).update(payload).eq("id", editId);
         if (error) throw error;
@@ -76,7 +87,7 @@ const ProductVideoManager = () => {
         if (error) throw error;
         toast.success("ভিডিও যোগ হয়েছে!");
       }
-      queryClient.invalidateQueries({ queryKey: ["admin-popular-videos"] });
+      queryClient.invalidateQueries({ queryKey });
       setOpen(false);
       resetForm();
     } catch (err: any) {
@@ -90,28 +101,28 @@ const ProductVideoManager = () => {
     const { error } = await supabase.from("popular_videos" as any).delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("ভিডিও ডিলিট হয়েছে!");
-    queryClient.invalidateQueries({ queryKey: ["admin-popular-videos"] });
+    queryClient.invalidateQueries({ queryKey });
   };
 
   const toggleActive = async (id: string, current: boolean) => {
     const { error } = await supabase.from("popular_videos" as any).update({ is_active: !current }).eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success(!current ? "সক্রিয় করা হয়েছে" : "নিষ্ক্রিয় করা হয়েছে");
-    queryClient.invalidateQueries({ queryKey: ["admin-popular-videos"] });
+    queryClient.invalidateQueries({ queryKey });
   };
 
   const moveOrder = async (id: string, currentOrder: number, direction: "up" | "down") => {
     const newOrder = direction === "up" ? currentOrder - 1 : currentOrder + 1;
     const { error } = await supabase.from("popular_videos" as any).update({ sort_order: newOrder }).eq("id", id);
     if (error) { toast.error(error.message); return; }
-    queryClient.invalidateQueries({ queryKey: ["admin-popular-videos"] });
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <Play className="h-5 w-5 text-primary" /> প্রডাক্ট ভিডিও
+          <Play className="h-5 w-5 text-primary" /> {heading ?? "প্রডাক্ট ভিডিও"}
         </h2>
         <Button className="gap-2 text-xs" size="sm" onClick={openAdd}>
           <Plus className="h-4 w-4" /> নতুন ভিডিও
