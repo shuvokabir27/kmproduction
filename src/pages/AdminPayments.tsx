@@ -457,20 +457,22 @@ const AdminPayments = () => {
                   </Select>
                 </div>
 
-                <div>
-                  <Label className="text-foreground">পেমেন্ট লাস্ট ৪ ডিজিট (ঐচ্ছিক)</Label>
-                  <Input
-                    value={transactionId}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "").slice(0, 4);
-                      setTransactionId(val);
-                    }}
-                    placeholder="যেমন: 1234"
-                    maxLength={4}
-                    inputMode="numeric"
-                    className="bg-secondary border-border/50 tracking-widest text-lg font-mono"
-                  />
-                </div>
+                {method !== "cash" && (
+                  <div>
+                    <Label className="text-foreground">পেমেন্ট লাস্ট ৪ ডিজিট (ঐচ্ছিক)</Label>
+                    <Input
+                      value={transactionId}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                        setTransactionId(val);
+                      }}
+                      placeholder="যেমন: 1234"
+                      maxLength={4}
+                      inputMode="numeric"
+                      className="bg-secondary border-border/50 tracking-widest text-lg font-mono"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <Label className="text-foreground">নোট (ঐচ্ছিক)</Label>
