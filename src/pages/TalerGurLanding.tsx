@@ -482,12 +482,12 @@ const TalerGurLanding = () => {
 
       {/* Premium Video Section */}
       {popularVideos && popularVideos.length > 0 && (
-        <section className="py-10 md:py-16 bg-gradient-to-b from-[#faf8f5] to-white">
+        <section className="py-10 md:py-16 bg-gradient-to-b from-[#e8f5e9] via-[#d4ecd6] to-[#c8e6c9]">
           <div className="max-w-5xl mx-auto px-4">
-            <h2 className="text-xl md:text-2xl font-bold text-[#333] text-center mb-2 flex items-center justify-center gap-2">
-              <Play className="h-5 w-5 text-[#c0392b] fill-[#c0392b]" /> বিস্তারিত জানতে ভিডিও দেখুন
+            <h2 className="text-xl md:text-2xl font-bold text-[#1b5e20] text-center mb-2 flex items-center justify-center gap-2">
+              <Play className="h-5 w-5 text-[#2e7d32] fill-[#2e7d32]" /> বিস্তারিত জানতে ভিডিও দেখুন
             </h2>
-            <p className="text-[#888] text-center mb-8 text-xs">আমাদের পণ্য সম্পর্কে বিস্তারিত ভিডিও</p>
+            <p className="text-[#3e6b40] text-center mb-8 text-xs">আমাদের পণ্য সম্পর্কে বিস্তারিত ভিডিও</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {popularVideos.map((v: any) => {
                 const url: string = v.video_url || "";
@@ -503,8 +503,8 @@ const TalerGurLanding = () => {
                   : "aspect-video";
 
                 return (
-                  <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border border-[#e8e0d4] shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className={`relative ${aspectClass} w-full bg-black`}>
+                  <div key={v.id} className="group rounded-2xl overflow-hidden bg-white border-4 border-[#2e7d32] ring-2 ring-[#a5d6a7] shadow-lg hover:shadow-2xl hover:border-[#1b5e20] transition-all duration-300">
+                    <div className={`relative ${aspectClass} w-full bg-black border-b-4 border-[#2e7d32]`}>
                       {ytId ? (
                         <iframe
                           src={`https://www.youtube.com/embed/${ytId}?rel=0`}
