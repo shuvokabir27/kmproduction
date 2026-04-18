@@ -36,7 +36,7 @@ export function useMemberBalance(profileId: string | undefined) {
       // Get profile info including salary_type_changed_at
       const { data: profile } = await (supabase as any)
         .from("profiles")
-        .select("previous_balance, salary_type, salary_type_changed_at")
+        .select("previous_balance, salary_type, salary_type_changed_at, full_name")
         .eq("id", profileId!)
         .maybeSingle();
 
