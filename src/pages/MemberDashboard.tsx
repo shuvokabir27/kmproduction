@@ -514,43 +514,95 @@ const MemberDashboard = () => {
               <Briefcase className="h-5 w-5 text-orange-400" /> বাইরের আয় বিস্তারিত
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-orange-500/10">
-              <span className="text-sm text-muted-foreground">মোট বাইরের আয়</span>
-              <span className="text-lg font-bold text-orange-400">৳{(balance?.totalFreelance ?? 0).toLocaleString("bn-BD")}</span>
-            </div>
-            {myFreelance && myFreelance.length > 0 ? (
-              <div className="space-y-2">
-                {myFreelance.map((a: any) => {
-                  const project = a.freelance_projects;
-                  const statusMap: Record<string, string> = { upcoming: "আসন্ন", ongoing: "চলছে", completed: "সম্পন্ন", paid: "পেইড" };
-                  return (
-                    <div key={a.id} className="p-3 rounded-xl bg-secondary/30 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-foreground">{project?.name || "প্রজেক্ট"}</span>
-                        <span className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{a.role_label}</span>
-                        <span>{project?.project_date ? new Date(project.project_date).toLocaleDateString("bn-BD") : ""}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">ক্লায়েন্ট: {project?.client_name || "—"}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${a.is_paid ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
-                          {a.is_paid ? "পেমেন্ট সম্পন্ন" : "বাকি আছে"}
-                        </span>
-                      </div>
-                      {project?.status && (
-                        <div className="text-[10px] text-muted-foreground">স্ট্যাটাস: {statusMap[project.status] || project.status}</div>
-                      )}
-                    </div>
-                  );
-                })}
+          {(() => {
+            const list = myFreelance ?? [];
+            const totalEarning = list.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
+            const totalPaid = list.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+            const totalDue = Math.max(0, totalEarning - totalPaid);
+            const statusMap: Record<string, { label: string; cls: string }> = {
+              upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+              ongoing:  { label: "চলছে", cls: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
+              completed:{ label: "সম্পন্ন", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
+              paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
+            };
+            return (
+              <div className="space-y-4">
+                {/* Summary 3-grid */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground">মোট আয়</p>
+                    <p className="text-sm font-bold text-orange-400 mt-0.5">৳{totalEarning.toLocaleString("bn-BD")}</p>
+                  </div>
+                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground">পেইড</p>
+                    <p className="text-sm font-bold text-emerald-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
+                  </div>
+                  <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground">বাকি</p>
+                    <p className="text-sm font-bold text-rose-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
+                  </div>
+                </div>
+
+                {/* Project count */}
+                <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                  <span>মোট প্রজেক্ট</span>
+                  <span className="font-semibold text-foreground">{list.length} টি</span>
+                </div>
+
+                {list.length > 0 ? (
+                  <div className="space-y-2">
+                    {list.map((a: any) => {
+                      const project = a.freelance_projects;
+                      const rate = Number(a.rate || 0);
+                      const paid = Number(a.paid_amount || 0);
+                      const due = Math.max(0, rate - paid);
+                      const st = statusMap[project?.status as string] ?? { label: project?.status || "—", cls: "bg-secondary text-muted-foreground border-border/30" };
+                      return (
+                        <div key={a.id} className="p-3 rounded-xl bg-secondary/30 space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="text-sm font-semibold text-foreground truncate">{project?.name || "প্রজেক্ট"}</p>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
+                              </div>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">
+                                {a.role_label && <span className="text-foreground/80">{a.role_label}</span>}
+                                {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
+                              </p>
+                            </div>
+                          </div>
+
+                          {(project?.client_name || project?.location) && (
+                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                              {project?.client_name && <span>👤 {project.client_name}</span>}
+                              {project?.location && <span>📍 {project.location}</span>}
+                            </div>
+                          )}
+
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="rounded-lg border border-border/30 bg-background/40 px-2 py-1.5 text-center">
+                              <p className="text-[9px] text-muted-foreground">পাওনা</p>
+                              <p className="text-xs font-bold text-foreground">৳{rate.toLocaleString("bn-BD")}</p>
+                            </div>
+                            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2 py-1.5 text-center">
+                              <p className="text-[9px] text-muted-foreground">পেইড</p>
+                              <p className="text-xs font-bold text-emerald-400">৳{paid.toLocaleString("bn-BD")}</p>
+                            </div>
+                            <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2 py-1.5 text-center">
+                              <p className="text-[9px] text-muted-foreground">বাকি</p>
+                              <p className="text-xs font-bold text-rose-400">৳{due.toLocaleString("bn-BD")}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-center text-sm text-muted-foreground py-4">কোনো বাইরের কাজ নেই</p>
+                )}
               </div>
-            ) : (
-              <p className="text-center text-sm text-muted-foreground py-4">কোনো বাইরের কাজ নেই</p>
-            )}
-          </div>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </AppLayout>
