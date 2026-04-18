@@ -69,15 +69,51 @@ const MemberDashboard = () => {
   });
 
   const { data: myFreelance } = useQuery({
-    queryKey: ["my-freelance", profile?.id],
+    queryKey: ["my-freelance", profile?.id, profile?.full_name],
     enabled: !!profile?.id,
     queryFn: async () => {
-      const { data } = await (supabase as any)
+      // Source 1: admin-assigned freelance work (linked by member_id)
+      const { data: assignments } = await (supabase as any)
         .from("freelance_assignments")
         .select("*, freelance_projects(*)")
         .eq("member_id", profile!.id)
         .order("created_at", { ascending: false });
-      return data ?? [];
+
+      // Source 2: client-portal artist entries matched by name (no member link)
+      const names = [profile?.full_name, (profile as any)?.full_name_en].filter(Boolean) as string[];
+      let clientArtists: any[] = [];
+      if (names.length > 0) {
+        const { data } = await (supabase as any)
+          .from("client_project_artists")
+          .select("*, freelance_projects(*)")
+          .in("artist_name", names)
+          .order("created_at", { ascending: false });
+        clientArtists = data ?? [];
+      }
+
+      // Normalize both into a single shape
+      const fromAssignments = (assignments ?? []).map((a: any) => ({
+        id: `fa-${a.id}`,
+        rate: Number(a.rate || 0),
+        paid_amount: Number(a.paid_amount || 0),
+        is_paid: a.is_paid,
+        role_label: a.role_label,
+        notes: a.notes,
+        freelance_projects: a.freelance_projects,
+        source: "assignment" as const,
+      }));
+      const fromClientArtists = clientArtists.map((c: any) => ({
+        id: `ca-${c.id}`,
+        rate: Number(c.remuneration || 0),
+        paid_amount: Number(c.paid_amount || 0),
+        is_paid: c.is_paid,
+        role_label: "আর্টিস্ট",
+        notes: c.notes,
+        freelance_projects: c.freelance_projects,
+        source: "client" as const,
+      }));
+
+      return [...fromAssignments, ...fromClientArtists];
     },
   });
 
