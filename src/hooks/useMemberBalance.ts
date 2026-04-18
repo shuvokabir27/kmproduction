@@ -74,7 +74,20 @@ export function useMemberBalance(profileId: string | undefined) {
         .select("rate")
         .eq("member_id", profileId!);
 
-      const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
+      const totalFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
+
+      // Client-portal artist work (matched by artist_name = profile full_name)
+      const fullName = profile?.full_name as string | undefined;
+      let totalFromClientArtists = 0;
+      if (fullName) {
+        const { data: clientArtistsData } = await (supabase as any)
+          .from("client_project_artists")
+          .select("remuneration")
+          .eq("artist_name", fullName);
+        totalFromClientArtists = clientArtistsData?.reduce((sum: number, c: any) => sum + Number(c.remuneration || 0), 0) ?? 0;
+      }
+
+      const totalFreelance = totalFromAssignments + totalFromClientArtists;
 
       return {
         totalEarned,
