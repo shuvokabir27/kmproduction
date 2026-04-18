@@ -234,14 +234,26 @@ export default function ClientDashboard() {
                 </p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => supabase.auth.signOut()}
-              className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-destructive/10"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/dashboard")}
+                className="h-9 px-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/10 gap-1.5"
+                title="মেম্বার ড্যাশবোর্ড দেখুন"
+              >
+                <Eye className="h-4 w-4" />
+                <span className="text-xs hidden sm:inline">মেম্বার ভিউ</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => supabase.auth.signOut()}
+                className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-destructive/10"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

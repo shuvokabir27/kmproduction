@@ -16,7 +16,7 @@ const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { st
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 const MemberDashboard = () => {
-  const { user, profile, loading, isAdmin } = useAuth();
+  const { user, profile, loading, isAdmin, isClient } = useAuth();
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
   const [paymentDetailOpen, setPaymentDetailOpen] = useState(false);
@@ -101,6 +101,18 @@ const MemberDashboard = () => {
   return (
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-6">
+        {isClient && (
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+              <Eye className="h-4 w-4" />
+              <span>আপনি মেম্বার ড্যাশবোর্ড দেখছেন (শুধু পঠনযোগ্য)</span>
+            </div>
+            <Link to="/client" className="text-xs font-medium text-amber-700 dark:text-amber-300 hover:underline whitespace-nowrap">
+              ক্লায়েন্ট ড্যাশবোর্ডে ফিরে যান
+            </Link>
+          </div>
+        )}
+
         {/* Notice Board */}
         <NoticeBoard />
 
