@@ -239,44 +239,104 @@ const MemberDashboard = () => {
           </div>
         </div>
 
-        {/* Freelance Work */}
-        {myFreelance && myFreelance.length > 0 && (
-          <div className="premium-card rounded-2xl overflow-hidden">
-            <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                <Briefcase className="h-4 w-4 text-orange-400" />
+        {/* Outsourcing / Freelance Work — detailed */}
+        {myFreelance && myFreelance.length > 0 && (() => {
+          const totalEarning = myFreelance.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
+          const totalPaid = myFreelance.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+          const totalDue = Math.max(0, totalEarning - totalPaid);
+          const statusMap: Record<string, { label: string; cls: string }> = {
+            upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+            ongoing:  { label: "চলছে", cls: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
+            completed:{ label: "সম্পন্ন", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
+            paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
+          };
+          return (
+            <div className="premium-card rounded-2xl overflow-hidden">
+              <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-orange-400" />
+                </div>
+                <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ (Outsourcing)</h2>
+                <span className="ml-auto text-xs text-muted-foreground">{myFreelance.length} টি প্রজেক্ট</span>
               </div>
-              <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ</h2>
-            </div>
-            <div className="divide-y divide-border/10 max-h-80 overflow-auto">
-              {myFreelance.map((a: any) => {
-                const project = a.freelance_projects;
-                const statusMap: Record<string, string> = { upcoming: "আসন্ন", ongoing: "চলছে", completed: "সম্পন্ন", paid: "পেইড" };
-                return (
-                  <div key={a.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className={`h-8 w-8 rounded-lg ${a.is_paid ? "bg-success/10" : "bg-warning/10"} flex items-center justify-center`}>
-                        {a.is_paid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+
+              {/* Summary strip */}
+              <div className="grid grid-cols-3 gap-2 p-3 md:p-4 bg-secondary/10">
+                <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-3">
+                  <p className="text-[10px] text-muted-foreground">মোট আয়</p>
+                  <p className="text-sm md:text-base font-bold text-orange-400 mt-0.5">৳{totalEarning.toLocaleString("bn-BD")}</p>
+                </div>
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
+                  <p className="text-[10px] text-muted-foreground">পেইড</p>
+                  <p className="text-sm md:text-base font-bold text-emerald-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
+                </div>
+                <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3">
+                  <p className="text-[10px] text-muted-foreground">বাকি</p>
+                  <p className="text-sm md:text-base font-bold text-rose-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
+                </div>
+              </div>
+
+              {/* Project cards */}
+              <div className="divide-y divide-border/10 max-h-[28rem] overflow-auto">
+                {myFreelance.map((a: any) => {
+                  const project = a.freelance_projects;
+                  const rate = Number(a.rate || 0);
+                  const paid = Number(a.paid_amount || 0);
+                  const due = Math.max(0, rate - paid);
+                  const st = statusMap[project?.status as string] ?? { label: project?.status || "—", cls: "bg-secondary text-muted-foreground border-border/30" };
+                  return (
+                    <div key={a.id} className="p-4 hover:bg-secondary/15 transition-colors space-y-2.5">
+                      {/* Header row */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-sm font-semibold text-foreground truncate">{project?.name || "প্রজেক্ট"}</p>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
+                            {a.role_label && <span className="text-foreground/80">{a.role_label}</span>}
+                            {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
+                          </p>
+                        </div>
+                        <div className={`h-7 w-7 shrink-0 rounded-lg ${a.is_paid ? "bg-success/10" : due > 0 ? "bg-warning/10" : "bg-muted"} flex items-center justify-center`}>
+                          {a.is_paid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-foreground font-medium">{project?.name || "প্রজেক্ট"}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {a.role_label}{project?.project_date && ` • ${new Date(project.project_date).toLocaleDateString("bn-BD")}`}
-                        </p>
+
+                      {/* Client / location row */}
+                      {(project?.client_name || project?.location) && (
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                          {project?.client_name && <span>👤 {project.client_name}</span>}
+                          {project?.location && <span>📍 {project.location}</span>}
+                        </div>
+                      )}
+
+                      {/* Money grid */}
+                      <div className="grid grid-cols-3 gap-2 pt-1">
+                        <div className="rounded-lg border border-border/30 bg-background/40 px-2.5 py-1.5">
+                          <p className="text-[9px] text-muted-foreground">পাওনা</p>
+                          <p className="text-xs font-bold text-foreground">৳{rate.toLocaleString("bn-BD")}</p>
+                        </div>
+                        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1.5">
+                          <p className="text-[9px] text-muted-foreground">পেইড</p>
+                          <p className="text-xs font-bold text-emerald-400">৳{paid.toLocaleString("bn-BD")}</p>
+                        </div>
+                        <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2.5 py-1.5">
+                          <p className="text-[9px] text-muted-foreground">বাকি</p>
+                          <p className="text-xs font-bold text-rose-400">৳{due.toLocaleString("bn-BD")}</p>
+                        </div>
                       </div>
+
+                      {a.notes && (
+                        <p className="text-[11px] text-muted-foreground italic border-l-2 border-border/30 pl-2">{a.notes}</p>
+                      )}
                     </div>
-                    <div className="text-right">
-                      <span className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</span>
-                      <p className={`text-[10px] mt-0.5 ${a.is_paid ? "text-success" : "text-warning"}`}>
-                        {a.is_paid ? "পেমেন্ট সম্পন্ন" : "বাকি আছে"}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
