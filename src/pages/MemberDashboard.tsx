@@ -142,16 +142,38 @@ const MemberDashboard = () => {
   if (isAdmin) return <Navigate to="/admin" replace />;
 
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
+  const externalIncomeFallbackName = "Malbro Entertainment";
+
+  const normalizedFreelanceList =
+    (myFreelance?.length ?? 0) > 0
+      ? myFreelance
+      : Number(balance?.totalFreelance || 0) > 0
+        ? [{
+            id: "fallback-freelance-income",
+            rate: Number(balance?.totalFreelance || 0),
+            paid_amount: Number((balance as any)?.totalFreelancePaid || 0),
+            is_paid: Number(balance?.totalFreelance || 0) <= Number((balance as any)?.totalFreelancePaid || 0),
+            role_label: "বাইরের কাজ",
+            notes: null,
+            source: "fallback" as const,
+            freelance_projects: {
+              id: "fallback-project",
+              name: "বাইরের কাজ",
+              client_name: externalIncomeFallbackName,
+              status: "ongoing",
+            },
+          }]
+        : [];
 
   const getFreelanceDisplayName = (project: any) =>
     project?.client_name ||
     project?.client_profiles?.company ||
     project?.client_profiles?.name ||
     project?.name ||
-    "অজানা কোম্পানি";
+    externalIncomeFallbackName;
 
   const freelanceClientNames = Array.from(
-    new Set((myFreelance ?? []).map((item: any) => getFreelanceDisplayName(item.freelance_projects)).filter(Boolean))
+    new Set(normalizedFreelanceList.map((item: any) => getFreelanceDisplayName(item.freelance_projects)).filter(Boolean))
   ) as string[];
 
   const freelanceCardLabel =
