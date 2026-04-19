@@ -144,10 +144,15 @@ const AdminMembers = () => {
     },
   });
 
-  // Members = profiles with 'member' role (excluding admin/client/product_admin only profiles)
-  const members = (allProfiles ?? []).filter((p: any) => (p._roles ?? []).includes("member"));
-  // Staff list = admins, product_admins, and clients (no 'member' role)
-  const staffList = (allProfiles ?? []).filter((p: any) => !(p._roles ?? []).includes("member") && (p._roles ?? []).length > 0);
+  // Staff = anyone with admin/product_admin/client role (even if they also have 'member')
+  const isStaff = (p: any) => {
+    const r = p._roles ?? [];
+    return r.includes("admin") || r.includes("client") || r.includes("product_admin");
+  };
+  // Members = only pure members (no admin/client/product_admin role)
+  const members = (allProfiles ?? []).filter((p: any) => (p._roles ?? []).includes("member") && !isStaff(p));
+  // Staff list = admins, product_admins, and clients (regardless of member role)
+  const staffList = (allProfiles ?? []).filter((p: any) => isStaff(p));
 
   const { data: lockedAccounts, refetch: refetchLocked } = useQuery({
     queryKey: ["locked-accounts"],
