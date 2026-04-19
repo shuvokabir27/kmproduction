@@ -172,7 +172,7 @@ const AdminDashboard = () => {
         if (cutoff && s.credit_month >= cutoff) return;
         const e = map.get(s.member_id); if (e) e.salary += Number(s.amount || 0);
       });
-      freelanceData?.forEach((f: any) => { const e = map.get(f.member_id); if (e) e.freelance += Number(f.rate || 0); });
+      // Freelance excluded from admin dashboard.
       return Array.from(map.values()).map(m => ({ ...m, balance: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).sort((a, b) => b.balance - a.balance);
     },
   });
