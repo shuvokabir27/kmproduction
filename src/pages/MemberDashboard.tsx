@@ -334,9 +334,9 @@ const MemberDashboard = () => {
         </div>
 
         {/* Outsourcing / Freelance Work — detailed */}
-        {myFreelance && myFreelance.length > 0 && (() => {
-          const totalEarning = myFreelance.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-          const totalPaid = myFreelance.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+        {normalizedFreelanceList.length > 0 && (() => {
+          const totalEarning = normalizedFreelanceList.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
+          const totalPaid = normalizedFreelanceList.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
           const totalDue = Math.max(0, totalEarning - totalPaid);
           const statusMap: Record<string, { label: string; cls: string }> = {
             upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
@@ -351,7 +351,7 @@ const MemberDashboard = () => {
                   <Briefcase className="h-4 w-4 text-orange-400" />
                 </div>
                 <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ (Outsourcing)</h2>
-                <span className="ml-auto text-xs text-muted-foreground">{myFreelance.length} টি প্রজেক্ট</span>
+                <span className="ml-auto text-xs text-muted-foreground">{normalizedFreelanceList.length} টি প্রজেক্ট</span>
               </div>
 
               {/* Summary strip */}
@@ -372,7 +372,7 @@ const MemberDashboard = () => {
 
               {/* Project cards */}
               <div className="divide-y divide-border/10 max-h-[28rem] overflow-auto">
-                {myFreelance.map((a: any) => {
+                {normalizedFreelanceList.map((a: any) => {
                   const project = a.freelance_projects;
                   const rate = Number(a.rate || 0);
                   const paid = Number(a.paid_amount || 0);
@@ -613,7 +613,7 @@ const MemberDashboard = () => {
             </DialogTitle>
           </DialogHeader>
           {(() => {
-            const list = myFreelance ?? [];
+            const list = normalizedFreelanceList;
             const totalEarning = list.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
             const totalPaid = list.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
             const totalDue = Math.max(0, totalEarning - totalPaid);
@@ -718,7 +718,7 @@ const MemberDashboard = () => {
             </DialogTitle>
           </DialogHeader>
           {(() => {
-            const list = myFreelance ?? [];
+            const list = normalizedFreelanceList;
             // Group dues by client name
             const dueByClient = new Map<string, { earned: number; paid: number; due: number; projects: number }>();
             list.forEach((a: any) => {
