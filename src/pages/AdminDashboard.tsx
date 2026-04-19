@@ -373,9 +373,6 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
-              </tbody>
-            </table>
-          </div>
         </DialogContent>
       </Dialog>
 
