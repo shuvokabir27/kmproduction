@@ -131,7 +131,7 @@ const AdminDashboard = () => {
         if (cutoff && s.credit_month >= cutoff) return;
         const entry = memberMap.get(s.member_id); if (entry) entry.salary += Number(s.amount || 0);
       });
-      freelanceData?.forEach((f: any) => { const entry = memberMap.get(f.member_id); if (entry) entry.freelance += Number(f.rate || 0); });
+      // Freelance excluded from admin dashboard.
       const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).filter(m => m.earned > 0 || m.paid > 0 || m.bonus > 0 || m.salary > 0 || m.freelance > 0 || m.previous > 0).sort((a, b) => b.due - a.due);
       const totalEarned = list.reduce((s, m) => s + m.earned, 0);
       const totalPaid = list.reduce((s, m) => s + m.paid, 0);
