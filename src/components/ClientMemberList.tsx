@@ -12,42 +12,46 @@ interface Props {
 export default function ClientMemberList({ allProjectArtists }: Props) {
   const [expanded, setExpanded] = useState(true);
 
-  // Aggregate by artist name
-  const memberRows = useMemo(() => {
-    const map = new Map<string, { name: string; bill: number; paid: number; count: number }>();
-    allProjectArtists.forEach((a: any) => {
-      const name = (a.artist_name || "").trim();
-      if (!name) return;
-      const existing = map.get(name) || { name, bill: 0, paid: 0, count: 0 };
-      existing.bill += Number(a.remuneration || 0);
-      existing.paid += Number(a.paid_amount || 0);
-      existing.count += 1;
-      map.set(name, existing);
-    });
-    return Array.from(map.values()).sort((a, b) => (b.bill - b.paid) - (a.bill - a.paid));
-  }, [allProjectArtists]);
-
-  // Fetch profile photos by matching names
-  const names = useMemo(() => memberRows.map((m) => m.name), [memberRows]);
+  // Fetch ALL profiles first so we can resolve names live (admin renames reflect instantly)
   const { data: profiles = [] } = useQuery({
-    queryKey: ["client-member-list-profiles", names.sort().join("|")],
-    enabled: names.length > 0,
+    queryKey: ["client-member-list-profiles-all"],
     queryFn: async () => {
       const { data } = await (supabase as any).rpc("get_public_profiles");
-      return (data || []).filter((p: any) =>
-        names.includes(p.full_name) || (p.full_name_en && names.includes(p.full_name_en))
-      );
+      return data || [];
     },
   });
 
-  const profileMap = useMemo(() => {
-    const m = new Map<string, any>();
+  // Build lookup maps: by profile_id and by name
+  const { profileById, profileByName } = useMemo(() => {
+    const byId = new Map<string, any>();
+    const byName = new Map<string, any>();
     (profiles as any[]).forEach((p) => {
-      m.set(p.full_name, p);
-      if (p.full_name_en) m.set(p.full_name_en, p);
+      byId.set(p.id, p);
+      if (p.full_name) byName.set(p.full_name.trim(), p);
+      if (p.full_name_en) byName.set(p.full_name_en.trim(), p);
     });
-    return m;
+    return { profileById: byId, profileByName: byName };
   }, [profiles]);
+
+  // Aggregate by profile (preferred) or fallback to artist name
+  const memberRows = useMemo(() => {
+    const map = new Map<string, { key: string; profile: any; name: string; bill: number; paid: number; count: number }>();
+    allProjectArtists.forEach((a: any) => {
+      // Resolve current profile from profile_id (live), else by name
+      const profile = (a.profile_id && profileById.get(a.profile_id)) || profileByName.get((a.artist_name || "").trim());
+      const displayName = profile?.full_name || (a.artist_name || "").trim();
+      if (!displayName) return;
+      const key = profile?.id || displayName;
+      const existing = map.get(key) || { key, profile, name: displayName, bill: 0, paid: 0, count: 0 };
+      existing.bill += Number(a.remuneration || 0);
+      existing.paid += Number(a.paid_amount || 0);
+      existing.count += 1;
+      existing.profile = profile || existing.profile;
+      existing.name = displayName;
+      map.set(key, existing);
+    });
+    return Array.from(map.values()).sort((a, b) => (b.bill - b.paid) - (a.bill - a.paid));
+  }, [allProjectArtists, profileById, profileByName]);
 
   if (memberRows.length === 0) return null;
 
