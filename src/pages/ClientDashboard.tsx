@@ -614,6 +614,11 @@ export default function ClientDashboard() {
           </motion.div>
         </div>
 
+        {/* ═══ Member List (visible to client) ═══ */}
+        {projects.length > 0 && (
+          <ClientMemberList allProjectArtists={allProjectArtists} />
+        )}
+
         {/* ═══ Desktop/Tablet: Projects (hidden on mobile) ═══ */}
         <div className="hidden md:block">
           {projects.length > 0 && (
