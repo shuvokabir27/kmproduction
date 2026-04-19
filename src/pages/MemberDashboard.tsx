@@ -21,6 +21,7 @@ const MemberDashboard = () => {
   const [viewShooting, setViewShooting] = useState<any>(null);
   const [paymentDetailOpen, setPaymentDetailOpen] = useState(false);
   const [freelanceDetailOpen, setFreelanceDetailOpen] = useState(false);
+  const [balanceDetailOpen, setBalanceDetailOpen] = useState(false);
 
   const { data: balance } = useMemberBalance(profile?.id);
 
