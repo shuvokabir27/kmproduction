@@ -2457,6 +2457,10 @@ export type Database = {
       member_can_access_freelance_project:
         | { Args: { _project_id: string }; Returns: boolean }
         | { Args: { _project_id: string; _user_id: string }; Returns: boolean }
+      member_owns_client_artist_row: {
+        Args: { _artist_name: string; _user_id: string }
+        Returns: boolean
+      }
       notify_all_members: {
         Args: {
           _link?: string
