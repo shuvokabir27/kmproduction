@@ -297,67 +297,82 @@ const AdminDashboard = () => {
             </DialogTitle>
           </DialogHeader>
 
-          <p className="text-[10px] text-muted-foreground pb-3 border-b border-border/20">সকল সদস্যের সর্বমোট বকেয়ার তালিকা</p>
-
           {filteredData && (
-            <div className="py-2">
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
-                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">মোট বকেয়া</p>
-                <p className="text-base md:text-xl font-bold text-destructive">৳{filteredData.totalDue.toLocaleString("bn-BD")}</p>
+            <div className="space-y-4 py-2">
+              {/* Total Due - Hero */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-destructive/15 to-destructive/5 border border-destructive/30 text-center">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">সর্বমোট বকেয়া</p>
+                <p className="text-2xl md:text-3xl font-bold text-destructive">৳{filteredData.totalDue.toLocaleString("bn-BD")}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{filteredData.list.length} জন সদস্যের কাছে পাওনা</p>
               </div>
-            </div>
-          )}
 
-          {/* Mobile card list */}
-          <div className="space-y-2 md:hidden">
-            {filteredData?.list.map((m, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-secondary/30 border border-border/20">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
-                    {m.photo ? (
-                      <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="text-primary text-[10px] font-medium">{m.name.charAt(0)}</span>
-                    )}
-                  </div>
-                  <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+              {/* Category Breakdown */}
+              <div className="rounded-2xl border border-border/30 overflow-hidden">
+                <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <Wallet className="h-3.5 w-3.5 text-primary" /> খাত অনুযায়ী হিসাব
+                  </h3>
                 </div>
-                <span className={`text-sm font-bold ml-2 ${m.due > 0 ? "text-destructive" : "text-success"}`}>
-                  ৳{m.due.toLocaleString("bn-BD")}
-                </span>
+                <div className="divide-y divide-border/15">
+                  {[
+                    { label: "শুটিং থেকে আয়", value: filteredData.totalEarned, color: "text-emerald-400", sign: "+" },
+                    { label: "বোনাস ও যাতায়াত", value: (filteredData as any).totalBonus ?? 0, color: "text-amber-400", sign: "+" },
+                    { label: "মাসিক বেতন", value: (filteredData as any).totalSalary ?? 0, color: "text-violet-400", sign: "+" },
+                    { label: "বাইরের কাজ থেকে আয়", value: (filteredData as any).totalFreelance ?? 0, color: "text-cyan-400", sign: "+" },
+                    { label: "পূর্ববর্তী বকেয়া", value: (filteredData as any).totalPrevious ?? 0, color: "text-orange-400", sign: "+" },
+                    { label: "প্রদানকৃত পেমেন্ট", value: filteredData.totalPaid, color: "text-rose-400", sign: "−" },
+                    { label: "বাইরের কাজের পেমেন্ট", value: (filteredData as any).totalFreelancePaid ?? 0, color: "text-rose-400", sign: "−" },
+                  ].filter(r => r.value > 0).map((row, i) => (
+                    <div key={i} className="px-4 py-2.5 flex items-center justify-between hover:bg-secondary/20 transition-colors">
+                      <span className="text-xs md:text-sm text-foreground">{row.label}</span>
+                      <span className={`text-xs md:text-sm font-semibold ${row.color}`}>
+                        {row.sign} ৳{row.value.toLocaleString("bn-BD")}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="px-4 py-3 bg-destructive/5 flex items-center justify-between">
+                    <span className="text-xs md:text-sm font-bold text-foreground">মোট বকেয়া</span>
+                    <span className="text-sm md:text-base font-bold text-destructive">৳{filteredData.totalDue.toLocaleString("bn-BD")}</span>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
 
-          {/* Desktop table */}
-          <div className="hidden md:block border border-border/30 rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/30 bg-secondary/30">
-                  <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
-                  <th className="text-right p-3 text-pink-400 font-medium text-xs">বকেয়া</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/20">
-                {filteredData?.list.map((m, i) => (
-                  <tr key={i} className="hover:bg-secondary/20">
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
+              {/* Per-Member Due List */}
+              <div className="rounded-2xl border border-border/30 overflow-hidden">
+                <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <Users className="h-3.5 w-3.5 text-cyan-400" /> কার কাছে কত বকেয়া
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground">{filteredData.list.length} জন</span>
+                </div>
+                <div className="divide-y divide-border/15 max-h-[40vh] overflow-y-auto">
+                  {filteredData.list.length === 0 && (
+                    <div className="p-6 text-center text-xs text-muted-foreground">কোনো বকেয়া নেই</div>
+                  )}
+                  {filteredData.list.map((m, i) => (
+                    <div key={i} className="px-4 py-3 flex items-center justify-between hover:bg-secondary/20 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="h-9 w-9 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center overflow-hidden shrink-0">
                           {m.photo ? (
                             <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
                           ) : (
-                            <span className="text-primary text-[10px] font-medium">{m.name.charAt(0)}</span>
+                            <span className="text-primary text-xs font-bold">{m.name.charAt(0)}</span>
                           )}
                         </div>
-                        <span className="text-foreground font-medium text-sm">{m.name}</span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{m.name}</p>
+                          <p className="text-[10px] text-muted-foreground">ID: {m.memberId}</p>
+                        </div>
                       </div>
-                    </td>
-                    <td className="p-3 text-right font-semibold text-sm">
-                      <span className={m.due > 0 ? "text-destructive" : "text-success"}>৳{m.due.toLocaleString("bn-BD")}</span>
-                    </td>
-                  </tr>
-                ))}
+                      <span className="text-sm font-bold text-destructive ml-2 shrink-0">
+                        ৳{m.due.toLocaleString("bn-BD")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
               </tbody>
             </table>
           </div>
