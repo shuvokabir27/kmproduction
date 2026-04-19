@@ -82,12 +82,17 @@ export function useMemberBalance(profileId: string | undefined) {
       if (fullName) {
         const { data: clientArtistsData } = await (supabase as any)
           .from("client_project_artists")
-          .select("remuneration")
+          .select("remuneration, paid_amount")
           .eq("artist_name", fullName);
         totalFromClientArtists = clientArtistsData?.reduce((sum: number, c: any) => sum + Number(c.remuneration || 0), 0) ?? 0;
+        totalPaidFromClientArtists = clientArtistsData?.reduce((sum: number, c: any) => sum + Number(c.paid_amount || 0), 0) ?? 0;
       }
 
+      // Also include paid_amount from freelance_assignments
+      const totalPaidFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
+
       const totalFreelance = totalFromAssignments + totalFromClientArtists;
+      const totalFreelancePaid = totalPaidFromAssignments + totalPaidFromClientArtists;
 
       return {
         totalEarned,
