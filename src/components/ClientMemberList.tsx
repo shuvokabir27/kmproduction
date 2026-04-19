@@ -91,7 +91,7 @@ export default function ClientMemberList({ allProjectArtists }: Props) {
             >
               <div className="px-3 pb-3 space-y-2">
                 {memberRows.map((m, idx) => {
-                  const profile = profileMap.get(m.name);
+                  const profile = m.profile;
                   const due = m.bill - m.paid;
                   const isPaid = due <= 0 && m.bill > 0;
                   return (
