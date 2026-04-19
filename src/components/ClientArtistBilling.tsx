@@ -139,6 +139,13 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
     }
 
     try {
+      // Create profile (with auto member_id + demo email) for this artist via edge function
+      // so they appear in the main member list. Admin can later update photo/details.
+      const { error: fnError } = await (supabase as any).functions.invoke("create-client-artist", {
+        body: { full_name: artistName.trim() },
+      });
+      if (fnError) throw fnError;
+
       const { error } = await (supabase as any)
         .from("client_project_artists")
         .insert({
