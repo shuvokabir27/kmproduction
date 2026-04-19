@@ -151,7 +151,7 @@ const AdminDashboard = () => {
       const { data: payments } = await supabase.from("payments").select("member_id, amount");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
-      const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("member_id, rate");
+      // Freelance excluded from admin dashboard.
 
       // Build exclude map for members changed from monthly to daily
       const excludeMap: Record<string, string> = {};
