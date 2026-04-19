@@ -2,13 +2,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star, Edit } from "lucide-react";
 import { differenceInYears, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProfileReviews } from "@/components/ProfileReviews";
+import { useAuth } from "@/hooks/useAuth";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
