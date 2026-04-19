@@ -23,8 +23,6 @@ const AdminDashboard = () => {
   const { user, isAdmin, loading } = useAuth();
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
   const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
-  const [filterFrom, setFilterFrom] = useState<Date | undefined>(startOfMonth(new Date()));
-  const [filterTo, setFilterTo] = useState<Date | undefined>(new Date());
 
   const { data: memberCount } = useQuery({
     queryKey: ["admin-member-count"],
