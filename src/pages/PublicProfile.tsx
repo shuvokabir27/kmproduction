@@ -125,7 +125,16 @@ const PublicProfile = () => {
               <ArrowLeft className="h-4 w-4" /> {L.back}
             </Button>
           </Link>
-          <LanguageToggle />
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Link to={`/admin/members?edit=${profile.id}`}>
+                <Button variant="outline" size="sm" className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10">
+                  <Edit className="h-4 w-4" /> {lang === "bn" ? "এডিট" : "Edit"}
+                </Button>
+              </Link>
+            )}
+            <LanguageToggle />
+          </div>
         </div>
       </header>
 
