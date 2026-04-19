@@ -76,7 +76,7 @@ const MemberDashboard = () => {
       // Source 1: admin-assigned freelance work (linked by member_id)
       const { data: assignments } = await (supabase as any)
         .from("freelance_assignments")
-        .select("*, freelance_projects(*)")
+        .select("*, freelance_projects(*, client_profiles(company, name))")
         .eq("member_id", profile!.id)
         .order("created_at", { ascending: false });
 
@@ -86,7 +86,7 @@ const MemberDashboard = () => {
       if (names.length > 0) {
         const { data } = await (supabase as any)
           .from("client_project_artists")
-          .select("*, freelance_projects(*)")
+          .select("*, freelance_projects(*, client_profiles(company, name))")
           .in("artist_name", names)
           .order("created_at", { ascending: false });
         clientArtists = data ?? [];
@@ -126,12 +126,15 @@ const MemberDashboard = () => {
 
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
+  const getFreelanceDisplayName = (project: any) =>
+    project?.client_profiles?.company ||
+    project?.client_name ||
+    project?.client_profiles?.name ||
+    project?.name ||
+    "অজানা কোম্পানি";
+
   const freelanceClientNames = Array.from(
-    new Set(
-      (myFreelance ?? [])
-        .map((item: any) => item.freelance_projects?.client_name)
-        .filter(Boolean)
-    )
+    new Set((myFreelance ?? []).map((item: any) => getFreelanceDisplayName(item.freelance_projects)).filter(Boolean))
   ) as string[];
 
   const freelanceCardLabel =
@@ -343,7 +346,7 @@ const MemberDashboard = () => {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="text-sm font-semibold text-foreground truncate">
-                              👤 {project?.client_name || project?.name || "ক্লায়েন্ট"}
+                              👤 {getFreelanceDisplayName(project)}
                             </p>
                             <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                           </div>
@@ -619,7 +622,7 @@ const MemberDashboard = () => {
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <p className="text-sm font-semibold text-foreground truncate">
-                                  {project?.client_name || project?.name || "প্রজেক্ট"}
+                                  {getFreelanceDisplayName(project)}
                                 </p>
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                               </div>
@@ -683,7 +686,7 @@ const MemberDashboard = () => {
               const earned = Number(a.rate || 0);
               const paid = Number(a.paid_amount || 0);
               const due = Math.max(0, earned - paid);
-              const clientName = a.freelance_projects?.client_name || "অজানা ক্লায়েন্ট";
+              const clientName = getFreelanceDisplayName(a.freelance_projects);
               const prev = dueByClient.get(clientName) || { earned: 0, paid: 0, due: 0, projects: 0 };
               dueByClient.set(clientName, {
                 earned: prev.earned + earned,
