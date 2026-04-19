@@ -1192,7 +1192,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   return (
     <>
-      {receiptData && <ClientArtistReceipt receiptData={receiptData} onClose={() => setReceiptData(null)} />}
+      {/* Auto-popup receipt removed — users download receipts from payment history */}
       <Dialog open={open} onOpenChange={handleOpen}>
         <DialogTrigger asChild>
           <button className="w-full relative overflow-hidden rounded-2xl p-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
