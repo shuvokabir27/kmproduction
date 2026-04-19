@@ -467,9 +467,15 @@ const AdminMembers = () => {
                     </div>
                   </div>
                 )}
-                <div>
-                  <Label className="text-foreground">পূর্ণ নাম *</Label>
-                  <Input value={form.full_name} onChange={(e) => setField("full_name", e.target.value)} required className="bg-secondary border-border/50" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-foreground">পূর্ণ নাম *</Label>
+                    <Input value={form.full_name} onChange={(e) => setField("full_name", e.target.value)} required className="bg-secondary border-border/50" />
+                  </div>
+                  <div>
+                    <Label className="text-foreground">Full Name (English)</Label>
+                    <Input value={form.full_name_en} onChange={(e) => setField("full_name_en", e.target.value)} className="bg-secondary border-border/50" placeholder="English name" />
+                  </div>
                 </div>
                 <div>
                   <Label className="text-foreground">ইমেইল {!editId && "*"}</Label>
@@ -486,12 +492,111 @@ const AdminMembers = () => {
                   </div>
                 </div>
                 <div>
-                  <Label className="text-foreground">ঠিকানা</Label>
-                  <Input value={form.address} onChange={(e) => setField("address", e.target.value)} className="bg-secondary border-border/50" />
+                  <Label className="text-foreground">পদবী (English)</Label>
+                  <Input value={form.designation_en} onChange={(e) => setField("designation_en", e.target.value)} className="bg-secondary border-border/50" placeholder="Designation in English" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-foreground">ঠিকানা</Label>
+                    <Input value={form.address} onChange={(e) => setField("address", e.target.value)} className="bg-secondary border-border/50" />
+                  </div>
+                  <div>
+                    <Label className="text-foreground">Address (English)</Label>
+                    <Input value={form.address_en} onChange={(e) => setField("address_en", e.target.value)} className="bg-secondary border-border/50" />
+                  </div>
                 </div>
                 <div>
                   <Label className="text-foreground">বায়ো</Label>
                   <Textarea value={form.bio} onChange={(e) => setField("bio", e.target.value)} className="bg-secondary border-border/50" rows={2} />
+                </div>
+
+                {/* ── পাবলিক প্রোফাইল তথ্য ── */}
+                <div className="border-t border-border/30 pt-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">পাবলিক প্রোফাইল তথ্য</p>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-foreground text-xs">Bio (English)</Label>
+                      <Textarea value={form.bio_en} onChange={(e) => setField("bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Full bio in English" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">সংক্ষিপ্ত বায়ো</Label>
+                        <Textarea value={form.short_bio} onChange={(e) => setField("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="হিরোতে দেখানো হবে" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Short Bio (English)</Label>
+                        <Textarea value={form.short_bio_en} onChange={(e) => setField("short_bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-foreground text-xs">জন্ম তারিখ</Label>
+                      <Input type="date" value={form.date_of_birth} onChange={(e) => setField("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">শিক্ষা</Label>
+                        <Input value={form.education} onChange={(e) => setField("education", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Education (English)</Label>
+                        <Input value={form.education_en} onChange={(e) => setField("education_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">অর্জন</Label>
+                        <Textarea value={form.achievements} onChange={(e) => setField("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Achievements (English)</Label>
+                        <Textarea value={form.achievements_en} onChange={(e) => setField("achievements_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-muted-foreground mt-2 font-medium">প্রিয় তথ্য</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">প্রিয় অভিনেতা</Label>
+                        <Input value={form.favorite_actor} onChange={(e) => setField("favorite_actor", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Favorite Actor (EN)</Label>
+                        <Input value={form.favorite_actor_en} onChange={(e) => setField("favorite_actor_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">প্রিয় অভিনেত্রী</Label>
+                        <Input value={form.favorite_actress} onChange={(e) => setField("favorite_actress", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Favorite Actress (EN)</Label>
+                        <Input value={form.favorite_actress_en} onChange={(e) => setField("favorite_actress_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">প্রিয় রঙ</Label>
+                        <Input value={form.favorite_color} onChange={(e) => setField("favorite_color", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Favorite Color (EN)</Label>
+                        <Input value={form.favorite_color_en} onChange={(e) => setField("favorite_color_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">প্রিয় পোশাক</Label>
+                        <Input value={form.favorite_dress} onChange={(e) => setField("favorite_dress", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Favorite Dress (EN)</Label>
+                        <Input value={form.favorite_dress_en} onChange={(e) => setField("favorite_dress_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">প্রিয় খাবার</Label>
+                        <Input value={form.favorite_food} onChange={(e) => setField("favorite_food", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">Favorite Food (EN)</Label>
+                        <Input value={form.favorite_food_en} onChange={(e) => setField("favorite_food_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="border-t border-border/30 pt-3">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">বেতন তথ্য</p>
