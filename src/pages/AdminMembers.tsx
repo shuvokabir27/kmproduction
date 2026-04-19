@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Users, Eye, Plus, Edit, Trash2, Camera, Image, ShieldAlert } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
@@ -153,6 +153,22 @@ const AdminMembers = () => {
   const members = (allProfiles ?? []).filter((p: any) => (p._roles ?? []).includes("member") && !isStaff(p));
   // Staff list = admins, product_admins, and clients (regardless of member role)
   const staffList = (allProfiles ?? []).filter((p: any) => isStaff(p));
+
+  // Auto-open edit dialog when ?edit={profileId} is present (e.g. from PublicProfile admin button)
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const editProfileId = searchParams.get("edit");
+    if (editProfileId && allProfiles && !open) {
+      const target = allProfiles.find((p: any) => p.id === editProfileId);
+      if (target) {
+        openEdit(target);
+        const next = new URLSearchParams(searchParams);
+        next.delete("edit");
+        setSearchParams(next, { replace: true });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, allProfiles]);
 
   const { data: lockedAccounts, refetch: refetchLocked } = useQuery({
     queryKey: ["locked-accounts"],

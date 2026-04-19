@@ -2,13 +2,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star, Edit } from "lucide-react";
 import { differenceInYears, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProfileReviews } from "@/components/ProfileReviews";
+import { useAuth } from "@/hooks/useAuth";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -20,6 +21,7 @@ const PublicProfile = () => {
   const { memberId } = useParams();
   const { lang, t } = useLanguage();
   const L = labels[lang];
+  const { isAdmin } = useAuth();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
@@ -123,7 +125,16 @@ const PublicProfile = () => {
               <ArrowLeft className="h-4 w-4" /> {L.back}
             </Button>
           </Link>
-          <LanguageToggle />
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Link to={`/admin/members?edit=${profile.id}`}>
+                <Button variant="outline" size="sm" className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10">
+                  <Edit className="h-4 w-4" /> {lang === "bn" ? "এডিট" : "Edit"}
+                </Button>
+              </Link>
+            )}
+            <LanguageToggle />
+          </div>
         </div>
       </header>
 
