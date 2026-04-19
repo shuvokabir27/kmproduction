@@ -94,34 +94,17 @@ const AdminDashboard = () => {
   });
 
   const { data: filteredData } = useQuery({
-    queryKey: ["admin-filtered-due", filterFrom?.toISOString(), filterTo?.toISOString()],
+    queryKey: ["admin-filtered-due-all"],
     enabled: dueDialogOpen,
     queryFn: async () => {
-      const from = filterFrom ? startOfDay(filterFrom).toISOString() : undefined;
-      const to = filterTo ? endOfDay(filterTo).toISOString() : undefined;
       const { data: members } = await (supabase as any).from("profiles").select("id, full_name, member_id, photo_url, previous_balance, salary_type, salary_type_changed_at").eq("is_active", true);
-      let attQ = supabase.from("attendance").select("member_id, daily_rate, shooting_id, shootings(shoot_date)").eq("is_present", true);
-      if (from) attQ = attQ.gte("created_at", from);
-      if (to) attQ = attQ.lte("created_at", to);
-      const { data: attendance } = await attQ;
-      let payQ = supabase.from("payments").select("member_id, amount, payment_date");
-      if (from) payQ = payQ.gte("payment_date", from);
-      if (to) payQ = payQ.lte("payment_date", to);
-      const { data: payments } = await payQ;
-      let bonQ = (supabase as any).from("bonuses").select("member_id, amount");
-      if (from) bonQ = bonQ.gte("bonus_date", from);
-      if (to) bonQ = bonQ.lte("bonus_date", to);
-      const { data: bonuses } = await bonQ;
-      let salQ = (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
-      if (from) salQ = salQ.gte("credit_month", from);
-      if (to) salQ = salQ.lte("credit_month", to);
-      const { data: salaryCredits } = await salQ;
+      const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
+      const { data: payments } = await supabase.from("payments").select("member_id, amount");
+      const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
+      const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
 
-      // Production members' admin-assigned freelance (date-filtered)
-      let frQ = (supabase as any).from("freelance_assignments").select("member_id, rate, paid_amount, created_at");
-      if (from) frQ = frQ.gte("created_at", from);
-      if (to) frQ = frQ.lte("created_at", to);
-      const { data: freelanceRows } = await frQ;
+      // Production members' admin-assigned freelance (all-time)
+      const { data: freelanceRows } = await (supabase as any).from("freelance_assignments").select("member_id, rate, paid_amount");
 
       // Build exclude map
       const excludeMap: Record<string, string> = {};
@@ -146,7 +129,10 @@ const AdminDashboard = () => {
         const entry = memberMap.get(f.member_id);
         if (entry) { entry.freelance += Number(f.rate || 0); entry.freelancePaid += Number(f.paid_amount || 0); }
       });
-      const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid - m.freelancePaid })).filter(m => m.earned > 0 || m.paid > 0 || m.bonus > 0 || m.salary > 0 || m.freelance > 0 || m.previous > 0).sort((a, b) => b.due - a.due);
+      const list = Array.from(memberMap.values())
+        .map(m => ({ ...m, due: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid - m.freelancePaid }))
+        .filter(m => m.due > 0)
+        .sort((a, b) => b.due - a.due);
       const totalEarned = list.reduce((s, m) => s + m.earned, 0);
       const totalPaid = list.reduce((s, m) => s + m.paid, 0);
       const totalBonus = list.reduce((s, m) => s + m.bonus, 0);
