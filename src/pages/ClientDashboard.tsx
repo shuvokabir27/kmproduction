@@ -1157,12 +1157,8 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           note: paymentNote.trim() || undefined,
         },
       });
-      setReceiptData({
-        artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
-        clientName, companyName, amount, totalRemuneration: selectedGroup.totalBill,
-        totalPaid: selectedGroup.totalPaid + amount, remaining: selectedGroup.totalDue - amount,
-        date: new Date().toISOString(),
-      });
+      // Receipt popup removed — receipt can be downloaded from পেমেন্ট হিস্ট্রি section
+      setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
       queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
