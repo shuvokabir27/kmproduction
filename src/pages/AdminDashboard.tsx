@@ -110,10 +110,7 @@ const AdminDashboard = () => {
       if (from) salQ = salQ.gte("credit_month", from);
       if (to) salQ = salQ.lte("credit_month", to);
       const { data: salaryCredits } = await salQ;
-      let freelanceQ = (supabase as any).from("freelance_assignments").select("member_id, rate, created_at");
-      if (from) freelanceQ = freelanceQ.gte("created_at", from);
-      if (to) freelanceQ = freelanceQ.lte("created_at", to);
-      const { data: freelanceData } = await freelanceQ;
+      // Freelance/outsourcing intentionally excluded from admin dashboard.
 
       // Build exclude map
       const excludeMap: Record<string, string> = {};
