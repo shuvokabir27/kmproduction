@@ -74,7 +74,7 @@ const App = () => (
             <Route path="/project/:token" element={<FreelanceClientView />} />
 
             {/* Member routes — admin & member only, NOT client */}
-            <Route path="/dashboard" element={<RouteGuard allowedRoles={["admin", "member", "client"]}><MemberDashboard /></RouteGuard>} />
+            <Route path="/dashboard" element={<RouteGuard allowedRoles={["admin", "member"]}><MemberDashboard /></RouteGuard>} />
             <Route path="/scripts" element={<RouteGuard allowedRoles={["admin", "member"]}><MemberScripts /></RouteGuard>} />
             <Route path="/notifications" element={<RouteGuard allowedRoles={["admin", "member"]}><AllNotifications /></RouteGuard>} />
             <Route path="/settings" element={<RouteGuard allowedRoles={["admin", "member"]}><MemberSettings /></RouteGuard>} />
