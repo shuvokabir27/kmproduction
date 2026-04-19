@@ -97,7 +97,14 @@ const AdminDashboard = () => {
     queryKey: ["admin-filtered-due-all"],
     enabled: dueDialogOpen,
     queryFn: async () => {
-      const { data: members } = await (supabase as any).from("profiles").select("id, full_name, member_id, photo_url, previous_balance, salary_type, salary_type_changed_at").eq("is_active", true);
+      const { data: allMembers } = await (supabase as any).from("profiles").select("id, user_id, full_name, member_id, photo_url, previous_balance, salary_type, salary_type_changed_at").eq("is_active", true);
+      const { data: rolesData1 } = await (supabase as any).from("user_roles").select("user_id, role");
+      const rolesByUser1 = new Map<string, string[]>();
+      (rolesData1 ?? []).forEach((r: any) => { const a = rolesByUser1.get(r.user_id) ?? []; a.push(r.role); rolesByUser1.set(r.user_id, a); });
+      const members = (allMembers ?? []).filter((p: any) => {
+        const r = rolesByUser1.get(p.user_id) ?? [];
+        return r.includes("member") && !r.includes("admin") && !r.includes("client") && !r.includes("product_admin");
+      });
       const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
       const { data: payments } = await supabase.from("payments").select("member_id, amount");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
