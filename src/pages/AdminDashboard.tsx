@@ -297,39 +297,7 @@ const AdminDashboard = () => {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex flex-wrap items-center gap-2 pb-3 border-b border-border/20">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-muted-foreground">থেকে:</span>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 border-border/30 px-2">
-                    <CalendarIcon className="h-3 w-3" />
-                    {filterFrom ? format(filterFrom, "dd MMM yyyy") : "তারিখ"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={filterFrom} onSelect={setFilterFrom} className="p-3 pointer-events-auto" />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-muted-foreground">পর্যন্ত:</span>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 border-border/30 px-2">
-                    <CalendarIcon className="h-3 w-3" />
-                    {filterTo ? format(filterTo, "dd MMM yyyy") : "তারিখ"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={filterTo} onSelect={setFilterTo} className="p-3 pointer-events-auto" />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <Button variant="ghost" size="sm" className="h-7 text-[10px] text-muted-foreground" onClick={() => { setFilterFrom(startOfMonth(new Date())); setFilterTo(new Date()); }}>
-              এই মাস
-            </Button>
-          </div>
+          <p className="text-[10px] text-muted-foreground pb-3 border-b border-border/20">সকল সদস্যের সর্বমোট বকেয়ার তালিকা</p>
 
           {filteredData && (
             <div className="grid grid-cols-3 gap-2 py-2">
