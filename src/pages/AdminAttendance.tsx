@@ -56,9 +56,17 @@ const AdminAttendance = () => {
     queryFn: async () => {
       const { data: profiles } = await (supabase as any).from("profiles").select("*").eq("is_active", true).order("member_id");
       const { data: roles } = await (supabase as any).from("user_roles").select("user_id, role");
-      const memberUserIds = new Set((roles ?? []).filter((r: any) => r.role === "member").map((r: any) => r.user_id));
-      // Only include profiles that have the 'member' role
-      return (profiles ?? []).filter((p: any) => memberUserIds.has(p.user_id));
+      const rolesByUser = new Map<string, string[]>();
+      (roles ?? []).forEach((r: any) => {
+        const arr = rolesByUser.get(r.user_id) ?? [];
+        arr.push(r.role);
+        rolesByUser.set(r.user_id, arr);
+      });
+      // Pure members only — exclude anyone with admin/client/product_admin role
+      return (profiles ?? []).filter((p: any) => {
+        const r = rolesByUser.get(p.user_id) ?? [];
+        return r.includes("member") && !r.includes("admin") && !r.includes("client") && !r.includes("product_admin");
+      });
     },
   });
 
