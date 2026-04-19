@@ -400,7 +400,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className={`text-sm font-bold ${m.balance > 0 ? "text-warning" : m.balance < 0 ? "text-success" : "text-emerald-500"}`}>
+                  <p className={`text-sm font-bold ${m.balance > 0 ? "text-warning" : "text-success"}`}>
                     {m.balance > 0 ? "বকেয়া" : m.balance < 0 ? "অগ্রিম" : "ব্যালেন্স"}{" "}
                     ৳{Math.abs(m.balance).toLocaleString("bn-BD")}
                   </p>
