@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
 
       return new Response(
         JSON.stringify({
-          error: `পাসওয়ার্ড সঠিক নয়। আর ${remainingAttempts} বার চেষ্টা করতে পারবেন।`,
+          error: `আপনার পাসওয়ার্ড ভুল। সঠিক পাসওয়ার্ড দিয়ে চেষ্টা করুন। (আর ${remainingAttempts} বার চেষ্টা করতে পারবেন)`,
           remaining_attempts: remainingAttempts,
         }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }

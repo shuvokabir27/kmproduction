@@ -40,7 +40,7 @@ const Login = () => {
   const getErrorMessage = (err: any): string => {
     const msg = err?.message?.toLowerCase() || "";
     if (msg.includes("invalid login") || msg.includes("invalid credentials") || msg.includes("wrong password"))
-      return "আইডি অথবা পাসওয়ার্ড ভুল হয়েছে। আবার চেষ্টা করুন।";
+      return "আপনার পাসওয়ার্ড ভুল। সঠিক পাসওয়ার্ড দিয়ে চেষ্টা করুন।";
     if (msg.includes("email not confirmed"))
       return "আপনার ইমেইল ভেরিফাই করা হয়নি।";
     if (msg.includes("user not found") || msg.includes("no user"))
