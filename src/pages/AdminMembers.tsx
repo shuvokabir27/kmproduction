@@ -19,15 +19,36 @@ import { KeyRound, Mail } from "lucide-react";
 
 interface MemberForm {
   full_name: string;
+  full_name_en: string;
   email: string;
   phone: string;
   designation: string;
+  designation_en: string;
   bio: string;
+  bio_en: string;
+  short_bio: string;
+  short_bio_en: string;
   bank_name: string;
   bank_account_no: string;
   bkash_no: string;
   nagad_no: string;
   address: string;
+  address_en: string;
+  education: string;
+  education_en: string;
+  achievements: string;
+  achievements_en: string;
+  date_of_birth: string;
+  favorite_actor: string;
+  favorite_actor_en: string;
+  favorite_actress: string;
+  favorite_actress_en: string;
+  favorite_color: string;
+  favorite_color_en: string;
+  favorite_dress: string;
+  favorite_dress_en: string;
+  favorite_food: string;
+  favorite_food_en: string;
   salary_type: string;
   monthly_salary: string;
   daily_rate: string;
@@ -35,8 +56,19 @@ interface MemberForm {
 }
 
 const emptyForm: MemberForm = {
-  full_name: "", email: "", phone: "", designation: "", bio: "",
-  bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "", address: "",
+  full_name: "", full_name_en: "", email: "", phone: "",
+  designation: "", designation_en: "",
+  bio: "", bio_en: "", short_bio: "", short_bio_en: "",
+  bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "",
+  address: "", address_en: "",
+  education: "", education_en: "",
+  achievements: "", achievements_en: "",
+  date_of_birth: "",
+  favorite_actor: "", favorite_actor_en: "",
+  favorite_actress: "", favorite_actress_en: "",
+  favorite_color: "", favorite_color_en: "",
+  favorite_dress: "", favorite_dress_en: "",
+  favorite_food: "", favorite_food_en: "",
   salary_type: "daily", monthly_salary: "0", daily_rate: "0", previous_balance: "0",
 };
 
