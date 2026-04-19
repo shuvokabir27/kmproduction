@@ -835,6 +835,55 @@ export default function ClientDashboard() {
       {historyReceiptData && (
         <ClientPaymentReceipt receiptData={historyReceiptData} onClose={() => setHistoryReceiptData(null)} />
       )}
+
+      <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
+        <DialogContent className="rounded-2xl border-border/50 bg-card max-w-[380px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <KeyRound className="h-5 w-5 text-primary" /> পাসওয়ার্ড পরিবর্তন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড</Label>
+              <Input
+                type="password"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+                placeholder="কমপক্ষে ৬ অক্ষর"
+                className="bg-secondary/50 border-border/50 mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">পাসওয়ার্ড নিশ্চিত করুন</Label>
+              <Input
+                type="password"
+                value={confirmPw}
+                onChange={(e) => setConfirmPw(e.target.value)}
+                placeholder="আবার নতুন পাসওয়ার্ড দিন"
+                className="bg-secondary/50 border-border/50 mt-1"
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => { setPwDialogOpen(false); setNewPw(""); setConfirmPw(""); }}
+                disabled={pwSaving}
+                className="flex-1 rounded-xl"
+              >
+                বাতিল
+              </Button>
+              <Button
+                onClick={handleChangePassword}
+                disabled={pwSaving}
+                className="flex-1 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                {pwSaving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
