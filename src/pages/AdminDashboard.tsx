@@ -81,9 +81,9 @@ const AdminDashboard = () => {
       }, 0) ?? 0;
 
       const totalPreviousBalance = activeProfiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
-      const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("rate, member_id").in("member_id", activeIds);
-      const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
-      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + totalPreviousBalance - totalPaid };
+      // NOTE: Freelance/outsourcing income is intentionally excluded from admin dashboard.
+      // It belongs only to the member's personal dashboard.
+      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalPreviousBalance - totalPaid };
     },
   });
 
