@@ -2454,6 +2454,9 @@ export type Database = {
         Args: { _conversation_id: string; _user_id: string }
         Returns: boolean
       }
+      member_can_access_freelance_project:
+        | { Args: { _project_id: string }; Returns: boolean }
+        | { Args: { _project_id: string; _user_id: string }; Returns: boolean }
       notify_all_members: {
         Args: {
           _link?: string

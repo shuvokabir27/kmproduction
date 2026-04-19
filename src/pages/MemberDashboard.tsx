@@ -169,8 +169,10 @@ const MemberDashboard = () => {
     project?.client_name ||
     project?.client_profiles?.company ||
     project?.client_profiles?.name ||
-    project?.name ||
     externalIncomeFallbackName;
+
+  const getFreelanceProjectTitle = (project: any) =>
+    project?.name || "প্রজেক্ট টাইটেল নেই";
 
   const freelanceClientNames = Array.from(
     new Set(normalizedFreelanceList.map((item: any) => getFreelanceDisplayName(item.freelance_projects)).filter(Boolean))
@@ -389,9 +391,7 @@ const MemberDashboard = () => {
                             </p>
                             <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                           </div>
-                          {project?.name && project?.client_name && (
-                            <p className="text-[11px] text-foreground/70 mt-0.5 truncate">📋 {project.name}</p>
-                          )}
+                          <p className="text-[11px] text-foreground/70 mt-0.5 truncate">📋 {getFreelanceProjectTitle(project)}</p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
                             {a.role_label && <span className="text-foreground/80">{a.role_label}</span>}
                             {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
@@ -665,9 +665,7 @@ const MemberDashboard = () => {
                                 </p>
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                               </div>
-                              {project?.name && project?.client_name && (
-                                <p className="text-[11px] text-foreground/70 mt-0.5 truncate">📋 {project.name}</p>
-                              )}
+                              <p className="text-[11px] text-foreground/70 mt-0.5 truncate">📋 {getFreelanceProjectTitle(project)}</p>
                               <p className="text-[11px] text-muted-foreground mt-0.5">
                                 {a.role_label && <span className="text-foreground/80">{a.role_label}</span>}
                                 {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
