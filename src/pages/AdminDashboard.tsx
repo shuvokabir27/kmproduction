@@ -81,9 +81,17 @@ const AdminDashboard = () => {
       }, 0) ?? 0;
 
       const totalPreviousBalance = activeProfiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
-      // NOTE: Freelance/outsourcing income is intentionally excluded from admin dashboard.
-      // It belongs only to the member's personal dashboard.
-      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalPreviousBalance - totalPaid };
+
+      // Production members' admin-assigned freelance income (freelance_assignments)
+      // NOTE: client_project_artists (client-added artists) intentionally excluded from admin dashboard
+      const { data: freelanceAssignments } = await (supabase as any)
+        .from("freelance_assignments")
+        .select("rate, paid_amount, member_id")
+        .in("member_id", activeIds);
+      const totalFreelance = freelanceAssignments?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
+      const totalFreelancePaid = freelanceAssignments?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
+
+      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalPreviousBalance + totalFreelance - totalPaid - totalFreelancePaid };
     },
   });
 
@@ -110,7 +118,12 @@ const AdminDashboard = () => {
       if (from) salQ = salQ.gte("credit_month", from);
       if (to) salQ = salQ.lte("credit_month", to);
       const { data: salaryCredits } = await salQ;
-      // Freelance/outsourcing intentionally excluded from admin dashboard.
+
+      // Production members' admin-assigned freelance (date-filtered)
+      let frQ = (supabase as any).from("freelance_assignments").select("member_id, rate, paid_amount, created_at");
+      if (from) frQ = frQ.gte("created_at", from);
+      if (to) frQ = frQ.lte("created_at", to);
+      const { data: freelanceRows } = await frQ;
 
       // Build exclude map
       const excludeMap: Record<string, string> = {};
@@ -121,8 +134,8 @@ const AdminDashboard = () => {
         }
       });
 
-      const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; previous: number }>();
-      members?.forEach((m: any) => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, previous: Number(m.previous_balance || 0) }));
+      const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
+      members?.forEach((m: any) => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const entry = memberMap.get(a.member_id); if (entry) entry.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const entry = memberMap.get(b.member_id); if (entry) entry.bonus += Number(b.amount || 0); });
@@ -131,15 +144,19 @@ const AdminDashboard = () => {
         if (cutoff && s.credit_month >= cutoff) return;
         const entry = memberMap.get(s.member_id); if (entry) entry.salary += Number(s.amount || 0);
       });
-      // Freelance excluded from admin dashboard.
-      const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).filter(m => m.earned > 0 || m.paid > 0 || m.bonus > 0 || m.salary > 0 || m.freelance > 0 || m.previous > 0).sort((a, b) => b.due - a.due);
+      freelanceRows?.forEach((f: any) => {
+        const entry = memberMap.get(f.member_id);
+        if (entry) { entry.freelance += Number(f.rate || 0); entry.freelancePaid += Number(f.paid_amount || 0); }
+      });
+      const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid - m.freelancePaid })).filter(m => m.earned > 0 || m.paid > 0 || m.bonus > 0 || m.salary > 0 || m.freelance > 0 || m.previous > 0).sort((a, b) => b.due - a.due);
       const totalEarned = list.reduce((s, m) => s + m.earned, 0);
       const totalPaid = list.reduce((s, m) => s + m.paid, 0);
       const totalBonus = list.reduce((s, m) => s + m.bonus, 0);
       const totalSalary = list.reduce((s, m) => s + m.salary, 0);
       const totalFreelance = list.reduce((s, m) => s + m.freelance, 0);
+      const totalFreelancePaid = list.reduce((s, m) => s + m.freelancePaid, 0);
       const totalPrevious = list.reduce((s, m) => s + m.previous, 0);
-      return { list, totalEarned, totalPaid, totalDue: totalEarned + totalBonus + totalSalary + totalFreelance + totalPrevious - totalPaid };
+      return { list, totalEarned, totalPaid, totalDue: totalEarned + totalBonus + totalSalary + totalFreelance + totalPrevious - totalPaid - totalFreelancePaid };
     },
   });
 
@@ -151,7 +168,8 @@ const AdminDashboard = () => {
       const { data: payments } = await supabase.from("payments").select("member_id, amount");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
-      // Freelance excluded from admin dashboard.
+      // Production members' admin-assigned freelance income (client_project_artists excluded)
+      const { data: freelanceRows } = await (supabase as any).from("freelance_assignments").select("member_id, rate, paid_amount");
 
       // Build exclude map for members changed from monthly to daily
       const excludeMap: Record<string, string> = {};
@@ -162,8 +180,8 @@ const AdminDashboard = () => {
         }
       });
 
-      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; previous: number }>();
-      members?.forEach((m: any) => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, previous: Number(m.previous_balance || 0) }));
+      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
+      members?.forEach((m: any) => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const e = map.get(b.member_id); if (e) e.bonus += Number(b.amount || 0); });
@@ -172,8 +190,11 @@ const AdminDashboard = () => {
         if (cutoff && s.credit_month >= cutoff) return;
         const e = map.get(s.member_id); if (e) e.salary += Number(s.amount || 0);
       });
-      // Freelance excluded from admin dashboard.
-      return Array.from(map.values()).map(m => ({ ...m, balance: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).sort((a, b) => b.balance - a.balance);
+      freelanceRows?.forEach((f: any) => {
+        const e = map.get(f.member_id);
+        if (e) { e.freelance += Number(f.rate || 0); e.freelancePaid += Number(f.paid_amount || 0); }
+      });
+      return Array.from(map.values()).map(m => ({ ...m, balance: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid - m.freelancePaid })).sort((a, b) => b.balance - a.balance);
     },
   });
 
