@@ -300,18 +300,10 @@ const AdminDashboard = () => {
           <p className="text-[10px] text-muted-foreground pb-3 border-b border-border/20">সকল সদস্যের সর্বমোট বকেয়ার তালিকা</p>
 
           {filteredData && (
-            <div className="grid grid-cols-3 gap-2 py-2">
-              <div className="p-3 rounded-xl bg-success/10 border border-success/20 text-center">
-                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">আয়</p>
-                <p className="text-sm md:text-lg font-bold text-success">৳{filteredData.totalEarned.toLocaleString("bn-BD")}</p>
-              </div>
-              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-center">
-                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">প্রদান</p>
-                <p className="text-sm md:text-lg font-bold text-primary">৳{filteredData.totalPaid.toLocaleString("bn-BD")}</p>
-              </div>
+            <div className="py-2">
               <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
-                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">বকেয়া</p>
-                <p className="text-sm md:text-lg font-bold text-destructive">৳{filteredData.totalDue.toLocaleString("bn-BD")}</p>
+                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">মোট বকেয়া</p>
+                <p className="text-base md:text-xl font-bold text-destructive">৳{filteredData.totalDue.toLocaleString("bn-BD")}</p>
               </div>
             </div>
           )}
