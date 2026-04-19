@@ -1157,12 +1157,8 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
           note: paymentNote.trim() || undefined,
         },
       });
-      setReceiptData({
-        artistName: selectedGroup.name, projectName: updates.map(u => u.projectName).join(", "),
-        clientName, companyName, amount, totalRemuneration: selectedGroup.totalBill,
-        totalPaid: selectedGroup.totalPaid + amount, remaining: selectedGroup.totalDue - amount,
-        date: new Date().toISOString(),
-      });
+      // Receipt popup removed — receipt can be downloaded from পেমেন্ট হিস্ট্রি section
+      setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["all-client-project-artists", clientProfileId] });
       queryClient.invalidateQueries({ queryKey: ["client-project-artists"] });
       queryClient.invalidateQueries({ queryKey: ["client-payment-history"] });
@@ -1196,7 +1192,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
 
   return (
     <>
-      {receiptData && <ClientArtistReceipt receiptData={receiptData} onClose={() => setReceiptData(null)} />}
+      {/* Auto-popup receipt removed — users download receipts from payment history */}
       <Dialog open={open} onOpenChange={handleOpen}>
         <DialogTrigger asChild>
           <button className="w-full relative overflow-hidden rounded-2xl p-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
