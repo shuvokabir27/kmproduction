@@ -599,9 +599,14 @@ const MemberDashboard = () => {
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <p className="text-sm font-semibold text-foreground truncate">{project?.name || "প্রজেক্ট"}</p>
+                                <p className="text-sm font-semibold text-foreground truncate">
+                                  {project?.client_name || project?.name || "প্রজেক্ট"}
+                                </p>
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                               </div>
+                              {project?.name && project?.client_name && (
+                                <p className="text-[11px] text-foreground/70 mt-0.5 truncate">📋 {project.name}</p>
+                              )}
                               <p className="text-[11px] text-muted-foreground mt-0.5">
                                 {a.role_label && <span className="text-foreground/80">{a.role_label}</span>}
                                 {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
@@ -609,10 +614,9 @@ const MemberDashboard = () => {
                             </div>
                           </div>
 
-                          {(project?.client_name || project?.location) && (
+                          {project?.location && (
                             <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-                              {project?.client_name && <span>👤 {project.client_name}</span>}
-                              {project?.location && <span>📍 {project.location}</span>}
+                              <span>📍 {project.location}</span>
                             </div>
                           )}
 
