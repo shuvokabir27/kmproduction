@@ -68,6 +68,27 @@ export default function ClientDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
+  const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [pwSaving, setPwSaving] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (newPw.length < 6) { toast({ title: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে", variant: "destructive" }); return; }
+    if (newPw !== confirmPw) { toast({ title: "পাসওয়ার্ড মিলছে না", variant: "destructive" }); return; }
+    setPwSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) throw error;
+      toast({ title: "পাসওয়ার্ড পরিবর্তন হয়েছে!" });
+      setPwDialogOpen(false);
+      setNewPw(""); setConfirmPw("");
+    } catch (err: any) {
+      toast({ title: err.message, variant: "destructive" });
+    } finally {
+      setPwSaving(false);
+    }
+  };
   const dashboardRef = useRef<HTMLDivElement>(null);
   
 
