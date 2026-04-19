@@ -79,6 +79,7 @@ export function useMemberBalance(profileId: string | undefined) {
       // Client-portal artist work (matched by artist_name = profile full_name)
       const fullName = profile?.full_name as string | undefined;
       let totalFromClientArtists = 0;
+      let totalPaidFromClientArtists = 0;
       if (fullName) {
         const { data: clientArtistsData } = await (supabase as any)
           .from("client_project_artists")
