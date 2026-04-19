@@ -103,8 +103,9 @@ export function useMemberBalance(profileId: string | undefined) {
         totalBonuses,
         totalSalaryCredits,
         totalFreelance,
+        totalFreelancePaid,
         previousBalance,
-        balance: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid,
+        balance: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid - totalFreelancePaid,
       };
     },
   });
