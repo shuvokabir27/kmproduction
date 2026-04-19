@@ -21,6 +21,7 @@ const PublicProfile = () => {
   const { memberId } = useParams();
   const { lang, t } = useLanguage();
   const L = labels[lang];
+  const { isAdmin } = useAuth();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["public-profile", memberId],
