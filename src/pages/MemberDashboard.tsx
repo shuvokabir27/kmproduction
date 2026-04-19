@@ -103,7 +103,7 @@ const MemberDashboard = () => {
       const { data: projects } = projectIds.length
         ? await (supabase as any)
             .from("freelance_projects")
-            .select("*")
+            .select("*, client_profiles(name, company)")
             .in("id", projectIds)
         : { data: [] };
 
@@ -165,10 +165,12 @@ const MemberDashboard = () => {
           }]
         : [];
 
+  // Show ONLY ONE label per client: prefer company name, else person name.
+  // Never show both together (avoids duplicate cards like "সাদ্দাম মাল" and "সাদ্দাম মাল (Malbro)").
   const getFreelanceDisplayName = (project: any) =>
-    project?.client_name ||
     project?.client_profiles?.company ||
     project?.client_profiles?.name ||
+    project?.client_name ||
     externalIncomeFallbackName;
 
   const getFreelanceProjectTitle = (project: any) =>
