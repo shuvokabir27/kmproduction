@@ -271,6 +271,15 @@ export default function ClientDashboard() {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setPwDialogOpen(true)}
+                className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/10"
+                title="পাসওয়ার্ড পরিবর্তন"
+              >
+                <KeyRound className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => supabase.auth.signOut()}
                 className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-destructive/10"
               >
