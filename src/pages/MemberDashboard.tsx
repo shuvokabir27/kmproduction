@@ -346,7 +346,7 @@ const MemberDashboard = () => {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="text-sm font-semibold text-foreground truncate">
-                              👤 {project?.client_name || project?.name || "ক্লায়েন্ট"}
+                              👤 {getFreelanceDisplayName(project)}
                             </p>
                             <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                           </div>
@@ -622,7 +622,7 @@ const MemberDashboard = () => {
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <p className="text-sm font-semibold text-foreground truncate">
-                                  {project?.client_name || project?.name || "প্রজেক্ট"}
+                                  {getFreelanceDisplayName(project)}
                                 </p>
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                               </div>
@@ -686,7 +686,7 @@ const MemberDashboard = () => {
               const earned = Number(a.rate || 0);
               const paid = Number(a.paid_amount || 0);
               const due = Math.max(0, earned - paid);
-              const clientName = a.freelance_projects?.client_name || "অজানা ক্লায়েন্ট";
+              const clientName = getFreelanceDisplayName(a.freelance_projects);
               const prev = dueByClient.get(clientName) || { earned: 0, paid: 0, due: 0, projects: 0 };
               dueByClient.set(clientName, {
                 earned: prev.earned + earned,
