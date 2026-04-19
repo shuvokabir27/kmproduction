@@ -128,13 +128,26 @@ const AdminMembers = () => {
     return publicUrl;
   };
 
-  const { data: members } = useQuery({
+  const { data: allProfiles } = useQuery({
     queryKey: ["admin-members"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("*").order("member_id");
-      return data ?? [];
+      const { data: profiles } = await supabase.from("profiles").select("*").order("member_id");
+      const { data: roles } = await (supabase as any).from("user_roles").select("user_id, role");
+      // Group roles per user
+      const rolesByUser = new Map<string, string[]>();
+      (roles ?? []).forEach((r: any) => {
+        const arr = rolesByUser.get(r.user_id) ?? [];
+        arr.push(r.role);
+        rolesByUser.set(r.user_id, arr);
+      });
+      return (profiles ?? []).map((p: any) => ({ ...p, _roles: rolesByUser.get(p.user_id) ?? [] }));
     },
   });
+
+  // Members = profiles with 'member' role (excluding admin/client/product_admin only profiles)
+  const members = (allProfiles ?? []).filter((p: any) => p._roles.includes("member"));
+  // Staff list = admins, product_admins, and clients (no 'member' role)
+  const staffList = (allProfiles ?? []).filter((p: any) => !p._roles.includes("member") && p._roles.length > 0);
 
   const { data: lockedAccounts, refetch: refetchLocked } = useQuery({
     queryKey: ["locked-accounts"],
