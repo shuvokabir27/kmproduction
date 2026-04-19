@@ -76,7 +76,7 @@ const MemberDashboard = () => {
       // Source 1: admin-assigned freelance work (linked by member_id)
       const { data: assignments } = await (supabase as any)
         .from("freelance_assignments")
-        .select("*, freelance_projects(*, client_profiles(company, name))")
+        .select("*")
         .eq("member_id", profile!.id)
         .order("created_at", { ascending: false });
 
@@ -86,11 +86,28 @@ const MemberDashboard = () => {
       if (names.length > 0) {
         const { data } = await (supabase as any)
           .from("client_project_artists")
-          .select("*, freelance_projects(*, client_profiles(company, name))")
+          .select("*")
           .in("artist_name", names)
           .order("created_at", { ascending: false });
         clientArtists = data ?? [];
       }
+
+      const projectIds = Array.from(
+        new Set(
+          [...(assignments ?? []), ...clientArtists]
+            .map((item: any) => item.project_id)
+            .filter(Boolean)
+        )
+      );
+
+      const { data: projects } = projectIds.length
+        ? await (supabase as any)
+            .from("freelance_projects")
+            .select("*")
+            .in("id", projectIds)
+        : { data: [] };
+
+      const projectMap = new Map((projects ?? []).map((project: any) => [project.id, project]));
 
       // Normalize both into a single shape
       const fromAssignments = (assignments ?? []).map((a: any) => ({
@@ -100,7 +117,7 @@ const MemberDashboard = () => {
         is_paid: a.is_paid,
         role_label: a.role_label,
         notes: a.notes,
-        freelance_projects: a.freelance_projects,
+        freelance_projects: projectMap.get(a.project_id) ?? null,
         source: "assignment" as const,
       }));
       const fromClientArtists = clientArtists.map((c: any) => ({
@@ -110,7 +127,7 @@ const MemberDashboard = () => {
         is_paid: c.is_paid,
         role_label: "আর্টিস্ট",
         notes: c.notes,
-        freelance_projects: c.freelance_projects,
+        freelance_projects: projectMap.get(c.project_id) ?? null,
         source: "client" as const,
       }));
 
@@ -127,8 +144,8 @@ const MemberDashboard = () => {
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
   const getFreelanceDisplayName = (project: any) =>
-    project?.client_profiles?.company ||
     project?.client_name ||
+    project?.client_profiles?.company ||
     project?.client_profiles?.name ||
     project?.name ||
     "অজানা কোম্পানি";
