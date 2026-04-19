@@ -353,8 +353,6 @@ const AdminDashboard = () => {
                         <span className="text-foreground font-medium text-sm">{m.name}</span>
                       </div>
                     </td>
-                    <td className="p-3 text-right text-success text-sm">৳{m.earned.toLocaleString("bn-BD")}</td>
-                    <td className="p-3 text-right text-primary text-sm">৳{m.paid.toLocaleString("bn-BD")}</td>
                     <td className="p-3 text-right font-semibold text-sm">
                       <span className={m.due > 0 ? "text-destructive" : "text-success"}>৳{m.due.toLocaleString("bn-BD")}</span>
                     </td>
