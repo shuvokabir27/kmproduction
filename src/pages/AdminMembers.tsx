@@ -154,6 +154,22 @@ const AdminMembers = () => {
   // Staff list = admins, product_admins, and clients (regardless of member role)
   const staffList = (allProfiles ?? []).filter((p: any) => isStaff(p));
 
+  // Auto-open edit dialog when ?edit={profileId} is present (e.g. from PublicProfile admin button)
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const editProfileId = searchParams.get("edit");
+    if (editProfileId && allProfiles && !open) {
+      const target = allProfiles.find((p: any) => p.id === editProfileId);
+      if (target) {
+        openEdit(target);
+        const next = new URLSearchParams(searchParams);
+        next.delete("edit");
+        setSearchParams(next, { replace: true });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, allProfiles]);
+
   const { data: lockedAccounts, refetch: refetchLocked } = useQuery({
     queryKey: ["locked-accounts"],
     queryFn: async () => {
