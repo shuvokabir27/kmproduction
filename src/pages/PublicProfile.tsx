@@ -106,7 +106,6 @@ const PublicProfile = () => {
     displayAddress && { icon: MapPin, text: displayAddress },
     displayDesignation && { icon: Briefcase, text: displayDesignation },
     displayEducation && { icon: GraduationCap, text: displayEducation },
-    profile.joining_date && { icon: Calendar, text: `${L.joinDate}: ${formatDate(profile.joining_date)}` },
   ].filter(Boolean) as { icon: any; text: string }[];
 
   return (
