@@ -81,9 +81,9 @@ const AdminDashboard = () => {
       }, 0) ?? 0;
 
       const totalPreviousBalance = activeProfiles?.reduce((sum: number, p: any) => sum + Number(p.previous_balance || 0), 0) ?? 0;
-      const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("rate, member_id").in("member_id", activeIds);
-      const totalFreelance = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
-      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + totalPreviousBalance - totalPaid };
+      // NOTE: Freelance/outsourcing income is intentionally excluded from admin dashboard.
+      // It belongs only to the member's personal dashboard.
+      return { totalEarned, totalPaid, due: totalEarned + totalBonuses + totalSalaryCredits + totalPreviousBalance - totalPaid };
     },
   });
 
@@ -110,10 +110,7 @@ const AdminDashboard = () => {
       if (from) salQ = salQ.gte("credit_month", from);
       if (to) salQ = salQ.lte("credit_month", to);
       const { data: salaryCredits } = await salQ;
-      let freelanceQ = (supabase as any).from("freelance_assignments").select("member_id, rate, created_at");
-      if (from) freelanceQ = freelanceQ.gte("created_at", from);
-      if (to) freelanceQ = freelanceQ.lte("created_at", to);
-      const { data: freelanceData } = await freelanceQ;
+      // Freelance/outsourcing intentionally excluded from admin dashboard.
 
       // Build exclude map
       const excludeMap: Record<string, string> = {};
@@ -134,7 +131,7 @@ const AdminDashboard = () => {
         if (cutoff && s.credit_month >= cutoff) return;
         const entry = memberMap.get(s.member_id); if (entry) entry.salary += Number(s.amount || 0);
       });
-      freelanceData?.forEach((f: any) => { const entry = memberMap.get(f.member_id); if (entry) entry.freelance += Number(f.rate || 0); });
+      // Freelance excluded from admin dashboard.
       const list = Array.from(memberMap.values()).map(m => ({ ...m, due: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).filter(m => m.earned > 0 || m.paid > 0 || m.bonus > 0 || m.salary > 0 || m.freelance > 0 || m.previous > 0).sort((a, b) => b.due - a.due);
       const totalEarned = list.reduce((s, m) => s + m.earned, 0);
       const totalPaid = list.reduce((s, m) => s + m.paid, 0);
@@ -154,7 +151,7 @@ const AdminDashboard = () => {
       const { data: payments } = await supabase.from("payments").select("member_id, amount");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
-      const { data: freelanceData } = await (supabase as any).from("freelance_assignments").select("member_id, rate");
+      // Freelance excluded from admin dashboard.
 
       // Build exclude map for members changed from monthly to daily
       const excludeMap: Record<string, string> = {};
@@ -175,7 +172,7 @@ const AdminDashboard = () => {
         if (cutoff && s.credit_month >= cutoff) return;
         const e = map.get(s.member_id); if (e) e.salary += Number(s.amount || 0);
       });
-      freelanceData?.forEach((f: any) => { const e = map.get(f.member_id); if (e) e.freelance += Number(f.rate || 0); });
+      // Freelance excluded from admin dashboard.
       return Array.from(map.values()).map(m => ({ ...m, balance: m.earned + m.bonus + m.salary + m.freelance + m.previous - m.paid })).sort((a, b) => b.balance - a.balance);
     },
   });
