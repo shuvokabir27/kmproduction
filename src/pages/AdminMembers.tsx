@@ -487,7 +487,7 @@ const AdminMembers = () => {
                     <Input value={form.phone} onChange={(e) => setField("phone", e.target.value)} className="bg-secondary border-border/50" />
                   </div>
                   <div>
-                    <Label className="text-foreground">রোল / পদবী</Label>
+                    <Label className="text-foreground">রোল / পদবী (একাধিক নির্বাচন করা যাবে)</Label>
                     {(() => {
                       const editingMember = editId ? (allProfiles || []).find((p: any) => p.id === editId) : null;
                       const isSuperAdminMember = editingMember?.member_id === 20200;
@@ -502,36 +502,34 @@ const AdminMembers = () => {
                         { bn: "ক্লায়েন্ট", en: "Client" },
                       ];
                       if (isSuperAdminMember) ROLES.push({ bn: "সুপার এডমিন", en: "Super Admin" });
-                      const isCustom = form.designation && !ROLES.some((r) => r.bn === form.designation);
+                      const selected = (form.designation || "").split(",").map((s) => s.trim()).filter(Boolean);
+                      const toggle = (bn: string) => {
+                        const next = selected.includes(bn) ? selected.filter((s) => s !== bn) : [...selected, bn];
+                        const enList = next.map((b) => ROLES.find((r) => r.bn === b)?.en || b);
+                        setForm((f) => ({
+                          ...f,
+                          designation: next.join(", "),
+                          designation_en: enList.join(", "),
+                        }));
+                      };
                       return (
-                        <Select
-                          value={isCustom ? "__custom__" : form.designation}
-                          onValueChange={(v) => {
-                            if (v === "__custom__") return;
-                            const match = ROLES.find((r) => r.bn === v);
-                            setForm((f) => ({
-                              ...f,
-                              designation: v,
-                              designation_en: match?.en || f.designation_en,
-                            }));
-                          }}
-                        >
-                          <SelectTrigger className="bg-secondary border-border/50">
-                            <SelectValue placeholder="রোল নির্বাচন করুন" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-popover z-50">
-                            {ROLES.map((r) => (
-                              <SelectItem key={r.bn} value={r.bn}>{r.bn}</SelectItem>
-                            ))}
-                            {isCustom && <SelectItem value="__custom__">{form.designation}</SelectItem>}
-                          </SelectContent>
-                        </Select>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-2 rounded-md bg-secondary border border-border/50">
+                          {ROLES.map((r) => {
+                            const checked = selected.includes(r.bn);
+                            return (
+                              <label key={r.bn} className={`flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-xs transition-colors ${checked ? "bg-primary/20 text-primary" : "hover:bg-background"}`}>
+                                <input type="checkbox" checked={checked} onChange={() => toggle(r.bn)} className="h-3 w-3 accent-primary" />
+                                <span>{r.bn}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
                       );
                     })()}
                   </div>
                 </div>
                 <div>
-                  <Label className="text-foreground">পদবী (English)</Label>
+                  <Label className="text-foreground">পদবী (English) — স্বয়ংক্রিয়</Label>
                   <Input value={form.designation_en} onChange={(e) => setField("designation_en", e.target.value)} className="bg-secondary border-border/50" placeholder="Designation in English" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
