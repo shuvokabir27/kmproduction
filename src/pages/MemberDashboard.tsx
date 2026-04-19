@@ -76,7 +76,7 @@ const MemberDashboard = () => {
       // Source 1: admin-assigned freelance work (linked by member_id)
       const { data: assignments } = await (supabase as any)
         .from("freelance_assignments")
-        .select("*, freelance_projects(*)")
+        .select("*, freelance_projects(*, client_profiles(company, name))")
         .eq("member_id", profile!.id)
         .order("created_at", { ascending: false });
 
@@ -86,7 +86,7 @@ const MemberDashboard = () => {
       if (names.length > 0) {
         const { data } = await (supabase as any)
           .from("client_project_artists")
-          .select("*, freelance_projects(*)")
+          .select("*, freelance_projects(*, client_profiles(company, name))")
           .in("artist_name", names)
           .order("created_at", { ascending: false });
         clientArtists = data ?? [];
@@ -126,12 +126,15 @@ const MemberDashboard = () => {
 
   const paymentMethodLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
 
+  const getFreelanceDisplayName = (project: any) =>
+    project?.client_profiles?.company ||
+    project?.client_name ||
+    project?.client_profiles?.name ||
+    project?.name ||
+    "অজানা কোম্পানি";
+
   const freelanceClientNames = Array.from(
-    new Set(
-      (myFreelance ?? [])
-        .map((item: any) => item.freelance_projects?.client_name)
-        .filter(Boolean)
-    )
+    new Set((myFreelance ?? []).map((item: any) => getFreelanceDisplayName(item.freelance_projects)).filter(Boolean))
   ) as string[];
 
   const freelanceCardLabel =
