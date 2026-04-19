@@ -567,6 +567,58 @@ const AdminMembers = () => {
           </div>
         </Card>
 
+        {/* Admins & Clients (separate list) */}
+        {staffList.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between mt-6">
+              <h2 className="text-base md:text-lg font-bold text-foreground flex items-center gap-2">
+                <ShieldAlert className="h-4 w-4 text-amber-400" /> এডমিন ও ক্লায়েন্ট
+              </h2>
+              <p className="text-xs text-muted-foreground">{staffList.length} জন</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {staffList.map((m: any) => {
+                const isAdmin = m._roles.includes("admin");
+                const isClient = m._roles.includes("client");
+                const isProductAdmin = m._roles.includes("product_admin");
+                return (
+                  <Card key={m.id} className={`bg-card border-border/30 p-3 ${!(m.is_active ?? true) ? "opacity-50" : ""}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0 overflow-hidden">
+                        {m.photo_url ? (
+                          <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-primary text-sm font-semibold">{m.full_name.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-sm font-semibold text-foreground truncate">{m.full_name}</p>
+                          {isAdmin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-destructive/15 text-destructive">এডমিন</span>}
+                          {isProductAdmin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500">প্রডাক্ট এডমিন</span>}
+                          {isClient && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-500">ক্লায়েন্ট</span>}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground truncate">{m.email || m.designation || "—"}</p>
+                      </div>
+                      <div className="flex items-center gap-0.5 shrink-0">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
+                          <Edit className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
+                          <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}>
+                          <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Password Dialog */}
         <Dialog open={pwOpen} onOpenChange={setPwOpen}>
           <DialogContent className="bg-card border-border/50 max-w-sm">
