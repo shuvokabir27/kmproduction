@@ -4,7 +4,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff, Receipt, Trash2, History } from "lucide-react";
+import { Briefcase, Calendar, MapPin, FileText, CheckCircle2, LogOut, Wallet, Users, Banknote, Download, CreditCard, ArrowRight, ChevronLeft, ChevronDown, ChevronUp, Sparkles, TrendingUp, Eye, EyeOff, Receipt, Trash2, History, KeyRound } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -67,6 +68,27 @@ export default function ClientDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "derived" | "history"; rec: any } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [historyReceiptData, setHistoryReceiptData] = useState<any>(null);
+  const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [pwSaving, setPwSaving] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (newPw.length < 6) { toast({ title: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে", variant: "destructive" }); return; }
+    if (newPw !== confirmPw) { toast({ title: "পাসওয়ার্ড মিলছে না", variant: "destructive" }); return; }
+    setPwSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) throw error;
+      toast({ title: "পাসওয়ার্ড পরিবর্তন হয়েছে!" });
+      setPwDialogOpen(false);
+      setNewPw(""); setConfirmPw("");
+    } catch (err: any) {
+      toast({ title: err.message, variant: "destructive" });
+    } finally {
+      setPwSaving(false);
+    }
+  };
   const dashboardRef = useRef<HTMLDivElement>(null);
   
 
@@ -245,6 +267,15 @@ export default function ClientDashboard() {
               >
                 <Eye className="h-4 w-4" />
                 <span className="text-xs hidden sm:inline">মেম্বার ভিউ</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPwDialogOpen(true)}
+                className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/10"
+                title="পাসওয়ার্ড পরিবর্তন"
+              >
+                <KeyRound className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
@@ -804,6 +835,55 @@ export default function ClientDashboard() {
       {historyReceiptData && (
         <ClientPaymentReceipt receiptData={historyReceiptData} onClose={() => setHistoryReceiptData(null)} />
       )}
+
+      <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
+        <DialogContent className="rounded-2xl border-border/50 bg-card max-w-[380px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <KeyRound className="h-5 w-5 text-primary" /> পাসওয়ার্ড পরিবর্তন
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div>
+              <Label className="text-muted-foreground text-xs">নতুন পাসওয়ার্ড</Label>
+              <Input
+                type="password"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+                placeholder="কমপক্ষে ৬ অক্ষর"
+                className="bg-secondary/50 border-border/50 mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-muted-foreground text-xs">পাসওয়ার্ড নিশ্চিত করুন</Label>
+              <Input
+                type="password"
+                value={confirmPw}
+                onChange={(e) => setConfirmPw(e.target.value)}
+                placeholder="আবার নতুন পাসওয়ার্ড দিন"
+                className="bg-secondary/50 border-border/50 mt-1"
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => { setPwDialogOpen(false); setNewPw(""); setConfirmPw(""); }}
+                disabled={pwSaving}
+                className="flex-1 rounded-xl"
+              >
+                বাতিল
+              </Button>
+              <Button
+                onClick={handleChangePassword}
+                disabled={pwSaving}
+                className="flex-1 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                {pwSaving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
