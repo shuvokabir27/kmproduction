@@ -487,8 +487,47 @@ const AdminMembers = () => {
                     <Input value={form.phone} onChange={(e) => setField("phone", e.target.value)} className="bg-secondary border-border/50" />
                   </div>
                   <div>
-                    <Label className="text-foreground">পদবী</Label>
-                    <Input value={form.designation} onChange={(e) => setField("designation", e.target.value)} className="bg-secondary border-border/50" />
+                    <Label className="text-foreground">রোল / পদবী</Label>
+                    {(() => {
+                      const editingMember = editId ? (allProfiles || []).find((p: any) => p.id === editId) : null;
+                      const isSuperAdminMember = editingMember?.member_id === 20200;
+                      const ROLES = [
+                        { bn: "অভিনেতা", en: "Actor" },
+                        { bn: "অভিনেত্রী", en: "Actress" },
+                        { bn: "রাইটার", en: "Writer" },
+                        { bn: "পরিচালক", en: "Director" },
+                        { bn: "সহঃ পরিচালক", en: "Assistant Director" },
+                        { bn: "প্রডাকশন", en: "Production" },
+                        { bn: "ক্যামেরাম্যান", en: "Cameraman" },
+                        { bn: "ক্লায়েন্ট", en: "Client" },
+                      ];
+                      if (isSuperAdminMember) ROLES.push({ bn: "সুপার এডমিন", en: "Super Admin" });
+                      const isCustom = form.designation && !ROLES.some((r) => r.bn === form.designation);
+                      return (
+                        <Select
+                          value={isCustom ? "__custom__" : form.designation}
+                          onValueChange={(v) => {
+                            if (v === "__custom__") return;
+                            const match = ROLES.find((r) => r.bn === v);
+                            setForm((f) => ({
+                              ...f,
+                              designation: v,
+                              designation_en: match?.en || f.designation_en,
+                            }));
+                          }}
+                        >
+                          <SelectTrigger className="bg-secondary border-border/50">
+                            <SelectValue placeholder="রোল নির্বাচন করুন" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover z-50">
+                            {ROLES.map((r) => (
+                              <SelectItem key={r.bn} value={r.bn}>{r.bn}</SelectItem>
+                            ))}
+                            {isCustom && <SelectItem value="__custom__">{form.designation}</SelectItem>}
+                          </SelectContent>
+                        </Select>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div>
