@@ -342,6 +342,7 @@ export type Database = {
           is_paid: boolean
           notes: string | null
           paid_amount: number
+          profile_id: string | null
           project_id: string
           remuneration: number
         }
@@ -353,6 +354,7 @@ export type Database = {
           is_paid?: boolean
           notes?: string | null
           paid_amount?: number
+          profile_id?: string | null
           project_id: string
           remuneration?: number
         }
@@ -364,6 +366,7 @@ export type Database = {
           is_paid?: boolean
           notes?: string | null
           paid_amount?: number
+          profile_id?: string | null
           project_id?: string
           remuneration?: number
         }
@@ -373,6 +376,13 @@ export type Database = {
             columns: ["client_profile_id"]
             isOneToOne: false
             referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_project_artists_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
