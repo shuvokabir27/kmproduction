@@ -54,8 +54,11 @@ const AdminAttendance = () => {
   const { data: members } = useQuery({
     queryKey: ["admin-members-list"],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("profiles").select("*").eq("is_active", true).order("member_id");
-      return data ?? [];
+      const { data: profiles } = await (supabase as any).from("profiles").select("*").eq("is_active", true).order("member_id");
+      const { data: roles } = await (supabase as any).from("user_roles").select("user_id, role");
+      const memberUserIds = new Set((roles ?? []).filter((r: any) => r.role === "member").map((r: any) => r.user_id));
+      // Only include profiles that have the 'member' role
+      return (profiles ?? []).filter((p: any) => memberUserIds.has(p.user_id));
     },
   });
 
