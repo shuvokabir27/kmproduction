@@ -8,6 +8,8 @@ interface Props {
   profileId: string;
   fullName?: string | null;
   fullNameEn?: string | null;
+  onKmClick?: () => void;
+  onClientClick?: () => void;
 }
 
 const MONTH_BN = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগ", "সেপ্ট", "অক্টো", "নভে", "ডিসে"];
