@@ -555,9 +555,14 @@ const AdminPayments = () => {
                       <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{p.transaction_id || "—"}</td>
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
                       <td className="p-3 text-center">
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => showReceiptForPayment(p)}>
-                          <Download className="h-3.5 w-3.5 text-primary" />
-                        </Button>
+                        <div className="flex items-center justify-center gap-1">
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
+                            <Download className="h-3.5 w-3.5 text-primary" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => sendWhatsAppFromRow(p)} title="WhatsApp-এ পাঠান">
+                            <MessageCircle className="h-3.5 w-3.5 text-green-500" />
+                          </Button>
+                        </div>
                       </td>
                       <td className="p-3 text-center">
                         {deleteTimers[p.id] === undefined ? (
