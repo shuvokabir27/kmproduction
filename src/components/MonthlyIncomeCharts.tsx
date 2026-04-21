@@ -110,74 +110,118 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
   }
 
   const { kmSeries, clientSeries, clientNames } = data;
-  const palette = ["hsl(var(--primary))", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4"];
+  const palette = [
+    { from: "#ef4444", to: "#b91c1c" },
+    { from: "#f59e0b", to: "#b45309" },
+    { from: "#10b981", to: "#047857" },
+    { from: "#8b5cf6", to: "#6d28d9" },
+    { from: "#ec4899", to: "#be185d" },
+    { from: "#06b6d4", to: "#0e7490" },
+  ];
   const hasKm = kmSeries.some((d) => d.income > 0);
   const hasClient = clientNames.length > 0 && clientSeries.some((d) => clientNames.some((n) => Number(d[n]) > 0));
 
+  const tooltipStyle = {
+    background: "hsl(var(--card) / 0.95)",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: 10,
+    fontSize: 11,
+    boxShadow: "0 8px 24px -8px rgba(0,0,0,0.4)",
+    backdropFilter: "blur(8px)",
+  } as const;
+
+  const yTick = (v: number) => `৳${v >= 1000 ? (v / 1000).toFixed(0) + "k" : v}`;
+
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid md:grid-cols-2 gap-3 md:gap-4">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid md:grid-cols-2 gap-2.5 md:gap-3">
       {/* KM Production */}
-      <div className="premium-card rounded-2xl p-4 md:p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
-            <TrendingUp className="h-4 w-4 text-red-400" />
+      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+        <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/20 blur-3xl" />
+        <div className="relative flex items-center gap-2 mb-2">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/30 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
+            <TrendingUp className="h-3.5 w-3.5 text-red-400" />
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground text-sm">KM Production থেকে আয়</h3>
-            <p className="text-[10px] text-muted-foreground">শেষ ৬ মাস (শুটিং + বোনাস + বেতন)</p>
+          <div className="min-w-0">
+            <h3 className="font-semibold text-foreground text-[13px] leading-tight">KM Production আয়</h3>
+            <p className="text-[9px] text-muted-foreground">শেষ ৬ মাস</p>
           </div>
         </div>
         {hasKm ? (
-          <div className="h-56">
+          <div className="relative h-44">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={kmSeries} margin={{ top: 5, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={10} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickFormatter={(v) => `৳${v >= 1000 ? (v / 1000).toFixed(0) + "k" : v}`} />
-                <Tooltip
-                  contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                  formatter={(v: any) => [`৳${Number(v).toLocaleString("bn-BD")}`, "আয়"]}
-                />
-                <Bar dataKey="income" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+              <BarChart data={kmSeries} margin={{ top: 4, right: 4, left: -18, bottom: 0 }} barCategoryGap="22%">
+                <defs>
+                  <linearGradient id="kmGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#f87171" stopOpacity={1} />
+                    <stop offset="60%" stopColor="#ef4444" stopOpacity={0.95} />
+                    <stop offset="100%" stopColor="#991b1b" stopOpacity={0.85} />
+                  </linearGradient>
+                  <linearGradient id="kmGloss" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity={0.45} />
+                    <stop offset="50%" stopColor="#ffffff" stopOpacity={0.05} />
+                    <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="2 4" stroke="hsl(var(--border))" opacity={0.25} vertical={false} />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={9} tickLine={false} axisLine={false} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={9} tickLine={false} axisLine={false} tickFormatter={yTick} width={36} />
+                <Tooltip cursor={{ fill: "hsl(var(--primary) / 0.08)" }} contentStyle={tooltipStyle} formatter={(v: any) => [`৳${Number(v).toLocaleString("bn-BD")}`, "আয়"]} />
+                <Bar dataKey="income" fill="url(#kmGrad)" radius={[8, 8, 2, 2]} maxBarSize={28} />
+                <Bar dataKey="income" fill="url(#kmGloss)" radius={[8, 8, 2, 2]} maxBarSize={28} stackId="gloss" hide={false} legendType="none" isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="h-56 flex items-center justify-center text-xs text-muted-foreground">কোনো আয় নেই</div>
+          <div className="h-44 flex items-center justify-center text-xs text-muted-foreground">কোনো আয় নেই</div>
         )}
       </div>
 
       {/* Per-client Freelance */}
-      <div className="premium-card rounded-2xl p-4 md:p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-            <Briefcase className="h-4 w-4 text-orange-400" />
+      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.25)]">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+        <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-orange-500/20 blur-3xl" />
+        <div className="relative flex items-center gap-2 mb-2">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500/30 to-orange-600/10 border border-orange-500/30 flex items-center justify-center shadow-inner">
+            <Briefcase className="h-3.5 w-3.5 text-orange-400" />
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground text-sm">বাইরের ক্লায়েন্ট থেকে আয়</h3>
-            <p className="text-[10px] text-muted-foreground">শেষ ৬ মাস (ক্লায়েন্ট অনুযায়ী)</p>
+          <div className="min-w-0">
+            <h3 className="font-semibold text-foreground text-[13px] leading-tight">বাইরের ক্লায়েন্ট আয়</h3>
+            <p className="text-[9px] text-muted-foreground">শেষ ৬ মাস</p>
           </div>
         </div>
         {hasClient ? (
-          <div className="h-56">
+          <div className="relative h-44">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={clientSeries} margin={{ top: 5, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={10} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickFormatter={(v) => `৳${v >= 1000 ? (v / 1000).toFixed(0) + "k" : v}`} />
-                <Tooltip
-                  contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                  formatter={(v: any, n: any) => [`৳${Number(v).toLocaleString("bn-BD")}`, n]}
-                />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
+              <BarChart data={clientSeries} margin={{ top: 4, right: 4, left: -18, bottom: 0 }} barCategoryGap="22%">
+                <defs>
+                  {clientNames.map((name, i) => (
+                    <linearGradient key={name} id={`cgrad-${i}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={palette[i % palette.length].from} stopOpacity={1} />
+                      <stop offset="100%" stopColor={palette[i % palette.length].to} stopOpacity={0.85} />
+                    </linearGradient>
+                  ))}
+                </defs>
+                <CartesianGrid strokeDasharray="2 4" stroke="hsl(var(--border))" opacity={0.25} vertical={false} />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={9} tickLine={false} axisLine={false} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={9} tickLine={false} axisLine={false} tickFormatter={yTick} width={36} />
+                <Tooltip cursor={{ fill: "hsl(var(--primary) / 0.08)" }} contentStyle={tooltipStyle} formatter={(v: any, n: any) => [`৳${Number(v).toLocaleString("bn-BD")}`, n]} />
+                <Legend wrapperStyle={{ fontSize: 9 }} iconSize={8} iconType="circle" />
                 {clientNames.map((name, i) => (
-                  <Bar key={name} dataKey={name} stackId="a" fill={palette[i % palette.length]} radius={i === clientNames.length - 1 ? [6, 6, 0, 0] : [0, 0, 0, 0]} />
+                  <Bar
+                    key={name}
+                    dataKey={name}
+                    stackId="a"
+                    fill={`url(#cgrad-${i})`}
+                    radius={i === clientNames.length - 1 ? [8, 8, 0, 0] : [0, 0, 0, 0]}
+                    maxBarSize={28}
+                  />
                 ))}
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="h-56 flex items-center justify-center text-xs text-muted-foreground">বাইরের কোনো আয় নেই</div>
+          <div className="h-44 flex items-center justify-center text-xs text-muted-foreground">বাইরের কোনো আয় নেই</div>
         )}
       </div>
     </motion.div>
