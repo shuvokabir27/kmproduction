@@ -722,45 +722,22 @@ const MemberDashboard = () => {
             </DialogTitle>
           </DialogHeader>
           {(() => {
-            const list = normalizedFreelanceList;
-            // Group dues by client name
-            const dueByClient = new Map<string, { earned: number; paid: number; due: number; projects: number }>();
-            list.forEach((a: any) => {
-              const earned = Number(a.rate || 0);
-              const paid = Number(a.paid_amount || 0);
-              const due = Math.max(0, earned - paid);
-              const clientName = getFreelanceDisplayName(a.freelance_projects);
-              const prev = dueByClient.get(clientName) || { earned: 0, paid: 0, due: 0, projects: 0 };
-              dueByClient.set(clientName, {
-                earned: prev.earned + earned,
-                paid: prev.paid + paid,
-                due: prev.due + due,
-                projects: prev.projects + 1,
-              });
-            });
-
             const totalEarned = Number(balance?.totalEarned || 0);
             const totalPaid = Number(balance?.totalPaid || 0);
             const totalBonuses = Number(balance?.totalBonuses || 0);
             const totalSalaryCredits = Number(balance?.totalSalaryCredits || 0);
-            const totalFreelance = Number(balance?.totalFreelance || 0);
-            const totalFreelancePaid = Number((balance as any)?.totalFreelancePaid || 0);
             const previousBalance = Number(balance?.previousBalance || 0);
-            const finalBalance = Number(balance?.balance || 0);
-            const freelanceDue = Math.max(0, totalFreelance - totalFreelancePaid);
             const internalDue = (totalEarned + totalBonuses + totalSalaryCredits + previousBalance) - totalPaid;
 
             return (
               <div className="space-y-4 mt-2">
-                {/* Total Summary */}
-                <div className={`rounded-xl p-4 border ${finalBalance > 0 ? "bg-red-500/10 border-red-500/30" : finalBalance < 0 ? "bg-emerald-500/10 border-emerald-500/30" : "bg-blue-500/10 border-blue-500/30"}`}>
-                  <p className="text-xs text-muted-foreground">{finalBalance > 0 ? "মোট বকেয়া" : finalBalance < 0 ? "মোট অগ্রিম" : "সমন্বয়কৃত"}</p>
-                  <p className={`text-2xl font-bold ${finalBalance > 0 ? "text-red-400" : finalBalance < 0 ? "text-emerald-400" : "text-blue-400"}`}>
-                    ৳{Math.abs(finalBalance).toLocaleString("bn-BD")}
+                <div className={`rounded-xl p-4 border ${internalDue > 0 ? "bg-red-500/10 border-red-500/30" : internalDue < 0 ? "bg-emerald-500/10 border-emerald-500/30" : "bg-blue-500/10 border-blue-500/30"}`}>
+                  <p className="text-xs text-muted-foreground">{internalDue > 0 ? "KM Production থেকে বকেয়া" : internalDue < 0 ? "KM Production-এ অগ্রিম" : "সমন্বয়কৃত"}</p>
+                  <p className={`text-2xl font-bold ${internalDue > 0 ? "text-red-400" : internalDue < 0 ? "text-emerald-400" : "text-blue-400"}`}>
+                    ৳{Math.abs(internalDue).toLocaleString("bn-BD")}
                   </p>
                 </div>
 
-                {/* Calculation Breakdown */}
                 <div className="rounded-xl border border-border/40 p-3 space-y-2 bg-muted/20">
                   <p className="text-xs font-semibold text-foreground mb-2">হিসাবের বিবরণ</p>
                   <div className="flex items-center justify-between text-xs">
@@ -775,10 +752,6 @@ const MemberDashboard = () => {
                     <span className="text-muted-foreground">মাসিক বেতন</span>
                     <span className="font-semibold text-foreground">৳{totalSalaryCredits.toLocaleString("bn-BD")}</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">বাইরের আয়</span>
-                    <span className="font-semibold text-foreground">৳{totalFreelance.toLocaleString("bn-BD")}</span>
-                  </div>
                   {previousBalance !== 0 && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">পূর্ববর্তী ব্যালেন্স</span>
@@ -786,54 +759,13 @@ const MemberDashboard = () => {
                     </div>
                   )}
                   <div className="flex items-center justify-between text-xs pt-2 border-t border-border/30">
-                    <span className="text-muted-foreground">প্রাপ্ত পেমেন্ট (অভ্যন্তরীণ)</span>
+                    <span className="text-muted-foreground">প্রাপ্ত পেমেন্ট</span>
                     <span className="font-semibold text-rose-400">- ৳{totalPaid.toLocaleString("bn-BD")}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">প্রাপ্ত পেমেন্ট (বাইরের)</span>
-                    <span className="font-semibold text-rose-400">- ৳{totalFreelancePaid.toLocaleString("bn-BD")}</span>
                   </div>
                 </div>
 
-                {/* Who owes - Internal (KM Production) */}
-                {internalDue > 0 && (
-                  <div className="rounded-xl border border-border/40 p-3 bg-muted/20">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-semibold text-foreground">KM Production (অভ্যন্তরীণ)</p>
-                      <span className="text-sm font-bold text-red-400">৳{internalDue.toLocaleString("bn-BD")}</span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">শুটিং, বোনাস, মাসিক বেতন থেকে বকেয়া</p>
-                  </div>
-                )}
-
-                {/* Who owes - Per client */}
-                {dueByClient.size > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-foreground">বাইরের ক্লায়েন্ট থেকে বকেয়া</p>
-                    {Array.from(dueByClient.entries())
-                      .filter(([, v]) => v.due > 0)
-                      .sort((a, b) => b[1].due - a[1].due)
-                      .map(([clientName, info]) => (
-                        <div key={clientName} className="rounded-xl border border-border/40 p-3 bg-muted/20">
-                          <div className="flex items-center justify-between mb-1">
-                            <p className="text-sm font-semibold text-foreground">{clientName}</p>
-                            <span className="text-sm font-bold text-red-400">৳{info.due.toLocaleString("bn-BD")}</span>
-                          </div>
-                          <div className="grid grid-cols-3 gap-1 text-[10px] text-muted-foreground mt-2">
-                            <div>প্রজেক্ট: <span className="text-foreground font-semibold">{info.projects.toLocaleString("bn-BD")}</span></div>
-                            <div>পাওনা: <span className="text-foreground font-semibold">৳{info.earned.toLocaleString("bn-BD")}</span></div>
-                            <div>পেইড: <span className="text-emerald-400 font-semibold">৳{info.paid.toLocaleString("bn-BD")}</span></div>
-                          </div>
-                        </div>
-                      ))}
-                    {Array.from(dueByClient.values()).every((v) => v.due === 0) && (
-                      <p className="text-xs text-muted-foreground text-center py-2">বাইরের কোনো ক্লায়েন্টের কাছে বকেয়া নেই</p>
-                    )}
-                  </div>
-                )}
-
-                {finalBalance <= 0 && internalDue <= 0 && Array.from(dueByClient.values()).every((v) => v.due === 0) && (
-                  <p className="text-sm text-muted-foreground text-center py-4">কোনো বকেয়া নেই 🎉</p>
+                {internalDue === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">KM Production-এ কোনো বকেয়া নেই 🎉</p>
                 )}
               </div>
             );
