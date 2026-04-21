@@ -65,6 +65,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Link
+                to="/"
+                title="পাবলিক সাইট দেখুন"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors border border-primary/20"
+              >
+                <Globe className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">সাইট দেখুন</span>
+              </Link>
               <NotificationBell />
               <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
                 {profile?.photo_url ? (
