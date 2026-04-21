@@ -22,6 +22,7 @@ interface MemberForm {
   full_name_en: string;
   email: string;
   phone: string;
+  whatsapp_no: string;
   designation: string;
   designation_en: string;
   bio: string;
@@ -56,7 +57,7 @@ interface MemberForm {
 }
 
 const emptyForm: MemberForm = {
-  full_name: "", full_name_en: "", email: "", phone: "",
+  full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
   bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "",
@@ -243,6 +244,7 @@ const AdminMembers = () => {
       full_name_en: member.full_name_en || "",
       email: member.email || "",
       phone: member.phone || "",
+      whatsapp_no: (member as any).whatsapp_no || "",
       designation: member.designation || "",
       designation_en: member.designation_en || "",
       bio: member.bio || "",
@@ -297,6 +299,7 @@ const AdminMembers = () => {
           full_name_en: form.full_name_en || null,
           email: form.email || null,
           phone: form.phone || null,
+          whatsapp_no: form.whatsapp_no || null,
           designation: form.designation || null,
           designation_en: form.designation_en || null,
           bio: form.bio || null,
@@ -354,6 +357,7 @@ const AdminMembers = () => {
             full_name: form.full_name,
             profile_data: {
               phone: form.phone || null,
+              whatsapp_no: form.whatsapp_no || null,
               designation: form.designation || null,
               bio: form.bio || null,
               bank_name: form.bank_name || null,
