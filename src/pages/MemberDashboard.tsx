@@ -282,6 +282,15 @@ const MemberDashboard = () => {
           </div>
         </motion.div>
 
+        {/* Monthly Income Charts */}
+        {profile?.id && (
+          <MonthlyIncomeCharts
+            profileId={profile.id}
+            fullName={profile.full_name}
+            fullNameEn={(profile as any).full_name_en}
+          />
+        )}
+
         {/* Balance Cards */}
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card) => (
