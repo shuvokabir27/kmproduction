@@ -221,11 +221,6 @@ const MemberDashboard = () => {
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative flex flex-col items-center text-center gap-1">
-          <Link to="/" className="absolute right-0 top-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors border border-primary/20">
-            <Globe className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">পাবলিক সাইট দেখুন</span>
-            <span className="sm:hidden">সাইট</span>
-          </Link>
           {(() => {
             const h = new Date().getHours();
             const greeting =
