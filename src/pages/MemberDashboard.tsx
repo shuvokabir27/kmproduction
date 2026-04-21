@@ -297,9 +297,9 @@ const MemberDashboard = () => {
             const animVariants = ["card-anim-pulse", "card-anim-shine", "card-anim-border", "card-anim-radial", "card-spotlight", "card-anim-scan"];
             const animClass = animVariants[idx % animVariants.length];
             return (
-              <motion.div key={card.label} variants={item}>
+              <motion.div key={card.label} variants={item} className={`${animClass} rounded-2xl`}>
                 <div
-                  className={`premium-card ${animClass} rounded-2xl p-4 md:p-5 relative overflow-hidden ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
+                  className={`premium-card rounded-2xl p-4 md:p-5 relative ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
                   onClick={card.onClick}
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
