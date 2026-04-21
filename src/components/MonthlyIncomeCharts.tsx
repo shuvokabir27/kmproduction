@@ -260,6 +260,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
           <div className="h-44 flex items-center justify-center text-xs text-muted-foreground">বাইরের কোনো আয় নেই</div>
         )}
       </div>
+      </div>
     </motion.div>
   );
 }
