@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown } from "lucide-react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown, MessageCircle } from "lucide-react";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -189,21 +189,7 @@ const AdminPayments = () => {
         paid_by: user!.id,
       });
       if (error) throw error;
-      toast.success("পেমেন্ট সফল!");
-      // Show receipt
-      setReceiptData({
-        memberName: selectedProfile?.full_name || "",
-        memberId: selectedProfile?.member_id || 0,
-        amount: Number(amount),
-        method,
-        transactionId: transactionId || null,
-        notes: notes || null,
-        date: new Date().toISOString(),
-        totalEarned: memberBalance?.totalEarned || 0,
-        totalFreelance: memberBalance?.totalFreelance || 0,
-        totalPaid: (memberBalance?.totalPaid || 0) + Number(amount),
-        balance: (memberBalance?.balance || 0) - Number(amount),
-      });
+      toast.success("পেমেন্ট সফল! রিসিট দেখতে পেমেন্ট হিস্ট্রি থেকে ক্লিক করুন।");
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
@@ -226,7 +212,7 @@ const AdminPayments = () => {
     const { data: bonuses } = await (supabase as any).from("bonuses").select("amount").eq("member_id", payment.member_id);
     const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
     const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, credit_month").eq("member_id", payment.member_id);
-    const { data: profile } = await (supabase as any).from("profiles").select("previous_balance, salary_type, salary_type_changed_at").eq("id", payment.member_id).maybeSingle();
+    const { data: profile } = await (supabase as any).from("profiles").select("previous_balance, salary_type, salary_type_changed_at, whatsapp_no, full_name").eq("id", payment.member_id).maybeSingle();
     const previousBalance = Number((profile as any)?.previous_balance || 0);
     
     // Filter salary credits if changed from monthly to daily
@@ -258,7 +244,23 @@ const AdminPayments = () => {
       totalFreelance,
       totalPaid,
       balance: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid,
+      whatsappNo: (profile as any)?.whatsapp_no || null,
     });
+  };
+
+  // Quick WhatsApp button on history row - just opens the receipt (which has WhatsApp inside)
+  const sendWhatsAppFromRow = async (payment: any) => {
+    const { data: profile } = await (supabase as any)
+      .from("profiles")
+      .select("whatsapp_no")
+      .eq("id", payment.member_id)
+      .maybeSingle();
+    const wno = (profile as any)?.whatsapp_no || "";
+    if (!wno) {
+      toast.error("WhatsApp নাম্বার নাই, WhatsApp নাম্বার যুক্ত করো।");
+      return;
+    }
+    await showReceiptForPayment(payment);
   };
 
   return (
@@ -553,9 +555,14 @@ const AdminPayments = () => {
                       <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{p.transaction_id || "—"}</td>
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
                       <td className="p-3 text-center">
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => showReceiptForPayment(p)}>
-                          <Download className="h-3.5 w-3.5 text-primary" />
-                        </Button>
+                        <div className="flex items-center justify-center gap-1">
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
+                            <Download className="h-3.5 w-3.5 text-primary" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => sendWhatsAppFromRow(p)} title="WhatsApp-এ পাঠান">
+                            <MessageCircle className="h-3.5 w-3.5 text-green-500" />
+                          </Button>
+                        </div>
                       </td>
                       <td className="p-3 text-center">
                         {deleteTimers[p.id] === undefined ? (

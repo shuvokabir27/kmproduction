@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useCallback } from "react";
-import { X, Download } from "lucide-react";
+import { X, Download, MessageCircle } from "lucide-react";
 import { toJpeg } from "html-to-image";
+import { toast } from "sonner";
 
 interface PaymentReceiptProps {
   receiptData: {
@@ -16,6 +17,7 @@ interface PaymentReceiptProps {
     totalFreelance?: number;
     totalPaid?: number;
     balance?: number;
+    whatsappNo?: string | null;
   };
   onClose: () => void;
 }
@@ -64,7 +66,7 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
         const blobUrl = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = blobUrl;
-        link.download = `receipt-${receiptNo}.jpg`;
+        link.download = `receipt-${receiptNo}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -74,10 +76,53 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
       }
     }, [receiptNo]);
 
+    const handleWhatsApp = useCallback(async () => {
+      const wno = receiptData.whatsappNo?.replace(/[^\d+]/g, "") || "";
+      if (!wno) {
+        toast.error("এই সদস্যের WhatsApp নাম্বার নেই");
+        return;
+      }
+      // First download PNG so user can attach
+      if (receiptRef.current) {
+        try {
+          const dataUrl = await toJpeg(receiptRef.current, { quality: 0.95, backgroundColor: "#fafaf7" });
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.download = `receipt-${receiptNo}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+        } catch (err) {
+          console.error("Image generation failed", err);
+        }
+      }
+      // Format phone for wa.me (Bangladesh default 880)
+      let formatted = wno.replace(/^\+/, "");
+      if (formatted.startsWith("0")) formatted = "880" + formatted.slice(1);
+      else if (!formatted.startsWith("880")) formatted = "880" + formatted;
+
+      const msg = encodeURIComponent(
+        `আসসালামু আলাইকুম ${receiptData.memberName},\n\nআপনার ৳${receiptData.amount.toLocaleString("bn-BD")} টাকার পেমেন্ট রিসিট ডাউনলোড হয়েছে। অনুগ্রহ করে এই চ্যাটে ছবি (PNG) সংযুক্ত করে পাঠান।\n\n— KM Production`
+      );
+      window.open(`https://wa.me/${formatted}?text=${msg}`, "_blank");
+      toast.success("WhatsApp ওপেন হয়েছে — ডাউনলোড করা ছবি সংযুক্ত করুন");
+    }, [receiptData, receiptNo]);
+
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
         <div className="relative w-full max-w-sm">
           <div className="absolute -top-3 right-6 z-10 flex gap-2">
+            <button
+              onClick={handleWhatsApp}
+              title="WhatsApp-এ পাঠান"
+              className="bg-green-600 text-white rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </button>
             <button
               onClick={handleDownload}
               className="bg-primary text-primary-foreground rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"

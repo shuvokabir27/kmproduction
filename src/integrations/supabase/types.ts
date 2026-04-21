@@ -1601,6 +1601,7 @@ export type Database = {
           show_on_public: boolean | null
           updated_at: string
           user_id: string
+          whatsapp_no: string | null
         }
         Insert: {
           achievements?: string | null
@@ -1655,6 +1656,7 @@ export type Database = {
           show_on_public?: boolean | null
           updated_at?: string
           user_id: string
+          whatsapp_no?: string | null
         }
         Update: {
           achievements?: string | null
@@ -1709,6 +1711,7 @@ export type Database = {
           show_on_public?: boolean | null
           updated_at?: string
           user_id?: string
+          whatsapp_no?: string | null
         }
         Relationships: []
       }
