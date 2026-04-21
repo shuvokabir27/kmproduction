@@ -220,43 +220,41 @@ const MemberDashboard = () => {
         <NoticeBoard />
 
         {/* Greeting */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between gap-3">
-          <div>
-            {(() => {
-              const h = new Date().getHours();
-              const greeting =
-                h < 5 ? "শুভ রাত্রি" :
-                h < 12 ? "শুভ সকাল" :
-                h < 16 ? "শুভ দুপুর" :
-                h < 18 ? "শুভ বিকাল" :
-                h < 21 ? "শুভ সন্ধ্যা" : "শুভ রাত্রি";
-              const greetColor =
-                h < 5 || h >= 21 ? "text-indigo-400" :
-                h < 12 ? "text-amber-400" :
-                h < 16 ? "text-orange-400" :
-                h < 18 ? "text-pink-400" : "text-purple-400";
-              return <p className={`${greetColor} text-sm md:text-base font-semibold`}>{greeting} 👋</p>;
-            })()}
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight mt-0.5">
-              {profile?.full_name}
-              {profile?.is_verified && (
-                <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white align-middle ml-1.5">
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
-                    <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                  </svg>
-                </span>
-              )}
-            </h1>
-            {profile?.is_verified && (
-              <p className="text-blue-400 text-[11px] md:text-xs mt-0.5 font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
-            )}
-            <p className="text-muted-foreground text-xs mt-1">আইডি: {profile?.member_id}</p>
-          </div>
-          <Link to="/" className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors border border-primary/20">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative flex flex-col items-center text-center gap-1">
+          <Link to="/" className="absolute right-0 top-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors border border-primary/20">
             <Globe className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">পাবলিক সাইট দেখুন</span>
             <span className="sm:hidden">সাইট</span>
           </Link>
+          {(() => {
+            const h = new Date().getHours();
+            const greeting =
+              h < 5 ? "শুভ রাত্রি" :
+              h < 12 ? "শুভ সকাল" :
+              h < 16 ? "শুভ দুপুর" :
+              h < 18 ? "শুভ বিকাল" :
+              h < 21 ? "শুভ সন্ধ্যা" : "শুভ রাত্রি";
+            const greetColor =
+              h < 5 || h >= 21 ? "text-indigo-400" :
+              h < 12 ? "text-amber-400" :
+              h < 16 ? "text-orange-400" :
+              h < 18 ? "text-pink-400" : "text-purple-400";
+            return <p className={`${greetColor} text-sm md:text-base font-semibold`}>{greeting} 👋</p>;
+          })()}
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+            {profile?.full_name}
+            {profile?.is_verified && (
+              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white align-middle ml-1.5">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
+                  <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+              </span>
+            )}
+          </h1>
+          {profile?.is_verified && (
+            <p className="text-blue-400 text-[11px] md:text-xs font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
+          )}
+          <p className="text-muted-foreground text-xs">আইডি: {profile?.member_id}</p>
         </motion.div>
 
         {/* Update Notice */}
@@ -270,15 +268,12 @@ const MemberDashboard = () => {
             <div className="h-8 w-8 shrink-0 rounded-lg bg-blue-500/15 flex items-center justify-center">
               <span className="text-base">📢</span>
             </div>
-            <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-wider text-blue-400 font-semibold">নোটিশ</p>
-              <p className="text-xs md:text-sm text-foreground/90 mt-0.5 leading-relaxed">
-                এখানে <span className="font-semibold text-blue-400">কুয়াকাটা মাল্টিমিডিয়া</span>-র সকল কাজের আপডেট
-                {freelanceClientNames.length > 0 && (
-                  <> ও <span className="font-semibold text-orange-400">{freelanceClientNames.join(", ")}</span>-এর সকল কাজের আপডেট</>
-                )} পাবেন।
-              </p>
-            </div>
+            <p className="text-xs md:text-sm text-foreground/90 leading-relaxed min-w-0">
+              এখানে <span className="font-semibold text-blue-400">কুয়াকাটা মাল্টিমিডিয়া</span>-র সকল কাজের আপডেট
+              {freelanceClientNames.length > 0 && (
+                <> ও <span className="font-semibold text-orange-400">{freelanceClientNames.join(", ")}</span>-এর সকল কাজের আপডেট</>
+              )} পাবেন।
+            </p>
           </div>
         </motion.div>
 
