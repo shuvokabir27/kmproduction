@@ -31,7 +31,7 @@ function lastNMonths(n: number) {
   return arr;
 }
 
-export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) {
+export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick }: Props) {
   const { data, isLoading } = useQuery({
     queryKey: ["monthly-income", profileId, fullName, fullNameEn],
     enabled: !!profileId,
