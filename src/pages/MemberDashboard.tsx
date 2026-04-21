@@ -241,10 +241,17 @@ const MemberDashboard = () => {
               h < 18 ? "text-pink-400" : "text-purple-400";
             return <p className={`${greetColor} text-sm md:text-base font-semibold`}>{greeting} 👋</p>;
           })()}
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-            {profile?.full_name}
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+            <span
+              className="bg-clip-text text-transparent bg-[linear-gradient(120deg,hsl(0_85%_60%),hsl(35_95%_60%),hsl(280_85%_65%),hsl(195_95%_60%),hsl(0_85%_60%))] bg-[length:300%_100%] animate-[name-gradient_6s_linear_infinite]"
+              style={{
+                filter: "drop-shadow(0 0 12px hsl(0 85% 55% / 0.45)) drop-shadow(0 0 24px hsl(280 85% 60% / 0.25))",
+              }}
+            >
+              {profile?.full_name}
+            </span>
             {profile?.is_verified && (
-              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white align-middle ml-1.5">
+              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white align-middle ml-1.5 shadow-[0_0_14px_hsl(210_85%_55%/0.7)]">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
                   <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
