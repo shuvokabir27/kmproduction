@@ -221,7 +221,19 @@ const MemberDashboard = () => {
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">স্বাগতম, {profile?.full_name}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2 flex-wrap">
+              <span>স্বাগতম, {profile?.full_name}</span>
+              {profile?.is_verified && (
+                <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white shrink-0">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
+                    <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                  </svg>
+                </span>
+              )}
+            </h1>
+            {profile?.is_verified && (
+              <p className="text-blue-400 text-[11px] md:text-xs mt-0.5 font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
+            )}
             <p className="text-muted-foreground text-xs mt-1">আইডি: {profile?.member_id}</p>
           </div>
           <Link to="/" className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors border border-primary/20">
