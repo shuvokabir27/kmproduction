@@ -11,6 +11,7 @@ import { useState } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { NoticeBoard } from "@/components/NoticeBoard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
@@ -280,6 +281,15 @@ const MemberDashboard = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Monthly Income Charts */}
+        {profile?.id && (
+          <MonthlyIncomeCharts
+            profileId={profile.id}
+            fullName={profile.full_name}
+            fullNameEn={(profile as any).full_name_en}
+          />
+        )}
 
         {/* Balance Cards */}
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
