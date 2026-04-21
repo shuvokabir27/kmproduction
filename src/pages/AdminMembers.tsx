@@ -491,6 +491,19 @@ const AdminMembers = () => {
                     <Input value={form.phone} onChange={(e) => setField("phone", e.target.value)} className="bg-secondary border-border/50" />
                   </div>
                   <div>
+                    <Label className="text-foreground flex items-center gap-1">
+                      <MessageCircle className="h-3.5 w-3.5 text-green-500" /> WhatsApp নাম্বার
+                    </Label>
+                    <Input
+                      value={form.whatsapp_no}
+                      onChange={(e) => setField("whatsapp_no", e.target.value)}
+                      placeholder="01XXXXXXXXX"
+                      className="bg-secondary border-border/50"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
                     <Label className="text-foreground">রোল / পদবী (একাধিক নির্বাচন করা যাবে)</Label>
                     {(() => {
                       const editingMember = editId ? (allProfiles || []).find((p: any) => p.id === editId) : null;
