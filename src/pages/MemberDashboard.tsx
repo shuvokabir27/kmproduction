@@ -187,8 +187,12 @@ const MemberDashboard = () => {
         ? `${freelanceClientNames[0]} +${freelanceClientNames.length - 1}`
         : "বাইরের আয়";
 
+  const kmBal = (balance as any)?.kmBalance ?? 0;
+  const clientBal = (balance as any)?.clientBalance ?? 0;
+
   const balanceCards = [
-    { label: (balance?.balance ?? 0) > 0 ? "বকেয়া ব্যালেন্স" : (balance?.balance ?? 0) < 0 ? "অগ্রিম ব্যালেন্স" : "সমন্বয়কৃত", value: Math.abs(balance?.balance ?? 0), icon: Wallet, gradient: "from-red-500/20 to-red-500/5", iconColor: (balance?.balance ?? 0) > 0 ? "text-red-400" : (balance?.balance ?? 0) < 0 ? "text-emerald-400" : "text-blue-400", iconBg: (balance?.balance ?? 0) > 0 ? "bg-red-500/10" : (balance?.balance ?? 0) < 0 ? "bg-emerald-500/10" : "bg-blue-500/10", onClick: () => setBalanceDetailOpen(true) },
+    { label: kmBal > 0 ? "বকেয়া (KM Production)" : kmBal < 0 ? "অগ্রিম (KM Production)" : "সমন্বয় (KM Production)", value: Math.abs(kmBal), icon: Wallet, gradient: "from-red-500/20 to-red-500/5", iconColor: kmBal > 0 ? "text-red-400" : kmBal < 0 ? "text-emerald-400" : "text-blue-400", iconBg: kmBal > 0 ? "bg-red-500/10" : kmBal < 0 ? "bg-emerald-500/10" : "bg-blue-500/10", onClick: () => setBalanceDetailOpen(true) },
+    { label: clientBal > 0 ? "বকেয়া (ক্লায়েন্ট)" : clientBal < 0 ? "অগ্রিম (ক্লায়েন্ট)" : "সমন্বয় (ক্লায়েন্ট)", value: Math.abs(clientBal), icon: Briefcase, gradient: "from-orange-500/20 to-orange-500/5", iconColor: clientBal > 0 ? "text-red-400" : clientBal < 0 ? "text-emerald-400" : "text-blue-400", iconBg: clientBal > 0 ? "bg-red-500/10" : clientBal < 0 ? "bg-emerald-500/10" : "bg-blue-500/10", onClick: () => setFreelanceDetailOpen(true) },
     { label: "মোট পেমেন্ট", value: balance?.totalPaid, icon: CreditCard, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setPaymentDetailOpen(true) },
     { label: "মোট বোনাস", value: balance?.totalBonus, icon: Gift, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: undefined },
     { label: "মোট গাড়ি ভাড়া", value: balance?.totalTransport, icon: Car, gradient: "from-cyan-500/20 to-cyan-500/5", iconColor: "text-cyan-400", iconBg: "bg-cyan-500/10", onClick: undefined },
