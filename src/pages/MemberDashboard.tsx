@@ -296,7 +296,7 @@ const MemberDashboard = () => {
           {balanceCards.map((card) => (
             <motion.div key={card.label} variants={item}>
               <div
-                className={`premium-card rounded-2xl p-4 md:p-5 relative overflow-hidden ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
+                className={`premium-card card-spotlight rounded-2xl p-4 md:p-5 relative overflow-hidden ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
                 onClick={card.onClick}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
