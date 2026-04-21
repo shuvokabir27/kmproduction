@@ -116,7 +116,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
     );
   }
 
-  const { kmSeries, clientSeries, clientNames } = data;
+  const { kmSeries, clientSeries, clientNames, kmTotal, clientTotal } = data;
   const palette = [
     { from: "#ef4444", to: "#b91c1c" },
     { from: "#f59e0b", to: "#b45309" },
