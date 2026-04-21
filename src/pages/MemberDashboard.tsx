@@ -221,10 +221,25 @@ const MemberDashboard = () => {
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight flex items-center gap-2 flex-wrap">
-              <span>স্বাগতম, {profile?.full_name}</span>
+            {(() => {
+              const h = new Date().getHours();
+              const greeting =
+                h < 5 ? "শুভ রাত্রি" :
+                h < 12 ? "শুভ সকাল" :
+                h < 16 ? "শুভ দুপুর" :
+                h < 18 ? "শুভ বিকাল" :
+                h < 21 ? "শুভ সন্ধ্যা" : "শুভ রাত্রি";
+              const greetColor =
+                h < 5 || h >= 21 ? "text-indigo-400" :
+                h < 12 ? "text-amber-400" :
+                h < 16 ? "text-orange-400" :
+                h < 18 ? "text-pink-400" : "text-purple-400";
+              return <p className={`${greetColor} text-sm md:text-base font-semibold`}>{greeting} 👋</p>;
+            })()}
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight mt-0.5">
+              {profile?.full_name}
               {profile?.is_verified && (
-                <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white shrink-0">
+                <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white align-middle ml-1.5">
                   <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
                     <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                   </svg>
