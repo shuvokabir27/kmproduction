@@ -254,7 +254,10 @@ const MemberDashboard = () => {
           {profile?.is_verified && (
             <p className="text-blue-400 text-[11px] md:text-xs font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
           )}
-          <p className="text-muted-foreground text-xs">আইডি: {profile?.member_id}</p>
+          <div className="inline-flex items-center gap-1.5 mt-0.5 px-3 py-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/15 shadow-[0_0_18px_-6px_hsl(var(--primary)/0.6)] backdrop-blur-sm">
+            <span className="text-[10px] uppercase tracking-wider text-primary/80 font-semibold">আইডি</span>
+            <span className="text-foreground text-xs font-bold tracking-wide">{profile?.member_id}</span>
+          </div>
         </motion.div>
 
         {/* Update Notice */}
