@@ -96,7 +96,14 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
         return obj;
       });
 
-      return { kmSeries, clientSeries, clientNames: Array.from(clientNames) };
+      const kmTotal = kmSeries.reduce((s, d) => s + d.income, 0);
+      const clientTotal = clientSeries.reduce((s, d) => {
+        let v = 0;
+        clientNames.forEach((n) => (v += Number((d as any)[n] || 0)));
+        return s + v;
+      }, 0);
+
+      return { kmSeries, clientSeries, clientNames: Array.from(clientNames), kmTotal, clientTotal };
     },
   });
 
