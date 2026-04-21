@@ -95,6 +95,9 @@ export function useMemberBalance(profileId: string | undefined) {
       const totalFreelance = totalFromAssignments + totalFromClientArtists;
       const totalFreelancePaid = totalPaidFromAssignments + totalPaidFromClientArtists;
 
+      const kmBalance = totalEarned + totalBonuses + totalSalaryCredits + previousBalance - totalPaid;
+      const clientBalance = totalFreelance - totalFreelancePaid;
+
       return {
         totalEarned,
         totalPaid,
@@ -105,7 +108,9 @@ export function useMemberBalance(profileId: string | undefined) {
         totalFreelance,
         totalFreelancePaid,
         previousBalance,
-        balance: totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid - totalFreelancePaid,
+        kmBalance,
+        clientBalance,
+        balance: kmBalance + clientBalance,
       };
     },
   });
