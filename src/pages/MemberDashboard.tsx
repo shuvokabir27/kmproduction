@@ -289,12 +289,17 @@ const MemberDashboard = () => {
         {/* Balance Cards */}
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card, idx) => {
-            const animVariants = ["card-anim-pulse", "card-anim-shine", "card-anim-border", "card-anim-radial", "card-spotlight", "card-anim-scan"];
-            const animClass = animVariants[idx % animVariants.length];
+            // Random-ish delay so the light sweep on each card fires at different times
+            const delay = ((idx * 1.7) % 6).toFixed(2) + "s";
             return (
-              <motion.div key={card.label} variants={item} className={`${animClass} rounded-2xl`}>
+              <motion.div
+                key={card.label}
+                variants={item}
+                className="card-glow rounded-2xl"
+                style={{ ["--glow-delay" as any]: delay }}
+              >
                 <div
-                  className={`premium-card rounded-2xl p-4 md:p-5 relative ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
+                  className={`card-glow-inner premium-card rounded-2xl p-4 md:p-5 relative ${card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98] transition-all" : ""}`}
                   onClick={card.onClick}
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />

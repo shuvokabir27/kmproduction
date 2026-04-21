@@ -149,8 +149,8 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2.5 md:space-y-3">
       {/* Income summary cards */}
       <div className="grid grid-cols-2 gap-2.5 md:gap-3">
-        <div className="card-anim-pulse rounded-2xl">
-          <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)]">
+        <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "0s" }}>
+          <div className="card-glow-inner relative rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)]">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
             <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">
@@ -163,8 +163,8 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
             <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয়</p>
           </div>
         </div>
-        <div className="card-anim-border rounded-2xl">
-          <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)]">
+        <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
+          <div className="card-glow-inner relative rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)]">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
             <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-orange-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">

@@ -210,164 +210,73 @@
     z-index: 3;
   }
 
-  /* ============ Highlighted card animation variants ============
-     IMPORTANT: These classes are designed to be applied to a WRAPPER around
-     a `.premium-card` (or any card), not on the card itself, to avoid
-     pseudo-element / overflow conflicts. They use a child selector `> *`
-     so the inner card receives the visual effect.
-     They also work standalone on cards that DO NOT use `.premium-card`. */
+  /* ============ Unified card highlight + soft light sweep ============
+     Apply `.card-glow` to a wrapper around any card. It adds:
+       1. A subtle highlighted gradient border (always visible)
+       2. A soft diagonal light sweep that runs at randomized intervals
+     Variation between cards is achieved purely via animation-delay,
+     not by using different effects. */
 
-  /* Base spotlight — rotating conic border (works as wrapper) */
-  .card-spotlight {
+  .card-glow {
     position: relative;
     border-radius: inherit;
   }
-  .card-spotlight::before {
+  /* Highlighted gradient border (always on, gentle) */
+  .card-glow::before {
     content: '';
     position: absolute;
-    inset: -2px;
+    inset: -1px;
     border-radius: inherit;
-    padding: 2px;
-    background: conic-gradient(from 0deg, transparent 0deg, hsl(0 85% 55% / 0.85) 60deg, hsl(35 95% 60% / 0.6) 130deg, transparent 220deg);
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      hsl(0 0% 100% / 0.18),
+      hsl(0 85% 55% / 0.35) 35%,
+      hsl(0 0% 100% / 0.08) 60%,
+      hsl(35 95% 60% / 0.30) 100%
+    );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
             mask-composite: exclude;
-    animation: spotlight-rotate 6s linear infinite;
     pointer-events: none;
-    z-index: 5;
+    z-index: 4;
   }
-
-  /* Variant 1: Pulse glow aura — uses filter so it doesn't fight box-shadow */
-  .card-anim-pulse {
-    animation: card-pulse-glow-filter 2.6s ease-in-out infinite;
-    border-radius: inherit;
-  }
-
-  /* Variant 2: Diagonal shine sweep (overlay element via ::after on wrapper) */
-  .card-anim-shine {
+  /* Soft diagonal light sweep — runs every ~7s with a small per-card random delay */
+  .card-glow > .card-glow-inner {
     position: relative;
     border-radius: inherit;
     overflow: hidden;
   }
-  .card-anim-shine::after {
+  .card-glow > .card-glow-inner::after {
     content: '';
     position: absolute;
-    top: 0; left: -120%;
-    width: 60%; height: 100%;
-    background: linear-gradient(115deg, transparent 0%, hsl(0 0% 100% / 0.28) 50%, transparent 100%);
-    transform: skewX(-20deg);
-    animation: card-shine-loop 3.2s ease-in-out infinite;
+    top: 0;
+    left: -120%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      hsl(0 0% 100% / 0.10) 40%,
+      hsl(0 0% 100% / 0.28) 50%,
+      hsl(0 0% 100% / 0.10) 60%,
+      transparent 100%
+    );
+    transform: skewX(-18deg);
+    animation: card-light-sweep 7s ease-in-out infinite;
+    animation-delay: var(--glow-delay, 0s);
     pointer-events: none;
     z-index: 5;
   }
 
-  /* Variant 3: Vertical scanline */
-  .card-anim-scan {
-    position: relative;
-    border-radius: inherit;
-    overflow: hidden;
-  }
-  .card-anim-scan::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 0%, hsl(195 95% 60% / 0.28) 50%, transparent 100%);
-    background-size: 100% 35%;
-    background-repeat: no-repeat;
-    background-position: 0 -50%;
-    animation: card-scan 2.8s linear infinite;
-    pointer-events: none;
-    z-index: 5;
-    mix-blend-mode: screen;
-  }
-
-  /* Variant 4: Soft floating breath */
-  .card-anim-float {
-    animation: card-float 4.5s ease-in-out infinite;
-    border-radius: inherit;
-  }
-
-  /* Variant 5: Gradient border shift */
-  .card-anim-border {
-    position: relative;
-    border-radius: inherit;
-  }
-  .card-anim-border::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-    background: linear-gradient(120deg, hsl(280 85% 60%), hsl(195 95% 55%), hsl(140 80% 50%), hsl(35 95% 55%), hsl(280 85% 60%));
-    background-size: 300% 100%;
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    animation: card-border-shift 5s linear infinite;
-    pointer-events: none;
-    z-index: 5;
-  }
-
-  /* Variant 6: Radial spotlight follow */
-  .card-anim-radial {
-    position: relative;
-    border-radius: inherit;
-    overflow: hidden;
-  }
-  .card-anim-radial::after {
-    content: '';
-    position: absolute;
-    inset: -25%;
-    background: radial-gradient(circle at 30% 30%, hsl(35 95% 55% / 0.30), transparent 40%);
-    animation: card-radial-orbit 6s linear infinite;
-    pointer-events: none;
-    z-index: 5;
-    mix-blend-mode: screen;
-  }
-
-  @keyframes card-shine {
-    0% { left: -75%; }
+  @keyframes card-light-sweep {
+    0%   { left: -120%; }
+    18%  { left: 130%; }
     100% { left: 130%; }
   }
-  @keyframes spotlight-sweep {
-    0%   { background-position: -120% 0; }
-    100% { background-position: 220% 0; }
-  }
-  @keyframes spotlight-rotate {
-    to { transform: rotate(1turn); }
-  }
-  @keyframes card-pulse-glow-filter {
-    0%, 100% { filter: drop-shadow(0 0 0 hsl(0 85% 55% / 0)); }
-    50%      { filter: drop-shadow(0 0 14px hsl(0 85% 55% / 0.55)); }
-  }
-  @keyframes card-shine-loop {
-    0%   { left: -120%; }
-    60%, 100% { left: 130%; }
-  }
-  @keyframes card-scan {
-    0%   { background-position: 0 -50%; }
-    100% { background-position: 0 150%; }
-  }
-  @keyframes card-float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-4px); }
-  }
-  @keyframes card-border-shift {
-    0%   { background-position: 0% 0; }
-    100% { background-position: 300% 0; }
-  }
-  @keyframes card-radial-orbit {
-    0%   { transform: translate(0, 0); }
-    25%  { transform: translate(40%, 10%); }
-    50%  { transform: translate(30%, 40%); }
-    75%  { transform: translate(-10%, 30%); }
-    100% { transform: translate(0, 0); }
-  }
   @media (prefers-reduced-motion: reduce) {
-    .card-spotlight::before, .card-spotlight::after,
-    .premium-card::after,
-    .card-anim-pulse, .card-anim-shine::after, .card-anim-scan::after,
-    .card-anim-float, .card-anim-border::before, .card-anim-radial::after { animation: none; }
+    .card-glow > .card-glow-inner::after,
+    .premium-card::after { animation: none; }
   }
   .red-line {
     position: relative;
