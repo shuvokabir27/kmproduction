@@ -210,7 +210,8 @@
     z-index: 3;
   }
 
-  /* Highlighted / important cards: continuous lighting sweep + pulsing aura */
+  /* ============ Highlighted card animation variants ============ */
+  /* Base spotlight (default) — rotating conic border */
   .card-spotlight {
     position: relative;
     isolation: isolate;
@@ -221,39 +222,114 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      hsl(0 85% 55% / 0.7) 60deg,
-      hsl(35 95% 55% / 0.5) 120deg,
-      transparent 200deg,
-      transparent 360deg
-    );
+    background: conic-gradient(from 0deg, transparent 0deg, hsl(0 85% 55% / 0.7) 60deg, hsl(35 95% 55% / 0.5) 120deg, transparent 200deg);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
             mask-composite: exclude;
     animation: spotlight-rotate 6s linear infinite;
     pointer-events: none;
     z-index: 4;
-    opacity: 0.9;
   }
   .card-spotlight::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(
-      120deg,
-      transparent 30%,
-      hsl(0 0% 100% / 0.10) 50%,
-      transparent 70%
-    );
+    background: linear-gradient(120deg, transparent 30%, hsl(0 0% 100% / 0.10) 50%, transparent 70%);
     background-size: 220% 100%;
     animation: spotlight-sweep 3.5s ease-in-out infinite;
     pointer-events: none;
     z-index: 2;
     mix-blend-mode: overlay;
   }
+
+  /* Variant 1: Pulse glow aura */
+  .card-anim-pulse {
+    position: relative;
+    isolation: isolate;
+    animation: card-pulse-glow 2.6s ease-in-out infinite;
+  }
+
+  /* Variant 2: Diagonal shine sweep */
+  .card-anim-shine {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .card-anim-shine::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -120%;
+    width: 60%; height: 100%;
+    background: linear-gradient(115deg, transparent 0%, hsl(0 0% 100% / 0.22) 50%, transparent 100%);
+    transform: skewX(-20deg);
+    animation: card-shine-loop 3.2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* Variant 3: Vertical scanline */
+  .card-anim-scan {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .card-anim-scan::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 0%, hsl(195 95% 60% / 0.18) 50%, transparent 100%);
+    background-size: 100% 40%;
+    background-repeat: no-repeat;
+    animation: card-scan 2.8s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: screen;
+  }
+
+  /* Variant 4: Soft floating breath */
+  .card-anim-float {
+    animation: card-float 4.5s ease-in-out infinite;
+  }
+
+  /* Variant 5: Gradient border shift */
+  .card-anim-border {
+    position: relative;
+    isolation: isolate;
+  }
+  .card-anim-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(120deg, hsl(280 85% 60%), hsl(195 95% 55%), hsl(140 80% 50%), hsl(280 85% 60%));
+    background-size: 300% 100%;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    animation: card-border-shift 5s linear infinite;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* Variant 6: Radial spotlight follow */
+  .card-anim-radial {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .card-anim-radial::after {
+    content: '';
+    position: absolute;
+    inset: -25%;
+    background: radial-gradient(circle at 30% 30%, hsl(35 95% 55% / 0.22), transparent 35%);
+    animation: card-radial-orbit 6s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: screen;
+  }
+
   @keyframes card-shine {
     0% { left: -75%; }
     100% { left: 130%; }
@@ -265,8 +341,38 @@
   @keyframes spotlight-rotate {
     to { transform: rotate(1turn); }
   }
+  @keyframes card-pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(0 85% 55% / 0.0), var(--shadow-card); }
+    50%      { box-shadow: 0 0 28px 2px hsl(0 85% 55% / 0.35), var(--shadow-card); }
+  }
+  @keyframes card-shine-loop {
+    0%   { left: -120%; }
+    60%, 100% { left: 130%; }
+  }
+  @keyframes card-scan {
+    0%   { background-position: 0 -50%; }
+    100% { background-position: 0 150%; }
+  }
+  @keyframes card-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+  @keyframes card-border-shift {
+    0%   { background-position: 0% 0; }
+    100% { background-position: 300% 0; }
+  }
+  @keyframes card-radial-orbit {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(40%, 10%); }
+    50%  { transform: translate(30%, 40%); }
+    75%  { transform: translate(-10%, 30%); }
+    100% { transform: translate(0, 0); }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .card-spotlight::before, .card-spotlight::after, .premium-card::after { animation: none; }
+    .card-spotlight::before, .card-spotlight::after,
+    .premium-card::after,
+    .card-anim-pulse, .card-anim-shine::after, .card-anim-scan::after,
+    .card-anim-float, .card-anim-border::before, .card-anim-radial::after { animation: none; }
   }
   .red-line {
     position: relative;
