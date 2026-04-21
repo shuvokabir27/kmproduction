@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown } from "lucide-react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown, MessageCircle } from "lucide-react";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
