@@ -96,20 +96,33 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
         return obj;
       });
 
-      return { kmSeries, clientSeries, clientNames: Array.from(clientNames) };
+      const kmTotal = kmSeries.reduce((s, d) => s + d.income, 0);
+      const clientTotal = clientSeries.reduce((s, d) => {
+        let v = 0;
+        clientNames.forEach((n) => (v += Number((d as any)[n] || 0)));
+        return s + v;
+      }, 0);
+
+      return { kmSeries, clientSeries, clientNames: Array.from(clientNames), kmTotal, clientTotal };
     },
   });
 
   if (isLoading || !data) {
     return (
-      <div className="grid md:grid-cols-2 gap-3 md:gap-4">
-        <div className="premium-card rounded-2xl h-72 animate-pulse" />
-        <div className="premium-card rounded-2xl h-72 animate-pulse" />
+      <div className="space-y-2.5 md:space-y-3">
+        <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+          <div className="premium-card rounded-2xl h-20 animate-pulse" />
+          <div className="premium-card rounded-2xl h-20 animate-pulse" />
+        </div>
+        <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
+          <div className="premium-card rounded-2xl h-56 animate-pulse" />
+          <div className="premium-card rounded-2xl h-56 animate-pulse" />
+        </div>
       </div>
     );
   }
 
-  const { kmSeries, clientSeries, clientNames } = data;
+  const { kmSeries, clientSeries, clientNames, kmTotal, clientTotal } = data;
   const palette = [
     { from: "#ef4444", to: "#b91c1c" },
     { from: "#f59e0b", to: "#b45309" },
@@ -133,7 +146,36 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
   const yTick = (v: number) => `৳${v >= 1000 ? (v / 1000).toFixed(0) + "k" : v}`;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid md:grid-cols-2 gap-2.5 md:gap-3">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2.5 md:space-y-3">
+      {/* Income summary cards */}
+      <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+        <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)]">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+          <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
+          <div className="relative flex items-center gap-2 mb-1.5">
+            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/40 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
+              <TrendingUp className="h-3.5 w-3.5 text-red-400" />
+            </div>
+            <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold">KM Production</p>
+          </div>
+          <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{kmTotal.toLocaleString("bn-BD")}</p>
+          <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয়</p>
+        </div>
+        <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)]">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+          <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-orange-500/25 blur-3xl" />
+          <div className="relative flex items-center gap-2 mb-1.5">
+            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500/40 to-orange-600/10 border border-orange-500/30 flex items-center justify-center shadow-inner">
+              <Briefcase className="h-3.5 w-3.5 text-orange-400" />
+            </div>
+            <p className="text-[10px] uppercase tracking-wider text-orange-400/90 font-semibold">Client আয়</p>
+          </div>
+          <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{clientTotal.toLocaleString("bn-BD")}</p>
+          <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয়</p>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
       {/* KM Production */}
       <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
@@ -223,6 +265,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn }: Props) 
         ) : (
           <div className="h-44 flex items-center justify-center text-xs text-muted-foreground">বাইরের কোনো আয় নেই</div>
         )}
+      </div>
       </div>
     </motion.div>
   );
