@@ -11,6 +11,7 @@ import { useState } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { NoticeBoard } from "@/components/NoticeBoard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
