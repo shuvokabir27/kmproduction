@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useCallback } from "react";
-import { X, Download } from "lucide-react";
+import { X, Download, MessageCircle } from "lucide-react";
 import { toJpeg } from "html-to-image";
+import { toast } from "sonner";
 
 interface PaymentReceiptProps {
   receiptData: {
@@ -16,6 +17,7 @@ interface PaymentReceiptProps {
     totalFreelance?: number;
     totalPaid?: number;
     balance?: number;
+    whatsappNo?: string | null;
   };
   onClose: () => void;
 }
