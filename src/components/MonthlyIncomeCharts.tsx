@@ -152,32 +152,42 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
       {/* Income summary cards */}
       <div className="grid grid-cols-2 gap-2.5 md:gap-3">
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "0s" }}>
-          <div className="card-glow-inner relative rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)]">
+          <button
+            type="button"
+            onClick={onKmClick}
+            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
+          >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
             <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">
               <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/40 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
                 <TrendingUp className="h-3.5 w-3.5 text-red-400" />
               </div>
-              <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold">KM Production</p>
+              <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">KM Production</p>
             </div>
             <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{kmTotal.toLocaleString("bn-BD")}</p>
-            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয়</p>
-          </div>
+            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয় · বিস্তারিত →</p>
+          </button>
         </div>
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
-          <div className="card-glow-inner relative rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)]">
+          <button
+            type="button"
+            onClick={onClientClick}
+            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)] hover:ring-1 hover:ring-orange-500/40 active:scale-[0.98] transition-all"
+          >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
             <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-orange-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">
-              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500/40 to-orange-600/10 border border-orange-500/30 flex items-center justify-center shadow-inner">
+              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500/40 to-orange-600/10 border border-orange-500/30 flex items-center justify-center shadow-inner shrink-0">
                 <Briefcase className="h-3.5 w-3.5 text-orange-400" />
               </div>
-              <p className="text-[10px] uppercase tracking-wider text-orange-400/90 font-semibold">Client আয়</p>
+              <p className="text-[10px] uppercase tracking-wider text-orange-400/90 font-semibold truncate">
+                {clientNames.length > 0 ? clientNames.join(", ") : "Client"}
+              </p>
             </div>
             <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{clientTotal.toLocaleString("bn-BD")}</p>
-            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয়</p>
-          </div>
+            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয় · বিস্তারিত →</p>
+          </button>
         </div>
       </div>
 
