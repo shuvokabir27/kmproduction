@@ -9,10 +9,11 @@ import { usePresenceTracker } from "@/hooks/usePresence";
 import { playMessageSound } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatPopup } from "@/components/chat/ChatPopup";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { Globe } from "lucide-react";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
