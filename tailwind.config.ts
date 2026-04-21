@@ -88,6 +88,10 @@ export default {
           from: { opacity: "0", transform: "translateX(-12px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
+        "name-gradient": {
+          "0%": { "background-position": "0% 50%" },
+          "100%": { "background-position": "300% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
