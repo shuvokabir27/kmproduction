@@ -336,9 +336,9 @@
   @keyframes spotlight-rotate {
     to { transform: rotate(1turn); }
   }
-  @keyframes card-pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 hsl(0 85% 55% / 0.0), var(--shadow-card); }
-    50%      { box-shadow: 0 0 28px 2px hsl(0 85% 55% / 0.35), var(--shadow-card); }
+  @keyframes card-pulse-glow-filter {
+    0%, 100% { filter: drop-shadow(0 0 0 hsl(0 85% 55% / 0)); }
+    50%      { filter: drop-shadow(0 0 14px hsl(0 85% 55% / 0.55)); }
   }
   @keyframes card-shine-loop {
     0%   { left: -120%; }
