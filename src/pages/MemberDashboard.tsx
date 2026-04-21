@@ -258,6 +258,29 @@ const MemberDashboard = () => {
           </Link>
         </motion.div>
 
+        {/* Update Notice */}
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-xl border border-blue-500/30 bg-gradient-to-r from-blue-500/15 via-blue-500/5 to-purple-500/10 p-3 md:p-4"
+        >
+          <div className="absolute inset-y-0 left-0 w-1 bg-blue-500" />
+          <div className="flex items-start gap-3 pl-2">
+            <div className="h-8 w-8 shrink-0 rounded-lg bg-blue-500/15 flex items-center justify-center">
+              <span className="text-base">📢</span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-wider text-blue-400 font-semibold">নোটিশ</p>
+              <p className="text-xs md:text-sm text-foreground/90 mt-0.5 leading-relaxed">
+                এখানে <span className="font-semibold text-blue-400">কুয়াকাটা মাল্টিমিডিয়া</span>-র সকল কাজের আপডেট
+                {freelanceClientNames.length > 0 && (
+                  <> ও <span className="font-semibold text-orange-400">{freelanceClientNames.join(", ")}</span>-এর সকল কাজের আপডেট</>
+                )} পাবেন।
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Balance Cards */}
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card) => (
