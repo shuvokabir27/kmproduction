@@ -50,6 +50,28 @@ export function AdvanceRequestCard() {
   const pending = (requests ?? []).filter((r) => r.status === "pending");
   const lastRejected = (requests ?? []).find((r) => r.status === "rejected" && r.admin_note);
 
+  // Limits: max 3 per day, 1 hour cooldown after rejection
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const todayCount = (requests ?? []).filter((r) => new Date(r.created_at) >= startOfToday).length;
+  const dailyLimitReached = todayCount >= 3;
+
+  const lastRejectedAny = (requests ?? []).find((r) => r.status === "rejected" && r.reviewed_at);
+  const cooldownMs = lastRejectedAny?.reviewed_at
+    ? 60 * 60 * 1000 - (Date.now() - new Date(lastRejectedAny.reviewed_at).getTime())
+    : 0;
+  const cooldownActive = cooldownMs > 0;
+  const cooldownMinutes = Math.ceil(cooldownMs / 60000);
+
+  const blocked = pending.length > 0 || dailyLimitReached || cooldownActive;
+  const blockReason = pending.length > 0
+    ? "ইতিমধ্যে একটি রিকোয়েস্ট অপেক্ষমান"
+    : dailyLimitReached
+    ? "আজকের সীমা শেষ (৩/৩)"
+    : cooldownActive
+    ? `${bnNum(cooldownMinutes)} মিনিট পর আবার চেষ্টা করুন`
+    : "";
+
   const createMut = useMutation({
     mutationFn: async () => {
       const amt = Number(amount);
