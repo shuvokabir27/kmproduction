@@ -168,37 +168,64 @@ export function WeatherWidget() {
 
   return (
     <div className="relative">
+      {/* Animated rainbow halo border */}
+      <motion.div
+        aria-hidden
+        animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+        className="absolute -inset-[2px] rounded-full opacity-90 blur-[2px] pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg,#f43f5e,#f59e0b,#facc15,#10b981,#06b6d4,#6366f1,#a855f7,#ec4899,#f43f5e)",
+          backgroundSize: "300% 100%",
+        }}
+      />
       <motion.button
         onClick={() => setOpen((v) => !v)}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.97 }}
-        className={`relative overflow-hidden flex items-center gap-1.5 md:gap-2 px-2 md:px-2.5 py-1 md:py-1.5 rounded-full
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.96 }}
+        className={`relative overflow-hidden flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 md:py-1.5 rounded-full
           bg-gradient-to-br ${meta.grad} bg-[length:200%_100%]
-          border border-white/25 shadow-lg ${meta.glow}
-          ring-1 ring-white/10`}
-        style={{ animation: "shine 5s linear infinite" }}
+          border border-white/40 shadow-xl ${meta.glow}
+          ring-1 ring-white/20`}
+        style={{ animation: "shine 4s linear infinite" }}
         aria-label="আবহাওয়া"
       >
+        {/* Rainbow tint overlay */}
+        <motion.span
+          aria-hidden
+          animate={{ opacity: [0.25, 0.55, 0.25] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(120deg, rgba(244,63,94,0.35), rgba(250,204,21,0.25), rgba(16,185,129,0.3), rgba(6,182,212,0.3), rgba(168,85,247,0.35))",
+            mixBlendMode: "overlay",
+          }}
+        />
         {/* Glossy top sheen */}
-        <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent" />
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/45 to-transparent" />
         {/* Shimmer */}
         <motion.span
           aria-hidden
           animate={{ x: ["-120%", "220%"] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-          className="pointer-events-none absolute -inset-y-1 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          className="pointer-events-none absolute -inset-y-1 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-12"
         />
         <motion.span
-          animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.1, 1] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ rotate: [0, 12, -12, 0], scale: [1, 1.18, 1] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           className="relative flex items-center justify-center"
         >
-          <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 text-white drop-shadow" strokeWidth={2.4} />
+          <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]" strokeWidth={2.6} />
         </motion.span>
-        <span className="relative font-bold text-[11px] md:text-xs text-white tabular-nums drop-shadow">
+        <span
+          className="relative font-extrabold text-[11px] md:text-xs tabular-nums drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
+          style={{ color: "#fff" }}
+        >
           {toBnDigits(data.temp)}°C
         </span>
-        <span className="relative hidden md:inline text-[10px] font-medium text-white/90 truncate max-w-[80px]">
+        <span className="relative hidden md:inline text-[10px] font-semibold text-white/95 truncate max-w-[80px] drop-shadow">
           {meta.label}
         </span>
       </motion.button>
