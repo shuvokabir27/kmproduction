@@ -251,6 +251,7 @@ export function AdminMarqueeEditor() {
           <Type className="h-3.5 w-3.5 text-muted-foreground" />
           <Input
             type="color"
+            onMouseDown={(e) => e.preventDefault()}
             value={color}
             onChange={(e) => setColor(e.target.value)}
             className="h-7 w-9 p-0.5 cursor-pointer"
@@ -258,6 +259,7 @@ export function AdminMarqueeEditor() {
           />
           <Button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             size="sm"
             variant="secondary"
             className="h-7 px-2 text-[11px]"
@@ -274,6 +276,7 @@ export function AdminMarqueeEditor() {
           <span className="text-[11px] text-muted-foreground">BG</span>
           <Input
             type="color"
+            onMouseDown={(e) => e.preventDefault()}
             value={bg}
             onChange={(e) => setBg(e.target.value)}
             className="h-7 w-9 p-0.5 cursor-pointer"
@@ -281,6 +284,7 @@ export function AdminMarqueeEditor() {
           />
           <Button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             size="sm"
             variant="secondary"
             className="h-7 px-2 text-[11px]"
@@ -301,6 +305,7 @@ export function AdminMarqueeEditor() {
         {/* Style toggles */}
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="secondary"
           className="h-7 w-7 p-0"
@@ -311,6 +316,7 @@ export function AdminMarqueeEditor() {
         </Button>
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="secondary"
           className="h-7 w-7 p-0"
@@ -321,6 +327,7 @@ export function AdminMarqueeEditor() {
         </Button>
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="secondary"
           className="h-7 w-7 p-0"
@@ -339,6 +346,7 @@ export function AdminMarqueeEditor() {
             <Button
               key={ef.key}
               type="button"
+            onMouseDown={(e) => e.preventDefault()}
               size="sm"
               variant="secondary"
               className="h-7 px-2 text-[11px]"
@@ -354,6 +362,7 @@ export function AdminMarqueeEditor() {
 
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="ghost"
           className="h-7 px-2 text-[11px]"
