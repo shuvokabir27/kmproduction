@@ -35,6 +35,60 @@ function bnNum(n: number | string): string {
 export function BirthdayCountdownBar() {
   const [now, setNow] = useState(new Date());
   const [idx, setIdx] = useState(0);
+  const [wishOpen, setWishOpen] = useState(false);
+  const [wishLoading, setWishLoading] = useState(false);
+  const [wishMessage, setWishMessage] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [wishMember, setWishMember] = useState<BirthdayMember | null>(null);
+
+  const fetchWish = async (member: BirthdayMember) => {
+    setWishLoading(true);
+    setWishMessage("");
+    try {
+      // fetch designation from profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("designation")
+        .eq("id", member.id)
+        .maybeSingle();
+
+      const { data, error } = await supabase.functions.invoke("generate-birthday-wish", {
+        body: {
+          full_name: member.full_name,
+          designation: profile?.designation ?? null,
+          days_until: member.daysUntil,
+          member_id: member.id,
+          seed: Date.now(),
+        },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        if (data.error.includes("credits")) toast.error("AI ক্রেডিট শেষ");
+        else if (data.error.includes("Rate")) toast.error("একটু পরে আবার চেষ্টা করুন");
+        else toast.error("শুভেচ্ছা তৈরি করা যায়নি");
+        return;
+      }
+      setWishMessage(data?.message ?? "");
+    } catch (err: any) {
+      toast.error(err?.message ?? "কিছু একটা ভুল হয়েছে");
+    } finally {
+      setWishLoading(false);
+    }
+  };
+
+  const openWish = (member: BirthdayMember) => {
+    setWishMember(member);
+    setWishOpen(true);
+    void fetchWish(member);
+  };
+
+  const copyWish = async () => {
+    if (!wishMessage) return;
+    await navigator.clipboard.writeText(wishMessage);
+    setCopied(true);
+    toast.success("কপি হয়েছে!");
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Live ticker every second for countdown
   useEffect(() => {
