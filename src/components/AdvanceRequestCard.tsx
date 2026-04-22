@@ -138,13 +138,9 @@ export function AdvanceRequestCard() {
                 </div>
                 <div className="text-[10px] text-amber-200/70">অ্যাডমিনের অনুমোদনের অপেক্ষায়</div>
               </div>
-              <button
-                onClick={() => cancelMut.mutate(pending[0].id)}
-                disabled={cancelMut.isPending}
-                className="shrink-0 text-[10px] px-2 py-1 rounded-md bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 font-semibold transition-colors"
-              >
-                বাতিল
-              </button>
+              <span className="shrink-0 text-[10px] px-2 py-1 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30 font-semibold">
+                প্রসেসিং
+              </span>
             </div>
           )}
 
