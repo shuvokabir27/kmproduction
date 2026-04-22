@@ -113,19 +113,19 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
                 ];
                 const c = colors[i % colors.length];
                 return (
-                  <div key={`${u.id}-${i}`} className="shrink-0 flex items-center gap-1">
+                  <div key={`${u.id}-${i}`} className="shrink-0 flex items-center gap-1.5">
                     {u.photo ? (
                       <img
                         src={u.photo}
                         alt={u.name}
-                        className={`h-4 w-4 rounded-full object-cover ring-1 ${c.ring} shadow-[0_0_6px_rgba(255,255,255,0.15)]`}
+                        className={`h-6 w-6 rounded-full object-cover ring-2 ${c.ring} shadow-[0_0_10px_rgba(255,255,255,0.35)] brightness-110 contrast-110 saturate-125`}
                       />
                     ) : (
-                      <div className={`h-4 w-4 rounded-full bg-gradient-to-br ${c.grad} flex items-center justify-center text-[8px] font-black text-slate-900 ring-1 ${c.ring}`}>
+                      <div className={`h-6 w-6 rounded-full bg-gradient-to-br ${c.grad} flex items-center justify-center text-[10px] font-black text-slate-900 ring-2 ${c.ring} shadow-[0_0_10px_rgba(255,255,255,0.35)]`}>
                         {u.name.charAt(0)}
                       </div>
                     )}
-                    <span className={`text-[10px] font-bold bg-gradient-to-r ${c.grad} bg-clip-text text-transparent`}>
+                    <span className={`text-[11px] font-bold bg-gradient-to-r ${c.grad} bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]`}>
                       {u.name}
                     </span>
                   </div>
