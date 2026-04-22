@@ -669,8 +669,12 @@ const AdminPayments = () => {
                           <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-primary/30 hover:bg-primary/10" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
                             <Download className="h-4 w-4 text-primary" />
                           </Button>
-                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-green-500/40 hover:bg-green-500/10" onClick={() => sendWhatsAppFromRow(p)} title="WhatsApp-এ পাঠান">
-                            <MessageCircle className="h-4 w-4 text-green-500" />
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-green-500/40 hover:bg-green-500/10" onClick={() => sendWhatsAppFromRow(p)} disabled={whatsappSendingId === p.id} title="WhatsApp-এ রিসিট লিংক পাঠান">
+                            {whatsappSendingId === p.id ? (
+                              <span className="h-3 w-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <MessageCircle className="h-4 w-4 text-green-500" />
+                            )}
                           </Button>
                         </div>
                       </td>
