@@ -47,6 +47,7 @@ import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import AdminProducts from "./pages/AdminProducts";
 import TalerGurLanding from "./pages/TalerGurLanding";
+import TasksPage from "./pages/TasksPage";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="/notifications" element={<RouteGuard allowedRoles={["admin", "member"]}><AllNotifications /></RouteGuard>} />
             <Route path="/settings" element={<RouteGuard allowedRoles={["admin", "member"]}><MemberSettings /></RouteGuard>} />
             <Route path="/chat" element={<RouteGuard allowedRoles={["admin", "member"]}><Chat /></RouteGuard>} />
+            <Route path="/tasks" element={<RouteGuard allowedRoles={["admin", "member"]}><TasksPage /></RouteGuard>} />
 
             {/* Admin routes */}
             <Route path="/admin" element={<RouteGuard allowedRoles={["admin"]}><AdminDashboard /></RouteGuard>} />

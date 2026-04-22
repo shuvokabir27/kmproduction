@@ -22,6 +22,7 @@ import {
   Receipt,
   ClipboardList,
   ShoppingBag,
+  ListTodo,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -52,6 +53,7 @@ const teamItems = [
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
+  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-purple-400", bg: "bg-purple-500/10" },
   { title: "বাইরের কাজ", url: "/admin/freelance", icon: Briefcase, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "সেটিংস", url: "/admin/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
 ];
@@ -70,6 +72,7 @@ const publicSiteItems = [
 
 const memberItems = [
   { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
+  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-purple-400", bg: "bg-purple-500/10" },
   { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
   { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
 ];
