@@ -109,178 +109,300 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
         </button>
       )}
 
-      {/* The downloadable card */}
-      <div
-        ref={cardRef}
-        className="relative rounded-2xl overflow-hidden mx-auto"
-        style={{
-          width: "100%",
-          maxWidth: 420,
-          background: "linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #6366f1 100%)",
-          padding: 18,
-        }}
+      {/* 3D tilt wrapper */}
+      <motion.div
+        whileHover={{ rotateX: -4, rotateY: 6, scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        style={{ perspective: 1200, transformStyle: "preserve-3d" }}
+        className="mx-auto"
       >
-        {/* Decorative confetti dots */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              style={{
-                position: "absolute",
-                left: `${(i * 53) % 100}%`,
-                top: `${(i * 37) % 100}%`,
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: ["#fde047", "#f9a8d4", "#a5f3fc", "#fff"][i % 4],
-                opacity: 0.55,
-              }}
-            />
-          ))}
-        </div>
-
+        {/* The downloadable card */}
         <div
-          className="relative rounded-xl"
+          ref={cardRef}
+          className="relative rounded-2xl overflow-hidden mx-auto"
           style={{
-            background: "rgba(255,255,255,0.08)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255,255,255,0.25)",
-            padding: 16,
+            width: "100%",
+            maxWidth: 420,
+            background:
+              "linear-gradient(135deg, #ec4899 0%, #a855f7 45%, #6366f1 100%)",
+            padding: 18,
+            boxShadow:
+              "0 20px 50px -10px rgba(168,85,247,0.55), 0 8px 20px -6px rgba(236,72,153,0.4), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 12px rgba(0,0,0,0.25)",
+            transform: "translateZ(0)",
           }}
         >
-          {/* Header */}
-          <div style={{ textAlign: "center", marginBottom: 12 }}>
-            <div style={{ fontSize: 36, lineHeight: 1 }}>🎂🎉</div>
-            <div
-              style={{
-                color: "#fff",
-                fontWeight: 800,
-                fontSize: 22,
-                marginTop: 6,
-                textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
-              }}
-            >
-              শুভ জন্মদিন
-            </div>
+          {/* Glossy top highlight */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              borderRadius: 16,
+              background:
+                "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.12) 25%, rgba(255,255,255,0) 55%)",
+              pointerEvents: "none",
+              mixBlendMode: "overlay",
+            }}
+          />
+          {/* Diagonal glass shine */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: -40,
+              left: -60,
+              width: "70%",
+              height: "180%",
+              transform: "rotate(20deg)",
+              background:
+                "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%)",
+              filter: "blur(8px)",
+              pointerEvents: "none",
+            }}
+          />
+          {/* Bottom inner glow */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              borderRadius: 16,
+              background:
+                "radial-gradient(ellipse at 50% 110%, rgba(253,224,71,0.35) 0%, rgba(253,224,71,0) 55%)",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Decorative confetti dots */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(24)].map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  position: "absolute",
+                  left: `${(i * 53) % 100}%`,
+                  top: `${(i * 37) % 100}%`,
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: ["#fde047", "#f9a8d4", "#a5f3fc", "#fff"][i % 4],
+                  opacity: 0.6,
+                  boxShadow: "0 0 6px rgba(255,255,255,0.6)",
+                }}
+              />
+            ))}
           </div>
 
-          {/* Photo */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-            <div
-              style={{
-                width: 110,
-                height: 110,
-                borderRadius: "50%",
-                overflow: "hidden",
-                border: "4px solid #fde047",
-                boxShadow: "0 6px 24px rgba(0,0,0,0.35)",
-                background: "#fff",
-              }}
-            >
-              {member.photo_url ? (
-                <img
-                  src={member.photo_url}
-                  alt={member.full_name}
-                  crossOrigin="anonymous"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
+          <div
+            className="relative rounded-xl"
+            style={{
+              background:
+                "linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.35)",
+              padding: 16,
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.25)",
+              transform: "translateZ(20px)",
+            }}
+          >
+            {/* Header */}
+            <div style={{ textAlign: "center", marginBottom: 12 }}>
+              <div
+                style={{
+                  fontSize: 36,
+                  lineHeight: 1,
+                  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.4))",
+                }}
+              >
+                🎂🎉
+              </div>
+              <div
+                style={{
+                  color: "#fff",
+                  fontWeight: 800,
+                  fontSize: 22,
+                  marginTop: 6,
+                  textShadow:
+                    "0 2px 8px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.5)",
+                  fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
+                  background:
+                    "linear-gradient(180deg, #ffffff 0%, #fde047 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                শুভ জন্মদিন
+              </div>
+            </div>
+
+            {/* Photo with glossy ring */}
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+              <div
+                style={{
+                  position: "relative",
+                  width: 118,
+                  height: 118,
+                  borderRadius: "50%",
+                  padding: 4,
+                  background:
+                    "conic-gradient(from 0deg, #fde047, #f9a8d4, #a5f3fc, #fde047)",
+                  boxShadow:
+                    "0 10px 28px rgba(0,0,0,0.45), 0 0 0 2px rgba(255,255,255,0.4), inset 0 1px 0 rgba(255,255,255,0.6)",
+                  transform: "translateZ(30px)",
+                }}
+              >
                 <div
                   style={{
                     width: "100%",
                     height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 44,
-                    fontWeight: 800,
-                    color: "#a855f7",
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    position: "relative",
                     background: "#fff",
                   }}
                 >
-                  {member.full_name.charAt(0)}
+                  {member.photo_url ? (
+                    <img
+                      src={member.photo_url}
+                      alt={member.full_name}
+                      crossOrigin="anonymous"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 44,
+                        fontWeight: 800,
+                        color: "#a855f7",
+                        background: "#fff",
+                      }}
+                    >
+                      {member.full_name.charAt(0)}
+                    </div>
+                  )}
+                  {/* Glossy reflection on photo */}
+                  <div
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      borderRadius: "50%",
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.1) 35%, rgba(255,255,255,0) 55%)",
+                      pointerEvents: "none",
+                    }}
+                  />
                 </div>
-              )}
+              </div>
             </div>
-          </div>
 
-          {/* Name */}
-          <div
-            style={{
-              textAlign: "center",
-              color: "#fff",
-              fontWeight: 800,
-              fontSize: 20,
-              marginBottom: 4,
-              textShadow: "0 2px 8px rgba(0,0,0,0.3)",
-              fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
-            }}
-          >
-            {member.full_name}
-          </div>
-          {member.designation && (
+            {/* Name */}
             <div
               style={{
                 textAlign: "center",
-                color: "#fde047",
-                fontSize: 12,
-                marginBottom: 10,
-                fontWeight: 600,
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: 20,
+                marginBottom: 4,
+                textShadow:
+                  "0 2px 8px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.4)",
                 fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
               }}
             >
-              {member.designation}
+              {member.full_name}
             </div>
-          )}
-
-          {/* Message */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.92)",
-              borderRadius: 12,
-              padding: 14,
-              minHeight: 100,
-              marginTop: 8,
-            }}
-          >
-            {loading ? (
-              <div style={{ textAlign: "center", color: "#a855f7", padding: 20, fontSize: 13 }}>
-                ✨ AI বার্তা তৈরি করছে...
-              </div>
-            ) : (
-              <p
+            {member.designation && (
+              <div
                 style={{
-                  color: "#1f2937",
-                  fontSize: 14,
-                  lineHeight: 1.7,
-                  fontWeight: 500,
-                  margin: 0,
-                  whiteSpace: "pre-wrap",
-                  fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
                   textAlign: "center",
+                  color: "#fde047",
+                  fontSize: 12,
+                  marginBottom: 10,
+                  fontWeight: 600,
+                  fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.4)",
                 }}
               >
-                {message}
-              </p>
+                {member.designation}
+              </div>
             )}
-          </div>
 
-          {/* Footer brand */}
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: 12,
-              color: "rgba(255,255,255,0.85)",
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: 1,
-            }}
-          >
-            ❤️ KM PRODUCTION
+            {/* Message with glossy panel */}
+            <div
+              style={{
+                position: "relative",
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.88) 100%)",
+                borderRadius: 12,
+                padding: 14,
+                minHeight: 100,
+                marginTop: 8,
+                boxShadow:
+                  "0 8px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.08)",
+                overflow: "hidden",
+              }}
+            >
+              {/* Top gloss strip */}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "40%",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%)",
+                  pointerEvents: "none",
+                }}
+              />
+              {loading ? (
+                <div style={{ textAlign: "center", color: "#a855f7", padding: 20, fontSize: 13, position: "relative" }}>
+                  ✨ AI বার্তা তৈরি করছে...
+                </div>
+              ) : (
+                <p
+                  style={{
+                    color: "#1f2937",
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                    fontWeight: 500,
+                    margin: 0,
+                    whiteSpace: "pre-wrap",
+                    fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
+                    textAlign: "center",
+                    position: "relative",
+                  }}
+                >
+                  {message}
+                </p>
+              )}
+            </div>
+
+            {/* Footer brand */}
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: 12,
+                color: "rgba(255,255,255,0.95)",
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: 1,
+                textShadow: "0 1px 4px rgba(0,0,0,0.4)",
+              }}
+            >
+              ❤️ KM PRODUCTION
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Action buttons (NOT inside card so won't be in PNG) */}
       <div className="flex items-center gap-2 mt-3 max-w-[420px] mx-auto">
