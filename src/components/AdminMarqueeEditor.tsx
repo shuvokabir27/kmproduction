@@ -157,10 +157,10 @@ export function AdminMarqueeEditor() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const cleanHtml = DOMPurify.sanitize(
+      const cleanHtml = (DOMPurify.sanitize(
         editorRef.current?.innerHTML || html,
         SANITIZE_OPTS
-      ).trim();
+      ) as unknown as string).trim();
 
       const payload = { text: cleanHtml, is_enabled: enabled };
       let error;
