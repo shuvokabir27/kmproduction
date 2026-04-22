@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import {
   Megaphone,
   Save,
@@ -15,6 +16,7 @@ import {
   Sparkles,
   Eraser,
   Type,
+  Gauge,
 } from "lucide-react";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
