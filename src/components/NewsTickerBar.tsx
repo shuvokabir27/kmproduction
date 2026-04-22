@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Newspaper, Radio, ExternalLink, Flag, Globe2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,7 @@ export function NewsTickerBar() {
   const [items, setItems] = useState<NewsItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const rotateTimeoutRef = useRef<number | null>(null);
 
   // Fetch news
   useEffect(() => {
@@ -50,12 +51,24 @@ export function NewsTickerBar() {
 
   // Auto-rotate every 8s
   useEffect(() => {
+    if (rotateTimeoutRef.current) {
+      window.clearTimeout(rotateTimeoutRef.current);
+      rotateTimeoutRef.current = null;
+    }
+
     if (items.length === 0 || paused) return;
-    const id = setInterval(() => {
+
+    rotateTimeoutRef.current = window.setTimeout(() => {
       setIdx((i) => (i + 1) % items.length);
     }, ROTATE_MS);
-    return () => clearInterval(id);
-  }, [items.length, paused]);
+
+    return () => {
+      if (rotateTimeoutRef.current) {
+        window.clearTimeout(rotateTimeoutRef.current);
+        rotateTimeoutRef.current = null;
+      }
+    };
+  }, [idx, items.length, paused]);
 
   if (items.length === 0) {
     return (
