@@ -83,6 +83,7 @@ export default function AdminAdvances() {
     onSuccess: (_, vars) => {
       toast.success(vars.status === "approved" ? "অনুমোদিত হয়েছে" : "বাতিল করা হয়েছে");
       qc.invalidateQueries({ queryKey: ["admin-advance-requests"] });
+      qc.invalidateQueries({ queryKey: ["admin-advance-pending"] });
       setActionDialog(null);
       setAdminNote("");
       setApprovedAmount("");
