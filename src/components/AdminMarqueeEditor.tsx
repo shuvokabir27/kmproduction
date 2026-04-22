@@ -79,6 +79,9 @@ export function AdminMarqueeEditor() {
   useEffect(() => {
     if (!data || loaded) return;
     setEnabled(!!data.is_enabled);
+    if (typeof data.speed_seconds === "number" && data.speed_seconds > 0) {
+      setSpeed(data.speed_seconds);
+    }
     const initial = DOMPurify.sanitize(data.text || "", SANITIZE_OPTS) as unknown as string;
     setHtml(initial);
     if (editorRef.current) editorRef.current.innerHTML = initial;
