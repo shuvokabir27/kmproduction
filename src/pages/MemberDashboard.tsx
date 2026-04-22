@@ -267,6 +267,9 @@ const MemberDashboard = () => {
           </div>
         </motion.div>
 
+        {/* Advance request - shown below name & ID */}
+        <AdvanceRequestCard />
+
         {/* Update Notice */}
         <motion.div
           initial={{ opacity: 0, y: -6 }}
