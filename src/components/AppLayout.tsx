@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Globe } from "lucide-react";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
+import { LiveClockBar } from "@/components/LiveClockBar";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
@@ -86,6 +87,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </header>
+
+          {/* Live clock + dates bar */}
+          <LiveClockBar />
 
           {/* Online users bar */}
           <OnlineUsersBar />
