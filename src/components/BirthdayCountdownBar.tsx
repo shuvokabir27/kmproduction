@@ -286,21 +286,52 @@ export function BirthdayCountdownBar() {
                   </div>
                 </div>
 
-                {/* AI wish button — always show for upcoming/today */}
-                <button
+                {/* AI wish button — animated & glowing to attract attention */}
+                <motion.button
                   onClick={() => openWish(current)}
-                  className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] md:text-[11px] font-bold transition-all ${
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  animate={{
+                    boxShadow: isToday
+                      ? [
+                          "0 0 0 0 rgba(236,72,153,0.7)",
+                          "0 0 0 8px rgba(236,72,153,0)",
+                          "0 0 0 0 rgba(236,72,153,0)",
+                        ]
+                      : [
+                          "0 0 0 0 rgba(168,85,247,0.6)",
+                          "0 0 0 6px rgba(168,85,247,0)",
+                          "0 0 0 0 rgba(168,85,247,0)",
+                        ],
+                  }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
+                  className={`relative shrink-0 inline-flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-full text-[10px] md:text-[11px] font-extrabold transition-colors overflow-hidden group ${
                     isToday
-                      ? "bg-pink-500 hover:bg-pink-600 text-white shadow-[0_0_10px_rgba(236,72,153,0.5)]"
-                      : showPlanBanner
-                        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40"
-                        : "bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30"
+                      ? "bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500 text-white"
+                      : "bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white"
                   }`}
-                  title="AI দিয়ে শুভেচ্ছা বার্তা তৈরি করুন"
+                  title="AI দিয়ে ইউনিক জন্মদিনের শুভেচ্ছা বার্তা তৈরি করুন"
                 >
-                  <Wand2 className="h-3 w-3" />
-                  <span className="hidden sm:inline">{isToday ? "শুভেচ্ছা" : "বার্তা"}</span>
-                </button>
+                  {/* Shimmer overlay */}
+                  <motion.span
+                    aria-hidden
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    animate={{ x: ["-150%", "150%"] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+                    style={{ width: "60%" }}
+                  />
+                  <motion.span
+                    animate={{ rotate: [0, -15, 15, -10, 10, 0] }}
+                    transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 0.5 }}
+                    className="relative z-10 inline-flex"
+                  >
+                    <Wand2 className="h-3.5 w-3.5 drop-shadow" />
+                  </motion.span>
+                  <span className="relative z-10 whitespace-nowrap">
+                    ✨ <span className="hidden xs:inline">শুভেচ্ছা </span>বার্তা
+                  </span>
+                  <Sparkles className="relative z-10 h-3 w-3 animate-pulse" />
+                </motion.button>
 
                 {/* Counter (when multiple) */}
                 {upcoming.length > 1 && (
