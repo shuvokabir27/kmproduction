@@ -99,25 +99,27 @@ export function BirthdayCountdownBar() {
   const { data: members } = useQuery({
     queryKey: ["upcoming-birthdays"],
     queryFn: async () => {
-      // First try direct profiles table (works for authenticated users via RLS)
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, full_name, photo_url, date_of_birth")
-        .eq("is_active", true)
-        .not("date_of_birth", "is", null);
-      if (error) {
-        // Fallback to public RPC for unauthenticated or restricted access
-        const { data: rpcData, error: rpcError } = await (supabase as any).rpc("get_public_profiles");
-        if (rpcError) throw rpcError;
-        return (rpcData ?? [])
-          .filter((m: any) => m.is_active && m.date_of_birth)
-          .map((m: any) => ({
+      // Use security-definer RPC so members/clients (not just admins) can see all
+      // active members' birthdays. The profiles table RLS only exposes the
+      // viewer's own row, which would hide every other birthday.
+      const { data: rpcData, error: rpcError } = await (supabase as any).rpc("get_public_profiles");
+      if (!rpcError && rpcData) {
+        return (rpcData as any[])
+          .filter((m) => m.is_active && m.date_of_birth)
+          .map((m) => ({
             id: m.id,
             full_name: m.full_name,
             photo_url: m.photo_url,
             date_of_birth: m.date_of_birth,
           }));
       }
+      // Fallback to direct table (admins will see all rows)
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, photo_url, date_of_birth")
+        .eq("is_active", true)
+        .not("date_of_birth", "is", null);
+      if (error) throw error;
       return (data ?? []).map((m: any) => ({
         id: m.id,
         full_name: m.full_name,
