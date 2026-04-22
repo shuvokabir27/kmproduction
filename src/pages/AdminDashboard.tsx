@@ -13,6 +13,8 @@ import { bn } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
+import { TaskSummaryCard } from "@/components/TaskSummaryCard";
 import { cn } from "@/lib/utils";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
@@ -220,6 +222,12 @@ const AdminDashboard = () => {
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
+        {/* Birthday countdown + Task summary */}
+        <div className="space-y-3">
+          <BirthdayCountdownBar />
+          <TaskSummaryCard />
+        </div>
+
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-3">
           <div className="min-w-0 relative">
