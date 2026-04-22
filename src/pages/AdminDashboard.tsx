@@ -254,10 +254,6 @@ const AdminDashboard = () => {
                     <Sparkles className="inline w-4 h-4 md:w-5 md:h-5 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
                   </motion.span>
                 </h1>
-                <p className="text-muted-foreground text-[11px] md:text-sm mt-0.5 flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
-                  সকল কার্যক্রমের সারসংক্ষেপ
-                </p>
               </div>
             </div>
           </div>
