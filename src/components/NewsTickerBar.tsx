@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Newspaper, Radio, ExternalLink, Flag, Globe2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,10 +15,14 @@ interface NewsResponse {
   updatedAt: string;
 }
 
+const ROTATE_MS = 8000; // 8 seconds per headline
+
 export function NewsTickerBar() {
   const [items, setItems] = useState<NewsItem[]>([]);
+  const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
+  // Fetch news
   useEffect(() => {
     let cancelled = false;
 
@@ -37,13 +41,21 @@ export function NewsTickerBar() {
     }
 
     load();
-    // refresh every 5 minutes
     const id = setInterval(load, 5 * 60 * 1000);
     return () => {
       cancelled = true;
       clearInterval(id);
     };
   }, []);
+
+  // Auto-rotate every 8s
+  useEffect(() => {
+    if (items.length === 0 || paused) return;
+    const id = setInterval(() => {
+      setIdx((i) => (i + 1) % items.length);
+    }, ROTATE_MS);
+    return () => clearInterval(id);
+  }, [items.length, paused]);
 
   if (items.length === 0) {
     return (
@@ -61,15 +73,14 @@ export function NewsTickerBar() {
     );
   }
 
-  // Duplicate for seamless marquee
-  const loop = [...items, ...items];
-
-  // approximate animation duration based on count
-  const duration = Math.max(40, items.length * 6);
+  const current = items[idx];
+  const FlagIcon = current.bangladeshi ? Flag : Globe2;
+  const colorClass = current.bangladeshi ? "text-emerald-300" : "text-cyan-300";
+  const dotColor = current.bangladeshi ? "bg-emerald-400" : "bg-cyan-400";
 
   return (
     <div
-      className="relative border-b border-border/30 overflow-hidden bg-gradient-to-r from-rose-500/15 via-amber-500/10 via-emerald-500/10 to-cyan-500/15 backdrop-blur-xl"
+      className="relative border-b border-border/30 overflow-hidden bg-gradient-to-r from-rose-500/15 via-amber-500/10 to-cyan-500/15 backdrop-blur-xl"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -86,6 +97,17 @@ export function NewsTickerBar() {
         }}
       />
 
+      {/* Progress bar — fills over 8s, resets each headline */}
+      {!paused && (
+        <motion.div
+          key={idx}
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: ROTATE_MS / 1000, ease: "linear" }}
+          className="absolute top-0 left-0 h-[1.5px] bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 z-10"
+        />
+      )}
+
       <div className="relative flex items-stretch h-8 md:h-9">
         {/* LIVE badge */}
         <div className="relative shrink-0 flex items-center gap-1.5 px-2.5 md:px-3 z-20">
@@ -94,8 +116,7 @@ export function NewsTickerBar() {
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
             className="absolute inset-y-1 left-1.5 right-1 rounded-md -z-10"
             style={{
-              background:
-                "linear-gradient(90deg,#f43f5e,#ef4444,#f59e0b,#f43f5e)",
+              background: "linear-gradient(90deg,#f43f5e,#ef4444,#f59e0b,#f43f5e)",
               backgroundSize: "200% 100%",
             }}
           />
@@ -111,56 +132,41 @@ export function NewsTickerBar() {
           </span>
         </div>
 
-        {/* Fade edges */}
-        <div className="pointer-events-none absolute left-[78px] md:left-[92px] top-0 bottom-0 w-8 bg-gradient-to-r from-card/80 to-transparent z-10" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-card/80 to-transparent z-10" />
-
-        {/* Marquee */}
+        {/* Rotating headline */}
         <div className="relative flex-1 overflow-hidden">
-          <div
-            className="flex items-center h-full whitespace-nowrap will-change-transform"
-            style={{
-              animation: `news-marquee ${duration}s linear infinite`,
-              animationPlayState: paused ? "paused" : "running",
-            }}
-          >
-            {loop.map((item, idx) => {
-              const FlagIcon = item.bangladeshi ? Flag : Globe2;
-              const colorClass = item.bangladeshi
-                ? "text-emerald-300"
-                : "text-cyan-300";
-              const dotColor = item.bangladeshi ? "bg-emerald-400" : "bg-cyan-400";
-              return (
-                <a
-                  key={`${idx}-${item.link}`}
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 group"
-                >
-                  <span className={`h-1.5 w-1.5 rounded-full ${dotColor} shadow-[0_0_6px_currentColor]`} />
-                  <FlagIcon className={`h-3 w-3 ${colorClass} shrink-0`} />
-                  <span className={`text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${colorClass} shrink-0`}>
-                    {item.source}
-                  </span>
-                  <span className="text-muted-foreground/40">•</span>
-                  <span className="text-[11px] md:text-xs text-foreground/90 group-hover:text-primary transition-colors font-medium">
-                    {item.title}
-                  </span>
-                  <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </a>
-              );
-            })}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.a
+              key={idx}
+              href={current.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -14 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="absolute inset-0 flex items-center gap-2 px-3 group min-w-0"
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${dotColor} shadow-[0_0_6px_currentColor] shrink-0`} />
+              <FlagIcon className={`h-3 w-3 ${colorClass} shrink-0`} />
+              <span className={`text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${colorClass} shrink-0`}>
+                {current.source}
+              </span>
+              <span className="text-muted-foreground/40 shrink-0">•</span>
+              <span className="text-[11px] md:text-xs text-foreground/90 group-hover:text-primary transition-colors font-medium truncate">
+                {current.title}
+              </span>
+              <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-auto" />
+            </motion.a>
+          </AnimatePresence>
+        </div>
+
+        {/* Counter */}
+        <div className="relative shrink-0 flex items-center px-2 md:px-3 z-20">
+          <span className="text-[9px] md:text-[10px] font-mono font-semibold text-muted-foreground/70 tabular-nums">
+            {idx + 1}/{items.length}
+          </span>
         </div>
       </div>
-
-      <style>{`
-        @keyframes news-marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
     </div>
   );
 }
