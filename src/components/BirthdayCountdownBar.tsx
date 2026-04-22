@@ -129,7 +129,7 @@ export function BirthdayCountdownBar() {
           nextBirthday: nextDate,
         };
       })
-      .filter((m) => m.daysUntil <= 30) // only next 30 days
+      .filter((m) => m.daysUntil <= 60) // only next 60 days
       .sort((a, b) => a.daysUntil - b.daysUntil)
       .slice(0, 5);
   }, [members]);
