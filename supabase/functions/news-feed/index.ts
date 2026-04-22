@@ -214,12 +214,19 @@ async function translateHeadlines(titles: string[]): Promise<Record<string, stri
           {
             role: "system",
             content:
-              "You translate international news headlines from English to natural, concise Bengali (বাংলা) suitable for a news ticker. Keep proper nouns transliterated when common (e.g., USA → যুক্তরাষ্ট্র, Trump → ট্রাম্প). Output ONLY the translations, numbered exactly like the input, one per line. No commentary, no English. Keep each headline short and punchy.",
+              "You translate news headlines into natural, concise Bengali (বাংলা) suitable for a scrolling news ticker. " +
+              "RULES:\n" +
+              "1. Keep proper nouns transliterated naturally (USA→যুক্তরাষ্ট্র, Trump→ট্রাম্প, Iran→ইরান, China→চীন).\n" +
+              "2. Use ENGLISH numerals (1, 2, 3) for the line numbers — NOT Bengali numerals.\n" +
+              "3. Output format: each line MUST start with 'N. ' where N is the English number, then the Bengali translation.\n" +
+              "4. Output exactly the same number of lines as input, in the same order.\n" +
+              "5. NO commentary, NO English in translations, NO empty lines.\n" +
+              "6. Keep each headline short and punchy — under 80 characters where possible.",
           },
           { role: "user", content: numbered },
         ],
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(20000),
     });
 
     if (!res.ok) {
