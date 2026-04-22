@@ -11,6 +11,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Settings, Globe } from "lucide-react";
 import { SiteSettingsDialog } from "@/components/SiteSettingsDialog";
 import { AdminMarqueeEditor } from "@/components/AdminMarqueeEditor";
+import { AdminBkashBalanceEditor } from "@/components/AdminBkashBalanceEditor";
 import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -227,6 +228,7 @@ const AdminSettings = () => {
 
         {/* Top scrolling announcement editor */}
         <AdminMarqueeEditor />
+        <AdminBkashBalanceEditor />
 
         {/* Settings Options */}
         <div className="space-y-2">
