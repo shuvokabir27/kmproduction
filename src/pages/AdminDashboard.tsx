@@ -222,6 +222,12 @@ const AdminDashboard = () => {
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
+        {/* Birthday countdown + Task summary */}
+        <div className="space-y-3">
+          <BirthdayCountdownBar />
+          <TaskSummaryCard />
+        </div>
+
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-3">
           <div className="min-w-0 relative">
