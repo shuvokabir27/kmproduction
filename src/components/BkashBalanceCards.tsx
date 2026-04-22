@@ -22,7 +22,7 @@ export const BkashBalanceCards = ({ kmBalance = 0, clientBalance = 0 }: Props) =
     setOpened((p) => ({ ...p, [key]: !p[key] }));
 
   return (
-    <div className="flex flex-wrap gap-2 mt-2 justify-center">
+    <div className="flex flex-nowrap gap-2 mt-2 justify-center items-center">
       {accounts.map((acc) => {
         const isOpen = opened[acc.key];
         return (
