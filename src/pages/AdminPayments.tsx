@@ -351,16 +351,30 @@ const AdminPayments = () => {
 
       const memberName = (profile as any)?.full_name || payment.profiles?.full_name || "";
       const paidAmt = Number(payment.amount).toLocaleString("bn-BD");
-      const dueText = balance > 0
-        ? `এখনো ৳${balance.toLocaleString("bn-BD")} বকেয়া রয়েছে।`
+
+      // Payment method label with last 4 digits (bank) or full txn id (bkash/nagad)
+      const methodNames: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
+      const methodName = methodNames[payment.payment_method] || payment.payment_method;
+      let methodLine = methodName;
+      if (payment.payment_method !== "cash" && payment.transaction_id) {
+        const last4 = payment.payment_method === "bank"
+          ? String(payment.transaction_id).slice(-4)
+          : String(payment.transaction_id);
+        methodLine = `${methodName} (লাস্ট ৪ ডিজিট: ${last4})`;
+      }
+
+      const dueLine = balance > 0
+        ? `আপনার অবশিষ্ট বকেয়া ব্যালেন্স: ৳${balance.toLocaleString("bn-BD")}`
         : balance < 0
-        ? `আপনার অগ্রিম জমা ৳${Math.abs(balance).toLocaleString("bn-BD")} টাকা।`
-        : `সকল হিসাব সমন্বয় হয়েছে, কোনো বকেয়া নেই।`;
+        ? `আপনার অগ্রিম জমা ব্যালেন্স: ৳${Math.abs(balance).toLocaleString("bn-BD")}`
+        : `আপনার কোনো বকেয়া নেই, সকল হিসাব সমন্বয় হয়েছে।`;
 
       const msg =
         `আসসালামু আলাইকুম ${memberName},\n\n` +
-        `আপনার ৳${paidAmt} টাকা পেমেন্ট সফলভাবে গ্রহণ করা হয়েছে। ${dueText}\n\n` +
-        `📄 রিসিট দেখুন / ডাউনলোড করুন:\n${publicUrl}\n\n` +
+        `আপনাকে ৳${paidAmt} টাকা পেমেন্ট করা হয়েছে।\n\n` +
+        `পেমেন্ট মাধ্যম: ${methodLine}\n\n` +
+        `${dueLine}\n\n` +
+        `📄 নিচে রিসিট লিংক দেওয়া হলো, চেক করে নেবেন:\n${publicUrl}\n\n` +
         `⏳ এই লিংকটি ২৪ ঘন্টা সক্রিয় থাকবে — অনুগ্রহ করে সময়মতো ডাউনলোড করে রাখুন।\n\n` +
         `— KM Production`;
 
