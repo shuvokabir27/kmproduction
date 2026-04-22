@@ -222,9 +222,6 @@ const AdminDashboard = () => {
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Birthday countdown */}
-        <BirthdayCountdownBar />
-
         {/* Pending advance requests */}
         <AdminAdvanceRequestsCard />
 
