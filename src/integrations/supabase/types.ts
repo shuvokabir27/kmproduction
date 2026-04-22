@@ -885,6 +885,33 @@ export type Database = {
         }
         Relationships: []
       }
+      marquee_settings: {
+        Row: {
+          created_at: string
+          id: string
+          is_enabled: boolean
+          text: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          text?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          text?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       member_achievements: {
         Row: {
           badge_color: string
