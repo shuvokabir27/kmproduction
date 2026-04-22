@@ -1,5 +1,6 @@
 // Aggregates Bengali news from public RSS feeds.
-// Bangladeshi sources are prioritized; important headlines bubble up;
+// Bangladeshi sources are prioritized; international (English) headlines are
+// translated to Bengali using Lovable AI Gateway. Important headlines bubble up;
 // consecutive items from the same source are avoided.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,8 @@ interface FeedSource {
   url: string;
   weight: number;
   bangladeshi: boolean;
+  /** If true, headlines are in English and need to be translated to Bengali. */
+  translate?: boolean;
 }
 
 const FEEDS: FeedSource[] = [
@@ -22,6 +25,14 @@ const FEEDS: FeedSource[] = [
   { name: "BBC বাংলা", url: "https://feeds.bbci.co.uk/bengali/rss.xml", weight: 4, bangladeshi: false },
   { name: "DW বাংলা", url: "https://rss.dw.com/rdf/rss-bn-all", weight: 3, bangladeshi: false },
   { name: "Anandabazar", url: "https://www.anandabazar.com/rss/all-news", weight: 2, bangladeshi: false },
+
+  // International (English) — will be auto-translated to Bengali
+  { name: "BBC World", url: "http://feeds.bbci.co.uk/news/world/rss.xml", weight: 3, bangladeshi: false, translate: true },
+  { name: "Reuters World", url: "https://feeds.reuters.com/Reuters/worldNews", weight: 3, bangladeshi: false, translate: true },
+  { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", weight: 3, bangladeshi: false, translate: true },
+  { name: "CNN World", url: "http://rss.cnn.com/rss/edition_world.rss", weight: 2, bangladeshi: false, translate: true },
+  { name: "NYT World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", weight: 2, bangladeshi: false, translate: true },
+  { name: "The Guardian", url: "https://www.theguardian.com/world/rss", weight: 2, bangladeshi: false, translate: true },
 ];
 
 // Keywords that indicate "important" news — score boost
@@ -98,6 +109,7 @@ interface EnrichedItem {
   weight: number;
   importance: number;
   recencyHours: number;
+  needsTranslation?: boolean;
 }
 
 async function fetchFeed(src: FeedSource): Promise<EnrichedItem[]> {
@@ -124,6 +136,7 @@ async function fetchFeed(src: FeedSource): Promise<EnrichedItem[]> {
         weight: src.weight,
         importance: importanceScore(it.title),
         recencyHours,
+        needsTranslation: src.translate === true,
       };
     });
   } catch (e) {
@@ -160,9 +173,74 @@ function dedupeConsecutiveSource(items: EnrichedItem[]): EnrichedItem[] {
   return result;
 }
 
+/**
+ * Translate a batch of English headlines to Bengali using Lovable AI Gateway.
+ * Returns a map of original -> translated. Falls back to originals on failure.
+ */
+async function translateHeadlines(titles: string[]): Promise<Record<string, string>> {
+  if (titles.length === 0) return {};
+  const apiKey = Deno.env.get("LOVABLE_API_KEY");
+  if (!apiKey) {
+    console.warn("LOVABLE_API_KEY missing — skipping translation");
+    return {};
+  }
+
+  // De-duplicate
+  const unique = Array.from(new Set(titles));
+  const numbered = unique.map((t, i) => `${i + 1}. ${t}`).join("\n");
+
+  try {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You translate international news headlines from English to natural, concise Bengali (বাংলা) suitable for a news ticker. Keep proper nouns transliterated when common (e.g., USA → যুক্তরাষ্ট্র, Trump → ট্রাম্প). Output ONLY the translations, numbered exactly like the input, one per line. No commentary, no English. Keep each headline short and punchy.",
+          },
+          { role: "user", content: numbered },
+        ],
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!res.ok) {
+      console.error("AI translation failed:", res.status, await res.text().catch(() => ""));
+      return {};
+    }
+
+    const data = await res.json();
+    const content: string = data?.choices?.[0]?.message?.content ?? "";
+    const lines = content
+      .split("\n")
+      .map((l: string) => l.trim())
+      .filter(Boolean);
+
+    const map: Record<string, string> = {};
+    for (const line of lines) {
+      const m = line.match(/^(\d+)[.)]\s*(.+)$/);
+      if (!m) continue;
+      const idx = parseInt(m[1], 10) - 1;
+      if (idx >= 0 && idx < unique.length) {
+        map[unique[idx]] = m[2].trim();
+      }
+    }
+    return map;
+  } catch (e) {
+    console.error("translateHeadlines error", e instanceof Error ? e.message : e);
+    return {};
+  }
+}
+
 // Cache (per cold start). Shorter cache so randomization feels fresh.
 let cache: { at: number; data: unknown } | null = null;
-const CACHE_MS = 3 * 60 * 1000; // 3 min
+const CACHE_MS = 5 * 60 * 1000; // 5 min (translations cost AI credits)
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -205,10 +283,19 @@ Deno.serve(async (req) => {
     // Ensure no two consecutive items share the same source
     const final = dedupeConsecutiveSource(merged);
 
+    // Translate English headlines (only the ones in final list, to save credits)
+    const englishTitles = final
+      .filter((it) => it.needsTranslation)
+      .map((it) => it.title);
+    const translations = await translateHeadlines(englishTitles);
+
     const payload = {
       updatedAt: new Date().toISOString(),
       count: final.length,
-      items: final.map(({ _score, importance, recencyHours, weight, ...rest }) => rest),
+      items: final.map(({ _score, importance, recencyHours, weight, needsTranslation, ...rest }) => ({
+        ...rest,
+        title: needsTranslation && translations[rest.title] ? translations[rest.title] : rest.title,
+      })),
     };
 
     cache = { at: Date.now(), data: payload };
