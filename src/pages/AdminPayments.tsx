@@ -352,7 +352,7 @@ const AdminPayments = () => {
       const memberName = (profile as any)?.full_name || payment.profiles?.full_name || "";
       const paidAmt = Number(payment.amount).toLocaleString("bn-BD");
 
-      // Payment method label with last 4 digits (bank) or full txn id (bkash/nagad)
+      // Payment method label with last 4 digits
       const methodNames: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
       const methodName = methodNames[payment.payment_method] || payment.payment_method;
       let methodLine = methodName;
@@ -360,23 +360,41 @@ const AdminPayments = () => {
         const last4 = payment.payment_method === "bank"
           ? String(payment.transaction_id).slice(-4)
           : String(payment.transaction_id);
-        methodLine = `${methodName} (লাস্ট ৪ ডিজিট: ${last4})`;
+        methodLine = `${methodName} _(লাস্ট ৪ ডিজিট: ${last4})_`;
       }
 
+      // Time-based greeting (Bangladesh time)
+      const hour = new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka", hour: "numeric", hour12: false });
+      const h = parseInt(hour, 10);
+      let greeting = "";
+      let emoji = "";
+      if (h >= 5 && h < 12) { greeting = "শুভ সকাল"; emoji = "🌅"; }
+      else if (h >= 12 && h < 16) { greeting = "শুভ দুপুর"; emoji = "☀️"; }
+      else if (h >= 16 && h < 18) { greeting = "শুভ বিকাল"; emoji = "🌤️"; }
+      else if (h >= 18 && h < 20) { greeting = "শুভ সন্ধ্যা"; emoji = "🌆"; }
+      else { greeting = "শুভ রাত্রি"; emoji = "🌙"; }
+
       const dueLine = balance > 0
-        ? `আপনার অবশিষ্ট বকেয়া ব্যালেন্স: ৳${balance.toLocaleString("bn-BD")}`
+        ? `🔴 *অবশিষ্ট বকেয়া:* ৳${balance.toLocaleString("bn-BD")}`
         : balance < 0
-        ? `আপনার অগ্রিম জমা ব্যালেন্স: ৳${Math.abs(balance).toLocaleString("bn-BD")}`
-        : `আপনার কোনো বকেয়া নেই, সকল হিসাব সমন্বয় হয়েছে।`;
+        ? `🟢 *অগ্রিম জমা:* ৳${Math.abs(balance).toLocaleString("bn-BD")}`
+        : `✅ _সকল হিসাব সমন্বয় হয়েছে — কোনো বকেয়া নেই।_`;
 
       const msg =
-        `আসসালামু আলাইকুম ${memberName},\n\n` +
-        `আপনাকে ৳${paidAmt} টাকা পেমেন্ট করা হয়েছে।\n\n` +
-        `পেমেন্ট মাধ্যম: ${methodLine}\n\n` +
+        `🌿 *আসসালামু আলাইকুম ${memberName}* 🌿\n` +
+        `${emoji} _${greeting}!_\n\n` +
+        `━━━━━━━━━━━━━━━\n` +
+        `💰 *পেমেন্ট নিশ্চিতকরণ*\n` +
+        `━━━━━━━━━━━━━━━\n\n` +
+        `✅ আপনাকে *৳${paidAmt}* টাকা পেমেন্ট করা হয়েছে।\n\n` +
+        `💳 *পেমেন্ট মাধ্যম:* ${methodLine}\n\n` +
         `${dueLine}\n\n` +
-        `📄 নিচে রিসিট লিংক দেওয়া হলো, চেক করে নেবেন:\n${publicUrl}\n\n` +
-        `⏳ এই লিংকটি ২৪ ঘন্টা সক্রিয় থাকবে — অনুগ্রহ করে সময়মতো ডাউনলোড করে রাখুন।\n\n` +
-        `— KM Production`;
+        `━━━━━━━━━━━━━━━\n` +
+        `📄 *রিসিট লিংক* — চেক করে নিন:\n${publicUrl}\n\n` +
+        `⏳ _এই লিংকটি ২৪ ঘন্টা সক্রিয় থাকবে। অনুগ্রহ করে সময়মতো ডাউনলোড করে রাখুন।_\n\n` +
+        `━━━━━━━━━━━━━━━\n` +
+        `🙏 _ধন্যবাদ আপনার সাথে থাকার জন্য_\n` +
+        `🎬 *— KM Production*`;
 
       window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, "_blank");
       toast.success("WhatsApp ওপেন হয়েছে — রিসিট লিংক যুক্ত হয়েছে");
