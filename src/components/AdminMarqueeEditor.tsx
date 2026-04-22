@@ -50,6 +50,8 @@ const SANITIZE_OPTS: any = {
 export function AdminMarqueeEditor() {
   const qc = useQueryClient();
   const editorRef = useRef<HTMLDivElement | null>(null);
+  // Saved selection range so toolbar clicks (which steal focus) can apply formatting
+  const savedRangeRef = useRef<Range | null>(null);
   const [enabled, setEnabled] = useState(true);
   const [saving, setSaving] = useState(false);
   const [html, setHtml] = useState<string>("");
@@ -104,24 +106,6 @@ export function AdminMarqueeEditor() {
     document.addEventListener("selectionchange", handler);
     return () => document.removeEventListener("selectionchange", handler);
   }, []);
-
-  // Save the last non-collapsed range from inside the editor so toolbar
-  // clicks (which steal focus) can still apply formatting to the selection.
-  const savedRangeRef = useRef<Range | null>(null);
-
-  const captureSelection = () => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const range = sel.getRangeAt(0);
-    if (
-      range.collapsed ||
-      !editorRef.current ||
-      !editorRef.current.contains(range.commonAncestorContainer)
-    ) {
-      return;
-    }
-    savedRangeRef.current = range.cloneRange();
-  };
 
   const wrapSelection = (
     styleAttr?: Partial<CSSStyleDeclaration>,
