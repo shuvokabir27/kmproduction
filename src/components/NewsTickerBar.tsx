@@ -81,8 +81,8 @@ export function NewsTickerBar() {
   return (
     <div
       className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-cyan-500/10 backdrop-blur-xl"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onPointerEnter={(e) => { if (e.pointerType === "mouse") setPaused(true); }}
+      onPointerLeave={(e) => { if (e.pointerType === "mouse") setPaused(false); }}
     >
       {/* Animated rainbow underline */}
       <motion.div
