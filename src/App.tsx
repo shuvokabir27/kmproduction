@@ -22,6 +22,7 @@ import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
 import AdminBonuses from "./pages/AdminBonuses";
+import AdminAdvances from "./pages/AdminAdvances";
 import AdminPublicProfiles from "./pages/AdminPublicProfiles";
 import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
@@ -94,6 +95,7 @@ const App = () => (
             <Route path="/admin/scripts/:id" element={<RouteGuard allowedRoles={["admin"]}><AdminScriptEdit /></RouteGuard>} />
             <Route path="/admin/scripts/:id/draw" element={<RouteGuard allowedRoles={["admin"]}><ScriptDrawing /></RouteGuard>} />
             <Route path="/admin/bonuses" element={<RouteGuard allowedRoles={["admin"]}><AdminBonuses /></RouteGuard>} />
+            <Route path="/admin/advances" element={<RouteGuard allowedRoles={["admin"]}><AdminAdvances /></RouteGuard>} />
             <Route path="/admin/notices" element={<RouteGuard allowedRoles={["admin"]}><AdminNotices /></RouteGuard>} />
             <Route path="/admin/public-profiles" element={<RouteGuard allowedRoles={["admin"]}><AdminPublicProfiles /></RouteGuard>} />
             <Route path="/admin/popular-videos" element={<RouteGuard allowedRoles={["admin"]}><AdminPopularVideos /></RouteGuard>} />
