@@ -1,0 +1,1 @@
+ALTER TABLE public.marquee_settings ADD COLUMN IF NOT EXISTS speed_seconds integer NOT NULL DEFAULT 35;

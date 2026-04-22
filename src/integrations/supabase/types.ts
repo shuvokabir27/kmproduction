@@ -890,6 +890,7 @@ export type Database = {
           created_at: string
           id: string
           is_enabled: boolean
+          speed_seconds: number
           text: string
           updated_at: string
           updated_by: string | null
@@ -898,6 +899,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_enabled?: boolean
+          speed_seconds?: number
           text?: string
           updated_at?: string
           updated_by?: string | null
@@ -906,6 +908,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_enabled?: boolean
+          speed_seconds?: number
           text?: string
           updated_at?: string
           updated_by?: string | null
