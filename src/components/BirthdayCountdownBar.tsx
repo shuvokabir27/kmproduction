@@ -216,93 +216,67 @@ export function BirthdayCountdownBar() {
         </div>
       )}
 
-      {/* ========== UPCOMING (next 30 days): Sliding ticker ========== */}
-      {upcomingOnly.length > 0 && current && (
-        <div
-          className={`relative border border-border/30 rounded-xl backdrop-blur-xl overflow-hidden ${
-            showPlanBanner
-              ? "bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-pink-500/15"
-              : "bg-gradient-to-r from-cyan-500/10 via-card/50 to-emerald-500/10"
-          }`}
-        >
-          <div className="relative px-2 md:px-3 py-1.5">
-            <div className="flex items-center gap-2">
-              {/* Icon */}
-              <div className="shrink-0 flex items-center justify-center h-8 w-8 rounded-lg overflow-hidden relative">
-                <motion.div
-                  animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 -z-10"
-                  style={{
-                    background: "linear-gradient(135deg,#06b6d4,#3b82f6,#8b5cf6,#06b6d4)",
-                    backgroundSize: "200% 200%",
-                  }}
-                />
-                <Cake className="h-4 w-4 text-white drop-shadow" strokeWidth={2.4} />
-              </div>
+      {/* ========== UPCOMING (next 30 days): Continuous sliding marquee ========== */}
+      {upcomingOnly.length > 0 && (
+        <div className="relative border border-border/30 rounded-xl backdrop-blur-xl overflow-hidden bg-gradient-to-r from-cyan-500/10 via-card/50 to-emerald-500/10">
+          <div className="relative flex items-center gap-2 px-2 md:px-3 py-1.5">
+            {/* Icon */}
+            <div className="shrink-0 flex items-center justify-center h-8 w-8 rounded-lg overflow-hidden relative">
+              <motion.div
+                animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 -z-10"
+                style={{
+                  background: "linear-gradient(135deg,#06b6d4,#3b82f6,#8b5cf6,#06b6d4)",
+                  backgroundSize: "200% 200%",
+                }}
+              />
+              <Cake className="h-4 w-4 text-white drop-shadow" strokeWidth={2.4} />
+            </div>
 
-              {/* Avatar */}
-              <Link
-                to={`/profile/${current.id}`}
-                className="relative shrink-0 h-8 w-8 rounded-full overflow-hidden border-2 border-pink-400/50 hover:border-pink-400 transition-colors"
+            <span className="shrink-0 text-[10px] md:text-[11px] font-bold text-pink-300">
+              আসছে জন্মদিন ({bnNum(upcomingOnly.length)})
+            </span>
+
+            {/* Marquee */}
+            <div className="relative flex-1 min-w-0 overflow-hidden">
+              <motion.div
+                className="flex items-center gap-4 whitespace-nowrap"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ duration: Math.max(20, upcomingOnly.length * 8), repeat: Infinity, ease: "linear" }}
               >
-                {current.photo_url ? (
-                  <img src={current.photo_url} alt={current.full_name} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="h-full w-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                    {current.full_name.charAt(0)}
-                  </div>
-                )}
-              </Link>
-
-              {/* Sliding info */}
-              <div className="flex-1 min-w-0">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`${current.id}-${idx}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[11px] md:text-[12px] font-bold text-foreground truncate max-w-[140px] md:max-w-none">
-                        {current.full_name}
-                      </span>
-                      {showPlanBanner ? (
-                        <span className="text-[9px] md:text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-400/40 font-bold">
-                          শুভেচ্ছা প্ল্যান করুন
-                        </span>
+                {[...upcomingOnly, ...upcomingOnly].map((m, i) => {
+                  const mDiffMs = m.nextBirthday.getTime() - now.getTime();
+                  const mTotalSec = Math.max(0, Math.floor(mDiffMs / 1000));
+                  const mDays = Math.floor(mTotalSec / 86400);
+                  const isSoon = m.daysUntil <= 3;
+                  return (
+                    <Link
+                      key={`${m.id}-${i}`}
+                      to={`/profile/${m.id}`}
+                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border ${
+                        isSoon
+                          ? "bg-amber-500/15 border-amber-400/40"
+                          : "bg-card/40 border-border/40"
+                      }`}
+                    >
+                      {m.photo_url ? (
+                        <img src={m.photo_url} alt={m.full_name} className="h-5 w-5 rounded-full object-cover ring-1 ring-pink-400/40" />
                       ) : (
-                        <span className="text-[9px] md:text-[10px] text-muted-foreground">
-                          আসছে জন্মদিন
-                        </span>
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center text-[9px] font-bold text-primary">
+                          {m.full_name.charAt(0)}
+                        </div>
                       )}
-                    </div>
-                    <div className="flex items-center gap-1 mt-0.5 text-[10px] md:text-[11px] font-mono tabular-nums">
-                      <span className="px-1 py-0.5 rounded bg-card/60 border border-border/30 text-foreground font-bold">
-                        {bnNum(days)}<span className="text-muted-foreground text-[8px] ml-0.5">দিন</span>
+                      <span className="text-[11px] font-bold text-foreground">{m.full_name}</span>
+                      <span className={`text-[9px] font-mono tabular-nums px-1 py-0.5 rounded ${
+                        isSoon ? "bg-amber-500/20 text-amber-200" : "bg-card/60 text-muted-foreground"
+                      }`}>
+                        {bnNum(mDays)} দিন
                       </span>
-                      <span className="px-1 py-0.5 rounded bg-card/60 border border-border/30 text-foreground font-bold">
-                        {bnNum(String(hours).padStart(2, "0"))}<span className="text-muted-foreground text-[8px] ml-0.5">ঘ</span>
-                      </span>
-                      <span className="px-1 py-0.5 rounded bg-card/60 border border-border/30 text-foreground font-bold">
-                        {bnNum(String(mins).padStart(2, "0"))}<span className="text-muted-foreground text-[8px] ml-0.5">মি</span>
-                      </span>
-                      <span className="px-1 py-0.5 rounded bg-pink-500/20 border border-pink-400/40 text-pink-200 font-bold">
-                        {bnNum(String(secs).padStart(2, "0"))}<span className="text-pink-300/70 text-[8px] ml-0.5">সে</span>
-                      </span>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Counter dots */}
-              {upcomingOnly.length > 1 && (
-                <span className="shrink-0 text-[9px] text-muted-foreground/60 font-mono tabular-nums">
-                  {bnNum(idx + 1)}/{bnNum(upcomingOnly.length)}
-                </span>
-              )}
+                    </Link>
+                  );
+                })}
+              </motion.div>
             </div>
           </div>
 
