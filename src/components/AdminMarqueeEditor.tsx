@@ -85,7 +85,26 @@ export function AdminMarqueeEditor() {
     [html]
   );
 
-  // ---- Selection helpers ----
+  // Track selection inside the editor so toolbar clicks can use it
+  // even after focus moves to the button.
+  useEffect(() => {
+    const handler = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0);
+      if (
+        range.collapsed ||
+        !editorRef.current ||
+        !editorRef.current.contains(range.commonAncestorContainer)
+      ) {
+        return;
+      }
+      savedRangeRef.current = range.cloneRange();
+    };
+    document.addEventListener("selectionchange", handler);
+    return () => document.removeEventListener("selectionchange", handler);
+  }, []);
+
   // Save the last non-collapsed range from inside the editor so toolbar
   // clicks (which steal focus) can still apply formatting to the selection.
   const savedRangeRef = useRef<Range | null>(null);
