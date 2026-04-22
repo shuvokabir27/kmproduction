@@ -1,12 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Megaphone } from "lucide-react";
+import DOMPurify from "dompurify";
 
 /**
  * Glossy scrolling marquee shown at the very top of the app.
  * Text + on/off is controlled by admins via public.marquee_settings.
- * Realtime keeps every dashboard in sync.
+ * The text is stored as sanitized HTML so admins can color individual
+ * words and apply effects (blink, glow, rainbow, etc.) per word.
  */
 export function UpdateNoticeMarquee() {
   const qc = useQueryClient();
@@ -39,10 +41,21 @@ export function UpdateNoticeMarquee() {
     };
   }, [qc]);
 
-  const text = (data?.text || "").trim();
+  const rawHtml = (data?.text || "").trim();
   const enabled = data?.is_enabled !== false;
 
-  if (!enabled || !text) return null;
+  const safeHtml = useMemo(
+    () =>
+      DOMPurify.sanitize(rawHtml, {
+        ALLOWED_TAGS: ["span", "b", "strong", "i", "em", "u", "br", "mark"],
+        ALLOWED_ATTR: ["style", "class"],
+        // Keep inline styles for color/background/text-shadow but disallow url() etc
+        ALLOW_DATA_ATTR: false,
+      }) as unknown as string,
+    [rawHtml]
+  );
+
+  if (!enabled || !rawHtml) return null;
 
   // Repeat content so the marquee loops seamlessly
   const Item = (
@@ -50,7 +63,10 @@ export function UpdateNoticeMarquee() {
       <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
         <Megaphone className="h-3 w-3 text-white" />
       </span>
-      <span className="font-medium">{text}</span>
+      <span
+        className="font-medium"
+        dangerouslySetInnerHTML={{ __html: safeHtml }}
+      />
       <span className="text-white/40">•</span>
     </span>
   );

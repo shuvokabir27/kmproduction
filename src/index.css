@@ -343,3 +343,45 @@
   }
 
 }
+
+/* Marquee text effects (used inside admin-controlled rich HTML) */
+@layer utilities {
+  .mq-blink { animation: mq-blink 1s steps(2, start) infinite; }
+  @keyframes mq-blink { to { visibility: hidden; } }
+
+  .mq-pulse { animation: mq-pulse 1.4s ease-in-out infinite; }
+  @keyframes mq-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.06); }
+  }
+
+  .mq-shake { animation: mq-shake 0.5s ease-in-out infinite; display: inline-block; }
+  @keyframes mq-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px) rotate(-2deg); }
+    75% { transform: translateX(2px) rotate(2deg); }
+  }
+
+  .mq-bounce { animation: mq-bounce 1s ease-in-out infinite; display: inline-block; }
+  @keyframes mq-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .mq-glow { text-shadow: 0 0 6px currentColor, 0 0 12px currentColor; }
+
+  .mq-rainbow {
+    background: linear-gradient(90deg, #f43f5e, #f59e0b, #eab308, #10b981, #06b6d4, #6366f1, #a855f7, #ec4899, #f43f5e);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: mq-rainbow 4s linear infinite;
+    font-weight: 700;
+  }
+  @keyframes mq-rainbow { to { background-position: 300% 50%; } }
+
+  .mq-underline { text-decoration: underline; text-underline-offset: 3px; }
+  .mq-italic { font-style: italic; }
+  .mq-bold { font-weight: 800; }
+}
