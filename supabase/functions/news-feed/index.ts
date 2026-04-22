@@ -212,12 +212,14 @@ async function translateHeadlines(titles: string[]): Promise<Record<string, stri
     });
 
     if (!res.ok) {
-      console.error("AI translation failed:", res.status, await res.text().catch(() => ""));
+      const errText = await res.text().catch(() => "");
+      console.error("[translate] AI failed:", res.status, errText);
       return {};
     }
 
     const data = await res.json();
     const content: string = data?.choices?.[0]?.message?.content ?? "";
+    console.log(`[translate] received ${content.split('\n').length} lines`);
     const lines = content
       .split("\n")
       .map((l: string) => l.trim())
