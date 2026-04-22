@@ -1,5 +1,6 @@
 // Aggregates Bengali news from public RSS feeds.
-// Bangladeshi sources are prioritized first.
+// Bangladeshi sources are prioritized; important headlines bubble up;
+// consecutive items from the same source are avoided.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -8,7 +9,6 @@ const corsHeaders = {
 interface FeedSource {
   name: string;
   url: string;
-  // Higher weight = more priority (more items shown earlier)
   weight: number;
   bangladeshi: boolean;
 }
@@ -20,10 +20,36 @@ const FEEDS: FeedSource[] = [
   { name: "Jugantor", url: "https://www.jugantor.com/feed/rss.xml", weight: 4, bangladeshi: true },
   { name: "Kaler Kantho", url: "https://www.kalerkantho.com/rss.xml", weight: 4, bangladeshi: true },
   { name: "BBC বাংলা", url: "https://feeds.bbci.co.uk/bengali/rss.xml", weight: 4, bangladeshi: false },
-  // International (in Bengali)
   { name: "DW বাংলা", url: "https://rss.dw.com/rdf/rss-bn-all", weight: 3, bangladeshi: false },
   { name: "Anandabazar", url: "https://www.anandabazar.com/rss/all-news", weight: 2, bangladeshi: false },
 ];
+
+// Keywords that indicate "important" news — score boost
+const IMPORTANT_KEYWORDS = [
+  // Breaking / urgent
+  "ব্রেকিং", "জরুরি", "জরুরী", "সর্বশেষ", "তাৎক্ষণিক",
+  // Political / national
+  "প্রধানমন্ত্রী", "রাষ্ট্রপতি", "সরকার", "নির্বাচন", "সংসদ", "মন্ত্রী",
+  "বিএনপি", "আওয়ামী", "জামায়াত", "রাজনীতি",
+  // Disaster / emergency
+  "নিহত", "মৃত্যু", "হত্যা", "আগুন", "বিস্ফোরণ", "ভূমিকম্প", "বন্যা",
+  "ঘূর্ণিঝড়", "দুর্ঘটনা", "সংঘর্ষ", "হামলা", "গ্রেপ্তার",
+  // International major
+  "যুক্তরাষ্ট্র", "চীন", "ভারত", "রাশিয়া", "ইসরায়েল", "ফিলিস্তিন",
+  "ইউক্রেন", "যুদ্ধ", "জাতিসংঘ",
+  // Economy
+  "ডলার", "শেয়ার", "বাজেট", "অর্থনীতি", "মূল্যস্ফীতি",
+];
+
+function importanceScore(title: string): number {
+  let score = 0;
+  for (const kw of IMPORTANT_KEYWORDS) {
+    if (title.includes(kw)) score += 2;
+  }
+  // Short, punchy headlines often = breaking news
+  if (title.length < 50) score += 1;
+  return score;
+}
 
 function stripTags(s: string): string {
   return s
@@ -40,10 +66,9 @@ function stripTags(s: string): string {
 
 function extractItems(xml: string): Array<{ title: string; link: string; pubDate: string }> {
   const items: Array<{ title: string; link: string; pubDate: string }> = [];
-  // Match both <item>..</item> (RSS) and <entry>..</entry> (Atom)
   const itemRegex = /<(item|entry)[\s\S]*?<\/(item|entry)>/gi;
   const matches = xml.match(itemRegex) || [];
-  for (const block of matches.slice(0, 15)) {
+  for (const block of matches.slice(0, 20)) {
     const titleMatch = block.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const linkMatch =
       block.match(/<link[^>]*>([\s\S]*?)<\/link>/i) ||
@@ -64,7 +89,18 @@ function extractItems(xml: string): Array<{ title: string; link: string; pubDate
   return items;
 }
 
-async function fetchFeed(src: FeedSource) {
+interface EnrichedItem {
+  title: string;
+  link: string;
+  pubDate: string;
+  source: string;
+  bangladeshi: boolean;
+  weight: number;
+  importance: number;
+  recencyHours: number;
+}
+
+async function fetchFeed(src: FeedSource): Promise<EnrichedItem[]> {
   try {
     const res = await fetch(src.url, {
       headers: {
@@ -77,21 +113,56 @@ async function fetchFeed(src: FeedSource) {
     if (!res.ok) return [];
     const xml = await res.text();
     const items = extractItems(xml);
-    return items.map((it) => ({
-      ...it,
-      source: src.name,
-      bangladeshi: src.bangladeshi,
-      weight: src.weight,
-    }));
+    const now = Date.now();
+    return items.map((it) => {
+      const ts = Date.parse(it.pubDate) || now;
+      const recencyHours = Math.max(0, (now - ts) / (1000 * 60 * 60));
+      return {
+        ...it,
+        source: src.name,
+        bangladeshi: src.bangladeshi,
+        weight: src.weight,
+        importance: importanceScore(it.title),
+        recencyHours,
+      };
+    });
   } catch (e) {
     console.error(`Feed failed: ${src.name}`, e instanceof Error ? e.message : e);
     return [];
   }
 }
 
-// Simple in-memory cache (per cold start)
+// Fisher-Yates shuffle (with optional weight bias via score-based jitter)
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Pick items so that no two consecutive items share the same source.
+ * Greedy: at each step, pick the highest-ranked item whose source != previous source.
+ */
+function dedupeConsecutiveSource(items: EnrichedItem[]): EnrichedItem[] {
+  const pool = [...items];
+  const result: EnrichedItem[] = [];
+  let lastSource = "";
+  while (pool.length > 0) {
+    let pickIdx = pool.findIndex((x) => x.source !== lastSource);
+    if (pickIdx === -1) pickIdx = 0; // only one source left — accept
+    const [picked] = pool.splice(pickIdx, 1);
+    result.push(picked);
+    lastSource = picked.source;
+  }
+  return result;
+}
+
+// Cache (per cold start). Shorter cache so randomization feels fresh.
 let cache: { at: number; data: unknown } | null = null;
-const CACHE_MS = 5 * 60 * 1000; // 5 min
+const CACHE_MS = 3 * 60 * 1000; // 3 min
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -108,30 +179,36 @@ Deno.serve(async (req) => {
     const results = await Promise.all(FEEDS.map(fetchFeed));
     const all = results.flat();
 
-    // Sort: bangladeshi first, then by weight desc, then by date desc
-    all.sort((a, b) => {
-      if (a.bangladeshi !== b.bangladeshi) return a.bangladeshi ? -1 : 1;
-      if (a.weight !== b.weight) return b.weight - a.weight;
-      const da = Date.parse(a.pubDate) || 0;
-      const db = Date.parse(b.pubDate) || 0;
-      return db - da;
+    // Compute composite score:
+    //   - Bangladeshi gets a big boost
+    //   - importance keywords boost
+    //   - source weight boost
+    //   - recency boost (newer = higher)
+    //   - random jitter so order varies between refreshes
+    const scored = all.map((it) => {
+      const bdBoost = it.bangladeshi ? 6 : 0;
+      const recencyBoost = Math.max(0, 8 - it.recencyHours * 0.5); // ~8 pts when fresh, decays
+      const jitter = Math.random() * 4; // 0..4
+      const score = bdBoost + it.weight + it.importance * 1.5 + recencyBoost + jitter;
+      return { ...it, _score: score };
     });
 
-    // Interleave a bit so one source doesn't dominate the start
-    const bd = all.filter((x) => x.bangladeshi);
-    const intl = all.filter((x) => !x.bangladeshi);
-    const interleaved: typeof all = [];
-    const ratio = 3; // 3 BD per 1 international
-    let i = 0, j = 0;
-    while (i < bd.length || j < intl.length) {
-      for (let k = 0; k < ratio && i < bd.length; k++) interleaved.push(bd[i++]);
-      if (j < intl.length) interleaved.push(intl[j++]);
-    }
+    // Sort by score desc
+    scored.sort((a, b) => b._score - a._score);
+
+    // Take top 60, then split: top 20 "important" stays at front (still de-duped),
+    // remaining are shuffled randomly so order changes per refresh.
+    const top = scored.slice(0, 20);
+    const rest = shuffle(scored.slice(20, 60));
+    const merged = [...top, ...rest];
+
+    // Ensure no two consecutive items share the same source
+    const final = dedupeConsecutiveSource(merged);
 
     const payload = {
       updatedAt: new Date().toISOString(),
-      count: interleaved.length,
-      items: interleaved.slice(0, 60),
+      count: final.length,
+      items: final.map(({ _score, importance, recencyHours, weight, ...rest }) => rest),
     };
 
     cache = { at: Date.now(), data: payload };
