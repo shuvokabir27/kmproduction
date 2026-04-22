@@ -41,7 +41,10 @@ export function UpdateNoticeMarquee() {
     };
   }, [qc]);
 
-  const rawHtml = (data?.text || "").trim();
+  // Strip the hidden editor-state marker before rendering
+  const rawHtml = ((data?.text || "") as string)
+    .replace(/<!--MQ_JSON:[\s\S]*?-->/g, "")
+    .trim();
   const enabled = data?.is_enabled !== false;
   const speed =
     typeof data?.speed_seconds === "number" && data.speed_seconds > 0
