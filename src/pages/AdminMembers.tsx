@@ -516,11 +516,11 @@ const AdminMembers = () => {
                                 if (tel) {
                                   const cleaned = String(tel).replace(/[\s-()]/g, "");
                                   setField("whatsapp_no", cleaned);
-                                  toast({ title: "নাম্বার যুক্ত হয়েছে", description: cleaned });
+                                  toast.success("নাম্বার যুক্ত হয়েছে: " + cleaned);
                                 }
                               }
                             } catch (err: any) {
-                              toast({ title: "বাছাই করা যায়নি", description: err?.message || "ফোনবুক অ্যাক্সেস দিন", variant: "destructive" });
+                              toast.error(err?.message || "ফোনবুক অ্যাক্সেস দিন");
                             }
                           }}
                         >
