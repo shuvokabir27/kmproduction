@@ -92,7 +92,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
           <div className="h-4 w-px bg-gradient-to-b from-transparent via-fuchsia-500/50 to-transparent shrink-0 z-10" />
 
           {/* Marquee names */}
-          <div className="relative w-[120px] sm:w-[180px] md:w-[240px] overflow-hidden z-10">
+          <div className="relative flex-1 min-w-0 overflow-hidden z-10">
             <motion.div
               className="flex items-center gap-2 whitespace-nowrap"
               animate={shouldAnimate ? { x: ["0%", "-50%"] } : undefined}
