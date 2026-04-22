@@ -18,7 +18,6 @@ import { OnlineUsersBar } from "@/components/OnlineUsersBar";
 import { LiveClockBar } from "@/components/LiveClockBar";
 import { WeatherWidget } from "@/components/WeatherWidget";
 import { NewsTickerBar } from "@/components/NewsTickerBar";
-import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
