@@ -17,6 +17,7 @@ import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
 import { cn } from "@/lib/utils";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
+import { AdminAdvanceRequestsCard } from "@/components/AdminAdvanceRequestsCard";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
