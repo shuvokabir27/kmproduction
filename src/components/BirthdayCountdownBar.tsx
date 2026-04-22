@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cake, Gift, PartyPopper, Sparkles, MessageCircle } from "lucide-react";
+import { Cake, Gift, PartyPopper, Sparkles, MessageCircle, Wand2, Copy, RefreshCw, X, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface BirthdayMember {
   id: string;
