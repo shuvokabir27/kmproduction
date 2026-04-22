@@ -33,63 +33,109 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
   const shouldAnimate = onlineUsers.length > 1;
   const items = shouldAnimate ? [...onlineUsers, ...onlineUsers] : onlineUsers;
 
-  // Inline compact pill (for placing next to a heading)
+  // Inline premium colorful pill (for placing next to a heading)
   if (variant === "inline") {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="relative inline-flex items-center gap-2 max-w-full overflow-hidden rounded-full
-          bg-gradient-to-br from-emerald-500/15 to-emerald-500/5
-          border border-emerald-500/25 backdrop-blur-md
-          shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_2px_8px_-2px_rgba(0,0,0,0.3)]
-          pl-2 pr-1 py-1"
+        initial={{ opacity: 0, scale: 0.85, y: -4 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 220, damping: 18 }}
+        className="relative inline-block max-w-full"
       >
-        {/* Label with pulse dot */}
-        <div className="relative shrink-0 flex items-center gap-1.5">
-          <div className="relative">
-            <Wifi className="h-3 w-3 text-emerald-400" />
-            <motion.span
-              animate={{ scale: [1, 1.6, 1], opacity: [0.7, 0, 0.7] }}
-              transition={{ duration: 1.6, repeat: Infinity }}
-              className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400"
-            />
-            <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]" />
-          </div>
-          <span className="text-[10px] font-bold text-emerald-300">{onlineUsers.length.toLocaleString("bn-BD")}</span>
-        </div>
+        {/* Animated rainbow gradient border */}
+        <motion.div
+          animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+          className="absolute -inset-[1.5px] rounded-full opacity-90 blur-[1px]"
+          style={{
+            background: "linear-gradient(90deg, #f43f5e, #f59e0b, #10b981, #06b6d4, #8b5cf6, #ec4899, #f43f5e)",
+            backgroundSize: "300% 100%",
+          }}
+        />
 
-        {/* Vertical separator */}
-        <div className="h-4 w-px bg-emerald-500/25 shrink-0" />
-
-        {/* Marquee names */}
-        <div className="relative w-[120px] sm:w-[180px] md:w-[240px] overflow-hidden">
+        <div className="relative inline-flex items-center gap-2 max-w-full overflow-hidden rounded-full
+          bg-gradient-to-br from-slate-950/95 via-slate-900/95 to-slate-950/95
+          backdrop-blur-md
+          shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_4px_16px_-4px_rgba(0,0,0,0.5)]
+          pl-2.5 pr-1.5 py-1">
+          {/* Glossy top sheen */}
+          <div className="absolute inset-x-0 top-0 h-1/2 rounded-t-full bg-gradient-to-b from-white/12 to-transparent pointer-events-none" />
+          {/* Animated rainbow shimmer sweep */}
           <motion.div
-            className="flex items-center gap-1.5 whitespace-nowrap"
-            animate={shouldAnimate ? { x: ["0%", "-50%"] } : undefined}
-            transition={
-              shouldAnimate
-                ? { duration: Math.max(12, onlineUsers.length * 4), ease: "linear", repeat: Infinity }
-                : undefined
-            }
-          >
-            {items.map((u, i) => (
-              <div key={`${u.id}-${i}`} className="shrink-0 flex items-center gap-1">
-                {u.photo ? (
-                  <img src={u.photo} alt={u.name} className="h-4 w-4 rounded-full object-cover border border-emerald-500/30" />
-                ) : (
-                  <div className="h-4 w-4 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-[8px] font-bold text-emerald-300">
-                    {u.name.charAt(0)}
+            animate={{ x: ["-150%", "250%"] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="absolute -inset-y-1 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-12 pointer-events-none"
+          />
+
+          {/* Live label with glowing pulse */}
+          <div className="relative shrink-0 flex items-center gap-1.5 z-10">
+            <div className="relative">
+              <motion.div
+                animate={{ rotate: [0, 0, -10, 0, 10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, times: [0, 0.7, 0.75, 0.8, 0.85, 1] }}
+              >
+                <Wifi className="h-3 w-3 text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.8)]" />
+              </motion.div>
+              <motion.span
+                animate={{ scale: [1, 2, 1], opacity: [0.8, 0, 0.8] }}
+                transition={{ duration: 1.6, repeat: Infinity }}
+                className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400"
+              />
+              <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]" />
+            </div>
+            <span className="text-[10px] font-black bg-gradient-to-r from-emerald-300 via-cyan-300 to-emerald-300 bg-clip-text text-transparent tabular-nums">
+              {onlineUsers.length.toLocaleString("bn-BD")}
+            </span>
+          </div>
+
+          {/* Vertical gradient separator */}
+          <div className="h-4 w-px bg-gradient-to-b from-transparent via-fuchsia-500/50 to-transparent shrink-0 z-10" />
+
+          {/* Marquee names */}
+          <div className="relative w-[120px] sm:w-[180px] md:w-[240px] overflow-hidden z-10">
+            <motion.div
+              className="flex items-center gap-2 whitespace-nowrap"
+              animate={shouldAnimate ? { x: ["0%", "-50%"] } : undefined}
+              transition={
+                shouldAnimate
+                  ? { duration: Math.max(12, onlineUsers.length * 4), ease: "linear", repeat: Infinity }
+                  : undefined
+              }
+            >
+              {items.map((u, i) => {
+                // Cycle through vibrant gradient colors per user
+                const colors = [
+                  { ring: "ring-rose-400/60", grad: "from-rose-300 via-pink-300 to-fuchsia-300" },
+                  { ring: "ring-amber-400/60", grad: "from-amber-300 via-orange-300 to-yellow-300" },
+                  { ring: "ring-emerald-400/60", grad: "from-emerald-300 via-teal-300 to-cyan-300" },
+                  { ring: "ring-cyan-400/60", grad: "from-cyan-300 via-sky-300 to-blue-300" },
+                  { ring: "ring-violet-400/60", grad: "from-violet-300 via-purple-300 to-fuchsia-300" },
+                ];
+                const c = colors[i % colors.length];
+                return (
+                  <div key={`${u.id}-${i}`} className="shrink-0 flex items-center gap-1">
+                    {u.photo ? (
+                      <img
+                        src={u.photo}
+                        alt={u.name}
+                        className={`h-4 w-4 rounded-full object-cover ring-1 ${c.ring} shadow-[0_0_6px_rgba(255,255,255,0.15)]`}
+                      />
+                    ) : (
+                      <div className={`h-4 w-4 rounded-full bg-gradient-to-br ${c.grad} flex items-center justify-center text-[8px] font-black text-slate-900 ring-1 ${c.ring}`}>
+                        {u.name.charAt(0)}
+                      </div>
+                    )}
+                    <span className={`text-[10px] font-bold bg-gradient-to-r ${c.grad} bg-clip-text text-transparent`}>
+                      {u.name}
+                    </span>
                   </div>
-                )}
-                <span className="text-[10px] font-medium text-foreground/90">{u.name}</span>
-              </div>
-            ))}
-          </motion.div>
-          {/* Edge fades */}
-          <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-emerald-950/40 to-transparent pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-emerald-950/40 to-transparent pointer-events-none" />
+                );
+              })}
+            </motion.div>
+            {/* Edge fades */}
+            <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-slate-950 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-slate-950 to-transparent pointer-events-none" />
+          </div>
         </div>
       </motion.div>
     );
