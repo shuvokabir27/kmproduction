@@ -2310,6 +2310,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_receipts: { Args: never; Returns: undefined }
       get_approved_profile_comments: {
         Args: { _profile_id: string }
         Returns: {
