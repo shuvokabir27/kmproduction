@@ -146,10 +146,17 @@ export function BirthdayCountdownBar() {
           nextBirthday: nextDate,
         };
       })
-      .filter((m) => m.daysUntil <= 60) // only next 60 days
-      .sort((a, b) => a.daysUntil - b.daysUntil)
-      .slice(0, 5);
+      .filter((m) => m.daysUntil <= 30) // only next 30 days
+      .sort((a, b) => a.daysUntil - b.daysUntil);
   }, [members]);
+
+  // Today's birthday members (for big card)
+  const todayMembers = useMemo(() => upcoming.filter((m) => m.isToday), [upcoming]);
+  const upcomingOnly = useMemo(() => upcoming.filter((m) => !m.isToday), [upcoming]);
+  const [todayIdx, setTodayIdx] = useState(0);
+  useEffect(() => {
+    setTodayIdx(0);
+  }, [todayMembers.length]);
 
   // Rotate every 6s
   useEffect(() => {
