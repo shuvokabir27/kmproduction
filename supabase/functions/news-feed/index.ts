@@ -274,10 +274,18 @@ Deno.serve(async (req) => {
     // Sort by score desc
     scored.sort((a, b) => b._score - a._score);
 
-    // Take top 60, then split: top 20 "important" stays at front (still de-duped),
-    // remaining are shuffled randomly so order changes per refresh.
-    const top = scored.slice(0, 20);
-    const rest = shuffle(scored.slice(20, 60));
+    // Guarantee international coverage: reserve slots for international (English) news.
+    // Bangladeshi feeds remain dominant but world headlines are always present.
+    const intl = scored.filter((it) => it.needsTranslation);
+    const local = scored.filter((it) => !it.needsTranslation);
+
+    const intlPick = intl.slice(0, 20); // up to 20 international
+    const localPick = local.slice(0, 40); // up to 40 local/Bangla
+
+    // Re-sort the combined pool by score, then split top vs shuffled rest
+    const combined = [...localPick, ...intlPick].sort((a, b) => b._score - a._score);
+    const top = combined.slice(0, 20);
+    const rest = shuffle(combined.slice(20, 60));
     const merged = [...top, ...rest];
 
     // Ensure no two consecutive items share the same source
