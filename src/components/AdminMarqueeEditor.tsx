@@ -86,17 +86,30 @@ export function AdminMarqueeEditor() {
   );
 
   // ---- Selection helpers ----
+  // Save the last non-collapsed range from inside the editor so toolbar
+  // clicks (which steal focus) can still apply formatting to the selection.
+  const savedRangeRef = useRef<Range | null>(null);
+
+  const captureSelection = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (
+      range.collapsed ||
+      !editorRef.current ||
+      !editorRef.current.contains(range.commonAncestorContainer)
+    ) {
+      return;
+    }
+    savedRangeRef.current = range.cloneRange();
+  };
+
   const wrapSelection = (
     styleAttr?: Partial<CSSStyleDeclaration>,
     className?: string
   ) => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) {
-      toast.info("আগে কিছু টেক্সট সিলেক্ট করুন");
-      return;
-    }
-    const range = sel.getRangeAt(0);
-    if (range.collapsed) {
+    const range = savedRangeRef.current;
+    if (!range) {
       toast.info("আগে কিছু টেক্সট সিলেক্ট করুন");
       return;
     }
@@ -113,16 +126,30 @@ export function AdminMarqueeEditor() {
     if (styleAttr) {
       Object.entries(styleAttr).forEach(([k, v]) => {
         if (v !== undefined && v !== "") {
-          (span.style as any)[k] = v;
+          span.style.setProperty(
+            // camelCase -> kebab-case for setProperty
+            k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()),
+            String(v),
+            "important"
+          );
         }
       });
     }
     try {
       span.appendChild(range.extractContents());
       range.insertNode(span);
-      sel.removeAllRanges();
-    } catch {
-      /* ignore */
+
+      // Re-select the new span so the user can chain effects
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.addRange(newRange);
+        savedRangeRef.current = newRange.cloneRange();
+      }
+    } catch (e) {
+      console.error("wrapSelection failed", e);
     }
     syncFromEditor();
   };
