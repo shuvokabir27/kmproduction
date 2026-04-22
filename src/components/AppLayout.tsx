@@ -18,7 +18,6 @@ import { OnlineUsersBar } from "@/components/OnlineUsersBar";
 import { LiveClockBar } from "@/components/LiveClockBar";
 import { WeatherWidget } from "@/components/WeatherWidget";
 import { NewsTickerBar } from "@/components/NewsTickerBar";
-import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
@@ -98,8 +97,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {/* Live news ticker */}
           <NewsTickerBar />
 
-          {/* Birthday countdown */}
-          <BirthdayCountdownBar />
 
           {/* Main content */}
           <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto animate-fade-in">
