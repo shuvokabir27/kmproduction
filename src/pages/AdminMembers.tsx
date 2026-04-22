@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { KeyRound, Mail, MessageCircle } from "lucide-react";
+import { KeyRound, Mail, MessageCircle, BookUser } from "lucide-react";
 
 interface MemberForm {
   full_name: string;
@@ -494,12 +494,40 @@ const AdminMembers = () => {
                     <Label className="text-foreground flex items-center gap-1">
                       <MessageCircle className="h-3.5 w-3.5 text-green-500" /> WhatsApp নাম্বার
                     </Label>
-                    <Input
-                      value={form.whatsapp_no}
-                      onChange={(e) => setField("whatsapp_no", e.target.value)}
-                      placeholder="01XXXXXXXXX"
-                      className="bg-secondary border-border/50"
-                    />
+                    <div className="flex gap-1.5">
+                      <Input
+                        value={form.whatsapp_no}
+                        onChange={(e) => setField("whatsapp_no", e.target.value)}
+                        placeholder="01XXXXXXXXX"
+                        className="bg-secondary border-border/50 flex-1"
+                      />
+                      {typeof navigator !== "undefined" && "contacts" in navigator && (navigator as any).contacts?.select && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="shrink-0 border-green-500/40 hover:bg-green-500/10"
+                          title="ফোনবুক থেকে বাছাই করুন"
+                          onClick={async () => {
+                            try {
+                              const contacts = await (navigator as any).contacts.select(["tel"], { multiple: false });
+                              if (contacts && contacts.length > 0) {
+                                const tel = contacts[0].tel?.[0];
+                                if (tel) {
+                                  const cleaned = String(tel).replace(/[\s-()]/g, "");
+                                  setField("whatsapp_no", cleaned);
+                                  toast.success("নাম্বার যুক্ত হয়েছে: " + cleaned);
+                                }
+                              }
+                            } catch (err: any) {
+                              toast.error(err?.message || "ফোনবুক অ্যাক্সেস দিন");
+                            }
+                          }}
+                        >
+                          <BookUser className="h-4 w-4 text-green-500" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-3">
