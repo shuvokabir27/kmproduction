@@ -268,6 +268,35 @@ export default function AdminAdvances() {
                             </Button>
                           </div>
                         )}
+
+                        {/* Re-approve for rejected/cancelled */}
+                        {(r.status === "rejected" || r.status === "cancelled") && (
+                          <div className="flex gap-2 mt-3">
+                            <Button
+                              onClick={() => openAction("approve", r)}
+                              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-9"
+                              size="sm"
+                            >
+                              <CheckCircle2 className="h-4 w-4 mr-1" />
+                              পুনরায় অনুমোদন
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* Cancel approved request */}
+                        {r.status === "approved" && (
+                          <div className="flex gap-2 mt-3">
+                            <Button
+                              onClick={() => openAction("reject", r)}
+                              variant="outline"
+                              className="flex-1 border-red-500/40 text-red-300 hover:bg-red-500/10 hover:text-red-200 font-bold h-9"
+                              size="sm"
+                            >
+                              <XCircle className="h-4 w-4 mr-1" />
+                              বাতিল করুন
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </motion.div>
