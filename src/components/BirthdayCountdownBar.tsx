@@ -99,17 +99,31 @@ export function BirthdayCountdownBar() {
   const { data: members } = useQuery({
     queryKey: ["upcoming-birthdays"],
     queryFn: async () => {
-      // Use safe RPC so non-admin members can also see other members' birthdays
-      const { data, error } = await (supabase as any).rpc("get_public_profiles");
-      if (error) throw error;
-      return (data ?? [])
-        .filter((m: any) => m.is_active && m.date_of_birth)
-        .map((m: any) => ({
-          id: m.id,
-          full_name: m.full_name,
-          photo_url: m.photo_url,
-          date_of_birth: m.date_of_birth,
-        }));
+      // First try direct profiles table (works for authenticated users via RLS)
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, photo_url, date_of_birth")
+        .eq("is_active", true)
+        .not("date_of_birth", "is", null);
+      if (error) {
+        // Fallback to public RPC for unauthenticated or restricted access
+        const { data: rpcData, error: rpcError } = await (supabase as any).rpc("get_public_profiles");
+        if (rpcError) throw rpcError;
+        return (rpcData ?? [])
+          .filter((m: any) => m.is_active && m.date_of_birth)
+          .map((m: any) => ({
+            id: m.id,
+            full_name: m.full_name,
+            photo_url: m.photo_url,
+            date_of_birth: m.date_of_birth,
+          }));
+      }
+      return (data ?? []).map((m: any) => ({
+        id: m.id,
+        full_name: m.full_name,
+        photo_url: m.photo_url,
+        date_of_birth: m.date_of_birth,
+      }));
     },
     staleTime: 5 * 60 * 1000,
   });
