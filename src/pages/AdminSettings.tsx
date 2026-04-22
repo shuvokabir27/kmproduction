@@ -227,7 +227,6 @@ const AdminSettings = () => {
 
         {/* Top scrolling announcement editor */}
         <AdminMarqueeEditor />
-        <AdminBkashBalanceEditor />
 
         {/* Settings Options */}
         <div className="space-y-2">
