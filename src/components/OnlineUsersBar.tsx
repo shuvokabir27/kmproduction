@@ -40,7 +40,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
         initial={{ opacity: 0, scale: 0.85, y: -4 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 220, damping: 18 }}
-        className="relative inline-block max-w-full"
+        className="relative block w-full"
       >
         {/* Animated rainbow gradient border */}
         <motion.div
@@ -53,7 +53,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
           }}
         />
 
-        <div className="relative inline-flex items-center gap-2 max-w-full overflow-hidden rounded-full
+        <div className="relative flex w-full items-center gap-2 overflow-hidden rounded-full
           bg-gradient-to-br from-slate-950/95 via-slate-900/95 to-slate-950/95
           backdrop-blur-md
           shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_4px_16px_-4px_rgba(0,0,0,0.5)]
@@ -92,7 +92,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
           <div className="h-4 w-px bg-gradient-to-b from-transparent via-fuchsia-500/50 to-transparent shrink-0 z-10" />
 
           {/* Marquee names */}
-          <div className="relative w-[120px] sm:w-[180px] md:w-[240px] overflow-hidden z-10">
+          <div className="relative flex-1 min-w-0 overflow-hidden z-10">
             <motion.div
               className="flex items-center gap-2 whitespace-nowrap"
               animate={shouldAnimate ? { x: ["0%", "-50%"] } : undefined}

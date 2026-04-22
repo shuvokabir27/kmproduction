@@ -226,10 +226,8 @@ const AdminDashboard = () => {
         <AdminAdvanceRequestsCard />
 
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-end gap-3">
-          <div className="shrink-0 mt-1">
-            <OnlineUsersBar variant="inline" />
-          </div>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="w-full">
+          <OnlineUsersBar variant="inline" />
         </motion.div>
 
         {/* Stats Grid - Compact Glossy */}
