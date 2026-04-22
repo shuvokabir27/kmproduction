@@ -361,6 +361,7 @@ const AdminPayments = () => {
         `আসসালামু আলাইকুম ${memberName},\n\n` +
         `আপনার ৳${paidAmt} টাকা পেমেন্ট সফলভাবে গ্রহণ করা হয়েছে। ${dueText}\n\n` +
         `📄 রিসিট দেখুন / ডাউনলোড করুন:\n${publicUrl}\n\n` +
+        `⏳ এই লিংকটি ২৪ ঘন্টা সক্রিয় থাকবে — অনুগ্রহ করে সময়মতো ডাউনলোড করে রাখুন।\n\n` +
         `— KM Production`;
 
       window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, "_blank");
