@@ -15,9 +15,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Globe } from "lucide-react";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
-import { LiveClockBar } from "@/components/LiveClockBar";
 import { WeatherWidget } from "@/components/WeatherWidget";
-import { NewsTickerBar } from "@/components/NewsTickerBar";
+import { HomeTopSection } from "@/components/HomeTopSection";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
@@ -91,11 +90,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          {/* Live clock + dates bar */}
-          <LiveClockBar />
-
-          {/* Live news ticker */}
-          <NewsTickerBar />
+          {/* Combined: clock + news + birthday inside one bordered section */}
+          <div className="px-3 md:px-4 pt-3">
+            <HomeTopSection />
+          </div>
 
 
           {/* Main content */}
