@@ -40,7 +40,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
         initial={{ opacity: 0, scale: 0.85, y: -4 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 220, damping: 18 }}
-        className="relative inline-block max-w-full"
+        className="relative block w-full"
       >
         {/* Animated rainbow gradient border */}
         <motion.div
