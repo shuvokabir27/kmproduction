@@ -53,7 +53,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
           }}
         />
 
-        <div className="relative inline-flex items-center gap-2 max-w-full overflow-hidden rounded-full
+        <div className="relative flex w-full items-center gap-2 overflow-hidden rounded-full
           bg-gradient-to-br from-slate-950/95 via-slate-900/95 to-slate-950/95
           backdrop-blur-md
           shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_4px_16px_-4px_rgba(0,0,0,0.5)]
