@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
@@ -281,6 +282,9 @@ const AdminDashboard = () => {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Monthly Expense Chart */}
+        <MonthlyExpenseChart />
 
         {/* Balance button */}
         <Button
