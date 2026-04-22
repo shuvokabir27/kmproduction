@@ -50,6 +50,8 @@ const SANITIZE_OPTS: any = {
 export function AdminMarqueeEditor() {
   const qc = useQueryClient();
   const editorRef = useRef<HTMLDivElement | null>(null);
+  // Saved selection range so toolbar clicks (which steal focus) can apply formatting
+  const savedRangeRef = useRef<Range | null>(null);
   const [enabled, setEnabled] = useState(true);
   const [saving, setSaving] = useState(false);
   const [html, setHtml] = useState<string>("");
@@ -85,18 +87,32 @@ export function AdminMarqueeEditor() {
     [html]
   );
 
-  // ---- Selection helpers ----
+  // Track selection inside the editor so toolbar clicks can use it
+  // even after focus moves to the button.
+  useEffect(() => {
+    const handler = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0);
+      if (
+        range.collapsed ||
+        !editorRef.current ||
+        !editorRef.current.contains(range.commonAncestorContainer)
+      ) {
+        return;
+      }
+      savedRangeRef.current = range.cloneRange();
+    };
+    document.addEventListener("selectionchange", handler);
+    return () => document.removeEventListener("selectionchange", handler);
+  }, []);
+
   const wrapSelection = (
     styleAttr?: Partial<CSSStyleDeclaration>,
     className?: string
   ) => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) {
-      toast.info("আগে কিছু টেক্সট সিলেক্ট করুন");
-      return;
-    }
-    const range = sel.getRangeAt(0);
-    if (range.collapsed) {
+    const range = savedRangeRef.current;
+    if (!range) {
       toast.info("আগে কিছু টেক্সট সিলেক্ট করুন");
       return;
     }
@@ -113,16 +129,30 @@ export function AdminMarqueeEditor() {
     if (styleAttr) {
       Object.entries(styleAttr).forEach(([k, v]) => {
         if (v !== undefined && v !== "") {
-          (span.style as any)[k] = v;
+          span.style.setProperty(
+            // camelCase -> kebab-case for setProperty
+            k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()),
+            String(v),
+            "important"
+          );
         }
       });
     }
     try {
       span.appendChild(range.extractContents());
       range.insertNode(span);
-      sel.removeAllRanges();
-    } catch {
-      /* ignore */
+
+      // Re-select the new span so the user can chain effects
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.addRange(newRange);
+        savedRangeRef.current = newRange.cloneRange();
+      }
+    } catch (e) {
+      console.error("wrapSelection failed", e);
     }
     syncFromEditor();
   };
@@ -221,6 +251,7 @@ export function AdminMarqueeEditor() {
           <Type className="h-3.5 w-3.5 text-muted-foreground" />
           <Input
             type="color"
+            onMouseDown={(e) => e.preventDefault()}
             value={color}
             onChange={(e) => setColor(e.target.value)}
             className="h-7 w-9 p-0.5 cursor-pointer"
@@ -228,6 +259,7 @@ export function AdminMarqueeEditor() {
           />
           <Button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             size="sm"
             variant="secondary"
             className="h-7 px-2 text-[11px]"
@@ -244,6 +276,7 @@ export function AdminMarqueeEditor() {
           <span className="text-[11px] text-muted-foreground">BG</span>
           <Input
             type="color"
+            onMouseDown={(e) => e.preventDefault()}
             value={bg}
             onChange={(e) => setBg(e.target.value)}
             className="h-7 w-9 p-0.5 cursor-pointer"
@@ -251,6 +284,7 @@ export function AdminMarqueeEditor() {
           />
           <Button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             size="sm"
             variant="secondary"
             className="h-7 px-2 text-[11px]"
@@ -271,6 +305,7 @@ export function AdminMarqueeEditor() {
         {/* Style toggles */}
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="secondary"
           className="h-7 w-7 p-0"
@@ -281,6 +316,7 @@ export function AdminMarqueeEditor() {
         </Button>
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="secondary"
           className="h-7 w-7 p-0"
@@ -291,6 +327,7 @@ export function AdminMarqueeEditor() {
         </Button>
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="secondary"
           className="h-7 w-7 p-0"
@@ -309,6 +346,7 @@ export function AdminMarqueeEditor() {
             <Button
               key={ef.key}
               type="button"
+            onMouseDown={(e) => e.preventDefault()}
               size="sm"
               variant="secondary"
               className="h-7 px-2 text-[11px]"
@@ -324,6 +362,7 @@ export function AdminMarqueeEditor() {
 
         <Button
           type="button"
+            onMouseDown={(e) => e.preventDefault()}
           size="sm"
           variant="ghost"
           className="h-7 px-2 text-[11px]"
