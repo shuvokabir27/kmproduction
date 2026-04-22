@@ -10,6 +10,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { NoticeBoard } from "@/components/NoticeBoard";
+import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
+import { TaskSummaryCard } from "@/components/TaskSummaryCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 
