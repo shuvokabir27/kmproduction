@@ -15,7 +15,7 @@ interface NewsResponse {
   updatedAt: string;
 }
 
-const ROTATE_MS = 8000; // 8 seconds per headline
+const ROTATE_MS = 20000; // 20 seconds per headline
 
 export function NewsTickerBar() {
   const [items, setItems] = useState<NewsItem[]>([]);
