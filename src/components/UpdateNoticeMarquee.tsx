@@ -116,13 +116,20 @@ export function UpdateNoticeMarquee() {
 
       {/* Scrolling track */}
       <div className="relative flex py-1.5">
-        <div className="flex shrink-0 animate-marquee-x">
+        <div
+          className="flex shrink-0 animate-marquee-x"
+          style={{ animationDuration: `${speed}s` }}
+        >
           {Item}
           {Item}
           {Item}
           {Item}
         </div>
-        <div className="flex shrink-0 animate-marquee-x" aria-hidden>
+        <div
+          className="flex shrink-0 animate-marquee-x"
+          style={{ animationDuration: `${speed}s` }}
+          aria-hidden
+        >
           {Item}
           {Item}
           {Item}
