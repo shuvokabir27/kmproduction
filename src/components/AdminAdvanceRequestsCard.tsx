@@ -89,39 +89,37 @@ export function AdminAdvanceRequestsCard() {
         animate={{ opacity: 1, y: 0 }}
         className="relative rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-orange-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
       >
-        <div className="relative p-4 md:p-5">
+        <div className="relative p-2.5 md:p-3">
           {/* Header */}
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="relative">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                  <Wallet className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="relative shrink-0">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/30">
+                  <Wallet className="h-4 w-4 text-white" />
                 </div>
                 {count > 0 && (
                   <motion.span
                     animate={{ scale: [1, 1.15, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-background"
+                    className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-background"
                   >
                     {bnNum(count)}
                   </motion.span>
                 )}
               </div>
-              <div>
-                <h3 className="text-sm md:text-base font-extrabold text-foreground flex items-center gap-1.5">
+              <div className="min-w-0">
+                <h3 className="text-xs md:text-sm font-extrabold text-foreground flex items-center gap-1 truncate">
                   অ্যাডভান্স রিকোয়েস্ট
-                  {count > 0 && (
-                    <Bell className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
-                  )}
+                  {count > 0 && <Bell className="h-3 w-3 text-amber-400 animate-pulse shrink-0" />}
                 </h3>
-                <p className="text-[10px] md:text-[11px] text-muted-foreground">
-                  {count > 0 ? `${bnNum(count)}টি অপেক্ষমান রিকোয়েস্ট` : "কোনো নতুন রিকোয়েস্ট নেই"}
+                <p className="text-[10px] text-muted-foreground truncate">
+                  {count > 0 ? `${bnNum(count)}টি অপেক্ষমান` : "✅ সব রিভিউ করা হয়েছে"}
                 </p>
               </div>
             </div>
             <button
               onClick={() => navigate("/admin/advances")}
-              className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-card/60 hover:bg-card border border-border/50 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+              className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-card/60 hover:bg-card border border-border/50 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
             >
               সব দেখুন
               <ArrowRight className="h-3 w-3" />
@@ -129,11 +127,7 @@ export function AdminAdvanceRequestsCard() {
           </div>
 
           {/* Pending List */}
-          {count === 0 ? (
-            <div className="text-center py-6 text-xs text-muted-foreground">
-              ✅ সব রিকোয়েস্ট রিভিউ করা হয়েছে
-            </div>
-          ) : (
+          {count > 0 && (
             <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
               <AnimatePresence>
                 {requests.map((r) => {
