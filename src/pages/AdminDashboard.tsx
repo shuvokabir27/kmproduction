@@ -13,6 +13,8 @@ import { bn } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
+import { TaskSummaryCard } from "@/components/TaskSummaryCard";
 import { cn } from "@/lib/utils";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
