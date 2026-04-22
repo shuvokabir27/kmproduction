@@ -15,7 +15,51 @@ interface NewsResponse {
   updatedAt: string;
 }
 
-const ROTATE_MS = 20000; // 20 seconds per headline
+const ROTATE_MS = 15000; // 15 seconds per headline
+
+/**
+ * Interleave items so that Bangladeshi and non-Bangladeshi (international/random)
+ * headlines alternate. The non-BD pool is shuffled for randomness across countries.
+ * No two consecutive items will be Bangladeshi.
+ */
+function interleaveAlternating(list: NewsItem[]): NewsItem[] {
+  const bd = list.filter((it) => it.bangladeshi);
+  const intl = list.filter((it) => !it.bangladeshi);
+
+  // Shuffle international pool for random country variety
+  for (let i = intl.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [intl[i], intl[j]] = [intl[j], intl[i]];
+  }
+
+  const result: NewsItem[] = [];
+  let bi = 0;
+  let ii = 0;
+  // Start with BD if available, then alternate
+  let pickBD = bd.length > 0;
+
+  while (bi < bd.length || ii < intl.length) {
+    if (pickBD && bi < bd.length) {
+      result.push(bd[bi++]);
+      pickBD = false;
+    } else if (!pickBD && ii < intl.length) {
+      result.push(intl[ii++]);
+      pickBD = true;
+    } else if (bi < bd.length) {
+      // intl exhausted — only append BD if last wasn't BD (enforce no-consecutive rule)
+      if (result.length === 0 || !result[result.length - 1].bangladeshi) {
+        result.push(bd[bi++]);
+      } else {
+        bi++; // skip to avoid two BD in a row
+      }
+      pickBD = false;
+    } else if (ii < intl.length) {
+      result.push(intl[ii++]);
+      pickBD = true;
+    }
+  }
+  return result;
+}
 
 export function NewsTickerBar() {
   const [items, setItems] = useState<NewsItem[]>([]);
@@ -35,7 +79,10 @@ export function NewsTickerBar() {
           console.error("news-feed invoke error", error);
           return;
         }
-        if (data?.items?.length) setItems(data.items);
+        if (data?.items?.length) {
+          setItems(interleaveAlternating(data.items));
+          setIdx(0);
+        }
       } catch (e) {
         console.error("news-feed fetch failed", e);
       }
