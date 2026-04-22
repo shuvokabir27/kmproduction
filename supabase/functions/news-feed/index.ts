@@ -237,21 +237,31 @@ async function translateHeadlines(titles: string[]): Promise<Record<string, stri
 
     const data = await res.json();
     const content: string = data?.choices?.[0]?.message?.content ?? "";
-    console.log(`[translate] received ${content.split('\n').length} lines`);
+    console.log(`[translate] received content sample:`, content.slice(0, 300));
     const lines = content
       .split("\n")
       .map((l: string) => l.trim())
       .filter(Boolean);
 
+    // Convert Bengali numerals to English for parsing
+    const bnToEn = (s: string) =>
+      s.replace(/[০-৯]/g, (d) => String("০১২৩৪৫৬৭৮৯".indexOf(d)));
+
     const map: Record<string, string> = {};
     for (const line of lines) {
-      const m = line.match(/^(\d+)[.)]\s*(.+)$/);
+      const normalized = bnToEn(line);
+      // Accept "1. text", "1) text", "1: text", or "1 - text"
+      const m = normalized.match(/^(\d+)\s*[.):\-]\s*(.+)$/);
       if (!m) continue;
       const idx = parseInt(m[1], 10) - 1;
       if (idx >= 0 && idx < unique.length) {
-        map[unique[idx]] = m[2].trim();
+        // Take the translation from the ORIGINAL line (preserving Bengali text),
+        // just stripping the numbered prefix.
+        const stripped = line.replace(/^[\d০-৯]+\s*[.):\-]\s*/, "").trim();
+        if (stripped) map[unique[idx]] = stripped;
       }
     }
+    console.log(`[translate] parsed ${Object.keys(map).length}/${unique.length} translations`);
     return map;
   } catch (e) {
     console.error("translateHeadlines error", e instanceof Error ? e.message : e);
