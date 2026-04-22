@@ -264,9 +264,6 @@ const MemberDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Advance request - shown below name & ID */}
-        <AdvanceRequestCard />
-
         {/* Update Notice */}
         <motion.div
           initial={{ opacity: 0, y: -6 }}
@@ -299,6 +296,9 @@ const MemberDashboard = () => {
             clientOutstanding={balance?.clientBalance}
           />
         )}
+
+        {/* Advance request - moved below the income graph */}
+        <AdvanceRequestCard />
 
         {/* Balance Cards */}
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
