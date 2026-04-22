@@ -92,6 +92,10 @@ export default {
           "0%": { "background-position": "0% 50%" },
           "100%": { "background-position": "300% 50%" },
         },
+        shine: {
+          "0%": { "background-position": "0% 50%" },
+          "100%": { "background-position": "200% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
