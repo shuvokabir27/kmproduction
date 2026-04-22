@@ -17,6 +17,7 @@ import { Globe } from "lucide-react";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
 import { WeatherWidget } from "@/components/WeatherWidget";
 import { HomeTopSection } from "@/components/HomeTopSection";
+import { UpdateNoticeMarquee } from "@/components/UpdateNoticeMarquee";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
@@ -56,6 +57,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex-1 flex flex-col min-w-0">
+          {/* Glossy scrolling announcement — sits above everything */}
+          <UpdateNoticeMarquee />
+
           {/* Top header */}
           <header className="h-12 md:h-14 flex items-center justify-between border-b border-border/30 px-3 md:px-4 bg-card/80 backdrop-blur-xl sticky top-0 z-30">
             <div className="flex items-center gap-2">
