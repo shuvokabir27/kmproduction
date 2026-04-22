@@ -43,6 +43,10 @@ export function UpdateNoticeMarquee() {
 
   const rawHtml = (data?.text || "").trim();
   const enabled = data?.is_enabled !== false;
+  const speed =
+    typeof data?.speed_seconds === "number" && data.speed_seconds > 0
+      ? data.speed_seconds
+      : 35;
 
   const safeHtml = useMemo(
     () =>
