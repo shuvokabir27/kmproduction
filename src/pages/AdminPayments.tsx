@@ -393,8 +393,8 @@ const AdminPayments = () => {
         `📄 *রিসিট লিংক* — চেক করে নিন:\n${publicUrl}\n\n` +
         `⏳ _এই লিংকটি ২৪ ঘন্টা সক্রিয় থাকবে। অনুগ্রহ করে সময়মতো ডাউনলোড করে রাখুন।_\n\n` +
         `━━━━━━━━━━━━━━━\n` +
-        `🙏 _ধন্যবাদ আপনার সাথে থাকার জন্য_\n` +
-        `🎬 *— KM Production*`;
+        `🙏 _ধন্যবাদ, আমাদের সাথে থাকার জন্য।_\n\n` +
+        `🎬 *Kuakata Multimedia*`;
 
       window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, "_blank");
       toast.success("WhatsApp ওপেন হয়েছে — রিসিট লিংক যুক্ত হয়েছে");
