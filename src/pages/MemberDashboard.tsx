@@ -11,7 +11,6 @@ import { useState } from "react";
 import { ScriptEditor } from "@/components/ScriptEditor";
 import { NoticeBoard } from "@/components/NoticeBoard";
 import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
-import { TaskSummaryCard } from "@/components/TaskSummaryCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 
@@ -221,11 +220,8 @@ const MemberDashboard = () => {
         {/* Notice Board */}
         <NoticeBoard />
 
-        {/* Birthday countdown + Task summary */}
-        <div className="space-y-3">
-          <BirthdayCountdownBar />
-          <TaskSummaryCard />
-        </div>
+        {/* Birthday countdown */}
+        <BirthdayCountdownBar />
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative flex flex-col items-center text-center gap-1">
