@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      advance_requests: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          approved_amount: number | null
+          created_at: string
+          id: string
+          member_id: string
+          payment_id: string | null
+          reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["advance_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          approved_amount?: number | null
+          created_at?: string
+          id?: string
+          member_id: string
+          payment_id?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["advance_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          approved_amount?: number | null
+          created_at?: string
+          id?: string
+          member_id?: string
+          payment_id?: string | null
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["advance_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           check_in_time: string | null
@@ -2583,6 +2628,7 @@ export type Database = {
       send_birthday_notifications: { Args: never; Returns: undefined }
     }
     Enums: {
+      advance_status: "pending" | "approved" | "rejected" | "cancelled"
       app_role: "admin" | "member" | "client" | "product_admin"
       bonus_type: "bonus" | "transport"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
@@ -2733,6 +2779,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      advance_status: ["pending", "approved", "rejected", "cancelled"],
       app_role: ["admin", "member", "client", "product_admin"],
       bonus_type: ["bonus", "transport"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
