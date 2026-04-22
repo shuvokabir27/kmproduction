@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cake, Gift, PartyPopper, Sparkles, MessageCircle } from "lucide-react";
+import { Cake, Gift, PartyPopper, Sparkles, MessageCircle, Wand2, Copy, RefreshCw, X, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface BirthdayMember {
   id: string;
@@ -33,6 +35,60 @@ function bnNum(n: number | string): string {
 export function BirthdayCountdownBar() {
   const [now, setNow] = useState(new Date());
   const [idx, setIdx] = useState(0);
+  const [wishOpen, setWishOpen] = useState(false);
+  const [wishLoading, setWishLoading] = useState(false);
+  const [wishMessage, setWishMessage] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [wishMember, setWishMember] = useState<BirthdayMember | null>(null);
+
+  const fetchWish = async (member: BirthdayMember) => {
+    setWishLoading(true);
+    setWishMessage("");
+    try {
+      // fetch designation from profile
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("designation")
+        .eq("id", member.id)
+        .maybeSingle();
+
+      const { data, error } = await supabase.functions.invoke("generate-birthday-wish", {
+        body: {
+          full_name: member.full_name,
+          designation: profile?.designation ?? null,
+          days_until: member.daysUntil,
+          member_id: member.id,
+          seed: Date.now(),
+        },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        if (data.error.includes("credits")) toast.error("AI ক্রেডিট শেষ");
+        else if (data.error.includes("Rate")) toast.error("একটু পরে আবার চেষ্টা করুন");
+        else toast.error("শুভেচ্ছা তৈরি করা যায়নি");
+        return;
+      }
+      setWishMessage(data?.message ?? "");
+    } catch (err: any) {
+      toast.error(err?.message ?? "কিছু একটা ভুল হয়েছে");
+    } finally {
+      setWishLoading(false);
+    }
+  };
+
+  const openWish = (member: BirthdayMember) => {
+    setWishMember(member);
+    setWishOpen(true);
+    void fetchWish(member);
+  };
+
+  const copyWish = async () => {
+    if (!wishMessage) return;
+    await navigator.clipboard.writeText(wishMessage);
+    setCopied(true);
+    toast.success("কপি হয়েছে!");
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Live ticker every second for countdown
   useEffect(() => {
@@ -230,29 +286,21 @@ export function BirthdayCountdownBar() {
                   </div>
                 </div>
 
-                {/* Action buttons (today/3-day) */}
-                {(isToday || showPlanBanner) && (
-                  <Link
-                    to="/chat"
-                    className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] md:text-[11px] font-bold transition-all ${
-                      isToday
-                        ? "bg-pink-500 hover:bg-pink-600 text-white shadow-[0_0_10px_rgba(236,72,153,0.5)]"
-                        : "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40"
-                    }`}
-                  >
-                    {isToday ? (
-                      <>
-                        <MessageCircle className="h-3 w-3" />
-                        <span className="hidden sm:inline">শুভেচ্ছা</span>
-                      </>
-                    ) : (
-                      <>
-                        <Gift className="h-3 w-3" />
-                        <span className="hidden sm:inline">প্ল্যান</span>
-                      </>
-                    )}
-                  </Link>
-                )}
+                {/* AI wish button — always show for upcoming/today */}
+                <button
+                  onClick={() => openWish(current)}
+                  className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] md:text-[11px] font-bold transition-all ${
+                    isToday
+                      ? "bg-pink-500 hover:bg-pink-600 text-white shadow-[0_0_10px_rgba(236,72,153,0.5)]"
+                      : showPlanBanner
+                        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40"
+                        : "bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30"
+                  }`}
+                  title="AI দিয়ে শুভেচ্ছা বার্তা তৈরি করুন"
+                >
+                  <Wand2 className="h-3 w-3" />
+                  <span className="hidden sm:inline">{isToday ? "শুভেচ্ছা" : "বার্তা"}</span>
+                </button>
 
                 {/* Counter (when multiple) */}
                 {upcoming.length > 1 && (
@@ -279,6 +327,80 @@ export function BirthdayCountdownBar() {
           backgroundSize: "300% 100%",
         }}
       />
+
+      {/* AI Birthday Wish Dialog */}
+      <Dialog open={wishOpen} onOpenChange={setWishOpen}>
+        <DialogContent className="max-w-md bg-gradient-to-br from-pink-500/10 via-card to-purple-500/10 border-pink-500/30">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Wand2 className="h-4 w-4 text-pink-400" />
+              <span>{wishMember?.full_name}-এর জন্য শুভেচ্ছা</span>
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-card/60 border border-border/40">
+            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-pink-400/50 shrink-0">
+              {wishMember?.photo_url ? (
+                <img src={wishMember.photo_url} alt={wishMember.full_name} className="h-full w-full object-cover" />
+              ) : (
+                <div className="h-full w-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary">
+                  {wishMember?.full_name.charAt(0)}
+                </div>
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="font-bold text-foreground truncate">{wishMember?.full_name}</div>
+              <div className="text-[11px] text-muted-foreground">
+                {wishMember?.isToday
+                  ? "🎂 আজ জন্মদিন"
+                  : wishMember
+                    ? `${bnNum(wishMember.daysUntil)} দিন পর জন্মদিন`
+                    : ""}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-gradient-to-br from-pink-500/10 to-purple-500/10 border border-pink-400/30 p-4 min-h-[120px] relative">
+            {wishLoading ? (
+              <div className="flex flex-col items-center justify-center py-6 gap-2">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
+                  <Sparkles className="h-6 w-6 text-pink-400" />
+                </motion.div>
+                <p className="text-xs text-muted-foreground">AI ইউনিক বার্তা তৈরি করছে...</p>
+              </div>
+            ) : wishMessage ? (
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap font-medium">
+                {wishMessage}
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground text-center py-6">কোনো বার্তা নেই</p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => wishMember && fetchWish(wishMember)}
+              disabled={wishLoading}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-card hover:bg-muted border border-border/50 text-xs font-semibold transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${wishLoading ? "animate-spin" : ""}`} />
+              নতুন বার্তা
+            </button>
+            <button
+              onClick={copyWish}
+              disabled={!wishMessage || wishLoading}
+              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold transition-colors disabled:opacity-50"
+            >
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? "কপি হয়েছে" : "কপি করুন"}
+            </button>
+          </div>
+
+          <p className="text-[10px] text-muted-foreground text-center">
+            💡 প্রতিবার ক্লিকে নতুন ইউনিক বার্তা তৈরি হবে
+          </p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
