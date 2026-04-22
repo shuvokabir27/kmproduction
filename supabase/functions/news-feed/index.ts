@@ -184,6 +184,7 @@ async function translateHeadlines(titles: string[]): Promise<Record<string, stri
     console.warn("LOVABLE_API_KEY missing — skipping translation");
     return {};
   }
+  console.log(`[translate] starting for ${titles.length} headlines`);
 
   // De-duplicate
   const unique = Array.from(new Set(titles));
