@@ -222,9 +222,39 @@ const AdminDashboard = () => {
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">এডমিন ড্যাশবোর্ড</h1>
-            <p className="text-muted-foreground text-xs md:text-sm mt-1">সকল কার্যক্রমের সারসংক্ষেপ</p>
+          <div className="min-w-0 relative">
+            {/* Glow backdrop */}
+            <div className="absolute -inset-3 -z-10 rounded-2xl bg-gradient-to-r from-amber-500/10 via-fuchsia-500/10 to-cyan-500/10 blur-2xl opacity-70" />
+            <div className="flex items-center gap-2 md:gap-2.5">
+              {/* Crown badge */}
+              <motion.div
+                initial={{ scale: 0, rotate: -45 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.1 }}
+                className="relative shrink-0"
+              >
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-amber-400 to-fuchsia-500 blur-md opacity-70 animate-pulse" />
+                <div className="relative w-9 h-9 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-fuchsia-600 flex items-center justify-center shadow-lg ring-1 ring-white/30">
+                  <Crown className="w-5 h-5 md:w-6 md:h-6 text-white drop-shadow" strokeWidth={2.5} />
+                </div>
+              </motion.div>
+              <div className="min-w-0">
+                <h1 className="relative text-2xl md:text-3xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-amber-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-[shine_4s_linear_infinite]">
+                  এডমিন ড্যাশবোর্ড
+                  <motion.span
+                    animate={{ rotate: [0, 15, -10, 0], scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="inline-block ml-1.5 align-middle"
+                  >
+                    <Sparkles className="inline w-4 h-4 md:w-5 md:h-5 text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]" />
+                  </motion.span>
+                </h1>
+                <p className="text-muted-foreground text-[11px] md:text-sm mt-0.5 flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                  সকল কার্যক্রমের সারসংক্ষেপ
+                </p>
+              </div>
+            </div>
           </div>
           <div className="shrink-0 mt-1">
             <OnlineUsersBar variant="inline" />
