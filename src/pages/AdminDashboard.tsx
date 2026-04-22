@@ -227,26 +227,55 @@ const AdminDashboard = () => {
           <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-rose-500 rounded-full mb-1 hidden md:block" />
         </motion.div>
 
-        {/* Stats Grid */}
-        <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
-          {stats.map((stat) => (
-            <motion.div key={stat.label} variants={item}>
+        {/* Stats Grid - Compact Glossy */}
+        <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-3" variants={container} initial="hidden" animate="show">
+          {stats.map((stat, idx) => (
+            <motion.div
+              key={stat.label}
+              variants={item}
+              whileHover={{ y: -3, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 320, damping: 20 }}
+            >
               <div
-                className="premium-card rounded-2xl p-4 md:p-5 cursor-pointer group relative overflow-hidden"
                 onClick={stat.onClick}
+                className={`relative cursor-pointer rounded-2xl p-3 md:p-3.5 overflow-hidden group
+                  bg-gradient-to-br ${stat.gradient}
+                  border border-white/10 backdrop-blur-xl
+                  shadow-[0_4px_20px_-4px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.08)]
+                  hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.15)]
+                  transition-shadow duration-300`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-60`} />
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`h-10 w-10 rounded-xl ${stat.iconBg} flex items-center justify-center`}>
-                      <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
-                    </div>
-                    <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Glossy top highlight */}
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+                {/* Diagonal shine */}
+                <div className="absolute -inset-x-4 -top-4 h-16 bg-gradient-to-r from-transparent via-white/15 to-transparent rotate-12 blur-sm pointer-events-none opacity-60" />
+                {/* Shimmer sweep on hover */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
+                {/* Corner glow */}
+                <div className="absolute -bottom-6 -right-6 w-20 h-20 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+
+                <div className="relative z-10 flex items-center gap-2.5">
+                  <motion.div
+                    whileHover={{ rotate: [0, -8, 8, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                    className={`h-9 w-9 md:h-10 md:w-10 shrink-0 rounded-xl ${stat.iconBg} flex items-center justify-center
+                      shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_-2px_rgba(0,0,0,0.3)]
+                      border border-white/10`}
+                  >
+                    <stat.icon className={`h-4 w-4 md:h-[18px] md:w-[18px] ${stat.iconColor} drop-shadow`} />
+                  </motion.div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[9px] md:text-[10px] text-muted-foreground uppercase tracking-wider truncate font-medium">{stat.label}</p>
+                    <motion.p
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + idx * 0.05, type: "spring", stiffness: 200 }}
+                      className="text-base md:text-lg font-bold text-foreground truncate leading-tight"
+                    >
+                      {stat.value}
+                    </motion.p>
                   </div>
-                  <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-                  <p className="text-xl md:text-2xl font-bold text-foreground mt-1 truncate">{stat.value}</p>
                 </div>
               </div>
             </motion.div>
