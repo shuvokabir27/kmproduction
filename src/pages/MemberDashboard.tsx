@@ -264,26 +264,6 @@ const MemberDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Update Notice */}
-        <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-xl border border-blue-500/30 bg-gradient-to-r from-blue-500/15 via-blue-500/5 to-purple-500/10 p-3 md:p-4"
-        >
-          <div className="absolute inset-y-0 left-0 w-1 bg-blue-500" />
-          <div className="flex items-start gap-3 pl-2">
-            <div className="h-8 w-8 shrink-0 rounded-lg bg-blue-500/15 flex items-center justify-center">
-              <span className="text-base">📢</span>
-            </div>
-            <p className="text-xs md:text-sm text-foreground/90 leading-relaxed min-w-0">
-              এখানে <span className="font-semibold text-blue-400">কুয়াকাটা মাল্টিমিডিয়া</span>-র সকল কাজের আপডেট
-              {freelanceClientNames.length > 0 && (
-                <> ও <span className="font-semibold text-orange-400">{freelanceClientNames.join(", ")}</span>-এর সকল কাজের আপডেট</>
-              )} পাবেন।
-            </p>
-          </div>
-        </motion.div>
-
         {/* Monthly Income Charts */}
         {profile?.id && (
           <MonthlyIncomeCharts
