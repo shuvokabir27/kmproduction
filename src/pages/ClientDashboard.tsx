@@ -27,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { LiveClockBar } from "@/components/LiveClockBar";
 
 const statusMap: Record<string, { label: string; color: string; bg: string }> = {
   upcoming: { label: "আসন্ন", color: "text-sky-400", bg: "bg-sky-500/15 border-sky-500/20" },
@@ -227,6 +228,7 @@ export default function ClientDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <LiveClockBar />
       {/* Hero Header */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-violet-500/5" />
