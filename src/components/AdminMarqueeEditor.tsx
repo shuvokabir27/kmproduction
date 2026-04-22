@@ -93,6 +93,44 @@ export function AdminMarqueeEditor() {
     [html]
   );
 
+  const captureSelection = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !editorRef.current) return null;
+
+    const range = sel.getRangeAt(0);
+    if (!editorRef.current.contains(range.commonAncestorContainer)) return null;
+
+    savedRangeRef.current = range.cloneRange();
+    return savedRangeRef.current;
+  };
+
+  const getActiveRange = () => {
+    const liveRange = captureSelection();
+    if (liveRange && !liveRange.collapsed) return liveRange.cloneRange();
+    if (savedRangeRef.current && !savedRangeRef.current.collapsed) {
+      return savedRangeRef.current.cloneRange();
+    }
+    return null;
+  };
+
+  const restoreSelection = (range: Range) => {
+    const sel = window.getSelection();
+    if (!sel) return;
+    sel.removeAllRanges();
+    sel.addRange(range);
+  };
+
+  const toStyleString = (styleAttr?: Partial<CSSStyleDeclaration>) => {
+    if (!styleAttr) return "";
+    return Object.entries(styleAttr)
+      .filter(([, v]) => v !== undefined && v !== "")
+      .map(
+        ([k, v]) =>
+          `${k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase())}: ${String(v)}`
+      )
+      .join("; ");
+  };
+
   // Track selection inside the editor so toolbar clicks can use it
   // even after focus moves to the button.
   useEffect(() => {
@@ -117,7 +155,7 @@ export function AdminMarqueeEditor() {
     styleAttr?: Partial<CSSStyleDeclaration>,
     className?: string
   ) => {
-    const range = savedRangeRef.current;
+    const range = getActiveRange();
     if (!range) {
       toast.info("আগে কিছু টেক্সট সিলেক্ট করুন");
       return;
@@ -132,19 +170,10 @@ export function AdminMarqueeEditor() {
 
     const span = document.createElement("span");
     if (className) span.className = className;
-    if (styleAttr) {
-      Object.entries(styleAttr).forEach(([k, v]) => {
-        if (v !== undefined && v !== "") {
-          span.style.setProperty(
-            // camelCase -> kebab-case for setProperty
-            k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()),
-            String(v),
-            "important"
-          );
-        }
-      });
-    }
+    const styleString = toStyleString(styleAttr);
+    if (styleString) span.setAttribute("style", styleString);
     try {
+      restoreSelection(range);
       span.appendChild(range.extractContents());
       range.insertNode(span);
 
@@ -257,7 +286,6 @@ export function AdminMarqueeEditor() {
           <Type className="h-3.5 w-3.5 text-muted-foreground" />
           <Input
             type="color"
-            onMouseDown={(e) => e.preventDefault()}
             value={color}
             onChange={(e) => setColor(e.target.value)}
             className="h-7 w-9 p-0.5 cursor-pointer"
@@ -282,7 +310,6 @@ export function AdminMarqueeEditor() {
           <span className="text-[11px] text-muted-foreground">BG</span>
           <Input
             type="color"
-            onMouseDown={(e) => e.preventDefault()}
             value={bg}
             onChange={(e) => setBg(e.target.value)}
             className="h-7 w-9 p-0.5 cursor-pointer"
@@ -419,6 +446,9 @@ export function AdminMarqueeEditor() {
         contentEditable
         suppressContentEditableWarning
         onInput={syncFromEditor}
+        onMouseUp={captureSelection}
+        onKeyUp={captureSelection}
+        onTouchEnd={captureSelection}
         className="min-h-[80px] max-h-[200px] overflow-auto p-3 rounded-lg bg-background border border-border/60 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/40"
         data-placeholder="এখানে টেক্সট লিখুন, তারপর শব্দ সিলেক্ট করে উপরের রঙ/ইফেক্ট অ্যাপ্লাই করুন..."
       />
