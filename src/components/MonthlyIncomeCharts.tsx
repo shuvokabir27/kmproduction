@@ -35,7 +35,53 @@ function lastNMonths(n: number) {
   return arr;
 }
 
-export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick }: Props) {
+export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick, kmOutstanding, clientOutstanding }: Props) {
+  const { data: lastPayments } = useQuery({
+    queryKey: ["member-last-payments", profileId, fullName, fullNameEn],
+    enabled: !!profileId,
+    queryFn: async () => {
+      const { data: km } = await supabase
+        .from("payments")
+        .select("amount, payment_date")
+        .eq("member_id", profileId)
+        .order("payment_date", { ascending: false })
+        .limit(1);
+
+      let lastClient: { amount: number; date: string } | null = null;
+      if (fullName) {
+        const names = [fullName, fullNameEn].filter(Boolean) as string[];
+        const { data: cpa } = await (supabase as any)
+          .from("client_project_artists")
+          .select("paid_amount, updated_at")
+          .in("artist_name", names)
+          .gt("paid_amount", 0)
+          .order("updated_at", { ascending: false })
+          .limit(1);
+        if (cpa && cpa[0]) {
+          lastClient = { amount: Number(cpa[0].paid_amount || 0), date: cpa[0].updated_at };
+        }
+      }
+      const { data: fa } = await (supabase as any)
+        .from("freelance_assignments")
+        .select("paid_amount, updated_at")
+        .eq("member_id", profileId)
+        .gt("paid_amount", 0)
+        .order("updated_at", { ascending: false })
+        .limit(1);
+      if (fa && fa[0]) {
+        const candidate = { amount: Number(fa[0].paid_amount || 0), date: fa[0].updated_at as string };
+        if (!lastClient || new Date(candidate.date) > new Date(lastClient.date)) {
+          lastClient = candidate;
+        }
+      }
+
+      return {
+        km: km && km[0] ? { amount: Number(km[0].amount || 0), date: km[0].payment_date as string } : null,
+        client: lastClient,
+      };
+    },
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ["monthly-income", profileId, fullName, fullNameEn],
     enabled: !!profileId,
