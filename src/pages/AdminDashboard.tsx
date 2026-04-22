@@ -283,6 +283,9 @@ const AdminDashboard = () => {
           ))}
         </motion.div>
 
+        {/* Monthly Expense Chart */}
+        <MonthlyExpenseChart />
+
         {/* Balance button */}
         <Button
           variant="outline"
