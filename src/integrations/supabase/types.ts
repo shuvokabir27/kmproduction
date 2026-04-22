@@ -110,6 +110,30 @@ export type Database = {
           },
         ]
       }
+      bkash_balances: {
+        Row: {
+          account_label: string
+          account_name: string
+          balance: number
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          account_label: string
+          account_name: string
+          balance?: number
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          account_label?: string
+          account_name?: string
+          balance?: number
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bonuses: {
         Row: {
           amount: number
