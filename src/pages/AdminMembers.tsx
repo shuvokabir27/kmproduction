@@ -624,10 +624,6 @@ const AdminMembers = () => {
                         <Textarea value={form.short_bio_en} onChange={(e) => setField("short_bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                       </div>
                     </div>
-                    <div>
-                      <Label className="text-foreground text-xs">জন্ম তারিখ</Label>
-                      <Input type="date" value={form.date_of_birth} onChange={(e) => setField("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
-                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <Label className="text-foreground text-xs">শিক্ষা</Label>
