@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import {
   Megaphone,
   Save,
@@ -15,6 +16,7 @@ import {
   Sparkles,
   Eraser,
   Type,
+  Gauge,
 } from "lucide-react";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
@@ -58,6 +60,7 @@ export function AdminMarqueeEditor() {
   const [color, setColor] = useState("#22d3ee");
   const [bg, setBg] = useState("#7c3aed");
   const [loaded, setLoaded] = useState(false);
+  const [speed, setSpeed] = useState<number>(35); // seconds per loop (lower = faster)
 
   const { data } = useQuery({
     queryKey: ["marquee-settings"],
@@ -76,6 +79,9 @@ export function AdminMarqueeEditor() {
   useEffect(() => {
     if (!data || loaded) return;
     setEnabled(!!data.is_enabled);
+    if (typeof data.speed_seconds === "number" && data.speed_seconds > 0) {
+      setSpeed(data.speed_seconds);
+    }
     const initial = DOMPurify.sanitize(data.text || "", SANITIZE_OPTS) as unknown as string;
     setHtml(initial);
     if (editorRef.current) editorRef.current.innerHTML = initial;
@@ -192,7 +198,7 @@ export function AdminMarqueeEditor() {
         SANITIZE_OPTS
       ) as unknown as string).trim();
 
-      const payload = { text: cleanHtml, is_enabled: enabled };
+      const payload = { text: cleanHtml, is_enabled: enabled, speed_seconds: speed };
       let error;
       if (data?.id) {
         ({ error } = await (supabase as any)
@@ -374,6 +380,39 @@ export function AdminMarqueeEditor() {
         </Button>
       </div>
 
+      {/* Speed control */}
+      <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 border border-border/40">
+        <Gauge className="h-4 w-4 text-cyan-300 shrink-0" />
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-1">
+            <Label className="text-xs text-muted-foreground">
+              স্ক্রলিং স্পিড
+            </Label>
+            <span className="text-[11px] text-muted-foreground">
+              {speed}s / লুপ {speed <= 15 ? "(দ্রুত)" : speed >= 60 ? "(ধীর)" : "(মাঝারি)"}
+            </span>
+          </div>
+          <Slider
+            min={5}
+            max={120}
+            step={1}
+            value={[speed]}
+            onValueChange={(v) => setSpeed(v[0] ?? 35)}
+          />
+        </div>
+        <Input
+          type="number"
+          min={5}
+          max={120}
+          value={speed}
+          onChange={(e) => {
+            const n = parseInt(e.target.value, 10);
+            if (!isNaN(n)) setSpeed(Math.min(120, Math.max(5, n)));
+          }}
+          className="h-8 w-16 text-xs"
+        />
+      </div>
+
       {/* Editor */}
       <div
         ref={editorRef}
@@ -408,7 +447,10 @@ export function AdminMarqueeEditor() {
             }}
           />
           <div className="relative flex py-1.5">
-            <div className="flex shrink-0 animate-marquee-x">
+            <div
+              className="flex shrink-0 animate-marquee-x"
+              style={{ animationDuration: `${speed}s` }}
+            >
               {[0, 1, 2, 3].map((i) => (
                 <span
                   key={i}

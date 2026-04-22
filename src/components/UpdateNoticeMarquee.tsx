@@ -18,7 +18,7 @@ export function UpdateNoticeMarquee() {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("marquee_settings")
-        .select("text,is_enabled,updated_at")
+        .select("text,is_enabled,speed_seconds,updated_at")
         .order("updated_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -43,6 +43,10 @@ export function UpdateNoticeMarquee() {
 
   const rawHtml = (data?.text || "").trim();
   const enabled = data?.is_enabled !== false;
+  const speed =
+    typeof data?.speed_seconds === "number" && data.speed_seconds > 0
+      ? data.speed_seconds
+      : 35;
 
   const safeHtml = useMemo(
     () =>
@@ -112,13 +116,20 @@ export function UpdateNoticeMarquee() {
 
       {/* Scrolling track */}
       <div className="relative flex py-1.5">
-        <div className="flex shrink-0 animate-marquee-x">
+        <div
+          className="flex shrink-0 animate-marquee-x"
+          style={{ animationDuration: `${speed}s` }}
+        >
           {Item}
           {Item}
           {Item}
           {Item}
         </div>
-        <div className="flex shrink-0 animate-marquee-x" aria-hidden>
+        <div
+          className="flex shrink-0 animate-marquee-x"
+          style={{ animationDuration: `${speed}s` }}
+          aria-hidden
+        >
           {Item}
           {Item}
           {Item}
