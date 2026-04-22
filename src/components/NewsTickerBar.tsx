@@ -145,7 +145,7 @@ export function NewsTickerBar() {
               <Newspaper className="h-3 w-3 text-white drop-shadow" strokeWidth={2.6} />
             </div>
             <span className="text-[9px] md:text-[10px] font-extrabold text-white tracking-wider drop-shadow leading-none">
-              লাইভ
+              ব্রেকিং নিউজ
             </span>
           </div>
 
