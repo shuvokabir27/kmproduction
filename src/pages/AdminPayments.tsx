@@ -248,19 +248,129 @@ const AdminPayments = () => {
     });
   };
 
-  // Quick WhatsApp button on history row - just opens the receipt (which has WhatsApp inside)
+  // Quick WhatsApp send: render receipt off-screen → upload PNG to storage → open wa.me with link
+  const [whatsappSendingId, setWhatsappSendingId] = useState<string | null>(null);
   const sendWhatsAppFromRow = async (payment: any) => {
-    const { data: profile } = await (supabase as any)
-      .from("profiles")
-      .select("whatsapp_no")
-      .eq("id", payment.member_id)
-      .maybeSingle();
-    const wno = (profile as any)?.whatsapp_no || "";
-    if (!wno) {
-      toast.error("WhatsApp নাম্বার নাই, WhatsApp নাম্বার যুক্ত করো।");
-      return;
+    setWhatsappSendingId(payment.id);
+    try {
+      // 1. Fetch profile + balance data
+      const { data: profile } = await (supabase as any)
+        .from("profiles")
+        .select("whatsapp_no, full_name, member_id")
+        .eq("id", payment.member_id)
+        .maybeSingle();
+      const wno = (profile as any)?.whatsapp_no || "";
+      if (!wno) {
+        toast.error("WhatsApp নাম্বার নাই, WhatsApp নাম্বার যুক্ত করো।");
+        return;
+      }
+
+      // 2. Compute balance (same logic as showReceiptForPayment)
+      const [{ data: attendance }, { data: allPayments }, bonusesRes, salaryRes, freelanceRes, profile2Res] = await Promise.all([
+        supabase.from("attendance").select("daily_rate").eq("member_id", payment.member_id).eq("is_present", true),
+        supabase.from("payments").select("amount").eq("member_id", payment.member_id),
+        (supabase as any).from("bonuses").select("amount").eq("member_id", payment.member_id),
+        (supabase as any).from("salary_credits").select("amount, credit_month").eq("member_id", payment.member_id),
+        (supabase as any).from("freelance_assignments").select("rate").eq("member_id", payment.member_id),
+        (supabase as any).from("profiles").select("previous_balance, salary_type, salary_type_changed_at").eq("id", payment.member_id).maybeSingle(),
+      ]);
+      const totalEarned = attendance?.reduce((s, a) => s + Number(a.daily_rate || 0), 0) ?? 0;
+      const totalPaid = allPayments?.reduce((s, p) => s + Number(p.amount || 0), 0) ?? 0;
+      const totalBonuses = (bonusesRes.data as any[])?.reduce((s, b) => s + Number(b.amount || 0), 0) ?? 0;
+      const totalFreelance = (freelanceRes.data as any[])?.reduce((s, f) => s + Number(f.rate || 0), 0) ?? 0;
+      const previousBalance = Number((profile2Res.data as any)?.previous_balance || 0);
+      let totalSalaryCredits = 0;
+      const salaryCredits = salaryRes.data as any[];
+      if (salaryCredits) {
+        let excludeFrom: string | null = null;
+        const p2 = profile2Res.data as any;
+        if (p2?.salary_type === "daily" && p2?.salary_type_changed_at) {
+          const d = new Date(p2.salary_type_changed_at);
+          excludeFrom = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+        }
+        totalSalaryCredits = salaryCredits.reduce((s: number, x: any) => {
+          if (excludeFrom && x.credit_month >= excludeFrom) return s;
+          return s + Number(x.amount || 0);
+        }, 0);
+      }
+      const balance = totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid;
+
+      // 3. Render receipt off-screen and capture PNG
+      toast.info("রিসিট তৈরি হচ্ছে...");
+      const fullReceipt = {
+        memberName: payment.profiles?.full_name || (profile as any)?.full_name || "",
+        memberId: payment.profiles?.member_id || (profile as any)?.member_id || 0,
+        amount: Number(payment.amount),
+        method: payment.payment_method,
+        transactionId: payment.transaction_id || null,
+        notes: payment.notes || null,
+        date: payment.payment_date,
+        totalEarned, totalFreelance, totalPaid, balance,
+        whatsappNo: wno,
+      };
+
+      // Render via offscreen container using ReactDOM
+      const { createRoot } = await import("react-dom/client");
+      const { default: Receipt } = await import("@/components/PaymentReceipt");
+      const holder = document.createElement("div");
+      holder.style.cssText = "position:fixed;top:-99999px;left:0;z-index:-1;";
+      document.body.appendChild(holder);
+      const root = createRoot(holder);
+      await new Promise<void>((resolve) => {
+        // Render in a wrapper that exposes the inner receipt
+        root.render(
+          <div>
+            <Receipt receiptData={fullReceipt} onClose={() => {}} />
+          </div>
+        );
+        setTimeout(resolve, 350);
+      });
+      // Capture the inner receipt card
+      const target = holder.querySelector('[class*="bg-[#fafaf7]"]') as HTMLElement | null;
+      if (!target) throw new Error("রিসিট রেন্ডার ব্যর্থ");
+      const { toPng } = await import("html-to-image");
+      const dataUrl = await toPng(target, { quality: 0.95, backgroundColor: "#fafaf7", pixelRatio: 2 });
+      root.unmount();
+      document.body.removeChild(holder);
+
+      // 4. Upload to storage
+      const blob = await (await fetch(dataUrl)).blob();
+      const fileName = `receipt-${payment.id}-${Date.now()}.png`;
+      const { error: upErr } = await supabase.storage.from("receipts").upload(fileName, blob, {
+        contentType: "image/png",
+        upsert: true,
+      });
+      if (upErr) throw upErr;
+      const { data: urlData } = supabase.storage.from("receipts").getPublicUrl(fileName);
+      const publicUrl = urlData.publicUrl;
+
+      // 5. Format phone & build message
+      let formatted = wno.replace(/[^\d+]/g, "").replace(/^\+/, "");
+      if (formatted.startsWith("0")) formatted = "880" + formatted.slice(1);
+      else if (!formatted.startsWith("880")) formatted = "880" + formatted;
+
+      const memberName = (profile as any)?.full_name || payment.profiles?.full_name || "";
+      const paidAmt = Number(payment.amount).toLocaleString("bn-BD");
+      const dueText = balance > 0
+        ? `এখনো ৳${balance.toLocaleString("bn-BD")} বকেয়া রয়েছে।`
+        : balance < 0
+        ? `আপনার অগ্রিম জমা ৳${Math.abs(balance).toLocaleString("bn-BD")} টাকা।`
+        : `সকল হিসাব সমন্বয় হয়েছে, কোনো বকেয়া নেই।`;
+
+      const msg =
+        `আসসালামু আলাইকুম ${memberName},\n\n` +
+        `আপনার ৳${paidAmt} টাকা পেমেন্ট সফলভাবে গ্রহণ করা হয়েছে। ${dueText}\n\n` +
+        `📄 রিসিট দেখুন / ডাউনলোড করুন:\n${publicUrl}\n\n` +
+        `— KM Production`;
+
+      window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, "_blank");
+      toast.success("WhatsApp ওপেন হয়েছে — রিসিট লিংক যুক্ত হয়েছে");
+    } catch (err: any) {
+      console.error("WhatsApp send failed", err);
+      toast.error(err.message || "WhatsApp পাঠাতে সমস্যা হয়েছে");
+    } finally {
+      setWhatsappSendingId(null);
     }
-    await showReceiptForPayment(payment);
   };
 
   return (
@@ -559,8 +669,12 @@ const AdminPayments = () => {
                           <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-primary/30 hover:bg-primary/10" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
                             <Download className="h-4 w-4 text-primary" />
                           </Button>
-                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-green-500/40 hover:bg-green-500/10" onClick={() => sendWhatsAppFromRow(p)} title="WhatsApp-এ পাঠান">
-                            <MessageCircle className="h-4 w-4 text-green-500" />
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-green-500/40 hover:bg-green-500/10" onClick={() => sendWhatsAppFromRow(p)} disabled={whatsappSendingId === p.id} title="WhatsApp-এ রিসিট লিংক পাঠান">
+                            {whatsappSendingId === p.id ? (
+                              <span className="h-3 w-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <MessageCircle className="h-4 w-4 text-green-500" />
+                            )}
                           </Button>
                         </div>
                       </td>
