@@ -176,12 +176,12 @@ export function LiveClockBar() {
           >
             <Clock className="h-3.5 w-3.5 md:h-4 md:w-4 text-indigo-200" />
           </motion.div>
-          <div className="font-mono font-bold text-sm md:text-base bg-gradient-to-r from-indigo-200 via-violet-200 to-fuchsia-200 bg-clip-text text-transparent tabular-nums tracking-wider drop-shadow flex items-baseline gap-0.5">
+          <div className="font-mono font-bold text-sm md:text-base bg-gradient-to-r from-indigo-200 via-violet-200 to-fuchsia-200 bg-clip-text text-transparent tabular-nums tracking-wide drop-shadow flex items-center gap-0.5">
             <span>{toBnDigits(hh)}</span>
             <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>:</motion.span>
             <span>{toBnDigits(mm)}</span>
-            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-[10px] md:text-xs">:</motion.span>
-            <span className="text-[10px] md:text-xs opacity-80">{toBnDigits(ss)}</span>
+            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>:</motion.span>
+            <span className="text-emerald-300 [-webkit-text-fill-color:initial]">{toBnDigits(ss)}</span>
           </div>
           <span className="text-[9px] md:text-[10px] font-bold text-violet-200 px-1.5 py-0.5 rounded-md bg-gradient-to-br from-violet-500/25 to-fuchsia-500/20 border border-violet-500/30 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)]">
             {ampm}
