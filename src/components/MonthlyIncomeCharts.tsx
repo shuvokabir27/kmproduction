@@ -215,8 +215,19 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
               </div>
               <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">KM Production</p>
             </div>
-            <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{kmTotal.toLocaleString("bn-BD")}</p>
-            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয় · বিস্তারিত →</p>
+            {(() => {
+              const due = Math.max(0, Math.round(kmOutstanding ?? kmTotal));
+              const lp = lastPayments?.km;
+              return (
+                <>
+                  <p className={`relative text-lg md:text-2xl font-bold ${due > 0 ? "text-foreground" : "text-emerald-400"}`}>৳{due.toLocaleString("bn-BD")}</p>
+                  <p className="relative text-[9px] text-muted-foreground mt-0.5">
+                    {due > 0 ? "বর্তমান বকেয়া" : "সব পেমেন্ট সম্পন্ন ✓"}
+                    {lp ? ` · শেষ পেমেন্ট ৳${Math.round(lp.amount).toLocaleString("bn-BD")}` : ""} · বিস্তারিত →
+                  </p>
+                </>
+              );
+            })()}
           </button>
         </div>
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
