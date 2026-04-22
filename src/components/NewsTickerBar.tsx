@@ -136,34 +136,35 @@ export function NewsTickerBar() {
             </span>
           </div>
 
-          {/* Headline box — full headline with wrapping */}
-          <div className="relative flex-1 min-w-0 min-h-[52px] md:min-h-[56px]">
+          {/* Headline box — grows with content, no overflow */}
+          <div className="relative flex-1 min-w-0 grid">
             <AnimatePresence mode="wait">
               <motion.a
                 key={idx}
                 href={current.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 12, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -12, scale: 0.98 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="absolute inset-0 flex flex-col gap-1 px-2.5 md:px-3 py-1.5 rounded-lg
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="col-start-1 row-start-1 flex flex-col gap-1 px-2.5 md:px-3 py-1.5 rounded-lg
                   bg-gradient-to-br from-card/90 to-card/60 border border-border/50
                   hover:border-primary/40 transition-colors group
-                  shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+                  shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]
+                  min-w-0 w-full"
               >
                 {/* Top row: source chip + counter */}
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 min-w-0">
                   <span
-                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] md:text-[10px] font-extrabold uppercase tracking-wider
+                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] md:text-[10px] font-extrabold uppercase tracking-wider shrink-0 max-w-[55%]
                       ${current.bangladeshi
                         ? "bg-gradient-to-r from-emerald-500/25 to-green-500/20 text-emerald-200 border border-emerald-400/40"
                         : "bg-gradient-to-r from-cyan-500/25 to-blue-500/20 text-cyan-200 border border-cyan-400/40"
                       }`}
                   >
-                    <FlagIcon className="h-2.5 w-2.5" />
-                    {current.source}
+                    <FlagIcon className="h-2.5 w-2.5 shrink-0" />
+                    <span className="truncate">{current.source}</span>
                   </span>
                   <span className="text-[9px] text-muted-foreground/60 ml-auto font-mono tabular-nums shrink-0">
                     {idx + 1}/{items.length}
@@ -171,8 +172,11 @@ export function NewsTickerBar() {
                   <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </div>
 
-                {/* Full headline — wraps to multiple lines */}
-                <p className="text-[12px] md:text-[13px] leading-snug font-semibold text-foreground/95 group-hover:text-primary transition-colors break-words">
+                {/* Full headline — wraps freely */}
+                <p
+                  className="text-[12px] md:text-[13px] leading-snug font-semibold text-foreground/95 group-hover:text-primary transition-colors min-w-0"
+                  style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}
+                >
                   {current.title}
                 </p>
               </motion.a>
