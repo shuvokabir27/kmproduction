@@ -840,6 +840,45 @@ export type Database = {
         }
         Relationships: []
       }
+      member_achievements: {
+        Row: {
+          badge_color: string
+          badge_icon: string
+          badge_label: string
+          badge_type: string
+          created_at: string
+          description: string | null
+          earned_at: string
+          id: string
+          member_id: string
+          metadata: Json | null
+        }
+        Insert: {
+          badge_color?: string
+          badge_icon?: string
+          badge_label: string
+          badge_type: string
+          created_at?: string
+          description?: string | null
+          earned_at?: string
+          id?: string
+          member_id: string
+          metadata?: Json | null
+        }
+        Update: {
+          badge_color?: string
+          badge_icon?: string
+          badge_label?: string
+          badge_type?: string
+          created_at?: string
+          description?: string | null
+          earned_at?: string
+          id?: string
+          member_id?: string
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -2453,6 +2492,11 @@ export type Database = {
           show_on_public: boolean
         }[]
       }
+      grant_all_member_achievements: { Args: never; Returns: undefined }
+      grant_member_achievements: {
+        Args: { _member_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2494,6 +2538,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      send_birthday_notifications: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "member" | "client" | "product_admin"
