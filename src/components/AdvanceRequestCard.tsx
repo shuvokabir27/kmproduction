@@ -50,6 +50,28 @@ export function AdvanceRequestCard() {
   const pending = (requests ?? []).filter((r) => r.status === "pending");
   const lastRejected = (requests ?? []).find((r) => r.status === "rejected" && r.admin_note);
 
+  // Limits: max 3 per day, 1 hour cooldown after rejection
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const todayCount = (requests ?? []).filter((r) => new Date(r.created_at) >= startOfToday).length;
+  const dailyLimitReached = todayCount >= 3;
+
+  const lastRejectedAny = (requests ?? []).find((r) => r.status === "rejected" && r.reviewed_at);
+  const cooldownMs = lastRejectedAny?.reviewed_at
+    ? 60 * 60 * 1000 - (Date.now() - new Date(lastRejectedAny.reviewed_at).getTime())
+    : 0;
+  const cooldownActive = cooldownMs > 0;
+  const cooldownMinutes = Math.ceil(cooldownMs / 60000);
+
+  const blocked = pending.length > 0 || dailyLimitReached || cooldownActive;
+  const blockReason = pending.length > 0
+    ? "ইতিমধ্যে একটি রিকোয়েস্ট অপেক্ষমান"
+    : dailyLimitReached
+    ? "আজকের সীমা শেষ (৩/৩)"
+    : cooldownActive
+    ? `${bnNum(cooldownMinutes)} মিনিট পর আবার চেষ্টা করুন`
+    : "";
+
   const createMut = useMutation({
     mutationFn: async () => {
       const amt = Number(amount);
@@ -157,13 +179,32 @@ export function AdvanceRequestCard() {
             </div>
           )}
 
+          {/* Cooldown / daily limit notice */}
+          {(cooldownActive || dailyLimitReached) && pending.length === 0 && (
+            <div className="mb-3 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-amber-400 shrink-0" />
+              <div className="text-[11px] text-amber-200/90 flex-1">
+                {dailyLimitReached
+                  ? `আজ আপনি ${bnNum(todayCount)}টি রিকোয়েস্ট করেছেন। একদিনে সর্বোচ্চ ৩টি রিকোয়েস্ট করা যায়।`
+                  : `বাতিল হওয়ার পর পুনরায় রিকোয়েস্ট করতে আরো ${bnNum(cooldownMinutes)} মিনিট অপেক্ষা করুন।`}
+              </div>
+            </div>
+          )}
+
+          {/* Daily counter */}
+          {!dailyLimitReached && !cooldownActive && pending.length === 0 && (
+            <div className="mb-2 text-[10px] text-muted-foreground text-right">
+              আজ: {bnNum(todayCount)}/৩ রিকোয়েস্ট
+            </div>
+          )}
+
           {/* CTA Button — animated, attention-grabbing */}
           <motion.button
             onClick={() => setCreateOpen(true)}
-            disabled={pending.length > 0}
-            whileHover={{ scale: pending.length > 0 ? 1 : 1.02 }}
+            disabled={blocked}
+            whileHover={{ scale: blocked ? 1 : 1.02 }}
             whileTap={{ scale: 0.98 }}
-            animate={pending.length === 0 ? {
+            animate={!blocked ? {
               boxShadow: [
                 "0 0 0 0 rgba(16,185,129,0.6)",
                 "0 0 0 10px rgba(16,185,129,0)",
@@ -172,12 +213,12 @@ export function AdvanceRequestCard() {
             } : {}}
             transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             className={`relative w-full overflow-hidden inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-extrabold text-sm transition-colors ${
-              pending.length > 0
+              blocked
                 ? "bg-muted/40 text-muted-foreground cursor-not-allowed"
                 : "bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white"
             }`}
           >
-            {pending.length === 0 && (
+            {!blocked && (
               <motion.span
                 aria-hidden
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
@@ -188,9 +229,9 @@ export function AdvanceRequestCard() {
             )}
             <Plus className="relative z-10 h-4 w-4" />
             <span className="relative z-10">
-              {pending.length > 0 ? "ইতিমধ্যে একটি রিকোয়েস্ট অপেক্ষমান" : "অ্যাডভান্স রিকোয়েস্ট করুন"}
+              {blocked ? blockReason : "অ্যাডভান্স রিকোয়েস্ট করুন"}
             </span>
-            {pending.length === 0 && <Sparkles className="relative z-10 h-3.5 w-3.5 animate-pulse" />}
+            {!blocked && <Sparkles className="relative z-10 h-3.5 w-3.5 animate-pulse" />}
           </motion.button>
         </div>
       </motion.div>
