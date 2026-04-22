@@ -18,7 +18,7 @@ export function UpdateNoticeMarquee() {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("marquee_settings")
-        .select("text,is_enabled,updated_at")
+        .select("text,is_enabled,speed_seconds,updated_at")
         .order("updated_at", { ascending: false })
         .limit(1)
         .maybeSingle();
