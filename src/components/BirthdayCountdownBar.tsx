@@ -158,26 +158,27 @@ export function BirthdayCountdownBar() {
     setTodayIdx(0);
   }, [todayMembers.length]);
 
-  // Rotate every 6s
+  // Rotate every 4s through upcoming-only list
   useEffect(() => {
-    if (upcoming.length <= 1) return;
-    const id = setInterval(() => setIdx((i) => (i + 1) % upcoming.length), 6000);
+    if (upcomingOnly.length <= 1) return;
+    const id = setInterval(() => setIdx((i) => (i + 1) % upcomingOnly.length), 4000);
     return () => clearInterval(id);
-  }, [upcoming.length]);
+  }, [upcomingOnly.length]);
 
   if (upcoming.length === 0) return null;
 
-  const current = upcoming[idx % upcoming.length];
-  const isToday = current.isToday;
-  const showPlanBanner = current.daysUntil > 0 && current.daysUntil <= 3;
+  const current = upcomingOnly.length > 0 ? upcomingOnly[idx % upcomingOnly.length] : null;
+  const showPlanBanner = !!current && current.daysUntil > 0 && current.daysUntil <= 3;
 
-  // Live countdown to next birthday
-  const diffMs = current.nextBirthday.getTime() - now.getTime();
+  // Live countdown to current upcoming
+  const diffMs = current ? current.nextBirthday.getTime() - now.getTime() : 0;
   const totalSec = Math.max(0, Math.floor(diffMs / 1000));
   const days = Math.floor(totalSec / 86400);
   const hours = Math.floor((totalSec % 86400) / 3600);
   const mins = Math.floor((totalSec % 3600) / 60);
   const secs = totalSec % 60;
+
+  const todayMember = todayMembers.length > 0 ? todayMembers[todayIdx % todayMembers.length] : null;
 
   return (
     <div
