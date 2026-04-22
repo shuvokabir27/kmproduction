@@ -577,6 +577,20 @@ const AdminMembers = () => {
                   <Label className="text-foreground">পদবী (English) — স্বয়ংক্রিয়</Label>
                   <Input value={form.designation_en} onChange={(e) => setField("designation_en", e.target.value)} className="bg-secondary border-border/50" placeholder="Designation in English" />
                 </div>
+
+                {/* জন্ম তারিখ — উপরে আনা হয়েছে যাতে সহজে চোখে পড়ে */}
+                <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3">
+                  <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                    🎂 <span>জন্ম তারিখ</span>
+                    <span className="text-[10px] text-muted-foreground font-normal">(জন্মদিন কাউন্টডাউনে দেখাবে)</span>
+                  </Label>
+                  <Input
+                    type="date"
+                    value={form.date_of_birth}
+                    onChange={(e) => setField("date_of_birth", e.target.value)}
+                    className="bg-secondary border-border/50"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="text-foreground">ঠিকানা</Label>
@@ -609,10 +623,6 @@ const AdminMembers = () => {
                         <Label className="text-foreground text-xs">Short Bio (English)</Label>
                         <Textarea value={form.short_bio_en} onChange={(e) => setField("short_bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                       </div>
-                    </div>
-                    <div>
-                      <Label className="text-foreground text-xs">জন্ম তারিখ</Label>
-                      <Input type="date" value={form.date_of_birth} onChange={(e) => setField("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
