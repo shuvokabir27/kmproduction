@@ -286,29 +286,21 @@ export function BirthdayCountdownBar() {
                   </div>
                 </div>
 
-                {/* Action buttons (today/3-day) */}
-                {(isToday || showPlanBanner) && (
-                  <Link
-                    to="/chat"
-                    className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] md:text-[11px] font-bold transition-all ${
-                      isToday
-                        ? "bg-pink-500 hover:bg-pink-600 text-white shadow-[0_0_10px_rgba(236,72,153,0.5)]"
-                        : "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40"
-                    }`}
-                  >
-                    {isToday ? (
-                      <>
-                        <MessageCircle className="h-3 w-3" />
-                        <span className="hidden sm:inline">শুভেচ্ছা</span>
-                      </>
-                    ) : (
-                      <>
-                        <Gift className="h-3 w-3" />
-                        <span className="hidden sm:inline">প্ল্যান</span>
-                      </>
-                    )}
-                  </Link>
-                )}
+                {/* AI wish button — always show for upcoming/today */}
+                <button
+                  onClick={() => openWish(current)}
+                  className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] md:text-[11px] font-bold transition-all ${
+                    isToday
+                      ? "bg-pink-500 hover:bg-pink-600 text-white shadow-[0_0_10px_rgba(236,72,153,0.5)]"
+                      : showPlanBanner
+                        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40"
+                        : "bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30"
+                  }`}
+                  title="AI দিয়ে শুভেচ্ছা বার্তা তৈরি করুন"
+                >
+                  <Wand2 className="h-3 w-3" />
+                  <span className="hidden sm:inline">{isToday ? "শুভেচ্ছা" : "বার্তা"}</span>
+                </button>
 
                 {/* Counter (when multiple) */}
                 {upcoming.length > 1 && (
