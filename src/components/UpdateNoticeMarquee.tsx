@@ -1,58 +1,48 @@
-import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Megaphone } from "lucide-react";
 
 /**
  * Glossy scrolling marquee shown at the very top of the app.
- * Announces that the user can find updates for KM Production and (if applicable)
- * any external/freelance clients linked to the current member.
+ * Text + on/off is controlled by admins via public.marquee_settings.
+ * Realtime keeps every dashboard in sync.
  */
 export function UpdateNoticeMarquee() {
-  const { profile } = useAuth();
+  const qc = useQueryClient();
 
-  const { data: clientNames = [] } = useQuery({
-    queryKey: ["update-marquee-clients", profile?.id],
-    enabled: !!profile?.id,
+  const { data } = useQuery({
+    queryKey: ["marquee-settings"],
     queryFn: async () => {
       const { data } = await (supabase as any)
-        .from("freelance_assignments")
-        .select(
-          "freelance_projects(client_name, client_profiles(name, company))"
-        )
-        .eq("member_id", profile!.id);
-      const names = new Set<string>();
-      (data || []).forEach((row: any) => {
-        const p = row?.freelance_projects;
-        const n =
-          p?.client_profiles?.company ||
-          p?.client_profiles?.name ||
-          p?.client_name;
-        if (n) names.add(n);
-      });
-      return Array.from(names);
+        .from("marquee_settings")
+        .select("text,is_enabled,updated_at")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
     },
   });
 
-  const message = (
-    <>
-      এখানে{" "}
-      <span className="font-bold text-cyan-300 drop-shadow-[0_0_6px_rgba(34,211,238,0.6)]">
-        কুয়াকাটা মাল্টিমিডিয়া
-      </span>
-      -র সকল কাজের আপডেট
-      {clientNames.length > 0 && (
-        <>
-          {" "}ও{" "}
-          <span className="font-bold text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]">
-            {clientNames.join(", ")}
-          </span>
-          -এর সকল কাজের আপডেট
-        </>
-      )}{" "}
-      পাবেন।
-    </>
-  );
+  // Live updates so every viewer sees changes instantly
+  useEffect(() => {
+    const channel = supabase
+      .channel("marquee-settings-rt")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "marquee_settings" },
+        () => qc.invalidateQueries({ queryKey: ["marquee-settings"] })
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
+
+  const text = (data?.text || "").trim();
+  const enabled = data?.is_enabled !== false;
+
+  if (!enabled || !text) return null;
 
   // Repeat content so the marquee loops seamlessly
   const Item = (
@@ -60,7 +50,7 @@ export function UpdateNoticeMarquee() {
       <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
         <Megaphone className="h-3 w-3 text-white" />
       </span>
-      {message}
+      <span className="font-medium">{text}</span>
       <span className="text-white/40">•</span>
     </span>
   );
@@ -100,8 +90,7 @@ export function UpdateNoticeMarquee() {
         aria-hidden
         className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.25), transparent)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.25), transparent)",
         }}
       />
 
@@ -113,10 +102,7 @@ export function UpdateNoticeMarquee() {
           {Item}
           {Item}
         </div>
-        <div
-          className="flex shrink-0 animate-marquee-x"
-          aria-hidden
-        >
+        <div className="flex shrink-0 animate-marquee-x" aria-hidden>
           {Item}
           {Item}
           {Item}

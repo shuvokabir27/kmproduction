@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound, UserCog, Camera, ImageIcon, Plus, Trash2, Save, ArrowLeft, LogOut, Mail, Settings, Globe } from "lucide-react";
 import { SiteSettingsDialog } from "@/components/SiteSettingsDialog";
+import { AdminMarqueeEditor } from "@/components/AdminMarqueeEditor";
 import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -223,6 +224,9 @@ const AdminSettings = () => {
             </div>
           </div>
         </Card>
+
+        {/* Top scrolling announcement editor */}
+        <AdminMarqueeEditor />
 
         {/* Settings Options */}
         <div className="space-y-2">
