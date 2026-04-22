@@ -220,12 +220,14 @@ const AdminDashboard = () => {
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-end justify-between">
-          <div>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">এডমিন ড্যাশবোর্ড</h1>
             <p className="text-muted-foreground text-xs md:text-sm mt-1">সকল কার্যক্রমের সারসংক্ষেপ</p>
           </div>
-          <div className="h-1 w-12 bg-gradient-to-r from-violet-500 to-rose-500 rounded-full mb-1 hidden md:block" />
+          <div className="shrink-0 mt-1">
+            <OnlineUsersBar variant="inline" />
+          </div>
         </motion.div>
 
         {/* Stats Grid - Compact Glossy */}
