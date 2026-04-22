@@ -16,6 +16,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Globe } from "lucide-react";
 import { OnlineUsersBar } from "@/components/OnlineUsersBar";
 import { LiveClockBar } from "@/components/LiveClockBar";
+import { WeatherWidget } from "@/components/WeatherWidget";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
