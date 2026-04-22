@@ -380,6 +380,39 @@ export function AdminMarqueeEditor() {
         </Button>
       </div>
 
+      {/* Speed control */}
+      <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 border border-border/40">
+        <Gauge className="h-4 w-4 text-cyan-300 shrink-0" />
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-1">
+            <Label className="text-xs text-muted-foreground">
+              স্ক্রলিং স্পিড
+            </Label>
+            <span className="text-[11px] text-muted-foreground">
+              {speed}s / লুপ {speed <= 15 ? "(দ্রুত)" : speed >= 60 ? "(ধীর)" : "(মাঝারি)"}
+            </span>
+          </div>
+          <Slider
+            min={5}
+            max={120}
+            step={1}
+            value={[speed]}
+            onValueChange={(v) => setSpeed(v[0] ?? 35)}
+          />
+        </div>
+        <Input
+          type="number"
+          min={5}
+          max={120}
+          value={speed}
+          onChange={(e) => {
+            const n = parseInt(e.target.value, 10);
+            if (!isNaN(n)) setSpeed(Math.min(120, Math.max(5, n)));
+          }}
+          className="h-8 w-16 text-xs"
+        />
+      </div>
+
       {/* Editor */}
       <div
         ref={editorRef}
