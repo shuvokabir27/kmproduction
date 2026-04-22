@@ -60,6 +60,7 @@ export function AdminMarqueeEditor() {
   const [color, setColor] = useState("#22d3ee");
   const [bg, setBg] = useState("#7c3aed");
   const [loaded, setLoaded] = useState(false);
+  const [speed, setSpeed] = useState<number>(35); // seconds per loop (lower = faster)
 
   const { data } = useQuery({
     queryKey: ["marquee-settings"],
