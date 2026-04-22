@@ -10,6 +10,10 @@ interface Props {
   fullNameEn?: string | null;
   onKmClick?: () => void;
   onClientClick?: () => void;
+  /** Outstanding (বকেয়া) for KM Production. Shown on the card instead of total earned. */
+  kmOutstanding?: number;
+  /** Outstanding (বকেয়া) from external clients. */
+  clientOutstanding?: number;
 }
 
 const MONTH_BN = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগ", "সেপ্ট", "অক্টো", "নভে", "ডিসে"];
