@@ -221,6 +221,12 @@ const MemberDashboard = () => {
         {/* Notice Board */}
         <NoticeBoard />
 
+        {/* Birthday countdown + Task summary */}
+        <div className="space-y-3">
+          <BirthdayCountdownBar />
+          <TaskSummaryCard />
+        </div>
+
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative flex flex-col items-center text-center gap-1">
           {(() => {
