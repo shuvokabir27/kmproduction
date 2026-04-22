@@ -15,7 +15,7 @@ interface NewsResponse {
   updatedAt: string;
 }
 
-const ROTATE_MS = 15000; // 15 seconds per headline
+const ROTATE_MS = 12000; // 12 seconds per headline
 
 /**
  * Interleave items so that Bangladeshi and non-Bangladeshi (international/random)
