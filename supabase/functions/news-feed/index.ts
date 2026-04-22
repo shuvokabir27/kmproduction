@@ -17,7 +17,7 @@ interface FeedSource {
 }
 
 const FEEDS: FeedSource[] = [
-  // ========= Bangladeshi major newspapers (highest priority) =========
+  // ========= Bangladeshi major newspapers (Bangla — highest priority) =========
   { name: "Prothom Alo", url: "https://www.prothomalo.com/feed", weight: 5, bangladeshi: true },
   { name: "BD Pratidin", url: "https://www.bd-pratidin.com/rss.xml", weight: 5, bangladeshi: true },
   { name: "Jugantor", url: "https://www.jugantor.com/feed/rss.xml", weight: 5, bangladeshi: true },
@@ -27,23 +27,83 @@ const FEEDS: FeedSource[] = [
   { name: "Manab Zamin", url: "https://mzamin.com/rss.xml", weight: 4, bangladeshi: true },
   { name: "Janakantha", url: "https://www.dailyjanakantha.com/rss.xml", weight: 3, bangladeshi: true },
   { name: "Inqilab", url: "https://www.dailyinqilab.com/rss.xml", weight: 3, bangladeshi: true },
-  { name: "Naya Diganta", url: "https://www.dailynayadiganta.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Naya Diganta", url: "https://www.dailynayadiganta.com/rss.xml", weight: 4, bangladeshi: true },
+  { name: "Jaijaidin", url: "https://www.jaijaidinbd.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Amader Shomoy", url: "https://www.dainikamadershomoy.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Bhorer Kagoj", url: "https://www.bhorerkagoj.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Sangbad", url: "https://sangbad.net.bd/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Bangla Tribune", url: "https://www.banglatribune.com/feed", weight: 4, bangladeshi: true },
+  { name: "BDNews24 Bangla", url: "https://bangla.bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true", weight: 4, bangladeshi: true },
+  { name: "Jago News", url: "https://www.jagonews24.com/rss/rss.xml", weight: 4, bangladeshi: true },
+  { name: "Risingbd", url: "https://www.risingbd.com/rss/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Banglanews24", url: "https://www.banglanews24.com/rss/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Dhaka Post", url: "https://www.dhakapost.com/rss/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Daily Bangladesh", url: "https://www.daily-bangladesh.com/rss/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Channel 24", url: "https://www.channel24bd.tv/rss/rss.xml", weight: 4, bangladeshi: true },
+  { name: "Somoy News", url: "https://www.somoynews.tv/rss/rss.xml", weight: 5, bangladeshi: true },
+  { name: "Jamuna TV", url: "https://jamuna.tv/feed", weight: 4, bangladeshi: true },
+  { name: "NTV BD", url: "https://www.ntvbd.com/rss.xml", weight: 4, bangladeshi: true },
+  { name: "RTV Online", url: "https://www.rtvonline.com/rss/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Independent TV", url: "https://www.independent24.com/rss/rss.xml", weight: 3, bangladeshi: true },
+  { name: "DBC News", url: "https://dbcnews.tv/feed", weight: 3, bangladeshi: true },
+  { name: "ATN News", url: "https://www.atnnewstv.com/feed", weight: 3, bangladeshi: true },
+  { name: "Ekattor TV", url: "https://ekattor.tv/feed", weight: 3, bangladeshi: true },
+  { name: "News24 BD", url: "https://www.news24bd.tv/rss.xml", weight: 3, bangladeshi: true },
   { name: "Daily Star (BD)", url: "https://www.thedailystar.net/frontpage/rss.xml", weight: 4, bangladeshi: true, translate: true },
   { name: "Dhaka Tribune", url: "https://www.dhakatribune.com/feed", weight: 3, bangladeshi: true, translate: true },
+  { name: "New Age BD", url: "https://www.newagebd.net/rss.xml", weight: 3, bangladeshi: true, translate: true },
+  { name: "Financial Express BD", url: "https://thefinancialexpress.com.bd/?service=rss", weight: 2, bangladeshi: true, translate: true },
+  { name: "Business Standard BD", url: "https://www.tbsnews.net/rss.xml", weight: 3, bangladeshi: true, translate: true },
+
+  // ========= Indian Bangla newspapers =========
+  { name: "Anandabazar", url: "https://www.anandabazar.com/rss/all-news", weight: 4, bangladeshi: false },
+  { name: "Bartaman", url: "https://bartamanpatrika.com/rss.xml", weight: 3, bangladeshi: false },
+  { name: "Ei Samay", url: "https://eisamay.indiatimes.com/rssfeedstopstories.cms", weight: 3, bangladeshi: false },
+  { name: "Sangbad Pratidin", url: "https://www.sangbadpratidin.in/feed/", weight: 3, bangladeshi: false },
+  { name: "Zee 24 Ghanta", url: "https://zeenews.india.com/bengali/rss/news_xml.xml", weight: 3, bangladeshi: false },
+  { name: "ABP Ananda", url: "https://bengali.abplive.com/news/feed", weight: 3, bangladeshi: false },
+  { name: "News18 Bangla", url: "https://bengali.news18.com/rss/", weight: 3, bangladeshi: false },
+  { name: "Hindustan Times Bangla", url: "https://bangla.hindustantimes.com/rss/feed", weight: 2, bangladeshi: false },
 
   // ========= Bangla-language international (already in Bangla) =========
   { name: "BBC বাংলা", url: "https://feeds.bbci.co.uk/bengali/rss.xml", weight: 4, bangladeshi: false },
   { name: "DW বাংলা", url: "https://rss.dw.com/rdf/rss-bn-all", weight: 3, bangladeshi: false },
-  { name: "Anandabazar", url: "https://www.anandabazar.com/rss/all-news", weight: 3, bangladeshi: false },
+  { name: "VOA বাংলা", url: "https://www.voabangla.com/api/zmgqoeyvyi", weight: 3, bangladeshi: false },
 
-  // ========= Major international (English) — auto-translated to Bengali =========
-  { name: "BBC World", url: "http://feeds.bbci.co.uk/news/world/rss.xml", weight: 3, bangladeshi: false, translate: true },
+  // ========= Asia (English) — auto-translated to Bengali =========
+  // South Asia — India
+  { name: "Times of India", url: "https://timesofindia.indiatimes.com/rssfeedstopstories.cms", weight: 3, bangladeshi: false, translate: true },
+  { name: "Hindustan Times", url: "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml", weight: 3, bangladeshi: false, translate: true },
+  { name: "The Hindu", url: "https://www.thehindu.com/news/national/feeder/default.rss", weight: 3, bangladeshi: false, translate: true },
+  { name: "NDTV", url: "https://feeds.feedburner.com/ndtvnews-world-news", weight: 3, bangladeshi: false, translate: true },
+  { name: "India Today", url: "https://www.indiatoday.in/rss/1206578", weight: 2, bangladeshi: false, translate: true },
+  // Pakistan
+  { name: "Dawn", url: "https://www.dawn.com/feeds/home", weight: 3, bangladeshi: false, translate: true },
+  { name: "Geo News", url: "https://www.geo.tv/rss/1/53", weight: 2, bangladeshi: false, translate: true },
+  { name: "The News Pakistan", url: "https://www.thenews.com.pk/rss/1/1", weight: 2, bangladeshi: false, translate: true },
+  { name: "ARY News", url: "https://arynews.tv/feed/", weight: 2, bangladeshi: false, translate: true },
+  // Other South Asia
+  { name: "Kathmandu Post", url: "https://kathmandupost.com/rss", weight: 2, bangladeshi: false, translate: true },
+  { name: "Daily Mirror SL", url: "https://www.dailymirror.lk/RSS_Feeds/breaking-news", weight: 2, bangladeshi: false, translate: true },
+  // East Asia
+  { name: "Japan Times", url: "https://www.japantimes.co.jp/feed/", weight: 2, bangladeshi: false, translate: true },
+  { name: "South China Morning Post", url: "https://www.scmp.com/rss/91/feed", weight: 2, bangladeshi: false, translate: true },
+  { name: "Korea Herald", url: "https://www.koreaherald.com/rss/02000000.xml", weight: 2, bangladeshi: false, translate: true },
+  // Southeast Asia
+  { name: "Channel News Asia", url: "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml", weight: 2, bangladeshi: false, translate: true },
+  { name: "Bangkok Post", url: "https://www.bangkokpost.com/rss/data/topstories.xml", weight: 2, bangladeshi: false, translate: true },
+  { name: "Jakarta Post", url: "https://www.thejakartapost.com/rss", weight: 2, bangladeshi: false, translate: true },
+  // Middle East / West Asia
   { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", weight: 3, bangladeshi: false, translate: true },
+  { name: "Arab News", url: "https://www.arabnews.com/rss.xml", weight: 2, bangladeshi: false, translate: true },
+  { name: "Times of Israel", url: "https://www.timesofisrael.com/feed/", weight: 2, bangladeshi: false, translate: true },
+
+  // ========= Major world (English) — auto-translated to Bengali =========
+  { name: "BBC World", url: "http://feeds.bbci.co.uk/news/world/rss.xml", weight: 3, bangladeshi: false, translate: true },
   { name: "CNN World", url: "http://rss.cnn.com/rss/edition_world.rss", weight: 2, bangladeshi: false, translate: true },
   { name: "NYT World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", weight: 2, bangladeshi: false, translate: true },
   { name: "The Guardian", url: "https://www.theguardian.com/world/rss", weight: 2, bangladeshi: false, translate: true },
   { name: "AP News", url: "https://apnews.com/index.rss", weight: 3, bangladeshi: false, translate: true },
-  { name: "NDTV", url: "https://feeds.feedburner.com/ndtvnews-world-news", weight: 2, bangladeshi: false, translate: true },
 ];
 
 // Keywords that indicate "important" news — score boost
@@ -310,13 +370,13 @@ Deno.serve(async (req) => {
     const intl = scored.filter((it) => it.needsTranslation);
     const local = scored.filter((it) => !it.needsTranslation);
 
-    const intlPick = intl.slice(0, 20); // up to 20 international
-    const localPick = local.slice(0, 40); // up to 40 local/Bangla
+    const intlPick = intl.slice(0, 30); // up to 30 international (Asia + world)
+    const localPick = local.slice(0, 60); // up to 60 local/Bangla
 
     // Re-sort the combined pool by score, then split top vs shuffled rest
     const combined = [...localPick, ...intlPick].sort((a, b) => b._score - a._score);
-    const top = combined.slice(0, 20);
-    const rest = shuffle(combined.slice(20, 60));
+    const top = combined.slice(0, 25);
+    const rest = shuffle(combined.slice(25, 90));
     const merged = [...top, ...rest];
 
     // Ensure no two consecutive items share the same source
