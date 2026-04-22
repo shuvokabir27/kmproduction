@@ -51,7 +51,7 @@ export function UpdateNoticeMarquee() {
         ALLOWED_ATTR: ["style", "class"],
         // Keep inline styles for color/background/text-shadow but disallow url() etc
         ALLOW_DATA_ATTR: false,
-      }),
+      }) as unknown as string,
     [rawHtml]
   );
 
