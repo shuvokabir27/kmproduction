@@ -224,9 +224,6 @@ const MemberDashboard = () => {
         {/* Birthday countdown */}
         <BirthdayCountdownBar />
 
-        {/* Advance request */}
-        <AdvanceRequestCard />
-
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative flex flex-col items-center text-center gap-1">
           {(() => {
@@ -269,6 +266,9 @@ const MemberDashboard = () => {
             <span className="text-foreground text-xs font-bold tracking-wide">{profile?.member_id}</span>
           </div>
         </motion.div>
+
+        {/* Advance request - shown below name & ID */}
+        <AdvanceRequestCard />
 
         {/* Update Notice */}
         <motion.div
