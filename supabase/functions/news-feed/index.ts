@@ -17,22 +17,33 @@ interface FeedSource {
 }
 
 const FEEDS: FeedSource[] = [
-  // Bangladeshi (highest priority)
+  // ========= Bangladeshi major newspapers (highest priority) =========
   { name: "Prothom Alo", url: "https://www.prothomalo.com/feed", weight: 5, bangladeshi: true },
-  { name: "BD Pratidin", url: "https://www.bd-pratidin.com/rss.xml", weight: 4, bangladeshi: true },
-  { name: "Jugantor", url: "https://www.jugantor.com/feed/rss.xml", weight: 4, bangladeshi: true },
-  { name: "Kaler Kantho", url: "https://www.kalerkantho.com/rss.xml", weight: 4, bangladeshi: true },
+  { name: "BD Pratidin", url: "https://www.bd-pratidin.com/rss.xml", weight: 5, bangladeshi: true },
+  { name: "Jugantor", url: "https://www.jugantor.com/feed/rss.xml", weight: 5, bangladeshi: true },
+  { name: "Kaler Kantho", url: "https://www.kalerkantho.com/rss.xml", weight: 5, bangladeshi: true },
+  { name: "Ittefaq", url: "https://www.ittefaq.com.bd/rss.xml", weight: 4, bangladeshi: true },
+  { name: "Samakal", url: "https://samakal.com/rss.xml", weight: 4, bangladeshi: true },
+  { name: "Manab Zamin", url: "https://mzamin.com/rss.xml", weight: 4, bangladeshi: true },
+  { name: "Janakantha", url: "https://www.dailyjanakantha.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Inqilab", url: "https://www.dailyinqilab.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Naya Diganta", url: "https://www.dailynayadiganta.com/rss.xml", weight: 3, bangladeshi: true },
+  { name: "Daily Star (BD)", url: "https://www.thedailystar.net/frontpage/rss.xml", weight: 4, bangladeshi: true, translate: true },
+  { name: "Dhaka Tribune", url: "https://www.dhakatribune.com/feed", weight: 3, bangladeshi: true, translate: true },
+
+  // ========= Bangla-language international (already in Bangla) =========
   { name: "BBC বাংলা", url: "https://feeds.bbci.co.uk/bengali/rss.xml", weight: 4, bangladeshi: false },
   { name: "DW বাংলা", url: "https://rss.dw.com/rdf/rss-bn-all", weight: 3, bangladeshi: false },
-  { name: "Anandabazar", url: "https://www.anandabazar.com/rss/all-news", weight: 2, bangladeshi: false },
+  { name: "Anandabazar", url: "https://www.anandabazar.com/rss/all-news", weight: 3, bangladeshi: false },
 
-  // International (English) — will be auto-translated to Bengali
+  // ========= Major international (English) — auto-translated to Bengali =========
   { name: "BBC World", url: "http://feeds.bbci.co.uk/news/world/rss.xml", weight: 3, bangladeshi: false, translate: true },
-  { name: "Reuters World", url: "https://feeds.reuters.com/Reuters/worldNews", weight: 3, bangladeshi: false, translate: true },
   { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml", weight: 3, bangladeshi: false, translate: true },
   { name: "CNN World", url: "http://rss.cnn.com/rss/edition_world.rss", weight: 2, bangladeshi: false, translate: true },
   { name: "NYT World", url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", weight: 2, bangladeshi: false, translate: true },
   { name: "The Guardian", url: "https://www.theguardian.com/world/rss", weight: 2, bangladeshi: false, translate: true },
+  { name: "AP News", url: "https://apnews.com/index.rss", weight: 3, bangladeshi: false, translate: true },
+  { name: "NDTV", url: "https://feeds.feedburner.com/ndtvnews-world-news", weight: 2, bangladeshi: false, translate: true },
 ];
 
 // Keywords that indicate "important" news — score boost
@@ -203,12 +214,19 @@ async function translateHeadlines(titles: string[]): Promise<Record<string, stri
           {
             role: "system",
             content:
-              "You translate international news headlines from English to natural, concise Bengali (বাংলা) suitable for a news ticker. Keep proper nouns transliterated when common (e.g., USA → যুক্তরাষ্ট্র, Trump → ট্রাম্প). Output ONLY the translations, numbered exactly like the input, one per line. No commentary, no English. Keep each headline short and punchy.",
+              "You translate news headlines into natural, concise Bengali (বাংলা) suitable for a scrolling news ticker. " +
+              "RULES:\n" +
+              "1. Keep proper nouns transliterated naturally (USA→যুক্তরাষ্ট্র, Trump→ট্রাম্প, Iran→ইরান, China→চীন).\n" +
+              "2. Use ENGLISH numerals (1, 2, 3) for the line numbers — NOT Bengali numerals.\n" +
+              "3. Output format: each line MUST start with 'N. ' where N is the English number, then the Bengali translation.\n" +
+              "4. Output exactly the same number of lines as input, in the same order.\n" +
+              "5. NO commentary, NO English in translations, NO empty lines.\n" +
+              "6. Keep each headline short and punchy — under 80 characters where possible.",
           },
           { role: "user", content: numbered },
         ],
       }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(20000),
     });
 
     if (!res.ok) {
@@ -219,21 +237,31 @@ async function translateHeadlines(titles: string[]): Promise<Record<string, stri
 
     const data = await res.json();
     const content: string = data?.choices?.[0]?.message?.content ?? "";
-    console.log(`[translate] received ${content.split('\n').length} lines`);
+    console.log(`[translate] received content sample:`, content.slice(0, 300));
     const lines = content
       .split("\n")
       .map((l: string) => l.trim())
       .filter(Boolean);
 
+    // Convert Bengali numerals to English for parsing
+    const bnToEn = (s: string) =>
+      s.replace(/[০-৯]/g, (d) => String("০১২৩৪৫৬৭৮৯".indexOf(d)));
+
     const map: Record<string, string> = {};
     for (const line of lines) {
-      const m = line.match(/^(\d+)[.)]\s*(.+)$/);
+      const normalized = bnToEn(line);
+      // Accept "1. text", "1) text", "1: text", or "1 - text"
+      const m = normalized.match(/^(\d+)\s*[.):\-]\s*(.+)$/);
       if (!m) continue;
       const idx = parseInt(m[1], 10) - 1;
       if (idx >= 0 && idx < unique.length) {
-        map[unique[idx]] = m[2].trim();
+        // Take the translation from the ORIGINAL line (preserving Bengali text),
+        // just stripping the numbered prefix.
+        const stripped = line.replace(/^[\d০-৯]+\s*[.):\-]\s*/, "").trim();
+        if (stripped) map[unique[idx]] = stripped;
       }
     }
+    console.log(`[translate] parsed ${Object.keys(map).length}/${unique.length} translations`);
     return map;
   } catch (e) {
     console.error("translateHeadlines error", e instanceof Error ? e.message : e);
