@@ -10,6 +10,10 @@ interface Props {
   fullNameEn?: string | null;
   onKmClick?: () => void;
   onClientClick?: () => void;
+  /** Outstanding (বকেয়া) for KM Production. Shown on the card instead of total earned. */
+  kmOutstanding?: number;
+  /** Outstanding (বকেয়া) from external clients. */
+  clientOutstanding?: number;
 }
 
 const MONTH_BN = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগ", "সেপ্ট", "অক্টো", "নভে", "ডিসে"];
@@ -31,7 +35,53 @@ function lastNMonths(n: number) {
   return arr;
 }
 
-export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick }: Props) {
+export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick, kmOutstanding, clientOutstanding }: Props) {
+  const { data: lastPayments } = useQuery({
+    queryKey: ["member-last-payments", profileId, fullName, fullNameEn],
+    enabled: !!profileId,
+    queryFn: async () => {
+      const { data: km } = await supabase
+        .from("payments")
+        .select("amount, payment_date")
+        .eq("member_id", profileId)
+        .order("payment_date", { ascending: false })
+        .limit(1);
+
+      let lastClient: { amount: number; date: string } | null = null;
+      if (fullName) {
+        const names = [fullName, fullNameEn].filter(Boolean) as string[];
+        const { data: cpa } = await (supabase as any)
+          .from("client_project_artists")
+          .select("paid_amount, updated_at")
+          .in("artist_name", names)
+          .gt("paid_amount", 0)
+          .order("updated_at", { ascending: false })
+          .limit(1);
+        if (cpa && cpa[0]) {
+          lastClient = { amount: Number(cpa[0].paid_amount || 0), date: cpa[0].updated_at };
+        }
+      }
+      const { data: fa } = await (supabase as any)
+        .from("freelance_assignments")
+        .select("paid_amount, updated_at")
+        .eq("member_id", profileId)
+        .gt("paid_amount", 0)
+        .order("updated_at", { ascending: false })
+        .limit(1);
+      if (fa && fa[0]) {
+        const candidate = { amount: Number(fa[0].paid_amount || 0), date: fa[0].updated_at as string };
+        if (!lastClient || new Date(candidate.date) > new Date(lastClient.date)) {
+          lastClient = candidate;
+        }
+      }
+
+      return {
+        km: km && km[0] ? { amount: Number(km[0].amount || 0), date: km[0].payment_date as string } : null,
+        client: lastClient,
+      };
+    },
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ["monthly-income", profileId, fullName, fullNameEn],
     enabled: !!profileId,
@@ -165,8 +215,19 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
               </div>
               <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">KM Production</p>
             </div>
-            <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{kmTotal.toLocaleString("bn-BD")}</p>
-            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয় · বিস্তারিত →</p>
+            {(() => {
+              const due = Math.max(0, Math.round(kmOutstanding ?? kmTotal));
+              const lp = lastPayments?.km;
+              return (
+                <>
+                  <p className={`relative text-lg md:text-2xl font-bold ${due > 0 ? "text-foreground" : "text-emerald-400"}`}>৳{due.toLocaleString("bn-BD")}</p>
+                  <p className="relative text-[9px] text-muted-foreground mt-0.5">
+                    {due > 0 ? "বর্তমান বকেয়া" : "সব পেমেন্ট সম্পন্ন ✓"}
+                    {lp ? ` · শেষ পেমেন্ট ৳${Math.round(lp.amount).toLocaleString("bn-BD")}` : ""} · বিস্তারিত →
+                  </p>
+                </>
+              );
+            })()}
           </button>
         </div>
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
@@ -185,8 +246,19 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
                 {clientNames.length > 0 ? clientNames.join(", ") : "Client"}
               </p>
             </div>
-            <p className="relative text-lg md:text-2xl font-bold text-foreground">৳{clientTotal.toLocaleString("bn-BD")}</p>
-            <p className="relative text-[9px] text-muted-foreground mt-0.5">শেষ ৬ মাসের মোট আয় · বিস্তারিত →</p>
+            {(() => {
+              const due = Math.max(0, Math.round(clientOutstanding ?? clientTotal));
+              const lp = lastPayments?.client;
+              return (
+                <>
+                  <p className={`relative text-lg md:text-2xl font-bold ${due > 0 ? "text-foreground" : "text-emerald-400"}`}>৳{due.toLocaleString("bn-BD")}</p>
+                  <p className="relative text-[9px] text-muted-foreground mt-0.5">
+                    {due > 0 ? "বর্তমান বকেয়া" : "সব পেমেন্ট সম্পন্ন ✓"}
+                    {lp ? ` · শেষ পেমেন্ট ৳${Math.round(lp.amount).toLocaleString("bn-BD")}` : ""} · বিস্তারিত →
+                  </p>
+                </>
+              );
+            })()}
           </button>
         </div>
       </div>

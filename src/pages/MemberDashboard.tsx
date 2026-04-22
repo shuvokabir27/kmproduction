@@ -295,6 +295,8 @@ const MemberDashboard = () => {
             fullNameEn={(profile as any).full_name_en}
             onKmClick={() => setBalanceDetailOpen(true)}
             onClientClick={() => setFreelanceDetailOpen(true)}
+            kmOutstanding={balance?.kmBalance}
+            clientOutstanding={balance?.clientBalance}
           />
         )}
 
