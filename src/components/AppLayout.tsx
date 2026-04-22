@@ -14,6 +14,7 @@ import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Globe } from "lucide-react";
+import { OnlineUsersBar } from "@/components/OnlineUsersBar";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user } = useAuth();
@@ -85,6 +86,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </header>
+
+          {/* Online users bar */}
+          <OnlineUsersBar />
 
           {/* Main content */}
           <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto animate-fade-in">
