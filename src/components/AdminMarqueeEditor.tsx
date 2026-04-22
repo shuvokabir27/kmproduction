@@ -198,7 +198,7 @@ export function AdminMarqueeEditor() {
         SANITIZE_OPTS
       ) as unknown as string).trim();
 
-      const payload = { text: cleanHtml, is_enabled: enabled };
+      const payload = { text: cleanHtml, is_enabled: enabled, speed_seconds: speed };
       let error;
       if (data?.id) {
         ({ error } = await (supabase as any)
