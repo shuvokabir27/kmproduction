@@ -80,7 +80,7 @@ export function NewsTickerBar() {
 
   return (
     <div
-      className="relative border-b border-border/30 overflow-hidden bg-gradient-to-r from-rose-500/15 via-amber-500/10 to-cyan-500/15 backdrop-blur-xl"
+      className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-cyan-500/10 backdrop-blur-xl"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -97,74 +97,87 @@ export function NewsTickerBar() {
         }}
       />
 
-      {/* Progress bar — fills over 8s, resets each headline */}
+      {/* Progress bar — fills over 8s */}
       {!paused && (
         <motion.div
           key={idx}
           initial={{ width: "0%" }}
           animate={{ width: "100%" }}
           transition={{ duration: ROTATE_MS / 1000, ease: "linear" }}
-          className="absolute top-0 left-0 h-[1.5px] bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 z-10"
+          className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 z-20 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
         />
       )}
 
-      <div className="relative flex items-stretch h-8 md:h-9">
-        {/* LIVE badge */}
-        <div className="relative shrink-0 flex items-center gap-1.5 px-2.5 md:px-3 z-20">
-          <motion.div
-            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-y-1 left-1.5 right-1 rounded-md -z-10"
-            style={{
-              background: "linear-gradient(90deg,#f43f5e,#ef4444,#f59e0b,#f43f5e)",
-              backgroundSize: "200% 100%",
-            }}
-          />
-          <span className="absolute inset-y-1 left-1.5 right-1 rounded-md bg-gradient-to-b from-white/30 to-transparent -z-10" />
-          <motion.span
-            animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity }}
-            className="relative h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.9)]"
-          />
-          <Newspaper className="h-3 w-3 md:h-3.5 md:w-3.5 text-white drop-shadow" strokeWidth={2.6} />
-          <span className="text-[10px] md:text-[11px] font-extrabold text-white tracking-wider drop-shadow">
-            লাইভ
-          </span>
-        </div>
+      <div className="relative px-2 md:px-3 py-2">
+        <div className="flex items-stretch gap-2">
+          {/* LIVE badge — vertical pill */}
+          <div className="relative shrink-0 flex flex-col items-center justify-center gap-0.5 px-2 rounded-lg overflow-hidden self-stretch min-w-[52px] md:min-w-[60px]">
+            <motion.div
+              aria-hidden
+              animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 -z-10"
+              style={{
+                background: "linear-gradient(135deg,#f43f5e,#ef4444,#f59e0b,#f43f5e)",
+                backgroundSize: "200% 200%",
+              }}
+            />
+            <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent -z-10" />
+            <div className="flex items-center gap-1">
+              <motion.span
+                animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+                className="h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.9)]"
+              />
+              <Newspaper className="h-3 w-3 text-white drop-shadow" strokeWidth={2.6} />
+            </div>
+            <span className="text-[9px] md:text-[10px] font-extrabold text-white tracking-wider drop-shadow leading-none">
+              লাইভ
+            </span>
+          </div>
 
-        {/* Rotating headline */}
-        <div className="relative flex-1 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.a
-              key={idx}
-              href={current.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -14 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              className="absolute inset-0 flex items-center gap-2 px-3 group min-w-0"
-            >
-              <span className={`h-1.5 w-1.5 rounded-full ${dotColor} shadow-[0_0_6px_currentColor] shrink-0`} />
-              <FlagIcon className={`h-3 w-3 ${colorClass} shrink-0`} />
-              <span className={`text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${colorClass} shrink-0`}>
-                {current.source}
-              </span>
-              <span className="text-muted-foreground/40 shrink-0">•</span>
-              <span className="text-[11px] md:text-xs text-foreground/90 group-hover:text-primary transition-colors font-medium truncate">
-                {current.title}
-              </span>
-              <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-auto" />
-            </motion.a>
-          </AnimatePresence>
-        </div>
+          {/* Headline box — full headline with wrapping */}
+          <div className="relative flex-1 min-w-0 min-h-[52px] md:min-h-[56px]">
+            <AnimatePresence mode="wait">
+              <motion.a
+                key={idx}
+                href={current.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -12, scale: 0.98 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="absolute inset-0 flex flex-col gap-1 px-2.5 md:px-3 py-1.5 rounded-lg
+                  bg-gradient-to-br from-card/90 to-card/60 border border-border/50
+                  hover:border-primary/40 transition-colors group
+                  shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+              >
+                {/* Top row: source chip + counter */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span
+                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] md:text-[10px] font-extrabold uppercase tracking-wider
+                      ${current.bangladeshi
+                        ? "bg-gradient-to-r from-emerald-500/25 to-green-500/20 text-emerald-200 border border-emerald-400/40"
+                        : "bg-gradient-to-r from-cyan-500/25 to-blue-500/20 text-cyan-200 border border-cyan-400/40"
+                      }`}
+                  >
+                    <FlagIcon className="h-2.5 w-2.5" />
+                    {current.source}
+                  </span>
+                  <span className="text-[9px] text-muted-foreground/60 ml-auto font-mono tabular-nums shrink-0">
+                    {idx + 1}/{items.length}
+                  </span>
+                  <ExternalLink className="h-2.5 w-2.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                </div>
 
-        {/* Counter */}
-        <div className="relative shrink-0 flex items-center px-2 md:px-3 z-20">
-          <span className="text-[9px] md:text-[10px] font-mono font-semibold text-muted-foreground/70 tabular-nums">
-            {idx + 1}/{items.length}
-          </span>
+                {/* Full headline — wraps to multiple lines */}
+                <p className="text-[12px] md:text-[13px] leading-snug font-semibold text-foreground/95 group-hover:text-primary transition-colors break-words">
+                  {current.title}
+                </p>
+              </motion.a>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
