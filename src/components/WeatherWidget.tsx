@@ -247,22 +247,40 @@ export function WeatherWidget() {
               className="absolute right-0 top-full mt-2 z-50 w-56 rounded-2xl overflow-hidden
                 bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl"
             >
-              {/* Top color band */}
-              <div className={`relative h-16 bg-gradient-to-br ${meta.grad} overflow-hidden`}>
-                <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent" />
+              {/* Top color band — rainbow animated */}
+              <div className="relative h-20 overflow-hidden">
+                <motion.div
+                  aria-hidden
+                  animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(120deg,#f43f5e,#f59e0b,#facc15,#10b981,#06b6d4,#6366f1,#a855f7,#ec4899,#f43f5e)",
+                    backgroundSize: "300% 100%",
+                  }}
+                />
+                <div className={`absolute inset-0 bg-gradient-to-br ${meta.grad} opacity-60 mix-blend-overlay`} />
+                <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/40 to-transparent" />
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                   className="absolute -right-3 -bottom-3"
                 >
-                  <Icon className="h-16 w-16 text-white/40" strokeWidth={1.5} />
+                  <Icon className="h-20 w-20 text-white/50" strokeWidth={1.5} />
                 </motion.div>
+                <motion.span
+                  aria-hidden
+                  animate={{ x: ["-120%", "220%"] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+                  className="pointer-events-none absolute -inset-y-2 w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-12"
+                />
                 <div className="relative px-3 py-2 flex items-end h-full">
                   <div>
-                    <div className="text-2xl font-extrabold text-white drop-shadow tabular-nums leading-none">
+                    <div className="text-2xl font-extrabold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] tabular-nums leading-none">
                       {toBnDigits(data.temp)}°C
                     </div>
-                    <div className="text-[11px] font-semibold text-white/95 drop-shadow">
+                    <div className="text-[11px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
                       {meta.label}
                     </div>
                   </div>
@@ -270,32 +288,34 @@ export function WeatherWidget() {
               </div>
 
               <div className="p-3 space-y-2">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+                <div className="flex items-center gap-1.5 text-xs font-semibold">
                   <MapPin className="h-3.5 w-3.5 text-rose-400" />
-                  <span className="truncate">{data.city}</span>
+                  <span className="truncate bg-gradient-to-r from-rose-400 via-fuchsia-400 to-violet-400 bg-clip-text text-transparent">
+                    {data.city}
+                  </span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5 pt-1">
-                  <div className="rounded-lg p-2 bg-gradient-to-br from-orange-500/15 to-rose-500/10 border border-orange-500/20">
-                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-orange-500/25 via-rose-500/20 to-pink-500/15 border border-orange-400/40 shadow-md shadow-orange-500/10">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-orange-300">
                       <Sun className="h-2.5 w-2.5" /> অনুভূত
                     </div>
-                    <div className="text-xs font-bold text-foreground tabular-nums mt-0.5">
+                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-orange-300 to-rose-400 bg-clip-text text-transparent">
                       {toBnDigits(data.feels)}°
                     </div>
                   </div>
-                  <div className="rounded-lg p-2 bg-gradient-to-br from-cyan-500/15 to-blue-500/10 border border-cyan-500/20">
-                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-cyan-500/25 via-sky-500/20 to-blue-500/15 border border-cyan-400/40 shadow-md shadow-cyan-500/10">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-cyan-300">
                       <Droplets className="h-2.5 w-2.5" /> আর্দ্রতা
                     </div>
-                    <div className="text-xs font-bold text-foreground tabular-nums mt-0.5">
+                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-cyan-300 to-blue-400 bg-clip-text text-transparent">
                       {toBnDigits(data.humidity)}%
                     </div>
                   </div>
-                  <div className="rounded-lg p-2 bg-gradient-to-br from-emerald-500/15 to-teal-500/10 border border-emerald-500/20">
-                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-emerald-500/25 via-teal-500/20 to-green-500/15 border border-emerald-400/40 shadow-md shadow-emerald-500/10">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-300">
                       <Wind className="h-2.5 w-2.5" /> বাতাস
                     </div>
-                    <div className="text-xs font-bold text-foreground tabular-nums mt-0.5">
+                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-emerald-300 to-teal-400 bg-clip-text text-transparent">
                       {toBnDigits(data.wind)}
                     </div>
                   </div>
