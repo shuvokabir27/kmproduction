@@ -14,6 +14,91 @@ export type Database = {
   }
   public: {
     Tables: {
+      actor_credits: {
+        Row: {
+          category: string
+          character_name: string | null
+          created_at: string
+          director: string | null
+          id: string
+          production_house: string | null
+          profile_id: string
+          project_title: string
+          release_year: number | null
+          sort_order: number | null
+        }
+        Insert: {
+          category?: string
+          character_name?: string | null
+          created_at?: string
+          director?: string | null
+          id?: string
+          production_house?: string | null
+          profile_id: string
+          project_title: string
+          release_year?: number | null
+          sort_order?: number | null
+        }
+        Update: {
+          category?: string
+          character_name?: string | null
+          created_at?: string
+          director?: string | null
+          id?: string
+          production_house?: string | null
+          profile_id?: string
+          project_title?: string
+          release_year?: number | null
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actor_credits_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      actor_portfolio_images: {
+        Row: {
+          caption: string | null
+          category: string
+          created_at: string
+          id: string
+          image_url: string
+          profile_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          caption?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          image_url: string
+          profile_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          caption?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          profile_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actor_portfolio_images_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advance_deductions: {
         Row: {
           advance_request_id: string
@@ -1755,8 +1840,10 @@ export type Database = {
         Row: {
           achievements: string | null
           achievements_en: string | null
+          acting_education: string | null
           address: string | null
           address_en: string | null
+          age_range: string | null
           bank_account_holder: string | null
           bank_account_no: string | null
           bank_name: string | null
@@ -1764,8 +1851,10 @@ export type Database = {
           bio_en: string | null
           bkash_holder: string | null
           bkash_no: string | null
+          body_measurements: string | null
           cover_url: string | null
           created_at: string
+          current_location: string | null
           daily_rate: number | null
           date_of_birth: string | null
           designation: string | null
@@ -1773,6 +1862,8 @@ export type Database = {
           education: string | null
           education_en: string | null
           email: string | null
+          eye_color: string | null
+          facebook_url: string | null
           favorite_actor: string | null
           favorite_actor_en: string | null
           favorite_actress: string | null
@@ -1785,10 +1876,15 @@ export type Database = {
           favorite_food_en: string | null
           full_name: string
           full_name_en: string | null
+          hair_type: string | null
+          height_cm: number | null
           id: string
+          instagram_url: string | null
           is_active: boolean | null
+          is_actor: boolean | null
           is_verified: boolean | null
           joining_date: string | null
+          languages: string[] | null
           last_seen_at: string | null
           member_id: number
           monthly_salary: number | null
@@ -1803,15 +1899,22 @@ export type Database = {
           short_bio: string | null
           short_bio_en: string | null
           show_on_public: boolean | null
+          showreel_url: string | null
+          skin_tone: string | null
+          special_skills: string[] | null
+          stage_name: string | null
           updated_at: string
           user_id: string
           whatsapp_no: string | null
+          youtube_url: string | null
         }
         Insert: {
           achievements?: string | null
           achievements_en?: string | null
+          acting_education?: string | null
           address?: string | null
           address_en?: string | null
+          age_range?: string | null
           bank_account_holder?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
@@ -1819,8 +1922,10 @@ export type Database = {
           bio_en?: string | null
           bkash_holder?: string | null
           bkash_no?: string | null
+          body_measurements?: string | null
           cover_url?: string | null
           created_at?: string
+          current_location?: string | null
           daily_rate?: number | null
           date_of_birth?: string | null
           designation?: string | null
@@ -1828,6 +1933,8 @@ export type Database = {
           education?: string | null
           education_en?: string | null
           email?: string | null
+          eye_color?: string | null
+          facebook_url?: string | null
           favorite_actor?: string | null
           favorite_actor_en?: string | null
           favorite_actress?: string | null
@@ -1840,10 +1947,15 @@ export type Database = {
           favorite_food_en?: string | null
           full_name: string
           full_name_en?: string | null
+          hair_type?: string | null
+          height_cm?: number | null
           id?: string
+          instagram_url?: string | null
           is_active?: boolean | null
+          is_actor?: boolean | null
           is_verified?: boolean | null
           joining_date?: string | null
+          languages?: string[] | null
           last_seen_at?: string | null
           member_id?: number
           monthly_salary?: number | null
@@ -1858,15 +1970,22 @@ export type Database = {
           short_bio?: string | null
           short_bio_en?: string | null
           show_on_public?: boolean | null
+          showreel_url?: string | null
+          skin_tone?: string | null
+          special_skills?: string[] | null
+          stage_name?: string | null
           updated_at?: string
           user_id: string
           whatsapp_no?: string | null
+          youtube_url?: string | null
         }
         Update: {
           achievements?: string | null
           achievements_en?: string | null
+          acting_education?: string | null
           address?: string | null
           address_en?: string | null
+          age_range?: string | null
           bank_account_holder?: string | null
           bank_account_no?: string | null
           bank_name?: string | null
@@ -1874,8 +1993,10 @@ export type Database = {
           bio_en?: string | null
           bkash_holder?: string | null
           bkash_no?: string | null
+          body_measurements?: string | null
           cover_url?: string | null
           created_at?: string
+          current_location?: string | null
           daily_rate?: number | null
           date_of_birth?: string | null
           designation?: string | null
@@ -1883,6 +2004,8 @@ export type Database = {
           education?: string | null
           education_en?: string | null
           email?: string | null
+          eye_color?: string | null
+          facebook_url?: string | null
           favorite_actor?: string | null
           favorite_actor_en?: string | null
           favorite_actress?: string | null
@@ -1895,10 +2018,15 @@ export type Database = {
           favorite_food_en?: string | null
           full_name?: string
           full_name_en?: string | null
+          hair_type?: string | null
+          height_cm?: number | null
           id?: string
+          instagram_url?: string | null
           is_active?: boolean | null
+          is_actor?: boolean | null
           is_verified?: boolean | null
           joining_date?: string | null
+          languages?: string[] | null
           last_seen_at?: string | null
           member_id?: number
           monthly_salary?: number | null
@@ -1913,9 +2041,14 @@ export type Database = {
           short_bio?: string | null
           short_bio_en?: string | null
           show_on_public?: boolean | null
+          showreel_url?: string | null
+          skin_tone?: string | null
+          special_skills?: string[] | null
+          stage_name?: string | null
           updated_at?: string
           user_id?: string
           whatsapp_no?: string | null
+          youtube_url?: string | null
         }
         Relationships: []
       }
