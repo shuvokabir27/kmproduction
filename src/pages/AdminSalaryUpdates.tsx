@@ -151,10 +151,10 @@ const AdminSalaryUpdates = () => {
       // 1) Update profile
       const profileUpdate: any = {
         salary_type: salaryType,
-        salary_type_changed_at: isTypeChanged
-          ? new Date().toISOString()
-          : selectedProfile.salary_type_changed_at,
       };
+      if (isTypeChanged) {
+        profileUpdate.salary_type_changed_at = new Date().toISOString();
+      }
       if (salaryType === "monthly") {
         profileUpdate.monthly_salary = newAmt;
       } else {
