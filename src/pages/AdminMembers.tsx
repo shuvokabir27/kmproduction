@@ -62,7 +62,7 @@ const emptyForm: MemberForm = {
   full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
-  bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "",
+  bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", nagad_no: "",
   address: "", address_en: "",
   education: "", education_en: "",
   achievements: "", achievements_en: "",
