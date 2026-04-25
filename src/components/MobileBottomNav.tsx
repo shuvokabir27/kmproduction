@@ -38,14 +38,17 @@ const adminTabs = [
 ];
 
 const moreItems = [
-  { icon: null, label: "— টিম ম্যানেজমেন্ট —", path: "__divider__", color: "", bg: "" },
+  { icon: null, label: "— টিম ও কাজ —", path: "__divider__", color: "", bg: "" },
   { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { icon: Briefcase, label: "বাইরের কাজ", path: "/admin/freelance", color: "text-orange-400", bg: "bg-orange-500/10" },
   { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
-  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400", bg: "bg-green-500/10" },
   { icon: Receipt, label: "শুটিং খরচ", path: "/admin/shooting-expenses", color: "text-red-400", bg: "bg-red-500/10" },
+  { icon: Briefcase, label: "বাইরের কাজ", path: "/admin/freelance", color: "text-orange-400", bg: "bg-orange-500/10" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400", bg: "bg-orange-500/10" },
   { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/10" },
+  { icon: null, label: "— একাউন্ট ও পেমেন্ট —", path: "__divider_acc__", color: "", bg: "" },
+  { icon: Wallet, label: "বেতন আপডেট", path: "/admin/salary-updates", color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400", bg: "bg-green-500/10" },
+  { icon: Calculator, label: "একাউন্ট চেকিং", path: "/admin/account-checking", color: "text-indigo-400", bg: "bg-indigo-500/10" },
   { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__", color: "", bg: "" },
   { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" },
   { icon: Newspaper, label: "নিউজ", path: "/admin/news", color: "text-red-400", bg: "bg-red-500/10" },
