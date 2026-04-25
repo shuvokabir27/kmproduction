@@ -201,6 +201,81 @@ const AdminDashboard = () => {
     },
   });
 
+  const { data: advanceSummary } = useQuery({
+    queryKey: ["admin-advance-summary"],
+    queryFn: async () => {
+      // Approved advances
+      const { data: approved } = await (supabase as any)
+        .from("advance_requests")
+        .select("id, member_id, amount, approved_amount, created_at, reason")
+        .eq("status", "approved");
+      // All deductions
+      const { data: deductions } = await (supabase as any)
+        .from("advance_deductions")
+        .select("advance_request_id, amount");
+
+      const dedMap = new Map<string, number>();
+      (deductions ?? []).forEach((d: any) => {
+        dedMap.set(d.advance_request_id, (dedMap.get(d.advance_request_id) ?? 0) + Number(d.amount || 0));
+      });
+
+      let totalAdvance = 0;
+      let totalDeducted = 0;
+      const perMember = new Map<string, { total: number; deducted: number }>();
+      (approved ?? []).forEach((a: any) => {
+        const total = Number(a.approved_amount ?? a.amount ?? 0);
+        const ded = dedMap.get(a.id) ?? 0;
+        totalAdvance += total;
+        totalDeducted += ded;
+        const cur = perMember.get(a.member_id) ?? { total: 0, deducted: 0 };
+        cur.total += total;
+        cur.deducted += ded;
+        perMember.set(a.member_id, cur);
+      });
+
+      const remaining = totalAdvance - totalDeducted;
+
+      // Get member info for those with remaining advance
+      const memberIds = Array.from(perMember.keys());
+      let memberList: any[] = [];
+      if (memberIds.length > 0) {
+        const { data: profs } = await (supabase as any)
+          .from("profiles")
+          .select("id, full_name, member_id, photo_url")
+          .in("id", memberIds);
+        memberList = (profs ?? []).map((p: any) => {
+          const v = perMember.get(p.id) ?? { total: 0, deducted: 0 };
+          return { ...p, total: v.total, deducted: v.deducted, remaining: v.total - v.deducted };
+        }).filter((m: any) => m.remaining > 0)
+          .sort((a: any, b: any) => b.remaining - a.remaining);
+      }
+
+      return { totalAdvance, totalDeducted, remaining, memberList };
+    },
+  });
+
+  const { data: advanceDeductionLog } = useQuery({
+    queryKey: ["admin-advance-deduction-log"],
+    enabled: advanceDialogOpen,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("advance_deductions")
+        .select("id, amount, created_at, member_id, advance_request_id, notes")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      const mIds = Array.from(new Set((data ?? []).map((d: any) => d.member_id)));
+      let memberMap = new Map<string, any>();
+      if (mIds.length > 0) {
+        const { data: profs } = await (supabase as any)
+          .from("profiles")
+          .select("id, full_name, member_id, photo_url")
+          .in("id", mIds);
+        (profs ?? []).forEach((p: any) => memberMap.set(p.id, p));
+      }
+      return (data ?? []).map((d: any) => ({ ...d, member: memberMap.get(d.member_id) }));
+    },
+  });
+
   const { data: recentPayments } = useQuery({
     queryKey: ["admin-recent-payments"],
     queryFn: async () => {
