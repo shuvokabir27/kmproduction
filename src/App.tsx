@@ -23,6 +23,7 @@ import AdminScriptEdit from "./pages/AdminScriptEdit";
 import AdminNotices from "./pages/AdminNotices";
 import AdminBonuses from "./pages/AdminBonuses";
 import AdminAdvances from "./pages/AdminAdvances";
+import AdminAccountChecking from "./pages/AdminAccountChecking";
 import AdminPublicProfiles from "./pages/AdminPublicProfiles";
 import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
