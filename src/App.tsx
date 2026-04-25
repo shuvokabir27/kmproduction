@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/hooks/useLanguage";
 import { RouteGuard } from "@/components/RouteGuard";
 import PublicHome from "./pages/PublicHome";
 import PublicProfile from "./pages/PublicProfile";
+import ActorPortfolio from "./pages/ActorPortfolio";
 import Login from "./pages/Login";
 import MemberDashboard from "./pages/MemberDashboard";
 import MemberScripts from "./pages/MemberScripts";
@@ -66,6 +67,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<PublicHome />} />
             <Route path="/member/:memberId" element={<PublicProfile />} />
+            <Route path="/actor/:id" element={<ActorPortfolio />} />
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
             <Route path="/products" element={<TalerGurLanding />} />
