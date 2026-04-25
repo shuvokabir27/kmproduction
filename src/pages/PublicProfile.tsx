@@ -252,13 +252,6 @@ const PublicProfile = () => {
                 </motion.div>
               )}
 
-              {/* Member ID watermark — share-friendly */}
-              <div className="mt-8 pt-6 border-t border-border/20 flex items-center justify-center gap-2 text-xs text-muted-foreground/70">
-                <BadgeCheck className="h-3.5 w-3.5 text-primary/60" />
-                <span className="font-mono tracking-wider">
-                  {lang === "bn" ? "মেম্বার আইডি" : "Member ID"}: #{p.member_id?.toLocaleString(lang === "bn" ? "bn-BD" : "en-US")}
-                </span>
-              </div>
             </div>
           </div>
         </motion.div>
