@@ -1027,6 +1027,16 @@ const AdminMembers = () => {
             </Button>
           </DialogContent>
         </Dialog>
+
+        <MemberDeleteDialog
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          member={deleteMember}
+          onDeleted={() => {
+            queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+            queryClient.invalidateQueries({ queryKey: ["all-profiles"] });
+          }}
+        />
       </div>
     </AppLayout>
   );
