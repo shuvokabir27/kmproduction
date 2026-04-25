@@ -155,13 +155,23 @@ export function AppSidebar() {
           </SidebarGroup>
         ) : isAdmin ? (
           <>
-            {/* Team Management */}
+            {/* Team & Work */}
             <SidebarGroup>
               <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
-                টিম ম্যানেজমেন্ট
+                টিম ও কাজ
               </SidebarGroupLabel>
               <SidebarGroupContent>
-                {renderItems(teamItems)}
+                {renderItems(teamWorkItems)}
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Account & Payment */}
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-muted-foreground text-xs uppercase tracking-wider">
+                একাউন্ট ও পেমেন্ট
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                {renderItems(accountItems)}
               </SidebarGroupContent>
             </SidebarGroup>
 
