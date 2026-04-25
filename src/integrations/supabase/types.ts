@@ -1898,6 +1898,56 @@ export type Database = {
         }
         Relationships: []
       }
+      salary_changes: {
+        Row: {
+          admin_note: string | null
+          change_type: Database["public"]["Enums"]["salary_change_type"]
+          changed_by: string | null
+          created_at: string
+          diff_amount: number | null
+          id: string
+          member_id: string
+          new_amount: number | null
+          new_salary_type: Database["public"]["Enums"]["salary_type"] | null
+          old_amount: number | null
+          old_salary_type: Database["public"]["Enums"]["salary_type"] | null
+        }
+        Insert: {
+          admin_note?: string | null
+          change_type: Database["public"]["Enums"]["salary_change_type"]
+          changed_by?: string | null
+          created_at?: string
+          diff_amount?: number | null
+          id?: string
+          member_id: string
+          new_amount?: number | null
+          new_salary_type?: Database["public"]["Enums"]["salary_type"] | null
+          old_amount?: number | null
+          old_salary_type?: Database["public"]["Enums"]["salary_type"] | null
+        }
+        Update: {
+          admin_note?: string | null
+          change_type?: Database["public"]["Enums"]["salary_change_type"]
+          changed_by?: string | null
+          created_at?: string
+          diff_amount?: number | null
+          id?: string
+          member_id?: string
+          new_amount?: number | null
+          new_salary_type?: Database["public"]["Enums"]["salary_type"] | null
+          old_amount?: number | null
+          old_salary_type?: Database["public"]["Enums"]["salary_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salary_changes_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       salary_credits: {
         Row: {
           amount: number
@@ -2679,6 +2729,7 @@ export type Database = {
         | "returned"
       payment_method: "bank" | "bkash" | "nagad" | "cash"
       pricing_type: "hourly" | "per_minute" | "event" | "fixed"
+      salary_change_type: "amount_increase" | "amount_decrease" | "type_change"
       salary_type: "daily" | "monthly"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "done" | "cancelled"
@@ -2831,6 +2882,7 @@ export const Constants = {
       ],
       payment_method: ["bank", "bkash", "nagad", "cash"],
       pricing_type: ["hourly", "per_minute", "event", "fixed"],
+      salary_change_type: ["amount_increase", "amount_decrease", "type_change"],
       salary_type: ["daily", "monthly"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["todo", "in_progress", "done", "cancelled"],

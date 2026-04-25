@@ -24,6 +24,7 @@ import {
   ShoppingBag,
   ListTodo,
   Calculator,
+  Wallet,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -51,6 +52,7 @@ const teamItems = [
   { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
   { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
   { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-amber-400", bg: "bg-amber-500/10" },
+  { title: "বেতন আপডেট", url: "/admin/salary-updates", icon: Wallet, color: "text-emerald-400", bg: "bg-emerald-500/10" },
   { title: "একাউন্ট চেকিং", url: "/admin/account-checking", icon: Calculator, color: "text-indigo-400", bg: "bg-indigo-500/10" },
   { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
