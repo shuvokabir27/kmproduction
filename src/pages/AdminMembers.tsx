@@ -17,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { KeyRound, Mail, MessageCircle, BookUser } from "lucide-react";
 import { BankSelect } from "@/components/BankSelect";
+import { MemberDeleteDialog } from "@/components/MemberDeleteDialog";
 
 interface MemberForm {
   full_name: string;
