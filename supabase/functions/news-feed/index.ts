@@ -391,7 +391,7 @@ Deno.serve(async (req) => {
     const payload = {
       updatedAt: new Date().toISOString(),
       count: final.length,
-      items: final.map(({ _score, importance, recencyHours, weight, needsTranslation, ...rest }) => ({
+      items: final.map(({ importance, recencyHours, weight, needsTranslation, ...rest }) => ({
         ...rest,
         title: needsTranslation && translations[rest.title] ? translations[rest.title] : rest.title,
       })),
