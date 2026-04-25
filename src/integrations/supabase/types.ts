@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      advance_deductions: {
+        Row: {
+          advance_request_id: string
+          amount: number
+          attendance_id: string | null
+          created_at: string
+          id: string
+          member_id: string
+          notes: string | null
+        }
+        Insert: {
+          advance_request_id: string
+          amount?: number
+          attendance_id?: string | null
+          created_at?: string
+          id?: string
+          member_id: string
+          notes?: string | null
+        }
+        Update: {
+          advance_request_id?: string
+          amount?: number
+          attendance_id?: string | null
+          created_at?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advance_deductions_advance_request_id_fkey"
+            columns: ["advance_request_id"]
+            isOneToOne: false
+            referencedRelation: "advance_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advance_deductions_attendance_id_fkey"
+            columns: ["attendance_id"]
+            isOneToOne: false
+            referencedRelation: "attendance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advance_requests: {
         Row: {
           admin_note: string | null

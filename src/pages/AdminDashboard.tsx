@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X, List, ArrowUpRight, Crown, Sparkles } from "lucide-react";
+import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X, List, ArrowUpRight, Crown, Sparkles, HandCoins } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
@@ -27,6 +27,7 @@ const AdminDashboard = () => {
   const { user, isAdmin, loading } = useAuth();
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
   const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
+  const [advanceDialogOpen, setAdvanceDialogOpen] = useState(false);
 
   const { data: memberCount } = useQuery({
     queryKey: ["admin-member-count"],
@@ -200,6 +201,81 @@ const AdminDashboard = () => {
     },
   });
 
+  const { data: advanceSummary } = useQuery({
+    queryKey: ["admin-advance-summary"],
+    queryFn: async () => {
+      // Approved advances
+      const { data: approved } = await (supabase as any)
+        .from("advance_requests")
+        .select("id, member_id, amount, approved_amount, created_at, reason")
+        .eq("status", "approved");
+      // All deductions
+      const { data: deductions } = await (supabase as any)
+        .from("advance_deductions")
+        .select("advance_request_id, amount");
+
+      const dedMap = new Map<string, number>();
+      (deductions ?? []).forEach((d: any) => {
+        dedMap.set(d.advance_request_id, (dedMap.get(d.advance_request_id) ?? 0) + Number(d.amount || 0));
+      });
+
+      let totalAdvance = 0;
+      let totalDeducted = 0;
+      const perMember = new Map<string, { total: number; deducted: number }>();
+      (approved ?? []).forEach((a: any) => {
+        const total = Number(a.approved_amount ?? a.amount ?? 0);
+        const ded = dedMap.get(a.id) ?? 0;
+        totalAdvance += total;
+        totalDeducted += ded;
+        const cur = perMember.get(a.member_id) ?? { total: 0, deducted: 0 };
+        cur.total += total;
+        cur.deducted += ded;
+        perMember.set(a.member_id, cur);
+      });
+
+      const remaining = totalAdvance - totalDeducted;
+
+      // Get member info for those with remaining advance
+      const memberIds = Array.from(perMember.keys());
+      let memberList: any[] = [];
+      if (memberIds.length > 0) {
+        const { data: profs } = await (supabase as any)
+          .from("profiles")
+          .select("id, full_name, member_id, photo_url")
+          .in("id", memberIds);
+        memberList = (profs ?? []).map((p: any) => {
+          const v = perMember.get(p.id) ?? { total: 0, deducted: 0 };
+          return { ...p, total: v.total, deducted: v.deducted, remaining: v.total - v.deducted };
+        }).filter((m: any) => m.remaining > 0)
+          .sort((a: any, b: any) => b.remaining - a.remaining);
+      }
+
+      return { totalAdvance, totalDeducted, remaining, memberList };
+    },
+  });
+
+  const { data: advanceDeductionLog } = useQuery({
+    queryKey: ["admin-advance-deduction-log"],
+    enabled: advanceDialogOpen,
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("advance_deductions")
+        .select("id, amount, created_at, member_id, advance_request_id, notes")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      const mIds = Array.from(new Set((data ?? []).map((d: any) => d.member_id)));
+      let memberMap = new Map<string, any>();
+      if (mIds.length > 0) {
+        const { data: profs } = await (supabase as any)
+          .from("profiles")
+          .select("id, full_name, member_id, photo_url")
+          .in("id", mIds);
+        (profs ?? []).forEach((p: any) => memberMap.set(p.id, p));
+      }
+      return (data ?? []).map((d: any) => ({ ...d, member: memberMap.get(d.member_id) }));
+    },
+  });
+
   const { data: recentPayments } = useQuery({
     queryKey: ["admin-recent-payments"],
     queryFn: async () => {
@@ -217,6 +293,7 @@ const AdminDashboard = () => {
     { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: () => navigate("/admin/shootings") },
     { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10", onClick: () => navigate("/admin/payments") },
     { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setDueDialogOpen(true) },
+    { label: "অগ্রিম", value: `৳${(advanceSummary?.remaining ?? 0).toLocaleString("bn-BD")}`, icon: HandCoins, gradient: "from-orange-500/20 to-orange-500/5", iconColor: "text-orange-400", iconBg: "bg-orange-500/10", onClick: () => setAdvanceDialogOpen(true) },
   ];
 
   return (
@@ -231,7 +308,7 @@ const AdminDashboard = () => {
         </motion.div>
 
         {/* Stats Grid - Compact Glossy */}
-        <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-3" variants={container} initial="hidden" animate="show">
+        <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 md:gap-3" variants={container} initial="hidden" animate="show">
           {stats.map((stat, idx) => (
             <motion.div
               key={stat.label}
@@ -457,6 +534,107 @@ const AdminDashboard = () => {
               </div>
             ))}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Advance Detail Dialog */}
+      <Dialog open={advanceDialogOpen} onOpenChange={setAdvanceDialogOpen}>
+        <DialogContent className="bg-card border-border/30 max-w-2xl max-h-[85vh] overflow-y-auto mx-2">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-base flex items-center gap-2">
+              <HandCoins className="h-5 w-5 text-orange-400" /> অগ্রিম বিস্তারিত
+            </DialogTitle>
+          </DialogHeader>
+
+          {advanceSummary && (
+            <div className="space-y-4 py-2">
+              {/* Summary Hero */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500/15 to-orange-500/5 border border-orange-500/30 text-center">
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">বকেয়া অগ্রিম</p>
+                  <p className="text-base md:text-lg font-bold text-orange-400">৳{advanceSummary.remaining.toLocaleString("bn-BD")}</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 border border-emerald-500/30 text-center">
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">কাটা হয়েছে</p>
+                  <p className="text-base md:text-lg font-bold text-emerald-400">৳{advanceSummary.totalDeducted.toLocaleString("bn-BD")}</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-violet-500/15 to-violet-500/5 border border-violet-500/30 text-center">
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">মোট দেওয়া</p>
+                  <p className="text-base md:text-lg font-bold text-violet-400">৳{advanceSummary.totalAdvance.toLocaleString("bn-BD")}</p>
+                </div>
+              </div>
+
+              {/* Per-Member Advance List */}
+              <div className="rounded-2xl border border-border/30 overflow-hidden">
+                <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <Users className="h-3.5 w-3.5 text-orange-400" /> কার কাছে কত অগ্রিম বকেয়া
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground">{advanceSummary.memberList.length} জন</span>
+                </div>
+                <div className="divide-y divide-border/15 max-h-[35vh] overflow-y-auto">
+                  {advanceSummary.memberList.length === 0 && (
+                    <div className="p-6 text-center text-xs text-muted-foreground">কোনো বকেয়া অগ্রিম নেই</div>
+                  )}
+                  {advanceSummary.memberList.map((m: any) => (
+                    <div key={m.id} className="px-4 py-3 flex items-center justify-between hover:bg-secondary/20 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="h-9 w-9 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center overflow-hidden shrink-0">
+                          {m.photo_url ? (
+                            <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-orange-400 text-xs font-bold">{m.full_name?.charAt(0)}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
+                          <p className="text-[10px] text-muted-foreground">কাটা: ৳{m.deducted.toLocaleString("bn-BD")} / ৳{m.total.toLocaleString("bn-BD")}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold text-orange-400 ml-2 shrink-0">
+                        ৳{m.remaining.toLocaleString("bn-BD")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Deductions Log */}
+              <div className="rounded-2xl border border-border/30 overflow-hidden">
+                <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" /> সাম্প্রতিক কাটার রিপোর্ট
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground">শেষ ৫০টি</span>
+                </div>
+                <div className="divide-y divide-border/15 max-h-[30vh] overflow-y-auto">
+                  {(!advanceDeductionLog || advanceDeductionLog.length === 0) && (
+                    <div className="p-6 text-center text-xs text-muted-foreground">এখনো কোনো কাটা হয়নি</div>
+                  )}
+                  {advanceDeductionLog?.map((d: any) => (
+                    <div key={d.id} className="px-4 py-2.5 flex items-center justify-between hover:bg-secondary/20 transition-colors">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div className="h-7 w-7 rounded-full bg-secondary/40 flex items-center justify-center overflow-hidden shrink-0">
+                          {d.member?.photo_url ? (
+                            <img src={d.member.photo_url} alt={d.member.full_name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-bold text-muted-foreground">{d.member?.full_name?.charAt(0) || "?"}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{d.member?.full_name || "—"}</p>
+                          <p className="text-[10px] text-muted-foreground">{new Date(d.created_at).toLocaleDateString("bn-BD")} · {d.notes || ""}</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-400 ml-2 shrink-0">
+                        − ৳{Number(d.amount).toLocaleString("bn-BD")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </AppLayout>
