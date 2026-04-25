@@ -308,7 +308,7 @@ const AdminDashboard = () => {
         </motion.div>
 
         {/* Stats Grid - Compact Glossy */}
-        <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-3" variants={container} initial="hidden" animate="show">
+        <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 md:gap-3" variants={container} initial="hidden" animate="show">
           {stats.map((stat, idx) => (
             <motion.div
               key={stat.label}
