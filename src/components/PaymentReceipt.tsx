@@ -248,7 +248,7 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
               {/* Total */}
               <div className="border-b-2 border-dashed border-gray-400 pb-4 mb-4 space-y-2">
                 <div className="flex justify-between text-sm font-black">
-                  <span>প্রদানের পরিমাণ</span>
+                  <span>{(receiptData.balance ?? 0) < 0 ? "অগ্রিম প্রদত্ত" : "প্রদানের পরিমাণ"}</span>
                   <span className="text-lg">
                     ৳{receiptData.amount.toLocaleString()}
                   </span>
@@ -256,10 +256,10 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
                 {receiptData.balance !== undefined && (
                   <div className="flex justify-between text-xs">
                     <span className="text-gray-600">
-                      {receiptData.balance > 0 ? "অবশিষ্ট বকেয়া" : receiptData.balance < 0 ? "অগ্রিম ব্যালেন্স" : "সমন্বয়কৃত"}
+                      {receiptData.balance > 0 ? "অবশিষ্ট বকেয়া" : receiptData.balance < 0 ? "অগ্রিম (কোম্পানি পাবে)" : "সমন্বয়কৃত"}
                     </span>
                     <span
-                      className={`font-bold ${receiptData.balance > 0 ? "text-red-600" : receiptData.balance < 0 ? "text-green-600" : "text-blue-600"}`}
+                      className={`font-bold ${receiptData.balance > 0 ? "text-red-600" : receiptData.balance < 0 ? "text-orange-600" : "text-blue-600"}`}
                     >
                       ৳{Math.abs(receiptData.balance).toLocaleString()}
                     </span>
