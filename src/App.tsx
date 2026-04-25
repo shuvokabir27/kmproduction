@@ -27,6 +27,7 @@ import AdminAdvances from "./pages/AdminAdvances";
 import AdminAccountChecking from "./pages/AdminAccountChecking";
 import AdminSalaryUpdates from "./pages/AdminSalaryUpdates";
 import AdminPublicProfiles from "./pages/AdminPublicProfiles";
+import AdminActorEditor from "./pages/AdminActorEditor";
 import AdminPopularVideos from "./pages/AdminPopularVideos";
 import Chat from "./pages/Chat";
 import AdminContactSettings from "./pages/AdminContactSettings";
@@ -104,6 +105,7 @@ const App = () => (
             <Route path="/admin/salary-updates" element={<RouteGuard allowedRoles={["admin"]}><AdminSalaryUpdates /></RouteGuard>} />
             <Route path="/admin/notices" element={<RouteGuard allowedRoles={["admin"]}><AdminNotices /></RouteGuard>} />
             <Route path="/admin/public-profiles" element={<RouteGuard allowedRoles={["admin"]}><AdminPublicProfiles /></RouteGuard>} />
+            <Route path="/admin/actor-editor" element={<RouteGuard allowedRoles={["admin"]}><AdminActorEditor /></RouteGuard>} />
             <Route path="/admin/popular-videos" element={<RouteGuard allowedRoles={["admin"]}><AdminPopularVideos /></RouteGuard>} />
             <Route path="/admin/contact-settings" element={<RouteGuard allowedRoles={["admin"]}><AdminContactSettings /></RouteGuard>} />
             <Route path="/admin/gallery" element={<RouteGuard allowedRoles={["admin"]}><AdminGallery /></RouteGuard>} />
