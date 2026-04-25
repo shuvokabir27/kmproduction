@@ -312,6 +312,12 @@ const AdminActorEditor = () => {
                   </div>
                 </Section>
 
+                <Section title="যোগাযোগ (Contact CTA-র জন্য)">
+                  <Field label="ফোন নম্বর" value={form.phone} onChange={(v: string) => setForm({ ...form, phone: v })} placeholder="01XXXXXXXXX" />
+                  <Field label="WhatsApp নম্বর" value={form.whatsapp_no} onChange={(v: string) => setForm({ ...form, whatsapp_no: v })} placeholder="01XXXXXXXXX" />
+                  <Field label="ইমেইল" value={form.email} onChange={(v: string) => setForm({ ...form, email: v })} placeholder="actor@example.com" type="email" />
+                </Section>
+
                 <Section title="মিডিয়া ও সোশ্যাল">
                   <Field label="Showreel (YouTube URL)" value={form.showreel_url} onChange={(v: string) => setForm({ ...form, showreel_url: v })} placeholder="https://youtube.com/watch?v=..." />
                   <Field label="Instagram URL" value={form.instagram_url} onChange={(v: string) => setForm({ ...form, instagram_url: v })} placeholder="https://instagram.com/..." />
