@@ -34,7 +34,9 @@ interface MemberForm {
   bank_account_no: string;
   bank_account_holder: string;
   bkash_no: string;
+  bkash_holder: string;
   nagad_no: string;
+  nagad_holder: string;
   address: string;
   address_en: string;
   education: string;
@@ -62,7 +64,7 @@ const emptyForm: MemberForm = {
   full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
-  bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", nagad_no: "",
+  bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "",
   address: "", address_en: "",
   education: "", education_en: "",
   achievements: "", achievements_en: "",
@@ -257,7 +259,9 @@ const AdminMembers = () => {
       bank_account_no: member.bank_account_no || "",
       bank_account_holder: member.bank_account_holder || "",
       bkash_no: member.bkash_no || "",
+      bkash_holder: (member as any).bkash_holder || "",
       nagad_no: member.nagad_no || "",
+      nagad_holder: (member as any).nagad_holder || "",
       address: member.address || "",
       address_en: member.address_en || "",
       education: member.education || "",
@@ -313,7 +317,9 @@ const AdminMembers = () => {
           bank_account_no: form.bank_account_no || null,
           bank_account_holder: form.bank_account_holder || null,
           bkash_no: form.bkash_no || null,
+          bkash_holder: form.bkash_holder || null,
           nagad_no: form.nagad_no || null,
+          nagad_holder: form.nagad_holder || null,
           address: form.address || null,
           address_en: form.address_en || null,
           education: form.education || null,
@@ -368,7 +374,9 @@ const AdminMembers = () => {
               bank_account_no: form.bank_account_no || null,
               bank_account_holder: form.bank_account_holder || null,
               bkash_no: form.bkash_no || null,
+              bkash_holder: form.bkash_holder || null,
               nagad_no: form.nagad_no || null,
+              nagad_holder: form.nagad_holder || null,
               address: form.address || null,
               salary_type: form.salary_type,
               monthly_salary: Number(form.monthly_salary) || 0,
@@ -733,27 +741,57 @@ const AdminMembers = () => {
                   )}
                 </div>
                 <div className="border-t border-border/30 pt-3">
-                  <p className="text-xs text-muted-foreground mb-2 font-medium">পেমেন্ট তথ্য</p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">ব্যাংক তথ্য</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                       <Label className="text-foreground text-xs">ব্যাংকের নাম</Label>
                       <BankSelect value={form.bank_name} onChange={(v) => setField("bank_name", v)} className="bg-secondary border-border/50" />
                     </div>
                     <div>
-                      <Label className="text-foreground text-xs">ব্যাংক একাউন্ট নং</Label>
-                      <Input value={form.bank_account_no} onChange={(e) => setField("bank_account_no", e.target.value)} className="bg-secondary border-border/50" />
-                    </div>
-                    <div className="col-span-2">
-                      <Label className="text-foreground text-xs">ব্যাংক একাউন্ট হোল্ডার নাম</Label>
+                      <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
                       <Input value={form.bank_account_holder} onChange={(e) => setField("bank_account_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="একাউন্টধারীর পূর্ণ নাম" />
                     </div>
                     <div>
-                      <Label className="text-foreground text-xs">বিকাশ নম্বর</Label>
-                      <Input value={form.bkash_no} onChange={(e) => setField("bkash_no", e.target.value)} className="bg-secondary border-border/50" />
+                      <Label className="text-foreground text-xs">একাউন্ট নম্বর</Label>
+                      <Input value={form.bank_account_no} onChange={(e) => setField("bank_account_no", e.target.value)} className="bg-secondary border-border/50" />
                     </div>
-                    <div>
-                      <Label className="text-foreground text-xs">নগদ নম্বর</Label>
-                      <Input value={form.nagad_no} onChange={(e) => setField("nagad_no", e.target.value)} className="bg-secondary border-border/50" />
+                  </div>
+
+                  <p className="text-xs text-muted-foreground mt-4 mb-2 font-medium">মোবাইল ব্যাংকিং তথ্য</p>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">প্রোভাইডার</Label>
+                        <div className="flex items-center h-10 px-3 rounded-md bg-secondary border border-border/50">
+                          <span className="inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: "#E2136E" }}>bKash</span>
+                          <span className="ml-2 text-sm">বিকাশ</span>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
+                        <Input value={form.bkash_holder} onChange={(e) => setField("bkash_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="বিকাশ একাউন্টধারীর নাম" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">নম্বর</Label>
+                        <Input value={form.bkash_no} onChange={(e) => setField("bkash_no", e.target.value)} className="bg-secondary border-border/50" placeholder="01XXXXXXXXX" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">প্রোভাইডার</Label>
+                        <div className="flex items-center h-10 px-3 rounded-md bg-secondary border border-border/50">
+                          <span className="inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: "#EE3124" }}>Nagad</span>
+                          <span className="ml-2 text-sm">নগদ</span>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
+                        <Input value={form.nagad_holder} onChange={(e) => setField("nagad_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="নগদ একাউন্টধারীর নাম" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground text-xs">নম্বর</Label>
+                        <Input value={form.nagad_no} onChange={(e) => setField("nagad_no", e.target.value)} className="bg-secondary border-border/50" placeholder="01XXXXXXXXX" />
+                      </div>
                     </div>
                   </div>
                 </div>
