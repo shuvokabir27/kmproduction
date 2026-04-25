@@ -802,6 +802,30 @@ const AdminMembers = () => {
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সদস্য যোগ করুন"}
                 </Button>
+                {editId && (() => {
+                  const editingMember = (allProfiles || []).find((p: any) => p.id === editId);
+                  if (!editingMember || editingMember.member_id === 20200) return null;
+                  return (
+                    <div className="border-t border-destructive/30 pt-3 mt-2">
+                      <p className="text-[11px] text-destructive/80 mb-2 font-medium">⚠️ বিপজ্জনক জোন</p>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="w-full gap-2"
+                        onClick={() => {
+                          setDeleteMember(editingMember);
+                          setDeleteOpen(true);
+                          setOpen(false);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" /> সদস্য চিরতরে ডিলিট করুন
+                      </Button>
+                      <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
+                        হাজিরা, ফ্রিল্যান্স ও সকল হিস্টরী মুছে যাবে
+                      </p>
+                    </div>
+                  );
+                })()}
               </form>
             </DialogContent>
           </Dialog>
