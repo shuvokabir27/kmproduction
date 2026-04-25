@@ -600,17 +600,34 @@ const AdminMembers = () => {
                 </div>
 
                 {/* জন্ম তারিখ — উপরে আনা হয়েছে যাতে সহজে চোখে পড়ে */}
-                <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3">
-                  <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
-                    🎂 <span>জন্ম তারিখ</span>
-                    <span className="text-[10px] text-muted-foreground font-normal">(জন্মদিন কাউন্টডাউনে দেখাবে)</span>
-                  </Label>
-                  <Input
-                    type="date"
-                    value={form.date_of_birth}
-                    onChange={(e) => setField("date_of_birth", e.target.value)}
-                    className="bg-secondary border-border/50"
-                  />
+                <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                      🎂 <span>জন্ম তারিখ</span>
+                      <span className="text-[10px] text-muted-foreground font-normal">(কাউন্টডাউনে দেখাবে)</span>
+                    </Label>
+                    <Input
+                      type="date"
+                      value={form.date_of_birth}
+                      onChange={(e) => setField("date_of_birth", e.target.value)}
+                      className="bg-secondary border-border/50"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                      🩸 <span>রক্তের গ্রুপ</span>
+                    </Label>
+                    <Select value={form.blood_group || undefined} onValueChange={(v) => setField("blood_group" as any, v)}>
+                      <SelectTrigger className="bg-secondary border-border/50">
+                        <SelectValue placeholder="রক্তের গ্রুপ নির্বাচন করুন" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
+                          <SelectItem key={bg} value={bg}>{bg}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
