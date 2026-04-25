@@ -104,6 +104,9 @@ const AdminActorEditor = () => {
         instagram_url: profile.instagram_url ?? "",
         facebook_url: profile.facebook_url ?? "",
         youtube_url: profile.youtube_url ?? "",
+        phone: profile.phone ?? "",
+        email: profile.email ?? "",
+        whatsapp_no: profile.whatsapp_no ?? "",
         special_skills: profile.special_skills ?? [],
         languages: profile.languages ?? [],
         acting_education: profile.acting_education ?? "",
@@ -309,6 +312,12 @@ const AdminActorEditor = () => {
                   </div>
                 </Section>
 
+                <Section title="যোগাযোগ (Contact CTA-র জন্য)">
+                  <Field label="ফোন নম্বর" value={form.phone} onChange={(v: string) => setForm({ ...form, phone: v })} placeholder="01XXXXXXXXX" />
+                  <Field label="WhatsApp নম্বর" value={form.whatsapp_no} onChange={(v: string) => setForm({ ...form, whatsapp_no: v })} placeholder="01XXXXXXXXX" />
+                  <Field label="ইমেইল" value={form.email} onChange={(v: string) => setForm({ ...form, email: v })} placeholder="actor@example.com" type="email" />
+                </Section>
+
                 <Section title="মিডিয়া ও সোশ্যাল">
                   <Field label="Showreel (YouTube URL)" value={form.showreel_url} onChange={(v: string) => setForm({ ...form, showreel_url: v })} placeholder="https://youtube.com/watch?v=..." />
                   <Field label="Instagram URL" value={form.instagram_url} onChange={(v: string) => setForm({ ...form, instagram_url: v })} placeholder="https://instagram.com/..." />
@@ -352,14 +361,17 @@ const AdminActorEditor = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">অভিনয় শিক্ষা / ওয়ার্কশপ</Label>
-                  <Textarea
-                    value={form.acting_education ?? ""}
-                    onChange={(e) => setForm({ ...form, acting_education: e.target.value })}
-                    rows={3}
-                    placeholder="যেমনঃ ঢাকা থিয়েটার, ২০২০ থেকে ৪ বছরের অভিনয় ওয়ার্কশপ..."
-                  />
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold border-b border-border/30 pb-2">অভিনয় শিক্ষা ও প্রশিক্ষণ</h3>
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">ওয়ার্কশপ / একাডেমিক ট্রেনিং</Label>
+                    <Textarea
+                      value={form.acting_education ?? ""}
+                      onChange={(e) => setForm({ ...form, acting_education: e.target.value })}
+                      rows={3}
+                      placeholder="যেমনঃ ঢাকা থিয়েটার, ২০২০ থেকে ৪ বছরের অভিনয় ওয়ার্কশপ..."
+                    />
+                  </div>
                 </div>
 
                 <Button onClick={saveProfile} className="w-full sm:w-auto">
