@@ -366,6 +366,7 @@ const AdminMembers = () => {
               bio: form.bio || null,
               bank_name: form.bank_name || null,
               bank_account_no: form.bank_account_no || null,
+              bank_account_holder: form.bank_account_holder || null,
               bkash_no: form.bkash_no || null,
               nagad_no: form.nagad_no || null,
               address: form.address || null,
