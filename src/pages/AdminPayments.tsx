@@ -295,6 +295,10 @@ const AdminPayments = () => {
       }
       const balance = totalEarned + totalBonuses + totalSalaryCredits + totalFreelance + previousBalance - totalPaid;
 
+      // Detect advance: notes mentions "অগ্রিম"/"advance" OR balance is negative (overpaid)
+      const noteText = String(payment.notes || "").toLowerCase();
+      const isAdvance = balance < 0 || noteText.includes("অগ্রিম") || noteText.includes("advance");
+
       // 3. Render receipt off-screen and capture PNG
       toast.info("রিসিট তৈরি হচ্ছে...");
       const fullReceipt = {
