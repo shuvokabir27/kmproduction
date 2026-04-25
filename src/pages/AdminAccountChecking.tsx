@@ -9,9 +9,13 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import {
   Wallet,
   TrendingUp,
@@ -25,6 +29,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Calculator,
+  Download,
+  Loader2,
 } from "lucide-react";
 
 const fmt = (n: number) => `৳${Number(n || 0).toLocaleString("bn-BD")}`;
