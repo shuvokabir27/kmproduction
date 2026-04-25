@@ -97,23 +97,38 @@ export function AppSidebar() {
 
   const renderItems = (items: typeof teamWorkItems) => (
     <SidebarMenu>
-      {items.map((item) => (
-        <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild>
-            <NavLink
-              to={item.url}
-              end={item.url === "/admin"}
-              className="hover:bg-secondary/80 transition-colors"
-              activeClassName="bg-secondary font-medium"
-            >
-              <div className={`h-6 w-6 rounded-md ${item.bg} flex items-center justify-center mr-2 shrink-0`}>
-                <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
-              </div>
-              {!collapsed && <span className={item.color}>{item.title}</span>}
-            </NavLink>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+      {items.map((item) => {
+        const isPayments = item.url === "/admin/payments";
+        return (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton asChild>
+              <NavLink
+                to={item.url}
+                end={item.url === "/admin"}
+                className={
+                  isPayments
+                    ? "bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border-l-2 border-amber-400 hover:from-amber-500/25 hover:via-amber-500/15 transition-colors shadow-sm shadow-amber-500/10"
+                    : "hover:bg-secondary/80 transition-colors"
+                }
+                activeClassName={
+                  isPayments
+                    ? "from-amber-500/30 via-amber-500/20 font-bold ring-1 ring-amber-400/40"
+                    : "bg-secondary font-medium"
+                }
+              >
+                <div className={`h-6 w-6 rounded-md ${item.bg} flex items-center justify-center mr-2 shrink-0`}>
+                  <item.icon className={`h-3.5 w-3.5 ${item.color}`} />
+                </div>
+                {!collapsed && (
+                  <span className={`${item.color} ${isPayments ? "font-bold" : ""}`}>
+                    {item.title}
+                  </span>
+                )}
+              </NavLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
     </SidebarMenu>
   );
 

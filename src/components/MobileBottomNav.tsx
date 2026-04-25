@@ -281,7 +281,9 @@ export function MobileBottomNav() {
                   className={`relative z-10 flex items-center justify-center rounded-full transition-colors ${
                     active
                       ? `h-12 w-12 ${tab.bg} shadow-lg ring-2 ring-card`
-                      : "h-9 w-9"
+                      : tab.path === "/admin/payments"
+                        ? "h-9 w-9 bg-gradient-to-br from-amber-500/25 to-amber-600/10 ring-2 ring-amber-400/40 shadow-md shadow-amber-500/20"
+                        : "h-9 w-9"
                   }`}
                   style={
                     active
