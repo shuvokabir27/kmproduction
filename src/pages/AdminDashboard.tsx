@@ -27,6 +27,7 @@ const AdminDashboard = () => {
   const { user, isAdmin, loading } = useAuth();
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
   const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
+  const [advanceDialogOpen, setAdvanceDialogOpen] = useState(false);
 
   const { data: memberCount } = useQuery({
     queryKey: ["admin-member-count"],
