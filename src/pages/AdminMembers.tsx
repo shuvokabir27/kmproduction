@@ -32,6 +32,7 @@ interface MemberForm {
   short_bio_en: string;
   bank_name: string;
   bank_account_no: string;
+  bank_account_holder: string;
   bkash_no: string;
   nagad_no: string;
   address: string;
