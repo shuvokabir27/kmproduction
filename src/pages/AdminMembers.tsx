@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { KeyRound, Mail, MessageCircle, BookUser } from "lucide-react";
+import { BankSelect } from "@/components/BankSelect";
 
 interface MemberForm {
   full_name: string;
@@ -732,7 +733,7 @@ const AdminMembers = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label className="text-foreground text-xs">ব্যাংকের নাম</Label>
-                      <Input value={form.bank_name} onChange={(e) => setField("bank_name", e.target.value)} className="bg-secondary border-border/50" />
+                      <BankSelect value={form.bank_name} onChange={(v) => setField("bank_name", v)} className="bg-secondary border-border/50" />
                     </div>
                     <div>
                       <Label className="text-foreground text-xs">ব্যাংক একাউন্ট নং</Label>
