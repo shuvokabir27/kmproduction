@@ -34,7 +34,9 @@ interface MemberForm {
   bank_account_no: string;
   bank_account_holder: string;
   bkash_no: string;
+  bkash_holder: string;
   nagad_no: string;
+  nagad_holder: string;
   address: string;
   address_en: string;
   education: string;
@@ -62,7 +64,7 @@ const emptyForm: MemberForm = {
   full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
-  bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", nagad_no: "",
+  bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "",
   address: "", address_en: "",
   education: "", education_en: "",
   achievements: "", achievements_en: "",
@@ -257,7 +259,9 @@ const AdminMembers = () => {
       bank_account_no: member.bank_account_no || "",
       bank_account_holder: member.bank_account_holder || "",
       bkash_no: member.bkash_no || "",
+      bkash_holder: (member as any).bkash_holder || "",
       nagad_no: member.nagad_no || "",
+      nagad_holder: (member as any).nagad_holder || "",
       address: member.address || "",
       address_en: member.address_en || "",
       education: member.education || "",
