@@ -743,6 +743,10 @@ const AdminMembers = () => {
                       <Label className="text-foreground text-xs">ব্যাংক একাউন্ট নং</Label>
                       <Input value={form.bank_account_no} onChange={(e) => setField("bank_account_no", e.target.value)} className="bg-secondary border-border/50" />
                     </div>
+                    <div className="col-span-2">
+                      <Label className="text-foreground text-xs">ব্যাংক একাউন্ট হোল্ডার নাম</Label>
+                      <Input value={form.bank_account_holder} onChange={(e) => setField("bank_account_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="একাউন্টধারীর পূর্ণ নাম" />
+                    </div>
                     <div>
                       <Label className="text-foreground text-xs">বিকাশ নম্বর</Label>
                       <Input value={form.bkash_no} onChange={(e) => setField("bkash_no", e.target.value)} className="bg-secondary border-border/50" />
