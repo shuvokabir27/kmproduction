@@ -44,22 +44,25 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const teamItems = [
+const teamWorkItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
   { title: "সদস্য", url: "/admin/members", icon: Users, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
   { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
   { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
-  { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
-  { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-amber-400", bg: "bg-amber-500/10" },
-  { title: "বেতন আপডেট", url: "/admin/salary-updates", icon: Wallet, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { title: "একাউন্ট চেকিং", url: "/admin/account-checking", icon: Calculator, color: "text-indigo-400", bg: "bg-indigo-500/10" },
-  { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
-  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
   { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-purple-400", bg: "bg-purple-500/10" },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
+  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "বাইরের কাজ", url: "/admin/freelance", icon: Briefcase, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "সেটিংস", url: "/admin/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
+];
+
+const accountItems = [
+  { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-amber-400", bg: "bg-amber-500/10" },
+  { title: "বেতন আপডেট", url: "/admin/salary-updates", icon: Wallet, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-green-400", bg: "bg-green-500/10" },
+  { title: "একাউন্ট চেকিং", url: "/admin/account-checking", icon: Calculator, color: "text-indigo-400", bg: "bg-indigo-500/10" },
 ];
 
 const publicSiteItems = [
