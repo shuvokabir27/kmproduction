@@ -169,7 +169,7 @@ const AdminDashboard = () => {
         return r.includes("member") && !r.includes("admin") && !r.includes("client") && !r.includes("product_admin");
       });
       const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
-      const { data: payments } = await supabase.from("payments").select("member_id, amount");
+      const { data: payments } = await (supabase as any).from("payments").select("member_id, amount, is_advance");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
       // Production members' admin-assigned freelance income (client_project_artists excluded)
