@@ -99,6 +99,7 @@ const AdminActorEditor = () => {
         hair_type: profile.hair_type ?? "",
         eye_color: profile.eye_color ?? "",
         body_measurements: profile.body_measurements ?? "",
+        blood_group: profile.blood_group ?? "",
         showreel_url: profile.showreel_url ?? "",
         instagram_url: profile.instagram_url ?? "",
         facebook_url: profile.facebook_url ?? "",
@@ -295,6 +296,17 @@ const AdminActorEditor = () => {
                   <Field label="চুলের ধরন" value={form.hair_type} onChange={(v: string) => setForm({ ...form, hair_type: v })} placeholder="Black, Curly" />
                   <Field label="চোখের রং" value={form.eye_color} onChange={(v: string) => setForm({ ...form, eye_color: v })} placeholder="Brown" />
                   <Field label="বডি মেজারমেন্ট" value={form.body_measurements} onChange={(v: string) => setForm({ ...form, body_measurements: v })} placeholder="36-32-38" />
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">রক্তের গ্রুপ</Label>
+                    <Select value={form.blood_group || ""} onValueChange={(v) => setForm({ ...form, blood_group: v })}>
+                      <SelectTrigger><SelectValue placeholder="নির্বাচন করুন" /></SelectTrigger>
+                      <SelectContent>
+                        {["A+","A-","B+","B-","O+","O-","AB+","AB-"].map((bg) => (
+                          <SelectItem key={bg} value={bg}>{bg}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </Section>
 
                 <Section title="মিডিয়া ও সোশ্যাল">
