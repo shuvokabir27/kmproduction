@@ -536,6 +536,107 @@ const AdminDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Advance Detail Dialog */}
+      <Dialog open={advanceDialogOpen} onOpenChange={setAdvanceDialogOpen}>
+        <DialogContent className="bg-card border-border/30 max-w-2xl max-h-[85vh] overflow-y-auto mx-2">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-base flex items-center gap-2">
+              <HandCoins className="h-5 w-5 text-orange-400" /> অগ্রিম বিস্তারিত
+            </DialogTitle>
+          </DialogHeader>
+
+          {advanceSummary && (
+            <div className="space-y-4 py-2">
+              {/* Summary Hero */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500/15 to-orange-500/5 border border-orange-500/30 text-center">
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">বকেয়া অগ্রিম</p>
+                  <p className="text-base md:text-lg font-bold text-orange-400">৳{advanceSummary.remaining.toLocaleString("bn-BD")}</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 border border-emerald-500/30 text-center">
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">কাটা হয়েছে</p>
+                  <p className="text-base md:text-lg font-bold text-emerald-400">৳{advanceSummary.totalDeducted.toLocaleString("bn-BD")}</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-violet-500/15 to-violet-500/5 border border-violet-500/30 text-center">
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">মোট দেওয়া</p>
+                  <p className="text-base md:text-lg font-bold text-violet-400">৳{advanceSummary.totalAdvance.toLocaleString("bn-BD")}</p>
+                </div>
+              </div>
+
+              {/* Per-Member Advance List */}
+              <div className="rounded-2xl border border-border/30 overflow-hidden">
+                <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <Users className="h-3.5 w-3.5 text-orange-400" /> কার কাছে কত অগ্রিম বকেয়া
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground">{advanceSummary.memberList.length} জন</span>
+                </div>
+                <div className="divide-y divide-border/15 max-h-[35vh] overflow-y-auto">
+                  {advanceSummary.memberList.length === 0 && (
+                    <div className="p-6 text-center text-xs text-muted-foreground">কোনো বকেয়া অগ্রিম নেই</div>
+                  )}
+                  {advanceSummary.memberList.map((m: any) => (
+                    <div key={m.id} className="px-4 py-3 flex items-center justify-between hover:bg-secondary/20 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="h-9 w-9 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center overflow-hidden shrink-0">
+                          {m.photo_url ? (
+                            <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-orange-400 text-xs font-bold">{m.full_name?.charAt(0)}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
+                          <p className="text-[10px] text-muted-foreground">কাটা: ৳{m.deducted.toLocaleString("bn-BD")} / ৳{m.total.toLocaleString("bn-BD")}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold text-orange-400 ml-2 shrink-0">
+                        ৳{m.remaining.toLocaleString("bn-BD")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Deductions Log */}
+              <div className="rounded-2xl border border-border/30 overflow-hidden">
+                <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
+                  <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" /> সাম্প্রতিক কাটার রিপোর্ট
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground">শেষ ৫০টি</span>
+                </div>
+                <div className="divide-y divide-border/15 max-h-[30vh] overflow-y-auto">
+                  {(!advanceDeductionLog || advanceDeductionLog.length === 0) && (
+                    <div className="p-6 text-center text-xs text-muted-foreground">এখনো কোনো কাটা হয়নি</div>
+                  )}
+                  {advanceDeductionLog?.map((d: any) => (
+                    <div key={d.id} className="px-4 py-2.5 flex items-center justify-between hover:bg-secondary/20 transition-colors">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div className="h-7 w-7 rounded-full bg-secondary/40 flex items-center justify-center overflow-hidden shrink-0">
+                          {d.member?.photo_url ? (
+                            <img src={d.member.photo_url} alt={d.member.full_name} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-bold text-muted-foreground">{d.member?.full_name?.charAt(0) || "?"}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{d.member?.full_name || "—"}</p>
+                          <p className="text-[10px] text-muted-foreground">{new Date(d.created_at).toLocaleDateString("bn-BD")} · {d.notes || ""}</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-400 ml-2 shrink-0">
+                        − ৳{Number(d.amount).toLocaleString("bn-BD")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
