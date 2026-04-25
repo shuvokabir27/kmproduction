@@ -95,7 +95,7 @@ export function AppSidebar() {
       ? location.pathname === "/admin"
       : location.pathname.startsWith(path);
 
-  const renderItems = (items: typeof teamItems) => (
+  const renderItems = (items: typeof teamWorkItems) => (
     <SidebarMenu>
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
