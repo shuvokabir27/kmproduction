@@ -293,6 +293,7 @@ const AdminDashboard = () => {
     { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: () => navigate("/admin/shootings") },
     { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10", onClick: () => navigate("/admin/payments") },
     { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setDueDialogOpen(true) },
+    { label: "অগ্রিম", value: `৳${(advanceSummary?.remaining ?? 0).toLocaleString("bn-BD")}`, icon: HandCoins, gradient: "from-orange-500/20 to-orange-500/5", iconColor: "text-orange-400", iconBg: "bg-orange-500/10", onClick: () => setAdvanceDialogOpen(true) },
   ];
 
   return (
