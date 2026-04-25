@@ -45,6 +45,7 @@ interface MemberForm {
   achievements: string;
   achievements_en: string;
   date_of_birth: string;
+  blood_group: string;
   favorite_actor: string;
   favorite_actor_en: string;
   favorite_actress: string;
@@ -70,6 +71,7 @@ const emptyForm: MemberForm = {
   education: "", education_en: "",
   achievements: "", achievements_en: "",
   date_of_birth: "",
+  blood_group: "",
   favorite_actor: "", favorite_actor_en: "",
   favorite_actress: "", favorite_actress_en: "",
   favorite_color: "", favorite_color_en: "",
@@ -273,6 +275,7 @@ const AdminMembers = () => {
       achievements: member.achievements || "",
       achievements_en: member.achievements_en || "",
       date_of_birth: member.date_of_birth || "",
+      blood_group: (member as any).blood_group || "",
       favorite_actor: member.favorite_actor || "",
       favorite_actor_en: member.favorite_actor_en || "",
       favorite_actress: member.favorite_actress || "",
@@ -331,6 +334,7 @@ const AdminMembers = () => {
           achievements: form.achievements || null,
           achievements_en: form.achievements_en || null,
           date_of_birth: form.date_of_birth || null,
+          blood_group: form.blood_group || null,
           favorite_actor: form.favorite_actor || null,
           favorite_actor_en: form.favorite_actor_en || null,
           favorite_actress: form.favorite_actress || null,
@@ -596,17 +600,34 @@ const AdminMembers = () => {
                 </div>
 
                 {/* জন্ম তারিখ — উপরে আনা হয়েছে যাতে সহজে চোখে পড়ে */}
-                <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3">
-                  <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
-                    🎂 <span>জন্ম তারিখ</span>
-                    <span className="text-[10px] text-muted-foreground font-normal">(জন্মদিন কাউন্টডাউনে দেখাবে)</span>
-                  </Label>
-                  <Input
-                    type="date"
-                    value={form.date_of_birth}
-                    onChange={(e) => setField("date_of_birth", e.target.value)}
-                    className="bg-secondary border-border/50"
-                  />
+                <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                      🎂 <span>জন্ম তারিখ</span>
+                      <span className="text-[10px] text-muted-foreground font-normal">(কাউন্টডাউনে দেখাবে)</span>
+                    </Label>
+                    <Input
+                      type="date"
+                      value={form.date_of_birth}
+                      onChange={(e) => setField("date_of_birth", e.target.value)}
+                      className="bg-secondary border-border/50"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                      🩸 <span>রক্তের গ্রুপ</span>
+                    </Label>
+                    <Select value={form.blood_group || undefined} onValueChange={(v) => setField("blood_group" as any, v)}>
+                      <SelectTrigger className="bg-secondary border-border/50">
+                        <SelectValue placeholder="রক্তের গ্রুপ নির্বাচন করুন" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
+                          <SelectItem key={bg} value={bg}>{bg}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
