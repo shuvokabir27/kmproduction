@@ -644,4 +644,220 @@ const DataTable = ({
   );
 };
 
+// ============ Report Content for PDF ============
+const ReportContent = ({
+  profile,
+  balance: b,
+  attendance,
+  payments,
+  bonuses,
+  salaryCredits,
+  freelanceWork,
+}: {
+  profile: any;
+  balance: any;
+  attendance: any[];
+  payments: any[];
+  bonuses: any[];
+  salaryCredits: any[];
+  freelanceWork: { assignments: any[]; clientArtist: any[] };
+}) => {
+  const today = format(new Date(), "dd MMMM yyyy", { locale: bn });
+  const totalIncome = b.totalEarned + b.totalBonuses + b.totalSalaryCredits + b.previousBalance + b.totalFreelance;
+  const totalOut = b.totalPaid + b.totalFreelancePaid;
+
+  const th: React.CSSProperties = {
+    background: "#f1f5f9",
+    color: "#475569",
+    padding: "6px 8px",
+    textAlign: "left",
+    fontSize: "11px",
+    fontWeight: 600,
+    border: "1px solid #e2e8f0",
+  };
+  const td: React.CSSProperties = {
+    padding: "6px 8px",
+    border: "1px solid #e2e8f0",
+    fontSize: "11px",
+    color: "#0f172a",
+  };
+  const sectionTitle: React.CSSProperties = {
+    fontSize: "14px",
+    fontWeight: 700,
+    color: "#1e40af",
+    marginTop: "20px",
+    marginBottom: "8px",
+    paddingBottom: "4px",
+    borderBottom: "2px solid #1e40af",
+  };
+
+  const renderTable = (headers: string[], rows: (string | number)[][], emptyText = "কোনো তথ্য নেই") => {
+    if (!rows.length) {
+      return <div style={{ padding: "8px", color: "#94a3b8", fontSize: "11px", fontStyle: "italic" }}>{emptyText}</div>;
+    }
+    return (
+      <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "4px" }}>
+        <thead>
+          <tr>{headers.map((h, i) => <th key={i} style={th}>{h}</th>)}</tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i} style={{ background: i % 2 ? "#f8fafc" : "#ffffff" }}>
+              {r.map((c, j) => <td key={j} style={td}>{c}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ borderBottom: "3px solid #1e40af", paddingBottom: "12px", marginBottom: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ fontSize: "18px", fontWeight: 700, color: "#1e40af" }}>কুয়াকাটা মাল্টিমিডিয়া</div>
+            <div style={{ fontSize: "13px", color: "#475569", marginTop: "2px" }}>সদস্য একাউন্ট রিপোর্ট</div>
+          </div>
+          <div style={{ fontSize: "10px", color: "#64748b", textAlign: "right" }}>
+            <div>রিপোর্ট তারিখ:</div>
+            <div style={{ fontWeight: 600, color: "#0f172a" }}>{today}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Member info */}
+      <div style={{ display: "flex", gap: "12px", padding: "12px", background: "#eff6ff", borderRadius: "8px", marginBottom: "12px", border: "1px solid #bfdbfe" }}>
+        <div style={{ width: 64, height: 64, borderRadius: "50%", overflow: "hidden", background: "#dbeafe", display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid #1e40af", flexShrink: 0 }}>
+          {profile.photo_url ? (
+            <img src={profile.photo_url} alt="" crossOrigin="anonymous" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : (
+            <span style={{ fontSize: "24px", color: "#1e40af", fontWeight: 700 }}>{profile.full_name?.charAt(0)}</span>
+          )}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>{profile.full_name}</div>
+          <div style={{ fontSize: "11px", color: "#475569", marginTop: "2px" }}>{profile.designation || "সদস্য"}</div>
+          <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>সদস্য আইডি: {profile.member_id ?? "—"}</div>
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div style={sectionTitle}>আর্থিক সারসংক্ষেপ</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+        <div style={{ padding: "10px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "6px" }}>
+          <div style={{ fontSize: "11px", fontWeight: 700, color: "#15803d", marginBottom: "6px" }}>আয়ের উৎস</div>
+          <SumRow label="পূর্ববর্তী ব্যালান্স" value={fmt(b.previousBalance)} />
+          <SumRow label={`হাজিরা (${attendance.length} দিন)`} value={fmt(b.totalEarned)} />
+          <SumRow label="বোনাস" value={fmt(b.totalBonus)} />
+          <SumRow label="যাতায়াত" value={fmt(b.totalTransport)} />
+          <SumRow label="স্যালারি ক্রেডিট" value={fmt(b.totalSalaryCredits)} />
+          <SumRow label="বাইরের কাজ" value={fmt(b.totalFreelance)} />
+          <SumRow label="মোট আয়" value={fmt(totalIncome)} bold />
+        </div>
+        <div style={{ padding: "10px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "6px" }}>
+          <div style={{ fontSize: "11px", fontWeight: 700, color: "#b91c1c", marginBottom: "6px" }}>পরিশোধ ও ব্যালান্স</div>
+          <SumRow label="KM পেমেন্ট" value={fmt(b.totalPaid)} />
+          <SumRow label="বাইরের কাজ পরিশোধ" value={fmt(b.totalFreelancePaid)} />
+          <SumRow label="মোট পরিশোধ" value={fmt(totalOut)} bold />
+          <div style={{ borderTop: "1px dashed #cbd5e1", marginTop: "6px", paddingTop: "6px" }}>
+            <SumRow label="KM ব্যালান্স" value={fmt(b.kmBalance)} />
+            <SumRow label="ক্লায়েন্ট ব্যালান্স" value={fmt(b.clientBalance)} />
+            <SumRow label="চূড়ান্ত পাওনা" value={fmt(b.balance)} bold color={b.balance >= 0 ? "#15803d" : "#b91c1c"} />
+          </div>
+        </div>
+      </div>
+
+      {/* Attendance */}
+      <div style={sectionTitle}>হাজিরা বিবরণ ({attendance.length})</div>
+      {renderTable(
+        ["তারিখ", "শুটিং", "লোকেশন", "রেট"],
+        attendance.map((a: any) => [
+          fmtDate(a.shootings?.shoot_date || a.created_at),
+          a.shootings?.name || "-",
+          a.shootings?.location || "-",
+          fmt(a.daily_rate),
+        ])
+      )}
+
+      {/* Bonuses */}
+      <div style={sectionTitle}>বোনাস ও যাতায়াত ({bonuses.length})</div>
+      {renderTable(
+        ["তারিখ", "ধরন", "নোট", "পরিমাণ"],
+        bonuses.map((bn: any) => [
+          fmtDate(bn.bonus_date),
+          bn.type === "transport" ? "যাতায়াত" : "বোনাস",
+          bn.notes || "-",
+          fmt(bn.amount),
+        ])
+      )}
+
+      {/* Salary credits */}
+      <div style={sectionTitle}>মাসিক স্যালারি ক্রেডিট ({salaryCredits.length})</div>
+      {renderTable(
+        ["মাস", "ক্রেডিট তারিখ", "পরিমাণ"],
+        salaryCredits.map((s: any) => [
+          format(new Date(s.credit_month), "MMM yyyy", { locale: bn }),
+          fmtDate(s.created_at),
+          fmt(s.amount),
+        ])
+      )}
+
+      {/* Freelance assignments */}
+      <div style={sectionTitle}>বাইরের কাজ — অ্যাসাইনমেন্ট ({freelanceWork.assignments.length})</div>
+      {renderTable(
+        ["তারিখ", "প্রজেক্ট", "ক্লায়েন্ট", "ভূমিকা", "রেট", "পরিশোধ"],
+        freelanceWork.assignments.map((f: any) => [
+          fmtDate(f.freelance_projects?.project_date),
+          f.freelance_projects?.name || "-",
+          f.freelance_projects?.client_name || "-",
+          f.role_label || "-",
+          fmt(f.rate),
+          fmt(f.paid_amount),
+        ])
+      )}
+
+      {/* Client artist */}
+      <div style={sectionTitle}>বাইরের কাজ — ক্লায়েন্ট পোর্টাল ({freelanceWork.clientArtist.length})</div>
+      {renderTable(
+        ["তারিখ", "প্রজেক্ট", "ক্লায়েন্ট", "পারিশ্রমিক", "পরিশোধ"],
+        freelanceWork.clientArtist.map((c: any) => [
+          fmtDate(c.freelance_projects?.project_date),
+          c.freelance_projects?.name || "-",
+          c.freelance_projects?.client_name || "-",
+          fmt(c.remuneration),
+          fmt(c.paid_amount),
+        ])
+      )}
+
+      {/* Payments */}
+      <div style={sectionTitle}>পরিশোধ ইতিহাস ({payments.length})</div>
+      {renderTable(
+        ["তারিখ", "মাধ্যম", "ট্রানজেকশন ID", "নোট", "পরিমাণ"],
+        payments.map((p: any) => [
+          fmtDate(p.payment_date),
+          p.payment_method,
+          p.transaction_id || "-",
+          p.notes || "-",
+          fmt(p.amount),
+        ])
+      )}
+
+      {/* Footer */}
+      <div style={{ marginTop: "24px", paddingTop: "12px", borderTop: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#64748b" }}>
+        <span>কুয়াকাটা মাল্টিমিডিয়া — অভ্যন্তরীণ ব্যবহারের জন্য</span>
+        <span>রিপোর্ট তৈরি: {today}</span>
+      </div>
+    </div>
+  );
+};
+
+const SumRow = ({ label, value, bold, color }: { label: string; value: string; bold?: boolean; color?: string }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", padding: "2px 0", fontSize: "11px", borderTop: bold ? "1px solid #cbd5e1" : "none", marginTop: bold ? "4px" : 0, paddingTop: bold ? "4px" : "2px" }}>
+    <span style={{ color: "#475569", fontWeight: bold ? 700 : 400 }}>{label}</span>
+    <span style={{ color: color || "#0f172a", fontWeight: bold ? 700 : 600 }}>{value}</span>
+  </div>
+);
+
 export default AdminAccountChecking;
