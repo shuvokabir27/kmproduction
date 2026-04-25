@@ -522,6 +522,36 @@ const AdminAccountChecking = () => {
           </>
         )}
       </div>
+
+      {/* Offscreen full report for PDF capture */}
+      {selectedMember && b && selectedProfile && (
+        <div
+          ref={reportRef}
+          style={{
+            position: "fixed",
+            left: "-99999px",
+            top: "-99999px",
+            opacity: 0,
+            width: "794px", // A4 width @ 96dpi
+            background: "#ffffff",
+            color: "#0f172a",
+            padding: "32px",
+            fontFamily: "'Tiro Bangla', 'Hind Siliguri', sans-serif",
+            fontSize: "12px",
+            lineHeight: 1.6,
+          }}
+        >
+          <ReportContent
+            profile={selectedProfile}
+            balance={b}
+            attendance={attendance || []}
+            payments={payments || []}
+            bonuses={bonuses || []}
+            salaryCredits={salaryCredits || []}
+            freelanceWork={freelanceWork || { assignments: [], clientArtist: [] }}
+          />
+        </div>
+      )}
     </AppLayout>
   );
 };
