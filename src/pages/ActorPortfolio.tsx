@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Phone, Mail, Instagram, Facebook, Youtube, MapPin, Ruler, Palette,
   Scissors, Eye, Sparkles, Film, Video, Tv, GraduationCap, Award,
-  Languages, PlayCircle, ArrowLeft, Calendar
+  Languages, PlayCircle, ArrowLeft, Calendar, Droplet
 } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -204,16 +204,17 @@ const ActorPortfolio = () => {
       </section>
 
       {/* ===== 2. PHYSICAL ATTRIBUTES ===== */}
-      {(profile.height_cm || profile.skin_tone || profile.hair_type || profile.eye_color || profile.body_measurements) && (
+      {(profile.height_cm || profile.skin_tone || profile.hair_type || profile.eye_color || profile.body_measurements || profile.blood_group) && (
         <section className="py-20 px-6 border-t border-border/20">
           <div className="max-w-5xl mx-auto">
             <SectionHeader eyebrow="Profile" title="Physical Attributes" />
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mt-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mt-12">
               {profile.height_cm && <AttrCard icon={Ruler} label="Height" value={`${profile.height_cm} cm`} />}
               {profile.skin_tone && <AttrCard icon={Palette} label="Skin Tone" value={profile.skin_tone} />}
               {profile.hair_type && <AttrCard icon={Scissors} label="Hair" value={profile.hair_type} />}
               {profile.eye_color && <AttrCard icon={Eye} label="Eyes" value={profile.eye_color} />}
               {profile.body_measurements && <AttrCard icon={Sparkles} label="Measurements" value={profile.body_measurements} />}
+              {profile.blood_group && <AttrCard icon={Droplet} label="Blood Group" value={profile.blood_group} />}
             </div>
           </div>
         </section>

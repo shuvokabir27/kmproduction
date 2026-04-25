@@ -1851,6 +1851,7 @@ export type Database = {
           bio_en: string | null
           bkash_holder: string | null
           bkash_no: string | null
+          blood_group: string | null
           body_measurements: string | null
           cover_url: string | null
           created_at: string
@@ -1922,6 +1923,7 @@ export type Database = {
           bio_en?: string | null
           bkash_holder?: string | null
           bkash_no?: string | null
+          blood_group?: string | null
           body_measurements?: string | null
           cover_url?: string | null
           created_at?: string
@@ -1993,6 +1995,7 @@ export type Database = {
           bio_en?: string | null
           bkash_holder?: string | null
           bkash_no?: string | null
+          blood_group?: string | null
           body_measurements?: string | null
           cover_url?: string | null
           created_at?: string
