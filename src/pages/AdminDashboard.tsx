@@ -131,7 +131,7 @@ const AdminDashboard = () => {
       const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
       members?.forEach((m: any) => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const entry = memberMap.get(a.member_id); if (entry) entry.earned += Number(a.daily_rate || 0); });
-      payments?.forEach((p: any) => { const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
+      payments?.forEach((p: any) => { if (p.is_advance) return; const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const entry = memberMap.get(b.member_id); if (entry) entry.bonus += Number(b.amount || 0); });
       salaryCredits?.forEach((s: any) => {
         const cutoff = excludeMap[s.member_id];
