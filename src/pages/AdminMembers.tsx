@@ -255,6 +255,7 @@ const AdminMembers = () => {
       short_bio_en: member.short_bio_en || "",
       bank_name: member.bank_name || "",
       bank_account_no: member.bank_account_no || "",
+      bank_account_holder: member.bank_account_holder || "",
       bkash_no: member.bkash_no || "",
       nagad_no: member.nagad_no || "",
       address: member.address || "",
