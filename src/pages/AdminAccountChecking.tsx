@@ -41,6 +41,8 @@ const AdminAccountChecking = () => {
   const { user, isAdmin, loading } = useAuth();
   const [selectedMember, setSelectedMember] = useState<string>("");
   const [memberSearch, setMemberSearch] = useState("");
+  const [downloading, setDownloading] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const { data: members } = useQuery({
     queryKey: ["account-check-members"],
