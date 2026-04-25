@@ -2774,8 +2774,11 @@ export type Database = {
         Returns: {
           achievements: string
           achievements_en: string
+          address: string
+          address_en: string
           bio: string
           bio_en: string
+          blood_group: string
           cover_url: string
           date_of_birth: string
           designation: string
