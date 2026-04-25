@@ -381,16 +381,16 @@ const AdminPayments = () => {
       const dueLine = balance > 0
         ? `🔴 *অবশিষ্ট বকেয়া:* ৳${balance.toLocaleString("bn-BD")}`
         : balance < 0
-        ? `🟢 *অগ্রিম জমা:* ৳${Math.abs(balance).toLocaleString("bn-BD")}`
+        ? `🟠 *অগ্রিম (আপনার কাছে কোম্পানি পাবে):* ৳${Math.abs(balance).toLocaleString("bn-BD")}`
         : `✅ _সকল হিসাব সমন্বয় হয়েছে — কোনো বকেয়া নেই।_`;
 
       // Headline changes based on whether this is an advance payment
       const paymentLine = isAdvance
-        ? `💰 *অগ্রিম নেওয়া হয়েছে:* ৳${paidAmt}`
+        ? `💰 *অগ্রিম প্রদত্ত:* ৳${paidAmt}`
         : `✅ পেমেন্ট: *৳${paidAmt}*`;
 
       const introLine = isAdvance
-        ? `📌 _আপনি অগ্রিম টাকা গ্রহণ করেছেন।_\n\n`
+        ? `📌 _আপনাকে অগ্রিম টাকা প্রদান করা হয়েছে। এই টাকা পরবর্তী আয় থেকে সমন্বয় হবে।_\n\n`
         : ``;
 
       const msg =
