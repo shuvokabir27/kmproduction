@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X, List, ArrowUpRight, Crown, Sparkles } from "lucide-react";
+import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X, List, ArrowUpRight, Crown, Sparkles, HandCoins } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
