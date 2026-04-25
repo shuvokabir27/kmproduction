@@ -205,7 +205,7 @@ const AdminDashboard = () => {
   const { data: advanceSummary } = useQuery({
     queryKey: ["admin-advance-summary"],
     queryFn: async () => {
-      // Approved advances
+      // Approved advance requests
       const { data: approved } = await (supabase as any)
         .from("advance_requests")
         .select("id, member_id, amount, approved_amount, created_at, reason")
@@ -214,6 +214,11 @@ const AdminDashboard = () => {
       const { data: deductions } = await (supabase as any)
         .from("advance_deductions")
         .select("advance_request_id, amount");
+      // Advance payments (auto-detected from payments table)
+      const { data: advancePayments } = await (supabase as any)
+        .from("payments")
+        .select("member_id, amount")
+        .eq("is_advance", true);
 
       const dedMap = new Map<string, number>();
       (deductions ?? []).forEach((d: any) => {
@@ -232,6 +237,15 @@ const AdminDashboard = () => {
         cur.total += total;
         cur.deducted += ded;
         perMember.set(a.member_id, cur);
+      });
+
+      // Add auto-detected advance payments (no deductions yet, treated as balance)
+      (advancePayments ?? []).forEach((p: any) => {
+        const amt = Number(p.amount || 0);
+        totalAdvance += amt;
+        const cur = perMember.get(p.member_id) ?? { total: 0, deducted: 0 };
+        cur.total += amt;
+        perMember.set(p.member_id, cur);
       });
 
       const remaining = totalAdvance - totalDeducted;
