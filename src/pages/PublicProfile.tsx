@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star, Edit } from "lucide-react";
+import { ArrowLeft, MapPin, Briefcase, Calendar, GraduationCap, Award, Heart, Play, Quote, Sparkles, BadgeCheck, Cake, Star, Edit, Droplet } from "lucide-react";
 import { differenceInYears, format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { motion } from "framer-motion";
@@ -105,6 +105,7 @@ const PublicProfile = () => {
 
   const infoItems = [
     p.date_of_birth && { icon: Cake, text: `${L.age}: ${age?.toLocaleString(lang === "bn" ? "bn-BD" : "en-US")} ${L.years}` },
+    p.blood_group && { icon: Droplet, text: `${lang === "bn" ? "রক্তের গ্রুপ" : "Blood Group"}: ${p.blood_group}` },
     displayAddress && { icon: MapPin, text: displayAddress },
     displayDesignation && { icon: Briefcase, text: displayDesignation },
     displayEducation && { icon: GraduationCap, text: displayEducation },
