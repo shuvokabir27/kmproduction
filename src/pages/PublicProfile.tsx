@@ -141,81 +141,98 @@ const PublicProfile = () => {
 
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8 relative z-10">
 
-        {/* ── Hero Card ── */}
+        {/* ── Hero Card (Shareable Poster) ── */}
         <motion.div {...fadeUp(0)}>
-          <div className="rounded-2xl overflow-hidden border border-border/30 bg-card shadow-2xl shadow-primary/5">
+          <div className="relative rounded-3xl overflow-hidden border border-primary/20 bg-card shadow-2xl shadow-primary/10">
+            {/* Decorative corner accents */}
+            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-primary/30 to-transparent rounded-br-full pointer-events-none z-10" />
+            <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-primary/20 to-transparent rounded-tl-full pointer-events-none" />
+
             {/* Cover */}
-            <div className="h-56 sm:h-64 relative overflow-hidden">
+            <div className="h-64 sm:h-80 relative overflow-hidden">
               {p.cover_url ? (
                 <img src={p.cover_url} alt="cover" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary/30 via-primary/10 to-background relative">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.2),transparent_70%)]" />
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,hsl(var(--primary)/0.15),transparent_60%)]" />
+                <div className="w-full h-full bg-gradient-to-br from-primary/40 via-primary/15 to-background relative">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.3),transparent_70%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,hsl(var(--primary)/0.2),transparent_60%)]" />
+                  {/* Subtle pattern */}
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle, hsl(var(--primary)/0.4) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card to-transparent" />
             </div>
 
-            {/* Profile Info */}
-            <div className="px-6 sm:px-8 pb-8 -mt-20 relative">
-              <div className="flex flex-col sm:flex-row items-start gap-5">
-                {/* Avatar */}
+            {/* Profile Info — centered poster style */}
+            <div className="px-6 sm:px-10 pb-10 -mt-24 sm:-mt-28 relative text-center">
+              {/* Avatar — centered, large, glowing */}
+              <div className="flex justify-center">
                 <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-br from-primary to-primary/50 rounded-2xl blur-sm opacity-60 group-hover:opacity-80 transition-opacity" />
-                  <div className="h-32 w-32 rounded-2xl bg-card flex items-center justify-center border-2 border-primary/30 overflow-hidden relative shadow-xl">
+                  <div className="absolute -inset-2 bg-gradient-to-br from-primary via-primary/60 to-primary/30 rounded-full blur-md opacity-70 group-hover:opacity-100 transition-opacity animate-pulse" />
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-primary to-primary/40 rounded-full" />
+                  <div className="h-36 w-36 sm:h-44 sm:w-44 rounded-full bg-card flex items-center justify-center overflow-hidden relative shadow-2xl ring-4 ring-card">
                     {profile.photo_url ? (
                       <img src={profile.photo_url} alt={displayName} className="h-full w-full object-cover" />
                     ) : (
                       <div className="h-full w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <span className="text-primary font-bold text-4xl">{displayName.charAt(0)}</span>
+                        <span className="text-primary font-bold text-5xl">{displayName.charAt(0)}</span>
                       </div>
                     )}
                   </div>
                 </div>
+              </div>
 
-                {/* Name & Title */}
-                <div className="pt-2 sm:pt-8">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-                      {displayName}
-                    </h1>
-                    {p.is_verified && (
-                      <span title={L.verified} className="shrink-0">
-                        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="12" cy="12" r="10" fill="#1877F2" />
-                          <path d="M9.5 12.5L11 14L15 10" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                    )}
-                  </div>
-                  {/* Rating next to name */}
-                  {avgRating && (
-                    <div className="flex items-center gap-1 mt-1">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className={`h-4 w-4 ${s <= Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
-                      ))}
-                      <span className="text-foreground font-bold text-sm ml-1">{avgRating}</span>
-                      <span className="text-muted-foreground text-xs">({ratingsCount})</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                    <p className="text-primary font-medium text-sm tracking-wide uppercase">
-                      {displayDesignation}
-                    </p>
-                  </div>
+              {/* Name & Verified */}
+              <div className="mt-5 flex items-center justify-center gap-2 flex-wrap">
+                <h1 className="text-3xl sm:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
+                  {displayName}
+                </h1>
+                {p.is_verified && (
+                  <span title={L.verified} className="shrink-0">
+                    <svg className="h-7 w-7 sm:h-8 sm:w-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" fill="#1877F2" />
+                      <path d="M9.5 12.5L11 14L15 10" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                )}
+              </div>
+
+              {/* Designation pill */}
+              <div className="mt-3 flex justify-center">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                  <p className="text-primary font-semibold text-xs sm:text-sm tracking-wide uppercase">
+                    {displayDesignation}
+                  </p>
                 </div>
+              </div>
+
+              {/* Rating */}
+              {avgRating && (
+                <div className="mt-3 flex items-center justify-center gap-1">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`h-4 w-4 ${s <= Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                  ))}
+                  <span className="text-foreground font-bold text-sm ml-1">{avgRating}</span>
+                  <span className="text-muted-foreground text-xs">({ratingsCount})</span>
+                </div>
+              )}
+
+              {/* Decorative divider */}
+              <div className="mt-6 flex items-center justify-center gap-3">
+                <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary/40" />
+                <Sparkles className="h-3.5 w-3.5 text-primary/60" />
+                <div className="h-px w-12 bg-gradient-to-l from-transparent to-primary/40" />
               </div>
 
               {/* Short Bio */}
               {displayBio && (
-                <motion.div {...fadeUp(0.15)} className="mt-8 relative">
-                  <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary to-transparent rounded-full" />
-                  <div className="pl-5">
-                    <Quote className="h-4 w-4 text-primary/40 mb-2" />
-                    <p className="text-muted-foreground text-sm leading-relaxed italic">
-                      {displayBio}
+                <motion.div {...fadeUp(0.15)} className="mt-6 max-w-xl mx-auto">
+                  <div className="relative px-6 py-4 rounded-2xl bg-secondary/30 border border-border/20">
+                    <Quote className="h-5 w-5 text-primary/50 absolute -top-2.5 left-4 bg-card px-1" />
+                    <p className="text-foreground/80 text-sm sm:text-base leading-relaxed italic">
+                      "{displayBio}"
                     </p>
                   </div>
                 </motion.div>
@@ -223,17 +240,25 @@ const PublicProfile = () => {
 
               {/* Info Grid */}
               {infoItems.length > 0 && (
-                <motion.div {...fadeUp(0.2)} className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <motion.div {...fadeUp(0.2)} className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto text-left">
                   {infoItems.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/40 border border-border/20 hover:border-primary/20 transition-colors">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/40 border border-border/20 hover:border-primary/30 transition-colors">
+                      <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shrink-0 border border-primary/20">
                         <item.icon className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="text-sm text-foreground/80">{item.text}</span>
+                      <span className="text-sm text-foreground/85 font-medium">{item.text}</span>
                     </div>
                   ))}
                 </motion.div>
               )}
+
+              {/* Member ID watermark — share-friendly */}
+              <div className="mt-8 pt-6 border-t border-border/20 flex items-center justify-center gap-2 text-xs text-muted-foreground/70">
+                <BadgeCheck className="h-3.5 w-3.5 text-primary/60" />
+                <span className="font-mono tracking-wider">
+                  {lang === "bn" ? "মেম্বার আইডি" : "Member ID"}: #{p.member_id?.toLocaleString(lang === "bn" ? "bn-BD" : "en-US")}
+                </span>
+              </div>
             </div>
           </div>
         </motion.div>
