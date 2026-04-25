@@ -63,8 +63,9 @@ const AdminDashboard = () => {
 
       const { data: attendance } = await supabase.from("attendance").select("daily_rate, member_id").eq("is_present", true).in("member_id", activeIds);
       const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
-      const { data: payments } = await supabase.from("payments").select("amount, member_id").in("member_id", activeIds);
-      const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
+      // Exclude advance payments from totalPaid — they don't reduce due, they're tracked separately
+      const { data: payments } = await (supabase as any).from("payments").select("amount, member_id, is_advance").in("member_id", activeIds);
+      const totalPaid = payments?.reduce((sum: number, p: any) => sum + (p.is_advance ? 0 : Number(p.amount || 0)), 0) ?? 0;
       const { data: bonuses } = await (supabase as any).from("bonuses").select("amount, member_id").in("member_id", activeIds);
       const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, member_id, credit_month").in("member_id", activeIds);
