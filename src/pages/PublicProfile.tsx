@@ -105,6 +105,7 @@ const PublicProfile = () => {
 
   const infoItems = [
     p.date_of_birth && { icon: Cake, text: `${L.age}: ${age?.toLocaleString(lang === "bn" ? "bn-BD" : "en-US")} ${L.years}` },
+    p.blood_group && { icon: Droplet, text: `${lang === "bn" ? "রক্তের গ্রুপ" : "Blood Group"}: ${p.blood_group}` },
     displayAddress && { icon: MapPin, text: displayAddress },
     displayDesignation && { icon: Briefcase, text: displayDesignation },
     displayEducation && { icon: GraduationCap, text: displayEducation },
