@@ -67,6 +67,7 @@ const accountItems = [
 
 const publicSiteItems = [
   { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe, color: "text-teal-400", bg: "bg-teal-500/10" },
+  { title: "অভিনেতা পোর্টফোলিও", url: "/admin/actor-editor", icon: Film, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
   { title: "নিউজ", url: "/admin/news", icon: Newspaper, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play, color: "text-pink-400", bg: "bg-pink-500/10" },
   { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles, color: "text-yellow-400", bg: "bg-yellow-500/10" },
