@@ -45,6 +45,7 @@ interface MemberForm {
   achievements: string;
   achievements_en: string;
   date_of_birth: string;
+  blood_group: string;
   favorite_actor: string;
   favorite_actor_en: string;
   favorite_actress: string;
@@ -70,6 +71,7 @@ const emptyForm: MemberForm = {
   education: "", education_en: "",
   achievements: "", achievements_en: "",
   date_of_birth: "",
+  blood_group: "",
   favorite_actor: "", favorite_actor_en: "",
   favorite_actress: "", favorite_actress_en: "",
   favorite_color: "", favorite_color_en: "",
@@ -273,6 +275,7 @@ const AdminMembers = () => {
       achievements: member.achievements || "",
       achievements_en: member.achievements_en || "",
       date_of_birth: member.date_of_birth || "",
+      blood_group: (member as any).blood_group || "",
       favorite_actor: member.favorite_actor || "",
       favorite_actor_en: member.favorite_actor_en || "",
       favorite_actress: member.favorite_actress || "",
@@ -331,6 +334,7 @@ const AdminMembers = () => {
           achievements: form.achievements || null,
           achievements_en: form.achievements_en || null,
           date_of_birth: form.date_of_birth || null,
+          blood_group: form.blood_group || null,
           favorite_actor: form.favorite_actor || null,
           favorite_actor_en: form.favorite_actor_en || null,
           favorite_actress: form.favorite_actress || null,
