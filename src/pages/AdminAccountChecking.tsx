@@ -158,18 +158,84 @@ const AdminAccountChecking = () => {
 
   const b = balance.data;
 
+  const handleDownloadReport = async () => {
+    if (!reportRef.current || !selectedProfile || !b) {
+      toast.error("রিপোর্ট তৈরির জন্য প্রস্তুত নয়");
+      return;
+    }
+    setDownloading(true);
+    try {
+      // Make the offscreen report visible for capture
+      const node = reportRef.current;
+      node.style.left = "0";
+      node.style.top = "0";
+      node.style.position = "fixed";
+      node.style.zIndex = "-1";
+      node.style.opacity = "1";
+
+      await new Promise((r) => setTimeout(r, 100));
+
+      const canvas = await html2canvas(node, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        windowWidth: node.scrollWidth,
+        windowHeight: node.scrollHeight,
+      });
+
+      // Hide again
+      node.style.left = "-99999px";
+      node.style.top = "-99999px";
+      node.style.opacity = "0";
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const imgW = pageW;
+      const imgH = (canvas.height * imgW) / canvas.width;
+
+      let heightLeft = imgH;
+      let position = 0;
+      pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+      heightLeft -= pageH;
+      while (heightLeft > 0) {
+        position = heightLeft - imgH;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+        heightLeft -= pageH;
+      }
+
+      const filename = `একাউন্ট-রিপোর্ট-${selectedProfile.full_name}-${format(new Date(), "yyyy-MM-dd")}.pdf`;
+      pdf.save(filename);
+      toast.success("রিপোর্ট ডাউনলোড হয়েছে");
+    } catch (err: any) {
+      toast.error("ডাউনলোড ব্যর্থ: " + (err?.message || ""));
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto p-4 md:p-6 space-y-6 max-w-7xl">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/30">
-            <Calculator className="h-6 w-6 text-indigo-400" />
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/30">
+              <Calculator className="h-6 w-6 text-indigo-400" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">একাউন্ট চেকিং</h1>
+              <p className="text-sm text-muted-foreground">সদস্যের সম্পূর্ণ আর্থিক হিসাব</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">একাউন্ট চেকিং</h1>
-            <p className="text-sm text-muted-foreground">সদস্যের সম্পূর্ণ আর্থিক হিসাব</p>
-          </div>
+          {selectedMember && b && (
+            <Button onClick={handleDownloadReport} disabled={downloading} className="gap-2">
+              {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {downloading ? "তৈরি হচ্ছে..." : "পুরো রিপোর্ট PDF ডাউনলোড"}
+            </Button>
+          )}
         </div>
 
         {/* Member selector */}
