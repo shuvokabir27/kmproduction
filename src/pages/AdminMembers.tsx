@@ -32,6 +32,7 @@ interface MemberForm {
   short_bio_en: string;
   bank_name: string;
   bank_account_no: string;
+  bank_account_holder: string;
   bkash_no: string;
   nagad_no: string;
   address: string;
@@ -61,7 +62,7 @@ const emptyForm: MemberForm = {
   full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
-  bank_name: "", bank_account_no: "", bkash_no: "", nagad_no: "",
+  bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", nagad_no: "",
   address: "", address_en: "",
   education: "", education_en: "",
   achievements: "", achievements_en: "",
@@ -254,6 +255,7 @@ const AdminMembers = () => {
       short_bio_en: member.short_bio_en || "",
       bank_name: member.bank_name || "",
       bank_account_no: member.bank_account_no || "",
+      bank_account_holder: member.bank_account_holder || "",
       bkash_no: member.bkash_no || "",
       nagad_no: member.nagad_no || "",
       address: member.address || "",
@@ -309,6 +311,7 @@ const AdminMembers = () => {
           short_bio_en: form.short_bio_en || null,
           bank_name: form.bank_name || null,
           bank_account_no: form.bank_account_no || null,
+          bank_account_holder: form.bank_account_holder || null,
           bkash_no: form.bkash_no || null,
           nagad_no: form.nagad_no || null,
           address: form.address || null,
@@ -363,6 +366,7 @@ const AdminMembers = () => {
               bio: form.bio || null,
               bank_name: form.bank_name || null,
               bank_account_no: form.bank_account_no || null,
+              bank_account_holder: form.bank_account_holder || null,
               bkash_no: form.bkash_no || null,
               nagad_no: form.nagad_no || null,
               address: form.address || null,
@@ -738,6 +742,10 @@ const AdminMembers = () => {
                     <div>
                       <Label className="text-foreground text-xs">ব্যাংক একাউন্ট নং</Label>
                       <Input value={form.bank_account_no} onChange={(e) => setField("bank_account_no", e.target.value)} className="bg-secondary border-border/50" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-foreground text-xs">ব্যাংক একাউন্ট হোল্ডার নাম</Label>
+                      <Input value={form.bank_account_holder} onChange={(e) => setField("bank_account_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="একাউন্টধারীর পূর্ণ নাম" />
                     </div>
                     <div>
                       <Label className="text-foreground text-xs">বিকাশ নম্বর</Label>
