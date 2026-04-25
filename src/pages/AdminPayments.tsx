@@ -384,10 +384,20 @@ const AdminPayments = () => {
         ? `🟢 *অগ্রিম জমা:* ৳${Math.abs(balance).toLocaleString("bn-BD")}`
         : `✅ _সকল হিসাব সমন্বয় হয়েছে — কোনো বকেয়া নেই।_`;
 
+      // Headline changes based on whether this is an advance payment
+      const paymentLine = isAdvance
+        ? `💰 *অগ্রিম নেওয়া হয়েছে:* ৳${paidAmt}`
+        : `✅ পেমেন্ট: *৳${paidAmt}*`;
+
+      const introLine = isAdvance
+        ? `📌 _আপনি অগ্রিম টাকা গ্রহণ করেছেন।_\n\n`
+        : ``;
+
       const msg =
         `*আসসালামু আলাইকুম ${memberName}* 🌿\n` +
         `${emoji} _${greeting}!_\n\n` +
-        `✅ পেমেন্ট: *৳${paidAmt}*\n` +
+        `${introLine}` +
+        `${paymentLine}\n` +
         `💳 মাধ্যম: ${methodLine}\n` +
         `${dueLine}\n\n` +
         `📄 রিসিট: ${publicUrl}\n` +
@@ -396,7 +406,7 @@ const AdminPayments = () => {
         `🎬 *Kuakata Multimedia*`;
 
       window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, "_blank");
-      toast.success("WhatsApp ওপেন হয়েছে — রিসিট লিংক যুক্ত হয়েছে");
+      toast.success(isAdvance ? "WhatsApp ওপেন হয়েছে — অগ্রিম মেসেজ পাঠান" : "WhatsApp ওপেন হয়েছে — রিসিট লিংক যুক্ত হয়েছে");
     } catch (err: any) {
       console.error("WhatsApp send failed", err);
       toast.error(err.message || "WhatsApp পাঠাতে সমস্যা হয়েছে");
