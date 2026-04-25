@@ -1412,6 +1412,7 @@ export type Database = {
           amount: number
           created_at: string
           id: string
+          is_advance: boolean
           member_id: string
           notes: string | null
           paid_by: string | null
@@ -1423,6 +1424,7 @@ export type Database = {
           amount: number
           created_at?: string
           id?: string
+          is_advance?: boolean
           member_id: string
           notes?: string | null
           paid_by?: string | null
@@ -1434,6 +1436,7 @@ export type Database = {
           amount?: number
           created_at?: string
           id?: string
+          is_advance?: boolean
           member_id?: string
           notes?: string | null
           paid_by?: string | null

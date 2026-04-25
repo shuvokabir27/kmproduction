@@ -63,8 +63,9 @@ const AdminDashboard = () => {
 
       const { data: attendance } = await supabase.from("attendance").select("daily_rate, member_id").eq("is_present", true).in("member_id", activeIds);
       const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
-      const { data: payments } = await supabase.from("payments").select("amount, member_id").in("member_id", activeIds);
-      const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount || 0), 0) ?? 0;
+      // Exclude advance payments from totalPaid — they don't reduce due, they're tracked separately
+      const { data: payments } = await (supabase as any).from("payments").select("amount, member_id, is_advance").in("member_id", activeIds);
+      const totalPaid = payments?.reduce((sum: number, p: any) => sum + (p.is_advance ? 0 : Number(p.amount || 0)), 0) ?? 0;
       const { data: bonuses } = await (supabase as any).from("bonuses").select("amount, member_id").in("member_id", activeIds);
       const totalBonuses = bonuses?.reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("amount, member_id, credit_month").in("member_id", activeIds);
@@ -111,7 +112,7 @@ const AdminDashboard = () => {
         return r.includes("member") && !r.includes("admin") && !r.includes("client") && !r.includes("product_admin");
       });
       const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
-      const { data: payments } = await supabase.from("payments").select("member_id, amount");
+      const { data: payments } = await (supabase as any).from("payments").select("member_id, amount, is_advance");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
 
@@ -130,7 +131,7 @@ const AdminDashboard = () => {
       const memberMap = new Map<string, { name: string; memberId: number; photo: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
       members?.forEach((m: any) => memberMap.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const entry = memberMap.get(a.member_id); if (entry) entry.earned += Number(a.daily_rate || 0); });
-      payments?.forEach((p: any) => { const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
+      payments?.forEach((p: any) => { if (p.is_advance) return; const entry = memberMap.get(p.member_id); if (entry) entry.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const entry = memberMap.get(b.member_id); if (entry) entry.bonus += Number(b.amount || 0); });
       salaryCredits?.forEach((s: any) => {
         const cutoff = excludeMap[s.member_id];
@@ -168,7 +169,7 @@ const AdminDashboard = () => {
         return r.includes("member") && !r.includes("admin") && !r.includes("client") && !r.includes("product_admin");
       });
       const { data: attendance } = await supabase.from("attendance").select("member_id, daily_rate").eq("is_present", true);
-      const { data: payments } = await supabase.from("payments").select("member_id, amount");
+      const { data: payments } = await (supabase as any).from("payments").select("member_id, amount, is_advance");
       const { data: bonuses } = await (supabase as any).from("bonuses").select("member_id, amount");
       const { data: salaryCredits } = await (supabase as any).from("salary_credits").select("member_id, amount, credit_month");
       // Production members' admin-assigned freelance income (client_project_artists excluded)
@@ -186,7 +187,7 @@ const AdminDashboard = () => {
       const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
       members?.forEach((m: any) => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
-      payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
+      payments?.forEach((p: any) => { if (p.is_advance) return; const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const e = map.get(b.member_id); if (e) e.bonus += Number(b.amount || 0); });
       salaryCredits?.forEach((s: any) => {
         const cutoff = excludeMap[s.member_id];
@@ -204,7 +205,7 @@ const AdminDashboard = () => {
   const { data: advanceSummary } = useQuery({
     queryKey: ["admin-advance-summary"],
     queryFn: async () => {
-      // Approved advances
+      // Approved advance requests
       const { data: approved } = await (supabase as any)
         .from("advance_requests")
         .select("id, member_id, amount, approved_amount, created_at, reason")
@@ -213,6 +214,11 @@ const AdminDashboard = () => {
       const { data: deductions } = await (supabase as any)
         .from("advance_deductions")
         .select("advance_request_id, amount");
+      // Advance payments (auto-detected from payments table)
+      const { data: advancePayments } = await (supabase as any)
+        .from("payments")
+        .select("member_id, amount")
+        .eq("is_advance", true);
 
       const dedMap = new Map<string, number>();
       (deductions ?? []).forEach((d: any) => {
@@ -231,6 +237,15 @@ const AdminDashboard = () => {
         cur.total += total;
         cur.deducted += ded;
         perMember.set(a.member_id, cur);
+      });
+
+      // Add auto-detected advance payments (no deductions yet, treated as balance)
+      (advancePayments ?? []).forEach((p: any) => {
+        const amt = Number(p.amount || 0);
+        totalAdvance += amt;
+        const cur = perMember.get(p.member_id) ?? { total: 0, deducted: 0 };
+        cur.total += amt;
+        perMember.set(p.member_id, cur);
       });
 
       const remaining = totalAdvance - totalDeducted;
