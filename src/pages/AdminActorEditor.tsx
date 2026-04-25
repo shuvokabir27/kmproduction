@@ -361,14 +361,17 @@ const AdminActorEditor = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">অভিনয় শিক্ষা / ওয়ার্কশপ</Label>
-                  <Textarea
-                    value={form.acting_education ?? ""}
-                    onChange={(e) => setForm({ ...form, acting_education: e.target.value })}
-                    rows={3}
-                    placeholder="যেমনঃ ঢাকা থিয়েটার, ২০২০ থেকে ৪ বছরের অভিনয় ওয়ার্কশপ..."
-                  />
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold border-b border-border/30 pb-2">অভিনয় শিক্ষা ও প্রশিক্ষণ</h3>
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">ওয়ার্কশপ / একাডেমিক ট্রেনিং</Label>
+                    <Textarea
+                      value={form.acting_education ?? ""}
+                      onChange={(e) => setForm({ ...form, acting_education: e.target.value })}
+                      rows={3}
+                      placeholder="যেমনঃ ঢাকা থিয়েটার, ২০২০ থেকে ৪ বছরের অভিনয় ওয়ার্কশপ..."
+                    />
+                  </div>
                 </div>
 
                 <Button onClick={saveProfile} className="w-full sm:w-auto">
