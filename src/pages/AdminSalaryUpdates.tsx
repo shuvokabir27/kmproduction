@@ -277,13 +277,26 @@ const AdminSalaryUpdates = () => {
                     value={selectedMember}
                     onValueChange={handleSelectMember}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-auto min-h-10">
                       <SelectValue placeholder="সদস্য নির্বাচন করুন" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-80">
+                    <SelectContent
+                      className="max-h-[60vh]"
+                      position="popper"
+                      sideOffset={4}
+                    >
                       {filteredMembers.map((m: any) => (
-                        <SelectItem key={m.id} value={m.id}>
+                        <SelectItem key={m.id} value={m.id} className="py-2">
                           <div className="flex items-center gap-2">
+                            <div className="h-7 w-7 rounded-full bg-muted overflow-hidden flex items-center justify-center shrink-0 border">
+                              {m.photo_url ? (
+                                <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                              ) : (
+                                <span className="text-[10px] font-semibold text-muted-foreground">
+                                  {(m.full_name || "?").charAt(0)}
+                                </span>
+                              )}
+                            </div>
                             <span className="font-medium">{m.full_name}</span>
                             {m.designation && (
                               <span className="text-xs text-muted-foreground">
