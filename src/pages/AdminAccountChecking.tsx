@@ -253,23 +253,19 @@ const AdminAccountChecking = () => {
               </div>
             </div>
             <div className="md:col-span-2">
-              <Select value={selectedMember} onValueChange={setSelectedMember}>
-                <SelectTrigger>
-                  <SelectValue placeholder="সদস্য নির্বাচন করুন" />
-                </SelectTrigger>
-                <SelectContent className="max-h-80">
-                  {filteredMembers.map((m: any) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{m.full_name}</span>
-                        {m.designation && (
-                          <span className="text-xs text-muted-foreground">• {m.designation}</span>
-                        )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                value={selectedMember}
+                onChange={(e) => setSelectedMember(e.target.value)}
+                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">সদস্য নির্বাচন করুন</option>
+                {filteredMembers.map((m: any) => (
+                  <option key={m.id} value={m.id}>
+                    {m.full_name}
+                    {m.designation ? ` • ${m.designation}` : ""}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
