@@ -253,19 +253,36 @@ const AdminAccountChecking = () => {
               </div>
             </div>
             <div className="md:col-span-2">
-              <select
-                value={selectedMember}
-                onChange={(e) => setSelectedMember(e.target.value)}
-                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="">সদস্য নির্বাচন করুন</option>
-                {filteredMembers.map((m: any) => (
-                  <option key={m.id} value={m.id}>
-                    {m.full_name}
-                    {m.designation ? ` • ${m.designation}` : ""}
-                  </option>
-                ))}
-              </select>
+              <Select value={selectedMember} onValueChange={setSelectedMember}>
+                <SelectTrigger className="h-auto min-h-10">
+                  <SelectValue placeholder="সদস্য নির্বাচন করুন" />
+                </SelectTrigger>
+                <SelectContent
+                  className="max-h-[60vh]"
+                  position="popper"
+                  sideOffset={4}
+                >
+                  {filteredMembers.map((m: any) => (
+                    <SelectItem key={m.id} value={m.id} className="py-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-full bg-muted overflow-hidden flex items-center justify-center shrink-0 border">
+                          {m.photo_url ? (
+                            <img src={m.photo_url} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-semibold text-muted-foreground">
+                              {(m.full_name || "?").charAt(0)}
+                            </span>
+                          )}
+                        </div>
+                        <span className="font-medium">{m.full_name}</span>
+                        {m.designation && (
+                          <span className="text-xs text-muted-foreground">• {m.designation}</span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
