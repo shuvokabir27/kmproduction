@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Download,
@@ -16,13 +17,23 @@ import {
   Info,
   HardDrive,
   Sparkles,
+  Tag,
+  Calendar,
+  FileText,
 } from "lucide-react";
 
-interface AppFile {
-  name: string;
+interface AppVersion {
+  id: string;
+  version: string;
+  platform: "android" | "ios";
+  file_path: string;
+  file_size: number;
+  release_notes: string | null;
+  released_at: string;
+}
+
+interface ResolvedVersion extends AppVersion {
   url: string;
-  size: number;
-  updated_at: string;
 }
 
 const formatBytes = (bytes: number) => {
@@ -41,47 +52,32 @@ const formatDate = (iso: string) => {
 };
 
 const DownloadApp = () => {
-  const [androidFile, setAndroidFile] = useState<AppFile | null>(null);
-  const [iosFile, setIosFile] = useState<AppFile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useQuery({
+    queryKey: ["app-versions-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("app_versions")
+        .select("*")
+        .eq("is_active", true)
+        .order("released_at", { ascending: false });
 
-  useEffect(() => {
-    const loadFiles = async () => {
-      const { data, error } = await supabase.storage
-        .from("app-downloads")
-        .list("", { sortBy: { column: "updated_at", order: "desc" } });
+      if (error) throw error;
 
-      if (!error && data) {
-        const apk = data.find((f) => f.name.toLowerCase().endsWith(".apk"));
-        const ipa = data.find((f) => f.name.toLowerCase().endsWith(".ipa"));
-
-        if (apk) {
-          const { data: urlData } = supabase.storage
-            .from("app-downloads")
-            .getPublicUrl(apk.name);
-          setAndroidFile({
-            name: apk.name,
-            url: urlData.publicUrl,
-            size: (apk.metadata as any)?.size ?? 0,
-            updated_at: apk.updated_at ?? "",
-          });
-        }
-        if (ipa) {
-          const { data: urlData } = supabase.storage
-            .from("app-downloads")
-            .getPublicUrl(ipa.name);
-          setIosFile({
-            name: ipa.name,
-            url: urlData.publicUrl,
-            size: (ipa.metadata as any)?.size ?? 0,
-            updated_at: ipa.updated_at ?? "",
-          });
+      const resolved: { android?: ResolvedVersion; ios?: ResolvedVersion } = {};
+      for (const v of (data ?? []) as AppVersion[]) {
+        const { data: urlData } = supabase.storage
+          .from("app-downloads")
+          .getPublicUrl(v.file_path);
+        if (!resolved[v.platform]) {
+          resolved[v.platform] = { ...v, url: urlData.publicUrl };
         }
       }
-      setLoading(false);
-    };
-    loadFiles();
-  }, []);
+      return resolved;
+    },
+  });
+
+  const androidFile = data?.android;
+  const iosFile = data?.ios;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -130,19 +126,27 @@ const DownloadApp = () => {
           >
             <Card className="overflow-hidden border-2 hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/10 h-full">
               <div className="bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent p-6 border-b border-border">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
-                    <Smartphone className="w-9 h-9 text-white" />
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
+                      <Smartphone className="w-9 h-9 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold">Android</h2>
+                      <p className="text-sm text-muted-foreground">APK File</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold">Android</h2>
-                    <p className="text-sm text-muted-foreground">APK File</p>
-                  </div>
+                  {androidFile && (
+                    <Badge variant="outline" className="border-green-500/30 text-green-600 dark:text-green-400 gap-1 shrink-0">
+                      <Tag className="w-3 h-3" />
+                      v{androidFile.version}
+                    </Badge>
+                  )}
                 </div>
               </div>
 
               <CardContent className="p-6 space-y-4">
-                {loading ? (
+                {isLoading ? (
                   <div className="h-32 flex items-center justify-center text-muted-foreground">
                     লোড হচ্ছে...
                   </div>
@@ -151,13 +155,25 @@ const DownloadApp = () => {
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <HardDrive className="w-4 h-4" />
-                        <span>{formatBytes(androidFile.size)}</span>
+                        <span>{formatBytes(androidFile.file_size)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                        <span>{formatDate(androidFile.updated_at)}</span>
+                        <Calendar className="w-4 h-4 text-green-500" />
+                        <span>{formatDate(androidFile.released_at)}</span>
                       </div>
                     </div>
+
+                    {androidFile.release_notes && (
+                      <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-green-700 dark:text-green-400 mb-1.5">
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>এই ভার্সনে নতুন:</span>
+                        </div>
+                        <p className="text-sm text-foreground/80 whitespace-pre-line">
+                          {androidFile.release_notes}
+                        </p>
+                      </div>
+                    )}
 
                     <Button
                       asChild
@@ -166,7 +182,7 @@ const DownloadApp = () => {
                     >
                       <a href={androidFile.url} download>
                         <Download className="w-5 h-5 mr-2" />
-                        APK ডাউনলোড করুন
+                        APK ডাউনলোড করুন (v{androidFile.version})
                       </a>
                     </Button>
 
@@ -209,19 +225,27 @@ const DownloadApp = () => {
           >
             <Card className="overflow-hidden border-2 hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/10 h-full">
               <div className="bg-gradient-to-br from-slate-500/10 via-zinc-500/5 to-transparent p-6 border-b border-border">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-700 to-zinc-900 flex items-center justify-center shadow-lg">
-                    <Apple className="w-9 h-9 text-white" />
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-700 to-zinc-900 flex items-center justify-center shadow-lg">
+                      <Apple className="w-9 h-9 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold">iOS / iPhone</h2>
+                      <p className="text-sm text-muted-foreground">PWA / IPA</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold">iOS / iPhone</h2>
-                    <p className="text-sm text-muted-foreground">PWA / IPA</p>
-                  </div>
+                  {iosFile && (
+                    <Badge variant="outline" className="border-slate-500/30 gap-1 shrink-0">
+                      <Tag className="w-3 h-3" />
+                      v{iosFile.version}
+                    </Badge>
+                  )}
                 </div>
               </div>
 
               <CardContent className="p-6 space-y-4">
-                {/* PWA Option (Always available, recommended) */}
+                {/* PWA Option */}
                 <div className="bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20 rounded-lg p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <div className="px-2 py-0.5 bg-primary text-primary-foreground text-xs font-bold rounded">
@@ -252,28 +276,33 @@ const DownloadApp = () => {
                   </ol>
                 </div>
 
-                {/* Native IPA Option */}
                 {iosFile ? (
                   <>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <HardDrive className="w-4 h-4" />
-                        <span>{formatBytes(iosFile.size)}</span>
+                        <span>{formatBytes(iosFile.file_size)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                        <span>{formatDate(iosFile.updated_at)}</span>
+                        <Calendar className="w-4 h-4 text-green-500" />
+                        <span>{formatDate(iosFile.released_at)}</span>
                       </div>
                     </div>
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="w-full border-2"
-                    >
+                    {iosFile.release_notes && (
+                      <div className="bg-muted/50 border border-border rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold mb-1.5">
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>এই ভার্সনে নতুন:</span>
+                        </div>
+                        <p className="text-sm text-foreground/80 whitespace-pre-line">
+                          {iosFile.release_notes}
+                        </p>
+                      </div>
+                    )}
+                    <Button asChild size="lg" variant="outline" className="w-full border-2">
                       <a href={iosFile.url} download>
                         <Download className="w-5 h-5 mr-2" />
-                        IPA ডাউনলোড করুন
+                        IPA ডাউনলোড (v{iosFile.version})
                       </a>
                     </Button>
                   </>
@@ -305,9 +334,9 @@ const DownloadApp = () => {
                   <h3 className="font-bold text-lg">নিরাপদ ও বিশ্বস্ত</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     আমাদের অ্যাপ KM Production এর official অ্যাপ। কোনো বিজ্ঞাপন বা spyware নেই।
-                    সমস্ত data Lovable Cloud এ সুরক্ষিতভাবে সংরক্ষিত। আপনি যদি Google Play Store এর
-                    "Unknown Sources" warning দেখেন তাহলে চিন্তা করবেন না — এটা স্বাভাবিক, কারণ আমরা
-                    Play Store এর বাইরে থেকে সরাসরি দিচ্ছি।
+                    সমস্ত data সুরক্ষিতভাবে সংরক্ষিত। আপনি যদি Google এর "Unknown Sources" warning
+                    দেখেন তাহলে চিন্তা করবেন না — এটা স্বাভাবিক, কারণ আমরা Play Store এর বাইরে থেকে
+                    সরাসরি দিচ্ছি।
                   </p>
                 </div>
               </div>
@@ -331,8 +360,8 @@ const DownloadApp = () => {
             <CardContent className="p-4">
               <p className="font-semibold mb-1">📲 আপডেট কীভাবে পাবো?</p>
               <p className="text-sm text-muted-foreground">
-                নতুন version আসলে এই page থেকে আবার download করে install করুন। অ্যাপের ভেতরে
-                "Check for Updates" notification ও পাবেন।
+                নতুন version আসলে এই page থেকে আবার download করে install করুন। উপরে সবসময় সবশেষ
+                version দেখানো হবে।
               </p>
             </CardContent>
           </Card>
