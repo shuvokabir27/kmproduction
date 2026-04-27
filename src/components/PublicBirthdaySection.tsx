@@ -144,7 +144,7 @@ export function PublicBirthdaySection() {
   if (todayMembers.length === 0 || !current) return null;
 
   return (
-    <section className="relative py-16 md:py-24 px-4">
+    <section className="relative py-8 md:py-12 px-4">
       {/* Celebratory background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[160px]" />
