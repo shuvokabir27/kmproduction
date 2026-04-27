@@ -189,6 +189,48 @@ export type Database = {
         }
         Relationships: []
       }
+      app_versions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_path: string
+          file_size: number
+          id: string
+          is_active: boolean
+          platform: Database["public"]["Enums"]["app_platform"]
+          release_notes: string | null
+          released_at: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_path: string
+          file_size?: number
+          id?: string
+          is_active?: boolean
+          platform: Database["public"]["Enums"]["app_platform"]
+          release_notes?: string | null
+          released_at?: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_path?: string
+          file_size?: number
+          id?: string
+          is_active?: boolean
+          platform?: Database["public"]["Enums"]["app_platform"]
+          release_notes?: string | null
+          released_at?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           check_in_time: string | null
@@ -2931,6 +2973,7 @@ export type Database = {
     }
     Enums: {
       advance_status: "pending" | "approved" | "rejected" | "cancelled"
+      app_platform: "android" | "ios"
       app_role: "admin" | "member" | "client" | "product_admin"
       bonus_type: "bonus" | "transport"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
@@ -3083,6 +3126,7 @@ export const Constants = {
   public: {
     Enums: {
       advance_status: ["pending", "approved", "rejected", "cancelled"],
+      app_platform: ["android", "ios"],
       app_role: ["admin", "member", "client", "product_admin"],
       bonus_type: ["bonus", "transport"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
