@@ -9,6 +9,7 @@ import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { PublicBirthdaySection } from "@/components/PublicBirthdaySection";
 
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
@@ -306,6 +307,9 @@ const PublicHome = () => {
 
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </section>
+
+      {/* Today's Birthday — Public celebration with comments */}
+      <PublicBirthdaySection />
 
       {/* Team */}
       <section className="py-28 px-4 relative" id="team">

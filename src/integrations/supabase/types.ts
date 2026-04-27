@@ -240,6 +240,41 @@ export type Database = {
           },
         ]
       }
+      birthday_wishes: {
+        Row: {
+          birthday_date: string
+          created_at: string
+          id: string
+          member_id: string
+          message: string
+          wisher_name: string
+        }
+        Insert: {
+          birthday_date: string
+          created_at?: string
+          id?: string
+          member_id: string
+          message: string
+          wisher_name: string
+        }
+        Update: {
+          birthday_date?: string
+          created_at?: string
+          id?: string
+          member_id?: string
+          message?: string
+          wisher_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "birthday_wishes_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bonuses: {
         Row: {
           amount: number
