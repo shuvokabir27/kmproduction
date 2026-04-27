@@ -169,8 +169,13 @@ const PublicHome = () => {
         </div>
       </header>
 
+      {/* Today's Birthday — Right under the menu bar */}
+      <div className="pt-20 md:pt-24">
+        <PublicBirthdaySection />
+      </div>
+
       {/* Hero Section */}
-      <section className="relative min-h-[95vh] flex items-center justify-center px-4 pt-16">
+      <section className="relative min-h-[95vh] flex items-center justify-center px-4">
         {/* Background effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[700px] bg-primary/8 rounded-full blur-[160px]" />
