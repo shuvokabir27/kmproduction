@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper, ShoppingBag } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper, ShoppingBag, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -88,6 +88,7 @@ const PublicHome = () => {
     { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
     { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
     { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, gradient: "from-fuchsia-500 to-pink-600", bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
+    { label: t("অ্যাপ ডাউনলোড", "Download App"), href: "/download", isPage: true, icon: Download, gradient: "from-green-500 to-emerald-600", bg: "bg-green-500/15", border: "border-green-500/30", text: "text-green-400" },
   ];
 
   const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
