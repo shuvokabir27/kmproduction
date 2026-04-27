@@ -215,6 +215,7 @@ export function BirthdayCountdownBar() {
               id: todayMember.id,
               full_name: todayMember.full_name,
               photo_url: todayMember.photo_url,
+              designation: todayMember.designation,
             }}
           />
         </div>
