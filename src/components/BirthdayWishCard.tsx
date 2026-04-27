@@ -398,7 +398,7 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
                 textShadow: "0 1px 4px rgba(0,0,0,0.4)",
               }}
             >
-              ❤️ KM PRODUCTION
+              ❤️ KUAKATA MULTIMEDIA
             </div>
           </div>
         </div>
