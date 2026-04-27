@@ -13,6 +13,7 @@ interface BirthdayMember {
   full_name: string;
   photo_url: string | null;
   date_of_birth: string;
+  designation: string | null;
   daysUntil: number;
   isToday: boolean;
   nextBirthday: Date;
