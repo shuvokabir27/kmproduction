@@ -113,12 +113,13 @@ export function BirthdayCountdownBar() {
             full_name: m.full_name,
             photo_url: m.photo_url,
             date_of_birth: m.date_of_birth,
+            designation: m.designation ?? null,
           }));
       }
       // Fallback to direct table (admins will see all rows)
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name, photo_url, date_of_birth")
+        .select("id, full_name, photo_url, date_of_birth, designation")
         .eq("is_active", true)
         .not("date_of_birth", "is", null);
       if (error) throw error;
@@ -127,6 +128,7 @@ export function BirthdayCountdownBar() {
         full_name: m.full_name,
         photo_url: m.photo_url,
         date_of_birth: m.date_of_birth,
+        designation: m.designation ?? null,
       }));
     },
     staleTime: 5 * 60 * 1000,
@@ -142,6 +144,7 @@ export function BirthdayCountdownBar() {
           full_name: m.full_name,
           photo_url: m.photo_url,
           date_of_birth: m.date_of_birth,
+          designation: m.designation ?? null,
           daysUntil: days,
           isToday: days === 0,
           nextBirthday: nextDate,
