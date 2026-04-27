@@ -53,6 +53,7 @@ import Products from "./pages/Products";
 import AdminProducts from "./pages/AdminProducts";
 import TalerGurLanding from "./pages/TalerGurLanding";
 import TasksPage from "./pages/TasksPage";
+import DownloadApp from "./pages/DownloadApp";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,8 @@ const App = () => (
             <Route path="/news/:shortId" element={<News />} />
             <Route path="/publisher/:publisherId" element={<PublisherProfile />} />
             <Route path="/project/:token" element={<FreelanceClientView />} />
+            <Route path="/download" element={<DownloadApp />} />
+            <Route path="/app" element={<DownloadApp />} />
 
             {/* Member routes — admin & member only, NOT client */}
             <Route path="/dashboard" element={<RouteGuard allowedRoles={["admin", "member"]}><MemberDashboard /></RouteGuard>} />
