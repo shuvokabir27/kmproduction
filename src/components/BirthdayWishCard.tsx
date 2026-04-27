@@ -392,13 +392,15 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
                 textAlign: "center",
                 marginTop: 12,
                 color: "rgba(255,255,255,0.95)",
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
-                letterSpacing: 1,
+                letterSpacing: 0.5,
                 textShadow: "0 1px 4px rgba(0,0,0,0.4)",
+                lineHeight: 1.4,
               }}
             >
-              ❤️ KUAKATA MULTIMEDIA
+              🎉 জন্মদিনের শুভেচ্ছা<br />
+              <span style={{ fontSize: 10, opacity: 0.95 }}>কুয়াকাটা মাল্টিমিডিয়া পরিবারের পক্ষ থেকে ❤️</span>
             </div>
           </div>
         </div>
