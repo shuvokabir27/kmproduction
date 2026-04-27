@@ -376,13 +376,9 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
                     fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
                     textAlign: "center",
                     position: "relative",
-                    background:
-                      "linear-gradient(90deg, #d81b60 0%, #8e24aa 20%, #3949ab 40%, #00897b 60%, #f57c00 80%, #c62828 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    color: "transparent",
-                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.08))",
+                    color: "#c2185b",
+                    textShadow:
+                      "0 0 1px rgba(142,36,170,0.4), 0 1px 2px rgba(0,0,0,0.08)",
                   }}
                 >
                   {message}
