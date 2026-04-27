@@ -220,18 +220,18 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
               </div>
               <div
                 style={{
-                  color: "#fff",
-                  fontWeight: 800,
-                  fontSize: 22,
+                  fontWeight: 900,
+                  fontSize: 26,
                   marginTop: 6,
-                  textShadow:
-                    "0 2px 8px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.5)",
                   fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
                   background:
-                    "linear-gradient(180deg, #ffffff 0%, #fde047 100%)",
+                    "linear-gradient(90deg, #ff1744 0%, #ff9100 18%, #ffea00 36%, #00e676 54%, #00b0ff 72%, #d500f9 90%, #ff1744 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
+                  color: "transparent",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.45)) drop-shadow(0 0 8px rgba(255,255,255,0.3))",
+                  letterSpacing: 1,
                 }}
               >
                 শুভ জন্মদিন
@@ -371,15 +371,21 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
               ) : (
                 <p
                   style={{
-                    color: "#1f2937",
                     fontSize: 14,
                     lineHeight: 1.7,
-                    fontWeight: 500,
+                    fontWeight: 700,
                     margin: 0,
                     whiteSpace: "pre-wrap",
                     fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
                     textAlign: "center",
                     position: "relative",
+                    background:
+                      "linear-gradient(90deg, #d81b60 0%, #8e24aa 20%, #3949ab 40%, #00897b 60%, #f57c00 80%, #c62828 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    color: "transparent",
+                    filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.08))",
                   }}
                 >
                   {message}
