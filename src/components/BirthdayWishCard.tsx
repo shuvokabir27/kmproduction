@@ -221,17 +221,14 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
               <div
                 style={{
                   fontWeight: 900,
-                  fontSize: 26,
-                  marginTop: 6,
+                  fontSize: 28,
+                  marginTop: 8,
                   fontFamily: "'Tiro Bangla', 'Hind Siliguri', serif",
-                  background:
-                    "linear-gradient(90deg, #ff1744 0%, #ff9100 18%, #ffea00 36%, #00e676 54%, #00b0ff 72%, #d500f9 90%, #ff1744 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.45)) drop-shadow(0 0 8px rgba(255,255,255,0.3))",
+                  color: "#fff200",
+                  textShadow:
+                    "0 0 8px rgba(255,0,128,0.9), 0 0 16px rgba(0,200,255,0.7), 0 2px 4px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.4)",
                   letterSpacing: 1,
+                  textAlign: "center",
                 }}
               >
                 শুভ জন্মদিন
