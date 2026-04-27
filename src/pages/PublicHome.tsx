@@ -308,6 +308,9 @@ const PublicHome = () => {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </section>
 
+      {/* Today's Birthday — Public celebration with comments */}
+      <PublicBirthdaySection />
+
       {/* Team */}
       <section className="py-28 px-4 relative" id="team">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
