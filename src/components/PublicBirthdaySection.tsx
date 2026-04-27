@@ -228,15 +228,147 @@ export function PublicBirthdaySection() {
             transition={{ duration: 0.5 }}
             className="grid md:grid-cols-2 gap-6 items-start"
           >
-            {/* Card */}
-            <div>
-              <BirthdayWishCard
-                member={{
-                  id: current.id,
-                  full_name: current.full_name,
-                  photo_url: current.photo_url,
+            {/* Card with surrounding animations */}
+            <div className="relative">
+              {/* Pulsing color glow ring */}
+              <motion.div
+                aria-hidden
+                animate={{
+                  opacity: [0.4, 0.8, 0.4],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -inset-6 rounded-3xl pointer-events-none"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, #ec4899, #a855f7, #6366f1, #06b6d4, #fde047, #ec4899)",
+                  filter: "blur(40px)",
                 }}
               />
+
+              {/* Rotating color halo */}
+              <motion.div
+                aria-hidden
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute -inset-3 rounded-3xl pointer-events-none opacity-60"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, transparent, #fde047, transparent, #ec4899, transparent, #a855f7, transparent)",
+                  filter: "blur(20px)",
+                }}
+              />
+
+              {/* Floating balloons around the card */}
+              {[
+                { emoji: "🎈", color: "#ec4899", left: "-8%", top: "5%", delay: 0 },
+                { emoji: "🎈", color: "#a855f7", left: "92%", top: "10%", delay: 0.5 },
+                { emoji: "🎈", color: "#06b6d4", left: "-10%", top: "55%", delay: 1 },
+                { emoji: "🎈", color: "#fde047", left: "94%", top: "60%", delay: 1.5 },
+                { emoji: "🎁", color: "#fff", left: "-6%", top: "85%", delay: 0.8 },
+                { emoji: "🎁", color: "#fff", left: "90%", top: "88%", delay: 0.3 },
+              ].map((b, i) => (
+                <motion.div
+                  key={i}
+                  aria-hidden
+                  animate={{
+                    y: [0, -14, 0],
+                    rotate: [-6, 6, -6],
+                  }}
+                  transition={{
+                    duration: 3 + (i % 3),
+                    repeat: Infinity,
+                    delay: b.delay,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute text-3xl pointer-events-none z-10"
+                  style={{
+                    left: b.left,
+                    top: b.top,
+                    filter: `drop-shadow(0 0 12px ${b.color})`,
+                  }}
+                >
+                  {b.emoji}
+                </motion.div>
+              ))}
+
+              {/* Twinkling light bulbs around the perimeter */}
+              {[...Array(16)].map((_, i) => {
+                const colors = ["#fde047", "#ec4899", "#a855f7", "#06b6d4", "#fff"];
+                const color = colors[i % colors.length];
+                const positions = [
+                  // Top edge
+                  { left: `${(i / 8) * 100}%`, top: "-2%" },
+                ];
+                // Distribute around perimeter
+                const t = i / 16;
+                let left = "0%", top = "0%";
+                if (t < 0.25) { left = `${t * 4 * 100}%`; top = "-2%"; }
+                else if (t < 0.5) { left = "100%"; top = `${(t - 0.25) * 4 * 100}%`; }
+                else if (t < 0.75) { left = `${(1 - (t - 0.5) * 4) * 100}%`; top = "100%"; }
+                else { left = "0%"; top = `${(1 - (t - 0.75) * 4) * 100}%`; }
+
+                return (
+                  <motion.div
+                    key={`light-${i}`}
+                    aria-hidden
+                    animate={{
+                      opacity: [0.3, 1, 0.3],
+                      scale: [0.8, 1.3, 0.8],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: i * 0.15,
+                      ease: "easeInOut",
+                    }}
+                    className="absolute h-2.5 w-2.5 rounded-full pointer-events-none z-10"
+                    style={{
+                      left,
+                      top,
+                      background: color,
+                      boxShadow: `0 0 12px ${color}, 0 0 24px ${color}`,
+                      transform: "translate(-50%, -50%)",
+                    }}
+                  />
+                );
+              })}
+
+              {/* Sparkles */}
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={`spark-${i}`}
+                  aria-hidden
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0, 1, 0],
+                    rotate: [0, 180],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: i * 0.4,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute pointer-events-none z-10"
+                  style={{
+                    left: `${(i * 67) % 100}%`,
+                    top: `${(i * 41) % 100}%`,
+                  }}
+                >
+                  <Sparkles className="h-4 w-4 text-yellow-300" style={{ filter: "drop-shadow(0 0 6px #fde047)" }} />
+                </motion.div>
+              ))}
+
+              <div className="relative z-20">
+                <BirthdayWishCard
+                  member={{
+                    id: current.id,
+                    full_name: current.full_name,
+                    photo_url: current.photo_url,
+                  }}
+                />
+              </div>
             </div>
 
             {/* Wishes panel */}
