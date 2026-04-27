@@ -4,6 +4,7 @@ import { Download, RefreshCw, Sparkles, X, Cake } from "lucide-react";
 import html2canvas from "html2canvas";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import kmLogo from "@/assets/km-logo.png";
 
 interface BirthdayWishCardProps {
   member: {
@@ -389,7 +390,10 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
             {/* Footer brand */}
             <div
               style={{
-                textAlign: "center",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
                 marginTop: 12,
                 color: "rgba(255,255,255,0.95)",
                 fontSize: 11,
@@ -399,8 +403,22 @@ export function BirthdayWishCard({ member, onClose }: BirthdayWishCardProps) {
                 lineHeight: 1.4,
               }}
             >
-              🎉 জন্মদিনের শুভেচ্ছা<br />
-              <span style={{ fontSize: 10, opacity: 0.95 }}>কুয়াকাটা মাল্টিমিডিয়া পরিবারের পক্ষ থেকে ❤️</span>
+              <img
+                src={kmLogo}
+                alt="Kuakata Multimedia"
+                crossOrigin="anonymous"
+                style={{
+                  width: 36,
+                  height: 36,
+                  objectFit: "contain",
+                  filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.4))",
+                  flexShrink: 0,
+                }}
+              />
+              <div style={{ textAlign: "left" }}>
+                🎉 জন্মদিনের শুভেচ্ছা<br />
+                <span style={{ fontSize: 10, opacity: 0.95 }}>কুয়াকাটা মাল্টিমিডিয়া পরিবারের পক্ষ থেকে ❤️</span>
+              </div>
             </div>
           </div>
         </div>
