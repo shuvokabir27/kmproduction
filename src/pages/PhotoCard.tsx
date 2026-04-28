@@ -228,7 +228,7 @@ const PhotoCard = () => {
   // Auto-draw preview whenever image changes
   useEffect(() => {
     if (imageSrc) drawCard();
-  }, [imageSrc]);
+  }, [imageSrc, sloganId]);
 
   const handleShare = async () => {
     const url = `${window.location.origin}/photo-card`;
