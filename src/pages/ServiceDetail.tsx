@@ -191,6 +191,9 @@ const ServiceDetail = () => {
       details: buildDetails(),
       booking_date: bookingDate ? format(bookingDate, "yyyy-MM-dd") : null,
       booking_days: bookingDays,
+      original_amount: finalPrice ?? null,
+      final_amount: finalPrice ?? null,
+      discount_amount: 0,
       status: "pending",
     } as any);
     setBookingSubmitting(false);
