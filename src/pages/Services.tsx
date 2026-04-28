@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Building, Heart, Film, Camera, Megaphone, Clapperboard,
   ChevronRight, Check, Star, ArrowLeft, MessageCircle, Phone,
-  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent, Clock, Minus, Plus as PlusIcon, CalendarIcon,
+  Sparkles, Play, Monitor, Palette, Mic, Video, Lightbulb, Timer, Gift, Percent, Clock, Minus, Plus as PlusIcon, CalendarIcon, Share2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
@@ -91,6 +91,48 @@ const Services = () => {
     const interval = setInterval(() => setTimeLeft(calc()), 1000);
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
+
+  // Highlighted service from share link (?service=<id>)
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get("service");
+    if (!sid || !services?.length) return;
+    const exists = services.find((s: any) => s.id === sid);
+    if (!exists) return;
+    setHighlightedId(sid);
+    // Wait for render then scroll into view
+    setTimeout(() => {
+      const el = document.getElementById(`service-${sid}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 400);
+    // Remove highlight after 4s
+    const t = setTimeout(() => setHighlightedId(null), 4000);
+    return () => clearTimeout(t);
+  }, [services]);
+
+  const handleShare = async (service: any) => {
+    const url = `${window.location.origin}/services?service=${service.id}`;
+    const shareData = {
+      title: service.title,
+      text: `${service.title} — ${service.description || "কুয়াকাটা মাল্টিমিডিয়া সেবা"}`,
+      url,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch (err) {
+      // user cancelled or share failed — fall back to clipboard
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({ title: t("লিংক কপি হয়েছে!", "Link copied!"), description: url });
+    } catch {
+      toast({ title: t("কপি করতে পারিনি", "Could not copy link"), variant: "destructive" });
+    }
+  };
 
   const getWaUrl = (serviceTitle: string, discount: number, price?: number, perMinuteInfo?: { rate: number; minutes: number }, perHourInfo?: { rate: number; hours: number; editedPhotos: number }) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
@@ -309,8 +351,15 @@ const Services = () => {
                 ];
                 const c = cardColors[index % cardColors.length];
                 return (
-                  <motion.div key={service.id} variants={item}>
-                    <div className={`relative rounded-2xl overflow-hidden h-full bg-gradient-to-b ${c.gradient} border-2 ${c.border} shadow-xl`}>
+                  <motion.div key={service.id} variants={item} id={`service-${service.id}`}>
+                    <div className={`relative rounded-2xl overflow-hidden h-full bg-gradient-to-b ${c.gradient} border-2 ${c.border} shadow-xl transition-all duration-500 ${highlightedId === service.id ? "ring-4 ring-primary ring-offset-2 ring-offset-background scale-[1.02]" : ""}`}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleShare(service); }}
+                        title={t("শেয়ার করুন", "Share")}
+                        className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-background/70 backdrop-blur-md border border-border/40 flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-all"
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </button>
                       {/* Decorative glow */}
                       <div className={`absolute -top-20 -right-20 w-40 h-40 ${c.glow} rounded-full blur-3xl opacity-60`} />
                       <div className={`absolute -bottom-10 -left-10 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-30`} />
@@ -523,9 +572,17 @@ const Services = () => {
                   <motion.div
                     key={service.id}
                     variants={item}
+                    id={`service-${service.id}`}
                     className={`w-full ${shouldCenter ? "sm:col-span-2 lg:col-span-1 lg:col-start-2" : ""}`}
                   >
-                    <div className={`relative rounded-2xl p-6 h-full flex flex-col overflow-hidden bg-gradient-to-b ${c.gradient} border ${c.border}`}>
+                    <div className={`relative rounded-2xl p-6 h-full flex flex-col overflow-hidden bg-gradient-to-b ${c.gradient} border ${c.border} transition-all duration-500 ${highlightedId === service.id ? "ring-4 ring-primary ring-offset-2 ring-offset-background scale-[1.02]" : ""}`}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleShare(service); }}
+                        title={t("শেয়ার করুন", "Share")}
+                        className="absolute top-3 right-3 z-20 h-8 w-8 rounded-full bg-background/70 backdrop-blur-md border border-border/40 flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-all"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                      </button>
                       {/* Decorative glow */}
                       <div className={`absolute -top-16 -right-16 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-50`} />
                       
