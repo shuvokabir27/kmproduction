@@ -17,6 +17,22 @@ interface NewsItem {
 const BRAND = "দৈনিক ইন্তেকাল";
 const TAGLINE = "সংবাদে চিরন্তন সত্য • প্রকাশিত প্রতিদিন";
 
+// Funny fake advertisements — appear randomly at bottom of card
+const FUNNY_ADS: { brand: string; tagline: string; offer: string; bg: string; accent: string; emoji: string }[] = [
+  { brand: "মামা হোটেল", tagline: "৩ দিনের বাসি ভাত — সম্পূর্ণ ফ্রেশ গ্যারান্টি!", offer: "অফার: ১ প্লেট কিনলে ১টি পেট ব্যথা ফ্রি", bg: "#7c2d12", accent: "#fde047", emoji: "🍛" },
+  { brand: "চাচার চা স্টল", tagline: "যে চা খেলে শ্বশুরবাড়ির কথা মনে পড়বে", offer: "১০ কাপ চা = ১টি দীর্ঘশ্বাস ফ্রি", bg: "#451a03", accent: "#fcd34d", emoji: "☕" },
+  { brand: "বাংলা টাইগার বালাম", tagline: "মাথা ব্যথা, কোমর ব্যথা, প্রেমের ব্যথা — সব এক বালামে!", offer: "১ কৌটা = ৭ পুরুষের শক্তি", bg: "#7f1d1d", accent: "#fef3c7", emoji: "💪" },
+  { brand: "সুপার গ্লু আঠা", tagline: "ভাঙা সম্পর্কও জোড়া লাগাই — গ্যারান্টি ১০০%", offer: "এক ফোঁটায় সারাজীবন একসাথে", bg: "#1e3a8a", accent: "#fde047", emoji: "🔗" },
+  { brand: "হারবাল হেয়ার অয়েল", tagline: "টাক মাথায় ৩ দিনে বাঁশ ঝাড়!", offer: "ফ্রি অফার: চিরুনি কেনার দরকার নেই", bg: "#064e3b", accent: "#a7f3d0", emoji: "🌿" },
+  { brand: "নুরু ভাইয়ের লন্ড্রি", tagline: "সাদা শার্ট দিলে কালো ফেরত — গ্যারান্টি!", offer: "৫টি কাপড় ধুলে ১টি হারিয়ে যাবেই", bg: "#312e81", accent: "#c7d2fe", emoji: "👕" },
+  { brand: "ম্যাজিক ফর্সা ক্রিম", tagline: "৭ দিনে এত ফর্সা — মা চিনবে না!", offer: "১ কৌটায় বউ পাওয়ার গ্যারান্টি", bg: "#831843", accent: "#fbcfe8", emoji: "✨" },
+  { brand: "দাদুর দাঁতের পাউডার", tagline: "৬০ বছরের দাঁতে নতুন বিয়ের কামড়!", offer: "১ প্যাকেট = ১০০ বছরের ওয়ারেন্টি", bg: "#0c4a6e", accent: "#bae6fd", emoji: "🦷" },
+  { brand: "কাবিল প্লাম্বার সার্ভিস", tagline: "পাইপ ঠিক করি — ঘর ভাসিয়ে দিই ফ্রি", offer: "কল দিলেই আসি — ৩ দিনের মধ্যে", bg: "#1e293b", accent: "#fde047", emoji: "🔧" },
+  { brand: "শখের মুরগী ফার্ম", tagline: "ডিম দেয় — মাঝে মাঝে সোনারও দেয়!", offer: "১ ডজন কিনলে ১টি মুরগি ধার", bg: "#78350f", accent: "#fef3c7", emoji: "🐔" },
+  { brand: "ফাটাফাটি ম্যাট্রিমনি", tagline: "৩ দিনে বিয়ে — ৭ দিনে ডিভোর্স!", offer: "প্যাকেজ অফার: বিয়ে + কোর্ট ফি ফ্রি", bg: "#581c87", accent: "#e9d5ff", emoji: "💍" },
+  { brand: "জাদুকর বাবার তাবিজ", tagline: "শাশুড়ি বশ, বস বশ, এমনকি বিড়ালও বশ!", offer: "১টি তাবিজে ৭ পুরুষের সমস্যার সমাধান", bg: "#3f0808", accent: "#fde047", emoji: "🔮" },
+];
+
 const NewsCard = () => {
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
