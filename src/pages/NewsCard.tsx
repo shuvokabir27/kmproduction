@@ -421,11 +421,11 @@ const NewsCard = () => {
 
   // Auto draw on changes
   useEffect(() => {
-    if (selected) {
+    if (selected || mode === "custom") {
       drawCard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, customHeadline, adIndex]);
+  }, [selected, customHeadline, adIndex, mode, customImageUrl, customAdEnabled, customAdBrand, customAdTagline, customAdOffer, customAdEmoji]);
 
   const isInAppBrowser = () => {
     const ua = navigator.userAgent || "";
