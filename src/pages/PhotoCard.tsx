@@ -239,7 +239,7 @@ const PhotoCard = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `kuakata-jela-chai.${format}`;
+        a.download = `kuakata-upajela-chai.${format}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
