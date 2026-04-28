@@ -18,8 +18,16 @@ const PhotoCard = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [format, setFormat] = useState<"png" | "jpeg">("png");
   const [sloganId, setSloganId] = useState<string>("right");
+  // Crop transform: zoom (1 = cover-fit), offsetX/Y in normalized [-1, 1] (0 = center)
+  const [zoom, setZoom] = useState<number>(1);
+  const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [imgDims, setImgDims] = useState<{ w: number; h: number } | null>(null);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragRef = useRef<{ active: boolean; startX: number; startY: number; ox: number; oy: number }>({
+    active: false, startX: 0, startY: 0, ox: 0, oy: 0,
+  });
 
   // Preload Bengali fonts for canvas rendering
   useEffect(() => {
@@ -36,9 +44,20 @@ const PhotoCard = () => {
       return;
     }
     const reader = new FileReader();
-    reader.onload = (e) => setImageSrc(e.target?.result as string);
+    reader.onload = (e) => {
+      const src = e.target?.result as string;
+      const img = new Image();
+      img.onload = () => {
+        setImgDims({ w: img.width, h: img.height });
+        setZoom(1);
+        setOffset({ x: 0, y: 0 });
+        setImageSrc(src);
+      };
+      img.src = src;
+    };
     reader.readAsDataURL(file);
   };
+
 
   const drawCard = () => {
     return new Promise<HTMLCanvasElement | null>((resolve) => {
