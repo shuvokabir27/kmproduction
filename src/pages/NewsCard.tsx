@@ -400,6 +400,7 @@ const NewsCard = () => {
     ctx.fillStyle = ad.accent;
     ctx.font = '800 17px "Hind Siliguri", sans-serif';
     ctx.fillText("⚡ " + ad.offer, adCenterX, adY + adH - 18);
+    } // end if (showAd)
 
     // Bottom red ticker bar
     const tickerY = H - 70;
