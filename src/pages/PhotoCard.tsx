@@ -376,11 +376,72 @@ const PhotoCard = () => {
         {/* Preview */}
         {imageSrc && (
           <div className="space-y-4">
-            <div className="rounded-2xl overflow-hidden border border-red-500/30 bg-black shadow-2xl">
+            <div className="rounded-2xl overflow-hidden border border-red-500/30 bg-black shadow-2xl relative select-none">
               <canvas
                 ref={canvasRef}
-                className="w-full h-auto block"
+                className="w-full h-auto block touch-none cursor-grab active:cursor-grabbing"
+                onPointerDown={(e) => {
+                  (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
+                  dragRef.current = {
+                    active: true,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    ox: offset.x,
+                    oy: offset.y,
+                  };
+                }}
+                onPointerMove={(e) => {
+                  if (!dragRef.current.active) return;
+                  const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+                  // Convert pixel drag to normalized offset (drag moves image, so invert)
+                  const dx = (e.clientX - dragRef.current.startX) / rect.width;
+                  const dy = (e.clientY - dragRef.current.startY) / rect.height;
+                  // Scale factor: at zoom=1 there's nothing to pan; multiply by 2 for full range
+                  const factor = 2.2;
+                  setOffset({
+                    x: Math.max(-1, Math.min(1, dragRef.current.ox - dx * factor)),
+                    y: Math.max(-1, Math.min(1, dragRef.current.oy - dy * factor)),
+                  });
+                }}
+                onPointerUp={(e) => {
+                  dragRef.current.active = false;
+                  (e.target as HTMLCanvasElement).releasePointerCapture(e.pointerId);
+                }}
+                onPointerCancel={() => { dragRef.current.active = false; }}
               />
+              <div className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full pointer-events-none">
+                ✋ ছবি টেনে সরান
+              </div>
+            </div>
+
+            {/* Crop / Zoom controls */}
+            <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-amber-400">🔍 জুম ও পজিশন</p>
+                <button
+                  onClick={() => { setZoom(1); setOffset({ x: 0, y: 0 }); }}
+                  className="text-[11px] px-2 py-1 rounded-full bg-background/50 text-foreground/70 border border-red-500/20 hover:border-red-500/50"
+                >
+                  রিসেট
+                </button>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-muted-foreground">−</span>
+                <input
+                  type="range"
+                  min={1}
+                  max={4}
+                  step={0.05}
+                  value={zoom}
+                  onChange={(e) => setZoom(parseFloat(e.target.value))}
+                  className="flex-1 accent-red-600"
+                />
+                <span className="text-xs text-muted-foreground">+</span>
+                <span className="text-xs font-semibold text-red-400 w-10 text-right">{zoom.toFixed(1)}x</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground text-center">
+                ছবিতে আঙুল/মাউস দিয়ে টেনে পজিশন ঠিক করুন
+              </p>
             </div>
 
             {/* Slogan selector */}
