@@ -379,9 +379,19 @@ const PhotoCard = () => {
             <div className="rounded-2xl overflow-hidden border border-red-500/30 bg-black shadow-2xl relative select-none">
               <canvas
                 ref={canvasRef}
-                className="w-full h-auto block touch-none cursor-grab active:cursor-grabbing"
+                className="w-full h-auto block cursor-grab active:cursor-grabbing"
+                style={{ touchAction: "pan-y" }}
                 onPointerDown={(e) => {
-                  (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
+                  const canvas = e.currentTarget;
+                  const rect = canvas.getBoundingClientRect();
+                  // Map click to canvas (1080x1350) coords
+                  const cx = ((e.clientX - rect.left) / rect.width) * 1080;
+                  const cy = ((e.clientY - rect.top) / rect.height) * 1350;
+                  // Photo frame is at x:50..1030, y:50..970
+                  const inPhoto = cx >= 50 && cx <= 1030 && cy >= 50 && cy <= 970;
+                  if (!inPhoto) return;
+                  e.preventDefault();
+                  canvas.setPointerCapture(e.pointerId);
                   dragRef.current = {
                     active: true,
                     startX: e.clientX,
@@ -392,11 +402,9 @@ const PhotoCard = () => {
                 }}
                 onPointerMove={(e) => {
                   if (!dragRef.current.active) return;
-                  const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-                  // Convert pixel drag to normalized offset (drag moves image, so invert)
+                  const rect = e.currentTarget.getBoundingClientRect();
                   const dx = (e.clientX - dragRef.current.startX) / rect.width;
                   const dy = (e.clientY - dragRef.current.startY) / rect.height;
-                  // Scale factor: at zoom=1 there's nothing to pan; multiply by 2 for full range
                   const factor = 2.2;
                   setOffset({
                     x: Math.max(-1, Math.min(1, dragRef.current.ox - dx * factor)),
@@ -404,8 +412,9 @@ const PhotoCard = () => {
                   });
                 }}
                 onPointerUp={(e) => {
+                  if (!dragRef.current.active) return;
                   dragRef.current.active = false;
-                  (e.target as HTMLCanvasElement).releasePointerCapture(e.pointerId);
+                  try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
                 }}
                 onPointerCancel={() => { dragRef.current.active = false; }}
               />
