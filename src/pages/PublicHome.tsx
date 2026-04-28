@@ -293,6 +293,23 @@ const PublicHome = () => {
             </a>
           </motion.div>
 
+          {/* Photo Card protest CTA */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mt-6 flex justify-center"
+          >
+            <button
+              onClick={() => navigate("/photo-card")}
+              className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-red-600 to-rose-700 text-white font-bold shadow-lg shadow-red-900/40 hover:shadow-red-700/60 hover:scale-105 transition-all animate-pulse"
+            >
+              <Camera className="h-5 w-5" />
+              <span>📸 ফটো কার্ড বানান — কুয়াকাটা জেলা চাই</span>
+            </button>
+          </motion.div>
+
+
           {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
