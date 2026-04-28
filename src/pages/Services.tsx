@@ -112,7 +112,7 @@ const Services = () => {
   }, [services]);
 
   const handleShare = async (service: any) => {
-    const url = `${window.location.origin}/services?service=${service.id}`;
+    const url = `${window.location.origin}/services/${service.id}`;
     const shareData = {
       title: service.title,
       text: `${service.title} — ${service.description || "কুয়াকাটা মাল্টিমিডিয়া সেবা"}`,
