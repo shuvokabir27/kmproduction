@@ -42,6 +42,16 @@ const NewsCard = () => {
   const [format, setFormat] = useState<"png" | "jpeg">("png");
   const [adIndex, setAdIndex] = useState(() => Math.floor(Math.random() * FUNNY_ADS.length));
 
+  // ====== CUSTOM MODE ======
+  const [mode, setMode] = useState<"auto" | "custom">("auto");
+  const [customImageUrl, setCustomImageUrl] = useState<string>("");
+  const [customAdEnabled, setCustomAdEnabled] = useState(false);
+  const [customAdBrand, setCustomAdBrand] = useState("");
+  const [customAdTagline, setCustomAdTagline] = useState("");
+  const [customAdOffer, setCustomAdOffer] = useState("");
+  const [customAdEmoji, setCustomAdEmoji] = useState("✨");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewBoxRef = useRef<HTMLDivElement>(null);
 
@@ -120,9 +130,20 @@ const NewsCard = () => {
     });
 
   const drawCard = async (): Promise<HTMLCanvasElement | null> => {
-    if (!selected) return null;
+    // In custom mode we don't need a selected news item
+    const isCustom = mode === "custom";
+    if (!isCustom && !selected) return null;
     const canvas = canvasRef.current!;
+    if (!canvas) return null;
     const ctx = canvas.getContext("2d")!;
+
+    // Effective inputs
+    const effectiveImageUrl = isCustom
+      ? customImageUrl || null
+      : selected?.featured_image_url || null;
+    const effectiveHeadline = (
+      customHeadline.trim() || (isCustom ? "এখানে আপনার হেডলাইন লিখুন" : selected?.title || "")
+    ).trim();
     const W = 1080;
     const H = 1350;
     canvas.width = W;
@@ -187,9 +208,9 @@ const NewsCard = () => {
     ctx.restore();
 
     // Draw featured image
-    if (selected.featured_image_url) {
+    if (effectiveImageUrl) {
       try {
-        const img = await loadImage(selected.featured_image_url);
+        const img = await loadImage(effectiveImageUrl);
         ctx.save();
         roundRect(ctx, imgX, imgY, imgW, imgH, 18);
         ctx.clip();
@@ -265,18 +286,30 @@ const NewsCard = () => {
     ctx.fillText("ব্রেকিং নিউজ", pillX + 46, pillY + 33);
 
     // ===== Funny Advertisement Block (positioned first to know its bounds) =====
-    const ad = FUNNY_ADS[adIndex % FUNNY_ADS.length];
+    const ad =
+      isCustom && customAdEnabled
+        ? {
+            brand: customAdBrand.trim() || "ব্র্যান্ডের নাম",
+            tagline: customAdTagline.trim() || "এখানে আপনার ট্যাগলাইন",
+            offer: customAdOffer.trim() || "স্পেশাল অফার এখানে",
+            bg: "#1e1b4b",
+            accent: "#fde047",
+            emoji: customAdEmoji || "✨",
+          }
+        : FUNNY_ADS[adIndex % FUNNY_ADS.length];
+    const showAd = !isCustom || customAdEnabled;
+
     const adX = 50;
     const adW = W - 100;
     const adH = 160;
-    const adY = H - 70 - adH - 20; // above ticker with 20px gap
+    const adY = showAd ? H - 70 - adH - 20 : H - 70; // collapse if no ad
 
     // ===== Headline area — fills ALL space between image and ad =====
     const headlineAreaTop = imgY + imgH + 30;
-    const headlineAreaBottom = adY - 30;
+    const headlineAreaBottom = (showAd ? adY : H - 70) - 30;
     const headlineAreaH = headlineAreaBottom - headlineAreaTop;
     const headlineMaxW = W - 80;
-    const headline = (customHeadline.trim() || selected.title).trim();
+    const headline = effectiveHeadline;
 
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
@@ -314,6 +347,7 @@ const NewsCard = () => {
     ctx.shadowBlur = 0;
 
     // ===== Draw Ad Block =====
+    if (showAd) {
     // Ad background
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.5)";
@@ -366,6 +400,7 @@ const NewsCard = () => {
     ctx.fillStyle = ad.accent;
     ctx.font = '800 17px "Hind Siliguri", sans-serif';
     ctx.fillText("⚡ " + ad.offer, adCenterX, adY + adH - 18);
+    } // end if (showAd)
 
     // Bottom red ticker bar
     const tickerY = H - 70;
@@ -386,11 +421,11 @@ const NewsCard = () => {
 
   // Auto draw on changes
   useEffect(() => {
-    if (selected) {
+    if (selected || mode === "custom") {
       drawCard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, customHeadline, adIndex]);
+  }, [selected, customHeadline, adIndex, mode, customImageUrl, customAdEnabled, customAdBrand, customAdTagline, customAdOffer, customAdEmoji]);
 
   const isInAppBrowser = () => {
     const ua = navigator.userAgent || "";
@@ -400,7 +435,7 @@ const NewsCard = () => {
   const handleDownload = async () => {
     const canvas = await drawCard();
     if (!canvas) {
-      toast.error("প্রথমে একটি নিউজ সিলেক্ট করুন");
+      toast.error(mode === "custom" ? "ছবি আপলোড করুন বা হেডলাইন লিখুন" : "প্রথমে একটি নিউজ সিলেক্ট করুন");
       return;
     }
     const mime = format === "png" ? "image/png" : "image/jpeg";
@@ -519,7 +554,38 @@ const NewsCard = () => {
           </p>
         </div>
 
-        {!selected && (
+        {/* Mode toggle: Auto vs Custom */}
+        <div className="flex gap-2 p-1 mb-5 rounded-xl bg-card/50 border border-red-500/20">
+          <button
+            onClick={() => {
+              setMode("auto");
+              setCustomHeadline("");
+            }}
+            className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all ${
+              mode === "auto"
+                ? "bg-red-600 text-white shadow-lg shadow-red-900/40"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            ⚡ অটো (নিউজ থেকে)
+          </button>
+          <button
+            onClick={() => {
+              setMode("custom");
+              setSelected(null);
+              setCustomHeadline("");
+            }}
+            className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all ${
+              mode === "custom"
+                ? "bg-amber-600 text-white shadow-lg shadow-amber-900/40"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            ✨ কাস্টম (নিজে বানান)
+          </button>
+        </div>
+
+        {mode === "auto" && !selected && (
           <>
             <div className="relative mb-4">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -575,28 +641,132 @@ const NewsCard = () => {
           </>
         )}
 
-        {selected && (
+        {(selected || mode === "custom") && (
           <div className="space-y-4">
             <div ref={previewBoxRef} className="rounded-2xl overflow-hidden border border-red-500/40 bg-black shadow-2xl shadow-red-900/40">
               <canvas ref={canvasRef} className="w-full h-auto block" />
             </div>
 
+            {/* Custom mode: image upload */}
+            {mode === "custom" && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <p className="text-xs font-semibold text-amber-400">কাস্টম ছবি আপলোড করুন</p>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    if (f.size > 8 * 1024 * 1024) {
+                      toast.error("ছবি ৮MB এর বেশি হতে পারবে না");
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = () => setCustomImageUrl(String(reader.result || ""));
+                    reader.readAsDataURL(f);
+                  }}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 border-amber-500/40 text-amber-400"
+                  >
+                    📷 {customImageUrl ? "ছবি পরিবর্তন করুন" : "ছবি আপলোড করুন"}
+                  </Button>
+                  {customImageUrl && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCustomImageUrl("")}
+                      className="border-red-500/40 text-red-400"
+                    >
+                      মুছুন
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Custom headline override */}
             <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                <p className="text-xs font-semibold text-amber-400">হেডলাইন এডিট করুন (ঐচ্ছিক)</p>
+                <p className="text-xs font-semibold text-amber-400">
+                  {mode === "custom" ? "হেডলাইন লিখুন" : "হেডলাইন এডিট করুন (ঐচ্ছিক)"}
+                </p>
               </div>
               <textarea
                 value={customHeadline}
                 onChange={(e) => setCustomHeadline(e.target.value)}
-                placeholder={selected.title}
+                placeholder={mode === "custom" ? "এখানে আপনার হেডলাইন লিখুন..." : selected?.title || ""}
                 rows={3}
                 className="w-full px-3 py-2 text-sm rounded-lg bg-background/50 border border-red-500/20 focus:border-red-500/60 outline-none resize-none"
                 style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
               />
-              <p className="text-[10px] text-muted-foreground mt-1">খালি রাখলে মূল হেডলাইন ব্যবহার হবে</p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {mode === "custom" ? "যেকোনো হেডলাইন লিখুন" : "খালি রাখলে মূল হেডলাইন ব্যবহার হবে"}
+              </p>
             </div>
+
+            {/* Custom mode: custom advertisement */}
+            {mode === "custom" && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 space-y-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={customAdEnabled}
+                    onChange={(e) => setCustomAdEnabled(e.target.checked)}
+                    className="w-4 h-4 accent-amber-500"
+                  />
+                  <span className="text-xs font-semibold text-amber-400">
+                    নিজস্ব বিজ্ঞাপন যোগ করুন
+                  </span>
+                </label>
+
+                {customAdEnabled && (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        value={customAdEmoji}
+                        onChange={(e) => setCustomAdEmoji(e.target.value.slice(0, 2))}
+                        placeholder="✨"
+                        className="w-16 text-center border-amber-500/30 bg-background/50"
+                      />
+                      <Input
+                        value={customAdBrand}
+                        onChange={(e) => setCustomAdBrand(e.target.value)}
+                        placeholder="ব্র্যান্ডের নাম"
+                        className="flex-1 border-amber-500/30 bg-background/50"
+                        style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
+                      />
+                    </div>
+                    <Input
+                      value={customAdTagline}
+                      onChange={(e) => setCustomAdTagline(e.target.value)}
+                      placeholder="ট্যাগলাইন (যেমন: সেরা মানের গ্যারান্টি!)"
+                      className="border-amber-500/30 bg-background/50"
+                      style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
+                    />
+                    <Input
+                      value={customAdOffer}
+                      onChange={(e) => setCustomAdOffer(e.target.value)}
+                      placeholder="স্পেশাল অফার (যেমন: ২টি কিনলে ১টি ফ্রি)"
+                      className="border-amber-500/30 bg-background/50"
+                      style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Format */}
             <div className="flex gap-2 justify-center">
@@ -622,12 +792,22 @@ const NewsCard = () => {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setSelected(null);
-                  setCustomHeadline("");
+                  if (mode === "custom") {
+                    setCustomImageUrl("");
+                    setCustomHeadline("");
+                    setCustomAdEnabled(false);
+                    setCustomAdBrand("");
+                    setCustomAdTagline("");
+                    setCustomAdOffer("");
+                    setCustomAdEmoji("✨");
+                  } else {
+                    setSelected(null);
+                    setCustomHeadline("");
+                  }
                 }}
                 className="border-red-500/40"
               >
-                <RefreshCw className="w-4 h-4 mr-2" /> অন্য নিউজ
+                <RefreshCw className="w-4 h-4 mr-2" /> {mode === "custom" ? "রিসেট" : "অন্য নিউজ"}
               </Button>
               <Button
                 onClick={handleDownload}
@@ -637,14 +817,16 @@ const NewsCard = () => {
               </Button>
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setAdIndex((i) => (i + 1 + Math.floor(Math.random() * (FUNNY_ADS.length - 1))) % FUNNY_ADS.length)}
-              className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
-            >
-              <Sparkles className="w-4 h-4 mr-2" /> অন্য বিজ্ঞাপন দেখাও
-            </Button>
+            {mode === "auto" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAdIndex((i) => (i + 1 + Math.floor(Math.random() * (FUNNY_ADS.length - 1))) % FUNNY_ADS.length)}
+                className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+              >
+                <Sparkles className="w-4 h-4 mr-2" /> অন্য বিজ্ঞাপন দেখাও
+              </Button>
+            )}
 
             <div className="flex gap-2 justify-center pt-2">
               <Button size="sm" variant="outline" onClick={handleShare}>
