@@ -647,22 +647,126 @@ const NewsCard = () => {
               <canvas ref={canvasRef} className="w-full h-auto block" />
             </div>
 
+            {/* Custom mode: image upload */}
+            {mode === "custom" && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <p className="text-xs font-semibold text-amber-400">কাস্টম ছবি আপলোড করুন</p>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    if (f.size > 8 * 1024 * 1024) {
+                      toast.error("ছবি ৮MB এর বেশি হতে পারবে না");
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = () => setCustomImageUrl(String(reader.result || ""));
+                    reader.readAsDataURL(f);
+                  }}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex-1 border-amber-500/40 text-amber-400"
+                  >
+                    📷 {customImageUrl ? "ছবি পরিবর্তন করুন" : "ছবি আপলোড করুন"}
+                  </Button>
+                  {customImageUrl && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCustomImageUrl("")}
+                      className="border-red-500/40 text-red-400"
+                    >
+                      মুছুন
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Custom headline override */}
             <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="w-4 h-4 text-amber-400" />
-                <p className="text-xs font-semibold text-amber-400">হেডলাইন এডিট করুন (ঐচ্ছিক)</p>
+                <p className="text-xs font-semibold text-amber-400">
+                  {mode === "custom" ? "হেডলাইন লিখুন" : "হেডলাইন এডিট করুন (ঐচ্ছিক)"}
+                </p>
               </div>
               <textarea
                 value={customHeadline}
                 onChange={(e) => setCustomHeadline(e.target.value)}
-                placeholder={selected.title}
+                placeholder={mode === "custom" ? "এখানে আপনার হেডলাইন লিখুন..." : selected?.title || ""}
                 rows={3}
                 className="w-full px-3 py-2 text-sm rounded-lg bg-background/50 border border-red-500/20 focus:border-red-500/60 outline-none resize-none"
                 style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
               />
-              <p className="text-[10px] text-muted-foreground mt-1">খালি রাখলে মূল হেডলাইন ব্যবহার হবে</p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {mode === "custom" ? "যেকোনো হেডলাইন লিখুন" : "খালি রাখলে মূল হেডলাইন ব্যবহার হবে"}
+              </p>
             </div>
+
+            {/* Custom mode: custom advertisement */}
+            {mode === "custom" && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 space-y-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={customAdEnabled}
+                    onChange={(e) => setCustomAdEnabled(e.target.checked)}
+                    className="w-4 h-4 accent-amber-500"
+                  />
+                  <span className="text-xs font-semibold text-amber-400">
+                    নিজস্ব বিজ্ঞাপন যোগ করুন
+                  </span>
+                </label>
+
+                {customAdEnabled && (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        value={customAdEmoji}
+                        onChange={(e) => setCustomAdEmoji(e.target.value.slice(0, 2))}
+                        placeholder="✨"
+                        className="w-16 text-center border-amber-500/30 bg-background/50"
+                      />
+                      <Input
+                        value={customAdBrand}
+                        onChange={(e) => setCustomAdBrand(e.target.value)}
+                        placeholder="ব্র্যান্ডের নাম"
+                        className="flex-1 border-amber-500/30 bg-background/50"
+                        style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
+                      />
+                    </div>
+                    <Input
+                      value={customAdTagline}
+                      onChange={(e) => setCustomAdTagline(e.target.value)}
+                      placeholder="ট্যাগলাইন (যেমন: সেরা মানের গ্যারান্টি!)"
+                      className="border-amber-500/30 bg-background/50"
+                      style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
+                    />
+                    <Input
+                      value={customAdOffer}
+                      onChange={(e) => setCustomAdOffer(e.target.value)}
+                      placeholder="স্পেশাল অফার (যেমন: ২টি কিনলে ১টি ফ্রি)"
+                      className="border-amber-500/30 bg-background/50"
+                      style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Format */}
             <div className="flex gap-2 justify-center">
