@@ -57,6 +57,7 @@ import TasksPage from "./pages/TasksPage";
 import DownloadApp from "./pages/DownloadApp";
 import AdminAppVersions from "./pages/AdminAppVersions";
 import PhotoCard from "./pages/PhotoCard";
+import NewsCard from "./pages/NewsCard";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +87,7 @@ const App = () => (
             <Route path="/project/:token" element={<FreelanceClientView />} />
             <Route path="/download" element={<DownloadApp />} />
             <Route path="/photo-card" element={<PhotoCard />} />
+            <Route path="/news-card" element={<NewsCard />} />
             <Route path="/app" element={<DownloadApp />} />
 
             {/* Member routes — admin & member only, NOT client */}
