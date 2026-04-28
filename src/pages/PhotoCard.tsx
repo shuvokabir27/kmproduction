@@ -202,7 +202,7 @@ const PhotoCard = () => {
 
         ctx.fillStyle = "#ffffff";
         ctx.font = '800 26px "Hind Siliguri", sans-serif';
-        ctx.fillText("#কুয়াকাটা_জেলা_চাই   ●   #প্রতিবাদ", W / 2, 1315);
+        ctx.fillText("#কুয়াকাটা_উপজেলা_চাই   ●   #প্রতিবাদ", W / 2, 1315);
 
         resolve(canvas);
       };
