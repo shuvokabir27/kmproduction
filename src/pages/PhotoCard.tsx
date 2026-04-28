@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, ArrowLeft, Image as ImageIcon, RefreshCw } from "lucide-react";
+import { Upload, Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook } from "lucide-react";
 import { toast } from "sonner";
 
 const PROTEST_TEXT = "কুয়াকাটা জেলা চাই";
