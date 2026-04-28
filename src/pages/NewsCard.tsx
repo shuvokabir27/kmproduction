@@ -347,6 +347,7 @@ const NewsCard = () => {
     ctx.shadowBlur = 0;
 
     // ===== Draw Ad Block =====
+    if (showAd) {
     // Ad background
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.5)";
