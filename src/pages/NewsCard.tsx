@@ -175,7 +175,7 @@ const NewsCard = () => {
     const imgX = 50;
     const imgY = headerH + 40;
     const imgW = W - 100;
-    const imgH = 720;
+    const imgH = 620;
 
     // Image frame shadow
     ctx.save();
