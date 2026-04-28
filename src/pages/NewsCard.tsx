@@ -264,42 +264,56 @@ const NewsCard = () => {
     ctx.textAlign = "left";
     ctx.fillText("ব্রেকিং নিউজ", pillX + 46, pillY + 33);
 
-    // Headline area
-    const headlineY = imgY + imgH + 55;
-    const headlineMaxW = W - 100;
+    // ===== Funny Advertisement Block (positioned first to know its bounds) =====
+    const ad = FUNNY_ADS[adIndex % FUNNY_ADS.length];
+    const adX = 50;
+    const adW = W - 100;
+    const adH = 160;
+    const adY = H - 70 - adH - 20; // above ticker with 20px gap
+
+    // ===== Headline area — fills ALL space between image and ad =====
+    const headlineAreaTop = imgY + imgH + 30;
+    const headlineAreaBottom = adY - 30;
+    const headlineAreaH = headlineAreaBottom - headlineAreaTop;
+    const headlineMaxW = W - 80;
     const headline = (customHeadline.trim() || selected.title).trim();
 
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    // Auto-size font based on length (smaller to fit ad area)
-    let fontSize = 52;
-    if (headline.length > 60) fontSize = 44;
-    if (headline.length > 100) fontSize = 38;
-    if (headline.length > 150) fontSize = 32;
-    ctx.font = `900 ${fontSize}px "Tiro Bangla", "Hind Siliguri", serif`;
 
-    const lines = wrapText(ctx, headline, headlineMaxW);
-    const lineHeight = fontSize * 1.22;
-    const maxLines = 3;
-    const visibleLines = lines.slice(0, maxLines);
-    if (lines.length > maxLines) {
-      visibleLines[maxLines - 1] = visibleLines[maxLines - 1].replace(/.{0,3}$/, "…");
+    // Auto-fit: try font sizes from large→small until text fits height & width
+    const tryFont = (size: number) => {
+      ctx.font = `900 ${size}px "Tiro Bangla", "Hind Siliguri", serif`;
+      const lh = size * 1.2;
+      const ls = wrapText(ctx, headline, headlineMaxW);
+      return { size, lh, lines: ls, totalH: ls.length * lh };
+    };
+
+    let chosen = tryFont(96);
+    for (let s = 96; s >= 28; s -= 2) {
+      const t = tryFont(s);
+      if (t.totalH <= headlineAreaH && t.lines.length <= 6) {
+        chosen = t;
+        break;
+      }
+      chosen = t;
     }
 
+    // Vertically center headline lines inside the available area
+    const startY =
+      headlineAreaTop +
+      (headlineAreaH - chosen.totalH) / 2 +
+      chosen.size * 0.85; // baseline offset for first line
+
+    ctx.font = `900 ${chosen.size}px "Tiro Bangla", "Hind Siliguri", serif`;
     ctx.shadowColor = "rgba(0,0,0,0.7)";
     ctx.shadowBlur = 8;
-    visibleLines.forEach((ln, i) => {
-      ctx.fillText(ln, W / 2, headlineY + i * lineHeight);
+    chosen.lines.forEach((ln, i) => {
+      ctx.fillText(ln, W / 2, startY + i * chosen.lh);
     });
     ctx.shadowBlur = 0;
 
-    // ===== Funny Advertisement Block =====
-    const ad = FUNNY_ADS[adIndex % FUNNY_ADS.length];
-    const adX = 50;
-    const adW = W - 100;
-    const adH = 150;
-    const adY = H - 70 - adH - 20; // above ticker with 20px gap
-
+    // ===== Draw Ad Block =====
     // Ad background
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.5)";
@@ -318,44 +332,40 @@ const NewsCard = () => {
     roundRect(ctx, adX, adY, adW, adH, 14);
     ctx.stroke();
 
-    // "বিজ্ঞাপন" tag (top-left corner of ad)
-    const tagW = 130;
-    const tagH = 28;
+    // "বিজ্ঞাপন" tag (top-center of ad)
+    const tagW = 140;
+    const tagH = 30;
+    const tagX = adX + (adW - tagW) / 2;
     ctx.fillStyle = ad.accent;
-    roundRect(ctx, adX + 14, adY - 14, tagW, tagH, 6);
+    roundRect(ctx, tagX, adY - 15, tagW, tagH, 8);
     ctx.fill();
     ctx.fillStyle = ad.bg;
-    ctx.font = '900 16px "Hind Siliguri", sans-serif';
+    ctx.font = '900 17px "Hind Siliguri", sans-serif';
     ctx.textAlign = "center";
-    ctx.fillText("বিজ্ঞাপন", adX + 14 + tagW / 2, adY - 14 + 20);
+    ctx.fillText("বিজ্ঞাপন", tagX + tagW / 2, adY - 15 + 21);
 
-    // Emoji (left side, large)
-    ctx.font = '70px "Apple Color Emoji", "Noto Color Emoji", sans-serif';
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(ad.emoji, adX + 70, adY + adH / 2);
-    ctx.textBaseline = "alphabetic";
+    // Centered ad content
+    const adCenterX = W / 2;
 
-    // Brand name
-    const adTextX = adX + 145;
+    // Brand name (with emoji prefix) — centered
     ctx.fillStyle = ad.accent;
-    ctx.font = '900 30px "Tiro Bangla", "Hind Siliguri", serif';
-    ctx.textAlign = "left";
-    ctx.fillText(ad.brand, adTextX, adY + 38);
+    ctx.font = '900 32px "Tiro Bangla", "Hind Siliguri", serif';
+    ctx.textAlign = "center";
+    ctx.fillText(`${ad.emoji}  ${ad.brand}`, adCenterX, adY + 50);
 
-    // Tagline (white, may wrap)
+    // Tagline (white, centered, may wrap)
     ctx.fillStyle = "#ffffff";
-    ctx.font = '700 19px "Hind Siliguri", sans-serif';
-    const adMaxW = adW - 145 - 24;
+    ctx.font = '700 20px "Hind Siliguri", sans-serif';
+    const adMaxW = adW - 40;
     const tlLines = wrapText(ctx, ad.tagline, adMaxW).slice(0, 2);
     tlLines.forEach((ln, i) => {
-      ctx.fillText(ln, adTextX, adY + 68 + i * 24);
+      ctx.fillText(ln, adCenterX, adY + 88 + i * 26);
     });
 
-    // Offer line (highlighted)
+    // Offer line (highlighted, centered)
     ctx.fillStyle = ad.accent;
-    ctx.font = '800 16px "Hind Siliguri", sans-serif';
-    ctx.fillText("⚡ " + ad.offer, adTextX, adY + adH - 18);
+    ctx.font = '800 17px "Hind Siliguri", sans-serif';
+    ctx.fillText("⚡ " + ad.offer, adCenterX, adY + adH - 18);
 
     // Bottom red ticker bar
     const tickerY = H - 70;
