@@ -130,9 +130,20 @@ const NewsCard = () => {
     });
 
   const drawCard = async (): Promise<HTMLCanvasElement | null> => {
-    if (!selected) return null;
+    // In custom mode we don't need a selected news item
+    const isCustom = mode === "custom";
+    if (!isCustom && !selected) return null;
     const canvas = canvasRef.current!;
+    if (!canvas) return null;
     const ctx = canvas.getContext("2d")!;
+
+    // Effective inputs
+    const effectiveImageUrl = isCustom
+      ? customImageUrl || null
+      : selected?.featured_image_url || null;
+    const effectiveHeadline = (
+      customHeadline.trim() || (isCustom ? "এখানে আপনার হেডলাইন লিখুন" : selected?.title || "")
+    ).trim();
     const W = 1080;
     const H = 1350;
     canvas.width = W;
