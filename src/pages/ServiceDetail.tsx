@@ -177,6 +177,10 @@ const ServiceDetail = () => {
       toast({ title: "নাম ও মোবাইল নম্বর দিন", variant: "destructive" });
       return;
     }
+    if (!/^01[0-9]{9}$/.test(bookingForm.phone.trim())) {
+      toast({ title: "সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (01...)", variant: "destructive" });
+      return;
+    }
     setBookingSubmitting(true);
     const { error } = await supabase.from("bookings" as any).insert({
       service_id: service.id,
@@ -397,44 +401,57 @@ const ServiceDetail = () => {
                   <div className="space-y-2">
                     <Label className="text-sm">মোবাইল নম্বর *</Label>
                     <Input
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={11}
                       value={bookingForm.phone}
-                      onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })}
+                      onChange={(e) => {
+                        const onlyDigits = e.target.value.replace(/[^0-9]/g, "").slice(0, 11);
+                        setBookingForm({ ...bookingForm, phone: onlyDigits });
+                      }}
                       placeholder="01XXXXXXXXX"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm">ঠিকানা (ঐচ্ছিক)</Label>
+                    <Label className="text-sm">ঠিকানা {perMin ? "*" : "(ঐচ্ছিক)"}</Label>
                     <Input
                       value={bookingForm.address}
                       onChange={(e) => setBookingForm({ ...bookingForm, address: e.target.value })}
                       placeholder="এলাকা / জেলা"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label className="text-sm">তারিখ</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !bookingDate && "text-muted-foreground")}>
-                            <CalendarIcon className="h-4 w-4 mr-2" />
-                            {bookingDate ? format(bookingDate, "dd/MM/yyyy") : "তারিখ"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar mode="single" selected={bookingDate} onSelect={setBookingDate} initialFocus />
-                        </PopoverContent>
-                      </Popover>
+                  {/* Conditional date / days fields based on service type */}
+                  {!perMin && (
+                    <div className={cn("grid gap-3", perHour ? "grid-cols-1" : "grid-cols-2")}>
+                      <div className="space-y-2">
+                        <Label className="text-sm">তারিখ</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !bookingDate && "text-muted-foreground")}>
+                              <CalendarIcon className="h-4 w-4 mr-2" />
+                              {bookingDate ? format(bookingDate, "dd/MM/yyyy") : "তারিখ নির্বাচন করুন"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar mode="single" selected={bookingDate} onSelect={setBookingDate} initialFocus />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      {!perHour && (
+                        <div className="space-y-2">
+                          <Label className="text-sm">দিন সংখ্যা</Label>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min={1}
+                            value={bookingDays}
+                            onChange={(e) => setBookingDays(Math.max(1, parseInt(e.target.value) || 1))}
+                          />
+                        </div>
+                      )}
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm">দিন সংখ্যা</Label>
-                      <Input
-                        type="number"
-                        min={1}
-                        value={bookingDays}
-                        onChange={(e) => setBookingDays(Math.max(1, parseInt(e.target.value) || 1))}
-                      />
-                    </div>
-                  </div>
+                  )}
                   <div className="flex gap-2 pt-2">
                     <Button variant="outline" onClick={() => setBookingStep("idle")} className="flex-1">
                       ফিরে যান
