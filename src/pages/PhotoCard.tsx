@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const MAIN_TITLE = "কুয়াকাটা জেলা চাই";
+const MAIN_TITLE = "কুয়াকাটা উপজেলা চাই";
 
 const SLOGAN_OPTIONS = [
   { id: "right", label: "অধিকার", text: "কুয়াকাটাবাসীর ন্যায্য অধিকার" },
   { id: "voice", label: "একতার কণ্ঠস্বর", text: "একতাই আমাদের শক্তি" },
-  { id: "demand", label: "যৌক্তিক দাবি", text: "যুগের দাবি — কুয়াকাটা জেলা" },
+  { id: "demand", label: "যৌক্তিক দাবি", text: "যুগের দাবি — কুয়াকাটা উপজেলা" },
   { id: "movement", label: "গণআন্দোলন", text: "আমরা ঐক্যবদ্ধ, আমরা সোচ্চার" },
-  { id: "future", label: "নতুন ভোর", text: "নতুন জেলা — নতুন সম্ভাবনা" },
+  { id: "future", label: "নতুন ভোর", text: "নতুন উপজেলা — নতুন সম্ভাবনা" },
 ];
 
 const PhotoCard = () => {
