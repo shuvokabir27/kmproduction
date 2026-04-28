@@ -92,6 +92,48 @@ const Services = () => {
     return () => clearInterval(interval);
   }, [activeOffer?.offer_end_date]);
 
+  // Highlighted service from share link (?service=<id>)
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get("service");
+    if (!sid || !services?.length) return;
+    const exists = services.find((s: any) => s.id === sid);
+    if (!exists) return;
+    setHighlightedId(sid);
+    // Wait for render then scroll into view
+    setTimeout(() => {
+      const el = document.getElementById(`service-${sid}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 400);
+    // Remove highlight after 4s
+    const t = setTimeout(() => setHighlightedId(null), 4000);
+    return () => clearTimeout(t);
+  }, [services]);
+
+  const handleShare = async (service: any) => {
+    const url = `${window.location.origin}/services?service=${service.id}`;
+    const shareData = {
+      title: service.title,
+      text: `${service.title} — ${service.description || "কুয়াকাটা মাল্টিমিডিয়া সেবা"}`,
+      url,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch (err) {
+      // user cancelled or share failed — fall back to clipboard
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({ title: t("লিংক কপি হয়েছে!", "Link copied!"), description: url });
+    } catch {
+      toast({ title: t("কপি করতে পারিনি", "Could not copy link"), variant: "destructive" });
+    }
+  };
+
   const getWaUrl = (serviceTitle: string, discount: number, price?: number, perMinuteInfo?: { rate: number; minutes: number }, perHourInfo?: { rate: number; hours: number; editedPhotos: number }) => {
     const phone = (settings as any)?.whatsapp_no?.replace(/[^0-9]/g, '') || '';
     const offerText = discount > 0 ? ` (${discount}% ডিসকাউন্ট সহ)` : '';
