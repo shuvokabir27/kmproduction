@@ -208,9 +208,9 @@ const NewsCard = () => {
     ctx.restore();
 
     // Draw featured image
-    if (selected.featured_image_url) {
+    if (effectiveImageUrl) {
       try {
-        const img = await loadImage(selected.featured_image_url);
+        const img = await loadImage(effectiveImageUrl);
         ctx.save();
         roundRect(ctx, imgX, imgY, imgW, imgH, 18);
         ctx.clip();
