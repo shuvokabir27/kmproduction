@@ -554,7 +554,38 @@ const NewsCard = () => {
           </p>
         </div>
 
-        {!selected && (
+        {/* Mode toggle: Auto vs Custom */}
+        <div className="flex gap-2 p-1 mb-5 rounded-xl bg-card/50 border border-red-500/20">
+          <button
+            onClick={() => {
+              setMode("auto");
+              setCustomHeadline("");
+            }}
+            className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all ${
+              mode === "auto"
+                ? "bg-red-600 text-white shadow-lg shadow-red-900/40"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            ⚡ অটো (নিউজ থেকে)
+          </button>
+          <button
+            onClick={() => {
+              setMode("custom");
+              setSelected(null);
+              setCustomHeadline("");
+            }}
+            className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all ${
+              mode === "custom"
+                ? "bg-amber-600 text-white shadow-lg shadow-amber-900/40"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            ✨ কাস্টম (নিজে বানান)
+          </button>
+        </div>
+
+        {mode === "auto" && !selected && (
           <>
             <div className="relative mb-4">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
