@@ -380,7 +380,7 @@ const NewsCard = () => {
       drawCard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, customHeadline]);
+  }, [selected, customHeadline, adIndex]);
 
   const isInAppBrowser = () => {
     const ua = navigator.userAgent || "";
