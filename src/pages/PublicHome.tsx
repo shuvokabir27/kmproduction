@@ -85,6 +85,7 @@ const PublicHome = () => {
     { label: t("সেবা", "Services"), href: "/services", isPage: true, icon: Film, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
     { label: t("প্রডাক্ট", "Products"), href: "/products", isPage: true, icon: ShoppingBag, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/15", border: "border-orange-500/30", text: "text-orange-400" },
     { label: t("নিউজ", "News"), href: "/news", isPage: true, icon: Newspaper, gradient: "from-red-500 to-orange-600", bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-400" },
+    { label: t("ফটো কার্ড", "Photo Card"), href: "/photo-card", isPage: true, icon: Camera, gradient: "from-red-600 to-rose-700", bg: "bg-red-600/15", border: "border-red-600/30", text: "text-red-500" },
     { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
     { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
     { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, gradient: "from-fuchsia-500 to-pink-600", bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
