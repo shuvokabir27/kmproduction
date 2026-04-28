@@ -102,17 +102,24 @@ const PhotoCard = () => {
         roundRect(ctx, frameX, frameY, frameW, frameH, radius);
         ctx.clip();
 
-        // Cover-fit image
+        // Cover-fit image with zoom + offset (user-controlled crop)
         const ir = img.width / img.height;
         const ar = frameW / frameH;
-        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+        // Base "cover" source rect (centered)
+        let bsw = img.width, bsh = img.height;
         if (ir > ar) {
-          sw = img.height * ar;
-          sx = (img.width - sw) / 2;
+          bsw = img.height * ar;
         } else {
-          sh = img.width / ar;
-          sy = (img.height - sh) / 2;
+          bsh = img.width / ar;
         }
+        // Apply zoom: smaller source rect = more zoomed in
+        const sw = bsw / zoom;
+        const sh = bsh / zoom;
+        // Max pannable range (in source pixels) so source stays inside image
+        const maxOffsetX = (img.width - sw) / 2;
+        const maxOffsetY = (img.height - sh) / 2;
+        const sx = Math.max(0, Math.min(img.width - sw, (img.width - sw) / 2 + offset.x * maxOffsetX));
+        const sy = Math.max(0, Math.min(img.height - sh, (img.height - sh) / 2 + offset.y * maxOffsetY));
         ctx.drawImage(img, sx, sy, sw, sh, frameX, frameY, frameW, frameH);
 
         // Subtle vignette
