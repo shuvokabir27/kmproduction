@@ -627,6 +627,15 @@ const NewsCard = () => {
               </Button>
             </div>
 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAdIndex((i) => (i + 1 + Math.floor(Math.random() * (FUNNY_ADS.length - 1))) % FUNNY_ADS.length)}
+              className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+            >
+              <Sparkles className="w-4 h-4 mr-2" /> অন্য বিজ্ঞাপন দেখাও
+            </Button>
+
             <div className="flex gap-2 justify-center pt-2">
               <Button size="sm" variant="outline" onClick={handleShare}>
                 <Share2 className="w-4 h-4 mr-2" /> পেজ শেয়ার
