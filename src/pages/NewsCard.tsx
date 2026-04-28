@@ -641,7 +641,7 @@ const NewsCard = () => {
           </>
         )}
 
-        {selected && (
+        {(selected || mode === "custom") && (
           <div className="space-y-4">
             <div ref={previewBoxRef} className="rounded-2xl overflow-hidden border border-red-500/40 bg-black shadow-2xl shadow-red-900/40">
               <canvas ref={canvasRef} className="w-full h-auto block" />
