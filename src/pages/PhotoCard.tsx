@@ -1,25 +1,34 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook } from "lucide-react";
+import { Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const PROTEST_TEXT = "কুয়াকাটা জেলা চাই";
-const SUBTITLE = "এটি একটি প্রতিবাদ";
+const MAIN_TITLE = "কুয়াকাটা জেলা চাই";
+
+const SLOGAN_OPTIONS = [
+  { id: "right", label: "অধিকার", text: "কুয়াকাটাবাসীর ন্যায্য অধিকার" },
+  { id: "voice", label: "একতার কণ্ঠস্বর", text: "একতাই আমাদের শক্তি" },
+  { id: "demand", label: "যৌক্তিক দাবি", text: "যুগের দাবি — কুয়াকাটা জেলা" },
+  { id: "movement", label: "গণআন্দোলন", text: "আমরা ঐক্যবদ্ধ, আমরা সোচ্চার" },
+  { id: "future", label: "নতুন ভোর", text: "নতুন জেলা — নতুন সম্ভাবনা" },
+];
 
 const PhotoCard = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [format, setFormat] = useState<"png" | "jpeg">("png");
+  const [sloganId, setSloganId] = useState<string>("right");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Preload Bengali font for canvas rendering
+  // Preload Bengali fonts for canvas rendering
   useEffect(() => {
     const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;700;900&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800;900&family=Tiro+Bangla:ital@0;1&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
   }, []);
+
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -41,18 +50,42 @@ const PhotoCard = () => {
       canvas.width = W;
       canvas.height = H;
 
-      // Background
-      ctx.fillStyle = "#0a0a0a";
+      const slogan = SLOGAN_OPTIONS.find((s) => s.id === sloganId) || SLOGAN_OPTIONS[0];
+
+      // Deep base background
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+      bgGrad.addColorStop(0, "#1a0608");
+      bgGrad.addColorStop(1, "#0a0203");
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, W, H);
 
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
-        // Image area (top portion)
-        const imgArea = { x: 40, y: 40, w: W - 80, h: 1000 };
-        // Cover-fit
+        // ---------- IMAGE FRAME ----------
+        const frameX = 50;
+        const frameY = 50;
+        const frameW = W - 100;
+        const frameH = 920;
+        const radius = 24;
+
+        // Outer red glow border
+        ctx.save();
+        ctx.shadowColor = "rgba(220, 38, 38, 0.6)";
+        ctx.shadowBlur = 40;
+        ctx.fillStyle = "#dc2626";
+        roundRect(ctx, frameX - 6, frameY - 6, frameW + 12, frameH + 12, radius + 4);
+        ctx.fill();
+        ctx.restore();
+
+        // Image clip
+        ctx.save();
+        roundRect(ctx, frameX, frameY, frameW, frameH, radius);
+        ctx.clip();
+
+        // Cover-fit image
         const ir = img.width / img.height;
-        const ar = imgArea.w / imgArea.h;
+        const ar = frameW / frameH;
         let sx = 0, sy = 0, sw = img.width, sh = img.height;
         if (ir > ar) {
           sw = img.height * ar;
@@ -61,43 +94,111 @@ const PhotoCard = () => {
           sh = img.width / ar;
           sy = (img.height - sh) / 2;
         }
-        ctx.drawImage(img, sx, sy, sw, sh, imgArea.x, imgArea.y, imgArea.w, imgArea.h);
+        ctx.drawImage(img, sx, sy, sw, sh, frameX, frameY, frameW, frameH);
 
-        // Red gradient overlay at bottom of image for text readability
-        const grad = ctx.createLinearGradient(0, imgArea.y + imgArea.h - 200, 0, imgArea.y + imgArea.h);
-        grad.addColorStop(0, "rgba(0,0,0,0)");
-        grad.addColorStop(1, "rgba(0,0,0,0.7)");
-        ctx.fillStyle = grad;
-        ctx.fillRect(imgArea.x, imgArea.y + imgArea.h - 200, imgArea.w, 200);
+        // Subtle vignette
+        const vGrad = ctx.createLinearGradient(0, frameY, 0, frameY + frameH);
+        vGrad.addColorStop(0, "rgba(0,0,0,0.25)");
+        vGrad.addColorStop(0.5, "rgba(0,0,0,0)");
+        vGrad.addColorStop(1, "rgba(0,0,0,0.55)");
+        ctx.fillStyle = vGrad;
+        ctx.fillRect(frameX, frameY, frameW, frameH);
 
-        // Red banner strip
-        ctx.fillStyle = "#dc2626";
-        ctx.fillRect(0, 1060, W, 10);
-
-        // Main protest text
+        // Top-left protest badge
+        const badgeX = frameX + 30;
+        const badgeY = frameY + 30;
+        ctx.fillStyle = "rgba(220, 38, 38, 0.95)";
+        roundRect(ctx, badgeX, badgeY, 240, 56, 28);
+        ctx.fill();
         ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.font = '700 24px "Hind Siliguri", sans-serif';
+        ctx.fillText("● প্রতিবাদ ২০২৬", badgeX + 22, badgeY + 28);
+
+        ctx.restore();
+
+        // ---------- DECORATIVE DIVIDER ----------
+        const divY = 1000;
+        // Triple stripe: red / white / red
+        ctx.fillStyle = "#dc2626";
+        ctx.fillRect(50, divY, W - 100, 6);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(50, divY + 10, W - 100, 2);
+        ctx.fillStyle = "#dc2626";
+        ctx.fillRect(50, divY + 16, W - 100, 6);
+
+        // ---------- MAIN TITLE ----------
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = '900 110px "Hind Siliguri", "Tiro Bangla", sans-serif';
-        ctx.fillText(PROTEST_TEXT, W / 2, 1170);
 
-        // Subtitle
+        // Title with shadow for depth
+        ctx.save();
+        ctx.shadowColor = "rgba(220, 38, 38, 0.5)";
+        ctx.shadowBlur = 20;
+        const titleGrad = ctx.createLinearGradient(0, 1060, 0, 1140);
+        titleGrad.addColorStop(0, "#ffffff");
+        titleGrad.addColorStop(1, "#fecaca");
+        ctx.fillStyle = titleGrad;
+        ctx.font = '900 96px "Hind Siliguri", "Tiro Bangla", sans-serif';
+        ctx.fillText(MAIN_TITLE, W / 2, 1100);
+        ctx.restore();
+
+        // ---------- SLOGAN (custom selected) ----------
+        ctx.fillStyle = "#fbbf24";
+        ctx.font = '700 36px "Hind Siliguri", sans-serif';
+        ctx.fillText(slogan.text, W / 2, 1180);
+
+        // ---------- "এটি একটি প্রতিবাদ" small label with side lines ----------
+        const labelY = 1230;
+        const labelText = "এটি একটি প্রতিবাদ";
+        ctx.font = '500 24px "Hind Siliguri", sans-serif';
         ctx.fillStyle = "#fca5a5";
-        ctx.font = '500 42px "Hind Siliguri", "Tiro Bangla", sans-serif';
-        ctx.fillText(SUBTITLE, W / 2, 1255);
+        const labelW = ctx.measureText(labelText).width;
+        ctx.fillText(labelText, W / 2, labelY);
+        // Side dashes
+        ctx.strokeStyle = "rgba(252, 165, 165, 0.5)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(W / 2 - labelW / 2 - 80, labelY);
+        ctx.lineTo(W / 2 - labelW / 2 - 20, labelY);
+        ctx.moveTo(W / 2 + labelW / 2 + 20, labelY);
+        ctx.lineTo(W / 2 + labelW / 2 + 80, labelY);
+        ctx.stroke();
 
-        // Bottom red bar
-        ctx.fillStyle = "#dc2626";
-        ctx.fillRect(0, 1310, W, 40);
+        // ---------- BOTTOM RED BAR ----------
+        const barGrad = ctx.createLinearGradient(0, 1290, W, 1290);
+        barGrad.addColorStop(0, "#7f1d1d");
+        barGrad.addColorStop(0.5, "#dc2626");
+        barGrad.addColorStop(1, "#7f1d1d");
+        ctx.fillStyle = barGrad;
+        ctx.fillRect(0, 1280, W, 70);
+
         ctx.fillStyle = "#ffffff";
-        ctx.font = '700 22px "Hind Siliguri", sans-serif';
-        ctx.fillText("# কুয়াকাটা_জেলা_চাই", W / 2, 1330);
+        ctx.font = '800 26px "Hind Siliguri", sans-serif';
+        ctx.fillText("#কুয়াকাটা_জেলা_চাই   ●   #প্রতিবাদ", W / 2, 1315);
 
         resolve(canvas);
       };
       img.src = imageSrc;
     });
   };
+
+  // Rounded rectangle helper
+  function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
 
   const handleDownload = async () => {
     const canvas = await drawCard();
@@ -127,7 +228,7 @@ const PhotoCard = () => {
   // Auto-draw preview whenever image changes
   useEffect(() => {
     if (imageSrc) drawCard();
-  }, [imageSrc]);
+  }, [imageSrc, sloganId]);
 
   const handleShare = async () => {
     const url = `${window.location.origin}/photo-card`;
@@ -254,6 +355,29 @@ const PhotoCard = () => {
                 ref={canvasRef}
                 className="w-full h-auto block"
               />
+            </div>
+
+            {/* Slogan selector */}
+            <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <p className="text-xs font-semibold text-amber-400">স্লোগান নির্বাচন করুন</p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {SLOGAN_OPTIONS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSloganId(s.id)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                      sloganId === s.id
+                        ? "bg-red-600 text-white shadow-lg shadow-red-900/40 scale-105"
+                        : "bg-background/50 text-foreground/70 border border-red-500/20 hover:border-red-500/50"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Format selector */}
