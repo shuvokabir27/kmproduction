@@ -305,7 +305,7 @@ const PublicHome = () => {
               className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-red-600 to-rose-700 text-white font-bold shadow-lg shadow-red-900/40 hover:shadow-red-700/60 hover:scale-105 transition-all animate-pulse"
             >
               <Camera className="h-5 w-5" />
-              <span>📸 ফটো কার্ড বানান — কুয়াকাটা জেলা চাই</span>
+              <span>📸 ফটো কার্ড বানান — কুয়াকাটা উপজেলা চাই</span>
             </button>
           </motion.div>
 
