@@ -357,6 +357,29 @@ const PhotoCard = () => {
               />
             </div>
 
+            {/* Slogan selector */}
+            <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <p className="text-xs font-semibold text-amber-400">স্লোগান নির্বাচন করুন</p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {SLOGAN_OPTIONS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSloganId(s.id)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                      sloganId === s.id
+                        ? "bg-red-600 text-white shadow-lg shadow-red-900/40 scale-105"
+                        : "bg-background/50 text-foreground/70 border border-red-500/20 hover:border-red-500/50"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Format selector */}
             <div className="flex gap-2 justify-center">
               <Button
