@@ -657,15 +657,12 @@ const Services = () => {
                       </div>
 
                       <div className="space-y-2 mb-5 relative z-10">
-                        {features.slice(0, 3).map((f: string, i: number) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <Check className={`h-3.5 w-3.5 ${c.checkIcon} flex-shrink-0`} />
-                            <span className="text-xs text-foreground/70">{f}</span>
+                        {features.map((f: string, i: number) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <Check className={`h-3.5 w-3.5 ${c.checkIcon} flex-shrink-0 mt-0.5`} />
+                            <span className="text-xs text-foreground/70 leading-relaxed">{f}</span>
                           </div>
                         ))}
-                        {features.length > 3 && (
-                          <span className="text-xs text-muted-foreground">+{features.length - 3} {t("আরো", "more")}</span>
-                        )}
                       </div>
 
                       {(settings as any)?.whatsapp_no ? (
