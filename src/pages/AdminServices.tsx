@@ -215,10 +215,18 @@ const AdminServices = () => {
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <h1 className="text-2xl font-bold text-foreground">সেবা / প্যাকেজ</h1>
-          <Button onClick={() => { setEditingId(null); setForm(defaultForm); setDialogOpen(true); }}>
-            <Plus className="h-4 w-4 mr-1" /> নতুন সেবা
-          </Button>
+          <div className="flex items-center gap-2">
+            <a href="/admin/bookings">
+              <Button variant="outline" className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10">
+                📋 বুকিং দেখুন
+              </Button>
+            </a>
+            <Button onClick={() => { setEditingId(null); setForm(defaultForm); setDialogOpen(true); }}>
+              <Plus className="h-4 w-4 mr-1" /> নতুন সেবা
+            </Button>
+          </div>
         </div>
 
         {/* Offer Management Section */}
