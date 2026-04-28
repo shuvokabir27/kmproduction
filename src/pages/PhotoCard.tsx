@@ -129,6 +129,38 @@ const PhotoCard = () => {
     if (imageSrc) drawCard();
   }, [imageSrc]);
 
+  const handleShare = async () => {
+    const url = `${window.location.origin}/photo-card`;
+    const shareData = {
+      title: "কুয়াকাটা জেলা চাই - ফটো কার্ড",
+      text: "আপনিও প্রতিবাদের ফটো কার্ড বানান — কুয়াকাটা জেলা চাই",
+      url,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch (e) {
+      // user cancelled — fall through to copy
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("লিংক কপি হয়েছে!");
+    } catch {
+      toast.error("লিংক কপি করা যায়নি");
+    }
+  };
+
+  const handleFacebookShare = () => {
+    const url = `${window.location.origin}/photo-card`;
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-red-950/20">
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/40">
@@ -137,7 +169,13 @@ const PhotoCard = () => {
             <ArrowLeft className="w-4 h-4" /> হোম
           </Link>
           <h1 className="text-base sm:text-lg font-bold text-red-500">📸 ফটো কার্ড</h1>
-          <div className="w-12" />
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-400 transition-colors"
+            aria-label="Share"
+          >
+            <Share2 className="w-4 h-4" /> শেয়ার
+          </button>
         </div>
       </header>
 
@@ -146,10 +184,38 @@ const PhotoCard = () => {
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2">
             কুয়াকাটা জেলা চাই
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-4">
             আপনার ছবি আপলোড করে প্রতিবাদের ফটো কার্ড বানান এবং সোশ্যাল মিডিয়ায় শেয়ার করুন
           </p>
+          <div className="flex gap-2 justify-center flex-wrap">
+            <Button
+              size="sm"
+              onClick={handleShare}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <Share2 className="w-4 h-4 mr-2" /> পেজ শেয়ার করুন
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleFacebookShare}
+              className="border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
+            >
+              <Facebook className="w-4 h-4 mr-2" /> Facebook
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={async () => {
+                await navigator.clipboard.writeText(`${window.location.origin}/photo-card`);
+                toast.success("লিংক কপি হয়েছে!");
+              }}
+            >
+              <Copy className="w-4 h-4 mr-2" /> লিংক কপি
+            </Button>
+          </div>
         </div>
+
 
         {/* Upload zone */}
         {!imageSrc && (
