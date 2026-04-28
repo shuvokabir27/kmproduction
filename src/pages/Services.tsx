@@ -572,9 +572,17 @@ const Services = () => {
                   <motion.div
                     key={service.id}
                     variants={item}
+                    id={`service-${service.id}`}
                     className={`w-full ${shouldCenter ? "sm:col-span-2 lg:col-span-1 lg:col-start-2" : ""}`}
                   >
-                    <div className={`relative rounded-2xl p-6 h-full flex flex-col overflow-hidden bg-gradient-to-b ${c.gradient} border ${c.border}`}>
+                    <div className={`relative rounded-2xl p-6 h-full flex flex-col overflow-hidden bg-gradient-to-b ${c.gradient} border ${c.border} transition-all duration-500 ${highlightedId === service.id ? "ring-4 ring-primary ring-offset-2 ring-offset-background scale-[1.02]" : ""}`}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleShare(service); }}
+                        title={t("শেয়ার করুন", "Share")}
+                        className="absolute top-3 right-3 z-20 h-8 w-8 rounded-full bg-background/70 backdrop-blur-md border border-border/40 flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-all"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                      </button>
                       {/* Decorative glow */}
                       <div className={`absolute -top-16 -right-16 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-50`} />
                       
