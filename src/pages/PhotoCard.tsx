@@ -259,8 +259,8 @@ const PhotoCard = () => {
   const handleShare = async () => {
     const url = `${window.location.origin}/photo-card`;
     const shareData = {
-      title: "কুয়াকাটা জেলা চাই - ফটো কার্ড",
-      text: "আপনিও প্রতিবাদের ফটো কার্ড বানান — কুয়াকাটা জেলা চাই",
+      title: "কুয়াকাটা উপজেলা চাই - ফটো কার্ড",
+      text: "আপনিও প্রতিবাদের ফটো কার্ড বানান — কুয়াকাটা উপজেলা চাই",
       url,
     };
     try {
