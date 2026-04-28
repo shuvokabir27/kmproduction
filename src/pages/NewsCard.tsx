@@ -17,6 +17,22 @@ interface NewsItem {
 const BRAND = "দৈনিক ইন্তেকাল";
 const TAGLINE = "সংবাদে চিরন্তন সত্য • প্রকাশিত প্রতিদিন";
 
+// Funny fake advertisements — appear randomly at bottom of card
+const FUNNY_ADS: { brand: string; tagline: string; offer: string; bg: string; accent: string; emoji: string }[] = [
+  { brand: "মামা হোটেল", tagline: "৩ দিনের বাসি ভাত — সম্পূর্ণ ফ্রেশ গ্যারান্টি!", offer: "অফার: ১ প্লেট কিনলে ১টি পেট ব্যথা ফ্রি", bg: "#7c2d12", accent: "#fde047", emoji: "🍛" },
+  { brand: "চাচার চা স্টল", tagline: "যে চা খেলে শ্বশুরবাড়ির কথা মনে পড়বে", offer: "১০ কাপ চা = ১টি দীর্ঘশ্বাস ফ্রি", bg: "#451a03", accent: "#fcd34d", emoji: "☕" },
+  { brand: "বাংলা টাইগার বালাম", tagline: "মাথা ব্যথা, কোমর ব্যথা, প্রেমের ব্যথা — সব এক বালামে!", offer: "১ কৌটা = ৭ পুরুষের শক্তি", bg: "#7f1d1d", accent: "#fef3c7", emoji: "💪" },
+  { brand: "সুপার গ্লু আঠা", tagline: "ভাঙা সম্পর্কও জোড়া লাগাই — গ্যারান্টি ১০০%", offer: "এক ফোঁটায় সারাজীবন একসাথে", bg: "#1e3a8a", accent: "#fde047", emoji: "🔗" },
+  { brand: "হারবাল হেয়ার অয়েল", tagline: "টাক মাথায় ৩ দিনে বাঁশ ঝাড়!", offer: "ফ্রি অফার: চিরুনি কেনার দরকার নেই", bg: "#064e3b", accent: "#a7f3d0", emoji: "🌿" },
+  { brand: "নুরু ভাইয়ের লন্ড্রি", tagline: "সাদা শার্ট দিলে কালো ফেরত — গ্যারান্টি!", offer: "৫টি কাপড় ধুলে ১টি হারিয়ে যাবেই", bg: "#312e81", accent: "#c7d2fe", emoji: "👕" },
+  { brand: "ম্যাজিক ফর্সা ক্রিম", tagline: "৭ দিনে এত ফর্সা — মা চিনবে না!", offer: "১ কৌটায় বউ পাওয়ার গ্যারান্টি", bg: "#831843", accent: "#fbcfe8", emoji: "✨" },
+  { brand: "দাদুর দাঁতের পাউডার", tagline: "৬০ বছরের দাঁতে নতুন বিয়ের কামড়!", offer: "১ প্যাকেট = ১০০ বছরের ওয়ারেন্টি", bg: "#0c4a6e", accent: "#bae6fd", emoji: "🦷" },
+  { brand: "কাবিল প্লাম্বার সার্ভিস", tagline: "পাইপ ঠিক করি — ঘর ভাসিয়ে দিই ফ্রি", offer: "কল দিলেই আসি — ৩ দিনের মধ্যে", bg: "#1e293b", accent: "#fde047", emoji: "🔧" },
+  { brand: "শখের মুরগী ফার্ম", tagline: "ডিম দেয় — মাঝে মাঝে সোনারও দেয়!", offer: "১ ডজন কিনলে ১টি মুরগি ধার", bg: "#78350f", accent: "#fef3c7", emoji: "🐔" },
+  { brand: "ফাটাফাটি ম্যাট্রিমনি", tagline: "৩ দিনে বিয়ে — ৭ দিনে ডিভোর্স!", offer: "প্যাকেজ অফার: বিয়ে + কোর্ট ফি ফ্রি", bg: "#581c87", accent: "#e9d5ff", emoji: "💍" },
+  { brand: "জাদুকর বাবার তাবিজ", tagline: "শাশুড়ি বশ, বস বশ, এমনকি বিড়ালও বশ!", offer: "১টি তাবিজে ৭ পুরুষের সমস্যার সমাধান", bg: "#3f0808", accent: "#fde047", emoji: "🔮" },
+];
+
 const NewsCard = () => {
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +40,7 @@ const NewsCard = () => {
   const [selected, setSelected] = useState<NewsItem | null>(null);
   const [customHeadline, setCustomHeadline] = useState("");
   const [format, setFormat] = useState<"png" | "jpeg">("png");
+  const [adIndex, setAdIndex] = useState(() => Math.floor(Math.random() * FUNNY_ADS.length));
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewBoxRef = useRef<HTMLDivElement>(null);
@@ -158,7 +175,7 @@ const NewsCard = () => {
     const imgX = 50;
     const imgY = headerH + 40;
     const imgW = W - 100;
-    const imgH = 720;
+    const imgH = 620;
 
     // Image frame shadow
     ctx.save();
@@ -248,22 +265,22 @@ const NewsCard = () => {
     ctx.fillText("ব্রেকিং নিউজ", pillX + 46, pillY + 33);
 
     // Headline area
-    const headlineY = imgY + imgH + 60;
+    const headlineY = imgY + imgH + 55;
     const headlineMaxW = W - 100;
     const headline = (customHeadline.trim() || selected.title).trim();
 
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    // Auto-size font based on length
-    let fontSize = 60;
-    if (headline.length > 70) fontSize = 50;
-    if (headline.length > 110) fontSize = 42;
-    if (headline.length > 160) fontSize = 36;
+    // Auto-size font based on length (smaller to fit ad area)
+    let fontSize = 52;
+    if (headline.length > 60) fontSize = 44;
+    if (headline.length > 100) fontSize = 38;
+    if (headline.length > 150) fontSize = 32;
     ctx.font = `900 ${fontSize}px "Tiro Bangla", "Hind Siliguri", serif`;
 
     const lines = wrapText(ctx, headline, headlineMaxW);
-    const lineHeight = fontSize * 1.25;
-    const maxLines = 5;
+    const lineHeight = fontSize * 1.22;
+    const maxLines = 3;
     const visibleLines = lines.slice(0, maxLines);
     if (lines.length > maxLines) {
       visibleLines[maxLines - 1] = visibleLines[maxLines - 1].replace(/.{0,3}$/, "…");
@@ -275,6 +292,70 @@ const NewsCard = () => {
       ctx.fillText(ln, W / 2, headlineY + i * lineHeight);
     });
     ctx.shadowBlur = 0;
+
+    // ===== Funny Advertisement Block =====
+    const ad = FUNNY_ADS[adIndex % FUNNY_ADS.length];
+    const adX = 50;
+    const adW = W - 100;
+    const adH = 150;
+    const adY = H - 70 - adH - 20; // above ticker with 20px gap
+
+    // Ad background
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 20;
+    const adGrad = ctx.createLinearGradient(adX, adY, adX + adW, adY + adH);
+    adGrad.addColorStop(0, ad.bg);
+    adGrad.addColorStop(1, "#000000");
+    ctx.fillStyle = adGrad;
+    roundRect(ctx, adX, adY, adW, adH, 14);
+    ctx.fill();
+    ctx.restore();
+
+    // Ad border
+    ctx.strokeStyle = ad.accent;
+    ctx.lineWidth = 2;
+    roundRect(ctx, adX, adY, adW, adH, 14);
+    ctx.stroke();
+
+    // "বিজ্ঞাপন" tag (top-left corner of ad)
+    const tagW = 130;
+    const tagH = 28;
+    ctx.fillStyle = ad.accent;
+    roundRect(ctx, adX + 14, adY - 14, tagW, tagH, 6);
+    ctx.fill();
+    ctx.fillStyle = ad.bg;
+    ctx.font = '900 16px "Hind Siliguri", sans-serif';
+    ctx.textAlign = "center";
+    ctx.fillText("বিজ্ঞাপন", adX + 14 + tagW / 2, adY - 14 + 20);
+
+    // Emoji (left side, large)
+    ctx.font = '70px "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(ad.emoji, adX + 70, adY + adH / 2);
+    ctx.textBaseline = "alphabetic";
+
+    // Brand name
+    const adTextX = adX + 145;
+    ctx.fillStyle = ad.accent;
+    ctx.font = '900 30px "Tiro Bangla", "Hind Siliguri", serif';
+    ctx.textAlign = "left";
+    ctx.fillText(ad.brand, adTextX, adY + 38);
+
+    // Tagline (white, may wrap)
+    ctx.fillStyle = "#ffffff";
+    ctx.font = '700 19px "Hind Siliguri", sans-serif';
+    const adMaxW = adW - 145 - 24;
+    const tlLines = wrapText(ctx, ad.tagline, adMaxW).slice(0, 2);
+    tlLines.forEach((ln, i) => {
+      ctx.fillText(ln, adTextX, adY + 68 + i * 24);
+    });
+
+    // Offer line (highlighted)
+    ctx.fillStyle = ad.accent;
+    ctx.font = '800 16px "Hind Siliguri", sans-serif';
+    ctx.fillText("⚡ " + ad.offer, adTextX, adY + adH - 18);
 
     // Bottom red ticker bar
     const tickerY = H - 70;
@@ -299,7 +380,7 @@ const NewsCard = () => {
       drawCard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, customHeadline]);
+  }, [selected, customHeadline, adIndex]);
 
   const isInAppBrowser = () => {
     const ua = navigator.userAgent || "";
@@ -545,6 +626,15 @@ const NewsCard = () => {
                 <Download className="w-4 h-4 mr-2" /> ডাউনলোড
               </Button>
             </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAdIndex((i) => (i + 1 + Math.floor(Math.random() * (FUNNY_ADS.length - 1))) % FUNNY_ADS.length)}
+              className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+            >
+              <Sparkles className="w-4 h-4 mr-2" /> অন্য বিজ্ঞাপন দেখাও
+            </Button>
 
             <div className="flex gap-2 justify-center pt-2">
               <Button size="sm" variant="outline" onClick={handleShare}>
