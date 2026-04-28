@@ -33,6 +33,7 @@ import Chat from "./pages/Chat";
 import AdminContactSettings from "./pages/AdminContactSettings";
 import AdminGallery from "./pages/AdminGallery";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import AdminServices from "./pages/AdminServices";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/actor/:id" element={<ActorPortfolio />} />
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/products" element={<TalerGurLanding />} />
             <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
