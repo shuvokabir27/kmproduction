@@ -33,6 +33,7 @@ import Chat from "./pages/Chat";
 import AdminContactSettings from "./pages/AdminContactSettings";
 import AdminGallery from "./pages/AdminGallery";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import AdminServices from "./pages/AdminServices";
 import ResetPassword from "./pages/ResetPassword";
 import AllNotifications from "./pages/AllNotifications";
