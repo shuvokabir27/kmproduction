@@ -226,6 +226,11 @@ const PhotoCard = () => {
   }
 
 
+  const isInAppBrowser = () => {
+    const ua = navigator.userAgent || "";
+    return /FBAN|FBAV|FB_IAB|FB4A|Messenger|Instagram|Line|MicroMessenger|WeChat|Twitter|TikTok|Snapchat|LinkedInApp/i.test(ua);
+  };
+
   const handleDownload = async () => {
     const canvas = await drawCard();
     if (!canvas) {
@@ -233,22 +238,77 @@ const PhotoCard = () => {
       return;
     }
     const mime = format === "png" ? "image/png" : "image/jpeg";
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `kuakata-upajela-chai.${format}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        toast.success("ফটো কার্ড ডাউনলোড হয়েছে");
-      },
-      mime,
-      0.95
+    const filename = `kuakata-upajela-chai.${format}`;
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), mime, 0.95)
     );
+    if (!blob) {
+      toast.error("ছবি তৈরি করতে সমস্যা হয়েছে");
+      return;
+    }
+
+    // 1) Try native Web Share with file (works great on mobile incl. some in-app browsers)
+    try {
+      const file = new File([blob], filename, { type: mime });
+      const navAny = navigator as any;
+      if (navAny.canShare && navAny.canShare({ files: [file] }) && isInAppBrowser()) {
+        await navAny.share({
+          files: [file],
+          title: "কুয়াকাটা উপজেলা চাই",
+          text: "ফটো কার্ড সেভ করুন",
+        });
+        toast.success("✅ ফটো কার্ড সফলভাবে শেয়ার/সেভ হয়েছে");
+        return;
+      }
+    } catch (err) {
+      // user cancelled or not supported — continue to fallback
+    }
+
+    // 2) Standard blob download (works in normal browsers)
+    try {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.rel = "noopener";
+      a.target = "_self";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+      // 3) In-app browser fallback: also open image in new tab so user can long-press → save
+      if (isInAppBrowser()) {
+        const dataUrl = canvas.toDataURL(mime, 0.95);
+        const w = window.open();
+        if (w) {
+          w.document.write(`
+            <html><head><title>ফটো কার্ড সেভ করুন</title>
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <style>
+              body{margin:0;background:#0a0a0a;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:16px}
+              img{max-width:100%;height:auto;border-radius:12px;box-shadow:0 4px 20px rgba(255,0,0,.3)}
+              .tip{margin:16px 0;padding:12px;background:#dc2626;border-radius:10px;font-size:15px;line-height:1.6}
+              a.btn{display:inline-block;margin-top:12px;padding:12px 24px;background:#fff;color:#000;text-decoration:none;border-radius:8px;font-weight:bold}
+            </style></head>
+            <body>
+              <div class="tip">📱 ছবিটি <b>চেপে ধরে</b> "Save image" / "ছবি সেভ করুন" সিলেক্ট করুন</div>
+              <img src="${dataUrl}" alt="ফটো কার্ড" />
+              <br><a class="btn" href="${dataUrl}" download="${filename}">⬇️ ডাউনলোড</a>
+              <p style="opacity:.7;font-size:13px;margin-top:20px">অথবা উপরের মেনু (⋮) থেকে "Open in browser" চাপুন</p>
+            </body></html>
+          `);
+          w.document.close();
+          toast.success("✅ নতুন ট্যাবে খুলেছে — ছবি চেপে ধরে সেভ করুন");
+          return;
+        }
+      }
+
+      toast.success("✅ ফটো কার্ড সফলভাবে ডাউনলোড হয়েছে");
+    } catch (err) {
+      toast.error("ডাউনলোড করতে সমস্যা হয়েছে — ব্রাউজারে খুলে চেষ্টা করুন");
+    }
   };
 
   // Auto-draw preview whenever image changes
