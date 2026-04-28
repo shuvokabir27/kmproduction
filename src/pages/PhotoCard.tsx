@@ -1,25 +1,34 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook } from "lucide-react";
+import { Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const PROTEST_TEXT = "কুয়াকাটা জেলা চাই";
-const SUBTITLE = "এটি একটি প্রতিবাদ";
+const MAIN_TITLE = "কুয়াকাটা জেলা চাই";
+
+const SLOGAN_OPTIONS = [
+  { id: "right", label: "অধিকার", text: "কুয়াকাটাবাসীর ন্যায্য অধিকার" },
+  { id: "voice", label: "একতার কণ্ঠস্বর", text: "একতাই আমাদের শক্তি" },
+  { id: "demand", label: "যৌক্তিক দাবি", text: "যুগের দাবি — কুয়াকাটা জেলা" },
+  { id: "movement", label: "গণআন্দোলন", text: "আমরা ঐক্যবদ্ধ, আমরা সোচ্চার" },
+  { id: "future", label: "নতুন ভোর", text: "নতুন জেলা — নতুন সম্ভাবনা" },
+];
 
 const PhotoCard = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [format, setFormat] = useState<"png" | "jpeg">("png");
+  const [sloganId, setSloganId] = useState<string>("right");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Preload Bengali font for canvas rendering
+  // Preload Bengali fonts for canvas rendering
   useEffect(() => {
     const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;700;900&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800;900&family=Tiro+Bangla:ital@0;1&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
   }, []);
+
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
