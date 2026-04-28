@@ -351,8 +351,15 @@ const Services = () => {
                 ];
                 const c = cardColors[index % cardColors.length];
                 return (
-                  <motion.div key={service.id} variants={item}>
-                    <div className={`relative rounded-2xl overflow-hidden h-full bg-gradient-to-b ${c.gradient} border-2 ${c.border} shadow-xl`}>
+                  <motion.div key={service.id} variants={item} id={`service-${service.id}`}>
+                    <div className={`relative rounded-2xl overflow-hidden h-full bg-gradient-to-b ${c.gradient} border-2 ${c.border} shadow-xl transition-all duration-500 ${highlightedId === service.id ? "ring-4 ring-primary ring-offset-2 ring-offset-background scale-[1.02]" : ""}`}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleShare(service); }}
+                        title={t("শেয়ার করুন", "Share")}
+                        className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-background/70 backdrop-blur-md border border-border/40 flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-all"
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </button>
                       {/* Decorative glow */}
                       <div className={`absolute -top-20 -right-20 w-40 h-40 ${c.glow} rounded-full blur-3xl opacity-60`} />
                       <div className={`absolute -bottom-10 -left-10 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-30`} />
