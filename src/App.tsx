@@ -56,6 +56,7 @@ import TalerGurLanding from "./pages/TalerGurLanding";
 import TasksPage from "./pages/TasksPage";
 import DownloadApp from "./pages/DownloadApp";
 import AdminAppVersions from "./pages/AdminAppVersions";
+import PhotoCard from "./pages/PhotoCard";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/publisher/:publisherId" element={<PublisherProfile />} />
             <Route path="/project/:token" element={<FreelanceClientView />} />
             <Route path="/download" element={<DownloadApp />} />
+            <Route path="/photo-card" element={<PhotoCard />} />
             <Route path="/app" element={<DownloadApp />} />
 
             {/* Member routes — admin & member only, NOT client */}
