@@ -177,6 +177,10 @@ const ServiceDetail = () => {
       toast({ title: "নাম ও মোবাইল নম্বর দিন", variant: "destructive" });
       return;
     }
+    if (!/^01[0-9]{9}$/.test(bookingForm.phone.trim())) {
+      toast({ title: "সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (01...)", variant: "destructive" });
+      return;
+    }
     setBookingSubmitting(true);
     const { error } = await supabase.from("bookings" as any).insert({
       service_id: service.id,
