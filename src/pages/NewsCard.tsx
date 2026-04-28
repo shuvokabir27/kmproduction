@@ -42,6 +42,16 @@ const NewsCard = () => {
   const [format, setFormat] = useState<"png" | "jpeg">("png");
   const [adIndex, setAdIndex] = useState(() => Math.floor(Math.random() * FUNNY_ADS.length));
 
+  // ====== CUSTOM MODE ======
+  const [mode, setMode] = useState<"auto" | "custom">("auto");
+  const [customImageUrl, setCustomImageUrl] = useState<string>("");
+  const [customAdEnabled, setCustomAdEnabled] = useState(false);
+  const [customAdBrand, setCustomAdBrand] = useState("");
+  const [customAdTagline, setCustomAdTagline] = useState("");
+  const [customAdOffer, setCustomAdOffer] = useState("");
+  const [customAdEmoji, setCustomAdEmoji] = useState("✨");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewBoxRef = useRef<HTMLDivElement>(null);
 
