@@ -74,6 +74,7 @@ const App = () => (
             <Route path="/actor/:id" element={<ActorPortfolio />} />
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/products" element={<TalerGurLanding />} />
             <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
