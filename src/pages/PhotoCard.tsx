@@ -309,7 +309,7 @@ const PhotoCard = () => {
       <main className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="text-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2">
-            কুয়াকাটা জেলা চাই
+            কুয়াকাটা উপজেলা চাই
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
             আপনার ছবি আপলোড করে প্রতিবাদের ফটো কার্ড বানান এবং সোশ্যাল মিডিয়ায় শেয়ার করুন
