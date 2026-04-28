@@ -40,6 +40,7 @@ const NewsCard = () => {
   const [selected, setSelected] = useState<NewsItem | null>(null);
   const [customHeadline, setCustomHeadline] = useState("");
   const [format, setFormat] = useState<"png" | "jpeg">("png");
+  const [adIndex, setAdIndex] = useState(() => Math.floor(Math.random() * FUNNY_ADS.length));
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewBoxRef = useRef<HTMLDivElement>(null);
