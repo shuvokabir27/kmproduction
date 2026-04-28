@@ -360,6 +360,7 @@ export type Database = {
       }
       bookings: {
         Row: {
+          admin_note: string | null
           booking_date: string | null
           booking_days: number | null
           created_at: string
@@ -367,12 +368,16 @@ export type Database = {
           customer_name: string
           customer_phone: string
           details: string | null
+          discount_amount: number | null
+          final_amount: number | null
           id: string
+          original_amount: number | null
           service_id: string | null
           service_title: string
           status: string
         }
         Insert: {
+          admin_note?: string | null
           booking_date?: string | null
           booking_days?: number | null
           created_at?: string
@@ -380,12 +385,16 @@ export type Database = {
           customer_name: string
           customer_phone: string
           details?: string | null
+          discount_amount?: number | null
+          final_amount?: number | null
           id?: string
+          original_amount?: number | null
           service_id?: string | null
           service_title: string
           status?: string
         }
         Update: {
+          admin_note?: string | null
           booking_date?: string | null
           booking_days?: number | null
           created_at?: string
@@ -393,7 +402,10 @@ export type Database = {
           customer_name?: string
           customer_phone?: string
           details?: string | null
+          discount_amount?: number | null
+          final_amount?: number | null
           id?: string
+          original_amount?: number | null
           service_id?: string | null
           service_title?: string
           status?: string
