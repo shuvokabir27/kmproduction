@@ -435,7 +435,7 @@ const NewsCard = () => {
   const handleDownload = async () => {
     const canvas = await drawCard();
     if (!canvas) {
-      toast.error("প্রথমে একটি নিউজ সিলেক্ট করুন");
+      toast.error(mode === "custom" ? "ছবি আপলোড করুন বা হেডলাইন লিখুন" : "প্রথমে একটি নিউজ সিলেক্ট করুন");
       return;
     }
     const mime = format === "png" ? "image/png" : "image/jpeg";
