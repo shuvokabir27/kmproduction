@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Download, ArrowLeft, Image as ImageIcon, RefreshCw, Share2, Copy, Facebook, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const MAIN_TITLE = "কুয়াকাটা জেলা চাই";
+const MAIN_TITLE = "কুয়াকাটা উপজেলা চাই";
 
 const SLOGAN_OPTIONS = [
   { id: "right", label: "অধিকার", text: "কুয়াকাটাবাসীর ন্যায্য অধিকার" },
   { id: "voice", label: "একতার কণ্ঠস্বর", text: "একতাই আমাদের শক্তি" },
-  { id: "demand", label: "যৌক্তিক দাবি", text: "যুগের দাবি — কুয়াকাটা জেলা" },
+  { id: "demand", label: "যৌক্তিক দাবি", text: "যুগের দাবি — কুয়াকাটা উপজেলা" },
   { id: "movement", label: "গণআন্দোলন", text: "আমরা ঐক্যবদ্ধ, আমরা সোচ্চার" },
-  { id: "future", label: "নতুন ভোর", text: "নতুন জেলা — নতুন সম্ভাবনা" },
+  { id: "future", label: "নতুন ভোর", text: "নতুন উপজেলা — নতুন সম্ভাবনা" },
 ];
 
 const PhotoCard = () => {
@@ -202,7 +202,7 @@ const PhotoCard = () => {
 
         ctx.fillStyle = "#ffffff";
         ctx.font = '800 26px "Hind Siliguri", sans-serif';
-        ctx.fillText("#কুয়াকাটা_জেলা_চাই   ●   #প্রতিবাদ", W / 2, 1315);
+        ctx.fillText("#কুয়াকাটা_উপজেলা_চাই   ●   #প্রতিবাদ", W / 2, 1315);
 
         resolve(canvas);
       };
@@ -239,7 +239,7 @@ const PhotoCard = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `kuakata-jela-chai.${format}`;
+        a.download = `kuakata-upajela-chai.${format}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -259,8 +259,8 @@ const PhotoCard = () => {
   const handleShare = async () => {
     const url = `${window.location.origin}/photo-card`;
     const shareData = {
-      title: "কুয়াকাটা জেলা চাই - ফটো কার্ড",
-      text: "আপনিও প্রতিবাদের ফটো কার্ড বানান — কুয়াকাটা জেলা চাই",
+      title: "কুয়াকাটা উপজেলা চাই - ফটো কার্ড",
+      text: "আপনিও প্রতিবাদের ফটো কার্ড বানান — কুয়াকাটা উপজেলা চাই",
       url,
     };
     try {
@@ -309,7 +309,7 @@ const PhotoCard = () => {
       <main className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="text-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground mb-2">
-            কুয়াকাটা জেলা চাই
+            কুয়াকাটা উপজেলা চাই
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
             আপনার ছবি আপলোড করে প্রতিবাদের ফটো কার্ড বানান এবং সোশ্যাল মিডিয়ায় শেয়ার করুন
