@@ -286,18 +286,30 @@ const NewsCard = () => {
     ctx.fillText("ব্রেকিং নিউজ", pillX + 46, pillY + 33);
 
     // ===== Funny Advertisement Block (positioned first to know its bounds) =====
-    const ad = FUNNY_ADS[adIndex % FUNNY_ADS.length];
+    const ad =
+      isCustom && customAdEnabled
+        ? {
+            brand: customAdBrand.trim() || "ব্র্যান্ডের নাম",
+            tagline: customAdTagline.trim() || "এখানে আপনার ট্যাগলাইন",
+            offer: customAdOffer.trim() || "স্পেশাল অফার এখানে",
+            bg: "#1e1b4b",
+            accent: "#fde047",
+            emoji: customAdEmoji || "✨",
+          }
+        : FUNNY_ADS[adIndex % FUNNY_ADS.length];
+    const showAd = !isCustom || customAdEnabled;
+
     const adX = 50;
     const adW = W - 100;
     const adH = 160;
-    const adY = H - 70 - adH - 20; // above ticker with 20px gap
+    const adY = showAd ? H - 70 - adH - 20 : H - 70; // collapse if no ad
 
     // ===== Headline area — fills ALL space between image and ad =====
     const headlineAreaTop = imgY + imgH + 30;
-    const headlineAreaBottom = adY - 30;
+    const headlineAreaBottom = (showAd ? adY : H - 70) - 30;
     const headlineAreaH = headlineAreaBottom - headlineAreaTop;
     const headlineMaxW = W - 80;
-    const headline = (customHeadline.trim() || selected.title).trim();
+    const headline = effectiveHeadline;
 
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
