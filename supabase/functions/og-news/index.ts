@@ -89,12 +89,15 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
+  const responseHeaders = new Headers();
+  responseHeaders.set("Content-Type", "text/html; charset=UTF-8");
+  responseHeaders.set("Cache-Control", "public, max-age=300, s-maxage=86400");
+  responseHeaders.set("Access-Control-Allow-Origin", "*");
+  responseHeaders.set("X-Content-Type-Options", "nosniff");
+
   return new Response(html, {
-    headers: {
-      ...corsHeaders,
-      "Content-Type": "text/html; charset=UTF-8",
-      "Cache-Control": "public, max-age=300, s-maxage=86400",
-    },
+    status: 200,
+    headers: responseHeaders,
   });
 });
 
