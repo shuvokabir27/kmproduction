@@ -49,22 +49,8 @@ Deno.serve(async (req) => {
   const description = news.excerpt || news.content?.substring(0, 160) || "বাংলা ভাইরাল নিউজ";
   const image = news.featured_image_url || `${siteUrl}/favicon.png`;
 
-  // Check if request is from a social media crawler
-  const userAgent = req.headers.get("user-agent") || "";
-  const isCrawler = /facebookexternalhit|Facebot|Twitterbot|WhatsApp|LinkedInBot|Slackbot|TelegramBot|Pinterest|Discordbot/i.test(userAgent);
-
-  if (!isCrawler) {
-    // Regular user - redirect immediately
-    return new Response(null, {
-      status: 302,
-      headers: {
-        "Location": redirectUrl,
-        ...corsHeaders,
-      },
-    });
-  }
-
-  // Crawler - serve OG meta tags
+  // Always serve OG HTML with meta refresh.
+  // Crawlers will read OG tags; real users will be redirected via meta refresh + JS.
   const html = `<!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -73,8 +59,10 @@ Deno.serve(async (req) => {
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:image" content="${escapeHtml(image)}" />
+  <meta property="og:image:secure_url" content="${escapeHtml(image)}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="${escapeHtml(title)}" />
   <meta property="og:url" content="${escapeHtml(shareUrl)}" />
   <meta property="og:site_name" content="দৈনিক ইন্তেকাল" />
   <link rel="canonical" href="${escapeHtml(shareUrl)}" />
@@ -82,10 +70,15 @@ Deno.serve(async (req) => {
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${escapeHtml(image)}" />
+  <meta name="description" content="${escapeHtml(description)}" />
+  <meta http-equiv="refresh" content="0; url=${escapeHtml(redirectUrl)}" />
   <title>${escapeHtml(title)}</title>
+  <script>window.location.replace(${JSON.stringify(redirectUrl)});</script>
 </head>
 <body>
-  <p>${escapeHtml(title)}</p>
+  <h1>${escapeHtml(title)}</h1>
+  <p>${escapeHtml(description)}</p>
+  <p><a href="${escapeHtml(redirectUrl)}">Continue to article</a></p>
 </body>
 </html>`;
 
