@@ -173,11 +173,14 @@ export default function News() {
   };
 
   const getShareUrl = (news: NewsItem) => {
-    const siteUrl = "https://kuakatamultimedia.com";
+    // Use og-news edge function so social media crawlers (Facebook, WhatsApp, etc.)
+    // get proper OG meta tags (title + featured image). Regular users are
+    // automatically redirected to the actual news page.
+    const ogBase = "https://xbgxnwzluykgxcxujeay.supabase.co/functions/v1/og-news";
     if (news.post_number) {
-      return `${siteUrl}/news/${encodeURIComponent(news.category)}/${news.post_number}`;
+      return `${ogBase}?category=${encodeURIComponent(news.category)}&post_number=${news.post_number}`;
     }
-    return `${siteUrl}/news?id=${news.id}`;
+    return `${ogBase}?id=${news.id}`;
   };
 
   const handleShare = (type: string, news: NewsItem) => {
