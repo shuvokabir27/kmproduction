@@ -40,9 +40,9 @@ Deno.serve(async (req) => {
     return new Response("News not found", { status: 404 });
   }
 
-  const siteUrl = "https://kuakatamultimedia.com";
+  const siteUrl = "https://kmproduction.lovable.app";
   const redirectUrl = news.post_number 
-    ? `${siteUrl}/news/${news.category}/${news.post_number}`
+    ? `${siteUrl}/news/${encodeURIComponent(news.category)}/${news.post_number}`
     : `${siteUrl}/news?id=${news.id}`;
   const title = news.title || "দৈনিক ইন্তেকাল";
   const description = news.excerpt || news.content?.substring(0, 160) || "বাংলা ভাইরাল নিউজ";
