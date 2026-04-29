@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
   const redirectUrl = news.post_number 
     ? `${siteUrl}/news/${encodeURIComponent(news.category)}/${news.post_number}`
     : `${siteUrl}/news?id=${news.id}`;
-  const shareUrl = url.toString();
+  const shareUrl = `${supabaseUrl}/functions/v1/og-news${url.search}`;
   const title = news.title || "দৈনিক ইন্তেকাল";
   const description = news.excerpt || news.content?.substring(0, 160) || "বাংলা ভাইরাল নিউজ";
   const image = news.featured_image_url || `${siteUrl}/favicon.png`;
@@ -92,8 +92,8 @@ Deno.serve(async (req) => {
   return new Response(html, {
     headers: {
       ...corsHeaders,
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=300, s-maxage=86400",
+      "Content-Type": "text/html; charset=UTF-8",
+      "Cache-Control": "public, max-age=300, s-maxage=86400",
     },
   });
 });
