@@ -37,7 +37,15 @@ function lastNMonths(n: number) {
   return arr;
 }
 
-export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick, kmOutstanding, clientOutstanding }: Props) {
+export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick, kmOutstanding, clientOutstanding, salaryType }: Props) {
+  const isMonthly = salaryType === "monthly";
+  const showKm = true; // both monthly + daily users see KM
+  const showClient = !isMonthly; // only daily users see client
+  const kmZero = Math.max(0, Math.round(kmOutstanding ?? 0)) === 0;
+  const clientZero = Math.max(0, Math.round(clientOutstanding ?? 0)) === 0;
+  // Hide the whole section if the relevant balances are all zero
+  const hideAll = isMonthly ? kmZero : (kmZero && clientZero);
+  if (hideAll) return null;
   const { data: lastPayments } = useQuery({
     queryKey: ["member-last-payments", profileId, fullName, fullNameEn],
     enabled: !!profileId,
