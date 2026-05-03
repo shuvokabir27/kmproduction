@@ -270,6 +270,15 @@ export function NewsTickerBar() {
           </div>
         </div>
       </div>
+
+      {/* Hide button */}
+      <button
+        onClick={() => setHiddenPersist(true)}
+        aria-label="ব্রেকিং নিউজ লুকান"
+        className="absolute top-1 right-1 z-30 h-5 w-5 rounded-full bg-background/70 hover:bg-background border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <X className="h-3 w-3" />
+      </button>
     </div>
   );
 }
