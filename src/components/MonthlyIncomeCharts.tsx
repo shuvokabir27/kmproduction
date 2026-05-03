@@ -244,13 +244,10 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
             </div>
             {(() => {
               const due = Math.max(0, Math.round(clientOutstanding ?? clientTotal));
-              const lp = lastPayments?.client;
               return (
                 <>
-                  <p className="relative text-lg md:text-2xl font-bold text-foreground tracking-widest">৳ • • •</p>
-                  <p className="relative text-[9px] text-muted-foreground mt-0.5">
-                    ব্যালেন্স দেখতে উপরের বাটনে ক্লিক করুন →
-                  </p>
+                  <p className="relative text-lg md:text-2xl font-bold text-foreground tracking-tight">৳{due.toLocaleString("bn-BD")}</p>
+                  <p className="relative text-[9px] text-muted-foreground mt-0.5">বর্তমান ব্যালেন্স</p>
                 </>
               );
             })()}
