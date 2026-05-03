@@ -236,6 +236,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
             })()}
           </button>
         </div>
+        {showClient && (
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
           <button
             type="button"
@@ -263,6 +264,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
             })()}
           </button>
         </div>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
