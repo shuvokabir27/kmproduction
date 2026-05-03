@@ -268,6 +268,7 @@ const MemberDashboard = () => {
             onClientClick={() => setFreelanceDetailOpen(true)}
             kmOutstanding={balance?.kmBalance}
             clientOutstanding={balance?.clientBalance}
+            salaryType={(profile as any)?.salary_type}
           />
         )}
 
