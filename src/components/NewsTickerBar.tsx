@@ -127,6 +127,22 @@ export function NewsTickerBar() {
     };
   }, [idx, items.length, paused]);
 
+  // Collapsed view — small button to re-open
+  if (hidden) {
+    return (
+      <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-amber-500/10 backdrop-blur-xl">
+        <button
+          onClick={() => setHiddenPersist(false)}
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="ব্রেকিং নিউজ দেখান"
+        >
+          <Eye className="h-3 w-3" />
+          ব্রেকিং নিউজ দেখান
+        </button>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-amber-500/10 backdrop-blur-xl">
