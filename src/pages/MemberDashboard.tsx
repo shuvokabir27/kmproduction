@@ -195,6 +195,11 @@ const MemberDashboard = () => {
   const kmBal = (balance as any)?.kmBalance ?? 0;
   const clientBal = (balance as any)?.clientBalance ?? 0;
 
+  const isMonthlyMember = (profile as any)?.salary_type === "monthly";
+  const kmIsZero = Math.max(0, Math.round(kmBal)) === 0;
+  const clientIsZero = Math.max(0, Math.round(clientBal)) === 0;
+  const isZeroBalance = balance ? (isMonthlyMember ? kmIsZero : (kmIsZero && clientIsZero)) : false;
+
   // Amounts are intentionally hidden — only the top KM / সাদ্দাম buttons reveal balances on click.
   const balanceCards: any[] = [];
 
