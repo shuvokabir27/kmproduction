@@ -14,6 +14,8 @@ interface Props {
   kmOutstanding?: number;
   /** Outstanding (বকেয়া) from external clients. */
   clientOutstanding?: number;
+  /** "monthly" | "daily" — controls which cards/charts are shown. */
+  salaryType?: string | null;
 }
 
 const MONTH_BN = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগ", "সেপ্ট", "অক্টো", "নভে", "ডিসে"];
