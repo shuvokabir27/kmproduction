@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Newspaper, Radio, ExternalLink, Flag, Globe2 } from "lucide-react";
+import { Newspaper, Radio, ExternalLink, Flag, Globe2, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+const HIDE_KEY = "news-ticker-hidden";
 
 interface NewsItem {
   title: string;
@@ -65,7 +67,15 @@ export function NewsTickerBar() {
   const [items, setItems] = useState<NewsItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [hidden, setHidden] = useState<boolean>(() => {
+    try { return localStorage.getItem(HIDE_KEY) === "1"; } catch { return false; }
+  });
   const rotateTimeoutRef = useRef<number | null>(null);
+
+  const setHiddenPersist = (v: boolean) => {
+    setHidden(v);
+    try { localStorage.setItem(HIDE_KEY, v ? "1" : "0"); } catch {}
+  };
 
   // Fetch news
   useEffect(() => {
@@ -116,6 +126,22 @@ export function NewsTickerBar() {
       }
     };
   }, [idx, items.length, paused]);
+
+  // Collapsed view — small button to re-open
+  if (hidden) {
+    return (
+      <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-amber-500/10 backdrop-blur-xl">
+        <button
+          onClick={() => setHiddenPersist(false)}
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="ব্রেকিং নিউজ দেখান"
+        >
+          <Eye className="h-3 w-3" />
+          ব্রেকিং নিউজ দেখান
+        </button>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -244,6 +270,15 @@ export function NewsTickerBar() {
           </div>
         </div>
       </div>
+
+      {/* Hide button */}
+      <button
+        onClick={() => setHiddenPersist(true)}
+        aria-label="ব্রেকিং নিউজ লুকান"
+        className="absolute top-1 right-1 z-30 h-5 w-5 rounded-full bg-background/70 hover:bg-background border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <X className="h-3 w-3" />
+      </button>
     </div>
   );
 }
