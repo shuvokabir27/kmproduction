@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Newspaper, Radio, ExternalLink, Flag, Globe2 } from "lucide-react";
+import { Newspaper, Radio, ExternalLink, Flag, Globe2, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+const HIDE_KEY = "news-ticker-hidden";
 
 interface NewsItem {
   title: string;
