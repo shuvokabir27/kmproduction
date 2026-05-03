@@ -265,7 +265,7 @@ const MemberDashboard = () => {
         </motion.div>
 
         {/* Monthly Income Charts */}
-        {profile?.id && (
+        {!isZeroBalance && profile?.id && (
           <MonthlyIncomeCharts
             profileId={profile.id}
             fullName={profile.full_name}
@@ -279,9 +279,13 @@ const MemberDashboard = () => {
         )}
 
         {/* Advance request - moved below the income graph */}
-        <AdvanceRequestCard />
+        {!isZeroBalance && <AdvanceRequestCard />}
+
+        {/* Zero-balance: show fun spotlight + members instead */}
+        {isZeroBalance && <ZeroBalanceFun />}
 
         {/* Balance Cards */}
+        {!isZeroBalance && (
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card, idx) => {
             // Random-ish delay so the light sweep on each card fires at different times
