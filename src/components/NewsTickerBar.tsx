@@ -67,7 +67,15 @@ export function NewsTickerBar() {
   const [items, setItems] = useState<NewsItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [hidden, setHidden] = useState<boolean>(() => {
+    try { return localStorage.getItem(HIDE_KEY) === "1"; } catch { return false; }
+  });
   const rotateTimeoutRef = useRef<number | null>(null);
+
+  const setHiddenPersist = (v: boolean) => {
+    setHidden(v);
+    try { localStorage.setItem(HIDE_KEY, v ? "1" : "0"); } catch {}
+  };
 
   // Fetch news
   useEffect(() => {
