@@ -315,6 +315,7 @@ const MemberDashboard = () => {
             );
           })}
         </motion.div>
+        )}
 
         {/* Shootings */}
         <div className="premium-card rounded-2xl overflow-hidden">
