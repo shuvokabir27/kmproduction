@@ -14,6 +14,7 @@ import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
 import { AdvanceRequestCard } from "@/components/AdvanceRequestCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
+import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
@@ -194,6 +195,11 @@ const MemberDashboard = () => {
   const kmBal = (balance as any)?.kmBalance ?? 0;
   const clientBal = (balance as any)?.clientBalance ?? 0;
 
+  const isMonthlyMember = (profile as any)?.salary_type === "monthly";
+  const kmIsZero = Math.max(0, Math.round(kmBal)) === 0;
+  const clientIsZero = Math.max(0, Math.round(clientBal)) === 0;
+  const isZeroBalance = balance ? (isMonthlyMember ? kmIsZero : (kmIsZero && clientIsZero)) : false;
+
   // Amounts are intentionally hidden — only the top KM / সাদ্দাম buttons reveal balances on click.
   const balanceCards: any[] = [];
 
@@ -259,7 +265,7 @@ const MemberDashboard = () => {
         </motion.div>
 
         {/* Monthly Income Charts */}
-        {profile?.id && (
+        {!isZeroBalance && profile?.id && (
           <MonthlyIncomeCharts
             profileId={profile.id}
             fullName={profile.full_name}
@@ -273,9 +279,13 @@ const MemberDashboard = () => {
         )}
 
         {/* Advance request - moved below the income graph */}
-        <AdvanceRequestCard />
+        {!isZeroBalance && <AdvanceRequestCard />}
+
+        {/* Zero-balance: show fun spotlight + members instead */}
+        {isZeroBalance && <ZeroBalanceFun />}
 
         {/* Balance Cards */}
+        {!isZeroBalance && (
         <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4" variants={container} initial="hidden" animate="show">
           {balanceCards.map((card, idx) => {
             // Random-ish delay so the light sweep on each card fires at different times
@@ -305,6 +315,7 @@ const MemberDashboard = () => {
             );
           })}
         </motion.div>
+        )}
 
         {/* Shootings */}
         <div className="premium-card rounded-2xl overflow-hidden">
@@ -368,6 +379,7 @@ const MemberDashboard = () => {
         </div>
 
         {/* Bonus & Transport */}
+        {!isZeroBalance && (
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -393,6 +405,7 @@ const MemberDashboard = () => {
             ))}
           </div>
         </div>
+        )}
 
         {/* Outsourcing / Freelance Work — detailed */}
         {normalizedFreelanceList.length > 0 && (() => {
@@ -496,6 +509,7 @@ const MemberDashboard = () => {
         })()}
 
 
+        {!isZeroBalance && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="premium-card rounded-2xl overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
@@ -542,6 +556,7 @@ const MemberDashboard = () => {
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {viewShooting && (
