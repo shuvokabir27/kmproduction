@@ -210,7 +210,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2.5 md:space-y-3">
       {/* Income summary cards */}
-      <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+      <div className={`grid ${showClient ? "grid-cols-2" : "grid-cols-1"} gap-2.5 md:gap-3`}>
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "0s" }}>
           <button
             type="button"
