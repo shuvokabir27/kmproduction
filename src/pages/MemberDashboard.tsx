@@ -14,6 +14,7 @@ import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
 import { AdvanceRequestCard } from "@/components/AdvanceRequestCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
+import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
