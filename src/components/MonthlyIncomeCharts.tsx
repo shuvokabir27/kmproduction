@@ -267,7 +267,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
         )}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
+      <div className={`grid ${showClient ? "md:grid-cols-2" : "md:grid-cols-1"} gap-2.5 md:gap-3`}>
       {/* KM Production */}
       <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
