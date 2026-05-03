@@ -256,7 +256,6 @@ const MemberDashboard = () => {
             <span className="text-[10px] uppercase tracking-wider text-primary/80 font-semibold">আইডি</span>
             <span className="text-foreground text-xs font-bold tracking-wide">{profile?.member_id}</span>
           </div>
-          <BkashBalanceCards kmBalance={balance?.kmBalance} clientBalance={balance?.clientBalance} />
         </motion.div>
 
         {/* Monthly Income Charts */}
