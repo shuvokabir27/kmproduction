@@ -14,6 +14,8 @@ interface Props {
   kmOutstanding?: number;
   /** Outstanding (বকেয়া) from external clients. */
   clientOutstanding?: number;
+  /** "monthly" | "daily" — controls which cards/charts are shown. */
+  salaryType?: string | null;
 }
 
 const MONTH_BN = ["জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগ", "সেপ্ট", "অক্টো", "নভে", "ডিসে"];
@@ -35,7 +37,15 @@ function lastNMonths(n: number) {
   return arr;
 }
 
-export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick, kmOutstanding, clientOutstanding }: Props) {
+export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick, onClientClick, kmOutstanding, clientOutstanding, salaryType }: Props) {
+  const isMonthly = salaryType === "monthly";
+  const showKm = true; // both monthly + daily users see KM
+  const showClient = !isMonthly; // only daily users see client
+  const kmZero = Math.max(0, Math.round(kmOutstanding ?? 0)) === 0;
+  const clientZero = Math.max(0, Math.round(clientOutstanding ?? 0)) === 0;
+  // Hide the whole section if the relevant balances are all zero
+  const hideAll = isMonthly ? kmZero : (kmZero && clientZero);
+  if (hideAll) return null;
   const { data: lastPayments } = useQuery({
     queryKey: ["member-last-payments", profileId, fullName, fullNameEn],
     enabled: !!profileId,
@@ -200,7 +210,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2.5 md:space-y-3">
       {/* Income summary cards */}
-      <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+      <div className={`grid ${showClient ? "grid-cols-2" : "grid-cols-1"} gap-2.5 md:gap-3`}>
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "0s" }}>
           <button
             type="button"
@@ -226,6 +236,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
             })()}
           </button>
         </div>
+        {showClient && (
         <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
           <button
             type="button"
@@ -253,9 +264,10 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
             })()}
           </button>
         </div>
+        )}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
+      <div className={`grid ${showClient ? "md:grid-cols-2" : "md:grid-cols-1"} gap-2.5 md:gap-3`}>
       {/* KM Production */}
       <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
@@ -299,7 +311,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
         )}
       </div>
 
-      {/* Per-client Freelance */}
+      {showClient && (
       <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
         <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-orange-500/20 blur-3xl" />
@@ -346,6 +358,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
           <div className="h-44 flex items-center justify-center text-xs text-muted-foreground">বাইরের কোনো আয় নেই</div>
         )}
       </div>
+      )}
       </div>
     </motion.div>
   );
