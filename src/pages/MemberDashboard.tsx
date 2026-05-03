@@ -512,7 +512,47 @@ const MemberDashboard = () => {
         {!isZeroBalance && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="premium-card rounded-2xl overflow-hidden">
-...
+            <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <CreditCard className="h-4 w-4 text-amber-400" />
+              </div>
+              <h2 className="font-semibold text-foreground text-sm md:text-base">পেমেন্ট হিস্ট্রি</h2>
+            </div>
+            <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+              {recentPayments?.length === 0 && <div className="p-6 text-sm text-muted-foreground text-center">কোনো পেমেন্ট নেই</div>}
+              {recentPayments?.map((p) => (
+                <div key={p.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
+                  <div>
+                    <p className="text-sm text-foreground font-medium">৳{Number(p.amount).toLocaleString("bn-BD")}</p>
+                    <p className="text-xs text-muted-foreground">{paymentMethodLabel[p.payment_method] || p.payment_method} • {new Date(p.payment_date).toLocaleDateString("bn-BD")}</p>
+                  </div>
+                  {p.transaction_id && <span className="text-xs text-muted-foreground">#{p.transaction_id}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="premium-card rounded-2xl overflow-hidden">
+            <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-cyan-400" />
+              </div>
+              <h2 className="font-semibold text-foreground text-sm md:text-base">হাজিরা হিস্ট্রি</h2>
+            </div>
+            <div className="divide-y divide-border/10 max-h-80 overflow-auto">
+              {recentAttendance?.length === 0 && <div className="p-6 text-sm text-muted-foreground text-center">কোনো হাজিরা নেই</div>}
+              {recentAttendance?.map((a: any) => (
+                <div key={a.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
+                  <div>
+                    <p className="text-sm text-foreground font-medium">{a.shootings?.name || "শুটিং"}</p>
+                    <p className="text-xs text-muted-foreground">{a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : ""}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>{a.is_present ? "উপস্থিত" : "অনুপস্থিত"}</span>
+                    {a.daily_rate > 0 && <p className="text-xs text-muted-foreground mt-0.5">৳{Number(a.daily_rate).toLocaleString("bn-BD")}</p>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
