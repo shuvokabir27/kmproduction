@@ -124,6 +124,7 @@ const MemberDashboard = () => {
         is_paid: a.is_paid,
         role_label: a.role_label,
         notes: a.notes,
+        created_at: a.created_at,
         freelance_projects: projectMap.get(a.project_id) ?? null,
         source: "assignment" as const,
       }));
@@ -134,6 +135,7 @@ const MemberDashboard = () => {
         is_paid: c.is_paid,
         role_label: "আর্টিস্ট",
         notes: c.notes,
+        created_at: c.created_at,
         freelance_projects: projectMap.get(c.project_id) ?? null,
         source: "client" as const,
       }));
@@ -172,6 +174,12 @@ const MemberDashboard = () => {
           }]
         : [];
 
+  const getFreelanceDateValue = (item: any) => {
+    const rawDate = item?.freelance_projects?.project_date || item?.created_at || item?.freelance_projects?.created_at;
+    const time = rawDate ? new Date(rawDate).getTime() : 0;
+    return Number.isFinite(time) ? time : 0;
+  };
+
   // Show ONLY ONE label per client: prefer company name, else person name.
   // Never show both together (avoids duplicate cards like "সাদ্দাম মাল" and "সাদ্দাম মাল (Malbro)").
   const getFreelanceDisplayName = (project: any) =>
@@ -206,9 +214,8 @@ const MemberDashboard = () => {
     if (kmAdvanceForFreelance <= 0) return map;
     // Sort by project_date ascending (oldest first); fallback to created_at
     const sorted = [...normalizedFreelanceList].sort((a: any, b: any) => {
-      const da = new Date(a?.freelance_projects?.project_date || a?.created_at || 0).getTime();
-      const db = new Date(b?.freelance_projects?.project_date || b?.created_at || 0).getTime();
-      return da - db;
+      const dateDiff = getFreelanceDateValue(a) - getFreelanceDateValue(b);
+      return dateDiff !== 0 ? dateDiff : String(a.id).localeCompare(String(b.id));
     });
     let remaining = kmAdvanceForFreelance;
     for (const a of sorted) {
@@ -448,7 +455,11 @@ const MemberDashboard = () => {
         {/* Outsourcing / Freelance Work — detailed */}
         {normalizedFreelanceList.length > 0 && (() => {
           const totalEarning = normalizedFreelanceList.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-          const totalPaid = normalizedFreelanceList.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+          const totalPaid = normalizedFreelanceList.reduce((s: number, a: any) => {
+            const rate = Number(a.rate || 0);
+            const paid = Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0);
+            return s + Math.min(rate, paid);
+          }, 0);
           const totalDue = Math.max(0, totalEarning - totalPaid);
           const statusMap: Record<string, { label: string; cls: string }> = {
             upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
@@ -487,9 +498,10 @@ const MemberDashboard = () => {
                 {normalizedFreelanceList.map((a: any) => {
                   const project = a.freelance_projects;
                   const rate = Number(a.rate || 0);
-                  const paid = Number(a.paid_amount || 0);
+                  const paid = Math.min(rate, Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0));
                   const due = Math.max(0, rate - paid);
                   const st = statusMap[project?.status as string] ?? { label: project?.status || "—", cls: "bg-secondary text-muted-foreground border-border/30" };
+                  const isPaid = due <= 0 && rate > 0;
                   return (
                     <div key={a.id} className="p-4 hover:bg-secondary/15 transition-colors space-y-2.5">
                       {/* Header row */}
@@ -507,8 +519,8 @@ const MemberDashboard = () => {
                             {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
                           </p>
                         </div>
-                        <div className={`h-7 w-7 shrink-0 rounded-lg ${a.is_paid ? "bg-success/10" : due > 0 ? "bg-warning/10" : "bg-muted"} flex items-center justify-center`}>
-                          {a.is_paid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+                        <div className={`h-7 w-7 shrink-0 rounded-lg ${isPaid ? "bg-success/10" : "bg-warning/10"} flex items-center justify-center`}>
+                          {isPaid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
                         </div>
                       </div>
 
@@ -727,7 +739,11 @@ const MemberDashboard = () => {
           {(() => {
             const list = normalizedFreelanceList;
             const totalEarning = list.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-            const totalPaid = list.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+            const totalPaid = list.reduce((s: number, a: any) => {
+              const rate = Number(a.rate || 0);
+              const paid = Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0);
+              return s + Math.min(rate, paid);
+            }, 0);
             const totalDue = Math.max(0, totalEarning - totalPaid);
             const statusMap: Record<string, { label: string; cls: string }> = {
               upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
@@ -764,7 +780,7 @@ const MemberDashboard = () => {
                     {list.map((a: any) => {
                       const project = a.freelance_projects;
                       const rate = Number(a.rate || 0);
-                      const paid = Number(a.paid_amount || 0);
+                      const paid = Math.min(rate, Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0));
                       const due = Math.max(0, rate - paid);
                       const st = statusMap[project?.status as string] ?? { label: project?.status || "—", cls: "bg-secondary text-muted-foreground border-border/30" };
                       return (
