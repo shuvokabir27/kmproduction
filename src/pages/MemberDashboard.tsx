@@ -282,6 +282,9 @@ const MemberDashboard = () => {
         {/* Advance request - moved below the income graph */}
         {!isZeroBalance && <AdvanceRequestCard />}
 
+        {/* Daily fun horoscope */}
+        <DailyRashifal />
+
         {/* Fun spotlight + member list — visible to everyone, just below advance request */}
         <ZeroBalanceFun />
 
