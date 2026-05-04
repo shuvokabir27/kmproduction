@@ -91,7 +91,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Use local scope so logout doesn't depend on the auth server (which has been timing out).
+    // This clears the local session immediately and reliably.
+    try {
+      await Promise.race([
+        supabase.auth.signOut({ scope: "local" }),
+        new Promise((resolve) => setTimeout(resolve, 2000)),
+      ]);
+    } catch (e) {
+      console.warn("signOut error (ignored):", e);
+    }
+    // Hard-clear any leftover supabase keys in localStorage as a safety net
+    try {
+      Object.keys(localStorage).forEach((k) => {
+        if (k.startsWith("sb-") || k.includes("supabase")) localStorage.removeItem(k);
+      });
+    } catch {}
+    setSession(null);
+    setUser(null);
+    setProfile(null);
   };
 
   return (

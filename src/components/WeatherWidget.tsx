@@ -105,15 +105,23 @@ export function WeatherWidget() {
     }
 
     async function reverseCity(lat: number, lon: number): Promise<string> {
-      try {
-        const r = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=bn&count=1`
-        );
-        const j = await r.json();
-        return j?.results?.[0]?.name || "আপনার এলাকা";
-      } catch {
-        return "আপনার এলাকা";
+      // Try multiple endpoints; some have CORS restrictions on certain origins
+      const endpoints = [
+        `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=bn&count=1`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=bn&zoom=10`,
+      ];
+      for (const url of endpoints) {
+        try {
+          const r = await fetch(url);
+          if (!r.ok) continue;
+          const j = await r.json();
+          const name = j?.results?.[0]?.name || j?.address?.city || j?.address?.town || j?.address?.village || j?.address?.county;
+          if (name) return name;
+        } catch {
+          /* try next */
+        }
       }
+      return "আপনার এলাকা";
     }
 
     function fallbackDhaka() {
