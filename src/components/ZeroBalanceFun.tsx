@@ -147,8 +147,41 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPng = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!stageRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(stageRef.current, {
+        backgroundColor: "#0b0b1a",
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const blob = await (await fetch(dataUrl)).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const name = (spotMember?.full_name || "spotlight").replace(/\s+/g, "_");
+      a.href = url;
+      a.download = `${name}_spotlight.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (err) {
+      console.error("PNG download failed", err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const SpotlightStage = ({ big = false }: { big?: boolean }) => (
     <div
+      ref={stageRef}
       onClick={() => setPaused((p) => !p)}
       className={`relative flex items-center justify-center overflow-hidden cursor-pointer select-none ${
         big ? "min-h-screen p-8" : "min-h-[300px] md:min-h-[360px] p-6"
