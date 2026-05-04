@@ -83,11 +83,19 @@ export function ZeroBalanceFun() {
     return FUNNY_MESSAGES[Math.floor(Math.random() * FUNNY_MESSAGES.length)];
   };
 
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
+  useEffect(() => { pausedRef.current = paused; }, [paused]);
+
   useEffect(() => {
     if (!members || members.length === 0) return;
     let cancelled = false;
     let timer: any;
     const tick = async () => {
+      if (pausedRef.current) {
+        timer = setTimeout(tick, 500);
+        return;
+      }
       const memberIdx = pickWeightedIndex(members);
       const member = members[memberIdx];
       const message = await fetchAiMessage(member);
@@ -95,7 +103,15 @@ export function ZeroBalanceFun() {
       setSpot({ memberIdx, message, key: Date.now() });
       // Reading time: ~70ms per char + 2.5s base, clamped 4s–14s
       const readMs = Math.min(14000, Math.max(4000, 2500 + message.length * 70));
-      timer = setTimeout(tick, readMs);
+      const wait = () => {
+        if (cancelled) return;
+        if (pausedRef.current) {
+          timer = setTimeout(wait, 500);
+        } else {
+          timer = setTimeout(tick, readMs);
+        }
+      };
+      wait();
     };
     tick();
     return () => {
