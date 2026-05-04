@@ -26,12 +26,8 @@ export function ZeroBalanceFun() {
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, full_name, photo_url, member_id")
-        .eq("is_active", true)
-        .not("photo_url", "is", null);
-      return (data ?? []) as any[];
+      const { data } = await (supabase as any).rpc("get_public_profiles");
+      return ((data ?? []) as any[]).filter((p) => p.is_active !== false);
     },
   });
 
@@ -86,13 +82,23 @@ export function ZeroBalanceFun() {
                     {isUp && (
                       <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-md opacity-70 animate-pulse" />
                     )}
-                    <img
-                      src={m.photo_url}
-                      alt={m.full_name}
-                      className={`relative h-16 w-16 md:h-20 md:w-20 rounded-full object-cover border-2 ${
-                        isUp ? "border-primary" : "border-border/40"
-                      }`}
-                    />
+                    {m.photo_url ? (
+                      <img
+                        src={m.photo_url}
+                        alt={m.full_name}
+                        className={`relative h-16 w-16 md:h-20 md:w-20 rounded-full object-cover border-2 ${
+                          isUp ? "border-primary" : "border-border/40"
+                        }`}
+                      />
+                    ) : (
+                      <div
+                        className={`relative h-16 w-16 md:h-20 md:w-20 rounded-full bg-muted border-2 flex items-center justify-center text-sm font-bold text-foreground ${
+                          isUp ? "border-primary" : "border-border/40"
+                        }`}
+                      >
+                        {(m.full_name || "?").trim().charAt(0)}
+                      </div>
+                    )}
 
                     {/* Funny message bubble above the lifted member */}
                     <AnimatePresence>
