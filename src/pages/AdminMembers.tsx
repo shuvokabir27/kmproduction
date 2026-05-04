@@ -195,7 +195,14 @@ const AdminMembers = () => {
   // Members = only pure members (no admin/client/product_admin role)
   const members = (allProfiles ?? []).filter((p: any) => (p._roles ?? []).includes("member") && !isStaff(p));
   // Staff list = admins, product_admins, and clients (regardless of member role)
-  const staffList = (allProfiles ?? []).filter((p: any) => isStaff(p));
+  const staffList = (allProfiles ?? [])
+    .filter((p: any) => isStaff(p))
+    .sort((a: any, b: any) => {
+      const oa = Number(a.public_display_order ?? 0) || 9999;
+      const ob = Number(b.public_display_order ?? 0) || 9999;
+      if (oa !== ob) return oa - ob;
+      return (a.full_name || "").localeCompare(b.full_name || "");
+    });
 
   // Auto-open edit dialog when ?edit={profileId} is present (e.g. from PublicProfile admin button)
   const [searchParams, setSearchParams] = useSearchParams();
