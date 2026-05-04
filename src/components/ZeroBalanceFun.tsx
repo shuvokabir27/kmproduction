@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Users, Maximize2, Minimize2, X, Download } from "lucide-react";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 
 const FUNNY_MESSAGES = [
   "🎬 ক্যামেরা রেডি? অ্যাকশন বলার আগেই হাসি দাও!",
@@ -155,13 +155,11 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
     if (!stageRef.current || downloading) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(stageRef.current, {
+      const dataUrl = await toPng(stageRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
         backgroundColor: "#0b0b1a",
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
       });
-      const dataUrl = canvas.toDataURL("image/png");
       const blob = await (await fetch(dataUrl)).blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
