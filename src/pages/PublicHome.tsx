@@ -11,6 +11,7 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { PublicBirthdaySection } from "@/components/PublicBirthdaySection";
 import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
+import { DailyRashifal } from "@/components/DailyRashifal";
 
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
@@ -181,6 +182,11 @@ const PublicHome = () => {
       {/* Spotlight monitor — Right under the menu bar */}
       <div className="px-4 max-w-6xl mx-auto w-full">
         <ZeroBalanceFun spotlightOnly />
+      </div>
+
+      {/* Public horoscope */}
+      <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
+        <DailyRashifal mode="public" />
       </div>
 
       {/* Today's Birthday */}
