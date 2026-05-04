@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Users } from "lucide-react";
+import { Sparkles, Users, Maximize2, Minimize2, X } from "lucide-react";
 
 const FUNNY_MESSAGES = [
   "🎬 ক্যামেরা রেডি? অ্যাকশন বলার আগেই হাসি দাও!",
