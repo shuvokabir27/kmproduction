@@ -272,6 +272,9 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                   {spotMember.designation}
                 </p>
               )}
+              <p className={`mt-1 font-medium text-muted-foreground/80 ${big ? "text-sm md:text-base" : "text-[10px] md:text-xs"}`}>
+                কুয়াকাটা মাল্টিমিডিয়া
+              </p>
               {/* Extra info chips */}
               <div className={`mt-3 flex flex-wrap items-center justify-center gap-2 ${big ? "text-sm" : "text-[10px] md:text-xs"}`}>
                 {spotMember.blood_group && (
