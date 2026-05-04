@@ -910,6 +910,7 @@ const AdminMembers = () => {
                    <th className="text-left p-3 text-amber-400 font-medium text-xs">বেতন ধরন</th>
                    <th className="text-left p-3 text-emerald-400 font-medium text-xs">ভেরিফাইড</th>
                    <th className="text-left p-3 text-fuchsia-400 font-medium text-xs">স্পটলাইট</th>
+                   <th className="text-left p-3 text-sky-400 font-medium text-xs">ক্রম</th>
                    <th className="text-left p-3 text-pink-400 font-medium text-xs">স্ট্যাটাস</th>
                   <th className="text-right p-3 text-orange-400 font-medium text-xs">অ্যাকশন</th>
                 </tr>
