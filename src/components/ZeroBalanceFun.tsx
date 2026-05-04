@@ -26,12 +26,8 @@ export function ZeroBalanceFun() {
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, full_name, photo_url, member_id")
-        .eq("is_active", true)
-        .not("photo_url", "is", null);
-      return (data ?? []) as any[];
+      const { data } = await (supabase as any).rpc("get_public_profiles");
+      return ((data ?? []) as any[]).filter((p) => p.is_active !== false);
     },
   });
 
