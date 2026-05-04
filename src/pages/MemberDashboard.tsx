@@ -455,7 +455,11 @@ const MemberDashboard = () => {
         {/* Outsourcing / Freelance Work — detailed */}
         {normalizedFreelanceList.length > 0 && (() => {
           const totalEarning = normalizedFreelanceList.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-          const totalPaid = normalizedFreelanceList.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+          const totalPaid = normalizedFreelanceList.reduce((s: number, a: any) => {
+            const rate = Number(a.rate || 0);
+            const paid = Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0);
+            return s + Math.min(rate, paid);
+          }, 0);
           const totalDue = Math.max(0, totalEarning - totalPaid);
           const statusMap: Record<string, { label: string; cls: string }> = {
             upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
@@ -494,9 +498,10 @@ const MemberDashboard = () => {
                 {normalizedFreelanceList.map((a: any) => {
                   const project = a.freelance_projects;
                   const rate = Number(a.rate || 0);
-                  const paid = Number(a.paid_amount || 0);
+                  const paid = Math.min(rate, Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0));
                   const due = Math.max(0, rate - paid);
                   const st = statusMap[project?.status as string] ?? { label: project?.status || "—", cls: "bg-secondary text-muted-foreground border-border/30" };
+                  const isPaid = due <= 0 && rate > 0;
                   return (
                     <div key={a.id} className="p-4 hover:bg-secondary/15 transition-colors space-y-2.5">
                       {/* Header row */}
@@ -514,8 +519,8 @@ const MemberDashboard = () => {
                             {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
                           </p>
                         </div>
-                        <div className={`h-7 w-7 shrink-0 rounded-lg ${a.is_paid ? "bg-success/10" : due > 0 ? "bg-warning/10" : "bg-muted"} flex items-center justify-center`}>
-                          {a.is_paid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+                        <div className={`h-7 w-7 shrink-0 rounded-lg ${isPaid ? "bg-success/10" : "bg-warning/10"} flex items-center justify-center`}>
+                          {isPaid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
                         </div>
                       </div>
 
