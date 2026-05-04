@@ -213,7 +213,10 @@ export function ZeroBalanceFun() {
               }`}
               style={{ boxShadow: "0 0 40px hsl(var(--primary) / 0.4)" }}
             >
-              <p className={`font-semibold text-foreground leading-snug ${big ? "text-xl md:text-2xl" : "text-xs md:text-sm"}`}>
+              <p
+                className={`font-semibold text-foreground leading-snug ${big ? "text-xl md:text-2xl" : "text-xs md:text-sm"}`}
+                style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+              >
                 {spot.message}
               </p>
               <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/50" />
