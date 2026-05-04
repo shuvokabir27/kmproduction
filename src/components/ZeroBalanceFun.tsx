@@ -44,17 +44,37 @@ export function ZeroBalanceFun() {
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
       const { data } = await (supabase as any).rpc("get_public_profiles");
-      return ((data ?? []) as any[]).filter((p) => p.is_active !== false);
+      const list = ((data ?? []) as any[]).filter((p) => p.is_active !== false);
+      // Sort: higher priority first, then by name
+      list.sort((a, b) => {
+        const pa = Number(a.spotlight_priority ?? 1);
+        const pb = Number(b.spotlight_priority ?? 1);
+        if (pb !== pa) return pb - pa;
+        return (a.full_name || "").localeCompare(b.full_name || "");
+      });
+      return list;
     },
   });
 
   const [spot, setSpot] = useState<{ memberIdx: number; msgIdx: number; key: number } | null>(null);
 
+  // Weighted random pick based on spotlight_priority
+  const pickWeightedIndex = (list: any[]) => {
+    const weights = list.map((m) => Math.max(1, Number(m.spotlight_priority ?? 1)));
+    const total = weights.reduce((s, w) => s + w, 0);
+    let r = Math.random() * total;
+    for (let i = 0; i < weights.length; i++) {
+      r -= weights[i];
+      if (r <= 0) return i;
+    }
+    return list.length - 1;
+  };
+
   useEffect(() => {
     if (!members || members.length === 0) return;
     let timer: any;
     const tick = () => {
-      const memberIdx = Math.floor(Math.random() * members.length);
+      const memberIdx = pickWeightedIndex(members);
       const msgIdx = Math.floor(Math.random() * FUNNY_MESSAGES.length);
       setSpot({ memberIdx, msgIdx, key: Date.now() });
       timer = setTimeout(tick, 3500);
