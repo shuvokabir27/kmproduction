@@ -93,7 +93,9 @@ export function ZeroBalanceFun() {
       const message = await fetchAiMessage(member);
       if (cancelled) return;
       setSpot({ memberIdx, message, key: Date.now() });
-      timer = setTimeout(tick, 5500);
+      // Reading time: ~70ms per char + 2.5s base, clamped 4s–14s
+      const readMs = Math.min(14000, Math.max(4000, 2500 + message.length * 70));
+      timer = setTimeout(tick, readMs);
     };
     tick();
     return () => {
