@@ -148,7 +148,8 @@ export function ZeroBalanceFun() {
 
   const SpotlightStage = ({ big = false }: { big?: boolean }) => (
     <div
-      className={`relative flex items-center justify-center overflow-hidden ${
+      onClick={() => setPaused((p) => !p)}
+      className={`relative flex items-center justify-center overflow-hidden cursor-pointer select-none ${
         big ? "min-h-screen p-8" : "min-h-[300px] md:min-h-[360px] p-6"
       }`}
       style={{
@@ -156,6 +157,11 @@ export function ZeroBalanceFun() {
           "radial-gradient(ellipse at top, hsl(var(--primary) / 0.18), transparent 55%), radial-gradient(ellipse at bottom right, hsl(300 80% 55% / 0.15), transparent 55%), linear-gradient(135deg, hsl(240 30% 6%), hsl(260 40% 8%))",
       }}
     >
+      {paused && (
+        <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] md:text-xs font-semibold backdrop-blur pointer-events-none">
+          ⏸ পজড — ট্যাপ করে চালু করুন
+        </div>
+      )}
       {/* Animated background orbs */}
       <motion.div
         className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full blur-3xl"
