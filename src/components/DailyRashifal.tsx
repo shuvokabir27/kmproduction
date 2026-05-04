@@ -167,19 +167,33 @@ export function DailyRashifal() {
       </div>
 
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
-              <Sparkles className="h-5 w-5 text-white" />
+        <div className="flex items-start justify-between mb-3 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Big member photo */}
+            <div className="relative shrink-0">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-400 blur-md opacity-70" />
+              <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-background shadow-xl ring-2 ring-pink-400/40">
+                {profile?.photo_url ? (
+                  <img src={profile.photo_url} alt={profile?.full_name || ""} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xl md:text-2xl font-bold">
+                    {profile?.full_name?.charAt(0) || "U"}
+                  </div>
+                )}
+              </div>
+              <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/40 border-2 border-background">
+                <Sparkles className="h-3 w-3 text-white" />
+              </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <h3 className="text-sm md:text-base font-bold text-foreground leading-tight">আজকের রাশিফল 🔮</h3>
-              <p className="text-[10px] md:text-xs text-muted-foreground">
-                {profile?.full_name ? `${profile.full_name}-এর জন্য` : "তোমার জন্য"} • শুধুই মজার জন্য 😄
+              <p className="text-xs md:text-sm font-semibold text-foreground/90 truncate">
+                {profile?.full_name || "তুমি"}
               </p>
+              <p className="text-[10px] md:text-xs text-muted-foreground">শুধুই মজার জন্য 😄</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setShuffleSalt((s) => s + 1)} title="আবার দেখো">
               <RefreshCw className="h-4 w-4" />
             </Button>
