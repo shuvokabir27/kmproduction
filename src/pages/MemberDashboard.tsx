@@ -281,8 +281,8 @@ const MemberDashboard = () => {
         {/* Advance request - moved below the income graph */}
         {!isZeroBalance && <AdvanceRequestCard />}
 
-        {/* Zero-balance: show fun spotlight + members instead */}
-        {isZeroBalance && <ZeroBalanceFun />}
+        {/* Fun spotlight + member list — visible to everyone, just below advance request */}
+        <ZeroBalanceFun />
 
         {/* Balance Cards */}
         {!isZeroBalance && (
