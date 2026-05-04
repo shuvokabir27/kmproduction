@@ -184,6 +184,11 @@ const PublicHome = () => {
         <ZeroBalanceFun spotlightOnly />
       </div>
 
+      {/* Public horoscope */}
+      <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
+        <DailyRashifal mode="public" />
+      </div>
+
       {/* Today's Birthday */}
       <div className="mt-6">
         <PublicBirthdaySection />
