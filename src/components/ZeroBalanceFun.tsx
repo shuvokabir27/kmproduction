@@ -311,14 +311,7 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
       const avatarCenterY = avatarY + avatarSize / 2;
       const image = await loadCanvasImage(member?.photo_url);
 
-      const shadow = ctx.createRadialGradient(avatarCenterX, avatarCenterY + 18, 60, avatarCenterX, avatarCenterY + 18, 240);
-      shadow.addColorStop(0, "hsl(310 90% 60% / 0.8)");
-      shadow.addColorStop(0.45, "hsl(195 100% 55% / 0.42)");
-      shadow.addColorStop(1, "hsl(45 100% 55% / 0)");
-      ctx.fillStyle = shadow;
-      ctx.beginPath();
-      ctx.arc(avatarCenterX, avatarCenterY + 18, 250, 0, Math.PI * 2);
-      ctx.fill();
+
 
       const ring = ctx.createConicGradient(0, avatarCenterX, avatarCenterY);
       ring.addColorStop(0, "hsl(195 100% 55%)");
