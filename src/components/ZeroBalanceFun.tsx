@@ -269,7 +269,7 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                   {spotMember.designation}
                 </p>
               )}
-              {spotMember.member_id && (
+              {!spotlightOnly && spotMember.member_id && (
                 <p className={`text-muted-foreground mt-0.5 ${big ? "text-sm" : "text-[11px] md:text-xs"}`}>
                   আইডি: {spotMember.member_id}
                 </p>
