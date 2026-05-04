@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 import { DailyRashifal } from "@/components/DailyRashifal";
+import { MemeGenerator } from "@/components/MemeGenerator";
 
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
@@ -287,6 +288,9 @@ const MemberDashboard = () => {
 
         {/* All members rotating horoscope */}
         <DailyRashifal mode="all" className="mt-4" />
+
+        {/* Meme generator */}
+        <MemeGenerator mode="member" className="mt-4" />
 
         {/* Fun spotlight + member list — visible to everyone, just below advance request */}
         <ZeroBalanceFun />
