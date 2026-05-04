@@ -260,7 +260,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
               </p>
             </div>
             {(() => {
-              const due = Math.max(0, Math.round(clientOutstanding ?? clientTotal));
+              const due = displayClient;
               return (
                 <>
                   <p className="relative text-lg md:text-2xl font-bold text-foreground tracking-tight">৳{due.toLocaleString("bn-BD")}</p>
