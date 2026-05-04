@@ -242,18 +242,35 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className={`relative px-5 py-3 rounded-2xl bg-card/95 backdrop-blur border border-primary/50 shadow-2xl text-center ${
+              className={`relative px-6 py-4 rounded-2xl backdrop-blur-xl border border-white/15 shadow-2xl text-center overflow-hidden ${
                 big ? "max-w-2xl" : "max-w-[80vw] md:max-w-md"
               }`}
-              style={{ boxShadow: "0 0 40px hsl(var(--primary) / 0.4)" }}
+              style={{
+                background: "linear-gradient(135deg, hsl(240 40% 8% / 0.92), hsl(260 50% 12% / 0.88))",
+                boxShadow: "0 0 50px hsl(var(--primary) / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.1)",
+              }}
             >
+              {/* Glossy highlight */}
+              <span
+                className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl"
+                style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.08), transparent)" }}
+              />
               <p
-                className={`font-semibold text-foreground leading-snug ${big ? "text-xl md:text-2xl" : "text-xs md:text-sm"}`}
-                style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+                className={`relative font-extrabold leading-snug tracking-wide ${big ? "text-xl md:text-2xl" : "text-sm md:text-base"}`}
+                style={{
+                  fontFamily: "'Hind Siliguri', sans-serif",
+                  background: "linear-gradient(135deg, hsl(45 100% 75%), hsl(0 0% 100%) 50%, hsl(180 100% 80%))",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  textShadow: "0 0 24px hsl(var(--primary) / 0.4)",
+                  filter: "drop-shadow(0 2px 6px hsl(var(--primary) / 0.45))",
+                }}
               >
                 {spot.message}
               </p>
-              <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/50" />
+              <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 border-r border-b border-white/15" style={{ background: "hsl(260 50% 12% / 0.9)" }} />
+
             </motion.div>
 
             {/* Avatar with rotating ring */}
