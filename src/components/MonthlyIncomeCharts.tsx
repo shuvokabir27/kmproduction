@@ -41,8 +41,14 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
   const isMonthly = salaryType === "monthly";
   const showKm = true; // both monthly + daily users see KM
   const showClient = !isMonthly; // only daily users see client
-  const kmZero = Math.max(0, Math.round(kmOutstanding ?? 0)) === 0;
-  const clientZero = Math.max(0, Math.round(clientOutstanding ?? 0)) === 0;
+  // Net-off logic: if KM is in advance (negative balance), apply it against client outstanding.
+  const rawKm = Math.round(kmOutstanding ?? 0);
+  const rawClient = Math.round(clientOutstanding ?? 0);
+  const kmAdvance = rawKm < 0 ? -rawKm : 0; // amount member owes back to KM
+  const displayKm = Math.max(0, rawKm); // KM card shows 0 when in advance
+  const displayClient = Math.max(0, rawClient - kmAdvance); // client card absorbs KM advance
+  const kmZero = displayKm === 0;
+  const clientZero = displayClient === 0;
   // Hide the whole section if the relevant balances are all zero
   const hideAll = isMonthly ? kmZero : (kmZero && clientZero);
   if (hideAll) return null;
@@ -226,7 +232,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
               <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">KM Production</p>
             </div>
             {(() => {
-              const due = Math.max(0, Math.round(kmOutstanding ?? kmTotal));
+              const due = displayKm;
               return (
                 <>
                   <p className="relative text-lg md:text-2xl font-bold text-foreground tracking-tight">৳{due.toLocaleString("bn-BD")}</p>
@@ -254,7 +260,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
               </p>
             </div>
             {(() => {
-              const due = Math.max(0, Math.round(clientOutstanding ?? clientTotal));
+              const due = displayClient;
               return (
                 <>
                   <p className="relative text-lg md:text-2xl font-bold text-foreground tracking-tight">৳{due.toLocaleString("bn-BD")}</p>
