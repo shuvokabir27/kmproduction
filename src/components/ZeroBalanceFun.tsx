@@ -311,14 +311,7 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
       const avatarCenterY = avatarY + avatarSize / 2;
       const image = await loadCanvasImage(member?.photo_url);
 
-      const shadow = ctx.createRadialGradient(avatarCenterX, avatarCenterY + 18, 60, avatarCenterX, avatarCenterY + 18, 240);
-      shadow.addColorStop(0, "hsl(310 90% 60% / 0.8)");
-      shadow.addColorStop(0.45, "hsl(195 100% 55% / 0.42)");
-      shadow.addColorStop(1, "hsl(45 100% 55% / 0)");
-      ctx.fillStyle = shadow;
-      ctx.beginPath();
-      ctx.arc(avatarCenterX, avatarCenterY + 18, 250, 0, Math.PI * 2);
-      ctx.fill();
+
 
       const ring = ctx.createConicGradient(0, avatarCenterX, avatarCenterY);
       ring.addColorStop(0, "hsl(195 100% 55%)");
@@ -512,17 +505,7 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               />
               <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-50 animate-pulse" />
-              {/* Colorful drop shadow behind image */}
-              <div
-                className="absolute -inset-2 rounded-full pointer-events-none"
-                style={{
-                  background: "conic-gradient(from 0deg, hsl(195 100% 55%), hsl(310 90% 60%), hsl(45 100% 55%), hsl(140 80% 50%), hsl(195 100% 55%))",
-                  filter: "blur(22px)",
-                  opacity: 0.75,
-                  transform: "translateY(8px)",
-                }}
-              />
-              <div className="relative rounded-full overflow-hidden" style={{ filter: "drop-shadow(0 8px 24px hsl(310 90% 55% / 0.55)) drop-shadow(0 -4px 18px hsl(195 100% 55% / 0.45))" }}>
+              <div className="relative rounded-full overflow-hidden">
                 {spotMember.photo_url ? (
                   <img
                     src={spotMember.photo_url}
