@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Users, Maximize2, Minimize2, X, Download } from "lucide-react";
-import { toPng } from "html-to-image";
 
 const FUNNY_MESSAGES = [
   "🎬 ক্যামেরা রেডি? অ্যাকশন বলার আগেই হাসি দাও!",
@@ -39,6 +38,73 @@ function Avatar({ url, name, size = "md", ring = false }: { url?: string; name: 
     </div>
   );
 }
+
+const loadCanvasImage = (src?: string): Promise<HTMLImageElement | null> =>
+  new Promise((resolve) => {
+    if (!src) return resolve(null);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+
+const roundRectPath = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+};
+
+const wrapCanvasText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number) => {
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+
+  words.forEach((word) => {
+    const testLine = line ? `${line} ${word}` : word;
+    if (ctx.measureText(testLine).width <= maxWidth) {
+      line = testLine;
+      return;
+    }
+    if (line) lines.push(line);
+    if (ctx.measureText(word).width <= maxWidth) {
+      line = word;
+      return;
+    }
+    let chunk = "";
+    Array.from(word).forEach((char) => {
+      const testChunk = `${chunk}${char}`;
+      if (ctx.measureText(testChunk).width > maxWidth && chunk) {
+        lines.push(chunk);
+        chunk = char;
+      } else {
+        chunk = testChunk;
+      }
+    });
+    line = chunk;
+  });
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const drawImageCover = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, size: number) => {
+  const scale = Math.max(size / img.naturalWidth, size / img.naturalHeight);
+  const sw = size / scale;
+  const sh = size / scale;
+  const sx = (img.naturalWidth - sw) / 2;
+  const sy = (img.naturalHeight - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, size, size);
+};
+
+const canvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> =>
+  new Promise((resolve) => canvas.toBlob(resolve, "image/png", 1));
 
 export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: boolean } = {}) {
   const { data: members } = useQuery({
