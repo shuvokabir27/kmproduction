@@ -1992,6 +1992,7 @@ export type Database = {
           showreel_url: string | null
           skin_tone: string | null
           special_skills: string[] | null
+          spotlight_priority: number
           stage_name: string | null
           updated_at: string
           user_id: string
@@ -2064,6 +2065,7 @@ export type Database = {
           showreel_url?: string | null
           skin_tone?: string | null
           special_skills?: string[] | null
+          spotlight_priority?: number
           stage_name?: string | null
           updated_at?: string
           user_id: string
@@ -2136,6 +2138,7 @@ export type Database = {
           showreel_url?: string | null
           skin_tone?: string | null
           special_skills?: string[] | null
+          spotlight_priority?: number
           stage_name?: string | null
           updated_at?: string
           user_id?: string
@@ -2933,6 +2936,7 @@ export type Database = {
           short_bio: string
           short_bio_en: string
           show_on_public: boolean
+          spotlight_priority: number
         }[]
       }
       grant_all_member_achievements: { Args: never; Returns: undefined }
