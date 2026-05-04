@@ -242,33 +242,54 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className={`relative px-5 py-3 rounded-2xl bg-card/95 backdrop-blur border border-primary/50 shadow-2xl text-center ${
+              className={`relative px-6 py-4 rounded-2xl backdrop-blur-xl border border-white/15 shadow-2xl text-center overflow-hidden ${
                 big ? "max-w-2xl" : "max-w-[80vw] md:max-w-md"
               }`}
-              style={{ boxShadow: "0 0 40px hsl(var(--primary) / 0.4)" }}
+              style={{
+                background: "linear-gradient(135deg, hsl(240 40% 8% / 0.92), hsl(260 50% 12% / 0.88))",
+                boxShadow: "0 0 50px hsl(var(--primary) / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.1)",
+              }}
             >
+              {/* Glossy highlight */}
+              <span
+                className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl"
+                style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.08), transparent)" }}
+              />
               <p
-                className={`font-semibold text-foreground leading-snug ${big ? "text-xl md:text-2xl" : "text-xs md:text-sm"}`}
-                style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+                className={`relative font-extrabold leading-snug tracking-wide ${big ? "text-xl md:text-2xl" : "text-sm md:text-base"}`}
+                style={{
+                  fontFamily: "'Hind Siliguri', sans-serif",
+                  background: "linear-gradient(135deg, hsl(45 100% 75%), hsl(0 0% 100%) 50%, hsl(180 100% 80%))",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  textShadow: "0 0 24px hsl(var(--primary) / 0.4)",
+                  filter: "drop-shadow(0 2px 6px hsl(var(--primary) / 0.45))",
+                }}
               >
                 {spot.message}
               </p>
-              <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/50" />
+              <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 border-r border-b border-white/15" style={{ background: "hsl(260 50% 12% / 0.9)" }} />
+
             </motion.div>
 
-            {/* Avatar with rotating ring */}
+            {/* Avatar with thin glossy ring */}
             <div className="relative">
               <motion.div
-                className="absolute -inset-3 rounded-full"
+                className="absolute -inset-1 rounded-full"
                 style={{
                   background:
                     "conic-gradient(from 0deg, hsl(var(--primary)), hsl(310 80% 60%), hsl(45 90% 55%), hsl(var(--primary)))",
+                  padding: "1.5px",
+                  WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
                 }}
                 animate={{ rotate: 360 }}
-                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               />
-              <div className="absolute -inset-6 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-60 animate-pulse" />
-              <div className="relative rounded-full bg-background p-1">
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-50 animate-pulse" />
+              <div className="relative rounded-full overflow-hidden">
                 {spotMember.photo_url ? (
                   <img
                     src={spotMember.photo_url}
@@ -286,8 +307,20 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                     {(spotMember.full_name || "?").trim().charAt(0)}
                   </div>
                 )}
+                {/* Glossy sheen overlay */}
+                <span
+                  className="pointer-events-none absolute inset-0 rounded-full"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 30% 15%, hsl(0 0% 100% / 0.35), transparent 45%), linear-gradient(160deg, hsl(0 0% 100% / 0.15) 0%, transparent 35%, transparent 70%, hsl(0 0% 100% / 0.08) 100%)",
+                  }}
+                />
+                <span
+                  className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/20"
+                />
               </div>
             </div>
+
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
