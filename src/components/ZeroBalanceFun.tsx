@@ -23,9 +23,6 @@ const FUNNY_MESSAGES = [
 ];
 
 export function ZeroBalanceFun() {
-  const [msgIdx, setMsgIdx] = useState(() => Math.floor(Math.random() * FUNNY_MESSAGES.length));
-  const [memberIdx, setMemberIdx] = useState(0);
-
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
@@ -38,87 +35,28 @@ export function ZeroBalanceFun() {
     },
   });
 
-  // Rotate funny message every 4s
-  useEffect(() => {
-    const t = setInterval(() => {
-      setMsgIdx((i) => (i + 1 + Math.floor(Math.random() * (FUNNY_MESSAGES.length - 1))) % FUNNY_MESSAGES.length);
-    }, 4000);
-    return () => clearInterval(t);
-  }, []);
+  // Spotlight: pick a random member from the grid + a random funny message
+  const [spot, setSpot] = useState<{ memberIdx: number; msgIdx: number; key: number } | null>(null);
 
-  // Rotate spotlight member every 3.5s
   useEffect(() => {
     if (!members || members.length === 0) return;
-    const t = setInterval(() => {
-      setMemberIdx(() => Math.floor(Math.random() * members.length));
-    }, 3500);
-    return () => clearInterval(t);
+    let timer: any;
+    const tick = () => {
+      const memberIdx = Math.floor(Math.random() * members.length);
+      const msgIdx = Math.floor(Math.random() * FUNNY_MESSAGES.length);
+      setSpot({ memberIdx, msgIdx, key: Date.now() });
+      // visible ~3.2s, gap ~0.6s before next pop
+      timer = setTimeout(() => {
+        setSpot(null);
+        timer = setTimeout(tick, 600);
+      }, 3200);
+    };
+    tick();
+    return () => clearTimeout(timer);
   }, [members]);
-
-  const spotlight = members && members.length > 0 ? members[memberIdx] : null;
 
   return (
     <div className="space-y-6">
-      {/* Random funny message banner */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-fuchsia-500/10 to-amber-500/10 p-5 md:p-6 text-center"
-      >
-        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.4),transparent_70%)]" />
-        <Sparkles className="relative mx-auto h-6 w-6 text-primary mb-2" />
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={msgIdx}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.4 }}
-            className="relative text-sm md:text-base font-semibold text-foreground"
-          >
-            {FUNNY_MESSAGES[msgIdx]}
-          </motion.p>
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Random spotlight member */}
-      {spotlight && (
-        <div className="premium-card rounded-2xl overflow-hidden">
-          <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-fuchsia-400" />
-            </div>
-            <h2 className="font-semibold text-foreground text-sm md:text-base">আজকের স্পটলাইট</h2>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={spotlight.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-              className="p-6 flex flex-col items-center text-center gap-3"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-md opacity-60 animate-pulse" />
-                <img
-                  src={spotlight.photo_url}
-                  alt={spotlight.full_name}
-                  className="relative h-28 w-28 rounded-full object-cover border-4 border-background"
-                />
-              </div>
-              <div>
-                <p className="text-lg font-bold text-foreground">{spotlight.full_name}</p>
-                {spotlight.member_id && (
-                  <p className="text-xs text-muted-foreground mt-0.5">আইডি: {spotlight.member_id}</p>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* Members grid with photos */}
       {members && members.length > 0 && (
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
@@ -126,25 +64,60 @@ export function ZeroBalanceFun() {
               <Users className="h-4 w-4 text-cyan-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">সদস্য তালিকা</h2>
-            <span className="ml-auto text-xs text-muted-foreground">{members.length} জন</span>
+            <span className="ml-auto text-xs text-muted-foreground">
+              {members.length} জন
+            </span>
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 p-4">
-            {members.map((m: any) => (
-              <motion.div
-                key={m.id}
-                whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center text-center gap-1.5"
-              >
-                <img
-                  src={m.photo_url}
-                  alt={m.full_name}
-                  className="h-16 w-16 md:h-20 md:w-20 rounded-full object-cover border-2 border-border/40"
-                />
-                <p className="text-[11px] md:text-xs font-medium text-foreground truncate max-w-full">
-                  {m.full_name}
-                </p>
-              </motion.div>
-            ))}
+
+          <div className="relative grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 p-5 pt-16">
+            {members.map((m: any, idx: number) => {
+              const isUp = spot?.memberIdx === idx;
+              return (
+                <div key={m.id} className="relative flex flex-col items-center text-center gap-1.5">
+                  <motion.div
+                    animate={
+                      isUp
+                        ? { y: -56, scale: 1.25, zIndex: 30 }
+                        : { y: 0, scale: 1, zIndex: 1 }
+                    }
+                    transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                    className="relative"
+                  >
+                    {isUp && (
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-md opacity-70 animate-pulse" />
+                    )}
+                    <img
+                      src={m.photo_url}
+                      alt={m.full_name}
+                      className={`relative h-16 w-16 md:h-20 md:w-20 rounded-full object-cover border-2 ${
+                        isUp ? "border-primary" : "border-border/40"
+                      }`}
+                    />
+
+                    {/* Funny message bubble above the lifted member */}
+                    <AnimatePresence>
+                      {isUp && spot && (
+                        <motion.div
+                          key={spot.key}
+                          initial={{ opacity: 0, y: 6, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                          transition={{ duration: 0.25 }}
+                          className="absolute left-1/2 -translate-x-1/2 -top-12 whitespace-nowrap max-w-[60vw] px-3 py-1.5 rounded-xl bg-card border border-primary/40 shadow-lg text-[11px] md:text-xs font-semibold text-foreground"
+                        >
+                          {FUNNY_MESSAGES[spot.msgIdx]}
+                          <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/40" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+
+                  <p className="text-[11px] md:text-xs font-medium text-foreground truncate max-w-full">
+                    {m.full_name}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
