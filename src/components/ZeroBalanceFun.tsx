@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Users, Maximize2, Minimize2, X } from "lucide-react";
+import { Sparkles, Users, Maximize2, Minimize2, X, Download } from "lucide-react";
+import html2canvas from "html2canvas";
 
 const FUNNY_MESSAGES = [
   "🎬 ক্যামেরা রেডি? অ্যাকশন বলার আগেই হাসি দাও!",
@@ -146,8 +147,41 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPng = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!stageRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(stageRef.current, {
+        backgroundColor: "#0b0b1a",
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const blob = await (await fetch(dataUrl)).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const name = (spotMember?.full_name || "spotlight").replace(/\s+/g, "_");
+      a.href = url;
+      a.download = `${name}_spotlight.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (err) {
+      console.error("PNG download failed", err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const SpotlightStage = ({ big = false }: { big?: boolean }) => (
     <div
+      ref={stageRef}
       onClick={() => setPaused((p) => !p)}
       className={`relative flex items-center justify-center overflow-hidden cursor-pointer select-none ${
         big ? "min-h-screen p-8" : "min-h-[300px] md:min-h-[360px] p-6"
@@ -320,8 +354,17 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
           </div>
           <h2 className="font-semibold text-foreground text-sm md:text-base">আজকের স্পটলাইট</h2>
           <button
+            onClick={handleDownloadPng}
+            disabled={downloading || !spotMember}
+            className="ml-auto h-8 w-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors disabled:opacity-50"
+            aria-label="Download PNG"
+            title="PNG ডাউনলোড করুন"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          <button
             onClick={toggleFullscreen}
-            className="ml-auto h-8 w-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors"
+            className="h-8 w-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors"
             aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
             title={isFullscreen ? "ছোট করুন" : "ফুল স্ক্রিন"}
           >
