@@ -957,6 +957,22 @@ const AdminMembers = () => {
                       </select>
                     </td>
                     <td className="p-3">
+                      <input
+                        type="number"
+                        defaultValue={Number((m as any).public_display_order ?? 0)}
+                        onBlur={async (e) => {
+                          const val = Number(e.target.value || 0);
+                          if (val === Number((m as any).public_display_order ?? 0)) return;
+                          const { error } = await supabase.from("profiles").update({ public_display_order: val } as any).eq("id", m.id);
+                          if (error) { toast.error(error.message); return; }
+                          toast.success("ক্রম আপডেট হয়েছে");
+                          queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+                        }}
+                        className="bg-background border border-border rounded-md px-2 py-1 text-xs text-foreground w-16"
+                        title="ছোট সংখ্যা = উপরে"
+                      />
+                    </td>
+                    <td className="p-3">
                       <Switch checked={m.is_active ?? true} onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)} />
                     </td>
                     <td className="p-3 text-right">
