@@ -197,6 +197,33 @@ const MemberDashboard = () => {
   const kmBal = (balance as any)?.kmBalance ?? 0;
   const clientBal = (balance as any)?.clientBalance ?? 0;
 
+  // KM advance (negative balance = member owes KM) absorbs client বাকি sequentially,
+  // starting from the OLDEST project. Newest projects remain unpaid.
+  // Returns a Map of assignment.id -> virtual extra paid amount.
+  const kmAdvanceForFreelance = Math.max(0, -Number(kmBal || 0));
+  const freelanceVirtualPaid = (() => {
+    const map = new Map<string, number>();
+    if (kmAdvanceForFreelance <= 0) return map;
+    // Sort by project_date ascending (oldest first); fallback to created_at
+    const sorted = [...normalizedFreelanceList].sort((a: any, b: any) => {
+      const da = new Date(a?.freelance_projects?.project_date || a?.created_at || 0).getTime();
+      const db = new Date(b?.freelance_projects?.project_date || b?.created_at || 0).getTime();
+      return da - db;
+    });
+    let remaining = kmAdvanceForFreelance;
+    for (const a of sorted) {
+      if (remaining <= 0) break;
+      const rate = Number(a.rate || 0);
+      const paid = Number(a.paid_amount || 0);
+      const due = Math.max(0, rate - paid);
+      if (due <= 0) continue;
+      const apply = Math.min(due, remaining);
+      map.set(a.id, apply);
+      remaining -= apply;
+    }
+    return map;
+  })();
+
   const isMonthlyMember = (profile as any)?.salary_type === "monthly";
   const kmIsZero = Math.max(0, Math.round(kmBal)) === 0;
   const clientIsZero = Math.max(0, Math.round(clientBal)) === 0;
