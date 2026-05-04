@@ -173,8 +173,13 @@ const PublicHome = () => {
         </div>
       </header>
 
+      {/* Divider line under the menu */}
+      <div className="pt-60 sm:pt-52 md:pt-28 px-4 max-w-6xl mx-auto w-full">
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-6" />
+      </div>
+
       {/* Spotlight monitor — Right under the menu bar */}
-      <div className="pt-52 sm:pt-44 md:pt-24 px-4 max-w-6xl mx-auto w-full">
+      <div className="px-4 max-w-6xl mx-auto w-full">
         <ZeroBalanceFun spotlightOnly />
       </div>
 
