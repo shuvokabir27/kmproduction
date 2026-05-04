@@ -172,8 +172,13 @@ const PublicHome = () => {
         </div>
       </header>
 
-      {/* Today's Birthday — Right under the menu bar */}
-      <div className="pt-20 md:pt-24">
+      {/* Spotlight monitor — Right under the menu bar */}
+      <div className="pt-20 md:pt-24 px-4 max-w-6xl mx-auto w-full">
+        <ZeroBalanceFun spotlightOnly />
+      </div>
+
+      {/* Today's Birthday */}
+      <div className="mt-6">
         <PublicBirthdaySection />
       </div>
 
