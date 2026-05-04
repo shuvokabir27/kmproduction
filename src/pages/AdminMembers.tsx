@@ -939,6 +939,23 @@ const AdminMembers = () => {
                       <Switch checked={(m as any).is_verified ?? false} onCheckedChange={() => toggleVerified(m.id, (m as any).is_verified ?? false)} />
                     </td>
                     <td className="p-3">
+                      <select
+                        value={Number((m as any).spotlight_priority ?? 1)}
+                        onChange={async (e) => {
+                          const val = Number(e.target.value);
+                          const { error } = await supabase.from("profiles").update({ spotlight_priority: val } as any).eq("id", m.id);
+                          if (error) { toast.error(error.message); return; }
+                          toast.success("অগ্রাধিকার আপডেট হয়েছে");
+                          queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+                        }}
+                        className="bg-background border border-border rounded-md px-2 py-1 text-xs text-foreground"
+                      >
+                        {[1,2,3,5,8,10].map(v => (
+                          <option key={v} value={v}>{v === 1 ? "সাধারণ" : `${v}x`}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="p-3">
                       <Switch checked={m.is_active ?? true} onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)} />
                     </td>
                     <td className="p-3 text-right">
