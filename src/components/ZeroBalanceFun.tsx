@@ -265,7 +265,10 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                 {spotMember.full_name}
               </p>
               {spotMember.designation && (
-                <p className={`text-primary mt-1 ${big ? "text-base md:text-lg" : "text-[11px] md:text-xs"}`}>
+                <p
+                  className={`mt-1 font-semibold ${big ? "text-base md:text-lg" : "text-[11px] md:text-xs"}`}
+                  style={{ color: "hsl(150 70% 35%)" }}
+                >
                   {spotMember.designation}
                 </p>
               )}
