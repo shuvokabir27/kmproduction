@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Sun, Moon, Star, RefreshCw, Share2 } from "lucide-react";
+import { Sparkles, Sun, Moon, Star, RefreshCw, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 // Simple seeded RNG (mulberry32)
 function mulberry32(seed: number) {
