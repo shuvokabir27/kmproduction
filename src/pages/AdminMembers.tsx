@@ -1030,7 +1030,21 @@ const AdminMembers = () => {
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{m.email || m.designation || "—"}</p>
                       </div>
-                      <div className="flex items-center gap-0.5 shrink-0">
+                      <div className="flex items-center gap-1 shrink-0">
+                        <input
+                          type="number"
+                          defaultValue={Number((m as any).public_display_order ?? 0)}
+                          onBlur={async (e) => {
+                            const val = Number(e.target.value || 0);
+                            if (val === Number((m as any).public_display_order ?? 0)) return;
+                            const { error } = await supabase.from("profiles").update({ public_display_order: val } as any).eq("id", m.id);
+                            if (error) { toast.error(error.message); return; }
+                            toast.success("ক্রম আপডেট হয়েছে");
+                            queryClient.invalidateQueries({ queryKey: ["all-profiles"] });
+                          }}
+                          className="bg-background border border-border rounded-md px-2 py-1 text-xs text-foreground w-14"
+                          title="ক্রম (ছোট সংখ্যা = উপরে)"
+                        />
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
                           <Edit className="h-3.5 w-3.5 text-muted-foreground" />
                         </Button>
