@@ -1215,6 +1215,44 @@ export type Database = {
         }
         Relationships: []
       }
+      memes: {
+        Row: {
+          caption: string
+          caption_hash: string
+          created_at: string
+          id: string
+          member_id: string | null
+          member_name: string
+          photo_url: string | null
+        }
+        Insert: {
+          caption: string
+          caption_hash: string
+          created_at?: string
+          id?: string
+          member_id?: string | null
+          member_name: string
+          photo_url?: string | null
+        }
+        Update: {
+          caption?: string
+          caption_hash?: string
+          created_at?: string
+          id?: string
+          member_id?: string | null
+          member_name?: string
+          photo_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memes_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
