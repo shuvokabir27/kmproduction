@@ -232,7 +232,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
               <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">KM Production</p>
             </div>
             {(() => {
-              const due = Math.max(0, Math.round(kmOutstanding ?? kmTotal));
+              const due = displayKm;
               return (
                 <>
                   <p className="relative text-lg md:text-2xl font-bold text-foreground tracking-tight">৳{due.toLocaleString("bn-BD")}</p>
