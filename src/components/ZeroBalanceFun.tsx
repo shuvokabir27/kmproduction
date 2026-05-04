@@ -269,8 +269,31 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                   {spotMember.designation}
                 </p>
               )}
+              {/* Extra info chips */}
+              <div className={`mt-2 flex flex-wrap items-center justify-center gap-1.5 ${big ? "text-sm" : "text-[10px] md:text-xs"}`}>
+                {spotMember.blood_group && (
+                  <span className="px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-400/40 text-rose-300 font-semibold">
+                    🩸 {spotMember.blood_group}
+                  </span>
+                )}
+                {spotMember.date_of_birth && (() => {
+                  const d = new Date(spotMember.date_of_birth);
+                  if (isNaN(d.getTime())) return null;
+                  const months = ["জানু","ফেব্রু","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্ট","অক্টো","নভে","ডিসে"];
+                  return (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 font-semibold">
+                      🎂 {d.getDate()} {months[d.getMonth()]}
+                    </span>
+                  );
+                })()}
+                {spotMember.address && (
+                  <span className="px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 font-medium max-w-[260px] truncate">
+                    📍 {spotMember.address}
+                  </span>
+                )}
+              </div>
               {!spotlightOnly && spotMember.member_id && (
-                <p className={`text-muted-foreground mt-0.5 ${big ? "text-sm" : "text-[11px] md:text-xs"}`}>
+                <p className={`text-muted-foreground mt-1.5 ${big ? "text-sm" : "text-[11px] md:text-xs"}`}>
                   আইডি: {spotMember.member_id}
                 </p>
               )}
