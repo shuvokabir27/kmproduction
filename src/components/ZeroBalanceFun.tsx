@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Users, Maximize2, Minimize2, X, Download } from "lucide-react";
-import { toPng } from "html-to-image";
 
 const FUNNY_MESSAGES = [
   "🎬 ক্যামেরা রেডি? অ্যাকশন বলার আগেই হাসি দাও!",
@@ -39,6 +38,73 @@ function Avatar({ url, name, size = "md", ring = false }: { url?: string; name: 
     </div>
   );
 }
+
+const loadCanvasImage = (src?: string): Promise<HTMLImageElement | null> =>
+  new Promise((resolve) => {
+    if (!src) return resolve(null);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "async";
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+
+const roundRectPath = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+};
+
+const wrapCanvasText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number) => {
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+
+  words.forEach((word) => {
+    const testLine = line ? `${line} ${word}` : word;
+    if (ctx.measureText(testLine).width <= maxWidth) {
+      line = testLine;
+      return;
+    }
+    if (line) lines.push(line);
+    if (ctx.measureText(word).width <= maxWidth) {
+      line = word;
+      return;
+    }
+    let chunk = "";
+    Array.from(word).forEach((char) => {
+      const testChunk = `${chunk}${char}`;
+      if (ctx.measureText(testChunk).width > maxWidth && chunk) {
+        lines.push(chunk);
+        chunk = char;
+      } else {
+        chunk = testChunk;
+      }
+    });
+    line = chunk;
+  });
+
+  if (line) lines.push(line);
+  return lines;
+};
+
+const drawImageCover = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, size: number) => {
+  const scale = Math.max(size / img.naturalWidth, size / img.naturalHeight);
+  const sw = size / scale;
+  const sh = size / scale;
+  const sx = (img.naturalWidth - sw) / 2;
+  const sy = (img.naturalHeight - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, size, size);
+};
+
+const canvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> =>
+  new Promise((resolve) => canvas.toBlob(resolve, "image/png", 1));
 
 export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: boolean } = {}) {
   const { data: members } = useQuery({
@@ -155,12 +221,171 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
     if (!stageRef.current || downloading) return;
     setDownloading(true);
     try {
-      const dataUrl = await toPng(stageRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: "#0b0b1a",
+      await document.fonts?.ready;
+      const member = spotMember;
+      const message = spot?.message || "কুয়াকাটা মাল্টিমিডিয়া";
+      const width = 1200;
+      const height = 900;
+      const ratio = 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas unavailable");
+      ctx.scale(ratio, ratio);
+
+      const bg = ctx.createLinearGradient(0, 0, width, height);
+      bg.addColorStop(0, "hsl(240 35% 6%)");
+      bg.addColorStop(0.5, "hsl(260 45% 8%)");
+      bg.addColorStop(1, "hsl(220 35% 5%)");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      const glowTop = ctx.createRadialGradient(width * 0.22, 0, 40, width * 0.22, 0, 520);
+      glowTop.addColorStop(0, "hsl(190 95% 55% / 0.36)");
+      glowTop.addColorStop(1, "hsl(190 95% 55% / 0)");
+      ctx.fillStyle = glowTop;
+      ctx.fillRect(0, 0, width, height);
+      const glowBottom = ctx.createRadialGradient(width * 0.82, height * 0.9, 40, width * 0.82, height * 0.9, 560);
+      glowBottom.addColorStop(0, "hsl(310 85% 58% / 0.28)");
+      glowBottom.addColorStop(1, "hsl(310 85% 58% / 0)");
+      ctx.fillStyle = glowBottom;
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = 0; i < 42; i += 1) {
+        ctx.fillStyle = `hsl(0 0% 100% / ${0.16 + (i % 4) * 0.08})`;
+        ctx.beginPath();
+        ctx.arc((i * 97) % width, (i * 151) % height, 1.6 + (i % 3) * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.font = "800 34px 'Hind Siliguri', 'Tiro Bangla', sans-serif";
+      const messageLines = wrapCanvasText(ctx, message, 900).slice(0, 5);
+      const lineHeight = 48;
+      const bubbleW = 1000;
+      const bubbleH = Math.max(150, messageLines.length * lineHeight + 62);
+      const bubbleX = (width - bubbleW) / 2;
+      const bubbleY = 78;
+
+      ctx.save();
+      ctx.shadowColor = "hsl(190 90% 55% / 0.55)";
+      ctx.shadowBlur = 46;
+      const bubbleBg = ctx.createLinearGradient(bubbleX, bubbleY, bubbleX + bubbleW, bubbleY + bubbleH);
+      bubbleBg.addColorStop(0, "hsl(240 40% 8% / 0.96)");
+      bubbleBg.addColorStop(1, "hsl(260 50% 13% / 0.94)");
+      roundRectPath(ctx, bubbleX, bubbleY, bubbleW, bubbleH, 28);
+      ctx.fillStyle = bubbleBg;
+      ctx.fill();
+      ctx.restore();
+
+      roundRectPath(ctx, bubbleX + 2, bubbleY + 2, bubbleW - 4, bubbleH / 2, 26);
+      const shine = ctx.createLinearGradient(0, bubbleY, 0, bubbleY + bubbleH / 2);
+      shine.addColorStop(0, "hsl(0 0% 100% / 0.13)");
+      shine.addColorStop(1, "hsl(0 0% 100% / 0)");
+      ctx.fillStyle = shine;
+      ctx.fill();
+
+      ctx.strokeStyle = "hsl(0 0% 100% / 0.16)";
+      ctx.lineWidth = 2;
+      roundRectPath(ctx, bubbleX, bubbleY, bubbleW, bubbleH, 28);
+      ctx.stroke();
+
+      const textGradient = ctx.createLinearGradient(bubbleX + 80, bubbleY, bubbleX + bubbleW - 80, bubbleY + bubbleH);
+      textGradient.addColorStop(0, "hsl(45 100% 76%)");
+      textGradient.addColorStop(0.5, "hsl(0 0% 100%)");
+      textGradient.addColorStop(1, "hsl(180 100% 80%)");
+      ctx.fillStyle = textGradient;
+      ctx.shadowColor = "hsl(190 95% 55% / 0.5)";
+      ctx.shadowBlur = 14;
+      messageLines.forEach((line, idx) => {
+        ctx.fillText(line, width / 2, bubbleY + 55 + idx * lineHeight);
       });
-      const blob = await (await fetch(dataUrl)).blob();
+      ctx.shadowBlur = 0;
+
+      const avatarSize = 286;
+      const avatarX = (width - avatarSize) / 2;
+      const avatarY = bubbleY + bubbleH + 92;
+      const avatarCenterX = width / 2;
+      const avatarCenterY = avatarY + avatarSize / 2;
+      const image = await loadCanvasImage(member?.photo_url);
+
+      const shadow = ctx.createRadialGradient(avatarCenterX, avatarCenterY + 18, 60, avatarCenterX, avatarCenterY + 18, 240);
+      shadow.addColorStop(0, "hsl(310 90% 60% / 0.8)");
+      shadow.addColorStop(0.45, "hsl(195 100% 55% / 0.42)");
+      shadow.addColorStop(1, "hsl(45 100% 55% / 0)");
+      ctx.fillStyle = shadow;
+      ctx.beginPath();
+      ctx.arc(avatarCenterX, avatarCenterY + 18, 250, 0, Math.PI * 2);
+      ctx.fill();
+
+      const ring = ctx.createConicGradient(0, avatarCenterX, avatarCenterY);
+      ring.addColorStop(0, "hsl(195 100% 55%)");
+      ring.addColorStop(0.32, "hsl(310 90% 60%)");
+      ring.addColorStop(0.66, "hsl(45 100% 55%)");
+      ring.addColorStop(1, "hsl(195 100% 55%)");
+      ctx.fillStyle = ring;
+      ctx.beginPath();
+      ctx.arc(avatarCenterX, avatarCenterY, avatarSize / 2 + 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avatarCenterX, avatarCenterY, avatarSize / 2, 0, Math.PI * 2);
+      ctx.clip();
+      if (image) {
+        drawImageCover(ctx, image, avatarX, avatarY, avatarSize);
+      } else {
+        const fallback = ctx.createLinearGradient(avatarX, avatarY, avatarX + avatarSize, avatarY + avatarSize);
+        fallback.addColorStop(0, "hsl(190 75% 24%)");
+        fallback.addColorStop(1, "hsl(290 60% 22%)");
+        ctx.fillStyle = fallback;
+        ctx.fillRect(avatarX, avatarY, avatarSize, avatarSize);
+        ctx.fillStyle = "hsl(0 0% 100%)";
+        ctx.font = "800 96px 'Hind Siliguri', sans-serif";
+        ctx.fillText((member?.full_name || "?").trim().charAt(0), avatarCenterX, avatarCenterY + 34);
+      }
+      const avatarShine = ctx.createRadialGradient(avatarX + 85, avatarY + 48, 8, avatarX + 85, avatarY + 48, 175);
+      avatarShine.addColorStop(0, "hsl(0 0% 100% / 0.42)");
+      avatarShine.addColorStop(1, "hsl(0 0% 100% / 0)");
+      ctx.fillStyle = avatarShine;
+      ctx.fillRect(avatarX, avatarY, avatarSize, avatarSize);
+      ctx.restore();
+
+      ctx.strokeStyle = "hsl(0 0% 100% / 0.28)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(avatarCenterX, avatarCenterY, avatarSize / 2 - 2, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const nameY = avatarY + avatarSize + 70;
+      ctx.font = "800 48px 'Hind Siliguri', 'Tiro Bangla', sans-serif";
+      ctx.fillStyle = "hsl(0 0% 98%)";
+      ctx.shadowColor = "hsl(0 0% 0% / 0.45)";
+      ctx.shadowBlur = 12;
+      ctx.fillText(member?.full_name || "সদস্য", width / 2, nameY);
+      ctx.shadowBlur = 0;
+
+      if (member?.designation) {
+        ctx.font = "700 24px 'Hind Siliguri', sans-serif";
+        ctx.fillStyle = "hsl(150 70% 58%)";
+        ctx.fillText(member.designation, width / 2, nameY + 42);
+      }
+      ctx.font = "600 22px 'Hind Siliguri', sans-serif";
+      ctx.fillStyle = "hsl(210 18% 82% / 0.86)";
+      ctx.fillText("কুয়াকাটা মাল্টিমিডিয়া", width / 2, nameY + (member?.designation ? 78 : 44));
+
+      const infoParts = [member?.blood_group && `🩸 ${member.blood_group}`, member?.address && `📍 ${member.address}`].filter(Boolean) as string[];
+      if (infoParts.length) {
+        ctx.font = "600 18px 'Hind Siliguri', sans-serif";
+        const chipText = infoParts.join("   ").slice(0, 80);
+        ctx.fillStyle = "hsl(190 90% 88% / 0.92)";
+        ctx.fillText(chipText, width / 2, height - 46);
+      }
+
+      const blob = await canvasBlob(canvas);
+      if (!blob) throw new Error("PNG export failed");
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       const name = (spotMember?.full_name || "spotlight").replace(/\s+/g, "_");
