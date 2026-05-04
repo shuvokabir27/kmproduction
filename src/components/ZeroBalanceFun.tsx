@@ -39,7 +39,7 @@ function Avatar({ url, name, size = "md", ring = false }: { url?: string; name: 
   );
 }
 
-export function ZeroBalanceFun() {
+export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: boolean } = {}) {
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
