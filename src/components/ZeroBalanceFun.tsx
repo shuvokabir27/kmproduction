@@ -354,8 +354,17 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
           </div>
           <h2 className="font-semibold text-foreground text-sm md:text-base">আজকের স্পটলাইট</h2>
           <button
+            onClick={handleDownloadPng}
+            disabled={downloading || !spotMember}
+            className="ml-auto h-8 w-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors disabled:opacity-50"
+            aria-label="Download PNG"
+            title="PNG ডাউনলোড করুন"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          <button
             onClick={toggleFullscreen}
-            className="ml-auto h-8 w-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors"
+            className="h-8 w-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors"
             aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
             title={isFullscreen ? "ছোট করুন" : "ফুল স্ক্রিন"}
           >
