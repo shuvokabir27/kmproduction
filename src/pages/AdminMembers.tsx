@@ -573,6 +573,7 @@ const AdminMembers = () => {
                         { bn: "প্রডাকশন", en: "Production" },
                         { bn: "ক্যামেরাম্যান", en: "Cameraman" },
                         { bn: "ক্লায়েন্ট", en: "Client" },
+                        { bn: "এডিটর", en: "Editor" },
                       ];
                       if (isSuperAdminMember) ROLES.push({ bn: "সুপার এডমিন", en: "Super Admin" });
                       const selected = (form.designation || "").split(",").map((s) => s.trim()).filter(Boolean);
