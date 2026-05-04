@@ -739,7 +739,11 @@ const MemberDashboard = () => {
           {(() => {
             const list = normalizedFreelanceList;
             const totalEarning = list.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-            const totalPaid = list.reduce((s: number, a: any) => s + Number(a.paid_amount || 0), 0);
+            const totalPaid = list.reduce((s: number, a: any) => {
+              const rate = Number(a.rate || 0);
+              const paid = Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0);
+              return s + Math.min(rate, paid);
+            }, 0);
             const totalDue = Math.max(0, totalEarning - totalPaid);
             const statusMap: Record<string, { label: string; cls: string }> = {
               upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
@@ -776,7 +780,7 @@ const MemberDashboard = () => {
                     {list.map((a: any) => {
                       const project = a.freelance_projects;
                       const rate = Number(a.rate || 0);
-                      const paid = Number(a.paid_amount || 0);
+                      const paid = Math.min(rate, Number(a.paid_amount || 0) + Number(freelanceVirtualPaid.get(a.id) || 0));
                       const due = Math.max(0, rate - paid);
                       const st = statusMap[project?.status as string] ?? { label: project?.status || "—", cls: "bg-secondary text-muted-foreground border-border/30" };
                       return (
