@@ -15,6 +15,7 @@ import { AdvanceRequestCard } from "@/components/AdvanceRequestCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
+import { DailyRashifal } from "@/components/DailyRashifal";
 
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
@@ -280,6 +281,9 @@ const MemberDashboard = () => {
 
         {/* Advance request - moved below the income graph */}
         {!isZeroBalance && <AdvanceRequestCard />}
+
+        {/* Daily fun horoscope */}
+        <DailyRashifal />
 
         {/* Fun spotlight + member list — visible to everyone, just below advance request */}
         <ZeroBalanceFun />
