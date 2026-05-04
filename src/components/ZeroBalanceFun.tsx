@@ -22,6 +22,23 @@ const FUNNY_MESSAGES = [
   "🦄 আজকের দিনটা ম্যাজিকাল হোক!",
 ];
 
+function Avatar({ url, name, size = "md", ring = false }: { url?: string; name: string; size?: "sm" | "md" | "lg"; ring?: boolean }) {
+  const cls =
+    size === "lg"
+      ? "h-28 w-28 md:h-32 md:w-32 text-2xl"
+      : size === "sm"
+        ? "h-16 w-16 md:h-20 md:w-20 text-sm"
+        : "h-20 w-20 text-base";
+  const border = ring ? "border-primary" : "border-border/40";
+  return url ? (
+    <img src={url} alt={name} className={`relative rounded-full object-cover border-2 ${cls} ${border}`} />
+  ) : (
+    <div className={`relative rounded-full bg-muted border-2 flex items-center justify-center font-bold text-foreground ${cls} ${border}`}>
+      {(name || "?").trim().charAt(0)}
+    </div>
+  );
+}
+
 export function ZeroBalanceFun() {
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
@@ -31,7 +48,6 @@ export function ZeroBalanceFun() {
     },
   });
 
-  // Spotlight: pick a random member from the grid + a random funny message
   const [spot, setSpot] = useState<{ memberIdx: number; msgIdx: number; key: number } | null>(null);
 
   useEffect(() => {
@@ -41,18 +57,62 @@ export function ZeroBalanceFun() {
       const memberIdx = Math.floor(Math.random() * members.length);
       const msgIdx = Math.floor(Math.random() * FUNNY_MESSAGES.length);
       setSpot({ memberIdx, msgIdx, key: Date.now() });
-      // visible ~3.2s, gap ~0.6s before next pop
-      timer = setTimeout(() => {
-        setSpot(null);
-        timer = setTimeout(tick, 600);
-      }, 3200);
+      timer = setTimeout(tick, 3500);
     };
     tick();
     return () => clearTimeout(timer);
   }, [members]);
 
+  const spotMember = spot && members ? members[spot.memberIdx] : null;
+
   return (
     <div className="space-y-6">
+      {/* Animated spotlight display */}
+      <div className="premium-card rounded-2xl overflow-hidden">
+        <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
+          <div className="h-8 w-8 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-fuchsia-400" />
+          </div>
+          <h2 className="font-semibold text-foreground text-sm md:text-base">আজকের স্পটলাইট</h2>
+        </div>
+        <div className="relative min-h-[260px] md:min-h-[300px] flex items-center justify-center p-6 overflow-hidden bg-gradient-to-br from-primary/5 via-fuchsia-500/5 to-amber-500/5">
+          {/* glow */}
+          <div className="pointer-events-none absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.25),transparent_60%)]" />
+          <AnimatePresence mode="wait">
+            {spotMember && spot && (
+              <motion.div
+                key={spot.key}
+                initial={{ opacity: 0, y: 40, scale: 0.7 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -40, scale: 0.7 }}
+                transition={{ type: "spring", stiffness: 220, damping: 20 }}
+                className="relative flex flex-col items-center gap-4"
+              >
+                {/* Speech bubble */}
+                <div className="relative px-4 py-2 rounded-2xl bg-card border border-primary/40 shadow-lg max-w-[80vw] md:max-w-md text-center">
+                  <p className="text-xs md:text-sm font-semibold text-foreground">
+                    {FUNNY_MESSAGES[spot.msgIdx]}
+                  </p>
+                  <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/40" />
+                </div>
+                {/* Avatar with glow */}
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-xl opacity-70 animate-pulse" />
+                  <Avatar url={spotMember.photo_url} name={spotMember.full_name} size="lg" ring />
+                </div>
+                <div className="text-center">
+                  <p className="text-base md:text-lg font-bold text-foreground">{spotMember.full_name}</p>
+                  {spotMember.member_id && (
+                    <p className="text-[11px] md:text-xs text-muted-foreground mt-0.5">আইডি: {spotMember.member_id}</p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Full member grid (static) */}
       {members && members.length > 0 && (
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
@@ -60,70 +120,17 @@ export function ZeroBalanceFun() {
               <Users className="h-4 w-4 text-cyan-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">সদস্য তালিকা</h2>
-            <span className="ml-auto text-xs text-muted-foreground">
-              {members.length} জন
-            </span>
+            <span className="ml-auto text-xs text-muted-foreground">{members.length} জন</span>
           </div>
-
-          <div className="relative grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 p-5 pt-16">
-            {members.map((m: any, idx: number) => {
-              const isUp = spot?.memberIdx === idx;
-              return (
-                <div key={m.id} className="relative flex flex-col items-center text-center gap-1.5">
-                  <motion.div
-                    animate={
-                      isUp
-                        ? { y: -56, scale: 1.25, zIndex: 30 }
-                        : { y: 0, scale: 1, zIndex: 1 }
-                    }
-                    transition={{ type: "spring", stiffness: 260, damping: 18 }}
-                    className="relative"
-                  >
-                    {isUp && (
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-md opacity-70 animate-pulse" />
-                    )}
-                    {m.photo_url ? (
-                      <img
-                        src={m.photo_url}
-                        alt={m.full_name}
-                        className={`relative h-16 w-16 md:h-20 md:w-20 rounded-full object-cover border-2 ${
-                          isUp ? "border-primary" : "border-border/40"
-                        }`}
-                      />
-                    ) : (
-                      <div
-                        className={`relative h-16 w-16 md:h-20 md:w-20 rounded-full bg-muted border-2 flex items-center justify-center text-sm font-bold text-foreground ${
-                          isUp ? "border-primary" : "border-border/40"
-                        }`}
-                      >
-                        {(m.full_name || "?").trim().charAt(0)}
-                      </div>
-                    )}
-
-                    {/* Funny message bubble above the lifted member */}
-                    <AnimatePresence>
-                      {isUp && spot && (
-                        <motion.div
-                          key={spot.key}
-                          initial={{ opacity: 0, y: 6, scale: 0.9 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
-                          transition={{ duration: 0.25 }}
-                          className="absolute left-1/2 -translate-x-1/2 -top-12 whitespace-nowrap max-w-[60vw] px-3 py-1.5 rounded-xl bg-card border border-primary/40 shadow-lg text-[11px] md:text-xs font-semibold text-foreground"
-                        >
-                          {FUNNY_MESSAGES[spot.msgIdx]}
-                          <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/40" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-
-                  <p className="text-[11px] md:text-xs font-medium text-foreground truncate max-w-full">
-                    {m.full_name}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 p-5">
+            {members.map((m: any) => (
+              <div key={m.id} className="flex flex-col items-center text-center gap-1.5">
+                <Avatar url={m.photo_url} name={m.full_name} size="sm" />
+                <p className="text-[11px] md:text-xs font-medium text-foreground truncate max-w-full">
+                  {m.full_name}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       )}
