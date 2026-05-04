@@ -289,7 +289,17 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               />
               <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-50 animate-pulse" />
-              <div className="relative rounded-full overflow-hidden">
+              {/* Colorful drop shadow behind image */}
+              <div
+                className="absolute -inset-2 rounded-full pointer-events-none"
+                style={{
+                  background: "conic-gradient(from 0deg, hsl(195 100% 55%), hsl(310 90% 60%), hsl(45 100% 55%), hsl(140 80% 50%), hsl(195 100% 55%))",
+                  filter: "blur(22px)",
+                  opacity: 0.75,
+                  transform: "translateY(8px)",
+                }}
+              />
+              <div className="relative rounded-full overflow-hidden" style={{ filter: "drop-shadow(0 8px 24px hsl(310 90% 55% / 0.55)) drop-shadow(0 -4px 18px hsl(195 100% 55% / 0.45))" }}>
                 {spotMember.photo_url ? (
                   <img
                     src={spotMember.photo_url}
