@@ -39,7 +39,7 @@ function Avatar({ url, name, size = "md", ring = false }: { url?: string; name: 
   );
 }
 
-export function ZeroBalanceFun() {
+export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: boolean } = {}) {
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
@@ -303,7 +303,7 @@ export function ZeroBalanceFun() {
       </div>
 
       {/* Full member grid (static) */}
-      {members && members.length > 0 && (
+      {!spotlightOnly && members && members.length > 0 && (
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">

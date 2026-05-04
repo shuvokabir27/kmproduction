@@ -10,6 +10,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { PublicBirthdaySection } from "@/components/PublicBirthdaySection";
+import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
@@ -172,8 +173,13 @@ const PublicHome = () => {
         </div>
       </header>
 
-      {/* Today's Birthday — Right under the menu bar */}
-      <div className="pt-20 md:pt-24">
+      {/* Spotlight monitor — Right under the menu bar */}
+      <div className="pt-20 md:pt-24 px-4 max-w-6xl mx-auto w-full">
+        <ZeroBalanceFun spotlightOnly />
+      </div>
+
+      {/* Today's Birthday */}
+      <div className="mt-6">
         <PublicBirthdaySection />
       </div>
 
