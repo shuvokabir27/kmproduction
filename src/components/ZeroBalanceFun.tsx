@@ -45,8 +45,11 @@ export function ZeroBalanceFun() {
     queryFn: async () => {
       const { data } = await (supabase as any).rpc("get_public_profiles");
       const list = ((data ?? []) as any[]).filter((p) => p.is_active !== false);
-      // Sort: higher priority first, then by name
+      // Sort: custom display order first (ascending, 0 = unset goes last), then priority desc, then name
       list.sort((a, b) => {
+        const oa = Number(a.public_display_order ?? 0) || 9999;
+        const ob = Number(b.public_display_order ?? 0) || 9999;
+        if (oa !== ob) return oa - ob;
         const pa = Number(a.spotlight_priority ?? 1);
         const pb = Number(b.spotlight_priority ?? 1);
         if (pb !== pa) return pb - pa;

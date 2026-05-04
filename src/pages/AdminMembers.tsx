@@ -910,6 +910,7 @@ const AdminMembers = () => {
                    <th className="text-left p-3 text-amber-400 font-medium text-xs">বেতন ধরন</th>
                    <th className="text-left p-3 text-emerald-400 font-medium text-xs">ভেরিফাইড</th>
                    <th className="text-left p-3 text-fuchsia-400 font-medium text-xs">স্পটলাইট</th>
+                   <th className="text-left p-3 text-sky-400 font-medium text-xs">ক্রম</th>
                    <th className="text-left p-3 text-pink-400 font-medium text-xs">স্ট্যাটাস</th>
                   <th className="text-right p-3 text-orange-400 font-medium text-xs">অ্যাকশন</th>
                 </tr>
@@ -954,6 +955,22 @@ const AdminMembers = () => {
                           <option key={v} value={v}>{v === 1 ? "সাধারণ" : `${v}x`}</option>
                         ))}
                       </select>
+                    </td>
+                    <td className="p-3">
+                      <input
+                        type="number"
+                        defaultValue={Number((m as any).public_display_order ?? 0)}
+                        onBlur={async (e) => {
+                          const val = Number(e.target.value || 0);
+                          if (val === Number((m as any).public_display_order ?? 0)) return;
+                          const { error } = await supabase.from("profiles").update({ public_display_order: val } as any).eq("id", m.id);
+                          if (error) { toast.error(error.message); return; }
+                          toast.success("ক্রম আপডেট হয়েছে");
+                          queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+                        }}
+                        className="bg-background border border-border rounded-md px-2 py-1 text-xs text-foreground w-16"
+                        title="ছোট সংখ্যা = উপরে"
+                      />
                     </td>
                     <td className="p-3">
                       <Switch checked={m.is_active ?? true} onCheckedChange={() => toggleActive(m.id, m.is_active ?? true)} />
