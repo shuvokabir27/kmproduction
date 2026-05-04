@@ -9,6 +9,7 @@ import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { PublicBirthdaySection } from "@/components/PublicBirthdaySection";
 import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 import { DailyRashifal } from "@/components/DailyRashifal";
 
