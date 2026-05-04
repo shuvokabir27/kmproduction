@@ -174,7 +174,7 @@ const PublicHome = () => {
       </header>
 
       {/* Spotlight monitor — Right under the menu bar */}
-      <div className="pt-20 md:pt-24 px-4 max-w-6xl mx-auto w-full">
+      <div className="pt-[420px] sm:pt-32 md:pt-24 px-4 max-w-6xl mx-auto w-full">
         <ZeroBalanceFun spotlightOnly />
       </div>
 
