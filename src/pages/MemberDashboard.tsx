@@ -124,6 +124,7 @@ const MemberDashboard = () => {
         is_paid: a.is_paid,
         role_label: a.role_label,
         notes: a.notes,
+        created_at: a.created_at,
         freelance_projects: projectMap.get(a.project_id) ?? null,
         source: "assignment" as const,
       }));
@@ -134,6 +135,7 @@ const MemberDashboard = () => {
         is_paid: c.is_paid,
         role_label: "আর্টিস্ট",
         notes: c.notes,
+        created_at: c.created_at,
         freelance_projects: projectMap.get(c.project_id) ?? null,
         source: "client" as const,
       }));
@@ -172,6 +174,12 @@ const MemberDashboard = () => {
           }]
         : [];
 
+  const getFreelanceDateValue = (item: any) => {
+    const rawDate = item?.freelance_projects?.project_date || item?.created_at || item?.freelance_projects?.created_at;
+    const time = rawDate ? new Date(rawDate).getTime() : 0;
+    return Number.isFinite(time) ? time : 0;
+  };
+
   // Show ONLY ONE label per client: prefer company name, else person name.
   // Never show both together (avoids duplicate cards like "সাদ্দাম মাল" and "সাদ্দাম মাল (Malbro)").
   const getFreelanceDisplayName = (project: any) =>
@@ -206,9 +214,8 @@ const MemberDashboard = () => {
     if (kmAdvanceForFreelance <= 0) return map;
     // Sort by project_date ascending (oldest first); fallback to created_at
     const sorted = [...normalizedFreelanceList].sort((a: any, b: any) => {
-      const da = new Date(a?.freelance_projects?.project_date || a?.created_at || 0).getTime();
-      const db = new Date(b?.freelance_projects?.project_date || b?.created_at || 0).getTime();
-      return da - db;
+      const dateDiff = getFreelanceDateValue(a) - getFreelanceDateValue(b);
+      return dateDiff !== 0 ? dateDiff : String(a.id).localeCompare(String(b.id));
     });
     let remaining = kmAdvanceForFreelance;
     for (const a of sorted) {
