@@ -59,9 +59,8 @@ export function ZeroBalanceFun() {
     },
   });
 
-  const [spot, setSpot] = useState<{ memberIdx: number; msgIdx: number; key: number } | null>(null);
+  const [spot, setSpot] = useState<{ memberIdx: number; message: string; key: number } | null>(null);
 
-  // Weighted random pick based on spotlight_priority
   const pickWeightedIndex = (list: any[]) => {
     const weights = list.map((m) => Math.max(1, Number(m.spotlight_priority ?? 1)));
     const total = weights.reduce((s, w) => s + w, 0);
@@ -73,17 +72,34 @@ export function ZeroBalanceFun() {
     return list.length - 1;
   };
 
+  const fetchAiMessage = async (member: any): Promise<string> => {
+    try {
+      const { data } = await supabase.functions.invoke("generate-funny-message", {
+        body: { name: member?.full_name || "", designation: member?.designation || "" },
+      });
+      const msg = (data as any)?.message;
+      if (typeof msg === "string" && msg.trim()) return msg.trim();
+    } catch {}
+    return FUNNY_MESSAGES[Math.floor(Math.random() * FUNNY_MESSAGES.length)];
+  };
+
   useEffect(() => {
     if (!members || members.length === 0) return;
+    let cancelled = false;
     let timer: any;
-    const tick = () => {
+    const tick = async () => {
       const memberIdx = pickWeightedIndex(members);
-      const msgIdx = Math.floor(Math.random() * FUNNY_MESSAGES.length);
-      setSpot({ memberIdx, msgIdx, key: Date.now() });
-      timer = setTimeout(tick, 3500);
+      const member = members[memberIdx];
+      const message = await fetchAiMessage(member);
+      if (cancelled) return;
+      setSpot({ memberIdx, message, key: Date.now() });
+      timer = setTimeout(tick, 5500);
     };
     tick();
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [members]);
 
   const spotMember = spot && members ? members[spot.memberIdx] : null;
