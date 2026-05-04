@@ -273,19 +273,23 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
 
             </motion.div>
 
-            {/* Avatar with rotating ring */}
+            {/* Avatar with thin glossy ring */}
             <div className="relative">
               <motion.div
-                className="absolute -inset-3 rounded-full"
+                className="absolute -inset-1 rounded-full"
                 style={{
                   background:
                     "conic-gradient(from 0deg, hsl(var(--primary)), hsl(310 80% 60%), hsl(45 90% 55%), hsl(var(--primary)))",
+                  padding: "1.5px",
+                  WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
                 }}
                 animate={{ rotate: 360 }}
-                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               />
-              <div className="absolute -inset-6 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-60 animate-pulse" />
-              <div className="relative rounded-full bg-background p-1">
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-50 animate-pulse" />
+              <div className="relative rounded-full overflow-hidden">
                 {spotMember.photo_url ? (
                   <img
                     src={spotMember.photo_url}
@@ -303,8 +307,20 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
                     {(spotMember.full_name || "?").trim().charAt(0)}
                   </div>
                 )}
+                {/* Glossy sheen overlay */}
+                <span
+                  className="pointer-events-none absolute inset-0 rounded-full"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 30% 15%, hsl(0 0% 100% / 0.35), transparent 45%), linear-gradient(160deg, hsl(0 0% 100% / 0.15) 0%, transparent 35%, transparent 70%, hsl(0 0% 100% / 0.08) 100%)",
+                  }}
+                />
+                <span
+                  className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/20"
+                />
               </div>
             </div>
+
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
