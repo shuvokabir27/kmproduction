@@ -130,7 +130,7 @@ export function ZeroBalanceFun() {
                 {/* Speech bubble */}
                 <div className="relative px-4 py-2 rounded-2xl bg-card border border-primary/40 shadow-lg max-w-[80vw] md:max-w-md text-center">
                   <p className="text-xs md:text-sm font-semibold text-foreground">
-                    {FUNNY_MESSAGES[spot.msgIdx]}
+                    {spot.message}
                   </p>
                   <span className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/40" />
                 </div>
