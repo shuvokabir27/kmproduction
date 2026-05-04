@@ -1,13 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Sun, Moon, Star, RefreshCw, Share2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Sparkles, Sun, Moon, Star, RefreshCw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-// Simple seeded RNG (mulberry32)
+type HoroscopeMember = {
+  id?: string;
+  user_id?: string;
+  full_name: string;
+  designation?: string | null;
+  photo_url?: string | null;
+};
+
+type Pool = { generic: string[]; byRole: Record<string, string[]> };
+
 function mulberry32(seed: number) {
   return function () {
     seed |= 0;
@@ -27,8 +36,6 @@ function hashStr(s: string) {
   }
   return h >>> 0;
 }
-
-type Pool = { generic: string[]; byRole: Record<string, string[]> };
 
 const POOL: Pool = {
   generic: [
@@ -94,6 +101,15 @@ const POOL: Pool = {
   },
 };
 
+const LUCKY_COLORS = ["আকাশী 💙", "সবুজ 💚", "হলুদ 💛", "লাল ❤️", "বেগুনি 💜", "কমলা 🧡", "গোলাপি 💗"];
+const LUCKY_NUMBERS = ["৩", "৭", "৯", "১১", "১৩", "২১", "৫"];
+const MOODS = [
+  { label: "চাঙ্গা", icon: Sun },
+  { label: "শান্ত", icon: Moon },
+  { label: "জাদুকরী", icon: Sparkles },
+  { label: "ভাগ্যবান", icon: Star },
+];
+
 function pickRole(designation?: string | null): string[] {
   const d = (designation || "").toLowerCase();
   if (/(camera|ক্যামেরা|dop|cinematograph)/i.test(d)) return POOL.byRole.cameraman;
@@ -107,42 +123,41 @@ function pickRole(designation?: string | null): string[] {
   return [];
 }
 
-const LUCKY_COLORS = ["আকাশী 💙", "সবুজ 💚", "হলুদ 💛", "লাল ❤️", "বেগুনি 💜", "কমলা 🧡", "গোলাপি 💗"];
-const LUCKY_NUMBERS = ["৩", "৭", "৯", "১১", "১৩", "২১", "৫"];
-const MOODS = [
-  { label: "চাঙ্গা", icon: Sun },
-  { label: "শান্ত", icon: Moon },
-  { label: "জাদুকরী", icon: Sparkles },
-  { label: "ভাগ্যবান", icon: Star },
-];
+function createHoroscope(member: HoroscopeMember, dateKey: string, salt = 0) {
+  const id = member.id || member.user_id || member.full_name || "guest";
+  const seed = hashStr(`${id}|${dateKey}|${salt}`);
+  const rng = mulberry32(seed);
+  const rolePool = pickRole(member.designation);
+  const useRole = rolePool.length > 0 && rng() < 0.6;
+  const pool = useRole ? rolePool : POOL.generic;
+  const prediction = pool[Math.floor(rng() * pool.length)];
+  const color = LUCKY_COLORS[Math.floor(rng() * LUCKY_COLORS.length)];
+  const number = LUCKY_NUMBERS[Math.floor(rng() * LUCKY_NUMBERS.length)];
+  const mood = MOODS[Math.floor(rng() * MOODS.length)];
+  const score = 60 + Math.floor(rng() * 40);
+  return { prediction, color, number, mood, score };
+}
 
-export function DailyRashifal() {
-  const { profile } = useAuth();
-  const [shuffleSalt, setShuffleSalt] = useState(0);
-
-  const today = new Date();
-  const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-
-  const data = useMemo(() => {
-    const id = profile?.id || profile?.user_id || "guest";
-    const seed = hashStr(`${id}|${dateKey}|${shuffleSalt}`);
-    const rng = mulberry32(seed);
-    const rolePool = pickRole(profile?.designation);
-    // 60% role-specific, 40% generic if role pool exists
-    const useRole = rolePool.length > 0 && rng() < 0.6;
-    const pool = useRole ? rolePool : POOL.generic;
-    const prediction = pool[Math.floor(rng() * pool.length)];
-    const color = LUCKY_COLORS[Math.floor(rng() * LUCKY_COLORS.length)];
-    const number = LUCKY_NUMBERS[Math.floor(rng() * LUCKY_NUMBERS.length)];
-    const mood = MOODS[Math.floor(rng() * MOODS.length)];
-    const score = 60 + Math.floor(rng() * 40); // 60-99
-    return { prediction, color, number, mood, score };
-  }, [profile?.id, profile?.user_id, profile?.designation, dateKey, shuffleSalt]);
-
+function HoroscopeCard({
+  member,
+  dateKey,
+  shuffleSalt,
+  title,
+  subtitle,
+  autoTag,
+}: {
+  member: HoroscopeMember;
+  dateKey: string;
+  shuffleSalt: number;
+  title: string;
+  subtitle: string;
+  autoTag?: string;
+}) {
+  const data = useMemo(() => createHoroscope(member, dateKey, shuffleSalt), [member, dateKey, shuffleSalt]);
   const MoodIcon = data.mood.icon;
 
   const handleShare = async () => {
-    const text = `🔮 আজকের রাশিফল (${profile?.full_name || ""}):\n\n${data.prediction}\n\n🎨 ভাগ্যের রঙ: ${data.color}\n🔢 ভাগ্যের সংখ্যা: ${data.number}\n✨ মুড: ${data.mood.label}\n📊 দিনের স্কোর: ${data.score}/১০০`;
+    const text = `🔮 আজকের রাশিফল (${member.full_name || ""}):\n\n${data.prediction}\n\n🎨 ভাগ্যের রঙ: ${data.color}\n🔢 ভাগ্যের সংখ্যা: ${data.number}\n✨ মুড: ${data.mood.label}\n📊 দিনের স্কোর: ${data.score}/১০০`;
     try {
       if (navigator.share) {
         await navigator.share({ text });
@@ -159,46 +174,42 @@ export function DailyRashifal() {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-purple-500/10 via-primary/10 to-pink-500/10 backdrop-blur-sm p-4 md:p-5"
+      className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 backdrop-blur-sm p-4 md:p-5"
     >
-      {/* Decorative stars */}
       <div className="pointer-events-none absolute inset-0 opacity-30">
-        <div className="absolute top-3 right-6 text-yellow-300">✨</div>
-        <div className="absolute bottom-4 left-8 text-pink-300">⭐</div>
-        <div className="absolute top-10 left-1/3 text-cyan-300">💫</div>
+        <div className="absolute top-3 right-6 text-primary/80">✨</div>
+        <div className="absolute bottom-4 left-8 text-primary/70">⭐</div>
+        <div className="absolute top-10 left-1/3 text-primary/60">💫</div>
       </div>
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3 gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            {/* Big member photo */}
             <div className="relative shrink-0">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-400 blur-md opacity-70" />
-              <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-background shadow-xl ring-2 ring-pink-400/40">
-                {profile?.photo_url ? (
-                  <img src={profile.photo_url} alt={profile?.full_name || ""} className="h-full w-full object-cover" />
+              <div className="absolute -inset-1 rounded-full bg-primary/35 blur-md opacity-90" />
+              <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-background shadow-xl ring-2 ring-primary/40">
+                {member.photo_url ? (
+                  <img src={member.photo_url} alt={member.full_name || ""} className="h-full w-full object-cover" />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xl md:text-2xl font-bold">
-                    {profile?.full_name?.charAt(0) || "U"}
+                  <div className="h-full w-full flex items-center justify-center bg-primary text-primary-foreground text-xl md:text-2xl font-bold">
+                    {member.full_name?.charAt(0) || "U"}
                   </div>
                 )}
               </div>
-              <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/40 border-2 border-background">
-                <Sparkles className="h-3 w-3 text-white" />
+              <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-background">
+                <Sparkles className="h-3 w-3 text-primary-foreground" />
               </div>
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm md:text-base font-bold text-foreground leading-tight">আজকের রাশিফল 🔮</h3>
-              <p className="text-xs md:text-sm font-semibold text-foreground/90 truncate">
-                {profile?.full_name || "তুমি"}
-              </p>
-              <p className="text-[10px] md:text-xs text-muted-foreground">শুধুই মজার জন্য 😄</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm md:text-base font-bold text-foreground leading-tight">{title}</h3>
+                {autoTag ? <span className="text-[10px] px-2 py-0.5 rounded-full border border-border/50 bg-background/30 text-muted-foreground">{autoTag}</span> : null}
+              </div>
+              <p className="text-xs md:text-sm font-semibold text-foreground/90 truncate">{member.full_name || "তুমি"}</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{subtitle}</p>
             </div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setShuffleSalt((s) => s + 1)} title="আবার দেখো">
-              <RefreshCw className="h-4 w-4" />
-            </Button>
             <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleShare} title="শেয়ার">
               <Share2 className="h-4 w-4" />
             </Button>
@@ -207,16 +218,14 @@ export function DailyRashifal() {
 
         <AnimatePresence mode="wait">
           <motion.div
-            key={data.prediction}
+            key={`${member.id || member.user_id || member.full_name}-${shuffleSalt}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.3 }}
             className="rounded-xl bg-background/40 border border-border/40 p-3 md:p-4 mb-3"
           >
-            <p className="text-sm md:text-base text-foreground leading-relaxed font-medium">
-              {data.prediction}
-            </p>
+            <p className="text-sm md:text-base text-foreground leading-relaxed font-medium">{data.prediction}</p>
           </motion.div>
         </AnimatePresence>
 
@@ -240,10 +249,7 @@ export function DailyRashifal() {
             <p className="text-[10px] text-muted-foreground">দিনের স্কোর</p>
             <div className="flex items-center gap-1.5">
               <div className="flex-1 h-1.5 rounded-full bg-border/50 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500"
-                  style={{ width: `${data.score}%` }}
-                />
+                <div className="h-full bg-primary" style={{ width: `${data.score}%` }} />
               </div>
               <span className="text-[10px] font-bold text-foreground">{data.score}</span>
             </div>
@@ -251,5 +257,102 @@ export function DailyRashifal() {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+export function DailyRashifal({
+  mode = "self",
+  className = "",
+}: {
+  mode?: "self" | "all" | "public";
+  className?: string;
+}) {
+  const { profile } = useAuth();
+  const [shuffleSalt, setShuffleSalt] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const today = new Date();
+  const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+  const { data: publicMembers = [] } = useQuery({
+    queryKey: ["public-rashifal-members", mode],
+    enabled: mode !== "self",
+    queryFn: async () => {
+      const { data } = await supabase.rpc("get_public_profiles");
+      return ((data as any[]) ?? []).map((member) => ({
+        id: member.id,
+        user_id: member.user_id,
+        full_name: member.full_name,
+        designation: member.designation,
+        photo_url: member.photo_url,
+      })) as HoroscopeMember[];
+    },
+  });
+
+  const selfMember = useMemo(() => {
+    if (!profile?.full_name) return null;
+    return {
+      id: profile.id,
+      user_id: profile.user_id,
+      full_name: profile.full_name,
+      designation: profile.designation,
+      photo_url: profile.photo_url,
+    } as HoroscopeMember;
+  }, [profile]);
+
+  const members = useMemo(() => {
+    if (mode === "self") return selfMember ? [selfMember] : [];
+    return publicMembers;
+  }, [mode, publicMembers, selfMember]);
+
+  useEffect(() => {
+    if (mode === "self" || members.length <= 1) return;
+    const timer = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % members.length);
+      setShuffleSalt((prev) => prev + 1);
+    }, 20000);
+    return () => window.clearInterval(timer);
+  }, [mode, members.length]);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [members.length, mode]);
+
+  const activeMember = members[activeIndex] ?? null;
+
+  if (!activeMember) return null;
+
+  const title = mode === "self" ? "তোমার আজকের রাশিফল 🔮" : "আজকের রাশিফল 🔮";
+  const subtitle = mode === "self" ? "শুধুই মজার জন্য 😄" : "সকল মেম্বারের রাশিফল এক এক করে আসবে ✨";
+
+  return (
+    <div className={className}>
+      <HoroscopeCard
+        member={activeMember}
+        dateKey={dateKey}
+        shuffleSalt={shuffleSalt}
+        title={title}
+        subtitle={subtitle}
+        autoTag={mode === "self" ? undefined : "Auto • 20s"}
+      />
+
+      {mode !== "self" && members.length > 1 ? (
+        <div className="mt-3 flex items-center justify-center gap-1.5">
+          {members.slice(0, Math.min(members.length, 8)).map((member, idx) => (
+            <button
+              key={member.id || member.user_id || `${member.full_name}-${idx}`}
+              type="button"
+              onClick={() => {
+                setActiveIndex(idx);
+                setShuffleSalt((prev) => prev + 1);
+              }}
+              className={`h-2 rounded-full transition-all ${idx === activeIndex ? "w-6 bg-primary" : "w-2 bg-border hover:bg-primary/50"}`}
+              title={member.full_name}
+              aria-label={member.full_name}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }
