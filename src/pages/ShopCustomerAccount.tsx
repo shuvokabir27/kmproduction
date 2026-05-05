@@ -253,6 +253,60 @@ export default function ShopCustomerAccount() {
         </div>
       </main>
       <MobileShopNav />
+
+      <Dialog open={!!trackOrder} onOpenChange={(o) => !o && setTrackOrder(null)}>
+        <DialogContent className="max-w-md" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Truck className="h-5 w-5" style={{ color: BRAND_GREEN }} /> অর্ডার ট্র্যাকিং</DialogTitle>
+          </DialogHeader>
+          {trackOrder && (() => {
+            const steps = [
+              { key: "pending", label: "অপেক্ষমান", icon: Clock },
+              { key: "confirmed", label: "নিশ্চিত হয়েছে", icon: CheckCircle2 },
+              { key: "shipped", label: "পাঠানো হয়েছে", icon: Truck },
+              { key: "delivered", label: "ডেলিভারড", icon: Package },
+            ];
+            const cancelled = trackOrder.status === "cancelled" || trackOrder.status === "returned" || trackOrder.status === "abandoned";
+            const currentIdx = steps.findIndex((s) => s.key === trackOrder.status);
+            return (
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-xl p-3 text-sm">
+                  <div className="font-bold text-gray-900">{trackOrder.product_name}</div>
+                  <div className="text-xs text-gray-500 mt-1">অর্ডার #{toBn(trackOrder.order_number)} · ৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</div>
+                </div>
+                {cancelled ? (
+                  <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-xl">
+                    <X className="h-5 w-5" />
+                    <span className="font-bold">{statusLabel(trackOrder.status).t}</span>
+                  </div>
+                ) : (
+                  <div className="space-y-0">
+                    {steps.map((s, i) => {
+                      const done = currentIdx >= i;
+                      const active = currentIdx === i;
+                      const Icon = s.icon;
+                      return (
+                        <div key={s.key} className="flex gap-3">
+                          <div className="flex flex-col items-center">
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center ${done ? "text-white" : "bg-gray-100 text-gray-400"} ${active ? "ring-4 ring-green-100" : ""}`} style={done ? { backgroundColor: BRAND_GREEN } : {}}>
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            {i < steps.length - 1 && <div className={`w-0.5 flex-1 min-h-[24px] ${currentIdx > i ? "" : "bg-gray-200"}`} style={currentIdx > i ? { backgroundColor: BRAND_GREEN } : {}} />}
+                          </div>
+                          <div className="pb-5 pt-1.5">
+                            <div className={`text-sm font-bold ${done ? "text-gray-900" : "text-gray-400"}`}>{s.label}</div>
+                            {active && <div className="text-xs text-gray-500 mt-0.5">বর্তমান অবস্থা</div>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
