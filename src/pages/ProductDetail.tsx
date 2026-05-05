@@ -298,6 +298,37 @@ const ProductDetail = () => {
               {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{product.category}</span></span>}
             </div>
 
+            {/* Variants (size / weight / option) */}
+            {variants.length > 0 && (
+              <div className="mt-6">
+                <Label className="text-sm font-semibold text-gray-800 block mb-2">
+                  {(product as any).unit_type === "kg" ? "ওজন বাছাই করুন" : (product as any).unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"}
+                  <span className="text-red-500"> *</span>
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {variants.map((v: any, i: number) => {
+                    const vPrice = v.discount_price ?? v.price;
+                    const vDiscount = v.discount_price != null && Number(v.discount_price) < Number(v.price);
+                    const active = selectedVariantIdx === i;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setSelectedVariantIdx(i)}
+                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-green-600 bg-green-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                      >
+                        <div className="font-bold text-sm text-gray-900">{v.label}</div>
+                        <div className="text-xs">
+                          <span className="font-bold" style={{ color: BRAND_GREEN }}>৳{toBn(Number(vPrice))}</span>
+                          {vDiscount && <span className="line-through text-gray-400 ml-1">৳{toBn(Number(v.price))}</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Quantity */}
             <div className="mt-6">
               <Label className="text-sm font-semibold text-gray-800 block mb-2">পরিমাণ</Label>
