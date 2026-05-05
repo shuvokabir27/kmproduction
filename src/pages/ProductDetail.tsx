@@ -518,6 +518,34 @@ const ProductDetail = () => {
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
                   </Button>
+                  {whatsappNo && (
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const lines = [
+                          `🛒 *নতুন অর্ডার*`,
+                          ``,
+                          `📦 পণ্য: ${product?.name || ""}`,
+                          `🔢 পরিমাণ: ${toBn(qty)}`,
+                          `💰 একক মূল্য: ৳${toBn(unitPrice)}`,
+                          `🧾 সাবটোটাল: ৳${toBn(total)}`,
+                          `🚚 ডেলিভারি: ${dlv.isFree ? "ফ্রি" : `৳${toBn(dlv.charge)}`}`,
+                          `✅ মোট পেমেন্ট: ৳${toBn(grandTotal)}`,
+                          `💵 পেমেন্ট: ক্যাশ অন ডেলিভারি`,
+                          ``,
+                          `👤 নাম: ${orderForm.name || "-"}`,
+                          `📱 মোবাইল: ${orderForm.phone || "-"}`,
+                          `📍 ঠিকানা: ${orderForm.address || "-"}`,
+                        ];
+                        const url = `https://wa.me/${whatsappNo.replace(/\D/g, "")}?text=${encodeURIComponent(lines.join("\n"))}`;
+                        window.open(url, "_blank");
+                      }}
+                      className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg bg-[#25D366] hover:bg-[#1ebe57]"
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                      WhatsApp এ অর্ডার পাঠান
+                    </Button>
+                  )}
                   <p className="text-center text-gray-400 text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
                 </div>
               </>
