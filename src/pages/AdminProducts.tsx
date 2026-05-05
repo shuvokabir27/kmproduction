@@ -37,6 +37,11 @@ const AdminProducts = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [orderInitialTab, setOrderInitialTab] = useState<string | undefined>(undefined);
+  const goToTab = (tab: string, orderTab?: string) => {
+    setActiveTab(tab);
+    if (orderTab) setOrderInitialTab(orderTab);
+  };
   const [productCategory, setProductCategory] = useState<"taler_gur" | "other">("taler_gur");
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
