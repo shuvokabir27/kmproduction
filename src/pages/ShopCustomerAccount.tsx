@@ -42,6 +42,29 @@ export default function ShopCustomerAccount() {
     if (!loading && !customer) nav("/shop/login", { replace: true });
   }, [loading, customer, nav]);
 
+  // Live status: poll every 8s while visible + on focus/visibility change
+  useEffect(() => {
+    if (!customer) return;
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") refresh();
+    }, 8000);
+    const onVis = () => { if (document.visibilityState === "visible") refresh(); };
+    window.addEventListener("focus", onVis);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onVis);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [customer, refresh]);
+
+  // Keep tracking modal in sync with latest order data
+  useEffect(() => {
+    if (!trackOrder) return;
+    const fresh = orders.find((o) => o.id === trackOrder.id);
+    if (fresh && fresh.status !== trackOrder.status) setTrackOrder(fresh);
+  }, [orders, trackOrder]);
+
   useEffect(() => {
     if (customer) setForm({
       full_name: customer.full_name || "",
