@@ -80,6 +80,8 @@ const App = () => (
             <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/shop/login" element={<ShopCustomerLogin />} />
+            <Route path="/shop/account" element={<ShopCustomerAccount />} />
             <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />
