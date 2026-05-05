@@ -19,7 +19,7 @@ export default function ShopOfferPopup() {
     queryFn: async () => {
       const { data } = await supabase
         .from("shop_offers" as any)
-        .select("*, products(name, image_url, price, discount_price)")
+        .select("*")
         .eq("is_active", true)
         .eq("show_popup", true)
         .order("popup_priority", { ascending: false })
@@ -75,7 +75,7 @@ export default function ShopOfferPopup() {
     setClosed(true);
   };
 
-  const product = (offer as any).products;
+  const product = null as any;
   const isFree = offer.discount_type === "free_delivery";
   const isPct = offer.discount_type === "percentage";
   const discountText = isFree
@@ -227,28 +227,16 @@ export default function ShopOfferPopup() {
             </div>
           )}
 
-          {isCombo ? (
-            <button
-              onClick={handleOrderCombo}
-              className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
-            >
-              <span className="inline-flex items-center gap-2">
-                <ShoppingBag className="h-5 w-5" />
-                কম্বো অর্ডার করুন
-              </span>
-            </button>
-          ) : (
-            <Link
-              to={ctaLink}
-              onClick={dismiss}
-              className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
-            >
-              <span className="inline-flex items-center gap-2">
-                <ShoppingBag className="h-5 w-5" />
-                এখনই অর্ডার করুন
-              </span>
-            </Link>
-          )}
+          <Link
+            to={`/offer/${offer.id}`}
+            onClick={dismiss}
+            className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+          >
+            <span className="inline-flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5" />
+              অফার দেখুন ও অর্ডার করুন
+            </span>
+          </Link>
 
           <button onClick={dismiss} className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">
             পরে দেখব
