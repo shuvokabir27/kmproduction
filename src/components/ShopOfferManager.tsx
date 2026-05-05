@@ -240,9 +240,9 @@ export default function ShopOfferManager() {
                 {form.combo_products.length === 0 && <p className="text-xs text-muted-foreground">কম্বোতে যোগ করতে প্রডাক্ট বাছাই করুন</p>}
                 {form.combo_products.map((c, idx) => (
                   <div key={idx} className="flex gap-2 items-center">
-                    <Select value={c.product_id || "_"} onValueChange={(v) => {
+                    <Select value={c.product_id || undefined} onValueChange={(v) => {
                       const next = [...form.combo_products];
-                      next[idx] = { ...next[idx], product_id: v === "_" ? "" : v };
+                      next[idx] = { ...next[idx], product_id: v };
                       setForm(f => ({ ...f, combo_products: next }));
                     }}>
                       <SelectTrigger className="flex-1"><SelectValue placeholder="প্রডাক্ট বাছাই" /></SelectTrigger>
