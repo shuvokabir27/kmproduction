@@ -762,6 +762,17 @@ const Products = () => {
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
                   </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const ok = addProductToCart(selectedProduct, Math.max(1, quantity), selectedVariantIdx);
+                      if (ok) setOrderOpen(false);
+                    }}
+                    className="w-full font-bold text-sm h-12 rounded-2xl gap-2 border-2"
+                    style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                  >
+                    <ShoppingCart className="h-4 w-4" /> কার্টে যুক্ত করুন (আরো প্রডাক্ট কিনুন)
+                  </Button>
                   <p className="text-center text-gray-400 text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
                 </div>
               </>
