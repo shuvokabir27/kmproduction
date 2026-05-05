@@ -34,7 +34,12 @@ export function BestSellersSection() {
         return { ...p, sold: byId + byName };
       });
       ranked.sort((a, b) => b.sold - a.sold);
-      return ranked.filter((p) => p.sold > 0).slice(0, 12);
+      const sold = ranked.filter((p) => p.sold > 0);
+      if (sold.length >= 4) return sold.slice(0, 12);
+      // Fallback: featured first, then rest
+      const featured = ranked.filter((p) => p.is_featured);
+      const others = ranked.filter((p) => !p.is_featured);
+      return [...sold, ...featured, ...others].filter((p, i, a) => a.findIndex((x) => x.id === p.id) === i).slice(0, 12);
     },
   });
 
