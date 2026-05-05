@@ -176,6 +176,11 @@ export default function ShopOfferBanner() {
                       <span>{toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়</span>
                     </div>
                   )}
+                  {offer.combo_free_delivery && (
+                    <div className="inline-flex items-center gap-1.5 bg-blue-500 rounded-full px-3 py-1 text-xs font-bold">
+                      <Truck className="h-3 w-3" /> ফ্রি ডেলিভারি
+                    </div>
+                  )}
                 </div>
               )}
 
