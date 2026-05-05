@@ -971,49 +971,7 @@ const Products = () => {
         </div>
       )}
 
-      {/* Mobile bottom nav (app-like) */}
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t shadow-[0_-2px_10px_rgba(0,0,0,0.06)]"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      >
-        <div className="grid grid-cols-4 text-[11px] font-semibold text-gray-700">
-          <Link to="/products" className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50">
-            <Home className="h-5 w-5" style={{ color: BRAND_GREEN }} />
-            <span>হোম</span>
-          </Link>
-          <a href="#shop" className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50">
-            <ShoppingBag className="h-5 w-5" style={{ color: BRAND_GREEN }} />
-            <span>শপ</span>
-          </a>
-          <button onClick={cart.open} className="relative flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50">
-            <div className="relative">
-              <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
-              {cart.count > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
-                  {toBn(cart.count)}
-                </span>
-              )}
-            </div>
-            <span>কার্ট</span>
-          </button>
-          {whatsappNo ? (
-            <a
-              href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50"
-            >
-              <MessageCircle className="h-5 w-5 text-green-600" />
-              <span>WhatsApp</span>
-            </a>
-          ) : (
-            <span className="flex flex-col items-center justify-center py-2 gap-0.5 text-gray-400">
-              <MessageCircle className="h-5 w-5" />
-              <span>WhatsApp</span>
-            </span>
-          )}
-        </div>
-      </nav>
+      <MobileShopNav />
     </div>
   );
 };
