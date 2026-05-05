@@ -264,6 +264,14 @@ const Products = () => {
           </div>
 
           <div className="md:hidden flex items-center gap-1">
+            <button onClick={cart.open} className="relative p-2 rounded-lg hover:bg-gray-100" aria-label="cart">
+              <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+              {cart.count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
+                  {toBn(cart.count)}
+                </span>
+              )}
+            </button>
             <Link
               to={shopCustomer ? "/shop/account" : "/shop/login"}
               className="p-2 rounded-lg hover:bg-gray-100"
