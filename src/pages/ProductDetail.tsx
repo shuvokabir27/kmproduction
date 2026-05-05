@@ -561,13 +561,6 @@ const ProductDetail = () => {
                           ৳{toBn(grandTotal)}
                         </span>
                       </div>
-                      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 p-[1.5px] shadow-md">
-                        <div className="rounded-[10px] bg-gradient-to-r from-emerald-50 to-green-50 px-3 py-2 flex items-center justify-center gap-2">
-                          <span className="text-base">💵</span>
-                          <span className="text-[12px] font-extrabold text-emerald-800 tracking-wide">ক্যাশ অন ডেলিভারি</span>
-                          <span className="text-[11px] text-emerald-700">— পণ্য হাতে পেয়ে পেমেন্ট</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
