@@ -58,7 +58,7 @@ import ProductDetail from "./pages/ProductDetail";
 import ShopCustomerLogin from "./pages/ShopCustomerLogin";
 import ShopCustomerAccount from "./pages/ShopCustomerAccount";
 import AdminProducts from "./pages/AdminProducts";
-import TalerGurLanding from "./pages/TalerGurLanding";
+
 import TasksPage from "./pages/TasksPage";
 import DownloadApp from "./pages/DownloadApp";
 import AdminAppVersions from "./pages/AdminAppVersions";
@@ -89,7 +89,7 @@ const App = () => (
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/shop/login" element={<ShopCustomerLogin />} />
             <Route path="/shop/account" element={<ShopCustomerAccount />} />
-            <Route path="/taler-gur" element={<TalerGurLanding />} />
+            
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:category/:postNumber" element={<News />} />
