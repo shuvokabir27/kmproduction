@@ -193,18 +193,19 @@ const OrderManagement = () => {
 
   // Filter orders
   const filtered = (orders ?? []).filter((o: any) => {
-    if (activeTab === "payment_verify") {
-      const pm = o.payment_method;
-      return pm === "bkash" || pm === "nagad";
-    }
-    if (activeTab !== "all" && o.status !== activeTab) return false;
+    // When searching, search across ALL orders (ignore tab filter)
     if (search) {
-      const s = search.toLowerCase();
+      const s = search.toLowerCase().trim();
       return o.customer_name?.toLowerCase().includes(s) ||
         o.customer_phone?.includes(s) ||
         o.product_name?.toLowerCase().includes(s) ||
         String(o.order_number)?.includes(s);
     }
+    if (activeTab === "payment_verify") {
+      const pm = o.payment_method;
+      return pm === "bkash" || pm === "nagad";
+    }
+    if (activeTab !== "all" && o.status !== activeTab) return false;
     return true;
   });
 
@@ -480,8 +481,14 @@ const OrderManagement = () => {
                       <StatusIcon className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <span className="text-xs text-muted-foreground">#{toBn(order.order_number)}</span>
-                      <h4 className="font-semibold text-foreground text-sm leading-tight">{order.customer_name}</h4>
+                      <button
+                        onClick={() => setViewDialog(order)}
+                        className="text-[11px] font-extrabold tracking-wide px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition cursor-pointer"
+                        title="বিস্তারিত দেখুন"
+                      >
+                        #{toBn(order.order_number)}
+                      </button>
+                      <h4 className="font-semibold text-foreground text-sm leading-tight mt-0.5">{order.customer_name}</h4>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
