@@ -51,20 +51,30 @@ export default function ShopCustomerAccount() {
   useEffect(() => {
     if (orders.length === 0) { setProductMap({}); setProductByName({}); return; }
     (async () => {
-      const ids = Array.from(new Set(orders.map((o: any) => o.product_id).filter(Boolean)));
-      const names = Array.from(new Set(orders.map((o: any) => o.product_name).filter(Boolean)));
-      const [byId, byName] = await Promise.all([
-        ids.length ? supabase.from("products").select("id, name, stock_status, is_active").in("id", ids) : Promise.resolve({ data: [] as any[] }),
-        names.length ? supabase.from("products").select("id, name, stock_status, is_active").in("name", names) : Promise.resolve({ data: [] as any[] }),
-      ]);
+      const { data: allProducts } = await supabase.from("products").select("id, name, stock_status, is_active");
       const mapId: Record<string, any> = {};
-      (byId.data || []).forEach((p: any) => { mapId[p.id] = p; });
       const mapName: Record<string, any> = {};
-      (byName.data || []).forEach((p: any) => { mapName[p.name] = p; });
+      (allProducts || []).forEach((p: any) => {
+        mapId[p.id] = p;
+        mapName[p.name.trim().toLowerCase()] = p;
+      });
       setProductMap(mapId);
       setProductByName(mapName);
     })();
   }, [orders]);
+
+  const findProduct = (o: any) => {
+    if (o.product_id && productMap[o.product_id]) return productMap[o.product_id];
+    const raw = (o.product_name || "").trim().toLowerCase();
+    if (productByName[raw]) return productByName[raw];
+    const base = raw.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    if (base && productByName[base]) return productByName[base];
+    // partial: order name starts with product name
+    for (const key of Object.keys(productByName)) {
+      if (raw.startsWith(key) || key.startsWith(base)) return productByName[key];
+    }
+    return null;
+  };
 
   const saveProfile = async () => {
     if (!form.full_name.trim()) { toast.error("নাম দিন"); return; }
