@@ -535,6 +535,33 @@ const ProductDetail = () => {
                     </div>
                   </div>
 
+                </div>
+
+
+                <div className="p-5 space-y-4">
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                    <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-gray-200 bg-gray-50/50" />
+                  </div>
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল <span className="text-red-500">*</span></Label>
+                    <Input value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-gray-50/50 ${phoneError ? 'border-red-300' : 'border-gray-200'}`} />
+                    {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
+                  </div>
+                  <div>
+                    <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                    <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 resize-none" />
+                  </div>
+                  <PaymentMethodPicker
+                    settings={siteSettings}
+                    method={orderForm.payment_method}
+                    senderNo={orderForm.payment_sender_no}
+                    trxId={orderForm.payment_trx_id}
+                    onMethodChange={(m) => setOrderForm(f => ({ ...f, payment_method: m }))}
+                    onSenderNoChange={(v) => setOrderForm(f => ({ ...f, payment_sender_no: v }))}
+                    onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
+                  />
+
                   <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 shadow-lg">
                     <div className="rounded-[14px] bg-gradient-to-br from-amber-50 via-white to-yellow-50 p-3.5 space-y-2 text-sm">
                       <div className="flex items-center justify-between">
@@ -563,31 +590,7 @@ const ProductDetail = () => {
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-5 space-y-4">
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
-                    <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-gray-200 bg-gray-50/50" />
-                  </div>
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল <span className="text-red-500">*</span></Label>
-                    <Input value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-gray-50/50 ${phoneError ? 'border-red-300' : 'border-gray-200'}`} />
-                    {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
-                  </div>
-                  <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
-                    <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 resize-none" />
-                  </div>
-                  <PaymentMethodPicker
-                    settings={siteSettings}
-                    method={orderForm.payment_method}
-                    senderNo={orderForm.payment_sender_no}
-                    trxId={orderForm.payment_trx_id}
-                    onMethodChange={(m) => setOrderForm(f => ({ ...f, payment_method: m }))}
-                    onSenderNoChange={(v) => setOrderForm(f => ({ ...f, payment_sender_no: v }))}
-                    onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
-                  />
                   <Button onClick={handleOrderSubmit} disabled={submitting} className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
