@@ -31,6 +31,10 @@ const ProductDetail = () => {
     if (searchParams.get("order") === "1") setOrderOpen(true);
   }, [searchParams]);
 
+  useEffect(() => {
+    setSelectedVariantIdx(-1);
+  }, [id]);
+
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
   const [tab, setTab] = useState<"desc" | "reviews">("desc");
@@ -39,6 +43,7 @@ const ProductDetail = () => {
   const [submitting, setSubmitting] = useState(false);
   const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" as "cod" | "bkash" | "nagad" | "rocket", payment_sender_no: "", payment_trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
+  const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product-detail", id],
@@ -48,6 +53,11 @@ const ProductDetail = () => {
       return data;
     },
   });
+
+  useEffect(() => {
+    const v: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
+    if (v.length > 0) setSelectedVariantIdx(prev => (prev < 0 ? 0 : prev));
+  }, [product]);
 
   const { data: related } = useQuery({
     queryKey: ["related-products", product?.category, id],
@@ -83,11 +93,20 @@ const ProductDetail = () => {
     return arr.length ? arr : [""];
   }, [product]);
 
-  const hasDiscount = product?.discount_price && product.discount_price < product.price;
-  const unitPrice = hasDiscount ? product!.discount_price! : product?.price ?? 0;
+  const variants: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
+  const chosenVariant = variants.length > 0 && selectedVariantIdx >= 0 ? variants[selectedVariantIdx] : null;
+  const baseHasDiscount = product?.discount_price && product.discount_price < product.price;
+  const variantHasDiscount = chosenVariant && chosenVariant.discount_price != null && Number(chosenVariant.discount_price) < Number(chosenVariant.price);
+  const hasDiscount = chosenVariant ? variantHasDiscount : baseHasDiscount;
+  const origPrice = chosenVariant ? Number(chosenVariant.price ?? 0) : Number(product?.price ?? 0);
+  const unitPrice = chosenVariant
+    ? Number(chosenVariant.discount_price ?? chosenVariant.price ?? 0)
+    : (baseHasDiscount ? product!.discount_price! : product?.price ?? 0);
   const total = unitPrice * qty;
-  const discountPct = hasDiscount ? Math.round(((product!.price - product!.discount_price!) / product!.price) * 100) : 0;
-  const totalWeight = Number(product?.weight_grams || 0) * qty;
+  const discountPct = hasDiscount && origPrice > 0 ? Math.round(((origPrice - unitPrice) / origPrice) * 100) : 0;
+  const variantWeight = chosenVariant && chosenVariant.weight_grams != null ? Number(chosenVariant.weight_grams) : null;
+  const wPer = variantWeight && variantWeight > 0 ? variantWeight : Number(product?.weight_grams || 0);
+  const totalWeight = wPer * qty;
   const dlv = calculateDelivery(total, totalWeight, deliverySettings);
   const grandTotal = total + dlv.charge;
 
@@ -101,17 +120,21 @@ const ProductDetail = () => {
     if (!orderForm.name.trim()) return toast.error("আপনার নাম দিন");
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) return toast.error("আপনার ঠিকানা দিন");
+    if (variants.length > 0 && !chosenVariant) return toast.error("একটি অপশন বাছাই করুন");
     if (orderForm.payment_method !== "cod") {
       if (orderForm.payment_sender_no.length !== 11) return toast.error("আপনার পেমেন্ট নম্বর দিন (১১ ডিজিট)");
       if (!orderForm.payment_trx_id.trim()) return toast.error("ট্রানজেকশন আইডি দিন");
     }
     setSubmitting(true);
     try {
+      const variantLabel = chosenVariant ? String(chosenVariant.label) : null;
+      const baseName = product?.name || "প্রডাক্ট";
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
-        product_name: product?.name || "প্রডাক্ট",
+        product_name: variantLabel ? `${baseName} (${variantLabel})` : baseName,
+        variant_label: variantLabel,
         quantity: qty,
         unit_price: unitPrice,
         total_amount: grandTotal,
@@ -266,11 +289,11 @@ const ProductDetail = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{product.name}</h1>
 
             <div className="flex items-baseline gap-3 mt-4 pb-4 border-b">
-              {hasDiscount && <span className="text-lg text-gray-400 line-through">৳{toBn(product.price)}</span>}
+              {hasDiscount && <span className="text-lg text-gray-400 line-through">৳{toBn(origPrice)}</span>}
               <span className="text-3xl font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(unitPrice)}</span>
               {hasDiscount && (
                 <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
-                  সাশ্রয় ৳{toBn(product.price - product.discount_price!)}
+                  সাশ্রয় ৳{toBn(origPrice - unitPrice)}
                 </span>
               )}
             </div>
@@ -287,6 +310,37 @@ const ProductDetail = () => {
               </span>
               {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{product.category}</span></span>}
             </div>
+
+            {/* Variants (size / weight / option) */}
+            {variants.length > 0 && (
+              <div className="mt-6">
+                <Label className="text-sm font-semibold text-gray-800 block mb-2">
+                  {(product as any).unit_type === "kg" ? "ওজন বাছাই করুন" : (product as any).unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"}
+                  <span className="text-red-500"> *</span>
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {variants.map((v: any, i: number) => {
+                    const vPrice = v.discount_price ?? v.price;
+                    const vDiscount = v.discount_price != null && Number(v.discount_price) < Number(v.price);
+                    const active = selectedVariantIdx === i;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setSelectedVariantIdx(i)}
+                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-green-600 bg-green-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                      >
+                        <div className="font-bold text-sm text-gray-900">{v.label}</div>
+                        <div className="text-xs">
+                          <span className="font-bold" style={{ color: BRAND_GREEN }}>৳{toBn(Number(vPrice))}</span>
+                          {vDiscount && <span className="line-through text-gray-400 ml-1">৳{toBn(Number(v.price))}</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Quantity */}
             <div className="mt-6">
@@ -311,15 +365,16 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 gap-3 mt-6">
               <Button
                 onClick={() => {
+                  if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
                   cart.addItem({
                     product_id: product!.id,
-                    product_name: product!.name,
+                    product_name: chosenVariant ? `${product!.name} (${chosenVariant.label})` : product!.name,
                     image_url: product!.image_url,
-                    variant_label: null,
+                    variant_label: chosenVariant ? String(chosenVariant.label) : null,
                     unit_price: unitPrice,
                     quantity: qty,
                     unit_type: (product as any)?.unit_type ?? null,
-                    weight_grams: Number((product as any)?.weight_grams || 0),
+                    weight_grams: wPer,
                   });
                   toast.success("কার্টে যুক্ত হয়েছে");
                   cart.open();
@@ -330,7 +385,14 @@ const ProductDetail = () => {
               >
                 <ShoppingCart className="h-4 w-4" /> Add to Cart
               </Button>
-              <Button onClick={openOrder} className="h-12 rounded-full font-bold text-white gap-2" style={{ backgroundColor: ACCENT_RED }}>
+              <Button
+                onClick={() => {
+                  if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
+                  openOrder();
+                }}
+                className="h-12 rounded-full font-bold text-white gap-2"
+                style={{ backgroundColor: ACCENT_RED }}
+              >
                 Buy Now
               </Button>
             </div>
@@ -465,9 +527,11 @@ const ProductDetail = () => {
                       <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
-                        {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(product!.price * qty)}</span>}
+                        {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(origPrice * qty)}</span>}
                       </div>
-                      <p className="text-[11px] text-gray-500 line-clamp-1">{product.name}</p>
+                      <p className="text-[11px] text-gray-500 line-clamp-1">
+                        {product.name}{chosenVariant ? ` — ${chosenVariant.label}` : ""}
+                      </p>
                     </div>
                   </div>
 
