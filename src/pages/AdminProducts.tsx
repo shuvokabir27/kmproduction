@@ -17,7 +17,7 @@ import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
   LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree, Truck
 } from "lucide-react";
-import LandingPageEditor from "@/components/LandingPageEditor";
+
 import OrderManagement from "@/components/OrderManagement";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
 import CustomerCRM from "@/components/CustomerCRM";
@@ -235,10 +235,6 @@ const AdminProducts = () => {
             <Play className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ভিডিও</span>
           </TabsTrigger>
-          <TabsTrigger value="landing" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <FileText className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ল্যান্ডিং</span>
-          </TabsTrigger>
           <TabsTrigger value="reports" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <BarChart3 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">রিপোর্ট</span>
@@ -377,11 +373,6 @@ const AdminProducts = () => {
         {/* Videos Tab */}
         <TabsContent value="videos" className="mt-4">
           <ProductVideoManager />
-        </TabsContent>
-
-        {/* Landing Page Tab */}
-        <TabsContent value="landing" className="mt-4">
-          <LandingPageEditor />
         </TabsContent>
 
         {/* Reports Tab */}
