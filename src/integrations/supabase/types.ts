@@ -2843,6 +2843,8 @@ export type Database = {
       shop_offers: {
         Row: {
           badge_text: string | null
+          combo_price: number | null
+          combo_products: Json
           created_at: string
           created_by: string | null
           description: string | null
@@ -2861,6 +2863,8 @@ export type Database = {
         }
         Insert: {
           badge_text?: string | null
+          combo_price?: number | null
+          combo_products?: Json
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -2879,6 +2883,8 @@ export type Database = {
         }
         Update: {
           badge_text?: string | null
+          combo_price?: number | null
+          combo_products?: Json
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -3279,7 +3285,7 @@ export type Database = {
       pricing_type: "hourly" | "per_minute" | "event" | "fixed"
       salary_change_type: "amount_increase" | "amount_decrease" | "type_change"
       salary_type: "daily" | "monthly"
-      shop_offer_type: "percentage" | "fixed" | "free_delivery"
+      shop_offer_type: "percentage" | "fixed" | "free_delivery" | "combo"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "done" | "cancelled"
     }
@@ -3434,7 +3440,7 @@ export const Constants = {
       pricing_type: ["hourly", "per_minute", "event", "fixed"],
       salary_change_type: ["amount_increase", "amount_decrease", "type_change"],
       salary_type: ["daily", "monthly"],
-      shop_offer_type: ["percentage", "fixed", "free_delivery"],
+      shop_offer_type: ["percentage", "fixed", "free_delivery", "combo"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["todo", "in_progress", "done", "cancelled"],
     },

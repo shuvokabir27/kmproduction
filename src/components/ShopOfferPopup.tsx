@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
-import { Sparkles, X, ShoppingBag, Truck, Tag, Clock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Sparkles, X, ShoppingBag, Truck, Tag, Clock, Package } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "sonner";
 
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 export default function ShopOfferPopup() {
   const [closed, setClosed] = useState(false);
   const [now, setNow] = useState(Date.now());
+  const cart = useCart();
+  const navigate = useNavigate();
 
   const { data: offers } = useQuery({
     queryKey: ["active-shop-offers"],
@@ -31,15 +35,26 @@ export default function ShopOfferPopup() {
     return startOk && endOk;
   });
 
-  // session-based dismissal per offer
+  const isCombo = offer?.discount_type === "combo";
+  const comboIds: string[] = isCombo
+    ? (Array.isArray(offer?.combo_products) ? offer.combo_products : []).map((c: any) => c.product_id).filter(Boolean)
+    : [];
+
+  const { data: comboProducts } = useQuery({
+    queryKey: ["combo-products", comboIds],
+    enabled: comboIds.length > 0,
+    queryFn: async () => {
+      const { data } = await supabase.from("products").select("id,name,image_url,price,discount_price,weight_grams,unit_type").in("id", comboIds);
+      return data ?? [];
+    },
+  });
+
   useEffect(() => {
     if (!offer) return;
     const dismissed = sessionStorage.getItem(`offer_dismissed_${offer.id}`);
-    if (dismissed) setClosed(true);
-    else setClosed(false);
+    setClosed(!!dismissed);
   }, [offer?.id]);
 
-  // delay show 1.5s
   const [show, setShow] = useState(false);
   useEffect(() => {
     if (!offer || closed) { setShow(false); return; }
@@ -47,7 +62,6 @@ export default function ShopOfferPopup() {
     return () => clearTimeout(t);
   }, [offer?.id, closed]);
 
-  // countdown ticker
   useEffect(() => {
     if (!offer?.ends_at) return;
     const i = setInterval(() => setNow(Date.now()), 1000);
@@ -66,11 +80,12 @@ export default function ShopOfferPopup() {
   const isPct = offer.discount_type === "percentage";
   const discountText = isFree
     ? "ফ্রি ডেলিভারি"
-    : isPct
-      ? `${toBn(offer.discount_value)}% ছাড়`
-      : `৳${toBn(offer.discount_value)} ছাড়`;
+    : isCombo
+      ? (offer.combo_price ? `৳${toBn(offer.combo_price)} মাত্র` : "কম্বো অফার")
+      : isPct
+        ? `${toBn(offer.discount_value)}% ছাড়`
+        : `৳${toBn(offer.discount_value)} ছাড়`;
 
-  // Countdown
   let countdown = "";
   if (offer.ends_at) {
     const diff = new Date(offer.ends_at).getTime() - now;
@@ -85,17 +100,53 @@ export default function ShopOfferPopup() {
     }
   }
 
+  // Combo total without discount
+  const comboItems = isCombo && Array.isArray(offer.combo_products) ? offer.combo_products : [];
+  const comboOriginalTotal = comboItems.reduce((sum: number, c: any) => {
+    const p = comboProducts?.find(x => x.id === c.product_id);
+    if (!p) return sum;
+    const price = Number(p.discount_price ?? p.price ?? 0);
+    return sum + price * (c.quantity || 1);
+  }, 0);
+
+  const handleOrderCombo = () => {
+    if (!comboProducts || comboProducts.length === 0) {
+      toast.error("কম্বো প্রডাক্ট লোড হচ্ছে");
+      return;
+    }
+    cart.clear();
+    comboItems.forEach((c: any) => {
+      const p = comboProducts.find(x => x.id === c.product_id);
+      if (!p) return;
+      const unitPrice = Number(p.discount_price ?? p.price ?? 0);
+      cart.addItem({
+        product_id: p.id,
+        product_name: p.name,
+        image_url: p.image_url,
+        variant_label: `কম্বো: ${offer.title}`,
+        unit_price: unitPrice,
+        quantity: c.quantity || 1,
+        unit_type: p.unit_type ?? null,
+        weight_grams: Number(p.weight_grams || 0),
+      });
+    });
+    toast.success("কম্বো কার্টে যোগ হয়েছে");
+    dismiss();
+    cart.open();
+  };
+
+  const ctaLink = offer.product_id ? `/products/${offer.product_id}` : "/products";
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300"
       onClick={dismiss}
     >
       <div
-        className="relative w-full max-w-md bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-amber-950 dark:via-slate-900 dark:to-orange-950 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500"
+        className="relative w-full max-w-md bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-amber-950 dark:via-slate-900 dark:to-orange-950 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
       >
-        {/* sparkle bg */}
         <div className="absolute inset-0 pointer-events-none opacity-20">
           <div className="absolute top-4 left-6 text-3xl animate-pulse">✨</div>
           <div className="absolute top-12 right-8 text-2xl animate-pulse" style={{ animationDelay: "300ms" }}>⭐</div>
@@ -111,7 +162,6 @@ export default function ShopOfferPopup() {
           <X className="h-5 w-5" />
         </button>
 
-        {/* Top ribbon */}
         <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 px-6 py-3 text-center">
           <div className="inline-flex items-center gap-2 text-white font-bold text-sm tracking-wide">
             <Sparkles className="h-4 w-4 animate-pulse" />
@@ -121,7 +171,7 @@ export default function ShopOfferPopup() {
         </div>
 
         <div className="relative p-6 space-y-4 text-center">
-          {(offer.image_url || product?.image_url) && (
+          {(offer.image_url || product?.image_url) && !isCombo && (
             <div className="mx-auto w-32 h-32 rounded-2xl overflow-hidden shadow-lg ring-4 ring-amber-300/40">
               <img src={offer.image_url || product?.image_url} alt={offer.title} className="w-full h-full object-cover" />
             </div>
@@ -132,13 +182,39 @@ export default function ShopOfferPopup() {
             {offer.description && <p className="text-sm text-slate-700 dark:text-slate-300 mt-2">{offer.description}</p>}
           </div>
 
-          {/* Discount banner */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white font-extrabold text-xl px-6 py-3 rounded-full shadow-lg">
-            {isFree ? <Truck className="h-5 w-5" /> : <Tag className="h-5 w-5" />}
+            {isFree ? <Truck className="h-5 w-5" /> : isCombo ? <Package className="h-5 w-5" /> : <Tag className="h-5 w-5" />}
             {discountText}
           </div>
 
-          {product && (
+          {/* Combo product list */}
+          {isCombo && comboProducts && comboProducts.length > 0 && (
+            <div className="bg-white/70 dark:bg-slate-800/50 rounded-2xl p-3 space-y-2 text-left">
+              <div className="text-xs font-bold text-slate-700 dark:text-amber-200 text-center mb-1">এই কম্বোতে যা থাকছে</div>
+              {comboItems.map((c: any, idx: number) => {
+                const p = comboProducts.find(x => x.id === c.product_id);
+                if (!p) return null;
+                return (
+                  <div key={idx} className="flex items-center gap-2 bg-white/80 dark:bg-slate-900/60 rounded-xl p-2">
+                    {p.image_url && <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-lg object-cover" />}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold truncate text-slate-800 dark:text-slate-100">{p.name}</div>
+                      <div className="text-xs text-slate-500">পরিমাণ: {toBn(c.quantity || 1)}</div>
+                    </div>
+                  </div>
+                );
+              })}
+              {offer.combo_price && comboOriginalTotal > Number(offer.combo_price) && (
+                <div className="text-center text-xs text-slate-600 dark:text-slate-300 pt-1">
+                  <span className="line-through">৳{toBn(comboOriginalTotal)}</span>{" "}
+                  <span className="font-extrabold text-red-600 dark:text-red-400">৳{toBn(offer.combo_price)}</span>{" "}
+                  <span className="font-bold text-green-700 dark:text-green-400">({toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়)</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {product && !isCombo && (
             <div className="text-sm text-slate-600 dark:text-slate-400">
               <span className="font-semibold">{product.name}</span>
             </div>
@@ -151,16 +227,28 @@ export default function ShopOfferPopup() {
             </div>
           )}
 
-          <Link
-            to={offer.product_id ? `/products/${offer.product_id}` : "/products"}
-            onClick={dismiss}
-            className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
-          >
-            <span className="inline-flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5" />
-              এখনই অর্ডার করুন
-            </span>
-          </Link>
+          {isCombo ? (
+            <button
+              onClick={handleOrderCombo}
+              className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+            >
+              <span className="inline-flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5" />
+                কম্বো অর্ডার করুন
+              </span>
+            </button>
+          ) : (
+            <Link
+              to={ctaLink}
+              onClick={dismiss}
+              className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+            >
+              <span className="inline-flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5" />
+                এখনই অর্ডার করুন
+              </span>
+            </Link>
+          )}
 
           <button onClick={dismiss} className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400">
             পরে দেখব

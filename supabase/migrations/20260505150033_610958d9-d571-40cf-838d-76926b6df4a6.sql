@@ -1,0 +1,1 @@
+ALTER TYPE shop_offer_type ADD VALUE IF NOT EXISTS 'combo';
