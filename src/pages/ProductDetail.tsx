@@ -84,11 +84,20 @@ const ProductDetail = () => {
     return arr.length ? arr : [""];
   }, [product]);
 
-  const hasDiscount = product?.discount_price && product.discount_price < product.price;
-  const unitPrice = hasDiscount ? product!.discount_price! : product?.price ?? 0;
+  const variants: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
+  const chosenVariant = variants.length > 0 && selectedVariantIdx >= 0 ? variants[selectedVariantIdx] : null;
+  const baseHasDiscount = product?.discount_price && product.discount_price < product.price;
+  const variantHasDiscount = chosenVariant && chosenVariant.discount_price != null && Number(chosenVariant.discount_price) < Number(chosenVariant.price);
+  const hasDiscount = chosenVariant ? variantHasDiscount : baseHasDiscount;
+  const origPrice = chosenVariant ? Number(chosenVariant.price ?? 0) : Number(product?.price ?? 0);
+  const unitPrice = chosenVariant
+    ? Number(chosenVariant.discount_price ?? chosenVariant.price ?? 0)
+    : (baseHasDiscount ? product!.discount_price! : product?.price ?? 0);
   const total = unitPrice * qty;
-  const discountPct = hasDiscount ? Math.round(((product!.price - product!.discount_price!) / product!.price) * 100) : 0;
-  const totalWeight = Number(product?.weight_grams || 0) * qty;
+  const discountPct = hasDiscount && origPrice > 0 ? Math.round(((origPrice - unitPrice) / origPrice) * 100) : 0;
+  const variantWeight = chosenVariant && chosenVariant.weight_grams != null ? Number(chosenVariant.weight_grams) : null;
+  const wPer = variantWeight && variantWeight > 0 ? variantWeight : Number(product?.weight_grams || 0);
+  const totalWeight = wPer * qty;
   const dlv = calculateDelivery(total, totalWeight, deliverySettings);
   const grandTotal = total + dlv.charge;
 
