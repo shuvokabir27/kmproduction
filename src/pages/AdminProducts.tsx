@@ -467,7 +467,7 @@ const AdminProducts = () => {
                         const existing = new Set(f.variants.map(v => v.label.trim()));
                         const toAdd = g.sizes
                           .filter(s => !existing.has(s))
-                          .map(s => ({ label: s, price: "", discount_price: "" }));
+                          .map(s => ({ label: s, price: "", discount_price: "", weight_grams: "" }));
                         return { ...f, variants: [...f.variants, ...toAdd] };
                       })}>
                       + {g.group}
