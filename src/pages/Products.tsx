@@ -11,6 +11,9 @@ import { Link } from "react-router-dom";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import { useProductCategories } from "@/hooks/useProductCategories";
 import { useCart } from "@/hooks/useCart";
+import { useDeliverySettings } from "@/hooks/useDeliverySettings";
+import { calculateDelivery } from "@/lib/delivery";
+import { Truck as TruckIcon } from "lucide-react";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -35,6 +38,7 @@ const Products = () => {
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
   const cart = useCart();
+  const { settings: deliverySettings } = useDeliverySettings();
 
   const addProductToCart = (p: any, qty = 1, variantIdx = -1) => {
     const variants = Array.isArray(p?.variants) ? p.variants : [];
