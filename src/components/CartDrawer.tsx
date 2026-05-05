@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
+import { useDeliverySettings } from "@/hooks/useDeliverySettings";
+import { calculateDelivery } from "@/lib/delivery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { X, Trash2, Plus, Minus, ShoppingCart, CheckCircle } from "lucide-react";
+import { X, Trash2, Plus, Minus, ShoppingCart, CheckCircle, Truck, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
+const toBn = (n: number) => Math.round(n).toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#1f7a3a";
 const BRAND_DARK = "#155c2c";
 
