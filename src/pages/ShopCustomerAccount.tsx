@@ -292,7 +292,17 @@ export default function ShopCustomerAccount() {
               { key: "delivered", label: "ডেলিভারড", sub: "সফলভাবে পৌঁছেছে", icon: Package },
             ];
             const cancelled = trackOrder.status === "cancelled" || trackOrder.status === "returned" || trackOrder.status === "abandoned";
-            const currentIdx = steps.findIndex((s) => s.key === trackOrder.status);
+            // Map any backend status to our 4-step flow
+            const statusAlias: Record<string, string> = {
+              pending: "pending",
+              confirmed: "confirmed",
+              processing: "confirmed",
+              shipped: "shipped",
+              out_for_delivery: "shipped",
+              delivered: "delivered",
+            };
+            const normalized = statusAlias[trackOrder.status] || "pending";
+            const currentIdx = cancelled ? -1 : Math.max(0, steps.findIndex((s) => s.key === normalized));
             const progressPct = currentIdx >= 0 ? (currentIdx / (steps.length - 1)) * 100 : 0;
             return (
               <>
