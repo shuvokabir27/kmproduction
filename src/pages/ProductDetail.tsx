@@ -19,6 +19,7 @@ const ACCENT_RED = "#d6302c";
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const cart = useCart();
 
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
