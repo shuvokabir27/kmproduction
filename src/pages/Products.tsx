@@ -519,11 +519,7 @@ const Products = () => {
                         <Button
                           onClick={() => {
                             const variants = Array.isArray(p.variants) ? p.variants : [];
-                            if (variants.length > 0) {
-                              openOrderDialog(p);
-                            } else {
-                              addProductToCart(p, 1);
-                            }
+                            addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
                           }}
                           variant="outline"
                           className="font-bold rounded-full text-xs h-10 gap-1 border-2"
