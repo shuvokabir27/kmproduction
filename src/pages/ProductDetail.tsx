@@ -26,6 +26,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const cart = useCart();
+  const { customer: shopCustomer } = useShopCustomer();
   const [searchParams] = useSearchParams();
   const { settings: deliverySettings } = useDeliverySettings();
 
