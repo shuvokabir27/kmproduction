@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
+import { useShopCustomer } from "@/hooks/useShopCustomer";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
