@@ -51,6 +51,8 @@ const AdminProducts = () => {
     stock_status: "in_stock",
     sort_order: "0",
     contact_info: "",
+    unit_type: "piece" as "piece" | "kg" | "size",
+    variants: [] as { label: string; price: string; discount_price: string }[],
   });
 
   const { data: products, isLoading } = useQuery({
