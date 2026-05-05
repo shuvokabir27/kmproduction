@@ -37,6 +37,7 @@ export default function ShopCustomerAccount() {
   const [productMap, setProductMap] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
   const [productByName, setProductByName] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
   const [trackOrder, setTrackOrder] = useState<any | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!loading && !customer) nav("/shop/login", { replace: true });
