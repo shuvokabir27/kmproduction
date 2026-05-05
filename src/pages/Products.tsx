@@ -16,7 +16,7 @@ import { calculateDelivery } from "@/lib/delivery";
 import { Truck as TruckIcon } from "lucide-react";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import MobileShopNav from "@/components/MobileShopNav";
-import ShopOfferPopup from "@/components/ShopOfferPopup";
+import ShopOfferBanner from "@/components/ShopOfferBanner";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -433,6 +433,8 @@ const Products = () => {
           </div>
         )}
       </header>
+
+      <ShopOfferBanner />
 
       {/* Hero Banner */}
       <section className="px-4 py-6 md:py-8">
@@ -986,7 +988,6 @@ const Products = () => {
       )}
 
       <MobileShopNav />
-      <ShopOfferPopup />
     </div>
   );
 };
