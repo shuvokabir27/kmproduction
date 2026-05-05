@@ -141,12 +141,14 @@ const AdminProducts = () => {
       sort_order: Number(form.sort_order) || 0,
       contact_info: form.contact_info.trim() || null,
       unit_type: form.unit_type,
+      weight_grams: Number(form.weight_grams) || 0,
       variants: form.variants
         .filter(v => v.label.trim() && v.price !== "")
         .map(v => ({
           label: v.label.trim(),
           price: Number(v.price) || 0,
           discount_price: v.discount_price ? Number(v.discount_price) : null,
+          weight_grams: v.weight_grams ? Number(v.weight_grams) : 0,
         })),
     } as any;
 
