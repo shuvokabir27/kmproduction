@@ -33,6 +33,7 @@ export default function ShopCustomerAccount() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", address: "" });
+  const [productMap, setProductMap] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
 
   useEffect(() => {
     if (!loading && !customer) nav("/shop/login", { replace: true });
@@ -45,6 +46,17 @@ export default function ShopCustomerAccount() {
       address: customer.address || "",
     });
   }, [customer]);
+
+  useEffect(() => {
+    const ids = Array.from(new Set(orders.map((o: any) => o.product_id).filter(Boolean)));
+    if (ids.length === 0) { setProductMap({}); return; }
+    (async () => {
+      const { data } = await supabase.from("products").select("id, stock_status, is_active").in("id", ids);
+      const map: Record<string, any> = {};
+      (data || []).forEach((p: any) => { map[p.id] = p; });
+      setProductMap(map);
+    })();
+  }, [orders]);
 
   const saveProfile = async () => {
     if (!form.full_name.trim()) { toast.error("নাম দিন"); return; }
