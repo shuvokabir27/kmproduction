@@ -238,8 +238,11 @@ export default function ShopCustomerAccount() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <div className="font-bold text-gray-900 truncate">{o.product_name}</div>
-                        <div className="text-xs text-gray-500 mt-0.5">
-                          অর্ডার #{toBn(o.order_number)} · পরিমাণ: {toBn(o.quantity)}
+                        <div className="text-xs mt-1 flex items-center gap-2">
+                          <span className="font-extrabold tracking-wide px-2 py-0.5 rounded-md text-white" style={{ backgroundColor: BRAND_GREEN }}>
+                            #{toBn(o.order_number)}
+                          </span>
+                          <span className="text-gray-500">পরিমাণ: {toBn(o.quantity)}</span>
                         </div>
                         <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
