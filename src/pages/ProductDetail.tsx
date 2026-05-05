@@ -86,6 +86,9 @@ const ProductDetail = () => {
   const unitPrice = hasDiscount ? product!.discount_price! : product?.price ?? 0;
   const total = unitPrice * qty;
   const discountPct = hasDiscount ? Math.round(((product!.price - product!.discount_price!) / product!.price) * 100) : 0;
+  const totalWeight = Number(product?.weight_grams || 0) * qty;
+  const dlv = calculateDelivery(total, totalWeight, deliverySettings);
+  const grandTotal = total + dlv.charge;
 
   const handlePhoneChange = (val: string) => {
     const digits = val.replace(/\D/g, "");
