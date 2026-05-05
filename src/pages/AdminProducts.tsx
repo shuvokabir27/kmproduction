@@ -188,6 +188,10 @@ const AdminProducts = () => {
             <Users className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">কাস্টমার</span>
           </TabsTrigger>
+          <TabsTrigger value="users" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <Users className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ইউজার</span>
+          </TabsTrigger>
           <TabsTrigger value="pricing" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <Weight className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">প্রাইসিং</span>
