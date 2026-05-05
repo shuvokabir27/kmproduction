@@ -234,14 +234,14 @@ export default function ShopCustomerAccount() {
                       <Button size="sm" variant="outline" onClick={() => setTrackOrder(o)} className="gap-1.5 h-9 rounded-xl flex-1 border-blue-200 text-blue-700 hover:bg-blue-50">
                         <Truck className="h-3.5 w-3.5" /> অর্ডার ট্র্যাকিং
                       </Button>
-                      {productAvailable && prod && (
+                      {o.status === "delivered" && productAvailable && prod && (
                         <Button size="sm" onClick={() => nav(`/products/${prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
                           <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার
                         </Button>
                       )}
-                      {outOfStock && (
+                      {o.status === "delivered" && outOfStock && (
                         <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl flex-1 justify-center">
-                          <XCircle className="h-3.5 w-3.5" /> স্টকে নেই
+                          <XCircle className="h-3.5 w-3.5" /> Out of stock
                         </div>
                       )}
                     </div>
