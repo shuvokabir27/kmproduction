@@ -27,6 +27,8 @@ const Products = () => {
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { customer: shopCustomer } = useShopCustomer();
+  const { data: categoryData } = useProductCategories();
+  const categoryTree = categoryData?.tree ?? [];
 
   const { data: products } = useQuery({
     queryKey: ["public-products"],
