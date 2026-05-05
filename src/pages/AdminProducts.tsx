@@ -442,11 +442,40 @@ const AdminProducts = () => {
                 <Label className="text-sm font-bold">
                   ভ্যারিয়েন্ট / অপশন {form.unit_type === "kg" ? "(ওজন)" : form.unit_type === "size" ? "(সাইজ)" : ""}
                 </Label>
-                <Button type="button" size="sm" variant="outline" className="h-7 gap-1"
-                  onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "" }] }))}>
-                  <Plus className="h-3 w-3" /> অপশন
-                </Button>
+                <div className="flex gap-1">
+                  <Button type="button" size="sm" variant="outline" className="h-7 gap-1"
+                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "" }] }))}>
+                    <Plus className="h-3 w-3" /> অপশন
+                  </Button>
+                </div>
               </div>
+
+              {form.unit_type === "size" && (
+                <div className="flex flex-wrap gap-1.5 pb-1">
+                  <span className="text-[11px] text-muted-foreground self-center mr-1">দ্রুত যোগ:</span>
+                  {[
+                    { group: "পোষাক (Adult)", sizes: ["S", "M", "L", "XL", "XXL", "XXXL"] },
+                    { group: "পোষাক (Kids)", sizes: ["0-3M", "3-6M", "6-12M", "1-2Y", "2-3Y", "3-4Y", "4-5Y", "5-6Y", "7-8Y", "9-10Y"] },
+                    { group: "নাম্বার সাইজ", sizes: ["28", "30", "32", "34", "36", "38", "40", "42", "44"] },
+                    { group: "ফ্রি সাইজ", sizes: ["Free Size"] },
+                  ].map((g) => (
+                    <Button key={g.group} type="button" size="sm" variant="secondary" className="h-7 text-[11px] gap-1"
+                      onClick={() => setForm(f => {
+                        const existing = new Set(f.variants.map(v => v.label.trim()));
+                        const toAdd = g.sizes
+                          .filter(s => !existing.has(s))
+                          .map(s => ({ label: s, price: "", discount_price: "" }));
+                        return { ...f, variants: [...f.variants, ...toAdd] };
+                      })}>
+                      + {g.group}
+                    </Button>
+                  ))}
+                  <Button type="button" size="sm" variant="ghost" className="h-7 text-[11px] text-destructive"
+                    onClick={() => setForm(f => ({ ...f, variants: [] }))}>
+                    সব মুছুন
+                  </Button>
+                </div>
+              )}
               {form.variants.length === 0 && (
                 <p className="text-[11px] text-muted-foreground">কোনো ভ্যারিয়েন্ট নেই — উপরের একক দাম ব্যবহার হবে।</p>
               )}
