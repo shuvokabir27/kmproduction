@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
-  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree
+  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree, Truck
 } from "lucide-react";
 import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
@@ -52,7 +52,8 @@ const AdminProducts = () => {
     sort_order: "0",
     contact_info: "",
     unit_type: "piece" as "piece" | "kg" | "size",
-    variants: [] as { label: string; price: string; discount_price: string }[],
+    weight_grams: "",
+    variants: [] as { label: string; price: string; discount_price: string; weight_grams: string }[],
   });
 
   const { data: products, isLoading } = useQuery({
@@ -71,7 +72,7 @@ const AdminProducts = () => {
     setForm({
       name: "", description: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
-      sort_order: "0", contact_info: "", unit_type: "piece", variants: [],
+      sort_order: "0", contact_info: "", unit_type: "piece", weight_grams: "", variants: [],
     });
     setEditingProduct(null);
   };
@@ -93,11 +94,13 @@ const AdminProducts = () => {
       sort_order: String(p.sort_order || 0),
       contact_info: p.contact_info || "",
       unit_type: (p.unit_type || "piece") as "piece" | "kg" | "size",
+      weight_grams: p.weight_grams ? String(p.weight_grams) : "",
       variants: Array.isArray(p.variants)
         ? p.variants.map((v: any) => ({
             label: v.label || "",
             price: String(v.price ?? ""),
             discount_price: v.discount_price != null ? String(v.discount_price) : "",
+            weight_grams: v.weight_grams != null ? String(v.weight_grams) : "",
           }))
         : [],
     });
@@ -138,12 +141,14 @@ const AdminProducts = () => {
       sort_order: Number(form.sort_order) || 0,
       contact_info: form.contact_info.trim() || null,
       unit_type: form.unit_type,
+      weight_grams: Number(form.weight_grams) || 0,
       variants: form.variants
         .filter(v => v.label.trim() && v.price !== "")
         .map(v => ({
           label: v.label.trim(),
           price: Number(v.price) || 0,
           discount_price: v.discount_price ? Number(v.discount_price) : null,
+          weight_grams: v.weight_grams ? Number(v.weight_grams) : 0,
         })),
     } as any;
 
@@ -190,6 +195,9 @@ const AdminProducts = () => {
             <p className="text-xs text-muted-foreground">প্রডাক্ট ও অর্ডার ম্যানেজমেন্ট</p>
           </div>
         </div>
+        <Link to="/admin/delivery-settings" className="inline-flex items-center gap-1.5 text-xs font-bold bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-lg">
+          <Truck className="h-4 w-4" /> <span className="hidden sm:inline">ডেলিভারি সেটিংস</span>
+        </Link>
       </div>
 
       {/* Tab Navigation */}
@@ -409,14 +417,18 @@ const AdminProducts = () => {
               <Label>বিবরণ</Label>
               <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="প্রডাক্টের বিবরণ" rows={3} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label>বেস দাম (৳)</Label>
                 <Input type="number" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
               </div>
               <div>
-                <Label>ডিসকাউন্ট দাম (৳)</Label>
+                <Label>ডিসকাউন্ট (৳)</Label>
                 <Input type="number" value={form.discount_price} onChange={(e) => setForm((f) => ({ ...f, discount_price: e.target.value }))} placeholder="ঐচ্ছিক" />
+              </div>
+              <div>
+                <Label>ওজন (গ্রাম)</Label>
+                <Input type="number" value={form.weight_grams} onChange={(e) => setForm((f) => ({ ...f, weight_grams: e.target.value }))} placeholder="যেমন: ৫০০" />
               </div>
             </div>
 
@@ -444,7 +456,7 @@ const AdminProducts = () => {
                 </Label>
                 <div className="flex gap-1">
                   <Button type="button" size="sm" variant="outline" className="h-7 gap-1"
-                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "" }] }))}>
+                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "", weight_grams: "" }] }))}>
                     <Plus className="h-3 w-3" /> অপশন
                   </Button>
                 </div>
@@ -464,7 +476,7 @@ const AdminProducts = () => {
                         const existing = new Set(f.variants.map(v => v.label.trim()));
                         const toAdd = g.sizes
                           .filter(s => !existing.has(s))
-                          .map(s => ({ label: s, price: "", discount_price: "" }));
+                          .map(s => ({ label: s, price: "", discount_price: "", weight_grams: "" }));
                         return { ...f, variants: [...f.variants, ...toAdd] };
                       })}>
                       + {g.group}
@@ -481,15 +493,18 @@ const AdminProducts = () => {
               )}
               {form.variants.map((v, i) => (
                 <div key={i} className="grid grid-cols-12 gap-2 items-center">
-                  <Input className="col-span-4 h-9" placeholder={form.unit_type === "kg" ? "১ কেজি" : form.unit_type === "size" ? "Medium" : "১ পিস"}
+                  <Input className="col-span-3 h-9" placeholder={form.unit_type === "kg" ? "১ কেজি" : form.unit_type === "size" ? "Medium" : "১ পিস"}
                     value={v.label}
                     onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], label: e.target.value }; return { ...f, variants: a }; })} />
-                  <Input className="col-span-3 h-9" type="number" placeholder="দাম"
+                  <Input className="col-span-2 h-9" type="number" placeholder="দাম"
                     value={v.price}
                     onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], price: e.target.value }; return { ...f, variants: a }; })} />
-                  <Input className="col-span-3 h-9" type="number" placeholder="ডিসকাউন্ট"
+                  <Input className="col-span-2 h-9" type="number" placeholder="ডিসকা."
                     value={v.discount_price}
                     onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], discount_price: e.target.value }; return { ...f, variants: a }; })} />
+                  <Input className="col-span-3 h-9" type="number" placeholder="ওজন (গ্রাম)"
+                    value={v.weight_grams}
+                    onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], weight_grams: e.target.value }; return { ...f, variants: a }; })} />
                   <Button type="button" size="sm" variant="ghost" className="col-span-2 text-destructive h-9"
                     onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, j) => j !== i) }))}>
                     <Trash2 className="h-3 w-3" />

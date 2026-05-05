@@ -45,6 +45,8 @@ const Products = () => {
     const unitPrice = chosen
       ? Number(chosen.discount_price ?? chosen.price ?? 0)
       : Number(p?.discount_price || p?.price || 0);
+    const variantWeight = chosen && chosen.weight_grams != null ? Number(chosen.weight_grams) : null;
+    const weightGrams = variantWeight && variantWeight > 0 ? variantWeight : Number(p?.weight_grams || 0);
     cart.addItem({
       product_id: p.id,
       product_name: p.name,
@@ -53,6 +55,7 @@ const Products = () => {
       unit_price: unitPrice,
       quantity: qty,
       unit_type: p.unit_type ?? null,
+      weight_grams: weightGrams,
     });
     toast.success("কার্টে যুক্ত হয়েছে");
     return true;

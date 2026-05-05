@@ -298,6 +298,7 @@ const ProductDetail = () => {
                     unit_price: unitPrice,
                     quantity: qty,
                     unit_type: (product as any)?.unit_type ?? null,
+                    weight_grams: Number((product as any)?.weight_grams || 0),
                   });
                   toast.success("কার্টে যুক্ত হয়েছে");
                   cart.open();
