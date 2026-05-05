@@ -1590,7 +1590,9 @@ export type Database = {
           notes: string | null
           order_number: number
           payment_method: string | null
+          payment_sender_no: string | null
           payment_status: Database["public"]["Enums"]["order_payment_status"]
+          payment_trx_id: string | null
           product_id: string | null
           product_name: string
           quantity: number
@@ -1614,7 +1616,9 @@ export type Database = {
           notes?: string | null
           order_number?: number
           payment_method?: string | null
+          payment_sender_no?: string | null
           payment_status?: Database["public"]["Enums"]["order_payment_status"]
+          payment_trx_id?: string | null
           product_id?: string | null
           product_name: string
           quantity?: number
@@ -1638,7 +1642,9 @@ export type Database = {
           notes?: string | null
           order_number?: number
           payment_method?: string | null
+          payment_sender_no?: string | null
           payment_status?: Database["public"]["Enums"]["order_payment_status"]
+          payment_trx_id?: string | null
           product_id?: string | null
           product_name?: string
           quantity?: number
@@ -2851,6 +2857,8 @@ export type Database = {
           nagad_enabled: boolean
           nagad_payment_no: string | null
           offer_end_date: string | null
+          rocket_enabled: boolean
+          rocket_payment_no: string | null
           site_description: string | null
           site_name: string | null
           ticker_enabled: boolean | null
@@ -2881,6 +2889,8 @@ export type Database = {
           nagad_enabled?: boolean
           nagad_payment_no?: string | null
           offer_end_date?: string | null
+          rocket_enabled?: boolean
+          rocket_payment_no?: string | null
           site_description?: string | null
           site_name?: string | null
           ticker_enabled?: boolean | null
@@ -2911,6 +2921,8 @@ export type Database = {
           nagad_enabled?: boolean
           nagad_payment_no?: string | null
           offer_end_date?: string | null
+          rocket_enabled?: boolean
+          rocket_payment_no?: string | null
           site_description?: string | null
           site_name?: string | null
           ticker_enabled?: boolean | null

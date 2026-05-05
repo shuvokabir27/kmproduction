@@ -8,6 +8,7 @@ import { calculateDelivery } from "@/lib/delivery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
@@ -36,7 +37,7 @@ const ProductDetail = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" as "cod" | "bkash" | "nagad" | "rocket", payment_sender_no: "", payment_trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
 
   const { data: product, isLoading } = useQuery({
@@ -100,6 +101,10 @@ const ProductDetail = () => {
     if (!orderForm.name.trim()) return toast.error("আপনার নাম দিন");
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) return toast.error("আপনার ঠিকানা দিন");
+    if (orderForm.payment_method !== "cod") {
+      if (orderForm.payment_sender_no.length !== 11) return toast.error("আপনার পেমেন্ট নম্বর দিন (১১ ডিজিট)");
+      if (!orderForm.payment_trx_id.trim()) return toast.error("ট্রানজেকশন আইডি দিন");
+    }
     setSubmitting(true);
     try {
       const { error } = await supabase.from("orders").insert({
@@ -111,11 +116,13 @@ const ProductDetail = () => {
         unit_price: unitPrice,
         total_amount: grandTotal,
         delivery_charge: dlv.charge,
-        payment_method: "cod",
-      });
+        payment_method: orderForm.payment_method,
+        payment_sender_no: orderForm.payment_method !== "cod" ? orderForm.payment_sender_no : null,
+        payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
+      } as any);
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে");
     } finally {
@@ -139,7 +146,7 @@ const ProductDetail = () => {
       } catch {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
   };
 
   const openOrder = () => {
@@ -515,6 +522,15 @@ const ProductDetail = () => {
                     <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
                     <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 resize-none" />
                   </div>
+                  <PaymentMethodPicker
+                    settings={siteSettings}
+                    method={orderForm.payment_method}
+                    senderNo={orderForm.payment_sender_no}
+                    trxId={orderForm.payment_trx_id}
+                    onMethodChange={(m) => setOrderForm(f => ({ ...f, payment_method: m }))}
+                    onSenderNoChange={(v) => setOrderForm(f => ({ ...f, payment_sender_no: v }))}
+                    onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
+                  />
                   <Button onClick={handleOrderSubmit} disabled={submitting} className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}

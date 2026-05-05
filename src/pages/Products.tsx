@@ -14,6 +14,7 @@ import { useCart } from "@/hooks/useCart";
 import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
 import { Truck as TruckIcon } from "lucide-react";
+import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -25,7 +26,7 @@ const Products = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" as "cod" | "bkash" | "nagad" | "rocket", payment_sender_no: "", payment_trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
@@ -121,6 +122,10 @@ const Products = () => {
     if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
+    if (orderForm.payment_method !== "cod") {
+      if (orderForm.payment_sender_no.length !== 11) { toast.error("আপনার পেমেন্ট নম্বর দিন (১১ ডিজিট)"); return; }
+      if (!orderForm.payment_trx_id.trim()) { toast.error("ট্রানজেকশন আইডি দিন"); return; }
+    }
 
     const variants = Array.isArray(selectedProduct?.variants) ? selectedProduct.variants : [];
     if (variants.length > 0 && selectedVariantIdx < 0) {
@@ -152,12 +157,14 @@ const Products = () => {
         unit_price: unitPrice,
         total_amount: subtotal + dlv.charge,
         delivery_charge: dlv.charge,
-        payment_method: "cod",
+        payment_method: orderForm.payment_method,
+        payment_sender_no: orderForm.payment_method !== "cod" ? orderForm.payment_sender_no : null,
+        payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
         shop_customer_id: shopCustomer?.id ?? null,
       } as any);
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
@@ -181,7 +188,7 @@ const Products = () => {
       } catch (_) {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
   };
 
   const openOrderDialog = (product: any) => {
@@ -918,6 +925,15 @@ const Products = () => {
                     <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
                     <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="আপনার সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 resize-none" />
                   </div>
+                  <PaymentMethodPicker
+                    settings={siteSettings}
+                    method={orderForm.payment_method}
+                    senderNo={orderForm.payment_sender_no}
+                    trxId={orderForm.payment_trx_id}
+                    onMethodChange={(m) => setOrderForm(f => ({ ...f, payment_method: m }))}
+                    onSenderNoChange={(v) => setOrderForm(f => ({ ...f, payment_sender_no: v }))}
+                    onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
+                  />
                   <Button onClick={handleOrderSubmit} disabled={submitting} className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}

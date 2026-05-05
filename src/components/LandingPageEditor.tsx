@@ -221,7 +221,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg, bkash_enabled, bkash_payment_no, nagad_enabled, nagad_payment_no").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg, bkash_enabled, bkash_payment_no, nagad_enabled, nagad_payment_no, rocket_enabled, rocket_payment_no").limit(1).single();
       return data;
     },
   });
@@ -495,6 +495,33 @@ const LandingPageEditor = () => {
                 value={(siteSettings as any).nagad_payment_no ?? ""}
                 onChange={async (e) => {
                   await supabase.from("site_settings").update({ nagad_payment_no: e.target.value } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+                className="h-8 text-sm"
+              />
+            )}
+
+            <div className="border-t border-border/30 pt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-base">🚀</span>
+                <p className="text-xs font-semibold text-foreground">রকেট</p>
+              </div>
+              <Switch
+                checked={(siteSettings as any).rocket_enabled ?? false}
+                onCheckedChange={async (val) => {
+                  await supabase.from("site_settings").update({ rocket_enabled: val } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+              />
+            </div>
+            {(siteSettings as any).rocket_enabled && (
+              <Input
+                placeholder="রকেট নম্বর (যেমন: 01XXXXXXXXX)"
+                value={(siteSettings as any).rocket_payment_no ?? ""}
+                onChange={async (e) => {
+                  await supabase.from("site_settings").update({ rocket_payment_no: e.target.value } as any).eq("id", siteSettings.id);
                   queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
                   queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
                 }}
