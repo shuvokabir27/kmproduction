@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import MobileShopNav from "@/components/MobileShopNav";
 
 const BRAND_GREEN = "#1f7a3a";
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
