@@ -745,17 +745,35 @@ const OrderManagement = () => {
                   <span className="text-muted-foreground text-xs">ঠিকানা</span>
                   <p className="font-medium text-foreground">{viewDialog.customer_address || "—"}</p>
                 </div>
-                <div>
-                  <span className="text-muted-foreground text-xs">প্রডাক্ট</span>
-                  <p className="font-medium text-foreground">{viewDialog.product_name}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground text-xs">পরিমাণ</span>
-                  <p className="font-medium text-foreground">{toBn(viewDialog.quantity)} পিস</p>
-                </div>
+                {viewDialog.__groupItems && viewDialog.__groupItems.length > 1 ? (
+                  <div className="col-span-2">
+                    <span className="text-muted-foreground text-xs">প্রডাক্ট তালিকা ({toBn(viewDialog.__groupItems.length)} টি)</span>
+                    <div className="mt-1 space-y-1 bg-muted/30 rounded-lg p-2">
+                      {viewDialog.__groupItems.map((it: any) => (
+                        <div key={it.id} className="flex items-center justify-between text-xs">
+                          <span className="text-foreground truncate flex-1">• {it.product_name}</span>
+                          <span className="text-muted-foreground whitespace-nowrap ml-2">
+                            {toBn(it.quantity)} × ৳{toBn(Number(it.unit_price))} = <span className="font-bold text-primary">৳{toBn(Number(it.total_amount))}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <span className="text-muted-foreground text-xs">প্রডাক্ট</span>
+                      <p className="font-medium text-foreground">{viewDialog.product_name}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-xs">পরিমাণ</span>
+                      <p className="font-medium text-foreground">{toBn(viewDialog.quantity)} পিস</p>
+                    </div>
+                  </>
+                )}
                 <div>
                   <span className="text-muted-foreground text-xs">মোট মূল্য</span>
-                  <p className="font-bold text-primary text-lg">৳{toBn(Number(viewDialog.total_amount))}</p>
+                  <p className="font-bold text-primary text-lg">৳{toBn(Number(viewDialog.__groupTotal ?? viewDialog.total_amount))}</p>
                 </div>
                 <div>
                   <span className="text-muted-foreground text-xs">পেমেন্ট</span>
