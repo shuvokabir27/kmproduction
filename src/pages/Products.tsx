@@ -121,6 +121,10 @@ const Products = () => {
     if (!orderForm.name.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
+    if (orderForm.payment_method !== "cod") {
+      if (orderForm.payment_sender_no.length !== 11) { toast.error("আপনার পেমেন্ট নম্বর দিন (১১ ডিজিট)"); return; }
+      if (!orderForm.payment_trx_id.trim()) { toast.error("ট্রানজেকশন আইডি দিন"); return; }
+    }
 
     const variants = Array.isArray(selectedProduct?.variants) ? selectedProduct.variants : [];
     if (variants.length > 0 && selectedVariantIdx < 0) {
@@ -152,7 +156,9 @@ const Products = () => {
         unit_price: unitPrice,
         total_amount: subtotal + dlv.charge,
         delivery_charge: dlv.charge,
-        payment_method: "cod",
+        payment_method: orderForm.payment_method,
+        payment_sender_no: orderForm.payment_method !== "cod" ? orderForm.payment_sender_no : null,
+        payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
         shop_customer_id: shopCustomer?.id ?? null,
       } as any);
       if (error) throw error;
