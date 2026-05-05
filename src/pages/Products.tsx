@@ -892,7 +892,7 @@ const Products = () => {
                   </div>
                   <div>
                     <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
-                    <Input value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-white text-gray-900 placeholder:text-gray-400 ${phoneError ? 'border-red-300' : 'border-gray-200'}`} />
+                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-white text-gray-900 placeholder:text-gray-400 ${phoneError ? 'border-red-300' : 'border-gray-200'}`} />
                     {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
                   </div>
                   <div>
