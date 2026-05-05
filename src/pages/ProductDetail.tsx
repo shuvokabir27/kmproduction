@@ -120,17 +120,21 @@ const ProductDetail = () => {
     if (!orderForm.name.trim()) return toast.error("আপনার নাম দিন");
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) return toast.error("আপনার ঠিকানা দিন");
+    if (variants.length > 0 && !chosenVariant) return toast.error("একটি অপশন বাছাই করুন");
     if (orderForm.payment_method !== "cod") {
       if (orderForm.payment_sender_no.length !== 11) return toast.error("আপনার পেমেন্ট নম্বর দিন (১১ ডিজিট)");
       if (!orderForm.payment_trx_id.trim()) return toast.error("ট্রানজেকশন আইডি দিন");
     }
     setSubmitting(true);
     try {
+      const variantLabel = chosenVariant ? String(chosenVariant.label) : null;
+      const baseName = product?.name || "প্রডাক্ট";
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
-        product_name: product?.name || "প্রডাক্ট",
+        product_name: variantLabel ? `${baseName} (${variantLabel})` : baseName,
+        variant_label: variantLabel,
         quantity: qty,
         unit_price: unitPrice,
         total_amount: grandTotal,
