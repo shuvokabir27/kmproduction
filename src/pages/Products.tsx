@@ -25,7 +25,7 @@ const Products = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
+  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" as "cod" | "bkash" | "nagad" | "rocket", payment_sender_no: "", payment_trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
