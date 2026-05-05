@@ -257,54 +257,104 @@ export default function ShopCustomerAccount() {
       <MobileShopNav />
 
       <Dialog open={!!trackOrder} onOpenChange={(o) => !o && setTrackOrder(null)}>
-        <DialogContent className="max-w-md" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Truck className="h-5 w-5" style={{ color: BRAND_GREEN }} /> অর্ডার ট্র্যাকিং</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-0 rounded-3xl" style={{ fontFamily: "'Tiro Bangla', serif" }}>
           {trackOrder && (() => {
             const steps = [
-              { key: "pending", label: "অপেক্ষমান", icon: Clock },
-              { key: "confirmed", label: "নিশ্চিত হয়েছে", icon: CheckCircle2 },
-              { key: "shipped", label: "পাঠানো হয়েছে", icon: Truck },
-              { key: "delivered", label: "ডেলিভারড", icon: Package },
+              { key: "pending", label: "অর্ডার গৃহীত", sub: "আপনার অর্ডার আমাদের কাছে পৌঁছেছে", icon: Clock },
+              { key: "confirmed", label: "নিশ্চিত হয়েছে", sub: "অর্ডার প্রস্তুত হচ্ছে", icon: CheckCircle2 },
+              { key: "shipped", label: "পাঠানো হয়েছে", sub: "ডেলিভারির পথে রয়েছে", icon: Truck },
+              { key: "delivered", label: "ডেলিভারড", sub: "সফলভাবে পৌঁছেছে", icon: Package },
             ];
             const cancelled = trackOrder.status === "cancelled" || trackOrder.status === "returned" || trackOrder.status === "abandoned";
             const currentIdx = steps.findIndex((s) => s.key === trackOrder.status);
+            const progressPct = currentIdx >= 0 ? (currentIdx / (steps.length - 1)) * 100 : 0;
             return (
-              <div className="space-y-4">
-                <div className="bg-gray-50 rounded-xl p-3 text-sm">
-                  <div className="font-bold text-gray-900">{trackOrder.product_name}</div>
-                  <div className="text-xs text-gray-500 mt-1">অর্ডার #{toBn(trackOrder.order_number)} · ৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</div>
-                </div>
-                {cancelled ? (
-                  <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-xl">
-                    <X className="h-5 w-5" />
-                    <span className="font-bold">{statusLabel(trackOrder.status).t}</span>
+              <>
+                {/* Premium gradient header */}
+                <div className="relative px-6 pt-6 pb-8 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, #0d3a1d 0%, ${BRAND_GREEN} 60%, #2da159 100%)` }}>
+                  <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+                  <div className="absolute -bottom-12 -left-8 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+                  <div className="relative flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
+                        <Truck className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-[11px] uppercase tracking-wider text-white/70 font-bold">Order Tracking</div>
+                        <div className="font-bold text-base leading-tight">অর্ডার ট্র্যাকিং</div>
+                      </div>
+                    </div>
+                    <button onClick={() => setTrackOrder(null)} className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition">
+                      <X className="h-4 w-4" />
+                    </button>
                   </div>
-                ) : (
-                  <div className="space-y-0">
-                    {steps.map((s, i) => {
-                      const done = currentIdx >= i;
-                      const active = currentIdx === i;
-                      const Icon = s.icon;
-                      return (
-                        <div key={s.key} className="flex gap-3">
-                          <div className="flex flex-col items-center">
-                            <div className={`w-9 h-9 rounded-full flex items-center justify-center ${done ? "text-white" : "bg-gray-100 text-gray-400"} ${active ? "ring-4 ring-green-100" : ""}`} style={done ? { backgroundColor: BRAND_GREEN } : {}}>
-                              <Icon className="h-4 w-4" />
+                  <div className="relative mt-4 bg-white/10 backdrop-blur rounded-2xl p-3.5 ring-1 ring-white/20">
+                    <div className="text-[15px] font-bold leading-snug">{trackOrder.product_name}</div>
+                    <div className="flex items-center justify-between mt-1.5 text-xs text-white/80">
+                      <span>অর্ডার #{toBn(trackOrder.order_number)}</span>
+                      <span className="font-bold text-amber-200 text-sm">৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white px-6 py-6">
+                  {cancelled ? (
+                    <div className="flex flex-col items-center text-center py-6">
+                      <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-3">
+                        <X className="h-8 w-8 text-red-600" />
+                      </div>
+                      <div className="font-bold text-lg text-red-700">{statusLabel(trackOrder.status).t}</div>
+                      <div className="text-xs text-gray-500 mt-1">এই অর্ডারটি আর সক্রিয় নেই</div>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Horizontal stepper with progress bar */}
+                      <div className="relative">
+                        <div className="absolute left-0 right-0 top-5 h-1 bg-gray-100 rounded-full mx-5" />
+                        <div className="absolute left-5 top-5 h-1 rounded-full transition-all duration-700" style={{ width: `calc((100% - 2.5rem) * ${progressPct / 100})`, background: `linear-gradient(90deg, ${BRAND_GREEN}, #2da159)` }} />
+                        <div className="relative grid grid-cols-4 gap-1">
+                          {steps.map((s, i) => {
+                            const done = currentIdx >= i;
+                            const active = currentIdx === i;
+                            const Icon = s.icon;
+                            return (
+                              <div key={s.key} className="flex flex-col items-center">
+                                <div className={`relative w-11 h-11 rounded-full flex items-center justify-center transition-all ${done ? "text-white shadow-lg" : "bg-white text-gray-300 border-2 border-gray-200"}`} style={done ? { background: `linear-gradient(135deg, ${BRAND_GREEN}, #2da159)`, boxShadow: `0 8px 20px -6px ${BRAND_GREEN}80` } : {}}>
+                                  {active && <span className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ backgroundColor: BRAND_GREEN }} />}
+                                  <Icon className="h-4.5 w-4.5 relative" />
+                                </div>
+                                <div className={`text-[10px] font-bold mt-2 text-center leading-tight ${done ? "text-gray-900" : "text-gray-400"}`}>{s.label}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Active step details */}
+                      {currentIdx >= 0 && (
+                        <div className="mt-6 rounded-2xl p-4 border-2" style={{ borderColor: `${BRAND_GREEN}30`, background: `linear-gradient(135deg, ${BRAND_GREEN}08, ${BRAND_GREEN}15)` }}>
+                          <div className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full mt-1.5 animate-pulse" style={{ backgroundColor: BRAND_GREEN }} />
+                            <div className="flex-1">
+                              <div className="text-[11px] font-bold uppercase tracking-wider" style={{ color: BRAND_GREEN }}>বর্তমান অবস্থা</div>
+                              <div className="font-bold text-gray-900 mt-0.5">{steps[currentIdx].label}</div>
+                              <div className="text-xs text-gray-600 mt-0.5">{steps[currentIdx].sub}</div>
                             </div>
-                            {i < steps.length - 1 && <div className={`w-0.5 flex-1 min-h-[24px] ${currentIdx > i ? "" : "bg-gray-200"}`} style={currentIdx > i ? { backgroundColor: BRAND_GREEN } : {}} />}
-                          </div>
-                          <div className="pb-5 pt-1.5">
-                            <div className={`text-sm font-bold ${done ? "text-gray-900" : "text-gray-400"}`}>{s.label}</div>
-                            {active && <div className="text-xs text-gray-500 mt-0.5">বর্তমান অবস্থা</div>}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                      )}
+
+                      {/* Delivery address */}
+                      {trackOrder.customer_address && (
+                        <div className="mt-3 flex items-start gap-2 px-3 py-2.5 rounded-xl bg-gray-50">
+                          <MapPin className="h-4 w-4 text-gray-400 shrink-0 mt-0.5" />
+                          <div className="text-xs text-gray-600 leading-relaxed">{trackOrder.customer_address}</div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
             );
           })()}
         </DialogContent>
