@@ -70,9 +70,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <LanguageProvider>
+      <CartProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CartDrawer />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
