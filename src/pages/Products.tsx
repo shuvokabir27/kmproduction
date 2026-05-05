@@ -424,20 +424,20 @@ const Products = () => {
         <div className="max-w-7xl mx-auto">
           <div className="relative rounded-2xl overflow-hidden shadow-xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_50%,white,transparent_60%)]" />
-            <div className="relative grid md:grid-cols-2 gap-6 items-center p-6 md:p-12">
+            <div className="relative grid md:grid-cols-2 gap-6 items-center p-6 md:p-12" style={{ fontFamily: "'Tiro Bangla', serif" }}>
               <div className="text-white text-center md:text-left">
-                <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs mb-4">
+                <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs mb-4" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <span className="w-2 h-2 bg-yellow-300 rounded-full animate-pulse" />
                   কুয়াকাটার অথেনটিক পণ্য
                 </div>
-                <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+                <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   প্রতিদিনের সুস্থতায় হোক<br />
                   <span className="text-yellow-300">খাঁটি পণ্য</span>
                 </h1>
-                <p className="text-white/85 text-sm md:text-base mb-6 max-w-md mx-auto md:mx-0">
+                <p className="text-white/85 text-sm md:text-base mb-6 max-w-md mx-auto md:mx-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   সরাসরি কুয়াকাটার সমুদ্র সৈকত ও স্থানীয় কৃষক থেকে সংগ্রহ করা ১০০% খাঁটি ও তাজা পণ্য — শুঁটকি, মধু, তালের গুড়, হস্তশিল্প আরও অনেক কিছু।
                 </p>
-                <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <div className="flex flex-wrap gap-3 justify-center md:justify-start" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <a href="#shop">
                     <Button className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold rounded-full px-6 h-12 gap-2">
                       <ShoppingBag className="h-4 w-4" /> এখনই কিনুন
@@ -452,7 +452,7 @@ const Products = () => {
                   )}
                 </div>
               </div>
-              <div className="relative hidden md:block">
+              <div className="relative block mt-2 md:mt-0">
                 {(() => {
                   const slides = (products || []).filter((p: any) => p.image_url).slice(0, 8);
                   const current = slides[heroSlide % (slides.length || 1)];
