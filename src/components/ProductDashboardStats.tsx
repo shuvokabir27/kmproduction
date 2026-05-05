@@ -368,17 +368,23 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
   );
 };
 
-const StatCard = ({ icon: Icon, label, value, color, bg }: {
-  icon: any; label: string; value: string; color: string; bg: string;
-}) => (
-  <div className={`${bg} border border-border/20 rounded-2xl p-3.5 space-y-1`}>
-    <div className="flex items-center gap-2">
-      <Icon className={`h-4 w-4 ${color}`} />
-      <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
-    </div>
-    <p className={`text-xl font-extrabold ${color}`}>{value}</p>
-  </div>
-);
+const StatCard = ({ icon: Icon, label, value, color, bg, onClick }: {
+  icon: any; label: string; value: string; color: string; bg: string; onClick?: () => void;
+}) => {
+  const Comp: any = onClick ? "button" : "div";
+  return (
+    <Comp
+      onClick={onClick}
+      className={`${bg} border border-border/20 rounded-2xl p-3.5 space-y-1 text-left ${onClick ? "hover:border-border/50 hover:scale-[1.02] transition-all cursor-pointer" : ""}`}
+    >
+      <div className="flex items-center gap-2">
+        <Icon className={`h-4 w-4 ${color}`} />
+        <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
+      </div>
+      <p className={`text-xl font-extrabold ${color}`}>{value}</p>
+    </Comp>
+  );
+};
 
 const DashboardSkeleton = () => (
   <div className="space-y-4">
