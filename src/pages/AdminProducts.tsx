@@ -21,6 +21,7 @@ import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
 import CustomerCRM from "@/components/CustomerCRM";
+import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
 import WeightPricingEditor from "@/components/WeightPricingEditor";
 import ProductVideoManager from "@/components/ProductVideoManager";
 
