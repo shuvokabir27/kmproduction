@@ -11,11 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Pencil, Trash2, Sparkles, Upload } from "lucide-react";
 import { toast } from "sonner";
 
+type ComboItem = { product_id: string; quantity: number };
+
 const emptyForm = {
   title: "",
   description: "",
   product_id: "",
-  discount_type: "percentage" as "percentage" | "fixed" | "free_delivery",
+  discount_type: "percentage" as "percentage" | "fixed" | "free_delivery" | "combo",
   discount_value: "",
   image_url: "",
   badge_text: "বিশেষ অফার",
@@ -24,6 +26,8 @@ const emptyForm = {
   is_active: true,
   show_popup: true,
   popup_priority: "0",
+  combo_products: [] as ComboItem[],
+  combo_price: "",
 };
 
 export default function ShopOfferManager() {
@@ -66,6 +70,8 @@ export default function ShopOfferManager() {
       is_active: o.is_active,
       show_popup: o.show_popup,
       popup_priority: String(o.popup_priority || 0),
+      combo_products: Array.isArray(o.combo_products) ? o.combo_products : [],
+      combo_price: o.combo_price != null ? String(o.combo_price) : "",
     });
     setOpen(true);
   };
