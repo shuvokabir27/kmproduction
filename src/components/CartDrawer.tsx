@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import { useDeliverySettings } from "@/hooks/useDeliverySettings";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { X, Trash2, Plus, Minus, ShoppingCart, CheckCircle, Truck, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import PaymentMethodPicker, { PaymentMethod } from "@/components/PaymentMethodPicker";
 
 const toBn = (n: number) => Math.round(n).toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#1f7a3a";
@@ -26,6 +27,14 @@ export const CartDrawer = () => {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", address: "" });
   const [phoneError, setPhoneError] = useState("");
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const [paymentSenderNo, setPaymentSenderNo] = useState("");
+  const [paymentTrxId, setPaymentTrxId] = useState("");
+
+  useEffect(() => {
+    supabase.from("site_settings").select("*").single().then(({ data }) => setSiteSettings(data));
+  }, []);
 
   const openCheckout = () => {
     if (!items.length) return;
@@ -47,6 +56,10 @@ export const CartDrawer = () => {
     if (!form.name.trim()) return toast.error("নাম দিন");
     if (form.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের"); return; }
     if (!form.address.trim()) return toast.error("ঠিকানা দিন");
+    if (paymentMethod !== "cod") {
+      if (paymentSenderNo.length !== 11) return toast.error("আপনার পেমেন্ট নম্বর ১১ ডিজিট দিন");
+      if (!paymentTrxId.trim()) return toast.error("ট্রানজেকশন আইডি দিন");
+    }
     setSubmitting(true);
     try {
       const rows = items.map((it, idx) => ({
@@ -61,6 +74,9 @@ export const CartDrawer = () => {
         total_amount: it.unit_price * it.quantity,
         delivery_charge: idx === 0 ? delivery.charge : 0,
         shop_customer_id: customer?.id ?? null,
+        payment_method: paymentMethod,
+        payment_sender_no: paymentMethod !== "cod" ? paymentSenderNo : null,
+        payment_trx_id: paymentMethod !== "cod" ? paymentTrxId : null,
       }));
       const { error } = await supabase.from("orders").insert(rows as any);
       if (error) throw error;
@@ -251,7 +267,16 @@ export const CartDrawer = () => {
               <div>
                 <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
                 <Textarea value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 resize-none" />
-              </div>
+              <PaymentMethodPicker
+                settings={siteSettings}
+                method={paymentMethod}
+                senderNo={paymentSenderNo}
+                trxId={paymentTrxId}
+                onMethodChange={setPaymentMethod}
+                onSenderNoChange={setPaymentSenderNo}
+                onTrxIdChange={setPaymentTrxId}
+              />
+            </div>
             </div>
             <div className="border-t border-gray-100 p-4 space-y-2 bg-white">
               <Button onClick={submit} disabled={submitting} className="w-full text-white font-bold h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
