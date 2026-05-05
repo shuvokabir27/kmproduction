@@ -71,7 +71,7 @@ const AdminProducts = () => {
     setForm({
       name: "", description: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
-      sort_order: "0", contact_info: "",
+      sort_order: "0", contact_info: "", unit_type: "piece", variants: [],
     });
     setEditingProduct(null);
   };
