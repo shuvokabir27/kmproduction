@@ -267,7 +267,16 @@ export const CartDrawer = () => {
               <div>
                 <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
                 <Textarea value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 resize-none" />
-              </div>
+              <PaymentMethodPicker
+                settings={siteSettings}
+                method={paymentMethod}
+                senderNo={paymentSenderNo}
+                trxId={paymentTrxId}
+                onMethodChange={setPaymentMethod}
+                onSenderNoChange={setPaymentSenderNo}
+                onTrxIdChange={setPaymentTrxId}
+              />
+            </div>
             </div>
             <div className="border-t border-gray-100 p-4 space-y-2 bg-white">
               <Button onClick={submit} disabled={submitting} className="w-full text-white font-bold h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
