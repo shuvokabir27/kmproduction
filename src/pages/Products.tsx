@@ -204,9 +204,18 @@ const Products = () => {
             />
           </div>
 
-          <button onClick={() => setMobileMenuOpen(v => !v)} className="md:hidden p-2 rounded-lg hover:bg-gray-100">
-            <Menu className="h-5 w-5 text-gray-700" />
-          </button>
+          <div className="md:hidden flex items-center gap-1">
+            <Link
+              to={shopCustomer ? "/shop/account" : "/shop/login"}
+              className="p-2 rounded-lg hover:bg-gray-100"
+              aria-label="login"
+            >
+              <User className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+            </Link>
+            <button onClick={() => setMobileMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-gray-100">
+              <Menu className="h-5 w-5 text-gray-700" />
+            </button>
+          </div>
         </div>
         {mobileMenuOpen && (
           <div className="md:hidden border-t bg-white px-4 py-3 space-y-2">
