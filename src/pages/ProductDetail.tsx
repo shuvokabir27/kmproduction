@@ -81,6 +81,17 @@ const ProductDetail = () => {
     },
   });
 
+  const { data: categoryMap } = useQuery({
+    queryKey: ["product-categories-map"],
+    queryFn: async () => {
+      const { data } = await supabase.from("product_categories").select("value,label");
+      const m: Record<string, string> = {};
+      (data || []).forEach((c: any) => { m[c.value] = c.label; });
+      return m;
+    },
+  });
+  const categoryLabel = product?.category ? (categoryMap?.[product.category] || product.category) : "";
+
   const contactPhone = product?.contact_info || siteSettings?.contact_phone || "";
   const whatsappNo = siteSettings?.whatsapp_no || contactPhone;
 
