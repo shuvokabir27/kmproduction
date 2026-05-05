@@ -52,7 +52,8 @@ const AdminProducts = () => {
     sort_order: "0",
     contact_info: "",
     unit_type: "piece" as "piece" | "kg" | "size",
-    variants: [] as { label: string; price: string; discount_price: string }[],
+    weight_grams: "",
+    variants: [] as { label: string; price: string; discount_price: string; weight_grams: string }[],
   });
 
   const { data: products, isLoading } = useQuery({
