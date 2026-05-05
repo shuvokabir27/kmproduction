@@ -26,7 +26,7 @@ export const CartDrawer = () => {
     if (!items.length) return;
     setForm({
       name: customer?.full_name || "",
-      phone: customer?.mobile_number || "",
+      phone: customer?.phone || "",
       address: "",
     });
     setCheckout(true);
