@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
-  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play
+  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree
 } from "lucide-react";
 import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
@@ -24,6 +24,8 @@ import CustomerCRM from "@/components/CustomerCRM";
 import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
 import WeightPricingEditor from "@/components/WeightPricingEditor";
 import ProductVideoManager from "@/components/ProductVideoManager";
+import CategoryManager from "@/components/CategoryManager";
+import { useProductCategories } from "@/hooks/useProductCategories";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
