@@ -327,6 +327,10 @@ const AdminProducts = () => {
           })()}
         </TabsContent>
 
+        <TabsContent value="categories" className="mt-4">
+          <CategoryManager />
+        </TabsContent>
+
         {/* Orders Tab */}
         <TabsContent value="orders" className="mt-4">
           <OrderManagement />
