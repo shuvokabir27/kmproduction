@@ -174,6 +174,24 @@ const Products = () => {
             >
               🔥 OFFER
             </button>
+            {shopCustomer ? (
+              <Link
+                to="/shop/account"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold"
+                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+              >
+                <User className="h-3.5 w-3.5" />
+                {shopCustomer.full_name?.split(" ")[0] || "অ্যাকাউন্ট"}
+              </Link>
+            ) : (
+              <Link
+                to="/shop/login"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold hover:bg-gray-50"
+                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+              >
+                <LogIn className="h-3.5 w-3.5" /> লগইন
+              </Link>
+            )}
           </nav>
 
           <div className="hidden lg:flex items-center bg-gray-100 rounded-full px-4 py-2 w-72">
