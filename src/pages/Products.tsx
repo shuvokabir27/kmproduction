@@ -308,6 +308,7 @@ const Products = () => {
                 className="bg-transparent flex-1 text-sm outline-none"
               />
             </div>
+            <Link to="/" className="block py-2 text-sm font-semibold flex items-center gap-1.5"><Home className="h-4 w-4" /> HOME</Link>
             <a href="#shop" className="block py-2 text-sm font-semibold">SHOP</a>
             <a href="#categories" className="block py-2 text-sm font-semibold">ক্যাটাগরি</a>
             <a href="#about" className="block py-2 text-sm font-semibold">ABOUT</a>
