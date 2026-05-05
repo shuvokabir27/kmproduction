@@ -28,6 +28,7 @@ const emptyForm = {
   popup_priority: "0",
   combo_products: [] as ComboItem[],
   combo_price: "",
+  combo_free_delivery: false,
 };
 
 export default function ShopOfferManager() {
@@ -72,6 +73,7 @@ export default function ShopOfferManager() {
       popup_priority: String(o.popup_priority || 0),
       combo_products: Array.isArray(o.combo_products) ? o.combo_products : [],
       combo_price: o.combo_price != null ? String(o.combo_price) : "",
+      combo_free_delivery: !!o.combo_free_delivery,
     });
     setOpen(true);
   };
@@ -109,6 +111,7 @@ export default function ShopOfferManager() {
       popup_priority: Number(form.popup_priority) || 0,
       combo_products: form.combo_products.filter(c => c.product_id),
       combo_price: form.combo_price ? Number(form.combo_price) : null,
+      combo_free_delivery: form.combo_free_delivery,
     };
     try {
       if (editing) {
