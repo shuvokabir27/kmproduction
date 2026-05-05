@@ -893,6 +893,55 @@ const Products = () => {
                     onSenderNoChange={(v) => setOrderForm(f => ({ ...f, payment_sender_no: v }))}
                     onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
                   />
+
+                  {selectedProduct && (() => {
+                    const p = selectedProduct;
+                    const variants = Array.isArray(p.variants) ? p.variants : [];
+                    const chosen = variants.length > 0 && selectedVariantIdx >= 0 ? variants[selectedVariantIdx] : null;
+                    const basePrice = chosen
+                      ? Number(chosen.discount_price ?? chosen.price ?? 0)
+                      : Number(p.discount_price || p.price || 0);
+                    const total = basePrice * Math.max(1, quantity);
+                    const variantWeight = chosen && (chosen as any).weight_grams != null ? Number((chosen as any).weight_grams) : null;
+                    const wPer = variantWeight && variantWeight > 0 ? variantWeight : Number(p.weight_grams || 0);
+                    const totalWeight = wPer * Math.max(1, quantity);
+                    const dlv = calculateDelivery(total, totalWeight, deliverySettings);
+                    const grand = total + dlv.charge;
+                    return (
+                      <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 shadow-lg">
+                        <div className="rounded-[14px] bg-gradient-to-br from-amber-50 via-white to-yellow-50 p-3.5 space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-700 flex items-center gap-2 font-medium">
+                              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                                <TruckIcon className="h-3.5 w-3.5 text-white" />
+                              </span>
+                              ডেলিভারি চার্জ
+                            </span>
+                            {dlv.isFree ? (
+                              <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow">🎉 ফ্রি</span>
+                            ) : (
+                              <span className="font-extrabold text-gray-900">৳{toBn(dlv.charge)}</span>
+                            )}
+                          </div>
+                          {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
+                            <div className="text-[11px] text-amber-800 bg-amber-100/70 border border-amber-200 rounded-lg px-2.5 py-1.5">
+                              🚚 আর মাত্র <span className="font-extrabold">৳{toBn(dlv.amountToFree)}</span> অর্ডার করলেই <span className="font-extrabold">ফ্রি ডেলিভারি!</span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between pt-2 border-t border-dashed border-amber-300">
+                            <span className="font-bold text-gray-900 text-base">মোট পেমেন্ট</span>
+                            <span
+                              className="font-extrabold text-2xl bg-clip-text text-transparent"
+                              style={{ backgroundImage: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}
+                            >
+                              ৳{toBn(grand)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   <Button onClick={handleOrderSubmit} disabled={submitting} className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
