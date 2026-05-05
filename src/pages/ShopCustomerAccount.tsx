@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import MobileShopNav from "@/components/MobileShopNav";
 
 const BRAND_GREEN = "#1f7a3a";
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -38,7 +39,7 @@ export default function ShopCustomerAccount() {
     .reduce((s, o) => s + Number(o.total_amount || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#f7f5ee]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+    <div className="min-h-screen bg-[#f7f5ee] pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
       <header className="bg-white shadow-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/products" className="flex items-center gap-2 text-sm text-gray-600">
@@ -123,6 +124,7 @@ export default function ShopCustomerAccount() {
           )}
         </div>
       </main>
+      <MobileShopNav />
     </div>
   );
 }

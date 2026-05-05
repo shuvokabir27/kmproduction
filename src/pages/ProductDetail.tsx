@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
+import MobileShopNav from "@/components/MobileShopNav";
 import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
@@ -202,7 +203,7 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f5ee]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+    <div className="min-h-screen bg-[#f7f5ee] pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
 
       {/* Top Strip */}
       <div className="text-white text-xs md:text-sm py-2 px-4" style={{ backgroundColor: BRAND_GREEN }}>
@@ -630,6 +631,7 @@ const ProductDetail = () => {
           </div>
         </div>
       )}
+      <MobileShopNav />
     </div>
   );
 };

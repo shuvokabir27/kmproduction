@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ShoppingBag, Lock, Phone, ArrowLeft } from "lucide-react";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
+import MobileShopNav from "@/components/MobileShopNav";
 
 const BRAND_GREEN = "#1f7a3a";
 const BRAND_DARK = "#155c2c";
@@ -46,7 +47,7 @@ export default function ShopCustomerLogin() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-10"
+      className="min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10"
       style={{
         fontFamily: "'Tiro Bangla', serif",
         background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})`,
@@ -117,6 +118,7 @@ export default function ShopCustomerLogin() {
 
         </div>
       </div>
+      <MobileShopNav />
     </div>
   );
 }
