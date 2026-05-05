@@ -25,6 +25,7 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { customer: shopCustomer } = useShopCustomer();
 
   const { data: products } = useQuery({
     queryKey: ["public-products"],
