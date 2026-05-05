@@ -1,10 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useShopCustomer } from "@/hooks/useShopCustomer";
-import { useEffect } from "react";
+import { useShopCustomer, SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar, MapPin, User, Save, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import MobileShopNav from "@/components/MobileShopNav";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const BRAND_GREEN = "#1f7a3a";
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
