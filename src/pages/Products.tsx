@@ -515,13 +515,30 @@ const Products = () => {
                           <span className="text-xs text-gray-400 line-through">৳{toBn(p.price)}</span>
                         )}
                       </div>
-                      <Button
-                        onClick={() => openOrderDialog(p)}
-                        className="mt-3 w-full text-white font-bold rounded-full text-xs md:text-sm h-10 gap-1.5"
-                        style={{ backgroundColor: BRAND_GREEN }}
-                      >
-                        <ShoppingCart className="h-4 w-4" /> অর্ডার করুন
-                      </Button>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <Button
+                          onClick={() => {
+                            const variants = Array.isArray(p.variants) ? p.variants : [];
+                            if (variants.length > 0) {
+                              openOrderDialog(p);
+                            } else {
+                              addProductToCart(p, 1);
+                            }
+                          }}
+                          variant="outline"
+                          className="font-bold rounded-full text-xs h-10 gap-1 border-2"
+                          style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                        >
+                          <ShoppingCart className="h-3.5 w-3.5" /> কার্টে
+                        </Button>
+                        <Button
+                          onClick={() => openOrderDialog(p)}
+                          className="text-white font-bold rounded-full text-xs h-10 gap-1"
+                          style={{ backgroundColor: BRAND_GREEN }}
+                        >
+                          অর্ডার
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
