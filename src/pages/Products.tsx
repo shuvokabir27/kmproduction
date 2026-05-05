@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
@@ -426,13 +426,50 @@ const Products = () => {
                 </div>
               </div>
               <div className="relative hidden md:block">
-                <div className="aspect-square bg-white/10 rounded-3xl backdrop-blur border border-white/20 flex items-center justify-center overflow-hidden">
-                  {products?.[0]?.image_url ? (
-                    <img src={products[0].image_url} alt="hero" className="w-full h-full object-cover" />
-                  ) : (
-                    <ShoppingBag className="h-32 w-32 text-white/30" />
-                  )}
-                </div>
+                {(() => {
+                  const slides = (products || []).filter((p: any) => p.image_url).slice(0, 8);
+                  const current = slides[heroSlide % (slides.length || 1)];
+                  return (
+                    <>
+                      <div className="aspect-square bg-white/10 rounded-3xl backdrop-blur border border-white/20 overflow-hidden relative">
+                        {current ? (
+                          <Link to={`/products/${current.id}`} className="block w-full h-full group">
+                            {slides.map((p: any, i: number) => (
+                              <img
+                                key={p.id}
+                                src={p.image_url}
+                                alt={p.name}
+                                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i === (heroSlide % slides.length) ? 'opacity-100' : 'opacity-0'}`}
+                              />
+                            ))}
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
+                              <p className="font-bold text-lg line-clamp-1">{current.name}</p>
+                              <p className="text-yellow-300 font-extrabold text-xl">
+                                ৳{toBn(Number(current.discount_price ?? current.price ?? 0))}
+                                {current.discount_price && current.discount_price < current.price && (
+                                  <span className="text-xs line-through text-white/60 ml-2">৳{toBn(Number(current.price))}</span>
+                                )}
+                              </p>
+                            </div>
+                          </Link>
+                        ) : (
+                          <ShoppingBag className="h-32 w-32 text-white/30 m-auto" />
+                        )}
+                      </div>
+                      {slides.length > 1 && (
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                          {slides.map((_: any, i: number) => (
+                            <button
+                              key={i}
+                              onClick={() => setHeroSlide(i)}
+                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-yellow-300' : 'w-1.5 bg-white/40'}`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
                 <div className="absolute -bottom-3 -left-3 bg-yellow-400 text-green-900 px-4 py-2 rounded-2xl shadow-lg font-bold text-sm">
                   ১০০% খাঁটি
                 </div>
