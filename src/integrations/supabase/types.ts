@@ -1562,6 +1562,7 @@ export type Database = {
           quantity: number
           return_amount: number | null
           returned_at: string | null
+          shop_customer_id: string | null
           status: Database["public"]["Enums"]["order_status"]
           total_amount: number
           unit_price: number
@@ -1583,6 +1584,7 @@ export type Database = {
           quantity?: number
           return_amount?: number | null
           returned_at?: string | null
+          shop_customer_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           total_amount?: number
           unit_price?: number
@@ -1604,6 +1606,7 @@ export type Database = {
           quantity?: number
           return_amount?: number | null
           returned_at?: string | null
+          shop_customer_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           total_amount?: number
           unit_price?: number
@@ -1615,6 +1618,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shop_customer_id_fkey"
+            columns: ["shop_customer_id"]
+            isOneToOne: false
+            referencedRelation: "shop_customers"
             referencedColumns: ["id"]
           },
         ]
@@ -2692,6 +2702,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      shop_customers: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          is_active: boolean
+          last_login_at: string | null
+          password_hash: string
+          phone: string
+          session_expires_at: string | null
+          session_token: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          last_login_at?: string | null
+          password_hash: string
+          phone: string
+          session_expires_at?: string | null
+          session_token?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          last_login_at?: string | null
+          password_hash?: string
+          phone?: string
+          session_expires_at?: string | null
+          session_token?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       site_settings: {
         Row: {
