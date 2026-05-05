@@ -31,6 +31,11 @@ const ProductDetail = () => {
     if (searchParams.get("order") === "1") setOrderOpen(true);
   }, [searchParams]);
 
+  useEffect(() => {
+    const v: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
+    setSelectedVariantIdx(v.length > 0 ? 0 : -1);
+  }, [product?.id]);
+
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
   const [tab, setTab] = useState<"desc" | "reviews">("desc");
