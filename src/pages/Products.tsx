@@ -138,6 +138,9 @@ const Products = () => {
 
   const openOrderDialog = (product: any) => {
     setSelectedProduct(product);
+    const variants = Array.isArray(product?.variants) ? product.variants : [];
+    setSelectedVariantIdx(variants.length > 0 ? 0 : -1);
+    setQuantity(1);
     setOrderSuccess(false);
     setPhoneError("");
     setOrderOpen(true);
