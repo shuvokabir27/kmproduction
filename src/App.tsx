@@ -58,6 +58,7 @@ import ProductDetail from "./pages/ProductDetail";
 import ShopCustomerLogin from "./pages/ShopCustomerLogin";
 import ShopCustomerAccount from "./pages/ShopCustomerAccount";
 import AdminProducts from "./pages/AdminProducts";
+import ShopOfferPage from "./pages/ShopOfferPage";
 
 import TasksPage from "./pages/TasksPage";
 import DownloadApp from "./pages/DownloadApp";
@@ -87,6 +88,7 @@ const App = () => (
             <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/offer/:id" element={<ShopOfferPage />} />
             <Route path="/shop/login" element={<ShopCustomerLogin />} />
             <Route path="/shop/account" element={<ShopCustomerAccount />} />
             
