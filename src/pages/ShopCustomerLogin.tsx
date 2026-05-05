@@ -73,8 +73,8 @@ export default function ShopCustomerLogin() {
             <button onClick={() => setMode("register")} className={`flex-1 py-2 rounded-full transition ${mode === "register" ? "bg-white shadow text-gray-900" : "text-gray-500"}`}>রেজিস্টার</button>
           </div>
 
-          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[12px] leading-relaxed text-amber-900">
-            💡 আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আপনার আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
+          <div className="mb-4 rounded-xl border-2 border-red-400 bg-red-50 px-3 py-3 text-[12px] leading-relaxed text-red-700 font-semibold shadow-[0_0_0_3px_rgba(239,68,68,0.15)] animate-pulse">
+            ⚠️ <span className="font-bold">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আপনার আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
           </div>
 
           <div className="space-y-3">
