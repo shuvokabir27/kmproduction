@@ -394,10 +394,32 @@ const AdminProducts = () => {
                 <Label>ক্যাটাগরি</Label>
                 <Select value={form.category || "none"} onValueChange={(v) => setForm((f) => ({ ...f, category: v === "none" ? "" : v }))}>
                   <SelectTrigger><SelectValue placeholder="বাছুন" /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-80">
                     <SelectItem value="none">কোনোটি নয়</SelectItem>
+
+                    <div className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">🍛 খাবার ও শুঁটকি</div>
+                    <SelectItem value="premium_shutki">প্রিমিয়াম শুঁটকি</SelectItem>
+                    <SelectItem value="bala_chao">বালাচাও স্পেশাল</SelectItem>
+                    <SelectItem value="traditional_pickles">ঐতিহ্যবাহী আচার</SelectItem>
+
+                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">🐚 ঝিনুক ও উপহার সামগ্রী</div>
+                    <SelectItem value="shell_jewelry">ঝিনুকের অলংকার</SelectItem>
+                    <SelectItem value="custom_showpieces">কাস্টমাইজড শোপিস</SelectItem>
+                    <SelectItem value="souvenirs">স্যুভেনিয়ার ও গিফট</SelectItem>
+
+                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">👘 রাখাইন ফ্যাশন ও তাঁত</div>
+                    <SelectItem value="woven_winter_wear">তাঁতের শীতবস্ত্র</SelectItem>
+                    <SelectItem value="traditional_attire">ঐতিহ্যবাহী পোশাক</SelectItem>
+                    <SelectItem value="handicrafts_bags">হস্তশিল্প ও ব্যাগ</SelectItem>
+
+                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">🪵 গৃহসজ্জা ও হস্তশিল্প</div>
+                    <SelectItem value="coconut_shell_crafts">নারিকেলের শোপিস</SelectItem>
+                    <SelectItem value="bamboo_wooden">বাঁশ ও কাঠের তৈরি</SelectItem>
+                    <SelectItem value="toys_others">খেলনা ও অন্যান্য</SelectItem>
+
+                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">📦 অন্যান্য</div>
                     <SelectItem value="taler_gur">🌴 তালের গুড়</SelectItem>
-                    <SelectItem value="other">📦 অন্যান্য</SelectItem>
+                    <SelectItem value="other">অন্যান্য</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
