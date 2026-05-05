@@ -451,13 +451,51 @@ const ProductDetail = () => {
                   </div>
                 </div>
 
-                <div className="mx-5 mt-4 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
-                  {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
-                  <div className="flex-1">
-                    <p className="text-[11px] text-gray-500 line-clamp-1">{product.name}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-xs text-gray-600">{toBn(qty)} × ৳{toBn(unitPrice)}</span>
-                      <span className="text-lg font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
+                <div className="mx-5 mt-4 space-y-3">
+                  <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
+                    {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
+                    <div className="flex-1">
+                      <p className="text-[11px] text-gray-500 line-clamp-1">{product.name}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-gray-600">{toBn(qty)} × ৳{toBn(unitPrice)}</span>
+                        <span className="text-lg font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 shadow-lg">
+                    <div className="rounded-[14px] bg-gradient-to-br from-amber-50 via-white to-yellow-50 p-3.5 space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-700 flex items-center gap-2 font-medium">
+                          <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                            <TruckIcon className="h-3.5 w-3.5 text-white" />
+                          </span>
+                          ডেলিভারি চার্জ
+                        </span>
+                        {dlv.isFree ? (
+                          <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow">🎉 ফ্রি</span>
+                        ) : (
+                          <span className="font-extrabold text-gray-900">৳{toBn(dlv.charge)}</span>
+                        )}
+                      </div>
+                      {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
+                        <div className="text-[11px] text-amber-800 bg-amber-100/70 border border-amber-200 rounded-lg px-2.5 py-1.5">
+                          🚚 আর মাত্র <span className="font-extrabold">৳{toBn(dlv.amountToFree)}</span> অর্ডার করলেই <span className="font-extrabold">ফ্রি ডেলিভারি!</span>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between pt-2 border-t border-dashed border-amber-300">
+                        <span className="font-bold text-gray-900 text-base">মোট পেমেন্ট</span>
+                        <span className="font-extrabold text-2xl bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
+                          ৳{toBn(grandTotal)}
+                        </span>
+                      </div>
+                      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 p-[1.5px] shadow-md">
+                        <div className="rounded-[10px] bg-gradient-to-r from-emerald-50 to-green-50 px-3 py-2 flex items-center justify-center gap-2">
+                          <span className="text-base">💵</span>
+                          <span className="text-[12px] font-extrabold text-emerald-800 tracking-wide">ক্যাশ অন ডেলিভারি</span>
+                          <span className="text-[11px] text-emerald-700">— পণ্য হাতে পেয়ে পেমেন্ট</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
