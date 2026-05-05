@@ -143,7 +143,7 @@ export default function ShopCustomerAccount() {
               </div>
               <div>
                 <Label className="text-xs font-bold text-gray-700">মোবাইল নম্বর</Label>
-                <Input value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "") }))} maxLength={11} inputMode="numeric" className="h-11 mt-1 bg-white text-gray-900" placeholder="01XXXXXXXXX" />
+                <Input type="tel" pattern="[0-9]*" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "") }))} maxLength={11} inputMode="numeric" className="h-11 mt-1 bg-white text-gray-900" placeholder="01XXXXXXXXX" />
               </div>
               <div>
                 <Label className="text-xs font-bold text-gray-700">ডেলিভারি ঠিকানা</Label>
