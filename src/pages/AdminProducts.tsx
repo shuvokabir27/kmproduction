@@ -409,6 +409,16 @@ const AdminProducts = () => {
               <Label>বিবরণ</Label>
               <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="প্রডাক্টের বিবরণ" rows={3} />
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>বেস দাম (৳)</Label>
+                <Input type="number" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
+              </div>
+              <div>
+                <Label>ডিসকাউন্ট দাম (৳)</Label>
+                <Input type="number" value={form.discount_price} onChange={(e) => setForm((f) => ({ ...f, discount_price: e.target.value }))} placeholder="ঐচ্ছিক" />
+              </div>
+            </div>
 
             <div>
               <Label>ইউনিট টাইপ (কীভাবে বিক্রি হবে)</Label>
@@ -457,12 +467,6 @@ const AdminProducts = () => {
                   </Button>
                 </div>
               ))}
-            </div>
-              </div>
-              <div>
-                <Label>ডিসকাউন্ট দাম (৳)</Label>
-                <Input type="number" value={form.discount_price} onChange={(e) => setForm((f) => ({ ...f, discount_price: e.target.value }))} placeholder="ঐচ্ছিক" />
-              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
