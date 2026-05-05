@@ -224,6 +224,25 @@ const OrderManagement = () => {
     return true;
   });
 
+  // Group filtered orders by order_number
+  const groupedFiltered = (() => {
+    const map = new Map<number, any[]>();
+    filtered.forEach((o: any) => {
+      const arr = map.get(o.order_number) || [];
+      arr.push(o);
+      map.set(o.order_number, arr);
+    });
+    return Array.from(map.entries())
+      .map(([order_number, items]) => ({
+        order_number,
+        items,
+        first: items[0],
+        total_amount: items.reduce((s, i) => s + Number(i.total_amount || 0), 0),
+        delivery_charge: items.reduce((s, i) => s + Number(i.delivery_charge || 0), 0),
+      }))
+      .sort((a, b) => new Date(b.first.created_at).getTime() - new Date(a.first.created_at).getTime());
+  })();
+
   // Stats
   const stats = {
     total: orders?.length || 0,
