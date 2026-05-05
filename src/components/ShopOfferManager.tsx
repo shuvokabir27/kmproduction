@@ -246,18 +246,20 @@ export default function ShopOfferManager() {
                   const unit = p ? Number((p as any).discount_price ?? p.price ?? 0) : 0;
                   const lineTotal = unit * (c.quantity || 1);
                   return (
-                    <div key={idx} className="space-y-1">
-                      <div className="flex gap-2 items-center">
-                        <Select value={c.product_id || undefined} onValueChange={(v) => {
-                          const next = [...form.combo_products];
-                          next[idx] = { ...next[idx], product_id: v };
-                          setForm(f => ({ ...f, combo_products: next }));
-                        }}>
-                          <SelectTrigger className="flex-1"><SelectValue placeholder="প্রডাক্ট বাছাই" /></SelectTrigger>
-                          <SelectContent>
-                            {products?.map(pp => <SelectItem key={pp.id} value={pp.id}>{pp.name} — ৳{(pp as any).discount_price ?? pp.price}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                    <div key={idx} className="space-y-1 rounded-lg border bg-card p-2">
+                      <div className="grid grid-cols-[1fr_72px_36px] gap-2 items-center">
+                        <select
+                          value={c.product_id}
+                          onChange={(e) => {
+                            const next = [...form.combo_products];
+                            next[idx] = { ...next[idx], product_id: e.target.value };
+                            setForm(f => ({ ...f, combo_products: next }));
+                          }}
+                          className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                        >
+                          <option value="">প্রডাক্ট বাছাই</option>
+                          {products?.map(pp => <option key={pp.id} value={pp.id}>{pp.name} — ৳{(pp as any).discount_price ?? pp.price}</option>)}
+                        </select>
                         <Input type="number" min={1} className="w-16" value={c.quantity} onChange={e => {
                           const next = [...form.combo_products];
                           next[idx] = { ...next[idx], quantity: Math.max(1, Number(e.target.value) || 1) };
