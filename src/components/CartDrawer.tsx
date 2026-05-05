@@ -78,8 +78,14 @@ export const CartDrawer = () => {
         payment_sender_no: paymentMethod !== "cod" ? paymentSenderNo : null,
         payment_trx_id: paymentMethod !== "cod" ? paymentTrxId : null,
       }));
-      const { error } = await supabase.from("orders").insert(rows as any);
+      const { data: inserted, error } = await supabase.from("orders").insert(rows as any).select("id, order_number");
       if (error) throw error;
+      // Group all items under the first order_number so customer sees them as one order
+      if (inserted && inserted.length > 1) {
+        const sharedNumber = inserted[0].order_number;
+        const otherIds = inserted.slice(1).map((r: any) => r.id);
+        await supabase.from("orders").update({ order_number: sharedNumber } as any).in("id", otherIds);
+      }
       setSuccess(true);
       clear();
     } catch {
