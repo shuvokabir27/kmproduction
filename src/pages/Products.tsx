@@ -238,6 +238,19 @@ const Products = () => {
                 <LogIn className="h-3.5 w-3.5" /> লগইন
               </Link>
             )}
+            <button
+              onClick={cart.open}
+              className="relative flex items-center gap-1.5 text-xs px-3 py-2 rounded-full font-bold text-white"
+              style={{ backgroundColor: BRAND_GREEN }}
+              aria-label="cart"
+            >
+              <ShoppingCart className="h-3.5 w-3.5" /> কার্ট
+              {cart.count > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+                  {toBn(cart.count)}
+                </span>
+              )}
+            </button>
           </nav>
 
           <div className="hidden lg:flex items-center bg-gray-100 rounded-full px-4 py-2 w-72">
