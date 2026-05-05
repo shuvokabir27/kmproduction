@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import { useDeliverySettings } from "@/hooks/useDeliverySettings";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { X, Trash2, Plus, Minus, ShoppingCart, CheckCircle, Truck, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import PaymentMethodPicker, { PaymentMethod } from "@/components/PaymentMethodPicker";
 
 const toBn = (n: number) => Math.round(n).toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#1f7a3a";
@@ -26,6 +27,14 @@ export const CartDrawer = () => {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", address: "" });
   const [phoneError, setPhoneError] = useState("");
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const [paymentSenderNo, setPaymentSenderNo] = useState("");
+  const [paymentTrxId, setPaymentTrxId] = useState("");
+
+  useEffect(() => {
+    supabase.from("site_settings").select("*").single().then(({ data }) => setSiteSettings(data));
+  }, []);
 
   const openCheckout = () => {
     if (!items.length) return;
