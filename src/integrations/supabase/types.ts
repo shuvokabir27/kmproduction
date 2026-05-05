@@ -2843,6 +2843,7 @@ export type Database = {
       shop_offers: {
         Row: {
           badge_text: string | null
+          combo_free_delivery: boolean
           combo_price: number | null
           combo_products: Json
           created_at: string
@@ -2863,6 +2864,7 @@ export type Database = {
         }
         Insert: {
           badge_text?: string | null
+          combo_free_delivery?: boolean
           combo_price?: number | null
           combo_products?: Json
           created_at?: string
@@ -2883,6 +2885,7 @@ export type Database = {
         }
         Update: {
           badge_text?: string | null
+          combo_free_delivery?: boolean
           combo_price?: number | null
           combo_products?: Json
           created_at?: string

@@ -28,6 +28,7 @@ const emptyForm = {
   popup_priority: "0",
   combo_products: [] as ComboItem[],
   combo_price: "",
+  combo_free_delivery: false,
 };
 
 export default function ShopOfferManager() {
@@ -48,7 +49,7 @@ export default function ShopOfferManager() {
   const { data: products } = useQuery({
     queryKey: ["admin-products-mini"],
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("id,name,price,image_url").order("name");
+      const { data } = await supabase.from("products").select("id,name,price,discount_price,image_url").order("name");
       return data ?? [];
     },
   });
@@ -72,6 +73,7 @@ export default function ShopOfferManager() {
       popup_priority: String(o.popup_priority || 0),
       combo_products: Array.isArray(o.combo_products) ? o.combo_products : [],
       combo_price: o.combo_price != null ? String(o.combo_price) : "",
+      combo_free_delivery: !!o.combo_free_delivery,
     });
     setOpen(true);
   };
@@ -109,6 +111,7 @@ export default function ShopOfferManager() {
       popup_priority: Number(form.popup_priority) || 0,
       combo_products: form.combo_products.filter(c => c.product_id),
       combo_price: form.combo_price ? Number(form.combo_price) : null,
+      combo_free_delivery: form.combo_free_delivery,
     };
     try {
       if (editing) {
@@ -238,33 +241,78 @@ export default function ShopOfferManager() {
                   </Button>
                 </div>
                 {form.combo_products.length === 0 && <p className="text-xs text-muted-foreground">কম্বোতে যোগ করতে প্রডাক্ট বাছাই করুন</p>}
-                {form.combo_products.map((c, idx) => (
-                  <div key={idx} className="flex gap-2 items-center">
-                    <Select value={c.product_id || undefined} onValueChange={(v) => {
-                      const next = [...form.combo_products];
-                      next[idx] = { ...next[idx], product_id: v };
-                      setForm(f => ({ ...f, combo_products: next }));
-                    }}>
-                      <SelectTrigger className="flex-1"><SelectValue placeholder="প্রডাক্ট বাছাই" /></SelectTrigger>
-                      <SelectContent>
-                        {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <Input type="number" min={1} className="w-16" value={c.quantity} onChange={e => {
-                      const next = [...form.combo_products];
-                      next[idx] = { ...next[idx], quantity: Math.max(1, Number(e.target.value) || 1) };
-                      setForm(f => ({ ...f, combo_products: next }));
-                    }} />
-                    <Button type="button" size="icon" variant="ghost" className="text-destructive" onClick={() => {
-                      setForm(f => ({ ...f, combo_products: f.combo_products.filter((_, i) => i !== idx) }));
-                    }}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                ))}
+                {form.combo_products.map((c, idx) => {
+                  const p = products?.find(x => x.id === c.product_id);
+                  const unit = p ? Number((p as any).discount_price ?? p.price ?? 0) : 0;
+                  const lineTotal = unit * (c.quantity || 1);
+                  return (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex gap-2 items-center">
+                        <Select value={c.product_id || undefined} onValueChange={(v) => {
+                          const next = [...form.combo_products];
+                          next[idx] = { ...next[idx], product_id: v };
+                          setForm(f => ({ ...f, combo_products: next }));
+                        }}>
+                          <SelectTrigger className="flex-1"><SelectValue placeholder="প্রডাক্ট বাছাই" /></SelectTrigger>
+                          <SelectContent>
+                            {products?.map(pp => <SelectItem key={pp.id} value={pp.id}>{pp.name} — ৳{(pp as any).discount_price ?? pp.price}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <Input type="number" min={1} className="w-16" value={c.quantity} onChange={e => {
+                          const next = [...form.combo_products];
+                          next[idx] = { ...next[idx], quantity: Math.max(1, Number(e.target.value) || 1) };
+                          setForm(f => ({ ...f, combo_products: next }));
+                        }} />
+                        <Button type="button" size="icon" variant="ghost" className="text-destructive" onClick={() => {
+                          setForm(f => ({ ...f, combo_products: f.combo_products.filter((_, i) => i !== idx) }));
+                        }}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                      {p && (
+                        <div className="text-xs text-muted-foreground pl-1">
+                          ৳{unit} × {c.quantity || 1} = <span className="font-bold text-foreground">৳{lineTotal}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {(() => {
+                  const total = form.combo_products.reduce((sum, c) => {
+                    const p = products?.find(x => x.id === c.product_id);
+                    if (!p) return sum;
+                    return sum + Number((p as any).discount_price ?? p.price ?? 0) * (c.quantity || 1);
+                  }, 0);
+                  const newPrice = Number(form.combo_price) || 0;
+                  const savings = newPrice > 0 && total > newPrice ? total - newPrice : 0;
+                  const pct = total > 0 && savings > 0 ? Math.round((savings / total) * 100) : 0;
+                  return (
+                    <div className="bg-card border rounded-lg p-3 space-y-1 text-sm">
+                      <div className="flex justify-between"><span className="text-muted-foreground">মোট মূল্য:</span><span className="font-bold">৳{total}</span></div>
+                      {newPrice > 0 && (
+                        <>
+                          <div className="flex justify-between"><span className="text-muted-foreground">অফার মূল্য:</span><span className="font-bold text-green-600">৳{newPrice}</span></div>
+                          {savings > 0 && (
+                            <div className="flex justify-between text-xs"><span className="text-muted-foreground">সাশ্রয়:</span><span className="font-bold text-red-600">৳{savings} ({pct}%)</span></div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
+
                 <div>
-                  <Label className="text-xs">কম্বোর বিশেষ মূল্য (৳)</Label>
+                  <Label className="text-xs">কম্বোর বিশেষ মূল্য (৳) — মোট মূল্য থেকে কম দিন</Label>
                   <Input type="number" value={form.combo_price} onChange={e => setForm(f => ({ ...f, combo_price: e.target.value }))} placeholder="যেমন: ৪৯৯" />
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-lg bg-card border">
+                  <div>
+                    <Label className="text-sm cursor-pointer">🚚 ফ্রি ডেলিভারি</Label>
+                    <p className="text-[11px] text-muted-foreground">কম্বো অর্ডারে ডেলিভারি চার্জ লাগবে না</p>
+                  </div>
+                  <Switch checked={form.combo_free_delivery} onCheckedChange={(v) => setForm(f => ({ ...f, combo_free_delivery: v }))} />
                 </div>
               </div>
             ) : (
