@@ -350,7 +350,7 @@ const ProductDetail = () => {
                   <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 flex items-center justify-center hover:bg-gray-100">
                     <Minus className="h-4 w-4" />
                   </button>
-                  <input type="number" value={qty} onChange={e => setQty(Math.max(1, parseInt(e.target.value) || 1))} className="w-12 h-10 text-center font-bold outline-none" />
+                  <input type="number" value={qty} onChange={e => setQty(Math.max(1, parseInt(e.target.value) || 1))} className="w-12 h-10 text-center font-bold outline-none bg-white text-gray-900" />
                   <button onClick={() => setQty(qty + 1)} className="w-10 h-10 flex items-center justify-center hover:bg-gray-100">
                     <Plus className="h-4 w-4" />
                   </button>
