@@ -111,12 +111,6 @@ export default function ShopCustomerLogin() {
             </Button>
           </div>
 
-          <div className="mt-6 pt-4 border-t text-center">
-            <p className="text-xs text-gray-500 mb-2">এডমিন বা সদস্য?</p>
-            <Link to="/login" className="text-sm font-semibold" style={{ color: BRAND_GREEN }}>
-              এডমিন/মেম্বার লগইন →
-            </Link>
-          </div>
         </div>
       </div>
     </div>
