@@ -34,6 +34,7 @@ export default function ShopCustomerAccount() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", address: "" });
   const [productMap, setProductMap] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
+  const [productByName, setProductByName] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
 
   useEffect(() => {
     if (!loading && !customer) nav("/shop/login", { replace: true });
@@ -48,13 +49,20 @@ export default function ShopCustomerAccount() {
   }, [customer]);
 
   useEffect(() => {
-    const ids = Array.from(new Set(orders.map((o: any) => o.product_id).filter(Boolean)));
-    if (ids.length === 0) { setProductMap({}); return; }
+    if (orders.length === 0) { setProductMap({}); setProductByName({}); return; }
     (async () => {
-      const { data } = await supabase.from("products").select("id, stock_status, is_active").in("id", ids);
-      const map: Record<string, any> = {};
-      (data || []).forEach((p: any) => { map[p.id] = p; });
-      setProductMap(map);
+      const ids = Array.from(new Set(orders.map((o: any) => o.product_id).filter(Boolean)));
+      const names = Array.from(new Set(orders.map((o: any) => o.product_name).filter(Boolean)));
+      const [byId, byName] = await Promise.all([
+        ids.length ? supabase.from("products").select("id, name, stock_status, is_active").in("id", ids) : Promise.resolve({ data: [] as any[] }),
+        names.length ? supabase.from("products").select("id, name, stock_status, is_active").in("name", names) : Promise.resolve({ data: [] as any[] }),
+      ]);
+      const mapId: Record<string, any> = {};
+      (byId.data || []).forEach((p: any) => { mapId[p.id] = p; });
+      const mapName: Record<string, any> = {};
+      (byName.data || []).forEach((p: any) => { mapName[p.name] = p; });
+      setProductMap(mapId);
+      setProductByName(mapName);
     })();
   }, [orders]);
 
