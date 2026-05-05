@@ -38,7 +38,7 @@ export default function ShopCustomerAccount() {
     .reduce((s, o) => s + Number(o.total_amount || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#f7f5ee]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+    <div className="min-h-screen bg-[#f7f5ee]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
       <header className="bg-white shadow-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/products" className="flex items-center gap-2 text-sm text-gray-600">
