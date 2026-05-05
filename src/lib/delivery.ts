@@ -24,11 +24,18 @@ export interface DeliveryResult {
 export function calculateDelivery(
   subtotal: number,
   totalWeightGrams: number,
-  s: DeliverySettings
+  s: DeliverySettings,
+  opts?: { skipThreshold?: boolean; forceFree?: boolean }
 ): DeliveryResult {
   const weight = Math.max(0, totalWeightGrams);
 
-  if (s.free_delivery_enabled && subtotal >= s.free_delivery_threshold && subtotal > 0) {
+  if (opts?.forceFree) {
+    return { charge: 0, isFree: true, amountToFree: 0, totalWeightGrams: weight };
+  }
+
+  const thresholdEnabled = s.free_delivery_enabled && !opts?.skipThreshold;
+
+  if (thresholdEnabled && subtotal >= s.free_delivery_threshold && subtotal > 0) {
     return { charge: 0, isFree: true, amountToFree: 0, totalWeightGrams: weight };
   }
 
@@ -40,7 +47,7 @@ export function calculateDelivery(
     charge += extraKgs * s.extra_charge_per_kg;
   }
 
-  const amountToFree = s.free_delivery_enabled
+  const amountToFree = thresholdEnabled
     ? Math.max(0, s.free_delivery_threshold - subtotal)
     : 0;
 
