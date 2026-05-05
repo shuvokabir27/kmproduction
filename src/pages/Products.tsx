@@ -55,6 +55,7 @@ const Products = () => {
       : Number(p?.discount_price || p?.price || 0);
     const variantWeight = chosen && chosen.weight_grams != null ? Number(chosen.weight_grams) : null;
     const weightGrams = variantWeight && variantWeight > 0 ? variantWeight : Number(p?.weight_grams || 0);
+    cart.setOffer(null);
     cart.addItem({
       product_id: p.id,
       product_name: p.name,

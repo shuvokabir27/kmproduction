@@ -388,6 +388,7 @@ const ProductDetail = () => {
               <Button
                 onClick={() => {
                   if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
+                  cart.setOffer(null);
                   cart.addItem({
                     product_id: product!.id,
                     product_name: chosenVariant ? `${product!.name} (${chosenVariant.label})` : product!.name,

@@ -109,6 +109,7 @@ export default function ShopOfferPage() {
       toast.error("কোনো প্রডাক্ট কার্টে যোগ হয়নি");
       return;
     }
+    cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery });
     toast.success("কম্বো অর্ডার কার্টে যোগ হয়েছে");
     cart.open();
   };
@@ -131,6 +132,7 @@ export default function ShopOfferPage() {
       unit_type: p.unit_type ?? null,
       weight_grams: Number(p.weight_grams || 0),
     });
+    cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery });
     toast.success("অফার কার্টে যোগ হয়েছে");
     cart.open();
   };
