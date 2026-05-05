@@ -219,8 +219,8 @@ export default function ShopCustomerAccount() {
                       </div>
                     </div>
                     <div className="mt-3 pt-3 border-t flex items-center justify-between gap-2">
-                      {productAvailable && (
-                        <Button size="sm" onClick={() => nav(prod ? `/products/${prod.id}` : "/products")} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
+                      {productAvailable && prod && (
+                        <Button size="sm" onClick={() => nav(`/products/${prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
                           <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার করুন
                         </Button>
                       )}
@@ -228,11 +228,6 @@ export default function ShopCustomerAccount() {
                         <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl flex-1 justify-center">
                           <XCircle className="h-3.5 w-3.5" /> এই পণ্যটি এখন স্টকে নেই
                         </div>
-                      )}
-                      {!prod && (
-                        <Button size="sm" variant="outline" onClick={() => nav("/products")} className="gap-1.5 h-9 rounded-xl flex-1">
-                          <RefreshCw className="h-3.5 w-3.5" /> দোকানে দেখুন
-                        </Button>
                       )}
                     </div>
                   </div>
