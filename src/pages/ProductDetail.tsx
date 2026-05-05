@@ -361,15 +361,16 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 gap-3 mt-6">
               <Button
                 onClick={() => {
+                  if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
                   cart.addItem({
                     product_id: product!.id,
-                    product_name: product!.name,
+                    product_name: chosenVariant ? `${product!.name} (${chosenVariant.label})` : product!.name,
                     image_url: product!.image_url,
-                    variant_label: null,
+                    variant_label: chosenVariant ? String(chosenVariant.label) : null,
                     unit_price: unitPrice,
                     quantity: qty,
                     unit_type: (product as any)?.unit_type ?? null,
-                    weight_grams: Number((product as any)?.weight_grams || 0),
+                    weight_grams: wPer,
                   });
                   toast.success("কার্টে যুক্ত হয়েছে");
                   cart.open();
@@ -380,7 +381,14 @@ const ProductDetail = () => {
               >
                 <ShoppingCart className="h-4 w-4" /> Add to Cart
               </Button>
-              <Button onClick={openOrder} className="h-12 rounded-full font-bold text-white gap-2" style={{ backgroundColor: ACCENT_RED }}>
+              <Button
+                onClick={() => {
+                  if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
+                  openOrder();
+                }}
+                className="h-12 rounded-full font-bold text-white gap-2"
+                style={{ backgroundColor: ACCENT_RED }}
+              >
                 Buy Now
               </Button>
             </div>
