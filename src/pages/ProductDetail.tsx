@@ -455,11 +455,12 @@ const ProductDetail = () => {
                   <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
                     {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
                     <div className="flex-1">
-                      <p className="text-[11px] text-gray-500 line-clamp-1">{product.name}</p>
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="text-xs text-gray-600">{toBn(qty)} × ৳{toBn(unitPrice)}</span>
-                        <span className="text-lg font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
+                      <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
+                        {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(product!.price * qty)}</span>}
                       </div>
+                      <p className="text-[11px] text-gray-500 line-clamp-1">{product.name}</p>
                     </div>
                   </div>
 
