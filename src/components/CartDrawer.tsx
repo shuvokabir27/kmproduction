@@ -158,6 +158,42 @@ export const CartDrawer = () => {
                   <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
                 </div>
               </div>
+
+              {/* Editable product list */}
+              <div>
+                <Label className="text-gray-800 font-bold text-sm mb-2 block">অর্ডার সামারি</Label>
+                <div className="space-y-2">
+                  {items.map(it => (
+                    <div key={it.id} className="flex gap-2 bg-gray-50 rounded-xl p-2 border border-gray-100">
+                      {it.image_url ? (
+                        <img src={it.image_url} alt={it.product_name} className="w-12 h-12 rounded-lg object-cover" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center"><ShoppingCart className="h-4 w-4 text-gray-400" /></div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-bold text-xs text-gray-900 line-clamp-1">{it.product_name}</p>
+                            {it.variant_label && <p className="text-[10px] text-gray-500">{it.variant_label}</p>}
+                          </div>
+                          <button onClick={() => removeItem(it.id)} className="text-gray-400 hover:text-red-500 shrink-0">
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="flex items-center gap-1 bg-white rounded-full border border-gray-200">
+                            <button onClick={() => updateQty(it.id, it.quantity - 1)} className="w-6 h-6 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
+                            <span className="text-xs font-bold w-5 text-center">{toBn(it.quantity)}</span>
+                            <button onClick={() => updateQty(it.id, it.quantity + 1)} className="w-6 h-6 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
+                          </div>
+                          <p className="font-extrabold text-xs" style={{ color: BRAND_GREEN }}>৳{toBn(it.unit_price * it.quantity)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
                 <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-gray-200" />
