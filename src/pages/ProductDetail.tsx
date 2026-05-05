@@ -115,7 +115,7 @@ const ProductDetail = () => {
       });
       if (error) throw error;
       setOrderSuccess(true);
-      setOrderForm({ name: "", phone: "", address: "" });
+      setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে");
     } finally {
@@ -139,7 +139,7 @@ const ProductDetail = () => {
       } catch {}
     }
     setOrderOpen(false);
-    setOrderForm({ name: "", phone: "", address: "" });
+    setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
   };
 
   const openOrder = () => {
