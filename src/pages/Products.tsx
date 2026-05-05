@@ -200,11 +200,98 @@ const Products = () => {
               />
             </div>
             <a href="#shop" className="block py-2 text-sm font-semibold">SHOP</a>
+            <a href="#categories" className="block py-2 text-sm font-semibold">ক্যাটাগরি</a>
             <a href="#about" className="block py-2 text-sm font-semibold">ABOUT</a>
             <a href="#contact" className="block py-2 text-sm font-semibold">CONTACT</a>
           </div>
         )}
-      </header>
+
+        {/* Categories Mega Bar */}
+        <div className="hidden md:block border-t bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <ul className="flex items-stretch gap-1 text-sm font-semibold text-gray-700">
+              {[
+                { label: "বেস্ট সেলার", href: "#shop", hot: true },
+                { label: "নতুন কালেকশন", href: "#shop" },
+                {
+                  label: "খাবার ও শুঁটকি",
+                  href: "#categories",
+                  sub: ["প্রিমিয়াম শুঁটকি", "বালাচাও স্পেশাল", "ঐতিহ্যবাহী আচার"],
+                },
+                {
+                  label: "ঝিনুক ও উপহার সামগ্রী",
+                  href: "#categories",
+                  sub: ["ঝিনুকের অলংকার", "কাস্টমাইজড শোপিস", "স্যুভেনিয়ার ও গিফট"],
+                },
+                {
+                  label: "রাখাইন ফ্যাশন ও তাঁত",
+                  href: "#categories",
+                  sub: ["তাঁতের শীতবস্ত্র", "ঐতিহ্যবাহী পোশাক", "হস্তশিল্প ও ব্যাগ"],
+                },
+                {
+                  label: "গৃহসজ্জা ও হস্তশিল্প",
+                  href: "#categories",
+                  sub: ["নারিকেলের শোপিস", "বাঁশ ও কাঠের তৈরি", "খেলনা ও অন্যান্য"],
+                },
+                { label: "সব পণ্য", href: "#shop" },
+              ].map((m: any, i) => (
+                <li key={i} className="relative group">
+                  <a
+                    href={m.href}
+                    className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap"
+                    style={{ ['--g' as any]: BRAND_GREEN }}
+                  >
+                    {m.label}
+                    {m.hot && <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">HOT</span>}
+                    {m.sub && <span className="text-xs">▾</span>}
+                  </a>
+                  {m.sub && (
+                    <div className="absolute left-0 top-full hidden group-hover:block bg-white shadow-xl border rounded-b-lg min-w-[220px] z-50 py-2">
+                      {m.sub.map((s: string, j: number) => (
+                        <a
+                          key={j}
+                          href="#shop"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[--g]"
+                          style={{ ['--g' as any]: BRAND_GREEN }}
+                        >
+                          {s}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Mobile Categories Accordion */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t bg-white px-4 py-3 space-y-1 max-h-[60vh] overflow-y-auto">
+            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">ক্যাটাগরি</div>
+            {[
+              { label: "বেস্ট সেলার" },
+              { label: "নতুন কালেকশন" },
+              { label: "খাবার ও শুঁটকি", sub: ["প্রিমিয়াম শুঁটকি", "বালাচাও স্পেশাল", "ঐতিহ্যবাহী আচার"] },
+              { label: "ঝিনুক ও উপহার সামগ্রী", sub: ["ঝিনুকের অলংকার", "কাস্টমাইজড শোপিস", "স্যুভেনিয়ার ও গিফট"] },
+              { label: "রাখাইন ফ্যাশন ও তাঁত", sub: ["তাঁতের শীতবস্ত্র", "ঐতিহ্যবাহী পোশাক", "হস্তশিল্প ও ব্যাগ"] },
+              { label: "গৃহসজ্জা ও হস্তশিল্প", sub: ["নারিকেলের শোপিস", "বাঁশ ও কাঠের তৈরি", "খেলনা ও অন্যান্য"] },
+              { label: "সব পণ্য" },
+            ].map((m: any, i) => (
+              <details key={i} className="group border-b last:border-0">
+                <summary className="flex items-center justify-between py-2 text-sm font-semibold cursor-pointer list-none">
+                  <span>{m.label}</span>
+                  {m.sub && <span className="text-xs text-gray-400 group-open:rotate-180 transition-transform">▾</span>}
+                </summary>
+                {m.sub && (
+                  <div className="pl-3 pb-2 space-y-1">
+                    {m.sub.map((s: string, j: number) => (
+                      <a key={j} href="#shop" className="block py-1.5 text-xs text-gray-600">— {s}</a>
+                    ))}
+                  </div>
+                )}
+              </details>
+            ))}
 
       {/* Hero Banner */}
       <section className="px-4 py-6 md:py-8">
