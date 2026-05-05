@@ -3175,6 +3175,7 @@ export type Database = {
         Args: { _artist_name: string; _user_id: string }
         Returns: boolean
       }
+      next_order_number: { Args: never; Returns: number }
       notify_all_members: {
         Args: {
           _link?: string
