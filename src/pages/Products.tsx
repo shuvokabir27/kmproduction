@@ -242,58 +242,46 @@ const Products = () => {
         {/* Categories Mega Bar */}
         <div className="hidden md:block border-t bg-white">
           <div className="max-w-7xl mx-auto px-4">
-            <ul className="flex items-stretch gap-1 text-sm font-semibold text-gray-700">
-              {[
-                { label: "বেস্ট সেলার", href: "#shop", hot: true },
-                { label: "নতুন কালেকশন", href: "#shop" },
-                {
-                  label: "খাবার ও শুঁটকি",
-                  href: "#categories",
-                  sub: ["প্রিমিয়াম শুঁটকি", "বালাচাও স্পেশাল", "ঐতিহ্যবাহী আচার"],
-                },
-                {
-                  label: "ঝিনুক ও উপহার সামগ্রী",
-                  href: "#categories",
-                  sub: ["ঝিনুকের অলংকার", "কাস্টমাইজড শোপিস", "স্যুভেনিয়ার ও গিফট"],
-                },
-                {
-                  label: "রাখাইন ফ্যাশন ও তাঁত",
-                  href: "#categories",
-                  sub: ["তাঁতের শীতবস্ত্র", "ঐতিহ্যবাহী পোশাক", "হস্তশিল্প ও ব্যাগ"],
-                },
-                {
-                  label: "গৃহসজ্জা ও হস্তশিল্প",
-                  href: "#categories",
-                  sub: ["নারিকেলের শোপিস", "বাঁশ ও কাঠের তৈরি", "খেলনা ও অন্যান্য"],
-                },
-                { label: "সব পণ্য", href: "#shop" },
-              ].map((m: any, i) => (
-                <li key={i} className="relative group">
+            <ul className="flex items-stretch gap-1 text-sm font-semibold text-gray-700 overflow-x-auto">
+              <li>
+                <a href="#shop" className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap" style={{ ['--g' as any]: BRAND_GREEN }}>
+                  বেস্ট সেলার
+                  <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">HOT</span>
+                </a>
+              </li>
+              <li>
+                <a href="#shop" className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap" style={{ ['--g' as any]: BRAND_GREEN }}>নতুন কালেকশন</a>
+              </li>
+              {categoryTree.map((m) => (
+                <li key={m.id} className="relative group">
                   <a
-                    href={m.href}
+                    href="#shop"
                     className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap"
                     style={{ ['--g' as any]: BRAND_GREEN }}
                   >
+                    {m.icon && <span>{m.icon}</span>}
                     {m.label}
-                    {m.hot && <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">HOT</span>}
-                    {m.sub && <span className="text-xs">▾</span>}
+                    {m.children.length > 0 && <span className="text-xs">▾</span>}
                   </a>
-                  {m.sub && (
+                  {m.children.length > 0 && (
                     <div className="absolute left-0 top-full hidden group-hover:block bg-white shadow-xl border rounded-b-lg min-w-[220px] z-50 py-2">
-                      {m.sub.map((s: string, j: number) => (
+                      {m.children.map((s) => (
                         <a
-                          key={j}
+                          key={s.id}
                           href="#shop"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[--g]"
                           style={{ ['--g' as any]: BRAND_GREEN }}
                         >
-                          {s}
+                          {s.label}
                         </a>
                       ))}
                     </div>
                   )}
                 </li>
               ))}
+              <li>
+                <a href="#shop" className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap" style={{ ['--g' as any]: BRAND_GREEN }}>সব পণ্য</a>
+              </li>
             </ul>
           </div>
         </div>
