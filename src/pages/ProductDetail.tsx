@@ -100,6 +100,10 @@ const ProductDetail = () => {
     if (!orderForm.name.trim()) return toast.error("আপনার নাম দিন");
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) return toast.error("আপনার ঠিকানা দিন");
+    if (orderForm.payment_method !== "cod") {
+      if (orderForm.payment_sender_no.length !== 11) return toast.error("আপনার পেমেন্ট নম্বর দিন (১১ ডিজিট)");
+      if (!orderForm.payment_trx_id.trim()) return toast.error("ট্রানজেকশন আইডি দিন");
+    }
     setSubmitting(true);
     try {
       const { error } = await supabase.from("orders").insert({
@@ -111,8 +115,10 @@ const ProductDetail = () => {
         unit_price: unitPrice,
         total_amount: grandTotal,
         delivery_charge: dlv.charge,
-        payment_method: "cod",
-      });
+        payment_method: orderForm.payment_method,
+        payment_sender_no: orderForm.payment_method !== "cod" ? orderForm.payment_sender_no : null,
+        payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
+      } as any);
       if (error) throw error;
       setOrderSuccess(true);
       setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
