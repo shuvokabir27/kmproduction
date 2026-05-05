@@ -238,12 +238,6 @@ export default function ShopCustomerAccount() {
                   </div>
                 );
               })}
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
             </div>
           )}
         </div>
