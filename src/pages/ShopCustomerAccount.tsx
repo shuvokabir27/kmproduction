@@ -230,15 +230,18 @@ export default function ShopCustomerAccount() {
                         <Badge className={`mt-1 ${sl.cls} border-0`}>{sl.t}</Badge>
                       </div>
                     </div>
-                    <div className="mt-3 pt-3 border-t flex items-center justify-between gap-2">
+                    <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap">
+                      <Button size="sm" variant="outline" onClick={() => setTrackOrder(o)} className="gap-1.5 h-9 rounded-xl flex-1 border-blue-200 text-blue-700 hover:bg-blue-50">
+                        <Truck className="h-3.5 w-3.5" /> অর্ডার ট্র্যাকিং
+                      </Button>
                       {productAvailable && prod && (
                         <Button size="sm" onClick={() => nav(`/products/${prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
-                          <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার করুন
+                          <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার
                         </Button>
                       )}
                       {outOfStock && (
                         <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl flex-1 justify-center">
-                          <XCircle className="h-3.5 w-3.5" /> এই পণ্যটি এখন স্টকে নেই
+                          <XCircle className="h-3.5 w-3.5" /> স্টকে নেই
                         </div>
                       )}
                     </div>
