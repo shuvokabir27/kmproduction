@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar, MapPin, User, Save, Pencil } from "lucide-react";
+import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar, MapPin, User, Save, Pencil, RefreshCw, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import MobileShopNav from "@/components/MobileShopNav";
 import { supabase } from "@/integrations/supabase/client";
