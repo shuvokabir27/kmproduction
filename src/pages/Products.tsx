@@ -75,7 +75,14 @@ const Products = () => {
     },
   });
 
-  const { data: siteSettings } = useQuery({
+  useEffect(() => {
+    const slides = (products || []).filter((p: any) => p.image_url).slice(0, 8);
+    if (slides.length < 2) return;
+    const id = setInterval(() => setHeroSlide((s) => (s + 1) % slides.length), 3000);
+    return () => clearInterval(id);
+  }, [products]);
+
+
     queryKey: ["site-settings-products"],
     queryFn: async () => {
       const { data } = await supabase.from("site_settings").select("*").single();
