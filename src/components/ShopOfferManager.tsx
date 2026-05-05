@@ -49,7 +49,7 @@ export default function ShopOfferManager() {
   const { data: products } = useQuery({
     queryKey: ["admin-products-mini"],
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("id,name,price,image_url").order("name");
+      const { data } = await supabase.from("products").select("id,name,price,discount_price,image_url").order("name");
       return data ?? [];
     },
   });
