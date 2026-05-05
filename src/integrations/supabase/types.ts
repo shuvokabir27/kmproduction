@@ -2840,6 +2840,63 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_offers: {
+        Row: {
+          badge_text: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount_type: Database["public"]["Enums"]["shop_offer_type"]
+          discount_value: number
+          ends_at: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          popup_priority: number
+          product_id: string | null
+          show_popup: boolean
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          badge_text?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["shop_offer_type"]
+          discount_value?: number
+          ends_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          popup_priority?: number
+          product_id?: string | null
+          show_popup?: boolean
+          starts_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          badge_text?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type?: Database["public"]["Enums"]["shop_offer_type"]
+          discount_value?: number
+          ends_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          popup_priority?: number
+          product_id?: string | null
+          show_popup?: boolean
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           bkash_enabled: boolean
@@ -3222,6 +3279,7 @@ export type Database = {
       pricing_type: "hourly" | "per_minute" | "event" | "fixed"
       salary_change_type: "amount_increase" | "amount_decrease" | "type_change"
       salary_type: "daily" | "monthly"
+      shop_offer_type: "percentage" | "fixed" | "free_delivery"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "done" | "cancelled"
     }
@@ -3376,6 +3434,7 @@ export const Constants = {
       pricing_type: ["hourly", "per_minute", "event", "fixed"],
       salary_change_type: ["amount_increase", "amount_decrease", "type_change"],
       salary_type: ["daily", "monthly"],
+      shop_offer_type: ["percentage", "fixed", "free_delivery"],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["todo", "in_progress", "done", "cancelled"],
     },
