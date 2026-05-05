@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       const { data, error } = await supabase.from("shop_customers").insert({
         phone, full_name: fullName || null, password_hash,
         session_token, session_expires_at, last_login_at: new Date().toISOString(),
-      }).select("id, phone, full_name").single();
+      }).select("id, phone, full_name, address").single();
       if (error) return bad(error.message, 500);
 
       // link any prior orders by phone
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
 
       const { data: cust } = await supabase
         .from("shop_customers")
-        .select("id, phone, full_name, password_hash, is_active")
+        .select("id, phone, full_name, address, password_hash, is_active")
         .eq("phone", phone).maybeSingle();
       if (!cust) return bad("এই নম্বরে কোনো অ্যাকাউন্ট নেই", 401);
       if (!cust.is_active) return bad("আপনার অ্যাকাউন্ট নিষ্ক্রিয়", 403);
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
         .eq("customer_phone", phone).is("shop_customer_id", null);
 
       return ok({
-        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name },
+        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name, address: cust.address },
         token: session_token, expires_at: session_expires_at,
       });
     }
@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
       if (!token) return bad("টোকেন নেই", 401);
       const { data: cust } = await supabase
         .from("shop_customers")
-        .select("id, phone, full_name, session_expires_at, is_active")
+        .select("id, phone, full_name, address, session_expires_at, is_active")
         .eq("session_token", token).maybeSingle();
       if (!cust) return bad("সেশন অবৈধ", 401);
       if (!cust.is_active) return bad("অ্যাকাউন্ট নিষ্ক্রিয়", 403);
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
         .order("created_at", { ascending: false }).limit(200);
 
       return ok({
-        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name },
+        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name, address: cust.address },
         orders: orders ?? [],
       });
     }
