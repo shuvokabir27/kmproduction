@@ -492,22 +492,24 @@ const OrderManagement = () => {
         <div className="space-y-3">
           {[1,2,3].map(i => <div key={i} className="h-28 bg-card animate-pulse rounded-xl" />)}
         </div>
-      ) : !filtered.length ? (
+      ) : !groupedFiltered.length ? (
         <div className="text-center py-16 text-muted-foreground">
           <Package className="h-12 w-12 mx-auto mb-3 opacity-30" />
           <p>কোনো অর্ডার পাওয়া যায়নি</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((order: any) => {
+          {groupedFiltered.map((grp: any) => {
+            const order = grp.first;
             const sc = statusConfig[order.status] || statusConfig.pending;
             const pc = paymentStatusConfig[order.payment_status] || paymentStatusConfig.unpaid;
             const StatusIcon = sc.icon;
             const orderLast4 = getLast4(order.notes);
             const orderTrxId = getTrxId(order.notes);
             const orderPayLabel = getPaymentLabel(order.notes);
+            const isMulti = grp.items.length > 1;
             return (
-              <div key={order.id} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/20 transition-all">
+              <div key={grp.order_number} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/20 transition-all">
                 {/* Top row */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -515,13 +517,20 @@ const OrderManagement = () => {
                       <StatusIcon className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <button
-                        onClick={() => setViewDialog(order)}
-                        className="text-[11px] font-extrabold tracking-wide px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition cursor-pointer"
-                        title="বিস্তারিত দেখুন"
-                      >
-                        #{toBn(order.order_number)}
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setViewDialog({ ...order, __groupItems: grp.items, __groupTotal: grp.total_amount, __groupDelivery: grp.delivery_charge })}
+                          className="text-[11px] font-extrabold tracking-wide px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition cursor-pointer"
+                          title="বিস্তারিত দেখুন"
+                        >
+                          #{toBn(order.order_number)}
+                        </button>
+                        {isMulti && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                            {toBn(grp.items.length)} পণ্য
+                          </span>
+                        )}
+                      </div>
                       <h4 className="font-semibold text-foreground text-sm leading-tight mt-0.5">{order.customer_name}</h4>
                     </div>
                   </div>
@@ -537,7 +546,7 @@ const OrderManagement = () => {
                     <Phone className="h-3 w-3" /> {order.customer_phone}
                   </div>
                   <div className="flex items-center gap-1">
-                    <Package className="h-3 w-3" /> {order.product_name}
+                    <Package className="h-3 w-3" /> {isMulti ? `${toBn(grp.items.length)} টি পণ্য` : order.product_name}
                   </div>
                   {order.customer_address && (
                     <div className="flex items-center gap-1 col-span-2">
@@ -545,6 +554,21 @@ const OrderManagement = () => {
                     </div>
                   )}
                 </div>
+
+                {/* Product list (if multi) */}
+                {isMulti && (
+                  <div className="bg-muted/30 rounded-lg p-2 mb-3 space-y-1">
+                    {grp.items.map((it: any) => (
+                      <div key={it.id} className="flex items-center justify-between text-xs">
+                        <span className="text-foreground truncate flex-1">• {it.product_name}</span>
+                        <span className="text-muted-foreground whitespace-nowrap ml-2">
+                          {toBn(it.quantity)} × ৳{toBn(Number(it.unit_price))} = <span className="font-bold text-primary">৳{toBn(Number(it.total_amount))}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Mobile payment badge */}
                 {(orderLast4 || orderTrxId) && (
                   <div className="flex flex-wrap items-center gap-1.5 mb-3">
@@ -568,19 +592,21 @@ const OrderManagement = () => {
                 {/* Bottom row */}
                 <div className="flex items-center justify-between pt-2 border-t border-border/30">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-primary">৳{toBn(Number(order.total_amount))}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {toBn(order.quantity)} × ৳{toBn(Number(order.unit_price))}
-                    </span>
+                    <span className="text-sm font-bold text-primary">৳{toBn(grp.total_amount)}</span>
+                    {grp.delivery_charge > 0 && (
+                      <span className="text-xs text-muted-foreground">+ ৳{toBn(grp.delivery_charge)} ডেলিভারি</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setViewDialog(order)}>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setViewDialog({ ...order, __groupItems: grp.items, __groupTotal: grp.total_amount, __groupDelivery: grp.delivery_charge })}>
                       <Eye className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEdit(order)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => handleDelete(order.id)}>
+                    {!isMulti && (
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEdit(order)}>
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => groupDelete(grp.order_number)}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -603,11 +629,11 @@ const OrderManagement = () => {
                 {order.status === "pending" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
-                      onClick={() => quickStatusUpdate(order.id, "confirmed")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "confirmed")}>
                       <CheckCircle2 className="h-3 w-3" /> কনফার্ম
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
-                      onClick={() => quickStatusUpdate(order.id, "cancelled")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "cancelled")}>
                       <Ban className="h-3 w-3" /> ক্যান্সেল
                     </Button>
                   </div>
@@ -615,7 +641,7 @@ const OrderManagement = () => {
                 {order.status === "cancelled" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10"
-                      onClick={() => quickStatusUpdate(order.id, "pending")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "pending")}>
                       <Clock className="h-3 w-3" /> পেন্ডিংয়ে ফেরাও
                     </Button>
                   </div>
@@ -623,7 +649,7 @@ const OrderManagement = () => {
                 {order.status === "confirmed" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1"
-                      onClick={() => quickStatusUpdate(order.id, "processing")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "processing")}>
                       <Package className="h-3 w-3" /> প্রসেসিং
                     </Button>
                   </div>
@@ -631,7 +657,7 @@ const OrderManagement = () => {
                 {order.status === "processing" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1"
-                      onClick={() => quickStatusUpdate(order.id, "shipped")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "shipped")}>
                       <Truck className="h-3 w-3" /> শিপড
                     </Button>
                   </div>
@@ -639,19 +665,18 @@ const OrderManagement = () => {
                 {order.status === "shipped" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
-                      onClick={() => quickStatusUpdate(order.id, "delivered")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "delivered")}>
                       <CheckCircle2 className="h-3 w-3" /> ডেলিভারড
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-rose-600 border-rose-500/30 hover:bg-rose-500/10"
                       onClick={async () => {
-                        const amt = Number(order.total_amount || 0);
+                        const amt = grp.total_amount;
                         const { error } = await supabase.from("orders").update({
                           status: "returned" as any,
                           returned_at: new Date().toISOString(),
                           return_amount: amt,
-                        }).eq("id", order.id);
+                        }).eq("order_number", grp.order_number);
                         if (error) {
-                          console.error("Return error:", error);
                           toast.error("রিটার্ন করতে সমস্যা: " + error.message);
                         } else {
                           queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
@@ -665,17 +690,16 @@ const OrderManagement = () => {
                 {order.status === "returned" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-rose-200/50 bg-rose-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
                     <div className="w-full">
-                      <p className="text-[10px] text-rose-600 mb-2">রিটার্ন মূল্য: ৳{toBn(Number(order.return_amount || order.total_amount || 0))}</p>
+                      <p className="text-[10px] text-rose-600 mb-2">রিটার্ন মূল্য: ৳{toBn(Number(order.return_amount || grp.total_amount || 0))}</p>
                       <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10"
-                        onClick={() => {
-                          supabase.from("orders").update({
+                        onClick={async () => {
+                          await supabase.from("orders").update({
                             status: "pending",
                             returned_at: null,
                             return_amount: 0,
-                          } as any).eq("id", order.id).then(() => {
-                            queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
-                            toast.success("অর্ডার পেন্ডিংয়ে ফেরানো হয়েছে");
-                          });
+                          } as any).eq("order_number", grp.order_number);
+                          queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+                          toast.success("অর্ডার পেন্ডিংয়ে ফেরানো হয়েছে");
                         }}>
                         <Clock className="h-3 w-3" /> পেন্ডিংয়ে ফেরাও
                       </Button>
@@ -685,7 +709,7 @@ const OrderManagement = () => {
                 {order.status === "abandoned" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-orange-200/50 bg-orange-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
-                      onClick={() => quickStatusUpdate(order.id, "pending")}>
+                      onClick={() => groupStatusUpdate(grp.order_number, "pending")}>
                       <CheckCircle2 className="h-3 w-3" /> পেন্ডিং করুন
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1"
