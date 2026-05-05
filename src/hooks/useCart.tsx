@@ -16,6 +16,7 @@ interface CartCtx {
   items: CartItem[];
   count: number;
   total: number;
+  totalWeightGrams: number;
   addItem: (item: Omit<CartItem, "id"> & { id?: string }) => void;
   updateQty: (id: string, qty: number) => void;
   removeItem: (id: string) => void;
