@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import { useProductCategories } from "@/hooks/useProductCategories";
+import { useCart } from "@/hooks/useCart";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -31,6 +32,30 @@ const Products = () => {
   const { customer: shopCustomer } = useShopCustomer();
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
+  const cart = useCart();
+
+  const addProductToCart = (p: any, qty = 1, variantIdx = -1) => {
+    const variants = Array.isArray(p?.variants) ? p.variants : [];
+    const chosen = variants.length > 0 && variantIdx >= 0 ? variants[variantIdx] : null;
+    if (variants.length > 0 && !chosen) {
+      toast.error("একটি অপশন বাছাই করুন");
+      return false;
+    }
+    const unitPrice = chosen
+      ? Number(chosen.discount_price ?? chosen.price ?? 0)
+      : Number(p?.discount_price || p?.price || 0);
+    cart.addItem({
+      product_id: p.id,
+      product_name: p.name,
+      image_url: p.image_url,
+      variant_label: chosen ? String(chosen.label) : null,
+      unit_price: unitPrice,
+      quantity: qty,
+      unit_type: p.unit_type ?? null,
+    });
+    toast.success("কার্টে যুক্ত হয়েছে");
+    return true;
+  };
 
   const { data: products } = useQuery({
     queryKey: ["public-products"],
@@ -213,6 +238,19 @@ const Products = () => {
                 <LogIn className="h-3.5 w-3.5" /> লগইন
               </Link>
             )}
+            <button
+              onClick={cart.open}
+              className="relative flex items-center gap-1.5 text-xs px-3 py-2 rounded-full font-bold text-white"
+              style={{ backgroundColor: BRAND_GREEN }}
+              aria-label="cart"
+            >
+              <ShoppingCart className="h-3.5 w-3.5" /> কার্ট
+              {cart.count > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+                  {toBn(cart.count)}
+                </span>
+              )}
+            </button>
           </nav>
 
           <div className="hidden lg:flex items-center bg-gray-100 rounded-full px-4 py-2 w-72">
@@ -226,6 +264,14 @@ const Products = () => {
           </div>
 
           <div className="md:hidden flex items-center gap-1">
+            <button onClick={cart.open} className="relative p-2 rounded-lg hover:bg-gray-100" aria-label="cart">
+              <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+              {cart.count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
+                  {toBn(cart.count)}
+                </span>
+              )}
+            </button>
             <Link
               to={shopCustomer ? "/shop/account" : "/shop/login"}
               className="p-2 rounded-lg hover:bg-gray-100"
@@ -469,13 +515,30 @@ const Products = () => {
                           <span className="text-xs text-gray-400 line-through">৳{toBn(p.price)}</span>
                         )}
                       </div>
-                      <Button
-                        onClick={() => openOrderDialog(p)}
-                        className="mt-3 w-full text-white font-bold rounded-full text-xs md:text-sm h-10 gap-1.5"
-                        style={{ backgroundColor: BRAND_GREEN }}
-                      >
-                        <ShoppingCart className="h-4 w-4" /> অর্ডার করুন
-                      </Button>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <Button
+                          onClick={() => {
+                            const variants = Array.isArray(p.variants) ? p.variants : [];
+                            if (variants.length > 0) {
+                              openOrderDialog(p);
+                            } else {
+                              addProductToCart(p, 1);
+                            }
+                          }}
+                          variant="outline"
+                          className="font-bold rounded-full text-xs h-10 gap-1 border-2"
+                          style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                        >
+                          <ShoppingCart className="h-3.5 w-3.5" /> কার্টে
+                        </Button>
+                        <Button
+                          onClick={() => openOrderDialog(p)}
+                          className="text-white font-bold rounded-full text-xs h-10 gap-1"
+                          style={{ backgroundColor: BRAND_GREEN }}
+                        >
+                          অর্ডার
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -698,6 +761,17 @@ const Products = () => {
                   <Button onClick={handleOrderSubmit} disabled={submitting} className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const ok = addProductToCart(selectedProduct, Math.max(1, quantity), selectedVariantIdx);
+                      if (ok) setOrderOpen(false);
+                    }}
+                    className="w-full font-bold text-sm h-12 rounded-2xl gap-2 border-2"
+                    style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                  >
+                    <ShoppingCart className="h-4 w-4" /> কার্টে যুক্ত করুন (আরো প্রডাক্ট কিনুন)
                   </Button>
                   <p className="text-center text-gray-400 text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
                 </div>

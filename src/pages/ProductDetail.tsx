@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import { useCart } from "@/hooks/useCart";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -18,6 +19,7 @@ const ACCENT_RED = "#d6302c";
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const cart = useCart();
 
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
@@ -286,7 +288,24 @@ const ProductDetail = () => {
 
             {/* CTAs */}
             <div className="grid grid-cols-2 gap-3 mt-6">
-              <Button onClick={openOrder} variant="outline" className="h-12 rounded-full font-bold border-2 gap-2" style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}>
+              <Button
+                onClick={() => {
+                  cart.addItem({
+                    product_id: product!.id,
+                    product_name: product!.name,
+                    image_url: product!.image_url,
+                    variant_label: null,
+                    unit_price: unitPrice,
+                    quantity: qty,
+                    unit_type: (product as any)?.unit_type ?? null,
+                  });
+                  toast.success("কার্টে যুক্ত হয়েছে");
+                  cart.open();
+                }}
+                variant="outline"
+                className="h-12 rounded-full font-bold border-2 gap-2"
+                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+              >
                 <ShoppingCart className="h-4 w-4" /> Add to Cart
               </Button>
               <Button onClick={openOrder} className="h-12 rounded-full font-bold text-white gap-2" style={{ backgroundColor: ACCENT_RED }}>

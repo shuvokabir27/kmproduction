@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { RouteGuard } from "@/components/RouteGuard";
+import { CartProvider } from "@/hooks/useCart";
+import { CartDrawer } from "@/components/CartDrawer";
 import PublicHome from "./pages/PublicHome";
 import PublicProfile from "./pages/PublicProfile";
 import ActorPortfolio from "./pages/ActorPortfolio";
@@ -68,9 +70,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <LanguageProvider>
+      <CartProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CartDrawer />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
@@ -143,6 +147,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </CartProvider>
       </LanguageProvider>
     </AuthProvider>
   </QueryClientProvider>
