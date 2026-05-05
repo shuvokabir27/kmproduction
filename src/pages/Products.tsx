@@ -644,10 +644,13 @@ const Products = () => {
               );
             }
 
+            // Map category slug → bangla label
+            const catLabelMap: Record<string, string> = {};
+            (categoryData?.all ?? []).forEach((c: any) => { catLabelMap[c.value] = c.label; });
             // Group by category
             const groups: Record<string, any[]> = {};
             filteredProducts.forEach((p: any) => {
-              const cat = p.category || "অন্যান্য";
+              const cat = p.category || "others";
               if (!groups[cat]) groups[cat] = [];
               groups[cat].push(p);
             });
@@ -657,7 +660,7 @@ const Products = () => {
                 {catNames.map(cat => (
                   <div key={cat}>
                     <div className="flex items-center gap-3 mb-5">
-                      <h3 className="text-xl md:text-2xl font-bold text-gray-900">{cat}</h3>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900">{catLabelMap[cat] || cat}</h3>
                       <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: BRAND_GREEN }}>
                         {toBn(groups[cat].length)}
                       </span>

@@ -81,6 +81,17 @@ const ProductDetail = () => {
     },
   });
 
+  const { data: categoryMap } = useQuery({
+    queryKey: ["product-categories-map"],
+    queryFn: async () => {
+      const { data } = await supabase.from("product_categories").select("value,label");
+      const m: Record<string, string> = {};
+      (data || []).forEach((c: any) => { m[c.value] = c.label; });
+      return m;
+    },
+  });
+  const categoryLabel = product?.category ? (categoryMap?.[product.category] || product.category) : "";
+
   const contactPhone = product?.contact_info || siteSettings?.contact_phone || "";
   const whatsappNo = siteSettings?.whatsapp_no || contactPhone;
 
@@ -250,7 +261,7 @@ const ProductDetail = () => {
       <div className="max-w-7xl mx-auto px-4 pt-4 text-xs md:text-sm text-gray-500 flex items-center gap-1.5 flex-wrap">
         <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-3 w-3" /> Home</Link>
         <span>/</span>
-        {product.category && <><span className="hover:text-gray-900">{product.category}</span><span>/</span></>}
+        {product.category && <><span className="hover:text-gray-900">{categoryLabel}</span><span>/</span></>}
         <span className="text-gray-900 font-medium line-clamp-1">{product.name}</span>
       </div>
 
@@ -319,7 +330,7 @@ const ProductDetail = () => {
                 <span className={`w-1.5 h-1.5 rounded-full ${product.stock_status === 'out_of_stock' ? 'bg-red-500' : 'bg-green-500'}`} />
                 {product.stock_status === 'out_of_stock' ? 'স্টক শেষ' : 'স্টকে আছে'}
               </span>
-              {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{product.category}</span></span>}
+              {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{categoryLabel}</span></span>}
             </div>
 
             {/* Variants (size / weight / option) */}
