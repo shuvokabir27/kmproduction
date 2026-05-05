@@ -56,6 +56,10 @@ export const CartDrawer = () => {
     if (!form.name.trim()) return toast.error("নাম দিন");
     if (form.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের"); return; }
     if (!form.address.trim()) return toast.error("ঠিকানা দিন");
+    if (paymentMethod !== "cod") {
+      if (paymentSenderNo.length !== 11) return toast.error("আপনার পেমেন্ট নম্বর ১১ ডিজিট দিন");
+      if (!paymentTrxId.trim()) return toast.error("ট্রানজেকশন আইডি দিন");
+    }
     setSubmitting(true);
     try {
       const rows = items.map((it, idx) => ({
@@ -70,6 +74,9 @@ export const CartDrawer = () => {
         total_amount: it.unit_price * it.quantity,
         delivery_charge: idx === 0 ? delivery.charge : 0,
         shop_customer_id: customer?.id ?? null,
+        payment_method: paymentMethod,
+        payment_sender_no: paymentMethod !== "cod" ? paymentSenderNo : null,
+        payment_trx_id: paymentMethod !== "cod" ? paymentTrxId : null,
       }));
       const { error } = await supabase.from("orders").insert(rows as any);
       if (error) throw error;
