@@ -201,18 +201,18 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={ShoppingCart} label="মোট অর্ডার" value={toBn(totalOrders)} color="text-blue-400" bg="bg-blue-500/10" />
-        <StatCard icon={Clock} label="পেন্ডিং" value={toBn(pendingOrders)} color="text-yellow-400" bg="bg-yellow-500/10" />
-        <StatCard icon={Truck} label="ডেলিভারড" value={toBn(deliveredOrders)} color="text-emerald-400" bg="bg-emerald-500/10" />
-        <StatCard icon={TrendingUp} label="মোট আয়" value={`৳${toBn(totalRevenue)}`} color="text-amber-400" bg="bg-amber-500/10" />
+        <StatCard icon={ShoppingCart} label="মোট অর্ডার" value={toBn(totalOrders)} color="text-blue-400" bg="bg-blue-500/10" onClick={() => nav("orders", "all")} />
+        <StatCard icon={Clock} label="পেন্ডিং" value={toBn(pendingOrders)} color="text-yellow-400" bg="bg-yellow-500/10" onClick={() => nav("orders", "pending")} />
+        <StatCard icon={Truck} label="ডেলিভারড" value={toBn(deliveredOrders)} color="text-emerald-400" bg="bg-emerald-500/10" onClick={() => nav("orders", "delivered")} />
+        <StatCard icon={TrendingUp} label="মোট আয়" value={`৳${toBn(totalRevenue)}`} color="text-amber-400" bg="bg-amber-500/10" onClick={() => nav("orders", "delivered")} />
       </div>
 
       {/* Customer Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={Users} label="মোট কাস্টমার" value={toBn(totalCustomers)} color="text-purple-400" bg="bg-purple-500/10" />
-        <StatCard icon={UserPlus} label="নতুন কাস্টমার" value={toBn(newCustomers)} color="text-cyan-400" bg="bg-cyan-500/10" />
-        <StatCard icon={RotateCcw} label="রিটার্ন কাস্টমার" value={toBn(returnCustomers)} color="text-pink-400" bg="bg-pink-500/10" />
-        <StatCard icon={RotateCcw} label="রিটার্ন %" value={`${toBn(returnPercent)}%`} color="text-orange-400" bg="bg-orange-500/10" />
+        <StatCard icon={Users} label="মোট কাস্টমার" value={toBn(totalCustomers)} color="text-purple-400" bg="bg-purple-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={UserPlus} label="নতুন কাস্টমার" value={toBn(newCustomers)} color="text-cyan-400" bg="bg-cyan-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={RotateCcw} label="রিটার্ন কাস্টমার" value={toBn(returnCustomers)} color="text-pink-400" bg="bg-pink-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={RotateCcw} label="রিটার্ন %" value={`${toBn(returnPercent)}%`} color="text-orange-400" bg="bg-orange-500/10" onClick={() => nav("customers")} />
       </div>
 
       {/* Charts Row */}
