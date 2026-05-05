@@ -301,7 +301,7 @@ const Products = () => {
                 const discountPct = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
                 return (
                   <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
-                    <div className="relative aspect-square bg-gray-100 overflow-hidden">
+                    <Link to={`/products/${p.id}`} className="relative aspect-square bg-gray-100 overflow-hidden block">
                       {p.image_url ? (
                         <img
                           src={p.image_url}
@@ -322,7 +322,7 @@ const Products = () => {
                       <div className="absolute top-2 right-2 text-white text-[10px] font-bold px-2 py-1 rounded shadow" style={{ backgroundColor: ACCENT_RED }}>
                         HOT
                       </div>
-                    </div>
+                    </Link>
                     <div className="p-3 md:p-4 flex flex-col flex-1">
                       <h3 className="font-bold text-sm md:text-base text-gray-900 line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
                       <div className="flex items-baseline gap-2 mt-2">
