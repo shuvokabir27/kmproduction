@@ -118,6 +118,7 @@ export default function ShopCustomerLogin() {
 
         </div>
       </div>
+      <MobileShopNav />
     </div>
   );
 }
