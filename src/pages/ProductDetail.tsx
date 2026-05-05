@@ -527,9 +527,11 @@ const ProductDetail = () => {
                       <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
-                        {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(product!.price * qty)}</span>}
+                        {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(origPrice * qty)}</span>}
                       </div>
-                      <p className="text-[11px] text-gray-500 line-clamp-1">{product.name}</p>
+                      <p className="text-[11px] text-gray-500 line-clamp-1">
+                        {product.name}{chosenVariant ? ` — ${chosenVariant.label}` : ""}
+                      </p>
                     </div>
                   </div>
 
