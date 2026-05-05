@@ -16,8 +16,11 @@ const BRAND_GREEN = "#1f7a3a";
 const BRAND_DARK = "#155c2c";
 
 export const CartDrawer = () => {
-  const { items, total, isOpen, close, updateQty, removeItem, clear } = useCart();
+  const { items, total, totalWeightGrams, isOpen, close, updateQty, removeItem, clear } = useCart();
   const { customer } = useShopCustomer();
+  const { settings } = useDeliverySettings();
+  const delivery = calculateDelivery(total, totalWeightGrams, settings);
+  const grandTotal = total + delivery.charge;
   const [checkout, setCheckout] = useState(false);
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
