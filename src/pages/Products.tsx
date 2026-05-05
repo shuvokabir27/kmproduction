@@ -15,6 +15,7 @@ import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
 import { Truck as TruckIcon } from "lucide-react";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
+import MobileShopNav from "@/components/MobileShopNav";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
