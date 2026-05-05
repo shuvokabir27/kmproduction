@@ -15,7 +15,10 @@ import {
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const ProductDashboardStats = () => {
+type NavFn = (tab: string, orderTab?: string) => void;
+
+const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
+  const nav: NavFn = (t, o) => onNavigate?.(t, o);
   const queryClient = useQueryClient();
   const { data: orders } = useQuery({
     queryKey: ["dashboard-orders-analytics"],
