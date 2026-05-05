@@ -67,6 +67,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const count = items.reduce((s, x) => s + x.quantity, 0);
   const total = items.reduce((s, x) => s + x.unit_price * x.quantity, 0);
+  const totalWeightGrams = items.reduce((s, x) => s + (x.weight_grams || 0) * x.quantity, 0);
 
   return (
     <Ctx.Provider value={{ items, count, total, addItem, updateQty, removeItem, clear, isOpen, open: () => setOpen(true), close: () => setOpen(false) }}>
