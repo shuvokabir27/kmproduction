@@ -299,7 +299,7 @@ const Products = () => {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="পণ্য খুঁজুন..."
-              className="bg-transparent flex-1 text-sm outline-none"
+              className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
             />
           </div>
 
