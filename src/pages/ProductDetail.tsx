@@ -261,7 +261,7 @@ const ProductDetail = () => {
       <div className="max-w-7xl mx-auto px-4 pt-4 text-xs md:text-sm text-gray-500 flex items-center gap-1.5 flex-wrap">
         <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-3 w-3" /> Home</Link>
         <span>/</span>
-        {product.category && <><span className="hover:text-gray-900">{product.category}</span><span>/</span></>}
+        {product.category && <><span className="hover:text-gray-900">{categoryLabel}</span><span>/</span></>}
         <span className="text-gray-900 font-medium line-clamp-1">{product.name}</span>
       </div>
 
