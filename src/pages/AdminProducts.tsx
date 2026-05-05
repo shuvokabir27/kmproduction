@@ -258,7 +258,7 @@ const AdminProducts = () => {
 
         {/* Dashboard Tab */}
         <TabsContent value="dashboard" className="mt-4">
-          <ProductDashboardStats />
+          <ProductDashboardStats onNavigate={goToTab} />
         </TabsContent>
 
         <TabsContent value="products" className="mt-4 space-y-4">
