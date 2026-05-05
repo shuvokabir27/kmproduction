@@ -486,15 +486,18 @@ const AdminProducts = () => {
               )}
               {form.variants.map((v, i) => (
                 <div key={i} className="grid grid-cols-12 gap-2 items-center">
-                  <Input className="col-span-4 h-9" placeholder={form.unit_type === "kg" ? "১ কেজি" : form.unit_type === "size" ? "Medium" : "১ পিস"}
+                  <Input className="col-span-3 h-9" placeholder={form.unit_type === "kg" ? "১ কেজি" : form.unit_type === "size" ? "Medium" : "১ পিস"}
                     value={v.label}
                     onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], label: e.target.value }; return { ...f, variants: a }; })} />
-                  <Input className="col-span-3 h-9" type="number" placeholder="দাম"
+                  <Input className="col-span-2 h-9" type="number" placeholder="দাম"
                     value={v.price}
                     onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], price: e.target.value }; return { ...f, variants: a }; })} />
-                  <Input className="col-span-3 h-9" type="number" placeholder="ডিসকাউন্ট"
+                  <Input className="col-span-2 h-9" type="number" placeholder="ডিসকা."
                     value={v.discount_price}
                     onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], discount_price: e.target.value }; return { ...f, variants: a }; })} />
+                  <Input className="col-span-3 h-9" type="number" placeholder="ওজন (গ্রাম)"
+                    value={v.weight_grams}
+                    onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], weight_grams: e.target.value }; return { ...f, variants: a }; })} />
                   <Button type="button" size="sm" variant="ghost" className="col-span-2 text-destructive h-9"
                     onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, j) => j !== i) }))}>
                     <Trash2 className="h-3 w-3" />
