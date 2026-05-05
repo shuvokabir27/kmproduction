@@ -17,7 +17,7 @@ export default function ShopOfferBanner() {
     queryFn: async () => {
       const { data } = await supabase
         .from("shop_offers" as any)
-        .select("*, products(name, image_url, price, discount_price)")
+        .select("*")
         .eq("is_active", true)
         .eq("show_popup", true)
         .order("popup_priority", { ascending: false })
@@ -37,6 +37,19 @@ export default function ShopOfferBanner() {
   const comboItems: any[] = isCombo && Array.isArray(offer?.combo_products) ? offer.combo_products : [];
   const comboIds = comboItems.map((c: any) => c.product_id).filter(Boolean);
 
+  const { data: offerProduct } = useQuery({
+    queryKey: ["offer-product", offer?.product_id],
+    enabled: !!offer?.product_id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("id,name,image_url,price,discount_price")
+        .eq("id", offer.product_id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
   const { data: comboProducts } = useQuery({
     queryKey: ["combo-products", comboIds],
     enabled: comboIds.length > 0,
@@ -53,7 +66,7 @@ export default function ShopOfferBanner() {
 
   if (!offer) return null;
 
-  const product = (offer as any).products;
+  const product = offerProduct;
   const isFree = offer.discount_type === "free_delivery";
   const isPct = offer.discount_type === "percentage";
   const discountText = isFree
