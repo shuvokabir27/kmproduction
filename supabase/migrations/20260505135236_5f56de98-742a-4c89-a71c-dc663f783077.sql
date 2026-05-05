@@ -1,0 +1,1 @@
+ALTER TABLE public.shop_customers ADD COLUMN IF NOT EXISTS address text;

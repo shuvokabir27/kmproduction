@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       const { data, error } = await supabase.from("shop_customers").insert({
         phone, full_name: fullName || null, password_hash,
         session_token, session_expires_at, last_login_at: new Date().toISOString(),
-      }).select("id, phone, full_name").single();
+      }).select("id, phone, full_name, address").single();
       if (error) return bad(error.message, 500);
 
       // link any prior orders by phone
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
 
       const { data: cust } = await supabase
         .from("shop_customers")
-        .select("id, phone, full_name, password_hash, is_active")
+        .select("id, phone, full_name, address, password_hash, is_active")
         .eq("phone", phone).maybeSingle();
       if (!cust) return bad("এই নম্বরে কোনো অ্যাকাউন্ট নেই", 401);
       if (!cust.is_active) return bad("আপনার অ্যাকাউন্ট নিষ্ক্রিয়", 403);
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
         .eq("customer_phone", phone).is("shop_customer_id", null);
 
       return ok({
-        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name },
+        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name, address: cust.address },
         token: session_token, expires_at: session_expires_at,
       });
     }
@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
       if (!token) return bad("টোকেন নেই", 401);
       const { data: cust } = await supabase
         .from("shop_customers")
-        .select("id, phone, full_name, session_expires_at, is_active")
+        .select("id, phone, full_name, address, session_expires_at, is_active")
         .eq("session_token", token).maybeSingle();
       if (!cust) return bad("সেশন অবৈধ", 401);
       if (!cust.is_active) return bad("অ্যাকাউন্ট নিষ্ক্রিয়", 403);
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
         .order("created_at", { ascending: false }).limit(200);
 
       return ok({
-        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name },
+        customer: { id: cust.id, phone: cust.phone, full_name: cust.full_name, address: cust.address },
         orders: orders ?? [],
       });
     }
@@ -133,6 +133,50 @@ Deno.serve(async (req) => {
         .update({ session_token: null, session_expires_at: null })
         .eq("session_token", token);
       return ok({ ok: true });
+    }
+
+    if (action === "update_profile") {
+      const token = String(body.token || "");
+      if (!token) return bad("টোকেন নেই", 401);
+      const { data: cust } = await supabase
+        .from("shop_customers")
+        .select("id, phone, session_expires_at, is_active")
+        .eq("session_token", token).maybeSingle();
+      if (!cust) return bad("সেশন অবৈধ", 401);
+      if (!cust.is_active) return bad("অ্যাকাউন্ট নিষ্ক্রিয়", 403);
+      if (cust.session_expires_at && new Date(cust.session_expires_at) < new Date())
+        return bad("সেশন শেষ হয়েছে", 401);
+
+      const fullName = body.full_name != null ? String(body.full_name).trim().slice(0, 100) : undefined;
+      const address = body.address != null ? String(body.address).trim().slice(0, 500) : undefined;
+      const newPhone = body.phone != null ? String(body.phone).replace(/\D/g, "") : undefined;
+
+      const updates: Record<string, unknown> = {};
+      if (fullName !== undefined) updates.full_name = fullName || null;
+      if (address !== undefined) updates.address = address || null;
+      if (newPhone !== undefined) {
+        if (newPhone.length !== 11) return bad("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+        if (newPhone !== cust.phone) {
+          const { data: dup } = await supabase
+            .from("shop_customers").select("id").eq("phone", newPhone).maybeSingle();
+          if (dup) return bad("এই নম্বরে ইতিমধ্যে অ্যাকাউন্ট আছে");
+          updates.phone = newPhone;
+        }
+      }
+
+      if (Object.keys(updates).length === 0) return ok({ ok: true });
+
+      const { data: updated, error } = await supabase
+        .from("shop_customers").update(updates).eq("id", cust.id)
+        .select("id, phone, full_name, address").single();
+      if (error) return bad(error.message, 500);
+
+      if (updates.phone) {
+        await supabase.from("orders").update({ shop_customer_id: updated.id })
+          .eq("customer_phone", updates.phone as string).is("shop_customer_id", null);
+      }
+
+      return ok({ customer: updated });
     }
 
     return bad("অজানা অ্যাকশন");

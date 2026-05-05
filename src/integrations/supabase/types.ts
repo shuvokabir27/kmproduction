@@ -2800,6 +2800,7 @@ export type Database = {
       }
       shop_customers: {
         Row: {
+          address: string | null
           created_at: string
           full_name: string | null
           id: string
@@ -2812,6 +2813,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          address?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
@@ -2824,6 +2826,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          address?: string | null
           created_at?: string
           full_name?: string | null
           id?: string

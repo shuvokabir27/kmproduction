@@ -199,6 +199,14 @@ const Products = () => {
     setQuantity(1);
     setOrderSuccess(false);
     setPhoneError("");
+    if (shopCustomer) {
+      setOrderForm(f => ({
+        ...f,
+        name: shopCustomer.full_name || f.name,
+        phone: shopCustomer.phone || f.phone,
+        address: shopCustomer.address || f.address,
+      }));
+    }
     setOrderOpen(true);
   };
 

@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
+import { useShopCustomer } from "@/hooks/useShopCustomer";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -25,6 +26,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const cart = useCart();
+  const { customer: shopCustomer } = useShopCustomer();
   const [searchParams] = useSearchParams();
   const { settings: deliverySettings } = useDeliverySettings();
 
@@ -176,6 +178,14 @@ const ProductDetail = () => {
   const openOrder = () => {
     setOrderSuccess(false);
     setPhoneError("");
+    if (shopCustomer) {
+      setOrderForm(f => ({
+        ...f,
+        name: shopCustomer.full_name || f.name,
+        phone: shopCustomer.phone || f.phone,
+        address: shopCustomer.address || f.address,
+      }));
+    }
     setOrderOpen(true);
   };
 
