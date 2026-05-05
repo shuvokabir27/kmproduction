@@ -77,7 +77,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/services" element={<Services />} />
             <Route path="/services/:id" element={<ServiceDetail />} />
-            <Route path="/products" element={<TalerGurLanding />} />
+            <Route path="/products" element={<Products />} />
             <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />
