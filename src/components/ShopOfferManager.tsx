@@ -107,6 +107,8 @@ export default function ShopOfferManager() {
       is_active: form.is_active,
       show_popup: form.show_popup,
       popup_priority: Number(form.popup_priority) || 0,
+      combo_products: form.combo_products.filter(c => c.product_id),
+      combo_price: form.combo_price ? Number(form.combo_price) : null,
     };
     try {
       if (editing) {
