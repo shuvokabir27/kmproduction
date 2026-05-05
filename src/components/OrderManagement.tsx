@@ -193,18 +193,19 @@ const OrderManagement = () => {
 
   // Filter orders
   const filtered = (orders ?? []).filter((o: any) => {
-    if (activeTab === "payment_verify") {
-      const pm = o.payment_method;
-      return pm === "bkash" || pm === "nagad";
-    }
-    if (activeTab !== "all" && o.status !== activeTab) return false;
+    // When searching, search across ALL orders (ignore tab filter)
     if (search) {
-      const s = search.toLowerCase();
+      const s = search.toLowerCase().trim();
       return o.customer_name?.toLowerCase().includes(s) ||
         o.customer_phone?.includes(s) ||
         o.product_name?.toLowerCase().includes(s) ||
         String(o.order_number)?.includes(s);
     }
+    if (activeTab === "payment_verify") {
+      const pm = o.payment_method;
+      return pm === "bkash" || pm === "nagad";
+    }
+    if (activeTab !== "all" && o.status !== activeTab) return false;
     return true;
   });
 
