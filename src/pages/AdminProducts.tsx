@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
-  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play
+  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree
 } from "lucide-react";
 import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
@@ -24,6 +24,8 @@ import CustomerCRM from "@/components/CustomerCRM";
 import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
 import WeightPricingEditor from "@/components/WeightPricingEditor";
 import ProductVideoManager from "@/components/ProductVideoManager";
+import CategoryManager from "@/components/CategoryManager";
+import { useProductCategories } from "@/hooks/useProductCategories";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
@@ -34,6 +36,8 @@ const AdminProducts = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [productCategory, setProductCategory] = useState<"taler_gur" | "other">("taler_gur");
+  const { data: categoryData } = useProductCategories();
+  const categoryTree = categoryData?.tree ?? [];
 
   const [form, setForm] = useState({
     name: "",
@@ -172,7 +176,7 @@ const AdminProducts = () => {
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-9 h-auto sm:h-11 bg-muted/50 rounded-xl">
+        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-10 h-auto sm:h-11 bg-muted/50 rounded-xl">
           <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <LayoutDashboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ড্যাশবোর্ড</span>
@@ -180,6 +184,10 @@ const AdminProducts = () => {
           <TabsTrigger value="products" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <Package className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">প্রডাক্ট</span>
+          </TabsTrigger>
+          <TabsTrigger value="categories" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <FolderTree className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ক্যাটাগরি</span>
           </TabsTrigger>
           <TabsTrigger value="orders" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <ShoppingBag className="h-3.5 w-3.5" />
@@ -319,6 +327,10 @@ const AdminProducts = () => {
           })()}
         </TabsContent>
 
+        <TabsContent value="categories" className="mt-4">
+          <CategoryManager />
+        </TabsContent>
+
         {/* Orders Tab */}
         <TabsContent value="orders" className="mt-4">
           <OrderManagement />
@@ -396,30 +408,17 @@ const AdminProducts = () => {
                   <SelectTrigger><SelectValue placeholder="বাছুন" /></SelectTrigger>
                   <SelectContent className="max-h-80">
                     <SelectItem value="none">কোনোটি নয়</SelectItem>
-
-                    <div className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">🍛 খাবার ও শুঁটকি</div>
-                    <SelectItem value="premium_shutki">প্রিমিয়াম শুঁটকি</SelectItem>
-                    <SelectItem value="bala_chao">বালাচাও স্পেশাল</SelectItem>
-                    <SelectItem value="traditional_pickles">ঐতিহ্যবাহী আচার</SelectItem>
-
-                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">🐚 ঝিনুক ও উপহার সামগ্রী</div>
-                    <SelectItem value="shell_jewelry">ঝিনুকের অলংকার</SelectItem>
-                    <SelectItem value="custom_showpieces">কাস্টমাইজড শোপিস</SelectItem>
-                    <SelectItem value="souvenirs">স্যুভেনিয়ার ও গিফট</SelectItem>
-
-                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">👘 রাখাইন ফ্যাশন ও তাঁত</div>
-                    <SelectItem value="woven_winter_wear">তাঁতের শীতবস্ত্র</SelectItem>
-                    <SelectItem value="traditional_attire">ঐতিহ্যবাহী পোশাক</SelectItem>
-                    <SelectItem value="handicrafts_bags">হস্তশিল্প ও ব্যাগ</SelectItem>
-
-                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">🪵 গৃহসজ্জা ও হস্তশিল্প</div>
-                    <SelectItem value="coconut_shell_crafts">নারিকেলের শোপিস</SelectItem>
-                    <SelectItem value="bamboo_wooden">বাঁশ ও কাঠের তৈরি</SelectItem>
-                    <SelectItem value="toys_others">খেলনা ও অন্যান্য</SelectItem>
-
-                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">📦 অন্যান্য</div>
-                    <SelectItem value="taler_gur">🌴 তালের গুড়</SelectItem>
-                    <SelectItem value="other">অন্যান্য</SelectItem>
+                    {categoryTree.map((m) => (
+                      <div key={m.id}>
+                        <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                          {m.icon} {m.label}
+                        </div>
+                        <SelectItem value={m.value}>{m.label} (মেইন)</SelectItem>
+                        {m.children.map((s) => (
+                          <SelectItem key={s.id} value={s.value}>— {s.label}</SelectItem>
+                        ))}
+                      </div>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
