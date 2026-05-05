@@ -176,7 +176,7 @@ const AdminProducts = () => {
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-9 h-auto sm:h-11 bg-muted/50 rounded-xl">
+        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-10 h-auto sm:h-11 bg-muted/50 rounded-xl">
           <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <LayoutDashboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ড্যাশবোর্ড</span>
