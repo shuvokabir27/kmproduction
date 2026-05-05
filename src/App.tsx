@@ -52,6 +52,8 @@ import ClientPaymentHistory from "./pages/ClientPaymentHistory";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
+import ShopCustomerLogin from "./pages/ShopCustomerLogin";
+import ShopCustomerAccount from "./pages/ShopCustomerAccount";
 import AdminProducts from "./pages/AdminProducts";
 import TalerGurLanding from "./pages/TalerGurLanding";
 import TasksPage from "./pages/TasksPage";
@@ -80,6 +82,8 @@ const App = () => (
             <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/shop/login" element={<ShopCustomerLogin />} />
+            <Route path="/shop/account" element={<ShopCustomerAccount />} />
             <Route path="/taler-gur" element={<TalerGurLanding />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/news" element={<News />} />

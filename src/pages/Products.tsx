@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingBag, Phone, ShoppingCart, Search, X, CheckCircle, Menu, Tag, Truck, ShieldCheck, Star, MessageCircle } from "lucide-react";
+import { ShoppingBag, Phone, ShoppingCart, Search, X, CheckCircle, Menu, Tag, Truck, ShieldCheck, Star, MessageCircle, User, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useShopCustomer } from "@/hooks/useShopCustomer";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -24,6 +25,7 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { customer: shopCustomer } = useShopCustomer();
 
   const { data: products } = useQuery({
     queryKey: ["public-products"],
@@ -86,7 +88,8 @@ const Products = () => {
         quantity: 1,
         unit_price: unitPrice,
         total_amount: unitPrice,
-      });
+        shop_customer_id: shopCustomer?.id ?? null,
+      } as any);
       if (error) throw error;
       setOrderSuccess(true);
       setOrderForm({ name: "", phone: "", address: "" });
@@ -172,6 +175,24 @@ const Products = () => {
             >
               🔥 OFFER
             </button>
+            {shopCustomer ? (
+              <Link
+                to="/shop/account"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold"
+                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+              >
+                <User className="h-3.5 w-3.5" />
+                {shopCustomer.full_name?.split(" ")[0] || "অ্যাকাউন্ট"}
+              </Link>
+            ) : (
+              <Link
+                to="/shop/login"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold hover:bg-gray-50"
+                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+              >
+                <LogIn className="h-3.5 w-3.5" /> লগইন
+              </Link>
+            )}
           </nav>
 
           <div className="hidden lg:flex items-center bg-gray-100 rounded-full px-4 py-2 w-72">
@@ -184,9 +205,18 @@ const Products = () => {
             />
           </div>
 
-          <button onClick={() => setMobileMenuOpen(v => !v)} className="md:hidden p-2 rounded-lg hover:bg-gray-100">
-            <Menu className="h-5 w-5 text-gray-700" />
-          </button>
+          <div className="md:hidden flex items-center gap-1">
+            <Link
+              to={shopCustomer ? "/shop/account" : "/shop/login"}
+              className="p-2 rounded-lg hover:bg-gray-100"
+              aria-label="login"
+            >
+              <User className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+            </Link>
+            <button onClick={() => setMobileMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-gray-100">
+              <Menu className="h-5 w-5 text-gray-700" />
+            </button>
+          </div>
         </div>
         {mobileMenuOpen && (
           <div className="md:hidden border-t bg-white px-4 py-3 space-y-2">

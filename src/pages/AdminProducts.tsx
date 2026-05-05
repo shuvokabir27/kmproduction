@@ -21,6 +21,7 @@ import LandingPageEditor from "@/components/LandingPageEditor";
 import OrderManagement from "@/components/OrderManagement";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
 import CustomerCRM from "@/components/CustomerCRM";
+import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
 import WeightPricingEditor from "@/components/WeightPricingEditor";
 import ProductVideoManager from "@/components/ProductVideoManager";
 
@@ -171,7 +172,7 @@ const AdminProducts = () => {
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-4 sm:grid-cols-8 h-11 bg-muted/50 rounded-xl">
+        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-9 h-auto sm:h-11 bg-muted/50 rounded-xl">
           <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <LayoutDashboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ড্যাশবোর্ড</span>
@@ -187,6 +188,10 @@ const AdminProducts = () => {
           <TabsTrigger value="customers" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <Users className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">কাস্টমার</span>
+          </TabsTrigger>
+          <TabsTrigger value="users" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <Users className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ইউজার</span>
           </TabsTrigger>
           <TabsTrigger value="pricing" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <Weight className="h-3.5 w-3.5" />
@@ -324,7 +329,9 @@ const AdminProducts = () => {
           <CustomerCRM />
         </TabsContent>
 
-        {/* Pricing Tab */}
+        <TabsContent value="users" className="mt-4">
+          <ShopCustomersAdmin />
+        </TabsContent>
         <TabsContent value="pricing" className="mt-4">
           <WeightPricingEditor />
         </TabsContent>
