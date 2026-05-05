@@ -9,6 +9,7 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
+import { useProductCategories } from "@/hooks/useProductCategories";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
