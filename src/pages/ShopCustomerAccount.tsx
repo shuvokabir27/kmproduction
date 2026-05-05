@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar, MapPin, User, Save, Pencil } from "lucide-react";
+import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar, MapPin, User, Save, Pencil, RefreshCw, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import MobileShopNav from "@/components/MobileShopNav";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +33,7 @@ export default function ShopCustomerAccount() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", address: "" });
+  const [productMap, setProductMap] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
 
   useEffect(() => {
     if (!loading && !customer) nav("/shop/login", { replace: true });
@@ -45,6 +46,17 @@ export default function ShopCustomerAccount() {
       address: customer.address || "",
     });
   }, [customer]);
+
+  useEffect(() => {
+    const ids = Array.from(new Set(orders.map((o: any) => o.product_id).filter(Boolean)));
+    if (ids.length === 0) { setProductMap({}); return; }
+    (async () => {
+      const { data } = await supabase.from("products").select("id, stock_status, is_active").in("id", ids);
+      const map: Record<string, any> = {};
+      (data || []).forEach((p: any) => { map[p.id] = p; });
+      setProductMap(map);
+    })();
+  }, [orders]);
 
   const saveProfile = async () => {
     if (!form.full_name.trim()) { toast.error("নাম দিন"); return; }
@@ -143,7 +155,7 @@ export default function ShopCustomerAccount() {
               </div>
               <div>
                 <Label className="text-xs font-bold text-gray-700">মোবাইল নম্বর</Label>
-                <Input value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "") }))} maxLength={11} inputMode="numeric" className="h-11 mt-1 bg-white text-gray-900" placeholder="01XXXXXXXXX" />
+                <Input type="tel" pattern="[0-9]*" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "") }))} maxLength={11} inputMode="numeric" className="h-11 mt-1 bg-white text-gray-900" placeholder="01XXXXXXXXX" />
               </div>
               <div>
                 <Label className="text-xs font-bold text-gray-700">ডেলিভারি ঠিকানা</Label>
@@ -175,6 +187,10 @@ export default function ShopCustomerAccount() {
             <div className="space-y-3">
               {orders.map((o) => {
                 const sl = statusLabel(o.status);
+                const prod = o.product_id ? productMap[o.product_id] : null;
+                const productAvailable = !!prod && prod.is_active && prod.stock_status === "in_stock";
+                const outOfStock = !!prod && (!prod.is_active || prod.stock_status !== "in_stock");
+                const productMissing = !prod && !!o.product_id;
                 return (
                   <div key={o.id} className="bg-white rounded-2xl p-4 border shadow-sm">
                     <div className="flex items-start justify-between gap-3">
@@ -195,6 +211,23 @@ export default function ShopCustomerAccount() {
                         <Badge className={`mt-1 ${sl.cls} border-0`}>{sl.t}</Badge>
                       </div>
                     </div>
+                    {o.product_id && (
+                      <div className="mt-3 pt-3 border-t flex items-center justify-between gap-2">
+                        {productAvailable && (
+                          <Button size="sm" onClick={() => nav(`/products/${o.product_id}`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
+                            <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার করুন
+                          </Button>
+                        )}
+                        {outOfStock && (
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl flex-1 justify-center">
+                            <XCircle className="h-3.5 w-3.5" /> এই পণ্যটি এখন স্টকে নেই
+                          </div>
+                        )}
+                        {productMissing && (
+                          <div className="text-xs text-gray-400 flex-1 text-center">পণ্যটি আর পাওয়া যাচ্ছে না</div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}

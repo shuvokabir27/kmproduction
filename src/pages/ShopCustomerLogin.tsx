@@ -136,8 +136,9 @@ export default function ShopCustomerLogin() {
                 <div className="relative mt-1">
                   <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
+                    type="tel"
                     inputMode="numeric"
-                    maxLength={11}
+                    pattern="[0-9]*"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                     placeholder="01XXXXXXXXX"
