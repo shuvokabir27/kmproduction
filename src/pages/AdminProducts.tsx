@@ -447,7 +447,7 @@ const AdminProducts = () => {
                 </Label>
                 <div className="flex gap-1">
                   <Button type="button" size="sm" variant="outline" className="h-7 gap-1"
-                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "" }] }))}>
+                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "", weight_grams: "" }] }))}>
                     <Plus className="h-3 w-3" /> অপশন
                   </Button>
                 </div>
