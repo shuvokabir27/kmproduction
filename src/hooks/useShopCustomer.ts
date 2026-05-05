@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type ShopCustomer = { id: string; phone: string; full_name: string | null };
+export type ShopCustomer = { id: string; phone: string; full_name: string | null; address?: string | null };
 const TOKEN_KEY = "km_shop_customer_token";
 
 export function useShopCustomer() {
