@@ -81,18 +81,30 @@ const Products = () => {
     if (orderForm.phone.length !== 11) { setPhoneError("মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে"); return; }
     if (!orderForm.address.trim()) { toast.error("আপনার ঠিকানা দিন"); return; }
 
+    const variants = Array.isArray(selectedProduct?.variants) ? selectedProduct.variants : [];
+    if (variants.length > 0 && selectedVariantIdx < 0) {
+      toast.error("একটি অপশন বাছাই করুন");
+      return;
+    }
+    const chosen = variants.length > 0 ? variants[selectedVariantIdx] : null;
+    const unitPrice = chosen
+      ? Number(chosen.discount_price ?? chosen.price ?? 0)
+      : Number(selectedProduct?.discount_price || selectedProduct?.price || 0);
+    const variantLabel = chosen ? String(chosen.label) : null;
+    const qty = Math.max(1, Number(quantity) || 1);
+
     setSubmitting(true);
     try {
       const productName = selectedProduct?.name || "প্রডাক্ট";
-      const unitPrice = selectedProduct?.discount_price || selectedProduct?.price || 0;
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
-        product_name: productName,
-        quantity: 1,
+        product_name: variantLabel ? `${productName} (${variantLabel})` : productName,
+        variant_label: variantLabel,
+        quantity: qty,
         unit_price: unitPrice,
-        total_amount: unitPrice,
+        total_amount: unitPrice * qty,
         shop_customer_id: shopCustomer?.id ?? null,
       } as any);
       if (error) throw error;
