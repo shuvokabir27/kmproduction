@@ -292,6 +292,9 @@ const Products = () => {
                 )}
               </details>
             ))}
+          </div>
+        )}
+      </header>
 
       {/* Hero Banner */}
       <section className="px-4 py-6 md:py-8">
