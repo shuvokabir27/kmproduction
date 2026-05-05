@@ -414,14 +414,18 @@ const AdminProducts = () => {
               <Label>বিবরণ</Label>
               <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="প্রডাক্টের বিবরণ" rows={3} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label>বেস দাম (৳)</Label>
                 <Input type="number" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
               </div>
               <div>
-                <Label>ডিসকাউন্ট দাম (৳)</Label>
+                <Label>ডিসকাউন্ট (৳)</Label>
                 <Input type="number" value={form.discount_price} onChange={(e) => setForm((f) => ({ ...f, discount_price: e.target.value }))} placeholder="ঐচ্ছিক" />
+              </div>
+              <div>
+                <Label>ওজন (গ্রাম)</Label>
+                <Input type="number" value={form.weight_grams} onChange={(e) => setForm((f) => ({ ...f, weight_grams: e.target.value }))} placeholder="যেমন: ৫০০" />
               </div>
             </div>
 
