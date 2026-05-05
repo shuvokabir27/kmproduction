@@ -88,7 +88,8 @@ const Products = () => {
         quantity: 1,
         unit_price: unitPrice,
         total_amount: unitPrice,
-      });
+        shop_customer_id: shopCustomer?.id ?? null,
+      } as any);
       if (error) throw error;
       setOrderSuccess(true);
       setOrderForm({ name: "", phone: "", address: "" });
