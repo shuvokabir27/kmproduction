@@ -34,9 +34,10 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
   paid: { label: "পেইড", color: "bg-green-500/10 text-green-600" },
 };
 
-const OrderManagement = () => {
+const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState(initialTab || "pending");
+  useEffect(() => { if (initialTab) setActiveTab(initialTab); }, [initialTab]);
   const [search, setSearch] = useState("");
   const [verifySearch, setVerifySearch] = useState("");
   const [verifyAmounts, setVerifyAmounts] = useState<Record<string, string>>({});
