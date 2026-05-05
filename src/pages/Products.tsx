@@ -160,8 +160,9 @@ const Products = () => {
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-700">
-            <a href="#shop" className="hover:text-[--g] transition-colors" style={{ ['--g' as any]: BRAND_GREEN }}>SHOP</a>
+          <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-gray-700">
+            <a href="#shop" className="hover:text-gray-900">SHOP</a>
+            <a href="#categories" className="hover:text-gray-900">ক্যাটাগরি</a>
             <a href="#about" className="hover:text-gray-900">ABOUT</a>
             <a href="#contact" className="hover:text-gray-900">CONTACT</a>
             <button
