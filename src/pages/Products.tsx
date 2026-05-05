@@ -24,6 +24,8 @@ const Products = () => {
   const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "" });
   const [phoneError, setPhoneError] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
+  const [quantity, setQuantity] = useState<number>(1);
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { customer: shopCustomer } = useShopCustomer();
