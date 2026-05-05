@@ -17,10 +17,13 @@ const BRAND_GREEN = "#1f7a3a";
 const BRAND_DARK = "#155c2c";
 
 export const CartDrawer = () => {
-  const { items, total, totalWeightGrams, isOpen, close, updateQty, removeItem, clear } = useCart();
+  const { items, total, totalWeightGrams, offer, isOpen, close, updateQty, removeItem, clear } = useCart();
   const { customer } = useShopCustomer();
   const { settings } = useDeliverySettings();
-  const delivery = calculateDelivery(total, totalWeightGrams, settings);
+  const delivery = calculateDelivery(total, totalWeightGrams, settings, {
+    skipThreshold: !!offer,
+    forceFree: !!offer?.free_delivery,
+  });
   const grandTotal = total + delivery.charge;
   const [checkout, setCheckout] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -140,8 +143,8 @@ export const CartDrawer = () => {
           </div>
         ) : !checkout ? (
           <>
-            {/* Free delivery progress / hint */}
-            {settings.free_delivery_enabled && (
+            {/* Free delivery progress / hint - hidden in offer mode */}
+            {!offer && settings.free_delivery_enabled && (
               <div className="mx-4 mt-4">
                 {delivery.isFree ? (
                   <div className="bg-green-50 border border-green-200 text-green-800 rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-2">
