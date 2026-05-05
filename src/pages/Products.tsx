@@ -925,6 +925,15 @@ const Products = () => {
                     <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
                     <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="আপনার সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-gray-50/50 resize-none" />
                   </div>
+                  <PaymentMethodPicker
+                    settings={siteSettings}
+                    method={orderForm.payment_method}
+                    senderNo={orderForm.payment_sender_no}
+                    trxId={orderForm.payment_trx_id}
+                    onMethodChange={(m) => setOrderForm(f => ({ ...f, payment_method: m }))}
+                    onSenderNoChange={(v) => setOrderForm(f => ({ ...f, payment_sender_no: v }))}
+                    onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
+                  />
                   <Button onClick={handleOrderSubmit} disabled={submitting} className="w-full text-white font-bold text-base h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                     <ShoppingCart className="h-5 w-5" />
                     {submitting ? "অর্ডার হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
