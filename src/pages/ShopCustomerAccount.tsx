@@ -344,6 +344,51 @@ export default function ShopCustomerAccount() {
                         </div>
                       )}
 
+                      {/* Status timeline */}
+                      <div className="mt-5 rounded-2xl border border-gray-100 bg-white overflow-hidden">
+                        <div className="px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+                          <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500">স্ট্যাটাস টাইমলাইন</div>
+                        </div>
+                        <div className="px-4 py-3 space-y-3">
+                          {steps.map((s, i) => {
+                            const done = currentIdx >= i;
+                            const active = currentIdx === i;
+                            const Icon = s.icon;
+                            const doneText: Record<string, string> = {
+                              pending: "অর্ডার গৃহীত হয়েছে",
+                              confirmed: "অর্ডার কনফার্ম হয়েছে",
+                              shipped: "অর্ডার শিপড করা হয়েছে",
+                              delivered: "অর্ডার ডেলিভার্ড হয়েছে",
+                            };
+                            const pendingText: Record<string, string> = {
+                              pending: "অর্ডার গ্রহণের অপেক্ষায়",
+                              confirmed: "কনফার্মের অপেক্ষায়",
+                              shipped: "শিপিংয়ের অপেক্ষায়",
+                              delivered: "ডেলিভারির অপেক্ষায়",
+                            };
+                            return (
+                              <div key={s.key} className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${done ? "text-white" : "bg-gray-100 text-gray-300"}`} style={done ? { background: `linear-gradient(135deg, ${BRAND_GREEN}, #2da159)` } : {}}>
+                                  {done ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className={`text-sm font-bold leading-tight ${done ? "text-gray-900" : "text-gray-400"}`}>
+                                    {done ? doneText[s.key] : pendingText[s.key]}
+                                  </div>
+                                  <div className={`text-[11px] mt-0.5 ${done ? "text-gray-500" : "text-gray-300"}`}>{s.sub}</div>
+                                </div>
+                                {active && (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: BRAND_GREEN }}>চলমান</span>
+                                )}
+                                {done && !active && (
+                                  <CheckCircle2 className="h-4 w-4" style={{ color: BRAND_GREEN }} />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
                       {/* Delivery address */}
                       {trackOrder.customer_address && (
                         <div className="mt-3 flex items-start gap-2 px-3 py-2.5 rounded-xl bg-gray-50">
