@@ -72,7 +72,7 @@ const AdminProducts = () => {
     setForm({
       name: "", description: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
-      sort_order: "0", contact_info: "", unit_type: "piece", variants: [],
+      sort_order: "0", contact_info: "", unit_type: "piece", weight_grams: "", variants: [],
     });
     setEditingProduct(null);
   };
@@ -94,11 +94,13 @@ const AdminProducts = () => {
       sort_order: String(p.sort_order || 0),
       contact_info: p.contact_info || "",
       unit_type: (p.unit_type || "piece") as "piece" | "kg" | "size",
+      weight_grams: p.weight_grams ? String(p.weight_grams) : "",
       variants: Array.isArray(p.variants)
         ? p.variants.map((v: any) => ({
             label: v.label || "",
             price: String(v.price ?? ""),
             discount_price: v.discount_price != null ? String(v.discount_price) : "",
+            weight_grams: v.weight_grams != null ? String(v.weight_grams) : "",
           }))
         : [],
     });
