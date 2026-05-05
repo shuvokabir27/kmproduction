@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import MobileShopNav from "@/components/MobileShopNav";
+import ShopOfferPopup from "@/components/ShopOfferPopup";
 import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
@@ -653,6 +654,7 @@ const ProductDetail = () => {
         </div>
       )}
       <MobileShopNav />
+      <ShopOfferPopup />
     </div>
   );
 };

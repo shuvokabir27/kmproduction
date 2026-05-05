@@ -16,6 +16,7 @@ import { calculateDelivery } from "@/lib/delivery";
 import { Truck as TruckIcon } from "lucide-react";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import MobileShopNav from "@/components/MobileShopNav";
+import ShopOfferPopup from "@/components/ShopOfferPopup";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -985,6 +986,7 @@ const Products = () => {
       )}
 
       <MobileShopNav />
+      <ShopOfferPopup />
     </div>
   );
 };
