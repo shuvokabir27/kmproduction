@@ -47,7 +47,7 @@ export default function ShopCustomerLogin() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-10"
+      className="min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10"
       style={{
         fontFamily: "'Tiro Bangla', serif",
         background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})`,
