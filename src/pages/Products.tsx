@@ -137,6 +137,11 @@ const Products = () => {
     setSubmitting(true);
     try {
       const productName = selectedProduct?.name || "প্রডাক্ট";
+      const subtotal = unitPrice * qty;
+      const variantWeight = chosen && (chosen as any).weight_grams != null ? Number((chosen as any).weight_grams) : null;
+      const wPer = variantWeight && variantWeight > 0 ? variantWeight : Number(selectedProduct?.weight_grams || 0);
+      const totalWeight = wPer * qty;
+      const dlv = calculateDelivery(subtotal, totalWeight, deliverySettings);
       const { error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
@@ -145,7 +150,9 @@ const Products = () => {
         variant_label: variantLabel,
         quantity: qty,
         unit_price: unitPrice,
-        total_amount: unitPrice * qty,
+        total_amount: subtotal + dlv.charge,
+        delivery_charge: dlv.charge,
+        payment_method: "cod",
         shop_customer_id: shopCustomer?.id ?? null,
       } as any);
       if (error) throw error;
