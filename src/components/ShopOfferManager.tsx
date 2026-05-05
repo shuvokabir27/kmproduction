@@ -135,7 +135,7 @@ export default function ShopOfferManager() {
     qc.invalidateQueries({ queryKey: ["active-shop-offers"] });
   };
 
-  const typeLabel = (t: string) => t === "percentage" ? "শতাংশ ছাড়" : t === "fixed" ? "নির্দিষ্ট ছাড়" : "ফ্রি ডেলিভারি";
+  const typeLabel = (t: string) => t === "percentage" ? "শতাংশ ছাড়" : t === "fixed" ? "নির্দিষ্ট ছাড়" : t === "combo" ? "কম্বো অফার" : "ফ্রি ডেলিভারি";
 
   return (
     <div className="space-y-4">
@@ -172,7 +172,7 @@ export default function ShopOfferManager() {
                     </div>
                     <h3 className="font-bold text-sm mt-1 truncate">{o.title}</h3>
                     <p className="text-xs text-muted-foreground truncate">
-                      {typeLabel(o.discount_type)} {o.discount_type !== "free_delivery" && `• ${o.discount_value}${o.discount_type === "percentage" ? "%" : "৳"}`}
+                      {typeLabel(o.discount_type)} {o.discount_type === "combo" && o.combo_price ? `• ৳${o.combo_price}` : o.discount_type !== "free_delivery" && o.discount_type !== "combo" ? `• ${o.discount_value}${o.discount_type === "percentage" ? "%" : "৳"}` : ""}
                       {product && ` • ${product.name}`}
                     </p>
                     {o.ends_at && <p className="text-xs text-muted-foreground">শেষ: {new Date(o.ends_at).toLocaleString("bn-BD")}</p>}
