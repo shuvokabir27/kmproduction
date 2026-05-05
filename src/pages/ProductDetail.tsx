@@ -1,12 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ShoppingCart, Phone, MessageCircle, Minus, Plus, ChevronLeft, ChevronRight, Share2, ShieldCheck, Truck, Tag, X, CheckCircle, Home, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 
@@ -20,6 +20,11 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const cart = useCart();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("order") === "1") setOrderOpen(true);
+  }, [searchParams]);
 
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
