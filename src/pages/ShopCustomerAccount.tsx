@@ -205,7 +205,7 @@ export default function ShopCustomerAccount() {
             <div className="space-y-3">
               {orders.map((o) => {
                 const sl = statusLabel(o.status);
-                const prod = (o.product_id && productMap[o.product_id]) || productByName[o.product_name] || null;
+                const prod = findProduct(o);
                 const productAvailable = !!prod && prod.is_active && prod.stock_status === "in_stock";
                 const outOfStock = !!prod && (!prod.is_active || prod.stock_status !== "in_stock");
                 return (
