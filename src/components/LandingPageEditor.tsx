@@ -501,6 +501,33 @@ const LandingPageEditor = () => {
                 className="h-8 text-sm"
               />
             )}
+
+            <div className="border-t border-border/30 pt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-base">🚀</span>
+                <p className="text-xs font-semibold text-foreground">রকেট</p>
+              </div>
+              <Switch
+                checked={(siteSettings as any).rocket_enabled ?? false}
+                onCheckedChange={async (val) => {
+                  await supabase.from("site_settings").update({ rocket_enabled: val } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+              />
+            </div>
+            {(siteSettings as any).rocket_enabled && (
+              <Input
+                placeholder="রকেট নম্বর (যেমন: 01XXXXXXXXX)"
+                value={(siteSettings as any).rocket_payment_no ?? ""}
+                onChange={async (e) => {
+                  await supabase.from("site_settings").update({ rocket_payment_no: e.target.value } as any).eq("id", siteSettings.id);
+                  queryClient.invalidateQueries({ queryKey: ["site-settings-delivery-editor"] });
+                  queryClient.invalidateQueries({ queryKey: ["landing-site-settings"] });
+                }}
+                className="h-8 text-sm"
+              />
+            )}
           </div>
         </div>
       )}
