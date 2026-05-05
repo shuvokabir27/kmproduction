@@ -109,7 +109,9 @@ const ProductDetail = () => {
         product_name: product?.name || "প্রডাক্ট",
         quantity: qty,
         unit_price: unitPrice,
-        total_amount: total,
+        total_amount: grandTotal,
+        delivery_charge: dlv.charge,
+        payment_method: "cod",
       });
       if (error) throw error;
       setOrderSuccess(true);
