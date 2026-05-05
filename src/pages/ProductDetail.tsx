@@ -39,6 +39,7 @@ const ProductDetail = () => {
   const [submitting, setSubmitting] = useState(false);
   const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" as "cod" | "bkash" | "nagad" | "rocket", payment_sender_no: "", payment_trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
+  const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product-detail", id],
