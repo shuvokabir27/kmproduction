@@ -779,17 +779,39 @@ const Products = () => {
                     : p.discount_price && p.discount_price < p.price;
                   const total = basePrice * Math.max(1, quantity);
                   const unitLabel = p.unit_type === "kg" ? "কেজি" : p.unit_type === "size" ? "সাইজ" : "পিস";
+                  const variantWeight = chosen && (chosen as any).weight_grams != null ? Number((chosen as any).weight_grams) : null;
+                  const wPer = variantWeight && variantWeight > 0 ? variantWeight : Number(p.weight_grams || 0);
+                  const totalWeight = wPer * Math.max(1, quantity);
+                  const dlv = calculateDelivery(total, totalWeight, deliverySettings);
+                  const grand = total + dlv.charge;
                   return (
                     <div className="mx-5 mt-4 space-y-3">
                       <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
                         {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
                         <div className="flex-1">
-                          <p className="text-xs text-gray-500">মোট মূল্য</p>
+                          <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
                             {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(origPrice * Math.max(1, quantity))}</span>}
                           </div>
                           <p className="text-[11px] text-gray-500 line-clamp-1">{p.name}</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 space-y-1.5 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-700 flex items-center gap-1.5"><TruckIcon className="h-4 w-4 text-amber-600" /> ডেলিভারি চার্জ</span>
+                          <span className="font-bold text-gray-900">{dlv.isFree ? "ফ্রি" : `৳${toBn(dlv.charge)}`}</span>
+                        </div>
+                        {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
+                          <p className="text-[11px] text-amber-700">আর মাত্র ৳{toBn(dlv.amountToFree)} অর্ডার করলেই ফ্রি ডেলিভারি!</p>
+                        )}
+                        <div className="flex items-center justify-between pt-1.5 border-t border-amber-200">
+                          <span className="font-bold text-gray-900">মোট পেমেন্ট</span>
+                          <span className="font-extrabold text-lg" style={{ color: BRAND_DARK }}>৳{toBn(grand)}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-1.5 mt-1 text-[11px] font-bold text-green-700 bg-green-100 rounded-full py-1">
+                          💵 ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে পেমেন্ট করুন
                         </div>
                       </div>
 
