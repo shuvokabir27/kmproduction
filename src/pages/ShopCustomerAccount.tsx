@@ -124,6 +124,7 @@ export default function ShopCustomerAccount() {
           )}
         </div>
       </main>
+      <MobileShopNav />
     </div>
   );
 }
