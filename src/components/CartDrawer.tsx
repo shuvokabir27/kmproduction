@@ -41,7 +41,7 @@ export const CartDrawer = () => {
     setForm({
       name: customer?.full_name || "",
       phone: customer?.phone || "",
-      address: "",
+      address: customer?.address || "",
     });
     setCheckout(true);
   };
