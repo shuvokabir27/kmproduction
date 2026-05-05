@@ -36,6 +36,8 @@ const AdminProducts = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [productCategory, setProductCategory] = useState<"taler_gur" | "other">("taler_gur");
+  const { data: categoryData } = useProductCategories();
+  const categoryTree = categoryData?.tree ?? [];
 
   const [form, setForm] = useState({
     name: "",
