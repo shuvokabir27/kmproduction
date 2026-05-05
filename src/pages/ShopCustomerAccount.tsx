@@ -187,6 +187,10 @@ export default function ShopCustomerAccount() {
             <div className="space-y-3">
               {orders.map((o) => {
                 const sl = statusLabel(o.status);
+                const prod = o.product_id ? productMap[o.product_id] : null;
+                const productAvailable = !!prod && prod.is_active && prod.stock_status === "in_stock";
+                const outOfStock = !!prod && (!prod.is_active || prod.stock_status !== "in_stock");
+                const productMissing = !prod && !!o.product_id;
                 return (
                   <div key={o.id} className="bg-white rounded-2xl p-4 border shadow-sm">
                     <div className="flex items-start justify-between gap-3">
@@ -207,6 +211,23 @@ export default function ShopCustomerAccount() {
                         <Badge className={`mt-1 ${sl.cls} border-0`}>{sl.t}</Badge>
                       </div>
                     </div>
+                    {o.product_id && (
+                      <div className="mt-3 pt-3 border-t flex items-center justify-between gap-2">
+                        {productAvailable && (
+                          <Button size="sm" onClick={() => nav(`/products/${o.product_id}`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
+                            <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার করুন
+                          </Button>
+                        )}
+                        {outOfStock && (
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl flex-1 justify-center">
+                            <XCircle className="h-3.5 w-3.5" /> এই পণ্যটি এখন স্টকে নেই
+                          </div>
+                        )}
+                        {productMissing && (
+                          <div className="text-xs text-gray-400 flex-1 text-center">পণ্যটি আর পাওয়া যাচ্ছে না</div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
