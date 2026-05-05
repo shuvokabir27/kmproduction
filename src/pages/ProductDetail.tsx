@@ -276,11 +276,11 @@ const ProductDetail = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{product.name}</h1>
 
             <div className="flex items-baseline gap-3 mt-4 pb-4 border-b">
-              {hasDiscount && <span className="text-lg text-gray-400 line-through">৳{toBn(product.price)}</span>}
+              {hasDiscount && <span className="text-lg text-gray-400 line-through">৳{toBn(origPrice)}</span>}
               <span className="text-3xl font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(unitPrice)}</span>
               {hasDiscount && (
                 <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
-                  সাশ্রয় ৳{toBn(product.price - product.discount_price!)}
+                  সাশ্রয় ৳{toBn(origPrice - unitPrice)}
                 </span>
               )}
             </div>
