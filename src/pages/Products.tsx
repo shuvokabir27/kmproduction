@@ -591,17 +591,73 @@ const Products = () => {
 
                 {selectedProduct && (() => {
                   const p = selectedProduct;
-                  const hasDiscount = p.discount_price && p.discount_price < p.price;
+                  const variants = Array.isArray(p.variants) ? p.variants : [];
+                  const chosen = variants.length > 0 && selectedVariantIdx >= 0 ? variants[selectedVariantIdx] : null;
+                  const basePrice = chosen
+                    ? Number(chosen.discount_price ?? chosen.price ?? 0)
+                    : Number(p.discount_price || p.price || 0);
+                  const origPrice = chosen ? Number(chosen.price ?? 0) : Number(p.price || 0);
+                  const hasDiscount = chosen
+                    ? chosen.discount_price != null && Number(chosen.discount_price) < Number(chosen.price)
+                    : p.discount_price && p.discount_price < p.price;
+                  const total = basePrice * Math.max(1, quantity);
+                  const unitLabel = p.unit_type === "kg" ? "কেজি" : p.unit_type === "size" ? "সাইজ" : "পিস";
                   return (
-                    <div className="mx-5 mt-4 bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
-                      {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
-                      <div className="flex-1">
-                        <p className="text-xs text-gray-500">অর্ডার মূল্য</p>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(hasDiscount ? p.discount_price : p.price)}</span>
-                          {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(p.price)}</span>}
+                    <div className="mx-5 mt-4 space-y-3">
+                      <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
+                        {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
+                        <div className="flex-1">
+                          <p className="text-xs text-gray-500">মোট মূল্য</p>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
+                            {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(origPrice * Math.max(1, quantity))}</span>}
+                          </div>
+                          <p className="text-[11px] text-gray-500 line-clamp-1">{p.name}</p>
                         </div>
-                        <p className="text-[11px] text-gray-500 line-clamp-1">{p.name}</p>
+                      </div>
+
+                      {variants.length > 0 && (
+                        <div>
+                          <Label className="text-gray-800 font-bold text-sm mb-2 block">
+                            {p.unit_type === "kg" ? "ওজন বাছাই করুন" : p.unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"} <span className="text-red-500">*</span>
+                          </Label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {variants.map((v: any, i: number) => {
+                              const vPrice = v.discount_price ?? v.price;
+                              const active = selectedVariantIdx === i;
+                              return (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={() => setSelectedVariantIdx(i)}
+                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-green-600 bg-green-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                                >
+                                  <div className="font-bold text-sm text-gray-900">{v.label}</div>
+                                  <div className="text-xs">
+                                    <span className="font-bold" style={{ color: BRAND_GREEN }}>৳{toBn(Number(vPrice))}</span>
+                                    {v.discount_price != null && Number(v.discount_price) < Number(v.price) && (
+                                      <span className="line-through text-gray-400 ml-1">৳{toBn(Number(v.price))}</span>
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <Label className="text-gray-800 font-bold text-sm mb-2 block">পরিমাণ ({unitLabel})</Label>
+                        <div className="flex items-center gap-3">
+                          <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                            className="w-10 h-10 rounded-full border-2 border-gray-200 font-bold text-lg">−</button>
+                          <Input type="number" min={1} value={quantity}
+                            onChange={e => setQuantity(Math.max(1, Number(e.target.value) || 1))}
+                            className="h-10 w-20 text-center rounded-xl border-2 border-gray-200" />
+                          <button type="button" onClick={() => setQuantity(q => q + 1)}
+                            className="w-10 h-10 rounded-full border-2 border-gray-200 font-bold text-lg">+</button>
+                          <span className="text-xs text-gray-500">× ৳{toBn(basePrice)} / {unitLabel}</span>
+                        </div>
                       </div>
                     </div>
                   );
