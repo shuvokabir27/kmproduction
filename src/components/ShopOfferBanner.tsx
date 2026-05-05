@@ -212,23 +212,13 @@ export default function ShopOfferBanner() {
               )}
 
               <div className="pt-2">
-                {isCombo ? (
-                  <button
-                    onClick={handleOrderCombo}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
-                  >
-                    <ShoppingBag className="h-5 w-5" />
-                    কম্বো অর্ডার করুন
-                  </button>
-                ) : (
-                  <Link
-                    to={ctaLink}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
-                  >
-                    <ShoppingBag className="h-5 w-5" />
-                    এখনই অর্ডার করুন
-                  </Link>
-                )}
+                <Link
+                  to={`/offer/${offer.id}`}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
+                >
+                  <ShoppingBag className="h-5 w-5" />
+                  অফার দেখুন ও অর্ডার করুন
+                </Link>
               </div>
             </div>
           </div>
