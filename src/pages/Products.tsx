@@ -82,7 +82,7 @@ const Products = () => {
     return () => clearInterval(id);
   }, [products]);
 
-
+  const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-products"],
     queryFn: async () => {
       const { data } = await supabase.from("site_settings").select("*").single();
