@@ -384,6 +384,10 @@ const AdminProducts = () => {
         <TabsContent value="reports" className="mt-4">
           <ReportsSection />
         </TabsContent>
+
+        <TabsContent value="footer" className="mt-4">
+          <ShopFooterEditor />
+        </TabsContent>
       </Tabs>
 
       {/* Create/Edit Dialog */}
