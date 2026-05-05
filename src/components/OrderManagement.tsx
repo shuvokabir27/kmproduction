@@ -143,6 +143,21 @@ const OrderManagement = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
   };
 
+  const groupStatusUpdate = async (orderNumber: number, status: string) => {
+    const { error } = await supabase.from("orders").update({ status } as any).eq("order_number", orderNumber);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`স্ট্যাটাস "${statusConfig[status]?.label}" করা হয়েছে`);
+    queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+  };
+
+  const groupDelete = async (orderNumber: number) => {
+    if (!confirm("পুরো অর্ডারটি মুছে ফেলতে চান?")) return;
+    const { error } = await supabase.from("orders").delete().eq("order_number", orderNumber);
+    if (error) { toast.error(error.message); return; }
+    toast.success("অর্ডার মুছে ফেলা হয়েছে");
+    queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+  };
+
   const updateTotal = (qty: string, price: string) => {
     const total = (Number(qty) || 0) * (Number(price) || 0);
     setForm(f => ({ ...f, quantity: qty, unit_price: price, total_amount: String(total) }));
