@@ -13,12 +13,14 @@ import { toast } from "sonner";
 
 type ComboItem = { product_id: string; quantity: number };
 
+type OfferMode = "fixed" | "percentage" | "free_delivery";
+
 const emptyForm = {
   title: "",
   description: "",
-  product_id: "",
-  discount_type: "percentage" as "percentage" | "fixed" | "free_delivery" | "combo",
-  discount_value: "",
+  offer_mode: "fixed" as OfferMode,
+  combo_price: "",
+  discount_percent: "",
   image_url: "",
   badge_text: "বিশেষ অফার",
   starts_at: "",
@@ -27,7 +29,6 @@ const emptyForm = {
   show_popup: true,
   popup_priority: "0",
   combo_products: [] as ComboItem[],
-  combo_price: "",
   combo_free_delivery: false,
 };
 
@@ -58,12 +59,17 @@ export default function ShopOfferManager() {
 
   const openEdit = (o: any) => {
     setEditing(o);
+    const mode: OfferMode = o.discount_type === "free_delivery"
+      ? "free_delivery"
+      : o.discount_type === "percentage"
+        ? "percentage"
+        : "fixed";
     setForm({
       title: o.title || "",
       description: o.description || "",
-      product_id: o.product_id || "",
-      discount_type: o.discount_type,
-      discount_value: String(o.discount_value || ""),
+      offer_mode: mode,
+      combo_price: o.combo_price != null ? String(o.combo_price) : "",
+      discount_percent: mode === "percentage" ? String(o.discount_value || "") : "",
       image_url: o.image_url || "",
       badge_text: o.badge_text || "",
       starts_at: o.starts_at ? new Date(o.starts_at).toISOString().slice(0, 16) : "",
@@ -72,7 +78,6 @@ export default function ShopOfferManager() {
       show_popup: o.show_popup,
       popup_priority: String(o.popup_priority || 0),
       combo_products: Array.isArray(o.combo_products) ? o.combo_products : [],
-      combo_price: o.combo_price != null ? String(o.combo_price) : "",
       combo_free_delivery: !!o.combo_free_delivery,
     });
     setOpen(true);
@@ -96,12 +101,47 @@ export default function ShopOfferManager() {
 
   const handleSave = async () => {
     if (!form.title.trim()) { toast.error("অফারের শিরোনাম দিন"); return; }
+    const items = form.combo_products.filter(c => c.product_id);
+    if (items.length === 0) { toast.error("কমপক্ষে একটি প্রডাক্ট যোগ করুন"); return; }
+
+    // Compute totals
+    const total = items.reduce((sum, c) => {
+      const p = products?.find(x => x.id === c.product_id);
+      if (!p) return sum;
+      return sum + Number((p as any).discount_price ?? p.price ?? 0) * (c.quantity || 1);
+    }, 0);
+
+    let discount_type: string = "combo";
+    let discount_value = 0;
+    let combo_price: number | null = null;
+    let combo_free_delivery = false;
+
+    if (form.offer_mode === "fixed") {
+      const cp = Number(form.combo_price);
+      if (!cp || cp <= 0) { toast.error("কম্বো অফার মূল্য দিন"); return; }
+      if (cp >= total) { toast.error("অফার মূল্য মোট মূল্যের চেয়ে কম হতে হবে"); return; }
+      combo_price = cp;
+      discount_type = "combo";
+    } else if (form.offer_mode === "percentage") {
+      const pct = Number(form.discount_percent);
+      if (!pct || pct <= 0 || pct >= 100) { toast.error("সঠিক শতাংশ দিন (১-৯৯)"); return; }
+      discount_value = pct;
+      combo_price = Math.round(total - (total * pct) / 100);
+      discount_type = "combo";
+    } else {
+      combo_free_delivery = true;
+      combo_price = total;
+      discount_type = "combo";
+    }
+
+    if (form.offer_mode !== "free_delivery" && form.combo_free_delivery) combo_free_delivery = true;
+
     const payload: any = {
       title: form.title.trim(),
       description: form.description.trim() || null,
-      product_id: form.product_id || null,
-      discount_type: form.discount_type,
-      discount_value: Number(form.discount_value) || 0,
+      product_id: null,
+      discount_type,
+      discount_value,
       image_url: form.image_url || null,
       badge_text: form.badge_text.trim() || "বিশেষ অফার",
       starts_at: form.starts_at ? new Date(form.starts_at).toISOString() : new Date().toISOString(),
@@ -109,9 +149,9 @@ export default function ShopOfferManager() {
       is_active: form.is_active,
       show_popup: form.show_popup,
       popup_priority: Number(form.popup_priority) || 0,
-      combo_products: form.combo_products.filter(c => c.product_id),
-      combo_price: form.combo_price ? Number(form.combo_price) : null,
-      combo_free_delivery: form.combo_free_delivery,
+      combo_products: items,
+      combo_price,
+      combo_free_delivery,
     };
     try {
       if (editing) {
