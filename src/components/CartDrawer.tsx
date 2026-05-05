@@ -256,7 +256,7 @@ export const CartDrawer = () => {
             <div className="border-t border-gray-100 p-4 space-y-2 bg-white">
               <Button onClick={submit} disabled={submitting} className="w-full text-white font-bold h-14 rounded-2xl gap-2 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                 <ShoppingCart className="h-5 w-5" />
-                {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন (৳${toBn(total)})`}
+                {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন (৳${toBn(grandTotal)})`}
               </Button>
               <button onClick={() => setCheckout(false)} className="w-full text-center text-xs text-gray-500 py-2">← কার্টে ফিরে যান</button>
             </div>
