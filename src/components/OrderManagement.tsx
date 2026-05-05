@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,9 +34,10 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
   paid: { label: "পেইড", color: "bg-green-500/10 text-green-600" },
 };
 
-const OrderManagement = () => {
+const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState(initialTab || "pending");
+  useEffect(() => { if (initialTab) setActiveTab(initialTab); }, [initialTab]);
   const [search, setSearch] = useState("");
   const [verifySearch, setVerifySearch] = useState("");
   const [verifyAmounts, setVerifyAmounts] = useState<Record<string, string>>({});

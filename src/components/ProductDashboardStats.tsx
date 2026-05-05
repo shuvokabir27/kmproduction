@@ -15,7 +15,10 @@ import {
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const ProductDashboardStats = () => {
+type NavFn = (tab: string, orderTab?: string) => void;
+
+const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
+  const nav: NavFn = (t, o) => onNavigate?.(t, o);
   const queryClient = useQueryClient();
   const { data: orders } = useQuery({
     queryKey: ["dashboard-orders-analytics"],
@@ -181,35 +184,35 @@ const ProductDashboardStats = () => {
           <h3 className="font-bold text-foreground">আজকের ফোকাস</h3>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <div className="text-center">
+          <button onClick={() => nav("orders", "all")} className="text-center hover:opacity-80 transition-opacity">
             <p className="text-2xl font-extrabold text-emerald-400">{toBn(todayOrders.length)}</p>
             <p className="text-[11px] text-muted-foreground">অর্ডার</p>
-          </div>
-          <div className="text-center">
+          </button>
+          <button onClick={() => nav("orders", "delivered")} className="text-center hover:opacity-80 transition-opacity">
             <p className="text-2xl font-extrabold text-amber-400">৳{toBn(todayRevenue)}</p>
             <p className="text-[11px] text-muted-foreground">আয়</p>
-          </div>
-          <div className="text-center">
+          </button>
+          <button onClick={() => nav("orders", "pending")} className="text-center hover:opacity-80 transition-opacity">
             <p className="text-2xl font-extrabold text-sky-400">{toBn(pendingOrders)}</p>
             <p className="text-[11px] text-muted-foreground">পেন্ডিং</p>
-          </div>
+          </button>
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={ShoppingCart} label="মোট অর্ডার" value={toBn(totalOrders)} color="text-blue-400" bg="bg-blue-500/10" />
-        <StatCard icon={Clock} label="পেন্ডিং" value={toBn(pendingOrders)} color="text-yellow-400" bg="bg-yellow-500/10" />
-        <StatCard icon={Truck} label="ডেলিভারড" value={toBn(deliveredOrders)} color="text-emerald-400" bg="bg-emerald-500/10" />
-        <StatCard icon={TrendingUp} label="মোট আয়" value={`৳${toBn(totalRevenue)}`} color="text-amber-400" bg="bg-amber-500/10" />
+        <StatCard icon={ShoppingCart} label="মোট অর্ডার" value={toBn(totalOrders)} color="text-blue-400" bg="bg-blue-500/10" onClick={() => nav("orders", "all")} />
+        <StatCard icon={Clock} label="পেন্ডিং" value={toBn(pendingOrders)} color="text-yellow-400" bg="bg-yellow-500/10" onClick={() => nav("orders", "pending")} />
+        <StatCard icon={Truck} label="ডেলিভারড" value={toBn(deliveredOrders)} color="text-emerald-400" bg="bg-emerald-500/10" onClick={() => nav("orders", "delivered")} />
+        <StatCard icon={TrendingUp} label="মোট আয়" value={`৳${toBn(totalRevenue)}`} color="text-amber-400" bg="bg-amber-500/10" onClick={() => nav("orders", "delivered")} />
       </div>
 
       {/* Customer Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={Users} label="মোট কাস্টমার" value={toBn(totalCustomers)} color="text-purple-400" bg="bg-purple-500/10" />
-        <StatCard icon={UserPlus} label="নতুন কাস্টমার" value={toBn(newCustomers)} color="text-cyan-400" bg="bg-cyan-500/10" />
-        <StatCard icon={RotateCcw} label="রিটার্ন কাস্টমার" value={toBn(returnCustomers)} color="text-pink-400" bg="bg-pink-500/10" />
-        <StatCard icon={RotateCcw} label="রিটার্ন %" value={`${toBn(returnPercent)}%`} color="text-orange-400" bg="bg-orange-500/10" />
+        <StatCard icon={Users} label="মোট কাস্টমার" value={toBn(totalCustomers)} color="text-purple-400" bg="bg-purple-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={UserPlus} label="নতুন কাস্টমার" value={toBn(newCustomers)} color="text-cyan-400" bg="bg-cyan-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={RotateCcw} label="রিটার্ন কাস্টমার" value={toBn(returnCustomers)} color="text-pink-400" bg="bg-pink-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={RotateCcw} label="রিটার্ন %" value={`${toBn(returnPercent)}%`} color="text-orange-400" bg="bg-orange-500/10" onClick={() => nav("customers")} />
       </div>
 
       {/* Charts Row */}
@@ -365,17 +368,23 @@ const ProductDashboardStats = () => {
   );
 };
 
-const StatCard = ({ icon: Icon, label, value, color, bg }: {
-  icon: any; label: string; value: string; color: string; bg: string;
-}) => (
-  <div className={`${bg} border border-border/20 rounded-2xl p-3.5 space-y-1`}>
-    <div className="flex items-center gap-2">
-      <Icon className={`h-4 w-4 ${color}`} />
-      <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
-    </div>
-    <p className={`text-xl font-extrabold ${color}`}>{value}</p>
-  </div>
-);
+const StatCard = ({ icon: Icon, label, value, color, bg, onClick }: {
+  icon: any; label: string; value: string; color: string; bg: string; onClick?: () => void;
+}) => {
+  const Comp: any = onClick ? "button" : "div";
+  return (
+    <Comp
+      onClick={onClick}
+      className={`${bg} border border-border/20 rounded-2xl p-3.5 space-y-1 text-left ${onClick ? "hover:border-border/50 hover:scale-[1.02] transition-all cursor-pointer" : ""}`}
+    >
+      <div className="flex items-center gap-2">
+        <Icon className={`h-4 w-4 ${color}`} />
+        <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
+      </div>
+      <p className={`text-xl font-extrabold ${color}`}>{value}</p>
+    </Comp>
+  );
+};
 
 const DashboardSkeleton = () => (
   <div className="space-y-4">

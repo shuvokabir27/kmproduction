@@ -37,6 +37,11 @@ const AdminProducts = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [orderInitialTab, setOrderInitialTab] = useState<string | undefined>(undefined);
+  const goToTab = (tab: string, orderTab?: string) => {
+    setActiveTab(tab);
+    if (orderTab) setOrderInitialTab(orderTab);
+  };
   const [productCategory, setProductCategory] = useState<"taler_gur" | "other">("taler_gur");
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
@@ -253,7 +258,7 @@ const AdminProducts = () => {
 
         {/* Dashboard Tab */}
         <TabsContent value="dashboard" className="mt-4">
-          <ProductDashboardStats />
+          <ProductDashboardStats onNavigate={goToTab} />
         </TabsContent>
 
         <TabsContent value="products" className="mt-4 space-y-4">
@@ -365,7 +370,7 @@ const AdminProducts = () => {
 
         {/* Orders Tab */}
         <TabsContent value="orders" className="mt-4">
-          <OrderManagement />
+          <OrderManagement initialTab={orderInitialTab} />
         </TabsContent>
 
         {/* Customers Tab */}
