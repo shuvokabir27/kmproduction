@@ -9,6 +9,7 @@ export interface CartItem {
   unit_price: number;
   quantity: number;
   unit_type?: string | null;
+  weight_grams?: number;
 }
 
 interface CartCtx {
