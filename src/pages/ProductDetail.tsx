@@ -394,7 +394,7 @@ const ProductDetail = () => {
                 className="h-12 rounded-full font-bold border-2 gap-2"
                 style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
               >
-                <ShoppingCart className="h-4 w-4" /> Add to Cart
+                <ShoppingCart className="h-4 w-4" /> কার্টে যোগ করুন
               </Button>
               <Button
                 onClick={() => {
@@ -404,7 +404,7 @@ const ProductDetail = () => {
                 className="h-12 rounded-full font-bold text-white gap-2"
                 style={{ backgroundColor: ACCENT_RED }}
               >
-                Buy Now
+                এখনই কিনুন
               </Button>
             </div>
 
