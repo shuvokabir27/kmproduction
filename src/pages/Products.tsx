@@ -324,7 +324,7 @@ const Products = () => {
                       </div>
                     </Link>
                     <div className="p-3 md:p-4 flex flex-col flex-1">
-                      <h3 className="font-bold text-sm md:text-base text-gray-900 line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
+                      <Link to={`/products/${p.id}`} className="font-bold text-sm md:text-base text-gray-900 line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
                       <div className="flex items-baseline gap-2 mt-2">
                         <span className="text-lg font-extrabold" style={{ color: BRAND_GREEN }}>
                           ৳{toBn(hasDiscount ? p.discount_price : p.price)}
