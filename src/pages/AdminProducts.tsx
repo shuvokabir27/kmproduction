@@ -185,6 +185,10 @@ const AdminProducts = () => {
             <Package className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">প্রডাক্ট</span>
           </TabsTrigger>
+          <TabsTrigger value="categories" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <FolderTree className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ক্যাটাগরি</span>
+          </TabsTrigger>
           <TabsTrigger value="orders" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <ShoppingBag className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">অর্ডার</span>
