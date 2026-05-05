@@ -316,21 +316,26 @@ const Products = () => {
           </div>
         </div>
         {mobileMenuOpen && (
-          <div className="md:hidden border-t bg-white px-4 py-3 space-y-2">
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
+          <div className="md:hidden border-t bg-white px-4 py-3 space-y-1">
+            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 mb-2">
               <Search className="h-4 w-4 text-gray-400 mr-2" />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="পণ্য খুঁজুন..."
-                className="bg-transparent flex-1 text-sm outline-none"
+                className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
               />
             </div>
-            <Link to="/products" className="block py-2 text-sm font-semibold flex items-center gap-1.5"><Home className="h-4 w-4" /> HOME</Link>
-            <a href="#shop" className="block py-2 text-sm font-semibold">SHOP</a>
-            <a href="#categories" className="block py-2 text-sm font-semibold">ক্যাটাগরি</a>
-            <a href="#about" className="block py-2 text-sm font-semibold">ABOUT</a>
-            <a href="#contact" className="block py-2 text-sm font-semibold">CONTACT</a>
+            <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Home className="h-4 w-4" style={{ color: BRAND_GREEN }} /> হোম</Link>
+            <a href="#shop" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><ShoppingBag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> শপ</a>
+            <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</a>
+            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><ShieldCheck className="h-4 w-4" style={{ color: BRAND_GREEN }} /> আমাদের সম্পর্কে</a>
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Phone className="h-4 w-4" style={{ color: BRAND_GREEN }} /> যোগাযোগ</a>
+            {shopCustomer ? (
+              <Link to="/shop/account" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><User className="h-4 w-4" style={{ color: BRAND_GREEN }} /> অ্যাকাউন্ট</Link>
+            ) : (
+              <Link to="/shop/login" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><LogIn className="h-4 w-4" style={{ color: BRAND_GREEN }} /> লগইন / রেজিস্টার</Link>
+            )}
           </div>
         )}
 
