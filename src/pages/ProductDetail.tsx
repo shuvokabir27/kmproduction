@@ -54,6 +54,11 @@ const ProductDetail = () => {
     },
   });
 
+  useEffect(() => {
+    const v: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
+    if (v.length > 0) setSelectedVariantIdx(prev => (prev < 0 ? 0 : prev));
+  }, [product]);
+
   const { data: related } = useQuery({
     queryKey: ["related-products", product?.category, id],
     enabled: !!product,
