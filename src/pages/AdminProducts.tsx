@@ -328,7 +328,9 @@ const AdminProducts = () => {
           <CustomerCRM />
         </TabsContent>
 
-        {/* Pricing Tab */}
+        <TabsContent value="users" className="mt-4">
+          <ShopCustomersAdmin />
+        </TabsContent>
         <TabsContent value="pricing" className="mt-4">
           <WeightPricingEditor />
         </TabsContent>
