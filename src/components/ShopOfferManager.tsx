@@ -251,113 +251,122 @@ export default function ShopOfferManager() {
               <Label>ব্যাজ টেক্সট</Label>
               <Input value={form.badge_text} onChange={e => setForm(f => ({ ...f, badge_text: e.target.value }))} placeholder="বিশেষ অফার" />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <Label>অফারের ধরন</Label>
-                <Select value={form.discount_type} onValueChange={(v: any) => setForm(f => ({ ...f, discount_type: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="percentage">শতাংশ ছাড় (%)</SelectItem>
-                    <SelectItem value="fixed">নির্দিষ্ট অংক (৳)</SelectItem>
-                    <SelectItem value="free_delivery">ফ্রি ডেলিভারি</SelectItem>
-                    <SelectItem value="combo">কম্বো অফার (একাধিক প্রডাক্ট)</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Product picker - always shown */}
+            <div className="space-y-2 p-3 rounded-lg border bg-amber-50/50 dark:bg-amber-950/20">
+              <div className="flex items-center justify-between">
+                <Label className="font-bold">কম্বোতে প্রডাক্টসমূহ *</Label>
+                <Button type="button" size="sm" variant="outline" onClick={() => setForm(f => ({ ...f, combo_products: [...f.combo_products, { product_id: "", quantity: 1 }] }))}>
+                  <Plus className="h-3 w-3 mr-1" /> প্রডাক্ট
+                </Button>
               </div>
-              {form.discount_type !== "free_delivery" && form.discount_type !== "combo" && (
-                <div>
-                  <Label>মান</Label>
-                  <Input type="number" value={form.discount_value} onChange={e => setForm(f => ({ ...f, discount_value: e.target.value }))} />
-                </div>
-              )}
+              {form.combo_products.length === 0 && <p className="text-xs text-muted-foreground">প্রডাক্ট লিস্ট থেকে একাধিক প্রডাক্ট যোগ করুন</p>}
+              {form.combo_products.map((c, idx) => {
+                const p = products?.find(x => x.id === c.product_id);
+                const unit = p ? Number((p as any).discount_price ?? p.price ?? 0) : 0;
+                const lineTotal = unit * (c.quantity || 1);
+                return (
+                  <div key={idx} className="space-y-1 rounded-lg border bg-card p-2">
+                    <div className="grid grid-cols-[1fr_72px_36px] gap-2 items-center">
+                      <select
+                        value={c.product_id}
+                        onChange={(e) => {
+                          const next = [...form.combo_products];
+                          next[idx] = { ...next[idx], product_id: e.target.value };
+                          setForm(f => ({ ...f, combo_products: next }));
+                        }}
+                        className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                      >
+                        <option value="">প্রডাক্ট বাছাই</option>
+                        {products?.map(pp => <option key={pp.id} value={pp.id}>{pp.name} — ৳{(pp as any).discount_price ?? pp.price}</option>)}
+                      </select>
+                      <Input type="number" min={1} value={c.quantity} onChange={e => {
+                        const next = [...form.combo_products];
+                        next[idx] = { ...next[idx], quantity: Math.max(1, Number(e.target.value) || 1) };
+                        setForm(f => ({ ...f, combo_products: next }));
+                      }} />
+                      <Button type="button" size="icon" variant="ghost" className="text-destructive" onClick={() => {
+                        setForm(f => ({ ...f, combo_products: f.combo_products.filter((_, i) => i !== idx) }));
+                      }}>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    {p && (
+                      <div className="text-xs text-muted-foreground pl-1">
+                        ৳{unit} × {c.quantity || 1} = <span className="font-bold text-foreground">৳{lineTotal}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {(() => {
+                const total = form.combo_products.reduce((sum, c) => {
+                  const p = products?.find(x => x.id === c.product_id);
+                  if (!p) return sum;
+                  return sum + Number((p as any).discount_price ?? p.price ?? 0) * (c.quantity || 1);
+                }, 0);
+                let newPrice = 0;
+                if (form.offer_mode === "fixed") newPrice = Number(form.combo_price) || 0;
+                else if (form.offer_mode === "percentage") {
+                  const pct = Number(form.discount_percent) || 0;
+                  newPrice = pct > 0 ? Math.round(total - (total * pct) / 100) : 0;
+                } else newPrice = total;
+                const savings = newPrice > 0 && total > newPrice ? total - newPrice : 0;
+                const pct = total > 0 && savings > 0 ? Math.round((savings / total) * 100) : 0;
+                return (
+                  <div className="bg-card border rounded-lg p-3 space-y-1 text-sm">
+                    <div className="flex justify-between"><span className="text-muted-foreground">মোট মূল্য:</span><span className="font-bold">৳{total}</span></div>
+                    {newPrice > 0 && form.offer_mode !== "free_delivery" && (
+                      <>
+                        <div className="flex justify-between"><span className="text-muted-foreground">অফার মূল্য:</span><span className="font-bold text-green-600">৳{newPrice}</span></div>
+                        {savings > 0 && (
+                          <div className="flex justify-between text-xs"><span className="text-muted-foreground">সাশ্রয়:</span><span className="font-bold text-red-600">৳{savings} ({pct}%)</span></div>
+                        )}
+                      </>
+                    )}
+                    {form.offer_mode === "free_delivery" && (
+                      <div className="text-xs text-blue-600 font-bold">🚚 ফ্রি ডেলিভারি প্রযোজ্য</div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
-            {form.discount_type === "combo" ? (
-              <div className="space-y-2 p-3 rounded-lg border bg-amber-50/50 dark:bg-amber-950/20">
-                <div className="flex items-center justify-between">
-                  <Label className="font-bold">কম্বোতে প্রডাক্টসমূহ</Label>
-                  <Button type="button" size="sm" variant="outline" onClick={() => setForm(f => ({ ...f, combo_products: [...f.combo_products, { product_id: "", quantity: 1 }] }))}>
-                    <Plus className="h-3 w-3 mr-1" /> প্রডাক্ট
-                  </Button>
-                </div>
-                {form.combo_products.length === 0 && <p className="text-xs text-muted-foreground">কম্বোতে যোগ করতে প্রডাক্ট বাছাই করুন</p>}
-                {form.combo_products.map((c, idx) => {
-                  const p = products?.find(x => x.id === c.product_id);
-                  const unit = p ? Number((p as any).discount_price ?? p.price ?? 0) : 0;
-                  const lineTotal = unit * (c.quantity || 1);
-                  return (
-                    <div key={idx} className="space-y-1 rounded-lg border bg-card p-2">
-                      <div className="grid grid-cols-[1fr_72px_36px] gap-2 items-center">
-                        <select
-                          value={c.product_id}
-                          onChange={(e) => {
-                            const next = [...form.combo_products];
-                            next[idx] = { ...next[idx], product_id: e.target.value };
-                            setForm(f => ({ ...f, combo_products: next }));
-                          }}
-                          className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                        >
-                          <option value="">প্রডাক্ট বাছাই</option>
-                          {products?.map(pp => <option key={pp.id} value={pp.id}>{pp.name} — ৳{(pp as any).discount_price ?? pp.price}</option>)}
-                        </select>
-                        <Input type="number" min={1} className="w-16" value={c.quantity} onChange={e => {
-                          const next = [...form.combo_products];
-                          next[idx] = { ...next[idx], quantity: Math.max(1, Number(e.target.value) || 1) };
-                          setForm(f => ({ ...f, combo_products: next }));
-                        }} />
-                        <Button type="button" size="icon" variant="ghost" className="text-destructive" onClick={() => {
-                          setForm(f => ({ ...f, combo_products: f.combo_products.filter((_, i) => i !== idx) }));
-                        }}>
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      {p && (
-                        <div className="text-xs text-muted-foreground pl-1">
-                          ৳{unit} × {c.quantity || 1} = <span className="font-bold text-foreground">৳{lineTotal}</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+            {/* Offer type selector */}
+            <div>
+              <Label>অফারের ধরন *</Label>
+              <Select value={form.offer_mode} onValueChange={(v: any) => setForm(f => ({ ...f, offer_mode: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">নির্দিষ্ট কম্বো মূল্য (৳)</SelectItem>
+                  <SelectItem value="percentage">শতাংশ ছাড় (%)</SelectItem>
+                  <SelectItem value="free_delivery">ফ্রি ডেলিভারি</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                {(() => {
-                  const total = form.combo_products.reduce((sum, c) => {
-                    const p = products?.find(x => x.id === c.product_id);
-                    if (!p) return sum;
-                    return sum + Number((p as any).discount_price ?? p.price ?? 0) * (c.quantity || 1);
-                  }, 0);
-                  const newPrice = Number(form.combo_price) || 0;
-                  const savings = newPrice > 0 && total > newPrice ? total - newPrice : 0;
-                  const pct = total > 0 && savings > 0 ? Math.round((savings / total) * 100) : 0;
-                  return (
-                    <div className="bg-card border rounded-lg p-3 space-y-1 text-sm">
-                      <div className="flex justify-between"><span className="text-muted-foreground">মোট মূল্য:</span><span className="font-bold">৳{total}</span></div>
-                      {newPrice > 0 && (
-                        <>
-                          <div className="flex justify-between"><span className="text-muted-foreground">অফার মূল্য:</span><span className="font-bold text-green-600">৳{newPrice}</span></div>
-                          {savings > 0 && (
-                            <div className="flex justify-between text-xs"><span className="text-muted-foreground">সাশ্রয়:</span><span className="font-bold text-red-600">৳{savings} ({pct}%)</span></div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  );
-                })()}
-
-                <div>
-                  <Label className="text-xs">কম্বোর বিশেষ মূল্য (৳) — মোট মূল্য থেকে কম দিন</Label>
-                  <Input type="number" value={form.combo_price} onChange={e => setForm(f => ({ ...f, combo_price: e.target.value }))} placeholder="যেমন: ৪৯৯" />
-                </div>
-
-                <div className="flex items-center justify-between p-2 rounded-lg bg-card border">
-                  <div>
-                    <Label className="text-sm cursor-pointer">🚚 ফ্রি ডেলিভারি</Label>
-                    <p className="text-[11px] text-muted-foreground">কম্বো অর্ডারে ডেলিভারি চার্জ লাগবে না</p>
-                  </div>
-                  <Switch checked={form.combo_free_delivery} onCheckedChange={(v) => setForm(f => ({ ...f, combo_free_delivery: v }))} />
-                </div>
+            {form.offer_mode === "fixed" && (
+              <div>
+                <Label>কম্বোর অফার মূল্য (৳) *</Label>
+                <Input type="number" value={form.combo_price} onChange={e => setForm(f => ({ ...f, combo_price: e.target.value }))} placeholder="যেমন: ৪৯৯" />
               </div>
-            ) : null}
+            )}
+            {form.offer_mode === "percentage" && (
+              <div>
+                <Label>ছাড়ের শতাংশ (%) *</Label>
+                <Input type="number" min={1} max={99} value={form.discount_percent} onChange={e => setForm(f => ({ ...f, discount_percent: e.target.value }))} placeholder="যেমন: ১৫" />
+              </div>
+            )}
+
+            {form.offer_mode !== "free_delivery" && (
+              <div className="flex items-center justify-between p-2 rounded-lg bg-card border">
+                <div>
+                  <Label className="text-sm cursor-pointer">🚚 ফ্রি ডেলিভারি যোগ করুন</Label>
+                  <p className="text-[11px] text-muted-foreground">কম্বো অর্ডারে ডেলিভারি চার্জ লাগবে না</p>
+                </div>
+                <Switch checked={form.combo_free_delivery} onCheckedChange={(v) => setForm(f => ({ ...f, combo_free_delivery: v }))} />
+              </div>
+            )}
             <div>
               <Label>ছবি</Label>
               <div className="flex gap-2">
