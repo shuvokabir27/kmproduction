@@ -13,6 +13,7 @@ import { PublicBirthdaySection } from "@/components/PublicBirthdaySection";
 import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
+import { BestSellersSection } from "@/components/BestSellersSection";
 
 const extractYouTubeId = (url: string): string | null => {
   if (!url) return null;
@@ -199,6 +200,9 @@ const PublicHome = () => {
       <div className="mt-6">
         <PublicBirthdaySection />
       </div>
+
+      {/* Best Sellers */}
+      <BestSellersSection />
 
       {/* Hero Section */}
       <section className="relative min-h-[95vh] flex items-center justify-center px-4">
