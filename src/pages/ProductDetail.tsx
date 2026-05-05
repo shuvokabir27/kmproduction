@@ -24,6 +24,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const cart = useCart();
   const [searchParams] = useSearchParams();
+  const { settings: deliverySettings } = useDeliverySettings();
 
   useEffect(() => {
     if (searchParams.get("order") === "1") setOrderOpen(true);
