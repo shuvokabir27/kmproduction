@@ -184,18 +184,18 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
           <h3 className="font-bold text-foreground">আজকের ফোকাস</h3>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <div className="text-center">
+          <button onClick={() => nav("orders", "all")} className="text-center hover:opacity-80 transition-opacity">
             <p className="text-2xl font-extrabold text-emerald-400">{toBn(todayOrders.length)}</p>
             <p className="text-[11px] text-muted-foreground">অর্ডার</p>
-          </div>
-          <div className="text-center">
+          </button>
+          <button onClick={() => nav("orders", "delivered")} className="text-center hover:opacity-80 transition-opacity">
             <p className="text-2xl font-extrabold text-amber-400">৳{toBn(todayRevenue)}</p>
             <p className="text-[11px] text-muted-foreground">আয়</p>
-          </div>
-          <div className="text-center">
+          </button>
+          <button onClick={() => nav("orders", "pending")} className="text-center hover:opacity-80 transition-opacity">
             <p className="text-2xl font-extrabold text-sky-400">{toBn(pendingOrders)}</p>
             <p className="text-[11px] text-muted-foreground">পেন্ডিং</p>
-          </div>
+          </button>
         </div>
       </div>
 
