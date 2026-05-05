@@ -317,18 +317,7 @@ export default function ShopOfferManager() {
                   <Switch checked={form.combo_free_delivery} onCheckedChange={(v) => setForm(f => ({ ...f, combo_free_delivery: v }))} />
                 </div>
               </div>
-            ) : (
-              <div>
-                <Label>প্রডাক্ট (ঐচ্ছিক)</Label>
-                <Select value={form.product_id || "none"} onValueChange={(v) => setForm(f => ({ ...f, product_id: v === "none" ? "" : v }))}>
-                  <SelectTrigger><SelectValue placeholder="সব প্রডাক্টের জন্য" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">সব প্রডাক্টের জন্য</SelectItem>
-                    {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            ) : null}
             <div>
               <Label>ছবি</Label>
               <div className="flex gap-2">
