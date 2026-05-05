@@ -48,6 +48,7 @@ import AdminBookings from "./pages/AdminBookings";
 import AdminFreelance from "./pages/AdminFreelance";
 import FreelanceClientView from "./pages/FreelanceClientView";
 import ScriptDrawing from "./pages/ScriptDrawing";
+import AdminDeliverySettings from "./pages/AdminDeliverySettings";
 import ClientDashboard from "./pages/ClientDashboard";
 import ClientProjects from "./pages/ClientProjects";
 import ClientPaymentHistory from "./pages/ClientPaymentHistory";
