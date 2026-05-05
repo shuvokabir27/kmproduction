@@ -221,7 +221,7 @@ const LandingPageEditor = () => {
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-delivery-editor"],
     queryFn: async () => {
-      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg, bkash_enabled, bkash_payment_no, nagad_enabled, nagad_payment_no").limit(1).single();
+      const { data } = await supabase.from("site_settings").select("id, free_delivery, offer_end_date, delivery_charge, delivery_charge_per_extra_kg, free_delivery_min_kg, bkash_enabled, bkash_payment_no, nagad_enabled, nagad_payment_no, rocket_enabled, rocket_payment_no").limit(1).single();
       return data;
     },
   });
