@@ -92,6 +92,14 @@ const AdminProducts = () => {
       stock_status: p.stock_status || "in_stock",
       sort_order: String(p.sort_order || 0),
       contact_info: p.contact_info || "",
+      unit_type: (p.unit_type || "piece") as "piece" | "kg" | "size",
+      variants: Array.isArray(p.variants)
+        ? p.variants.map((v: any) => ({
+            label: v.label || "",
+            price: String(v.price ?? ""),
+            discount_price: v.discount_price != null ? String(v.discount_price) : "",
+          }))
+        : [],
     });
     setDialogOpen(true);
   };
