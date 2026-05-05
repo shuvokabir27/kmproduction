@@ -111,6 +111,51 @@ export default function ShopCustomerAccount() {
           </div>
         </div>
 
+        {/* Profile settings */}
+        <div className="bg-white rounded-2xl border shadow-sm p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <User className="h-5 w-5" style={{ color: BRAND_GREEN }} /> প্রোফাইল ও ডেলিভারি ঠিকানা
+            </h2>
+            {!editing ? (
+              <Button size="sm" variant="outline" onClick={() => setEditing(true)} className="gap-1">
+                <Pencil className="h-3.5 w-3.5" /> এডিট
+              </Button>
+            ) : (
+              <Button size="sm" variant="ghost" onClick={() => { setEditing(false); setForm({ full_name: customer.full_name || "", phone: customer.phone || "", address: customer.address || "" }); }}>
+                বাতিল
+              </Button>
+            )}
+          </div>
+
+          {!editing ? (
+            <div className="space-y-2.5 text-sm">
+              <div className="flex items-start gap-2"><User className="h-4 w-4 text-gray-400 mt-0.5" /><span className="text-gray-500 w-24 shrink-0">নাম:</span><span className="font-semibold text-gray-900">{customer.full_name || "—"}</span></div>
+              <div className="flex items-start gap-2"><Phone className="h-4 w-4 text-gray-400 mt-0.5" /><span className="text-gray-500 w-24 shrink-0">মোবাইল:</span><span className="font-semibold text-gray-900">{toBn(customer.phone)}</span></div>
+              <div className="flex items-start gap-2"><MapPin className="h-4 w-4 text-gray-400 mt-0.5" /><span className="text-gray-500 w-24 shrink-0">ঠিকানা:</span><span className="font-semibold text-gray-900 flex-1">{customer.address || <span className="text-gray-400 font-normal">এখনো ঠিকানা যোগ করা হয়নি — অর্ডার করার আগে যোগ করুন</span>}</span></div>
+              <p className="text-[11px] text-gray-400 mt-2">💡 অর্ডার করার সময় এই তথ্য স্বয়ংক্রিয়ভাবে যোগ হবে।</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs font-bold text-gray-700">নাম</Label>
+                <Input value={form.full_name} onChange={(e) => setForm(f => ({ ...f, full_name: e.target.value }))} className="h-11 mt-1 bg-white text-gray-900" placeholder="পূর্ণ নাম" />
+              </div>
+              <div>
+                <Label className="text-xs font-bold text-gray-700">মোবাইল নম্বর</Label>
+                <Input value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "") }))} maxLength={11} inputMode="numeric" className="h-11 mt-1 bg-white text-gray-900" placeholder="01XXXXXXXXX" />
+              </div>
+              <div>
+                <Label className="text-xs font-bold text-gray-700">ডেলিভারি ঠিকানা</Label>
+                <Textarea value={form.address} onChange={(e) => setForm(f => ({ ...f, address: e.target.value }))} rows={3} className="mt-1 bg-white text-gray-900 resize-none" placeholder="বাড়ি, রাস্তা, এলাকা, থানা, জেলা" />
+              </div>
+              <Button onClick={saveProfile} disabled={saving} className="w-full h-11 text-white gap-2" style={{ backgroundColor: BRAND_GREEN }}>
+                <Save className="h-4 w-4" /> {saving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* Orders */}
         <div>
           <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
