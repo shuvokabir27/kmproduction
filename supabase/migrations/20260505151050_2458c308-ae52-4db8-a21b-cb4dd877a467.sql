@@ -1,0 +1,1 @@
+ALTER TABLE public.shop_offers ADD COLUMN IF NOT EXISTS combo_free_delivery boolean NOT NULL DEFAULT false;
