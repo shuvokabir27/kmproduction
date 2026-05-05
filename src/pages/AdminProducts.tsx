@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -195,6 +195,9 @@ const AdminProducts = () => {
             <p className="text-xs text-muted-foreground">প্রডাক্ট ও অর্ডার ম্যানেজমেন্ট</p>
           </div>
         </div>
+        <Link to="/admin/delivery-settings" className="inline-flex items-center gap-1.5 text-xs font-bold bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-lg">
+          <Truck className="h-4 w-4" /> <span className="hidden sm:inline">ডেলিভারি সেটিংস</span>
+        </Link>
       </div>
 
       {/* Tab Navigation */}
