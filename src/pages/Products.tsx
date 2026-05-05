@@ -232,7 +232,7 @@ const Products = () => {
           </Link>
 
           <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-gray-700">
-            <Link to="/" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-4 w-4" /> HOME</Link>
+            <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-4 w-4" /> HOME</Link>
             <a href="#shop" className="hover:text-gray-900">SHOP</a>
             <a href="#categories" className="hover:text-gray-900">ক্যাটাগরি</a>
             <a href="#about" className="hover:text-gray-900">ABOUT</a>
@@ -319,7 +319,7 @@ const Products = () => {
                 className="bg-transparent flex-1 text-sm outline-none"
               />
             </div>
-            <Link to="/" className="block py-2 text-sm font-semibold flex items-center gap-1.5"><Home className="h-4 w-4" /> HOME</Link>
+            <Link to="/products" className="block py-2 text-sm font-semibold flex items-center gap-1.5"><Home className="h-4 w-4" /> HOME</Link>
             <a href="#shop" className="block py-2 text-sm font-semibold">SHOP</a>
             <a href="#categories" className="block py-2 text-sm font-semibold">ক্যাটাগরি</a>
             <a href="#about" className="block py-2 text-sm font-semibold">ABOUT</a>
