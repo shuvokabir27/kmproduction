@@ -28,12 +28,40 @@ const statusLabel = (s: string) => {
 };
 
 export default function ShopCustomerAccount() {
-  const { customer, orders, loading, logout } = useShopCustomer();
+  const { customer, orders, loading, logout, refresh } = useShopCustomer();
   const nav = useNavigate();
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ full_name: "", phone: "", address: "" });
 
   useEffect(() => {
     if (!loading && !customer) nav("/shop/login", { replace: true });
   }, [loading, customer, nav]);
+
+  useEffect(() => {
+    if (customer) setForm({
+      full_name: customer.full_name || "",
+      phone: customer.phone || "",
+      address: customer.address || "",
+    });
+  }, [customer]);
+
+  const saveProfile = async () => {
+    if (!form.full_name.trim()) { toast.error("নাম দিন"); return; }
+    if (form.phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+    if (!form.address.trim()) { toast.error("ঠিকানা দিন"); return; }
+    const token = localStorage.getItem(SHOP_TOKEN_KEY);
+    if (!token) return;
+    setSaving(true);
+    const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
+      body: { action: "update_profile", token, full_name: form.full_name.trim(), phone: form.phone.replace(/\D/g, ""), address: form.address.trim() },
+    });
+    setSaving(false);
+    if (error || (data as any)?.error) { toast.error((data as any)?.error || error?.message || "ত্রুটি"); return; }
+    toast.success("প্রোফাইল আপডেট হয়েছে");
+    setEditing(false);
+    await refresh();
+  };
 
   if (loading || !customer) {
     return <div className="min-h-screen flex items-center justify-center">লোড হচ্ছে...</div>;
