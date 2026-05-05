@@ -62,6 +62,13 @@ export const CartDrawer = () => {
     }
     setSubmitting(true);
     try {
+      // Get one shared order number for all items in this cart
+      let sharedNumber: number | null = null;
+      if (items.length > 1) {
+        const { data: numData, error: numErr } = await supabase.rpc("next_order_number" as any);
+        if (numErr) throw numErr;
+        sharedNumber = numData as number;
+      }
       const rows = items.map((it, idx) => ({
         customer_name: form.name.trim(),
         customer_phone: form.phone,
@@ -77,18 +84,14 @@ export const CartDrawer = () => {
         payment_method: paymentMethod,
         payment_sender_no: paymentMethod !== "cod" ? paymentSenderNo : null,
         payment_trx_id: paymentMethod !== "cod" ? paymentTrxId : null,
+        ...(sharedNumber ? { order_number: sharedNumber } : {}),
       }));
-      const { data: inserted, error } = await supabase.from("orders").insert(rows as any).select("id, order_number");
+      const { error } = await supabase.from("orders").insert(rows as any);
       if (error) throw error;
-      // Group all items under the first order_number so customer sees them as one order
-      if (inserted && inserted.length > 1) {
-        const sharedNumber = inserted[0].order_number;
-        const otherIds = inserted.slice(1).map((r: any) => r.id);
-        await supabase.from("orders").update({ order_number: sharedNumber } as any).in("id", otherIds);
-      }
       setSuccess(true);
       clear();
-    } catch {
+    } catch (err) {
+      console.error("Order submit error:", err);
       toast.error("অর্ডার করতে সমস্যা হয়েছে");
     } finally {
       setSubmitting(false);
