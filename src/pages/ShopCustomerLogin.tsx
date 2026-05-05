@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ShoppingBag, Lock, Phone, ArrowLeft } from "lucide-react";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
+import MobileShopNav from "@/components/MobileShopNav";
 
 const BRAND_GREEN = "#1f7a3a";
 const BRAND_DARK = "#155c2c";
