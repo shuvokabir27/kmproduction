@@ -467,8 +467,12 @@ const Products = () => {
       <section id="shop" className="px-4 py-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
-            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>FEATURED PRODUCTS</span>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-2">আমাদের সেরা পণ্য সমূহ</h2>
+            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>
+              {showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-2">
+              {showAllProducts ? "ক্যাটাগরি অনুযায়ী সকল পণ্য" : "আমাদের সেরা পণ্য সমূহ"}
+            </h2>
             <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ backgroundColor: BRAND_GREEN }} />
           </div>
 
@@ -477,71 +481,123 @@ const Products = () => {
               <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-gray-300" />
               কোনো পণ্য পাওয়া যায়নি
             </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {filteredProducts.map((p: any) => {
-                const hasDiscount = p.discount_price && p.discount_price < p.price;
-                const discountPct = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
-                return (
-                  <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
-                    <Link to={`/products/${p.id}`} className="relative aspect-square bg-gray-100 overflow-hidden block">
-                      {p.image_url ? (
-                        <img
-                          src={p.image_url}
-                          alt={p.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="h-12 w-12 text-gray-300" />
-                        </div>
-                      )}
+          ) : (() => {
+            const renderCard = (p: any) => {
+              const hasDiscount = p.discount_price && p.discount_price < p.price;
+              const discountPct = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
+              return (
+                <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
+                  <Link to={`/products/${p.id}`} className="relative aspect-square bg-gray-100 overflow-hidden block">
+                    {p.image_url ? (
+                      <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ShoppingBag className="h-12 w-12 text-gray-300" />
+                      </div>
+                    )}
+                    {hasDiscount && (
+                      <div className="absolute top-2 left-2 bg-white shadow text-red-600 font-bold text-xs px-2 py-1 rounded">
+                        -{toBn(discountPct)}%
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2 text-white text-[10px] font-bold px-2 py-1 rounded shadow" style={{ backgroundColor: ACCENT_RED }}>
+                      HOT
+                    </div>
+                  </Link>
+                  <div className="p-3 md:p-4 flex flex-col flex-1">
+                    <Link to={`/products/${p.id}`} className="font-bold text-sm md:text-base text-gray-900 line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
+                    <div className="flex items-baseline gap-2 mt-2">
+                      <span className="text-lg font-extrabold" style={{ color: BRAND_GREEN }}>
+                        ৳{toBn(hasDiscount ? p.discount_price : p.price)}
+                      </span>
                       {hasDiscount && (
-                        <div className="absolute top-2 left-2 bg-white shadow text-red-600 font-bold text-xs px-2 py-1 rounded">
-                          -{toBn(discountPct)}%
-                        </div>
+                        <span className="text-xs text-gray-400 line-through">৳{toBn(p.price)}</span>
                       )}
-                      <div className="absolute top-2 right-2 text-white text-[10px] font-bold px-2 py-1 rounded shadow" style={{ backgroundColor: ACCENT_RED }}>
-                        HOT
-                      </div>
-                    </Link>
-                    <div className="p-3 md:p-4 flex flex-col flex-1">
-                      <Link to={`/products/${p.id}`} className="font-bold text-sm md:text-base text-gray-900 line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
-                      <div className="flex items-baseline gap-2 mt-2">
-                        <span className="text-lg font-extrabold" style={{ color: BRAND_GREEN }}>
-                          ৳{toBn(hasDiscount ? p.discount_price : p.price)}
-                        </span>
-                        {hasDiscount && (
-                          <span className="text-xs text-gray-400 line-through">৳{toBn(p.price)}</span>
-                        )}
-                      </div>
-                      <div className="mt-3 grid grid-cols-2 gap-2">
-                        <Button
-                          onClick={() => {
-                            const variants = Array.isArray(p.variants) ? p.variants : [];
-                            addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
-                          }}
-                          variant="outline"
-                          className="font-bold rounded-full text-xs h-10 gap-1 border-2"
-                          style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
-                        >
-                          <ShoppingCart className="h-3.5 w-3.5" /> কার্টে
-                        </Button>
-                        <Button
-                          onClick={() => openOrderDialog(p)}
-                          className="text-white font-bold rounded-full text-xs h-10 gap-1"
-                          style={{ backgroundColor: BRAND_GREEN }}
-                        >
-                          অর্ডার
-                        </Button>
-                      </div>
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <Button
+                        onClick={() => {
+                          const variants = Array.isArray(p.variants) ? p.variants : [];
+                          addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
+                        }}
+                        variant="outline"
+                        className="font-bold rounded-full text-xs h-10 gap-1 border-2"
+                        style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                      >
+                        <ShoppingCart className="h-3.5 w-3.5" /> কার্টে
+                      </Button>
+                      <Button
+                        onClick={() => openOrderDialog(p)}
+                        className="text-white font-bold rounded-full text-xs h-10 gap-1"
+                        style={{ backgroundColor: BRAND_GREEN }}
+                      >
+                        অর্ডার
+                      </Button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                </div>
+              );
+            };
+
+            if (!showAllProducts) {
+              const visible = filteredProducts.slice(0, 5);
+              return (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+                    {visible.map(renderCard)}
+                  </div>
+                  {filteredProducts.length > 5 && (
+                    <div className="text-center mt-8">
+                      <Button
+                        onClick={() => setShowAllProducts(true)}
+                        className="text-white font-bold rounded-full px-8 h-12 gap-2 shadow-lg"
+                        style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}
+                      >
+                        আরো প্রডাক্ট দেখুন ({toBn(filteredProducts.length - 5)}টি)
+                      </Button>
+                    </div>
+                  )}
+                </>
+              );
+            }
+
+            // Group by category
+            const groups: Record<string, any[]> = {};
+            filteredProducts.forEach((p: any) => {
+              const cat = p.category || "অন্যান্য";
+              if (!groups[cat]) groups[cat] = [];
+              groups[cat].push(p);
+            });
+            const catNames = Object.keys(groups).sort();
+            return (
+              <div className="space-y-12">
+                {catNames.map(cat => (
+                  <div key={cat}>
+                    <div className="flex items-center gap-3 mb-5">
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900">{cat}</h3>
+                      <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: BRAND_GREEN }}>
+                        {toBn(groups[cat].length)}
+                      </span>
+                      <div className="flex-1 h-px bg-gray-200" />
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                      {groups[cat].map(renderCard)}
+                    </div>
+                  </div>
+                ))}
+                <div className="text-center">
+                  <Button
+                    onClick={() => setShowAllProducts(false)}
+                    variant="outline"
+                    className="font-bold rounded-full px-8 h-12 border-2"
+                    style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                  >
+                    ↑ কম দেখুন
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
