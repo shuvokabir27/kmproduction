@@ -49,7 +49,7 @@ export const CartDrawer = () => {
     if (!form.address.trim()) return toast.error("ঠিকানা দিন");
     setSubmitting(true);
     try {
-      const rows = items.map(it => ({
+      const rows = items.map((it, idx) => ({
         customer_name: form.name.trim(),
         customer_phone: form.phone,
         customer_address: form.address.trim(),
@@ -59,6 +59,7 @@ export const CartDrawer = () => {
         quantity: it.quantity,
         unit_price: it.unit_price,
         total_amount: it.unit_price * it.quantity,
+        delivery_charge: idx === 0 ? delivery.charge : 0,
         shop_customer_id: customer?.id ?? null,
       }));
       const { error } = await supabase.from("orders").insert(rows as any);
