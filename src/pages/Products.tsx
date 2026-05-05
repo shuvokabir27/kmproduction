@@ -598,23 +598,24 @@ const Products = () => {
                     </div>
                     <div className="mt-3 flex flex-col gap-2">
                       <Button
+                        onClick={() => openOrderDialog(p)}
+                        className="w-full text-white font-bold tracking-wide text-sm h-10 rounded-md"
+                        style={{ backgroundColor: BRAND_GREEN }}
+                      >
+                        এখনই কিনুন
+                      </Button>
+                      <Button
                         onClick={() => {
                           const variants = Array.isArray(p.variants) ? p.variants : [];
                           addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
                         }}
-                        className="w-full text-white font-bold uppercase tracking-wide text-xs h-10 rounded-md gap-1.5"
-                        style={{ backgroundColor: BRAND_GREEN }}
-                      >
-                        <ShoppingCart className="h-3.5 w-3.5" /> ADD TO CART
-                      </Button>
-                      <Button
-                        onClick={() => openOrderDialog(p)}
-                        className="w-full text-white font-bold uppercase tracking-wide text-xs h-10 rounded-md"
+                        className="w-full text-white font-bold tracking-wide text-sm h-10 rounded-md gap-1.5"
                         style={{ backgroundColor: BRAND_DARK }}
                       >
-                        BUY NOW
+                        <ShoppingCart className="h-3.5 w-3.5" /> কার্টে যোগ করুন
                       </Button>
                     </div>
+
 
                   </div>
                 </div>
