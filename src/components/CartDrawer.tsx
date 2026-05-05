@@ -115,6 +115,23 @@ export const CartDrawer = () => {
           </div>
         ) : !checkout ? (
           <>
+            {/* Free delivery progress / hint */}
+            {settings.free_delivery_enabled && (
+              <div className="mx-4 mt-4">
+                {delivery.isFree ? (
+                  <div className="bg-green-50 border border-green-200 text-green-800 rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" /> অভিনন্দন! আপনি ফ্রি ডেলিভারি পাচ্ছেন 🎉
+                  </div>
+                ) : (
+                  <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl px-3 py-2 text-xs">
+                    আর মাত্র <span className="font-extrabold">৳{toBn(delivery.amountToFree)}</span> এর বাজার করলেই ফ্রি ডেলিভারি!
+                    <div className="h-1.5 mt-1.5 bg-amber-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-amber-500" style={{ width: `${Math.min(100, (total / settings.free_delivery_threshold) * 100)}%` }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {items.map(it => (
                 <div key={it.id} className="flex gap-3 bg-gray-50 rounded-2xl p-3 border border-gray-100">
@@ -145,10 +162,22 @@ export const CartDrawer = () => {
                 </div>
               ))}
             </div>
-            <div className="border-t border-gray-100 p-4 space-y-3 bg-white">
-              <div className="flex items-center justify-between">
+            <div className="border-t border-gray-100 p-4 space-y-2 bg-white">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600">সাবটোটাল</span>
+                <span className="font-bold text-gray-900">৳{toBn(total)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600 flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> ডেলিভারি চার্জ</span>
+                {delivery.isFree ? (
+                  <span className="font-bold text-green-700">ফ্রি</span>
+                ) : (
+                  <span className="font-bold text-gray-900">৳{toBn(delivery.charge)}</span>
+                )}
+              </div>
+              <div className="flex items-center justify-between border-t pt-2">
                 <span className="text-gray-600">মোট</span>
-                <span className="text-2xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
+                <span className="text-2xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(grandTotal)}</span>
               </div>
               <Button onClick={openCheckout} className="w-full text-white font-bold h-12 rounded-2xl gap-2" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                 <ShoppingCart className="h-4 w-4" /> চেকআউট করুন
