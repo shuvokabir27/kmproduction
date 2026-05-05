@@ -330,7 +330,7 @@ const ProductDetail = () => {
                 <span className={`w-1.5 h-1.5 rounded-full ${product.stock_status === 'out_of_stock' ? 'bg-red-500' : 'bg-green-500'}`} />
                 {product.stock_status === 'out_of_stock' ? 'স্টক শেষ' : 'স্টকে আছে'}
               </span>
-              {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{product.category}</span></span>}
+              {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{categoryLabel}</span></span>}
             </div>
 
             {/* Variants (size / weight / option) */}
