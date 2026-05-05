@@ -32,6 +32,30 @@ const Products = () => {
   const { customer: shopCustomer } = useShopCustomer();
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
+  const cart = useCart();
+
+  const addProductToCart = (p: any, qty = 1, variantIdx = -1) => {
+    const variants = Array.isArray(p?.variants) ? p.variants : [];
+    const chosen = variants.length > 0 && variantIdx >= 0 ? variants[variantIdx] : null;
+    if (variants.length > 0 && !chosen) {
+      toast.error("একটি অপশন বাছাই করুন");
+      return false;
+    }
+    const unitPrice = chosen
+      ? Number(chosen.discount_price ?? chosen.price ?? 0)
+      : Number(p?.discount_price || p?.price || 0);
+    cart.addItem({
+      product_id: p.id,
+      product_name: p.name,
+      image_url: p.image_url,
+      variant_label: chosen ? String(chosen.label) : null,
+      unit_price: unitPrice,
+      quantity: qty,
+      unit_type: p.unit_type ?? null,
+    });
+    toast.success("কার্টে যুক্ত হয়েছে");
+    return true;
+  };
 
   const { data: products } = useQuery({
     queryKey: ["public-products"],
