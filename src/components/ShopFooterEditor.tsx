@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, Save } from "lucide-react";
 
-const FIELDS = [
+type Field = { key: string; label: string; placeholder: string; textarea?: boolean };
+const FIELDS: Field[] = [
   { key: "shop_name", label: "শপের নাম", placeholder: "কে এম শপ" },
   { key: "shop_tagline", label: "ট্যাগলাইন / সংক্ষিপ্ত বর্ণনা", placeholder: "কুয়াকাটার সেরা পণ্য সম্ভার...", textarea: true },
   { key: "contact_phone", label: "ফোন নম্বর", placeholder: "01XXXXXXXXX" },
@@ -15,7 +16,7 @@ const FIELDS = [
   { key: "shop_email", label: "ইমেইল", placeholder: "info@example.com" },
   { key: "shop_address", label: "ঠিকানা", placeholder: "কুয়াকাটা, পটুয়াখালী" },
   { key: "shop_copyright", label: "কপিরাইট টেক্সট", placeholder: "কে এম শপ। সর্বস্বত্ব সংরক্ষিত।" },
-] as const;
+];
 
 export default function ShopFooterEditor() {
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ export default function ShopFooterEditor() {
   const save = async () => {
     if (!id) return;
     setSaving(true);
-    const { error } = await supabase.from("site_settings").update(form).eq("id", id);
+    const { error } = await supabase.from("site_settings").update(form as any).eq("id", id);
     setSaving(false);
     if (error) toast.error("সংরক্ষণ ব্যর্থ");
     else toast.success("ফুটার আপডেট হয়েছে");
