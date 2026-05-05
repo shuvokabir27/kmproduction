@@ -217,26 +217,68 @@ export default function ShopOfferManager() {
                     <SelectItem value="percentage">শতাংশ ছাড় (%)</SelectItem>
                     <SelectItem value="fixed">নির্দিষ্ট অংক (৳)</SelectItem>
                     <SelectItem value="free_delivery">ফ্রি ডেলিভারি</SelectItem>
+                    <SelectItem value="combo">কম্বো অফার (একাধিক প্রডাক্ট)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              {form.discount_type !== "free_delivery" && (
+              {form.discount_type !== "free_delivery" && form.discount_type !== "combo" && (
                 <div>
                   <Label>মান</Label>
                   <Input type="number" value={form.discount_value} onChange={e => setForm(f => ({ ...f, discount_value: e.target.value }))} />
                 </div>
               )}
             </div>
-            <div>
-              <Label>প্রডাক্ট (ঐচ্ছিক)</Label>
-              <Select value={form.product_id || "none"} onValueChange={(v) => setForm(f => ({ ...f, product_id: v === "none" ? "" : v }))}>
-                <SelectTrigger><SelectValue placeholder="সব প্রডাক্টের জন্য" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">সব প্রডাক্টের জন্য</SelectItem>
-                  {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
+
+            {form.discount_type === "combo" ? (
+              <div className="space-y-2 p-3 rounded-lg border bg-amber-50/50 dark:bg-amber-950/20">
+                <div className="flex items-center justify-between">
+                  <Label className="font-bold">কম্বোতে প্রডাক্টসমূহ</Label>
+                  <Button type="button" size="sm" variant="outline" onClick={() => setForm(f => ({ ...f, combo_products: [...f.combo_products, { product_id: "", quantity: 1 }] }))}>
+                    <Plus className="h-3 w-3 mr-1" /> প্রডাক্ট
+                  </Button>
+                </div>
+                {form.combo_products.length === 0 && <p className="text-xs text-muted-foreground">কম্বোতে যোগ করতে প্রডাক্ট বাছাই করুন</p>}
+                {form.combo_products.map((c, idx) => (
+                  <div key={idx} className="flex gap-2 items-center">
+                    <Select value={c.product_id || "_"} onValueChange={(v) => {
+                      const next = [...form.combo_products];
+                      next[idx] = { ...next[idx], product_id: v === "_" ? "" : v };
+                      setForm(f => ({ ...f, combo_products: next }));
+                    }}>
+                      <SelectTrigger className="flex-1"><SelectValue placeholder="প্রডাক্ট বাছাই" /></SelectTrigger>
+                      <SelectContent>
+                        {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Input type="number" min={1} className="w-16" value={c.quantity} onChange={e => {
+                      const next = [...form.combo_products];
+                      next[idx] = { ...next[idx], quantity: Math.max(1, Number(e.target.value) || 1) };
+                      setForm(f => ({ ...f, combo_products: next }));
+                    }} />
+                    <Button type="button" size="icon" variant="ghost" className="text-destructive" onClick={() => {
+                      setForm(f => ({ ...f, combo_products: f.combo_products.filter((_, i) => i !== idx) }));
+                    }}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
+                <div>
+                  <Label className="text-xs">কম্বোর বিশেষ মূল্য (৳)</Label>
+                  <Input type="number" value={form.combo_price} onChange={e => setForm(f => ({ ...f, combo_price: e.target.value }))} placeholder="যেমন: ৪৯৯" />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Label>প্রডাক্ট (ঐচ্ছিক)</Label>
+                <Select value={form.product_id || "none"} onValueChange={(v) => setForm(f => ({ ...f, product_id: v === "none" ? "" : v }))}>
+                  <SelectTrigger><SelectValue placeholder="সব প্রডাক্টের জন্য" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">সব প্রডাক্টের জন্য</SelectItem>
+                    {products?.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
               <Label>ছবি</Label>
               <div className="flex gap-2">
