@@ -1567,6 +1567,7 @@ export type Database = {
           total_amount: number
           unit_price: number
           updated_at: string
+          variant_label: string | null
         }
         Insert: {
           created_at?: string
@@ -1589,6 +1590,7 @@ export type Database = {
           total_amount?: number
           unit_price?: number
           updated_at?: string
+          variant_label?: string | null
         }
         Update: {
           created_at?: string
@@ -1611,6 +1613,7 @@ export type Database = {
           total_amount?: number
           unit_price?: number
           updated_at?: string
+          variant_label?: string | null
         }
         Relationships: [
           {
@@ -1903,7 +1906,9 @@ export type Database = {
           price: number
           sort_order: number | null
           stock_status: string
+          unit_type: string
           updated_at: string
+          variants: Json
         }
         Insert: {
           category?: string | null
@@ -1920,7 +1925,9 @@ export type Database = {
           price?: number
           sort_order?: number | null
           stock_status?: string
+          unit_type?: string
           updated_at?: string
+          variants?: Json
         }
         Update: {
           category?: string | null
@@ -1937,7 +1944,9 @@ export type Database = {
           price?: number
           sort_order?: number | null
           stock_status?: string
+          unit_type?: string
           updated_at?: string
+          variants?: Json
         }
         Relationships: []
       }

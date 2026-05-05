@@ -51,6 +51,8 @@ const AdminProducts = () => {
     stock_status: "in_stock",
     sort_order: "0",
     contact_info: "",
+    unit_type: "piece" as "piece" | "kg" | "size",
+    variants: [] as { label: string; price: string; discount_price: string }[],
   });
 
   const { data: products, isLoading } = useQuery({
@@ -69,7 +71,7 @@ const AdminProducts = () => {
     setForm({
       name: "", description: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
-      sort_order: "0", contact_info: "",
+      sort_order: "0", contact_info: "", unit_type: "piece", variants: [],
     });
     setEditingProduct(null);
   };
@@ -90,6 +92,14 @@ const AdminProducts = () => {
       stock_status: p.stock_status || "in_stock",
       sort_order: String(p.sort_order || 0),
       contact_info: p.contact_info || "",
+      unit_type: (p.unit_type || "piece") as "piece" | "kg" | "size",
+      variants: Array.isArray(p.variants)
+        ? p.variants.map((v: any) => ({
+            label: v.label || "",
+            price: String(v.price ?? ""),
+            discount_price: v.discount_price != null ? String(v.discount_price) : "",
+          }))
+        : [],
     });
     setDialogOpen(true);
   };
@@ -127,7 +137,15 @@ const AdminProducts = () => {
       stock_status: form.stock_status,
       sort_order: Number(form.sort_order) || 0,
       contact_info: form.contact_info.trim() || null,
-    };
+      unit_type: form.unit_type,
+      variants: form.variants
+        .filter(v => v.label.trim() && v.price !== "")
+        .map(v => ({
+          label: v.label.trim(),
+          price: Number(v.price) || 0,
+          discount_price: v.discount_price ? Number(v.discount_price) : null,
+        })),
+    } as any;
 
     try {
       if (editingProduct) {
@@ -393,13 +411,62 @@ const AdminProducts = () => {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>দাম (৳)</Label>
+                <Label>বেস দাম (৳)</Label>
                 <Input type="number" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
               </div>
               <div>
                 <Label>ডিসকাউন্ট দাম (৳)</Label>
                 <Input type="number" value={form.discount_price} onChange={(e) => setForm((f) => ({ ...f, discount_price: e.target.value }))} placeholder="ঐচ্ছিক" />
               </div>
+            </div>
+
+            <div>
+              <Label>ইউনিট টাইপ (কীভাবে বিক্রি হবে)</Label>
+              <Select value={form.unit_type} onValueChange={(v: any) => setForm(f => ({ ...f, unit_type: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="piece">📦 পিস (টুকরা হিসেবে)</SelectItem>
+                  <SelectItem value="kg">⚖️ কেজি / ওজন</SelectItem>
+                  <SelectItem value="size">📏 সাইজ অনুযায়ী</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                {form.unit_type === "piece" && "প্রতি পিসের জন্য একটি দাম। ভিন্ন প্যাক/কম্বো হলে নিচে ভ্যারিয়েন্ট যোগ করুন।"}
+                {form.unit_type === "kg" && "ওজন অনুযায়ী আলাদা দাম দিতে নিচে ভ্যারিয়েন্ট যোগ করুন (যেমন: ৫০০ গ্রাম, ১ কেজি, ২ কেজি)।"}
+                {form.unit_type === "size" && "সাইজ অনুযায়ী আলাদা দাম দিতে নিচে ভ্যারিয়েন্ট যোগ করুন (যেমন: Small, Medium, Large)।"}
+              </p>
+            </div>
+
+            <div className="border border-border/40 rounded-xl p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-bold">
+                  ভ্যারিয়েন্ট / অপশন {form.unit_type === "kg" ? "(ওজন)" : form.unit_type === "size" ? "(সাইজ)" : ""}
+                </Label>
+                <Button type="button" size="sm" variant="outline" className="h-7 gap-1"
+                  onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { label: "", price: "", discount_price: "" }] }))}>
+                  <Plus className="h-3 w-3" /> অপশন
+                </Button>
+              </div>
+              {form.variants.length === 0 && (
+                <p className="text-[11px] text-muted-foreground">কোনো ভ্যারিয়েন্ট নেই — উপরের একক দাম ব্যবহার হবে।</p>
+              )}
+              {form.variants.map((v, i) => (
+                <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                  <Input className="col-span-4 h-9" placeholder={form.unit_type === "kg" ? "১ কেজি" : form.unit_type === "size" ? "Medium" : "১ পিস"}
+                    value={v.label}
+                    onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], label: e.target.value }; return { ...f, variants: a }; })} />
+                  <Input className="col-span-3 h-9" type="number" placeholder="দাম"
+                    value={v.price}
+                    onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], price: e.target.value }; return { ...f, variants: a }; })} />
+                  <Input className="col-span-3 h-9" type="number" placeholder="ডিসকাউন্ট"
+                    value={v.discount_price}
+                    onChange={(e) => setForm(f => { const a = [...f.variants]; a[i] = { ...a[i], discount_price: e.target.value }; return { ...f, variants: a }; })} />
+                  <Button type="button" size="sm" variant="ghost" className="col-span-2 text-destructive h-9"
+                    onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, j) => j !== i) }))}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
