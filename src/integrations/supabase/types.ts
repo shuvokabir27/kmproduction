@@ -768,6 +768,39 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_settings: {
+        Row: {
+          base_charge: number
+          base_weight_grams: number
+          extra_charge_per_kg: number
+          free_delivery_enabled: boolean
+          free_delivery_threshold: number
+          id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          base_charge?: number
+          base_weight_grams?: number
+          extra_charge_per_kg?: number
+          free_delivery_enabled?: boolean
+          free_delivery_threshold?: number
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          base_charge?: number
+          base_weight_grams?: number
+          extra_charge_per_kg?: number
+          free_delivery_enabled?: boolean
+          free_delivery_threshold?: number
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       favorite_works: {
         Row: {
           created_at: string
@@ -1551,6 +1584,7 @@ export type Database = {
           customer_address: string | null
           customer_name: string
           customer_phone: string
+          delivery_charge: number
           delivery_date: string | null
           id: string
           notes: string | null
@@ -1574,6 +1608,7 @@ export type Database = {
           customer_address?: string | null
           customer_name: string
           customer_phone: string
+          delivery_charge?: number
           delivery_date?: string | null
           id?: string
           notes?: string | null
@@ -1597,6 +1632,7 @@ export type Database = {
           customer_address?: string | null
           customer_name?: string
           customer_phone?: string
+          delivery_charge?: number
           delivery_date?: string | null
           id?: string
           notes?: string | null
@@ -1909,6 +1945,7 @@ export type Database = {
           unit_type: string
           updated_at: string
           variants: Json
+          weight_grams: number
         }
         Insert: {
           category?: string | null
@@ -1928,6 +1965,7 @@ export type Database = {
           unit_type?: string
           updated_at?: string
           variants?: Json
+          weight_grams?: number
         }
         Update: {
           category?: string | null
@@ -1947,6 +1985,7 @@ export type Database = {
           unit_type?: string
           updated_at?: string
           variants?: Json
+          weight_grams?: number
         }
         Relationships: []
       }
