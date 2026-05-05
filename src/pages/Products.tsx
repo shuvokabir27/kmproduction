@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingBag, Phone, ShoppingCart, Search, X, CheckCircle, Menu, Tag, Truck, ShieldCheck, Star, MessageCircle, User, LogIn } from "lucide-react";
+import { ShoppingBag, Phone, ShoppingCart, Search, X, CheckCircle, Menu, Tag, Truck, ShieldCheck, Star, MessageCircle, User, LogIn, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -210,7 +210,7 @@ const Products = () => {
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 shrink-0">
+          <Link to="/products" className="flex items-center gap-2 shrink-0 hover:opacity-90 transition-opacity">
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: BRAND_GREEN }}>
               KM
             </div>
@@ -218,9 +218,10 @@ const Products = () => {
               <div className="font-bold text-base md:text-lg" style={{ color: BRAND_GREEN }}>কে এম শপ</div>
               <div className="text-[10px] md:text-xs text-gray-500 -mt-0.5">KM Shop · কুয়াকাটা</div>
             </div>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-gray-700">
+            <Link to="/" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-4 w-4" /> HOME</Link>
             <a href="#shop" className="hover:text-gray-900">SHOP</a>
             <a href="#categories" className="hover:text-gray-900">ক্যাটাগরি</a>
             <a href="#about" className="hover:text-gray-900">ABOUT</a>
