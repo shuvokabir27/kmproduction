@@ -102,7 +102,7 @@ export const CartDrawer = () => {
       <div
         className="bg-white w-full max-w-md h-full overflow-y-auto shadow-2xl flex flex-col"
         onClick={e => e.stopPropagation()}
-        style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
+        style={{ fontFamily: "'Tiro Bangla', serif" }}
       >
         <div className="flex items-center justify-between px-5 py-4 text-white" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
           <div className="flex items-center gap-2">

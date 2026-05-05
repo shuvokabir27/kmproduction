@@ -202,7 +202,7 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f5ee]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+    <div className="min-h-screen bg-[#f7f5ee]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
 
       {/* Top Strip */}
       <div className="text-white text-xs md:text-sm py-2 px-4" style={{ backgroundColor: BRAND_GREEN }}>
