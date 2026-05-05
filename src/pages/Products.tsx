@@ -658,6 +658,24 @@ const Products = () => {
                             className="w-10 h-10 rounded-full border-2 border-gray-200 font-bold text-lg">+</button>
                           <span className="text-xs text-gray-500">× ৳{toBn(basePrice)} / {unitLabel}</span>
                         </div>
+                        {(p.unit_type === "piece" || p.unit_type === "kg") && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {[5, 10, 20].map(n => (
+                              <button
+                                key={n}
+                                type="button"
+                                onClick={() => setQuantity(n)}
+                                className={`px-4 h-9 rounded-full border-2 text-xs font-bold transition ${
+                                  quantity === n
+                                    ? "bg-green-600 text-white border-green-600"
+                                    : "bg-white text-gray-700 border-gray-200 hover:border-green-400"
+                                }`}
+                              >
+                                {toBn(n)} {unitLabel}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
