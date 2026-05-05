@@ -2859,6 +2859,11 @@ export type Database = {
           offer_end_date: string | null
           rocket_enabled: boolean
           rocket_payment_no: string | null
+          shop_address: string | null
+          shop_copyright: string | null
+          shop_email: string | null
+          shop_name: string | null
+          shop_tagline: string | null
           site_description: string | null
           site_name: string | null
           ticker_enabled: boolean | null
@@ -2891,6 +2896,11 @@ export type Database = {
           offer_end_date?: string | null
           rocket_enabled?: boolean
           rocket_payment_no?: string | null
+          shop_address?: string | null
+          shop_copyright?: string | null
+          shop_email?: string | null
+          shop_name?: string | null
+          shop_tagline?: string | null
           site_description?: string | null
           site_name?: string | null
           ticker_enabled?: boolean | null
@@ -2923,6 +2933,11 @@ export type Database = {
           offer_end_date?: string | null
           rocket_enabled?: boolean
           rocket_payment_no?: string | null
+          shop_address?: string | null
+          shop_copyright?: string | null
+          shop_email?: string | null
+          shop_name?: string | null
+          shop_tagline?: string | null
           site_description?: string | null
           site_name?: string | null
           ticker_enabled?: boolean | null

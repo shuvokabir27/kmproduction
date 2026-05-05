@@ -25,6 +25,7 @@ import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
 import WeightPricingEditor from "@/components/WeightPricingEditor";
 import ProductVideoManager from "@/components/ProductVideoManager";
 import CategoryManager from "@/components/CategoryManager";
+import ShopFooterEditor from "@/components/ShopFooterEditor";
 import { useProductCategories } from "@/hooks/useProductCategories";
 
 const AdminProducts = () => {
@@ -202,7 +203,7 @@ const AdminProducts = () => {
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-10 h-auto sm:h-11 bg-muted/50 rounded-xl">
+        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-10 h-auto sm:h-11 bg-muted/50 rounded-xl flex-wrap">
           <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <LayoutDashboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ড্যাশবোর্ড</span>
@@ -238,6 +239,10 @@ const AdminProducts = () => {
           <TabsTrigger value="reports" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <BarChart3 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">রিপোর্ট</span>
+          </TabsTrigger>
+          <TabsTrigger value="footer" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <FileText className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ফুটার</span>
           </TabsTrigger>
         </TabsList>
 
@@ -378,6 +383,10 @@ const AdminProducts = () => {
         {/* Reports Tab */}
         <TabsContent value="reports" className="mt-4">
           <ReportsSection />
+        </TabsContent>
+
+        <TabsContent value="footer" className="mt-4">
+          <ShopFooterEditor />
         </TabsContent>
       </Tabs>
 

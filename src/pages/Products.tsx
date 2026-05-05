@@ -710,9 +710,9 @@ const Products = () => {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center font-bold">KM</div>
-              <div className="font-bold text-lg">কে এম শপ</div>
+              <div className="font-bold text-lg">{siteSettings?.shop_name || "কে এম শপ"}</div>
             </div>
-            <p className="text-white/70 leading-relaxed">কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।</p>
+            <p className="text-white/70 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
           </div>
           <div>
             <h4 className="font-bold mb-3">দ্রুত লিংক</h4>
@@ -727,12 +727,13 @@ const Products = () => {
             <ul className="space-y-2 text-white/70">
               {contactPhone && <li>📞 {contactPhone}</li>}
               {whatsappNo && <li>💬 WhatsApp: +{whatsappNo}</li>}
-              <li>📍 কুয়াকাটা, পটুয়াখালী</li>
+              {(siteSettings as any)?.shop_email && <li>✉️ {(siteSettings as any).shop_email}</li>}
+              {((siteSettings as any)?.shop_address || true) && <li>📍 {(siteSettings as any)?.shop_address || "কুয়াকাটা, পটুয়াখালী"}</li>}
             </ul>
           </div>
         </div>
         <div className="max-w-7xl mx-auto border-t border-white/10 mt-8 pt-4 text-center text-xs text-white/60">
-          © {toBn(new Date().getFullYear())} কে এম শপ। সর্বস্বত্ব সংরক্ষিত।
+          © {toBn(new Date().getFullYear())} {(siteSettings as any)?.shop_copyright || "কে এম শপ। সর্বস্বত্ব সংরক্ষিত।"}
         </div>
       </footer>
 
