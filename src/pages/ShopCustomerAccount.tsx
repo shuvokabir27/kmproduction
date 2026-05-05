@@ -231,9 +231,11 @@ export default function ShopCustomerAccount() {
                       </div>
                     </div>
                     <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap">
-                      <Button size="sm" variant="outline" onClick={() => setTrackOrder(o)} className="gap-1.5 h-9 rounded-xl flex-1 border-blue-200 text-blue-700 hover:bg-blue-50">
-                        <Truck className="h-3.5 w-3.5" /> অর্ডার ট্র্যাকিং
-                      </Button>
+                      {o.status !== "delivered" && o.status !== "cancelled" && o.status !== "returned" && o.status !== "abandoned" && (
+                        <Button size="sm" variant="outline" onClick={() => setTrackOrder(o)} className="gap-1.5 h-9 rounded-xl flex-1 border-blue-200 text-blue-700 hover:bg-blue-50">
+                          <Truck className="h-3.5 w-3.5" /> অর্ডার ট্র্যাকিং
+                        </Button>
+                      )}
                       {o.status === "delivered" && productAvailable && prod && (
                         <Button size="sm" onClick={() => nav(`/products/${prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
                           <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার
