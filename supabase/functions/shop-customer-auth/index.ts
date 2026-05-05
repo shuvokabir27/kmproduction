@@ -135,6 +135,50 @@ Deno.serve(async (req) => {
       return ok({ ok: true });
     }
 
+    if (action === "update_profile") {
+      const token = String(body.token || "");
+      if (!token) return bad("টোকেন নেই", 401);
+      const { data: cust } = await supabase
+        .from("shop_customers")
+        .select("id, phone, session_expires_at, is_active")
+        .eq("session_token", token).maybeSingle();
+      if (!cust) return bad("সেশন অবৈধ", 401);
+      if (!cust.is_active) return bad("অ্যাকাউন্ট নিষ্ক্রিয়", 403);
+      if (cust.session_expires_at && new Date(cust.session_expires_at) < new Date())
+        return bad("সেশন শেষ হয়েছে", 401);
+
+      const fullName = body.full_name != null ? String(body.full_name).trim().slice(0, 100) : undefined;
+      const address = body.address != null ? String(body.address).trim().slice(0, 500) : undefined;
+      const newPhone = body.phone != null ? String(body.phone).replace(/\D/g, "") : undefined;
+
+      const updates: Record<string, unknown> = {};
+      if (fullName !== undefined) updates.full_name = fullName || null;
+      if (address !== undefined) updates.address = address || null;
+      if (newPhone !== undefined) {
+        if (newPhone.length !== 11) return bad("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+        if (newPhone !== cust.phone) {
+          const { data: dup } = await supabase
+            .from("shop_customers").select("id").eq("phone", newPhone).maybeSingle();
+          if (dup) return bad("এই নম্বরে ইতিমধ্যে অ্যাকাউন্ট আছে");
+          updates.phone = newPhone;
+        }
+      }
+
+      if (Object.keys(updates).length === 0) return ok({ ok: true });
+
+      const { data: updated, error } = await supabase
+        .from("shop_customers").update(updates).eq("id", cust.id)
+        .select("id, phone, full_name, address").single();
+      if (error) return bad(error.message, 500);
+
+      if (updates.phone) {
+        await supabase.from("orders").update({ shop_customer_id: updated.id })
+          .eq("customer_phone", updates.phone as string).is("shop_customer_id", null);
+      }
+
+      return ok({ customer: updated });
+    }
+
     return bad("অজানা অ্যাকশন");
   } catch (e: any) {
     return bad(e?.message || "সার্ভার ত্রুটি", 500);
