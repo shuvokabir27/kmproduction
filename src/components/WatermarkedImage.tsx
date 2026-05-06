@@ -20,18 +20,20 @@ interface Props {
   alt?: string;
   className?: string;
   loading?: "lazy" | "eager";
-  /** Watermark intensity. Default true = baked into image bytes via canvas. */
-  bake?: boolean;
 }
 
 /**
- * Image with shop-name watermark. When `bake` is true (default) the watermark is
- * drawn into a canvas and exported as a data URL so any download/save-as keeps
- * the trademark. Falls back to original src if the image is cross-origin and
- * cannot be tainted-exported.
+ * Displays a clean image to the viewer, but any download / "save image as" /
+ * drag captures the watermarked version (baked into pixel data via canvas).
+ *
+ * How it works:
+ *  - Bottom layer: <img> with watermarked data URL (this is the actual DOM
+ *    image — what right-click "Save image as" saves).
+ *  - Top layer: clean <img> with pointer-events:none so right-clicks pass
+ *    through to the watermarked one underneath.
  */
-export function WatermarkedImage({ src, alt = "", className, loading = "lazy", bake = true }: Props) {
-  const [finalSrc, setFinalSrc] = useState<string>(src);
+export function WatermarkedImage({ src, alt = "", className, loading = "lazy" }: Props) {
+  const [watermarked, setWatermarked] = useState<string>(src);
   const mounted = useRef(true);
 
   useEffect(() => {
@@ -40,8 +42,9 @@ export function WatermarkedImage({ src, alt = "", className, loading = "lazy", b
   }, []);
 
   useEffect(() => {
-    if (!bake || !src) { setFinalSrc(src); return; }
+    if (!src) return;
     let cancelled = false;
+    setWatermarked(src); // fallback while baking
 
     (async () => {
       const shopName = await getShopName();
@@ -56,22 +59,21 @@ export function WatermarkedImage({ src, alt = "", className, loading = "lazy", b
           canvas.width = w;
           canvas.height = h;
           const ctx = canvas.getContext("2d");
-          if (!ctx) { setFinalSrc(src); return; }
+          if (!ctx) return;
           ctx.drawImage(img, 0, 0, w, h);
 
-          // Repeating diagonal watermark
-          const fontSize = Math.max(18, Math.round(Math.min(w, h) * 0.045));
+          const fontSize = Math.max(22, Math.round(Math.min(w, h) * 0.06));
           ctx.font = `bold ${fontSize}px sans-serif`;
-          ctx.fillStyle = "rgba(255,255,255,0.32)";
-          ctx.strokeStyle = "rgba(0,0,0,0.22)";
-          ctx.lineWidth = Math.max(1, fontSize * 0.06);
+          ctx.fillStyle = "rgba(255,255,255,0.55)";
+          ctx.strokeStyle = "rgba(0,0,0,0.45)";
+          ctx.lineWidth = Math.max(1, fontSize * 0.07);
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
 
           const text = `© ${shopName}`;
           const textW = ctx.measureText(text).width;
-          const stepX = textW + fontSize * 3;
-          const stepY = fontSize * 5;
+          const stepX = textW + fontSize * 2.2;
+          const stepY = fontSize * 4;
 
           ctx.save();
           ctx.translate(w / 2, h / 2);
@@ -86,7 +88,7 @@ export function WatermarkedImage({ src, alt = "", className, loading = "lazy", b
           ctx.restore();
 
           // Bottom-right solid badge
-          const badgeFont = Math.max(14, Math.round(Math.min(w, h) * 0.035));
+          const badgeFont = Math.max(16, Math.round(Math.min(w, h) * 0.04));
           ctx.font = `bold ${badgeFont}px sans-serif`;
           ctx.textAlign = "right";
           ctx.textBaseline = "bottom";
@@ -94,36 +96,52 @@ export function WatermarkedImage({ src, alt = "", className, loading = "lazy", b
           const badgeText = `© ${shopName}`;
           const bw = ctx.measureText(badgeText).width + pad * 2;
           const bh = badgeFont + pad;
-          ctx.fillStyle = "rgba(0,0,0,0.55)";
+          ctx.fillStyle = "rgba(0,0,0,0.7)";
           ctx.fillRect(w - bw - pad / 2, h - bh - pad / 2, bw, bh);
           ctx.fillStyle = "#ffffff";
           ctx.fillText(badgeText, w - pad, h - pad);
 
           const url = canvas.toDataURL("image/jpeg", 0.9);
-          if (!cancelled && mounted.current) setFinalSrc(url);
+          if (!cancelled && mounted.current) setWatermarked(url);
         } catch {
-          // Tainted canvas (CORS) — fallback to original
-          if (!cancelled && mounted.current) setFinalSrc(src);
+          // CORS-tainted; bottom layer stays as original src
         }
       };
-      img.onerror = () => { if (!cancelled && mounted.current) setFinalSrc(src); };
+      img.onerror = () => {};
       img.src = src;
     })();
 
     return () => { cancelled = true; };
-  }, [src, bake]);
+  }, [src]);
 
   return (
-    <img
-      src={finalSrc}
-      alt={alt}
-      className={className}
-      loading={loading}
-      draggable={false}
-      onContextMenu={(e) => e.preventDefault()}
-      onDragStart={(e) => e.preventDefault()}
-      style={{ WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none" }}
-    />
+    <div className={`relative ${className ?? ""}`} style={{ overflow: "hidden" }}>
+      {/* Bottom: watermarked — this is what gets saved */}
+      <img
+        src={watermarked}
+        alt={alt}
+        loading={loading}
+        className="absolute inset-0 w-full h-full object-cover"
+        draggable={false}
+        style={{ WebkitUserSelect: "none", userSelect: "none" }}
+      />
+      {/* Top: clean image, pointer-events disabled so right-click hits the
+          watermarked layer below. Visually this is what the user sees. */}
+      <img
+        src={src}
+        alt=""
+        aria-hidden
+        loading={loading}
+        className="absolute inset-0 w-full h-full object-cover"
+        draggable={false}
+        style={{
+          pointerEvents: "none",
+          WebkitUserSelect: "none",
+          userSelect: "none",
+          WebkitTouchCallout: "none",
+        }}
+      />
+    </div>
   );
 }
 
