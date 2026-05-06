@@ -74,6 +74,7 @@ export default function ShopOfferManager() {
         : "fixed";
     setForm({
       title: o.title || "",
+      slug: o.slug || "",
       description: o.description || "",
       offer_mode: mode,
       combo_price: o.combo_price != null ? String(o.combo_price) : "",
