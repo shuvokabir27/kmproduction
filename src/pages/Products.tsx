@@ -364,13 +364,12 @@ const Products = () => {
                   <div className="px-4 py-3 text-sm text-gray-500">কোন পণ্য পাওয়া যায়নি</div>
                 ) : (
                   filteredProducts.slice(0, 8).map((p: any) => (
-                    <button
+                    <Link
                       key={p.id}
+                      to={`/products/${p.id}`}
                       onClick={() => {
-                        setSelectedProduct(p);
-                        setSelectedVariantIdx(Array.isArray(p.variants) && p.variants.length > 0 ? 0 : -1);
-                        setQuantity(1);
                         setMobileSearchOpen(false);
+                        setSearch("");
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-50"
                     >
@@ -383,7 +382,7 @@ const Products = () => {
                           <div className="text-xs text-gray-500">৳ {toBn(Number(p.discount_price ?? p.price))}</div>
                         )}
                       </div>
-                    </button>
+                    </Link>
                   ))
                 )}
               </div>
