@@ -10,7 +10,7 @@ import { toast } from "sonner";
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 export default function ShopOfferPage() {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const navigate = useNavigate();
   const cart = useCart();
   const { customer } = useShopCustomer();
@@ -36,10 +36,13 @@ export default function ShopOfferPage() {
   }, []);
 
   const { data: offer, isLoading } = useQuery({
-    queryKey: ["shop-offer", id],
-    enabled: !!id,
+    queryKey: ["shop-offer", id || slug],
+    enabled: !!(id || slug),
     queryFn: async () => {
-      const { data } = await supabase.from("shop_offers" as any).select("*").eq("id", id).maybeSingle();
+      const q = supabase.from("shop_offers" as any).select("*");
+      const { data } = slug
+        ? await q.eq("slug", slug).maybeSingle()
+        : await q.eq("id", id).maybeSingle();
       return data as any;
     },
   });
