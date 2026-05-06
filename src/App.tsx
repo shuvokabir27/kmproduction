@@ -60,6 +60,7 @@ import ShopCustomerAccount from "./pages/ShopCustomerAccount";
 import AdminProducts from "./pages/AdminProducts";
 import ShopOfferPage from "./pages/ShopOfferPage";
 import FreeDeliveryPage from "./pages/FreeDeliveryPage";
+import AllCategories from "./pages/AllCategories";
 
 import TasksPage from "./pages/TasksPage";
 import DownloadApp from "./pages/DownloadApp";
