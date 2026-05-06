@@ -29,6 +29,7 @@ import ProductVideoManager from "@/components/ProductVideoManager";
 import CategoryManager from "@/components/CategoryManager";
 import ShopFooterEditor from "@/components/ShopFooterEditor";
 import { useProductCategories } from "@/hooks/useProductCategories";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
@@ -50,6 +51,7 @@ const AdminProducts = () => {
   const [form, setForm] = useState({
     name: "",
     description: "",
+    description_html: "",
     price: "",
     discount_price: "",
     image_url: "",
@@ -62,6 +64,7 @@ const AdminProducts = () => {
     unit_type: "piece" as "piece" | "kg" | "size",
     weight_grams: "",
     variants: [] as { label: string; price: string; discount_price: string; weight_grams: string }[],
+    suggested_product_ids: [] as string[],
   });
 
   const { data: products, isLoading } = useQuery({
@@ -78,9 +81,10 @@ const AdminProducts = () => {
 
   const resetForm = () => {
     setForm({
-      name: "", description: "", price: "", discount_price: "", image_url: "",
+      name: "", description: "", description_html: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
       sort_order: "0", contact_info: "", unit_type: "piece", weight_grams: "", variants: [],
+      suggested_product_ids: [],
     });
     setEditingProduct(null);
   };
@@ -92,6 +96,7 @@ const AdminProducts = () => {
     setForm({
       name: p.name || "",
       description: p.description || "",
+      description_html: p.description_html || "",
       price: String(p.price || 0),
       discount_price: p.discount_price ? String(p.discount_price) : "",
       image_url: p.image_url || "",
@@ -111,6 +116,7 @@ const AdminProducts = () => {
             weight_grams: v.weight_grams != null ? String(v.weight_grams) : "",
           }))
         : [],
+      suggested_product_ids: Array.isArray(p.suggested_product_ids) ? p.suggested_product_ids : [],
     });
     setDialogOpen(true);
   };
@@ -139,6 +145,7 @@ const AdminProducts = () => {
     const payload = {
       name: form.name.trim(),
       description: form.description.trim() || null,
+      description_html: form.description_html?.trim() || null,
       price: Number(form.price) || 0,
       discount_price: form.discount_price ? Number(form.discount_price) : null,
       image_url: form.image_url || null,
@@ -158,6 +165,7 @@ const AdminProducts = () => {
           discount_price: v.discount_price ? Number(v.discount_price) : null,
           weight_grams: v.weight_grams ? Number(v.weight_grams) : 0,
         })),
+      suggested_product_ids: form.suggested_product_ids,
     } as any;
 
     try {
@@ -437,8 +445,17 @@ const AdminProducts = () => {
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="যেমন: তালের গুড় ১ কেজি" />
             </div>
             <div>
-              <Label>বিবরণ</Label>
-              <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="প্রডাক্টের বিবরণ" rows={3} />
+              <Label>বিবরণ (ফরম্যাটিং সহ)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">টেক্সট হাইলাইট, রং, হেডিং ও লিস্ট ব্যবহার করে সুন্দর বিবরণ লিখুন।</p>
+              <RichTextEditor
+                value={form.description_html || form.description}
+                onChange={(html) => {
+                  const plain = html.replace(/<[^>]+>/g, "").trim();
+                  setForm((f) => ({ ...f, description_html: html, description: plain }));
+                }}
+                placeholder="প্রডাক্টের বিবরণ লিখুন..."
+                minHeight={140}
+              />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
@@ -586,6 +603,47 @@ const AdminProducts = () => {
               <div className="flex items-center gap-2">
                 <Switch checked={form.is_featured} onCheckedChange={(v) => setForm((f) => ({ ...f, is_featured: v }))} />
                 <Label>ফিচার্ড</Label>
+              </div>
+            </div>
+            {/* Suggested products */}
+            <div className="border border-border/40 rounded-xl p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-bold">সাজেস্টেড প্রডাক্ট</Label>
+                <span className="text-[11px] text-muted-foreground">
+                  {form.suggested_product_ids.length > 0
+                    ? `${form.suggested_product_ids.length}টি সিলেক্ট করা`
+                    : "সিলেক্ট না করলে অটো বাছাই হবে"}
+                </span>
+              </div>
+              <div className="max-h-48 overflow-y-auto rounded-lg border border-border/30 divide-y divide-border/20">
+                {(products || [])
+                  .filter((p: any) => !editingProduct || p.id !== editingProduct.id)
+                  .map((p: any) => {
+                    const checked = form.suggested_product_ids.includes(p.id);
+                    return (
+                      <label key={p.id} className="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-accent/40">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => {
+                            setForm((f) => ({
+                              ...f,
+                              suggested_product_ids: e.target.checked
+                                ? [...f.suggested_product_ids, p.id]
+                                : f.suggested_product_ids.filter((id) => id !== p.id),
+                            }));
+                          }}
+                          className="h-3.5 w-3.5 accent-primary"
+                        />
+                        {p.image_url && <img src={p.image_url} alt="" className="h-6 w-6 rounded object-cover" />}
+                        <span className="text-xs text-foreground flex-1 truncate">{p.name}</span>
+                        <span className="text-[10px] text-muted-foreground">৳{p.discount_price ?? p.price}</span>
+                      </label>
+                    );
+                  })}
+                {(!products || products.length === 0) && (
+                  <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রডাক্ট নেই</p>
+                )}
               </div>
             </div>
             <Button onClick={handleSave} className="w-full">{editingProduct ? "আপডেট করুন" : "যোগ করুন"}</Button>
