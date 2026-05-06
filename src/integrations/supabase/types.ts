@@ -2111,6 +2111,7 @@ export type Database = {
           contact_info: string | null
           created_at: string
           description: string | null
+          description_html: string | null
           discount_price: number | null
           id: string
           image_url: string | null
@@ -2121,6 +2122,7 @@ export type Database = {
           price: number
           sort_order: number | null
           stock_status: string
+          suggested_product_ids: string[]
           unit_type: string
           updated_at: string
           variants: Json
@@ -2131,6 +2133,7 @@ export type Database = {
           contact_info?: string | null
           created_at?: string
           description?: string | null
+          description_html?: string | null
           discount_price?: number | null
           id?: string
           image_url?: string | null
@@ -2141,6 +2144,7 @@ export type Database = {
           price?: number
           sort_order?: number | null
           stock_status?: string
+          suggested_product_ids?: string[]
           unit_type?: string
           updated_at?: string
           variants?: Json
@@ -2151,6 +2155,7 @@ export type Database = {
           contact_info?: string | null
           created_at?: string
           description?: string | null
+          description_html?: string | null
           discount_price?: number | null
           id?: string
           image_url?: string | null
@@ -2161,6 +2166,7 @@ export type Database = {
           price?: number
           sort_order?: number | null
           stock_status?: string
+          suggested_product_ids?: string[]
           unit_type?: string
           updated_at?: string
           variants?: Json
