@@ -51,6 +51,7 @@ const AdminProducts = () => {
   const [form, setForm] = useState({
     name: "",
     description: "",
+    description_html: "",
     price: "",
     discount_price: "",
     image_url: "",
@@ -63,6 +64,7 @@ const AdminProducts = () => {
     unit_type: "piece" as "piece" | "kg" | "size",
     weight_grams: "",
     variants: [] as { label: string; price: string; discount_price: string; weight_grams: string }[],
+    suggested_product_ids: [] as string[],
   });
 
   const { data: products, isLoading } = useQuery({
