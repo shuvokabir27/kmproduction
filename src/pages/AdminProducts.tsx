@@ -145,6 +145,7 @@ const AdminProducts = () => {
     const payload = {
       name: form.name.trim(),
       description: form.description.trim() || null,
+      description_html: form.description_html?.trim() || null,
       price: Number(form.price) || 0,
       discount_price: form.discount_price ? Number(form.discount_price) : null,
       image_url: form.image_url || null,
@@ -164,6 +165,7 @@ const AdminProducts = () => {
           discount_price: v.discount_price ? Number(v.discount_price) : null,
           weight_grams: v.weight_grams ? Number(v.weight_grams) : 0,
         })),
+      suggested_product_ids: form.suggested_product_ids,
     } as any;
 
     try {
