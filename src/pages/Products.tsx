@@ -37,6 +37,7 @@ const Products = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const { customer: shopCustomer } = useShopCustomer();
