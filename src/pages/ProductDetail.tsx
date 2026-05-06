@@ -63,9 +63,20 @@ const ProductDetail = () => {
   }, [product]);
 
   const { data: related } = useQuery({
-    queryKey: ["related-products", product?.category, id],
+    queryKey: ["related-products", product?.id, product?.category, (product as any)?.suggested_product_ids],
     enabled: !!product,
     queryFn: async () => {
+      const suggested: string[] = Array.isArray((product as any)?.suggested_product_ids)
+        ? (product as any).suggested_product_ids
+        : [];
+      if (suggested.length > 0) {
+        const { data } = await supabase
+          .from("products")
+          .select("*")
+          .in("id", suggested)
+          .eq("is_active", true);
+        if (data && data.length > 0) return data;
+      }
       const q = supabase.from("products").select("*").eq("is_active", true).neq("id", id!).limit(4);
       if (product?.category) q.eq("category", product.category);
       const { data } = await q;
