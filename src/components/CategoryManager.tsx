@@ -52,7 +52,7 @@ const CategoryManager = () => {
   const subsBy = (id: string) => (cats ?? []).filter((c) => c.parent_id === id);
 
   const reset = () => {
-    setForm({ label: "", value: "", icon: "", parent_id: "none", sort_order: "0" });
+    setForm({ label: "", value: "", icon: "", image_url: "", parent_id: "none", sort_order: "0" });
     setEditing(null);
   };
 
@@ -68,10 +68,28 @@ const CategoryManager = () => {
       label: c.label,
       value: c.value,
       icon: c.icon || "",
+      image_url: c.image_url || "",
       parent_id: c.parent_id || "none",
       sort_order: String(c.sort_order),
     });
     setOpen(true);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `categories/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage.from("product-images").upload(path, file, { upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+      setForm((f) => ({ ...f, image_url: data.publicUrl }));
+      toast.success("ছবি আপলোড হয়েছে");
+    } catch (e: any) {
+      toast.error(e.message || "আপলোড ব্যর্থ");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const save = async () => {
