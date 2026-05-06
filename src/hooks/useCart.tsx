@@ -81,7 +81,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateQty = useCallback((id: string, qty: number) => {
-    setItems(prev => prev.map(x => x.id === id ? { ...x, quantity: Math.max(1, qty) } : x));
+    setItems(prev => prev.map(x => {
+      if (x.id !== id) return x;
+      const min = x.min_quantity || 1;
+      const snapped = Math.max(min, Math.round(qty / min) * min);
+      return { ...x, quantity: snapped };
+    }));
   }, []);
 
   const removeItem = useCallback((id: string) => {
