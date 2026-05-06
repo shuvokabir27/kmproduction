@@ -341,7 +341,7 @@ const Products = () => {
             </div>
             <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Home className="h-4 w-4" style={{ color: BRAND_GREEN }} /> হোম</Link>
             <a href="#shop" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><ShoppingBag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> শপ</a>
-            <a href="#categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</a>
+            <Link to="/categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</Link>
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><ShieldCheck className="h-4 w-4" style={{ color: BRAND_GREEN }} /> আমাদের সম্পর্কে</a>
             <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Phone className="h-4 w-4" style={{ color: BRAND_GREEN }} /> যোগাযোগ</a>
             {shopCustomer ? (
