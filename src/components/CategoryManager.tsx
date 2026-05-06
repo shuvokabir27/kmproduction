@@ -211,6 +211,28 @@ const CategoryManager = () => {
               <Label>স্লাগ (ঐচ্ছিক, অটো হবে)</Label>
               <Input value={form.value} onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))} placeholder="achar_aam" />
             </div>
+            <div>
+              <Label>ক্যাটাগরি ছবি (ঐচ্ছিক)</Label>
+              <div className="flex items-center gap-3">
+                {form.image_url ? (
+                  <img src={form.image_url} alt="" className="w-16 h-16 rounded-lg object-cover border" />
+                ) : (
+                  <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center text-2xl">{form.icon || "🖼️"}</div>
+                )}
+                <div className="flex-1 space-y-1.5">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploading}
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }}
+                  />
+                  {form.image_url && (
+                    <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setForm((f) => ({ ...f, image_url: "" }))}>
+                      ছবি সরান
+                    </Button>
+                  )}
+                </div>
+              </div>
             <Button onClick={save} className="w-full">{editing ? "আপডেট" : "যোগ করুন"}</Button>
           </div>
         </DialogContent>
