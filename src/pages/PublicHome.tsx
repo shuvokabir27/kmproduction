@@ -182,10 +182,7 @@ const PublicHome = () => {
         <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-6" />
       </div>
 
-      {/* Shop Offer Banner */}
-      <div className="px-4 max-w-6xl mx-auto w-full">
-        <ShopOfferBanner />
-      </div>
+      {/* Shop Offer Banner removed from main homepage — only on /products */}
 
       {/* Spotlight monitor — Right under the menu bar */}
       <div className="px-4 max-w-6xl mx-auto w-full">
