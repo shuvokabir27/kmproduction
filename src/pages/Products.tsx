@@ -382,7 +382,7 @@ const Products = () => {
                           <div className="text-xs text-gray-500">৳ {toBn(Number(p.discount_price ?? p.price))}</div>
                         )}
                       </div>
-                    </button>
+                    </Link>
                   ))
                 )}
               </div>
