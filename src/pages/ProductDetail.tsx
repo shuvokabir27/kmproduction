@@ -15,6 +15,7 @@ import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
+import WatermarkedImage from "@/components/WatermarkedImage";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -284,7 +285,7 @@ const ProductDetail = () => {
           <div>
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 mb-3">
               {images[activeImg] ? (
-                <img src={images[activeImg]} alt={product.name} className="w-full h-full object-cover" />
+                <WatermarkedImage src={images[activeImg]} alt={product.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-20 w-20 text-gray-300" /></div>
               )}
