@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ShoppingBag, Truck, Tag, Clock, Package, ArrowLeft, Check } from "lucide-react";
+import { Sparkles, ShoppingBag, Truck, Tag, Clock, Package, ArrowLeft, Check, CheckCircle2, User, Phone, MapPin } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useShopCustomer } from "@/hooks/useShopCustomer";
 import { toast } from "sonner";
 
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -12,7 +13,22 @@ export default function ShopOfferPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const cart = useCart();
+  const { customer } = useShopCustomer();
   const [now, setNow] = useState(Date.now());
+  const [form, setForm] = useState({ name: "", phone: "", address: "" });
+  const [phoneError, setPhoneError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (customer) {
+      setForm(f => ({
+        name: f.name || customer.full_name || "",
+        phone: f.phone || customer.phone || "",
+        address: f.address || customer.address || "",
+      }));
+    }
+  }, [customer]);
 
   useEffect(() => {
     const i = setInterval(() => setNow(Date.now()), 1000);
