@@ -1860,6 +1860,7 @@ export type Database = {
           created_at: string
           icon: string | null
           id: string
+          image_url: string | null
           is_active: boolean
           label: string
           parent_id: string | null
@@ -1870,6 +1871,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean
           label: string
           parent_id?: string | null
@@ -1880,6 +1882,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean
           label?: string
           parent_id?: string | null

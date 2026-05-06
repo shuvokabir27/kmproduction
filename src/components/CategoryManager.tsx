@@ -15,6 +15,7 @@ interface Cat {
   label: string;
   value: string;
   icon: string | null;
+  image_url: string | null;
   sort_order: number;
   is_active: boolean;
 }
@@ -26,10 +27,12 @@ const CategoryManager = () => {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Cat | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     label: "",
     value: "",
     icon: "",
+    image_url: "",
     parent_id: "none",
     sort_order: "0",
   });
@@ -49,7 +52,7 @@ const CategoryManager = () => {
   const subsBy = (id: string) => (cats ?? []).filter((c) => c.parent_id === id);
 
   const reset = () => {
-    setForm({ label: "", value: "", icon: "", parent_id: "none", sort_order: "0" });
+    setForm({ label: "", value: "", icon: "", image_url: "", parent_id: "none", sort_order: "0" });
     setEditing(null);
   };
 
@@ -65,10 +68,28 @@ const CategoryManager = () => {
       label: c.label,
       value: c.value,
       icon: c.icon || "",
+      image_url: c.image_url || "",
       parent_id: c.parent_id || "none",
       sort_order: String(c.sort_order),
     });
     setOpen(true);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `categories/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage.from("product-images").upload(path, file, { upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+      setForm((f) => ({ ...f, image_url: data.publicUrl }));
+      toast.success("ছবি আপলোড হয়েছে");
+    } catch (e: any) {
+      toast.error(e.message || "আপলোড ব্যর্থ");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const save = async () => {
@@ -78,6 +99,7 @@ const CategoryManager = () => {
       label: form.label.trim(),
       value,
       icon: form.icon.trim() || null,
+      image_url: form.image_url.trim() || null,
       parent_id: form.parent_id === "none" ? null : form.parent_id,
       sort_order: Number(form.sort_order) || 0,
     };
@@ -188,6 +210,29 @@ const CategoryManager = () => {
             <div>
               <Label>স্লাগ (ঐচ্ছিক, অটো হবে)</Label>
               <Input value={form.value} onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))} placeholder="achar_aam" />
+            </div>
+            <div>
+              <Label>ক্যাটাগরি ছবি (ঐচ্ছিক)</Label>
+              <div className="flex items-center gap-3">
+                {form.image_url ? (
+                  <img src={form.image_url} alt="" className="w-16 h-16 rounded-lg object-cover border" />
+                ) : (
+                  <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center text-2xl">{form.icon || "🖼️"}</div>
+                )}
+                <div className="flex-1 space-y-1.5">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploading}
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }}
+                  />
+                  {form.image_url && (
+                    <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setForm((f) => ({ ...f, image_url: "" }))}>
+                      ছবি সরান
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
             <Button onClick={save} className="w-full">{editing ? "আপডেট" : "যোগ করুন"}</Button>
           </div>
