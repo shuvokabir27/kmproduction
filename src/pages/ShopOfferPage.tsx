@@ -226,20 +226,15 @@ export default function ShopOfferPage() {
             </div>
 
             <div className="bg-card border rounded-xl p-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">মোট মূল্য:</span>
-                <span className="font-bold line-through opacity-70">৳{toBn(comboTotal)}</span>
-              </div>
               {comboPrice > 0 && (
                 <div className="flex justify-between text-lg">
-                  <span className="font-bold">অফার মূল্য:</span>
+                  <span className="font-bold">কম্বো মূল্য:</span>
                   <span className="font-extrabold text-green-600">৳{toBn(comboPrice)}</span>
                 </div>
               )}
-              {savings > 0 && (
-                <div className="flex justify-between text-sm bg-green-50 dark:bg-green-950/30 rounded-lg p-2">
-                  <span className="text-green-700 dark:text-green-400 font-bold">আপনার সাশ্রয়:</span>
-                  <span className="text-green-700 dark:text-green-400 font-extrabold">৳{toBn(savings)} ({toBn(savingsPct)}%)</span>
+              {offer.combo_free_delivery && (
+                <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                  <Truck className="h-4 w-4" /> ফ্রি ডেলিভারি
                 </div>
               )}
               {offer.combo_free_delivery && (
