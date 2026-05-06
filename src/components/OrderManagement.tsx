@@ -509,16 +509,22 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
             const orderTrxId = getTrxId(order.notes);
             const orderPayLabel = getPaymentLabel(order.notes);
             const isMulti = grp.items.length > 1;
+            const isOfferOrder = grp.items.some((it: any) =>
+              typeof it.variant_label === "string" && (it.variant_label.includes("অফার") || it.variant_label.includes("কম্বো"))
+            );
+            const isComboOrder = grp.items.some((it: any) =>
+              typeof it.variant_label === "string" && it.variant_label.includes("কম্বো")
+            );
             return (
-              <div key={grp.order_number} className="bg-card border border-border/50 rounded-xl p-4 hover:border-primary/20 transition-all">
+              <div key={grp.order_number} className={`bg-card border rounded-xl p-4 hover:border-primary/20 transition-all ${isOfferOrder ? "border-amber-500/50 ring-1 ring-amber-500/20" : "border-border/50"}`}>
                 {/* Top row */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <StatusIcon className="h-4 w-4 text-primary" />
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isOfferOrder ? "bg-amber-500/15" : "bg-primary/10"}`}>
+                      <StatusIcon className={`h-4 w-4 ${isOfferOrder ? "text-amber-600" : "text-primary"}`} />
                     </div>
                     <div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <button
                           onClick={() => setViewDialog({ ...order, __groupItems: grp.items, __groupTotal: grp.total_amount, __groupDelivery: grp.delivery_charge })}
                           className="text-[11px] font-extrabold tracking-wide px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition cursor-pointer"
@@ -526,6 +532,11 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                         >
                           #{toBn(order.order_number)}
                         </button>
+                        {isOfferOrder && (
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-sm flex items-center gap-1">
+                            ✨ {isComboOrder ? "কম্বো অফার" : "অফার"}
+                          </span>
+                        )}
                         {isMulti && (
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
                             {toBn(grp.items.length)} পণ্য
