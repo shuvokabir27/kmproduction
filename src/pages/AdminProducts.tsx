@@ -20,6 +20,7 @@ import {
 
 import OrderManagement from "@/components/OrderManagement";
 import ShopOfferManager from "@/components/ShopOfferManager";
+import FreeDeliveryCampaignManager from "@/components/FreeDeliveryCampaignManager";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
 import CustomerCRM from "@/components/CustomerCRM";
 import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
@@ -250,6 +251,10 @@ const AdminProducts = () => {
             <Sparkles className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">অফার</span>
           </TabsTrigger>
+          <TabsTrigger value="freedelivery" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <Truck className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ফ্রি ডেলিভারি</span>
+          </TabsTrigger>
           <TabsTrigger value="footer" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <FileText className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ফুটার</span>
@@ -397,6 +402,10 @@ const AdminProducts = () => {
 
         <TabsContent value="offers" className="mt-4">
           <ShopOfferManager />
+        </TabsContent>
+
+        <TabsContent value="freedelivery" className="mt-4">
+          <FreeDeliveryCampaignManager />
         </TabsContent>
 
         <TabsContent value="footer" className="mt-4">
