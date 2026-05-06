@@ -129,14 +129,14 @@ function CampaignRow({ c, products, onEdit, onDelete }: { c: Campaign; products:
     queryKey: ["fd-tiers", c.id],
     queryFn: async () => {
       const { data } = await supabase.from("free_delivery_campaign_tiers" as any).select("*").eq("campaign_id", c.id).order("required_products");
-      return (data as Tier[]) ?? [];
+      return ((data as unknown) as Tier[]) ?? [];
     },
   });
   const { data: cps = [] } = useQuery({
     queryKey: ["fd-cps", c.id],
     queryFn: async () => {
       const { data } = await supabase.from("free_delivery_campaign_products" as any).select("*").eq("campaign_id", c.id);
-      return (data as Cp[]) ?? [];
+      return ((data as unknown) as Cp[]) ?? [];
     },
   });
 
