@@ -96,6 +96,7 @@ const AdminProducts = () => {
     setForm({
       name: p.name || "",
       description: p.description || "",
+      description_html: p.description_html || "",
       price: String(p.price || 0),
       discount_price: p.discount_price ? String(p.discount_price) : "",
       image_url: p.image_url || "",
