@@ -116,6 +116,7 @@ const AdminProducts = () => {
             weight_grams: v.weight_grams != null ? String(v.weight_grams) : "",
           }))
         : [],
+      suggested_product_ids: Array.isArray(p.suggested_product_ids) ? p.suggested_product_ids : [],
     });
     setDialogOpen(true);
   };
