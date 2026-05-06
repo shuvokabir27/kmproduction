@@ -10,12 +10,14 @@ export interface CartItem {
   quantity: number;
   unit_type?: string | null;
   weight_grams?: number;
+  min_quantity?: number; // for combo items: minimum & step quantity (must be multiples)
 }
 
 export interface OfferContext {
   offer_id: string;
   title: string;
   free_delivery: boolean; // explicit free delivery from offer
+  is_combo?: boolean;
 }
 
 interface CartCtx {
@@ -79,7 +81,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateQty = useCallback((id: string, qty: number) => {
-    setItems(prev => prev.map(x => x.id === id ? { ...x, quantity: Math.max(1, qty) } : x));
+    setItems(prev => prev.map(x => {
+      if (x.id !== id) return x;
+      const min = x.min_quantity || 1;
+      const snapped = Math.max(min, Math.round(qty / min) * min);
+      return { ...x, quantity: snapped };
+    }));
   }, []);
 
   const removeItem = useCallback((id: string) => {

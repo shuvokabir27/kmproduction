@@ -180,9 +180,9 @@ export const CartDrawer = () => {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-1 bg-white rounded-full border border-gray-200">
-                        <button onClick={() => updateQty(it.id, it.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
-                        <span className="text-sm font-bold w-6 text-center">{toBn(it.quantity)}</span>
-                        <button onClick={() => updateQty(it.id, it.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
+                        <button onClick={() => updateQty(it.id, it.min_quantity ? Math.max(it.min_quantity, it.quantity - it.min_quantity) : it.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
+                        <span className="text-sm font-bold w-8 text-center">{toBn(it.quantity)}</span>
+                        <button onClick={() => updateQty(it.id, it.min_quantity ? it.quantity + it.min_quantity : it.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
                       </div>
                       <p className="font-extrabold text-sm" style={{ color: BRAND_GREEN }}>৳{toBn(it.unit_price * it.quantity)}</p>
                     </div>
@@ -259,13 +259,13 @@ export const CartDrawer = () => {
                         </div>
                         <div className="flex items-center justify-between mt-1.5 gap-2">
                           <div className="flex items-center gap-1 bg-white rounded-full border border-gray-200">
-                            <button onClick={() => updateQty(it.id, it.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
+                            <button onClick={() => updateQty(it.id, it.min_quantity ? it.quantity - it.min_quantity : it.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
                             <span className="text-sm font-bold min-w-[40px] text-center px-1 text-gray-900">{toBn(it.quantity)}<span className="text-[9px] text-gray-500 ml-0.5">{unitLabel}</span></span>
-                            <button onClick={() => updateQty(it.id, it.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
+                            <button onClick={() => updateQty(it.id, it.min_quantity ? it.quantity + it.min_quantity : it.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
                           </div>
                           <p className="font-extrabold text-xs" style={{ color: BRAND_GREEN }}>৳{toBn(it.unit_price * it.quantity)}</p>
                         </div>
-                        {(it.unit_type === "piece" || it.unit_type === "kg") && (
+                        {!it.min_quantity && (it.unit_type === "piece" || it.unit_type === "kg") && (
                           <div className="flex flex-wrap gap-1 mt-1.5">
                             {[5, 10, 20].map(n => (
                               <button

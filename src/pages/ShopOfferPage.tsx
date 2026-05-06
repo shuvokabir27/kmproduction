@@ -90,6 +90,7 @@ export default function ShopOfferPage() {
     comboItems.forEach((c: any) => {
       const p = productsData.find(x => x.id === c.product_id);
       if (!p) return;
+      const baseQty = c.quantity || 1;
       const unitPrice = comboPrice > 0 && comboTotal > 0
         ? Math.round((Number(p.discount_price ?? p.price ?? 0) * (comboPrice / comboTotal)) * 100) / 100
         : Number(p.discount_price ?? p.price ?? 0);
@@ -99,7 +100,8 @@ export default function ShopOfferPage() {
         image_url: p.image_url,
         variant_label: `কম্বো: ${offer.title}`,
         unit_price: unitPrice,
-        quantity: c.quantity || 1,
+        quantity: baseQty,
+        min_quantity: baseQty,
         unit_type: p.unit_type ?? null,
         weight_grams: Number(p.weight_grams || 0),
       });
@@ -109,7 +111,7 @@ export default function ShopOfferPage() {
       toast.error("কোনো প্রডাক্ট কার্টে যোগ হয়নি");
       return;
     }
-    cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery });
+    cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery, is_combo: true });
     toast.success("কম্বো অর্ডার কার্টে যোগ হয়েছে");
     cart.open();
   };
@@ -209,17 +211,14 @@ export default function ShopOfferPage() {
               {comboItems.map((c: any, idx: number) => {
                 const p = productsData?.find(x => x.id === c.product_id);
                 if (!p) return null;
-                const unit = Number(p.discount_price ?? p.price ?? 0);
-                const lineTotal = unit * (c.quantity || 1);
+                const qty = c.quantity || 1;
+                const unitLabel = p.unit_type === "kg" ? "কেজি" : p.unit_type === "size" ? "সাইজ" : "পিস";
                 return (
                   <div key={idx} className="flex items-center gap-3 bg-card border rounded-xl p-3">
                     {p.image_url && <img src={p.image_url} alt={p.name} className="w-16 h-16 rounded-lg object-cover" />}
                     <div className="flex-1 min-w-0">
                       <p className="font-bold truncate">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">৳{toBn(unit)} × {toBn(c.quantity || 1)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-extrabold text-amber-600">৳{toBn(lineTotal)}</p>
+                      <p className="text-xs text-muted-foreground">পরিমাণ: {toBn(qty)} {unitLabel}</p>
                     </div>
                   </div>
                 );
@@ -227,20 +226,15 @@ export default function ShopOfferPage() {
             </div>
 
             <div className="bg-card border rounded-xl p-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">মোট মূল্য:</span>
-                <span className="font-bold line-through opacity-70">৳{toBn(comboTotal)}</span>
-              </div>
               {comboPrice > 0 && (
                 <div className="flex justify-between text-lg">
-                  <span className="font-bold">অফার মূল্য:</span>
+                  <span className="font-bold">কম্বো মূল্য:</span>
                   <span className="font-extrabold text-green-600">৳{toBn(comboPrice)}</span>
                 </div>
               )}
-              {savings > 0 && (
-                <div className="flex justify-between text-sm bg-green-50 dark:bg-green-950/30 rounded-lg p-2">
-                  <span className="text-green-700 dark:text-green-400 font-bold">আপনার সাশ্রয়:</span>
-                  <span className="text-green-700 dark:text-green-400 font-extrabold">৳{toBn(savings)} ({toBn(savingsPct)}%)</span>
+              {offer.combo_free_delivery && (
+                <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                  <Truck className="h-4 w-4" /> ফ্রি ডেলিভারি
                 </div>
               )}
               {offer.combo_free_delivery && (
@@ -274,10 +268,7 @@ export default function ShopOfferPage() {
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <div className="flex-1">
             {isCombo && comboPrice > 0 ? (
-              <>
-                <p className="text-xs text-muted-foreground line-through">৳{toBn(comboTotal)}</p>
-                <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
-              </>
+              <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
             ) : (
               <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
             )}
