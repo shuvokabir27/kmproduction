@@ -343,6 +343,14 @@ const Products = () => {
                 autoFocus
                 value={search}
                 onChange={e => setSearch(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    setMobileSearchOpen(false);
+                    setTimeout(() => {
+                      document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
+                    }, 50);
+                  }
+                }}
                 placeholder="পণ্য খুঁজুন..."
                 className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
               />
@@ -350,6 +358,36 @@ const Products = () => {
                 <button onClick={() => setSearch("")} className="ml-2 p-1 hover:bg-gray-200 rounded-full"><X className="h-3.5 w-3.5 text-gray-500" /></button>
               )}
             </div>
+            {search.trim() && (
+              <div className="mt-2 max-h-72 overflow-y-auto rounded-xl border bg-white shadow-sm divide-y">
+                {filteredProducts.length === 0 ? (
+                  <div className="px-4 py-3 text-sm text-gray-500">কোন পণ্য পাওয়া যায়নি</div>
+                ) : (
+                  filteredProducts.slice(0, 8).map((p: any) => (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        setSelectedProduct(p);
+                        setSelectedVariantIdx(Array.isArray(p.variants) && p.variants.length > 0 ? 0 : -1);
+                        setQuantity(1);
+                        setMobileSearchOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-50"
+                    >
+                      {p.image_url && (
+                        <img src={p.image_url} alt={p.name} className="h-10 w-10 rounded object-cover" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate">{p.name}</div>
+                        {p.price != null && (
+                          <div className="text-xs text-gray-500">৳ {toBn(Number(p.discount_price ?? p.price))}</div>
+                        )}
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         )}
         {mobileMenuOpen && (
