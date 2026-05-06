@@ -22,7 +22,7 @@ export default function FreeDeliveryPage() {
   const [phoneCount, setPhoneCount] = useState<number>(0);
 
   useEffect(() => {
-    if (customer) setForm((f) => ({ ...f, name: customer.name || "", phone: customer.phone || "", address: customer.address || "" }));
+    if (customer) setForm((f) => ({ ...f, name: customer.full_name || "", phone: customer.phone || "", address: customer.address || "" }));
   }, [customer]);
 
   const { data: campaign, isLoading } = useQuery({
