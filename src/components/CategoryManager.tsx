@@ -99,6 +99,7 @@ const CategoryManager = () => {
       label: form.label.trim(),
       value,
       icon: form.icon.trim() || null,
+      image_url: form.image_url.trim() || null,
       parent_id: form.parent_id === "none" ? null : form.parent_id,
       sort_order: Number(form.sort_order) || 0,
     };
