@@ -29,6 +29,7 @@ import ProductVideoManager from "@/components/ProductVideoManager";
 import CategoryManager from "@/components/CategoryManager";
 import ShopFooterEditor from "@/components/ShopFooterEditor";
 import { useProductCategories } from "@/hooks/useProductCategories";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 const AdminProducts = () => {
   const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
