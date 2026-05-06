@@ -331,8 +331,15 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {product.description && (
-              <p className="text-gray-700 text-sm leading-relaxed mt-4">{product.description}</p>
+            {((product as any).description_html || product.description) && (
+              (product as any).description_html ? (
+                <div
+                  className="prose prose-sm max-w-none text-gray-700 leading-relaxed mt-4 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:my-2 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:my-2 [&_p]:my-1.5 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                  dangerouslySetInnerHTML={{ __html: (product as any).description_html }}
+                />
+              ) : (
+                <p className="text-gray-700 text-sm leading-relaxed mt-4">{product.description}</p>
+              )
             )}
 
             {/* Stock */}
