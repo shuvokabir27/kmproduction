@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Sparkles, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Sparkles, Upload, Share2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 
 type ComboItem = { product_id: string; quantity: number };
@@ -17,6 +17,7 @@ type OfferMode = "fixed" | "percentage" | "free_delivery";
 
 const emptyForm = {
   title: "",
+  slug: "",
   description: "",
   offer_mode: "fixed" as OfferMode,
   combo_price: "",
@@ -31,6 +32,13 @@ const emptyForm = {
   combo_products: [] as ComboItem[],
   combo_free_delivery: false,
 };
+
+const slugify = (s: string) =>
+  s.toLowerCase().trim()
+    .replace(/[^a-z0-9\u0980-\u09FF\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60);
 
 export default function ShopOfferManager() {
   const qc = useQueryClient();
@@ -66,6 +74,7 @@ export default function ShopOfferManager() {
         : "fixed";
     setForm({
       title: o.title || "",
+      slug: o.slug || "",
       description: o.description || "",
       offer_mode: mode,
       combo_price: o.combo_price != null ? String(o.combo_price) : "",
@@ -138,6 +147,7 @@ export default function ShopOfferManager() {
 
     const payload: any = {
       title: form.title.trim(),
+      slug: form.slug.trim() ? slugify(form.slug) : null,
       description: form.description.trim() || null,
       product_id: null,
       discount_type,
@@ -219,11 +229,24 @@ export default function ShopOfferManager() {
                       {product && ` • ${product.name}`}
                     </p>
                     {o.ends_at && <p className="text-xs text-muted-foreground">শেষ: {new Date(o.ends_at).toLocaleString("bn-BD")}</p>}
+                    <p className="text-[11px] text-primary truncate flex items-center gap-1 mt-1">
+                      <LinkIcon className="h-3 w-3" />
+                      {window.location.origin}{o.slug ? `/o/${o.slug}` : `/offer/${o.id.slice(0, 8)}…`}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2 pt-1">
                   <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => openEdit(o)}>
                     <Pencil className="h-3 w-3" /> এডিট
+                  </Button>
+                  <Button size="sm" variant="outline" className="gap-1" onClick={async () => {
+                    const url = `${window.location.origin}${o.slug ? `/o/${o.slug}` : `/offer/${o.id}`}`;
+                    try {
+                      if (navigator.share) await navigator.share({ title: o.title, text: o.description || o.title, url });
+                      else { await navigator.clipboard.writeText(url); toast.success("লিংক কপি হয়েছে"); }
+                    } catch {}
+                  }}>
+                    <Share2 className="h-3 w-3" /> শেয়ার
                   </Button>
                   <Button size="sm" variant="outline" className="text-destructive" onClick={() => handleDelete(o.id)}>
                     <Trash2 className="h-3 w-3" />
@@ -241,7 +264,15 @@ export default function ShopOfferManager() {
           <div className="space-y-3">
             <div>
               <Label>শিরোনাম *</Label>
-              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="যেমন: ঈদ বিশেষ ছাড়" />
+              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value, slug: f.slug || slugify(e.target.value) }))} placeholder="যেমন: ঈদ বিশেষ ছাড়" />
+            </div>
+            <div>
+              <Label>কাস্টম লিংক (ঐচ্ছিক)</Label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">/o/</span>
+                <Input value={form.slug} onChange={e => setForm(f => ({ ...f, slug: slugify(e.target.value) }))} placeholder="eid-special" />
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-1">খালি রাখলে অটো শিরোনাম থেকে তৈরি হবে</p>
             </div>
             <div>
               <Label>বিবরণ</Label>

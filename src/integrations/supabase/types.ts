@@ -3037,6 +3037,7 @@ export type Database = {
           popup_priority: number
           product_id: string | null
           show_popup: boolean
+          slug: string | null
           starts_at: string
           title: string
           updated_at: string
@@ -3058,6 +3059,7 @@ export type Database = {
           popup_priority?: number
           product_id?: string | null
           show_popup?: boolean
+          slug?: string | null
           starts_at?: string
           title: string
           updated_at?: string
@@ -3079,6 +3081,7 @@ export type Database = {
           popup_priority?: number
           product_id?: string | null
           show_popup?: boolean
+          slug?: string | null
           starts_at?: string
           title?: string
           updated_at?: string

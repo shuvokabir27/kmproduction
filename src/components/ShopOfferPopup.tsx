@@ -228,7 +228,7 @@ export default function ShopOfferPopup() {
           )}
 
           <Link
-            to={`/offer/${offer.id}`}
+            to={offer.slug ? `/o/${offer.slug}` : `/offer/${offer.id}`}
             onClick={dismiss}
             className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
           >

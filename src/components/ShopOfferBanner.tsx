@@ -228,14 +228,32 @@ export default function ShopOfferBanner() {
                 </div>
               )}
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
                 <Link
-                  to={`/offer/${offer.id}`}
+                  to={offer.slug ? `/o/${offer.slug}` : `/offer/${offer.id}`}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
                 >
                   <ShoppingBag className="h-5 w-5" />
                   অফার দেখুন ও অর্ডার করুন
                 </Link>
+                <button
+                  type="button"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    const url = `${window.location.origin}${offer.slug ? `/o/${offer.slug}` : `/offer/${offer.id}`}`;
+                    try {
+                      if (navigator.share) {
+                        await navigator.share({ title: offer.title, text: offer.description || offer.title, url });
+                      } else {
+                        await navigator.clipboard.writeText(url);
+                        toast.success("লিংক কপি হয়েছে");
+                      }
+                    } catch {}
+                  }}
+                  className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur text-white font-bold px-5 py-3 rounded-2xl border border-white/30 transition-all"
+                >
+                  শেয়ার
+                </button>
               </div>
             </div>
           </div>
