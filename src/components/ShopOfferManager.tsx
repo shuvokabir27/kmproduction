@@ -17,6 +17,7 @@ type OfferMode = "fixed" | "percentage" | "free_delivery";
 
 const emptyForm = {
   title: "",
+  slug: "",
   description: "",
   offer_mode: "fixed" as OfferMode,
   combo_price: "",
@@ -31,6 +32,13 @@ const emptyForm = {
   combo_products: [] as ComboItem[],
   combo_free_delivery: false,
 };
+
+const slugify = (s: string) =>
+  s.toLowerCase().trim()
+    .replace(/[^a-z0-9\u0980-\u09FF\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60);
 
 export default function ShopOfferManager() {
   const qc = useQueryClient();
