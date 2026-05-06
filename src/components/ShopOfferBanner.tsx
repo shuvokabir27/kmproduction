@@ -241,5 +241,48 @@ export default function ShopOfferBanner() {
         </div>
       </div>
     </section>
+
+    {previewProduct && (
+      <div
+        className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+        onClick={() => setPreviewProduct(null)}
+      >
+        <div
+          className="bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+          style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
+        >
+          {previewProduct.image_url && (
+            <div className="aspect-square bg-gray-100">
+              <img src={previewProduct.image_url} alt={previewProduct.name} className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="p-4 space-y-3">
+            <h3 className="font-extrabold text-lg text-gray-900">{previewProduct.name}</h3>
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">নিয়মিত মূল্য</p>
+                <p className="text-2xl font-extrabold text-red-600">
+                  ৳{toBn(Number(previewProduct.discount_price ?? previewProduct.price ?? 0))}
+                  {previewProduct.discount_price && previewProduct.discount_price < previewProduct.price && (
+                    <span className="text-sm text-gray-400 line-through ml-2 font-semibold">৳{toBn(Number(previewProduct.price))}</span>
+                  )}
+                </p>
+              </div>
+              <div className="bg-orange-100 text-orange-700 font-bold px-3 py-1.5 rounded-xl text-sm">
+                কম্বোতে × {toBn(previewProduct.qty)}
+              </div>
+            </div>
+            <button
+              onClick={() => setPreviewProduct(null)}
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white font-bold py-3 rounded-2xl"
+            >
+              বন্ধ করুন
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
