@@ -268,10 +268,7 @@ export default function ShopOfferPage() {
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <div className="flex-1">
             {isCombo && comboPrice > 0 ? (
-              <>
-                <p className="text-xs text-muted-foreground line-through">৳{toBn(comboTotal)}</p>
-                <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
-              </>
+              <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
             ) : (
               <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
             )}
