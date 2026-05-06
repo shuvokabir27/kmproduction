@@ -14,6 +14,7 @@ import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
 import { BestSellersSection } from "@/components/BestSellersSection";
+import ShopOfferBanner from "@/components/ShopOfferBanner";
 
 
 const extractYouTubeId = (url: string): string | null => {
