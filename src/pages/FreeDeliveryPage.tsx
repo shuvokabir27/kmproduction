@@ -181,13 +181,13 @@ export default function FreeDeliveryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24" style={{ fontFamily: "'Tiro Bangla', serif" }}>
       {/* Header */}
       <header className="sticky top-0 z-20 bg-gradient-to-r from-green-700 to-emerald-600 text-white shadow-lg">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="p-1.5 hover:bg-white/10 rounded-lg"><ArrowLeft className="h-5 w-5" /></button>
           <div className="flex-1">
-            <h1 className="font-bold text-lg flex items-center gap-2"><Truck className="h-5 w-5" /> {campaign.campaign.title}</h1>
+            <h1 className="font-bold text-lg flex items-center gap-2 text-white"><Truck className="h-5 w-5" /> {campaign.campaign.title}</h1>
             {campaign.campaign.description && <p className="text-xs text-white/80">{campaign.campaign.description}</p>}
           </div>
         </div>
@@ -195,12 +195,12 @@ export default function FreeDeliveryPage() {
 
       <div className="max-w-3xl mx-auto px-4 pt-4 space-y-4">
         {/* Progress */}
-        <div className="bg-white rounded-2xl shadow-sm border p-4">
+        <div className="bg-white rounded-2xl shadow-sm border p-4 text-gray-900">
           <div className="flex items-center justify-between mb-2 text-sm font-semibold">
-            <span className="flex items-center gap-1.5"><Sparkles className="h-4 w-4 text-amber-500" /> অগ্রগতি: {toBn(distinctCount)} / {toBn(goal)} টি প্রডাক্ট</span>
+            <span className="flex items-center gap-1.5 text-gray-800"><Sparkles className="h-4 w-4 text-amber-500" /> অগ্রগতি: {toBn(distinctCount)} / {toBn(goal)} টি প্রডাক্ট</span>
             <span className="text-green-700 font-bold">{toBn(progress)}%</span>
           </div>
-          <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
           <div className="grid grid-cols-3 gap-2 mt-3">
@@ -208,9 +208,9 @@ export default function FreeDeliveryPage() {
               const reached = distinctCount >= t.required_products;
               return (
                 <div key={t.id} className={`text-center p-2 rounded-lg border ${reached ? "bg-green-50 border-green-300" : "bg-gray-50 border-gray-200"}`}>
-                  <div className={`text-xs font-bold ${reached ? "text-green-700" : "text-gray-500"}`}>{t.label}</div>
-                  <div className="text-[11px] text-gray-500">{toBn(t.required_products)} টি</div>
-                  <div className="text-[11px] font-semibold mt-0.5">{t.reward_text}</div>
+                  <div className={`text-xs font-bold ${reached ? "text-green-700" : "text-gray-700"}`}>{t.label}</div>
+                  <div className="text-[11px] text-gray-600">{toBn(t.required_products)} টি</div>
+                  <div className="text-[11px] font-semibold mt-0.5 text-gray-800">{t.reward_text}</div>
                 </div>
               );
             })}
@@ -223,8 +223,8 @@ export default function FreeDeliveryPage() {
         </div>
 
         {/* Products */}
-        <div className="bg-white rounded-2xl shadow-sm border p-4">
-          <h2 className="font-bold mb-3">আপনার পছন্দের প্রডাক্ট বাছাই করুন</h2>
+        <div className="bg-white rounded-2xl shadow-sm border p-4 text-gray-900">
+          <h2 className="font-bold mb-3 text-gray-900">আপনার পছন্দের প্রডাক্ট বাছাই করুন</h2>
           {campaign.products.length === 0 && <p className="text-sm text-gray-500">কোনো প্রডাক্ট যোগ করা হয়নি</p>}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {campaign.products.map((p: any) => {
@@ -232,18 +232,18 @@ export default function FreeDeliveryPage() {
               const price = Number(p.discount_price ?? p.price ?? 0);
               const active = q > 0;
               return (
-                <div key={p.id} className={`border rounded-xl p-2 transition-all ${active ? "border-green-500 bg-green-50/50 ring-2 ring-green-200" : "border-gray-200"}`}>
+                <div key={p.id} className={`border rounded-xl p-2 transition-all ${active ? "border-green-500 bg-green-50/50 ring-2 ring-green-200" : "border-gray-200 bg-white"}`}>
                   <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-2">
                     {p.image_url ? <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" /> : <ShoppingBag className="h-10 w-10 m-auto text-gray-300" />}
                   </div>
-                  <p className="text-xs font-semibold line-clamp-2 min-h-[2.5rem]">{p.name}</p>
+                  <p className="text-xs font-bold line-clamp-2 min-h-[2.5rem] text-gray-900">{p.name}</p>
                   <p className="text-sm font-bold text-green-700">৳{toBn(price)}</p>
                   {q === 0 ? (
-                    <Button size="sm" className="w-full mt-1.5 h-8 bg-green-600 hover:bg-green-700" onClick={() => setQty(p.id, 1)}>
+                    <Button size="sm" className="w-full mt-1.5 h-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setQty(p.id, 1)}>
                       <Plus className="h-3.5 w-3.5 mr-1" /> যোগ করুন
                     </Button>
                   ) : (
-                    <div className="flex items-center justify-between mt-1.5 bg-white border rounded-lg">
+                    <div className="flex items-center justify-between mt-1.5 bg-white border rounded-lg text-gray-900">
                       <button onClick={() => setQty(p.id, q - 1)} className="p-1.5 hover:bg-gray-100 rounded-l-lg"><Minus className="h-3.5 w-3.5" /></button>
                       <span className="font-bold text-sm">{toBn(q)}</span>
                       <button onClick={() => setQty(p.id, q + 1)} className="p-1.5 hover:bg-gray-100 rounded-r-lg"><Plus className="h-3.5 w-3.5" /></button>
@@ -256,21 +256,21 @@ export default function FreeDeliveryPage() {
         </div>
 
         {/* Order form */}
-        <div className="bg-white rounded-2xl shadow-sm border p-4 space-y-3">
-          <h2 className="font-bold">অর্ডার তথ্য</h2>
-          <div><Label>নাম *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="আপনার নাম" /></div>
+        <div className="bg-white rounded-2xl shadow-sm border p-4 space-y-3 text-gray-900">
+          <h2 className="font-bold text-gray-900">অর্ডার তথ্য</h2>
+          <div><Label className="text-gray-800">নাম *</Label><Input className="bg-white text-gray-900" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="আপনার নাম" /></div>
           <div>
-            <Label>মোবাইল নম্বর *</Label>
-            <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").slice(0, 11) })} placeholder="01XXXXXXXXX" inputMode="numeric" />
+            <Label className="text-gray-800">মোবাইল নম্বর *</Label>
+            <Input className="bg-white text-gray-900" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").slice(0, 11) })} placeholder="01XXXXXXXXX" inputMode="numeric" />
             {form.phone.length === 11 && phoneCount > 0 && (
               <p className={`text-xs mt-1 ${remainingAllowed > 0 ? "text-amber-600" : "text-red-600"}`}>
                 এই নম্বরে আগে {toBn(phoneCount)} বার অর্ডার আছে। বাকি: {toBn(remainingAllowed)}
               </p>
             )}
           </div>
-          <div><Label>ঠিকানা *</Label><Textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="বিস্তারিত ঠিকানা" rows={2} /></div>
+          <div><Label className="text-gray-800">ঠিকানা *</Label><Textarea className="bg-white text-gray-900" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="বিস্তারিত ঠিকানা" rows={2} /></div>
           <div className="flex items-center justify-between bg-green-50 rounded-lg px-3 py-2">
-            <span className="text-sm">মোট</span>
+            <span className="text-sm text-gray-800">মোট</span>
             <span className="font-bold text-green-700">৳{toBn(totalAmount)} <span className="text-xs font-normal">(ডেলিভারি ফ্রি)</span></span>
           </div>
         </div>
@@ -280,13 +280,13 @@ export default function FreeDeliveryPage() {
       <div className="fixed bottom-0 inset-x-0 bg-white border-t shadow-lg p-3 z-30">
         <div className="max-w-3xl mx-auto">
           {!reachedTier ? (
-            <Button disabled className="w-full h-12 text-base">
+            <Button disabled className="w-full h-12 text-base bg-gray-300 text-gray-700">
               আরও {toBn(goal - distinctCount)} টি প্রডাক্ট যোগ করুন
             </Button>
           ) : remainingAllowed <= 0 && form.phone.length === 11 ? (
-            <Button disabled className="w-full h-12 text-base bg-red-500">এই মোবাইল দিয়ে অর্ডার সীমা পূরণ</Button>
+            <Button disabled className="w-full h-12 text-base bg-red-500 text-white">এই মোবাইল দিয়ে অর্ডার সীমা পূরণ</Button>
           ) : (
-            <Button onClick={submit} disabled={submitting || !canOrder} className="w-full h-12 text-base bg-green-600 hover:bg-green-700 font-bold">
+            <Button onClick={submit} disabled={submitting || !canOrder} className="w-full h-12 text-base bg-green-600 hover:bg-green-700 text-white font-bold">
               {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন (৳${toBn(totalAmount)})`}
             </Button>
           )}
