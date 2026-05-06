@@ -10,6 +10,7 @@ const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২�
 
 export default function ShopOfferBanner() {
   const [now, setNow] = useState(Date.now());
+  const [previewProduct, setPreviewProduct] = useState<any>(null);
   const cart = useCart();
 
   const { data: offers } = useQuery({
@@ -170,30 +171,45 @@ export default function ShopOfferBanner() {
                 {discountText}
               </div>
 
-              {/* Combo list compact */}
+              {/* Combo product cards (enlarged, clickable for original price) */}
               {isCombo && comboProducts && comboProducts.length > 0 && (
-                <div className="flex flex-wrap gap-2 justify-center md:justify-start pt-1">
-                  {comboItems.map((c: any, idx: number) => {
-                    const p = comboProducts.find(x => x.id === c.product_id);
-                    if (!p) return null;
-                    return (
-                      <div key={idx} className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur rounded-full pl-1 pr-3 py-1 text-xs font-semibold">
-                        {p.image_url && <img src={p.image_url} alt={p.name} className="w-6 h-6 rounded-full object-cover" />}
-                        <span>{p.name} × {toBn(c.quantity || 1)}</span>
+                <div className="space-y-2 pt-1">
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                    {comboItems.map((c: any, idx: number) => {
+                      const p = comboProducts.find(x => x.id === c.product_id);
+                      if (!p) return null;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setPreviewProduct({ ...p, qty: c.quantity || 1 })}
+                          className="group flex flex-col items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur rounded-2xl p-2 w-[100px] md:w-[120px] transition-all hover:scale-105"
+                          title="মূল্য দেখতে ক্লিক করুন"
+                        >
+                          {p.image_url && (
+                            <div className="relative w-full aspect-square rounded-xl overflow-hidden ring-2 ring-white/40 shadow-lg">
+                              <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                              <div className="absolute top-1 right-1 bg-white/90 text-red-700 text-[10px] font-extrabold rounded-full px-1.5 py-0.5">×{toBn(c.quantity || 1)}</div>
+                            </div>
+                          )}
+                          <span className="text-[11px] md:text-xs font-bold text-white text-center line-clamp-2 leading-tight">{p.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                    {offer.combo_price && comboOriginalTotal > Number(offer.combo_price) && (
+                      <div className="inline-flex items-center gap-1.5 bg-green-500 rounded-full px-3 py-1 text-xs font-bold">
+                        <span className="line-through opacity-80">৳{toBn(comboOriginalTotal)}</span>
+                        <span>{toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়</span>
                       </div>
-                    );
-                  })}
-                  {offer.combo_price && comboOriginalTotal > Number(offer.combo_price) && (
-                    <div className="inline-flex items-center gap-1.5 bg-green-500 rounded-full px-3 py-1 text-xs font-bold">
-                      <span className="line-through opacity-80">৳{toBn(comboOriginalTotal)}</span>
-                      <span>{toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়</span>
-                    </div>
-                  )}
-                  {offer.combo_free_delivery && (
-                    <div className="inline-flex items-center gap-1.5 bg-blue-500 rounded-full px-3 py-1 text-xs font-bold">
-                      <Truck className="h-3 w-3" /> ফ্রি ডেলিভারি
-                    </div>
-                  )}
+                    )}
+                    {offer.combo_free_delivery && (
+                      <div className="inline-flex items-center gap-1.5 bg-blue-500 rounded-full px-3 py-1 text-xs font-bold">
+                        <Truck className="h-3 w-3" /> ফ্রি ডেলিভারি
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
