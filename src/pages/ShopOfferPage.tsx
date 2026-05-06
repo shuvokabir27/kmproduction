@@ -211,17 +211,14 @@ export default function ShopOfferPage() {
               {comboItems.map((c: any, idx: number) => {
                 const p = productsData?.find(x => x.id === c.product_id);
                 if (!p) return null;
-                const unit = Number(p.discount_price ?? p.price ?? 0);
-                const lineTotal = unit * (c.quantity || 1);
+                const qty = c.quantity || 1;
+                const unitLabel = p.unit_type === "kg" ? "কেজি" : p.unit_type === "size" ? "সাইজ" : "পিস";
                 return (
                   <div key={idx} className="flex items-center gap-3 bg-card border rounded-xl p-3">
                     {p.image_url && <img src={p.image_url} alt={p.name} className="w-16 h-16 rounded-lg object-cover" />}
                     <div className="flex-1 min-w-0">
                       <p className="font-bold truncate">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">৳{toBn(unit)} × {toBn(c.quantity || 1)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-extrabold text-amber-600">৳{toBn(lineTotal)}</p>
+                      <p className="text-xs text-muted-foreground">পরিমাণ: {toBn(qty)} {unitLabel}</p>
                     </div>
                   </div>
                 );
