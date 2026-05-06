@@ -133,6 +133,7 @@ export default function ShopOfferBanner() {
   );
 
   return (
+    <>
     <section
       className="relative w-full overflow-hidden"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
