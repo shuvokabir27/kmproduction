@@ -352,8 +352,8 @@ const Products = () => {
           </div>
         )}
 
-        {/* Categories Mega Bar */}
-        <div className="hidden md:block border-t bg-white">
+        {/* Categories Mega Bar — hidden */}
+        <div className="hidden">
           <div className="max-w-7xl mx-auto px-4">
             <ul className="flex items-stretch gap-1 text-sm font-semibold text-gray-700 overflow-x-auto">
               <li>
