@@ -252,17 +252,17 @@ const Products = () => {
           </Link>
 
           <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-gray-700">
-            <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-4 w-4" /> HOME</Link>
-            <a href="#shop" className="hover:text-gray-900">SHOP</a>
+            <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-4 w-4" /> হোম</Link>
+            <a href="#shop" className="hover:text-gray-900">শপ</a>
             <a href="#categories" className="hover:text-gray-900">ক্যাটাগরি</a>
-            <a href="#about" className="hover:text-gray-900">ABOUT</a>
-            <a href="#contact" className="hover:text-gray-900">CONTACT</a>
+            <a href="#about" className="hover:text-gray-900">আমাদের সম্পর্কে</a>
+            <a href="#contact" className="hover:text-gray-900">যোগাযোগ</a>
             <button
               onClick={() => featured[0] && openOrderDialog(featured[0])}
               className="text-white font-bold text-xs px-4 py-2 rounded-full flex items-center gap-1.5 shadow"
               style={{ backgroundColor: ACCENT_RED }}
             >
-              🔥 OFFER
+              🔥 অফার
             </button>
             {shopCustomer ? (
               <Link
