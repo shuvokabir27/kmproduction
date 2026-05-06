@@ -18,6 +18,7 @@ import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import MobileShopNav from "@/components/MobileShopNav";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
 import ShopCategoryGrid from "@/components/ShopCategoryGrid";
+import FreeDeliveryHomeCTA from "@/components/FreeDeliveryHomeCTA";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
