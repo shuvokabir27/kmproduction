@@ -7,6 +7,7 @@ export interface ProductCategory {
   label: string;
   value: string;
   icon: string | null;
+  image_url: string | null;
   sort_order: number;
   is_active: boolean;
 }
