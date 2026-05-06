@@ -605,6 +605,47 @@ const AdminProducts = () => {
                 <Label>ফিচার্ড</Label>
               </div>
             </div>
+            {/* Suggested products */}
+            <div className="border border-border/40 rounded-xl p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-bold">সাজেস্টেড প্রডাক্ট</Label>
+                <span className="text-[11px] text-muted-foreground">
+                  {form.suggested_product_ids.length > 0
+                    ? `${form.suggested_product_ids.length}টি সিলেক্ট করা`
+                    : "সিলেক্ট না করলে অটো বাছাই হবে"}
+                </span>
+              </div>
+              <div className="max-h-48 overflow-y-auto rounded-lg border border-border/30 divide-y divide-border/20">
+                {(products || [])
+                  .filter((p: any) => !editingProduct || p.id !== editingProduct.id)
+                  .map((p: any) => {
+                    const checked = form.suggested_product_ids.includes(p.id);
+                    return (
+                      <label key={p.id} className="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-accent/40">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => {
+                            setForm((f) => ({
+                              ...f,
+                              suggested_product_ids: e.target.checked
+                                ? [...f.suggested_product_ids, p.id]
+                                : f.suggested_product_ids.filter((id) => id !== p.id),
+                            }));
+                          }}
+                          className="h-3.5 w-3.5 accent-primary"
+                        />
+                        {p.image_url && <img src={p.image_url} alt="" className="h-6 w-6 rounded object-cover" />}
+                        <span className="text-xs text-foreground flex-1 truncate">{p.name}</span>
+                        <span className="text-[10px] text-muted-foreground">৳{p.discount_price ?? p.price}</span>
+                      </label>
+                    );
+                  })}
+                {(!products || products.length === 0) && (
+                  <p className="text-xs text-muted-foreground text-center py-3">কোনো প্রডাক্ট নেই</p>
+                )}
+              </div>
+            </div>
             <Button onClick={handleSave} className="w-full">{editingProduct ? "আপডেট করুন" : "যোগ করুন"}</Button>
           </div>
         </DialogContent>
