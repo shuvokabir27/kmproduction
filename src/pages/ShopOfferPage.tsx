@@ -90,6 +90,7 @@ export default function ShopOfferPage() {
     comboItems.forEach((c: any) => {
       const p = productsData.find(x => x.id === c.product_id);
       if (!p) return;
+      const baseQty = c.quantity || 1;
       const unitPrice = comboPrice > 0 && comboTotal > 0
         ? Math.round((Number(p.discount_price ?? p.price ?? 0) * (comboPrice / comboTotal)) * 100) / 100
         : Number(p.discount_price ?? p.price ?? 0);
@@ -99,7 +100,8 @@ export default function ShopOfferPage() {
         image_url: p.image_url,
         variant_label: `কম্বো: ${offer.title}`,
         unit_price: unitPrice,
-        quantity: c.quantity || 1,
+        quantity: baseQty,
+        min_quantity: baseQty,
         unit_type: p.unit_type ?? null,
         weight_grams: Number(p.weight_grams || 0),
       });
@@ -109,7 +111,7 @@ export default function ShopOfferPage() {
       toast.error("কোনো প্রডাক্ট কার্টে যোগ হয়নি");
       return;
     }
-    cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery });
+    cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery, is_combo: true });
     toast.success("কম্বো অর্ডার কার্টে যোগ হয়েছে");
     cart.open();
   };
