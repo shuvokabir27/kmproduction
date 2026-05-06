@@ -10,6 +10,7 @@ export interface CartItem {
   quantity: number;
   unit_type?: string | null;
   weight_grams?: number;
+  min_quantity?: number; // for combo items: minimum & step quantity (must be multiples)
 }
 
 export interface OfferContext {
