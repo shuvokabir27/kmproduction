@@ -528,6 +528,9 @@ const Products = () => {
         </div>
       </section>
 
+      {/* Free Delivery CTA */}
+      <FreeDeliveryHomeCTA />
+
       {/* Categories Grid */}
       <ShopCategoryGrid />
 
