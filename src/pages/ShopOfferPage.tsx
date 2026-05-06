@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ShoppingBag, Truck, Tag, Clock, Package, ArrowLeft, Check } from "lucide-react";
+import { Sparkles, ShoppingBag, Truck, Tag, Clock, Package, ArrowLeft, Check, CheckCircle2, User, Phone, MapPin } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useShopCustomer } from "@/hooks/useShopCustomer";
 import { toast } from "sonner";
 
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -12,7 +13,22 @@ export default function ShopOfferPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const cart = useCart();
+  const { customer } = useShopCustomer();
   const [now, setNow] = useState(Date.now());
+  const [form, setForm] = useState({ name: "", phone: "", address: "" });
+  const [phoneError, setPhoneError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (customer) {
+      setForm(f => ({
+        name: f.name || customer.full_name || "",
+        phone: f.phone || customer.phone || "",
+        address: f.address || customer.address || "",
+      }));
+    }
+  }, [customer]);
 
   useEffect(() => {
     const i = setInterval(() => setNow(Date.now()), 1000);
@@ -137,6 +153,85 @@ export default function ShopOfferPage() {
     cart.setOffer({ offer_id: offer.id, title: offer.title, free_delivery: !!offer.combo_free_delivery });
     toast.success("অফার কার্টে যোগ হয়েছে");
     cart.open();
+  };
+
+  const handlePhoneChange = (val: string) => {
+    const digits = val.replace(/\D/g, "").slice(0, 11);
+    setForm(f => ({ ...f, phone: digits }));
+    setPhoneError(digits.length > 0 && digits.length !== 11 ? "মোবাইল নম্বর ১১ ডিজিটের হতে হবে" : "");
+  };
+
+  const handleSubmitOrder = async () => {
+    if (!productsData || productsData.length === 0) { toast.error("প্রডাক্ট লোড হচ্ছে"); return; }
+    if (!form.name.trim()) return toast.error("নাম দিন");
+    if (form.phone.length !== 11) { setPhoneError("মোবাইল নম্বর ১১ ডিজিটের হতে হবে"); return; }
+    if (!form.address.trim()) return toast.error("ঠিকানা দিন");
+
+    let rows: any[] = [];
+    if (isCombo) {
+      rows = comboItems.map((c: any) => {
+        const p = productsData.find(x => x.id === c.product_id);
+        if (!p) return null;
+        const baseQty = c.quantity || 1;
+        const unitPrice = comboPrice > 0 && comboTotal > 0
+          ? Math.round((Number(p.discount_price ?? p.price ?? 0) * (comboPrice / comboTotal)) * 100) / 100
+          : Number(p.discount_price ?? p.price ?? 0);
+        return {
+          product_id: p.id,
+          product_name: `${p.name} (কম্বো: ${offer.title})`,
+          variant_label: `কম্বো: ${offer.title}`,
+          quantity: baseQty,
+          unit_price: unitPrice,
+          total_amount: unitPrice * baseQty,
+        };
+      }).filter(Boolean);
+    } else {
+      const p = productsData.find(x => x.id === singleId);
+      if (!p) { toast.error("প্রডাক্ট পাওয়া যায়নি"); return; }
+      const base = Number(p.discount_price ?? p.price ?? 0);
+      let unit = base;
+      if (isPct) unit = Math.max(0, base - (base * Number(offer.discount_value || 0)) / 100);
+      else if (offer.discount_type === "fixed") unit = Math.max(0, base - Number(offer.discount_value || 0));
+      rows = [{
+        product_id: p.id,
+        product_name: `${p.name} (অফার: ${offer.title})`,
+        variant_label: `অফার: ${offer.title}`,
+        quantity: 1,
+        unit_price: unit,
+        total_amount: unit,
+      }];
+    }
+
+    if (rows.length === 0) { toast.error("অর্ডার তৈরি করা যায়নি"); return; }
+
+    setSubmitting(true);
+    try {
+      let sharedNumber: number | null = null;
+      if (rows.length > 1) {
+        const { data: numData, error: numErr } = await supabase.rpc("next_order_number" as any);
+        if (numErr) throw numErr;
+        sharedNumber = numData as number;
+      }
+      const insertRows = rows.map((r, idx) => ({
+        ...r,
+        customer_name: form.name.trim(),
+        customer_phone: form.phone,
+        customer_address: form.address.trim(),
+        delivery_charge: 0,
+        shop_customer_id: customer?.id ?? null,
+        payment_method: "cod",
+        ...(sharedNumber ? { order_number: sharedNumber } : {}),
+      }));
+      const { error } = await supabase.from("orders").insert(insertRows as any);
+      if (error) throw error;
+      setSuccess(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("Offer order error:", err);
+      toast.error("অর্ডার করতে সমস্যা হয়েছে");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const TimeBox = ({ value, label }: { value: number; label: string }) => (
@@ -268,27 +363,104 @@ export default function ShopOfferPage() {
             <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600" /> ডেলিভারি চার্জ ফ্রি</li>
           )}
         </ul>
+
+        {/* Inline Order Form */}
+        <div id="offer-order-form" className="bg-card border-2 border-amber-500/30 rounded-2xl p-5 mt-6 shadow-xl">
+          {success ? (
+            <div className="flex flex-col items-center text-center py-6 gap-3">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 className="h-9 w-9 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-extrabold text-green-700">অর্ডার সফল! 🎉</h3>
+              <p className="text-muted-foreground text-sm">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
+              <button
+                onClick={() => navigate("/products")}
+                className="mt-2 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl"
+              >
+                আরও কেনাকাটা করুন
+              </button>
+            </div>
+          ) : (
+            <>
+              <h3 className="text-lg font-extrabold mb-1 flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-amber-600" /> অর্ডার করতে নিচের তথ্য দিন
+              </h3>
+              <p className="text-xs text-muted-foreground mb-4">ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে টাকা দিন</p>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-bold mb-1.5 flex items-center gap-1.5"><User className="h-4 w-4" /> আপনার নাম <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                    placeholder="পুরো নাম"
+                    maxLength={100}
+                    className="w-full h-11 px-3 rounded-xl border-2 border-border bg-background focus:border-amber-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-bold mb-1.5 flex items-center gap-1.5"><Phone className="h-4 w-4" /> মোবাইল নম্বর <span className="text-red-500">*</span></label>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={form.phone}
+                    onChange={e => handlePhoneChange(e.target.value)}
+                    placeholder="01XXXXXXXXX"
+                    maxLength={11}
+                    className={`w-full h-11 px-3 rounded-xl border-2 bg-background focus:border-amber-500 outline-none ${phoneError ? "border-red-400" : "border-border"}`}
+                  />
+                  {phoneError && <p className="text-red-500 text-xs mt-1">{phoneError}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-bold mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4" /> ঠিকানা <span className="text-red-500">*</span></label>
+                  <textarea
+                    value={form.address}
+                    onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
+                    placeholder="সম্পূর্ণ ঠিকানা (গ্রাম/রোড, পোস্ট, থানা, জেলা)"
+                    rows={3}
+                    maxLength={500}
+                    className="w-full px-3 py-2 rounded-xl border-2 border-border bg-background focus:border-amber-500 outline-none resize-none"
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmitOrder}
+                  disabled={submitting}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-2xl shadow-xl text-base"
+                >
+                  <ShoppingBag className="h-5 w-5" />
+                  {submitting ? "অর্ডার হচ্ছে..." : isCombo && comboPrice > 0 ? `অর্ডার কনফার্ম করুন (৳${toBn(comboPrice)})` : "অর্ডার কনফার্ম করুন"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur border-t p-3">
-        <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <div className="flex-1">
-            {isCombo && comboPrice > 0 ? (
-              <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
-            ) : (
-              <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
-            )}
+      {!success && (
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur border-t p-3">
+          <div className="max-w-3xl mx-auto flex items-center gap-3">
+            <div className="flex-1">
+              {isCombo && comboPrice > 0 ? (
+                <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
+              ) : (
+                <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                document.getElementById("offer-order-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-6 py-3 rounded-2xl shadow-xl"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              অর্ডার করুন
+            </button>
           </div>
-          <button
-            onClick={isCombo ? handleOrderCombo : handleOrderSingle}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-6 py-3 rounded-2xl shadow-xl"
-          >
-            <ShoppingBag className="h-5 w-5" />
-            অর্ডার করুন
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
