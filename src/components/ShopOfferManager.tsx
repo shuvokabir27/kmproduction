@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Sparkles, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Sparkles, Upload, Share2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 
 type ComboItem = { product_id: string; quantity: number };
