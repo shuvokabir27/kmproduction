@@ -15,6 +15,7 @@ import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
+import WatermarkedImage from "@/components/WatermarkedImage";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
