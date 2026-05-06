@@ -20,6 +20,7 @@ import {
 
 import OrderManagement from "@/components/OrderManagement";
 import ShopOfferManager from "@/components/ShopOfferManager";
+import FreeDeliveryCampaignManager from "@/components/FreeDeliveryCampaignManager";
 import ProductDashboardStats from "@/components/ProductDashboardStats";
 import CustomerCRM from "@/components/CustomerCRM";
 import ShopCustomersAdmin from "@/components/ShopCustomersAdmin";
@@ -209,7 +210,7 @@ const AdminProducts = () => {
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-11 h-auto sm:h-11 bg-muted/50 rounded-xl flex-wrap">
+        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-12 h-auto sm:h-11 bg-muted/50 rounded-xl flex-wrap">
           <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <LayoutDashboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">ড্যাশবোর্ড</span>
@@ -249,6 +250,10 @@ const AdminProducts = () => {
           <TabsTrigger value="offers" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <Sparkles className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">অফার</span>
+          </TabsTrigger>
+          <TabsTrigger value="freedelivery" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
+            <Truck className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">ফ্রি ডেলিভারি</span>
           </TabsTrigger>
           <TabsTrigger value="footer" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
             <FileText className="h-3.5 w-3.5" />
@@ -397,6 +402,10 @@ const AdminProducts = () => {
 
         <TabsContent value="offers" className="mt-4">
           <ShopOfferManager />
+        </TabsContent>
+
+        <TabsContent value="freedelivery" className="mt-4">
+          <FreeDeliveryCampaignManager />
         </TabsContent>
 
         <TabsContent value="footer" className="mt-4">
