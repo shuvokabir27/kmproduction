@@ -264,7 +264,15 @@ export default function ShopOfferManager() {
           <div className="space-y-3">
             <div>
               <Label>শিরোনাম *</Label>
-              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="যেমন: ঈদ বিশেষ ছাড়" />
+              <Input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value, slug: f.slug || slugify(e.target.value) }))} placeholder="যেমন: ঈদ বিশেষ ছাড়" />
+            </div>
+            <div>
+              <Label>কাস্টম লিংক (ঐচ্ছিক)</Label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">/o/</span>
+                <Input value={form.slug} onChange={e => setForm(f => ({ ...f, slug: slugify(e.target.value) }))} placeholder="eid-special" />
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-1">খালি রাখলে অটো শিরোনাম থেকে তৈরি হবে</p>
             </div>
             <div>
               <Label>বিবরণ</Label>
