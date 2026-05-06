@@ -233,6 +233,7 @@ const CategoryManager = () => {
                   )}
                 </div>
               </div>
+            </div>
             <Button onClick={save} className="w-full">{editing ? "আপডেট" : "যোগ করুন"}</Button>
           </div>
         </DialogContent>
