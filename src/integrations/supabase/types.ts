@@ -839,6 +839,176 @@ export type Database = {
           },
         ]
       }
+      free_delivery_campaign_products: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          product_id: string
+          sort_order: number
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+          sort_order?: number
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_delivery_campaign_products_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "free_delivery_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "free_delivery_campaign_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      free_delivery_campaign_tiers: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          label: string
+          required_products: number
+          reward_text: string | null
+          sort_order: number
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          label: string
+          required_products: number
+          reward_text?: string | null
+          sort_order?: number
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          label?: string
+          required_products?: number
+          reward_text?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_delivery_campaign_tiers_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "free_delivery_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      free_delivery_campaigns: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          max_orders_per_phone: number
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_orders_per_phone?: number
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_orders_per_phone?: number
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      free_delivery_orders: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          customer_address: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          product_ids: Json
+          shared_order_number: number | null
+          tier_id: string | null
+          total_amount: number
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          customer_address: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          product_ids?: Json
+          shared_order_number?: number | null
+          tier_id?: string | null
+          total_amount?: number
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          customer_address?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          product_ids?: Json
+          shared_order_number?: number | null
+          tier_id?: string | null
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_delivery_orders_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "free_delivery_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "free_delivery_orders_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "free_delivery_campaign_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       freelance_assignments: {
         Row: {
           created_at: string
@@ -3068,6 +3238,10 @@ export type Database = {
     }
     Functions: {
       cleanup_old_receipts: { Args: never; Returns: undefined }
+      free_delivery_phone_order_count: {
+        Args: { _campaign_id: string; _phone: string }
+        Returns: number
+      }
       get_approved_profile_comments: {
         Args: { _profile_id: string }
         Returns: {
