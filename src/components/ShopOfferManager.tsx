@@ -147,6 +147,7 @@ export default function ShopOfferManager() {
 
     const payload: any = {
       title: form.title.trim(),
+      slug: form.slug.trim() ? slugify(form.slug) : null,
       description: form.description.trim() || null,
       product_id: null,
       discount_type,
