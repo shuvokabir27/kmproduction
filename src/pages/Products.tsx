@@ -37,6 +37,7 @@ const Products = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [search, setSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const { customer: shopCustomer } = useShopCustomer();
@@ -308,6 +309,12 @@ const Products = () => {
           </div>
 
           <div className="md:hidden flex items-center gap-1">
+            <Link to="/" className="p-2 rounded-lg hover:bg-gray-100" aria-label="home">
+              <Home className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+            </Link>
+            <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-lg hover:bg-gray-100" aria-label="search">
+              <Search className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+            </button>
             <button onClick={cart.open} className="relative p-2 rounded-lg hover:bg-gray-100" aria-label="cart">
               <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
               {cart.count > 0 && (
@@ -328,6 +335,23 @@ const Products = () => {
             </button>
           </div>
         </div>
+        {mobileSearchOpen && (
+          <div className="md:hidden border-t bg-white px-4 py-3">
+            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
+              <Search className="h-4 w-4 text-gray-400 mr-2" />
+              <input
+                autoFocus
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="পণ্য খুঁজুন..."
+                className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
+              />
+              {search && (
+                <button onClick={() => setSearch("")} className="ml-2 p-1 hover:bg-gray-200 rounded-full"><X className="h-3.5 w-3.5 text-gray-500" /></button>
+              )}
+            </div>
+          </div>
+        )}
         {mobileMenuOpen && (
           <div className="md:hidden border-t bg-white px-4 py-3 space-y-1">
             <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 mb-2">
