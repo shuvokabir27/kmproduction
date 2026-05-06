@@ -445,8 +445,17 @@ const AdminProducts = () => {
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="যেমন: তালের গুড় ১ কেজি" />
             </div>
             <div>
-              <Label>বিবরণ</Label>
-              <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="প্রডাক্টের বিবরণ" rows={3} />
+              <Label>বিবরণ (ফরম্যাটিং সহ)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">টেক্সট হাইলাইট, রং, হেডিং ও লিস্ট ব্যবহার করে সুন্দর বিবরণ লিখুন।</p>
+              <RichTextEditor
+                value={form.description_html || form.description}
+                onChange={(html) => {
+                  const plain = html.replace(/<[^>]+>/g, "").trim();
+                  setForm((f) => ({ ...f, description_html: html, description: plain }));
+                }}
+                placeholder="প্রডাক্টের বিবরণ লিখুন..."
+                minHeight={140}
+              />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
