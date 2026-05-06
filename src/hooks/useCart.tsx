@@ -17,6 +17,7 @@ export interface OfferContext {
   offer_id: string;
   title: string;
   free_delivery: boolean; // explicit free delivery from offer
+  is_combo?: boolean;
 }
 
 interface CartCtx {
