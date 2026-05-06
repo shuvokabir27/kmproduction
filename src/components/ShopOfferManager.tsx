@@ -229,11 +229,24 @@ export default function ShopOfferManager() {
                       {product && ` • ${product.name}`}
                     </p>
                     {o.ends_at && <p className="text-xs text-muted-foreground">শেষ: {new Date(o.ends_at).toLocaleString("bn-BD")}</p>}
+                    <p className="text-[11px] text-primary truncate flex items-center gap-1 mt-1">
+                      <LinkIcon className="h-3 w-3" />
+                      {window.location.origin}{o.slug ? `/o/${o.slug}` : `/offer/${o.id.slice(0, 8)}…`}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2 pt-1">
                   <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => openEdit(o)}>
                     <Pencil className="h-3 w-3" /> এডিট
+                  </Button>
+                  <Button size="sm" variant="outline" className="gap-1" onClick={async () => {
+                    const url = `${window.location.origin}${o.slug ? `/o/${o.slug}` : `/offer/${o.id}`}`;
+                    try {
+                      if (navigator.share) await navigator.share({ title: o.title, text: o.description || o.title, url });
+                      else { await navigator.clipboard.writeText(url); toast.success("লিংক কপি হয়েছে"); }
+                    } catch {}
+                  }}>
+                    <Share2 className="h-3 w-3" /> শেয়ার
                   </Button>
                   <Button size="sm" variant="outline" className="text-destructive" onClick={() => handleDelete(o.id)}>
                     <Trash2 className="h-3 w-3" />
