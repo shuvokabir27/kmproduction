@@ -528,6 +528,9 @@ const Products = () => {
         </div>
       </section>
 
+      {/* Categories Grid */}
+      <ShopCategoryGrid />
+
       {/* Trust Bar */}
       <section className="px-4 pb-2">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
