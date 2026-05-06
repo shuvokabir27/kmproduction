@@ -309,7 +309,7 @@ const Products = () => {
           </div>
 
           <div className="md:hidden flex items-center gap-1">
-            <Link to="/" className="p-2 rounded-lg hover:bg-gray-100" aria-label="home">
+            <Link to="/products" className="p-2 rounded-lg hover:bg-gray-100" aria-label="shop home">
               <Home className="h-5 w-5" style={{ color: BRAND_GREEN }} />
             </Link>
             <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-lg hover:bg-gray-100" aria-label="search">
