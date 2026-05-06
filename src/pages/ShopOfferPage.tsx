@@ -363,27 +363,104 @@ export default function ShopOfferPage() {
             <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600" /> ডেলিভারি চার্জ ফ্রি</li>
           )}
         </ul>
+
+        {/* Inline Order Form */}
+        <div id="offer-order-form" className="bg-card border-2 border-amber-500/30 rounded-2xl p-5 mt-6 shadow-xl">
+          {success ? (
+            <div className="flex flex-col items-center text-center py-6 gap-3">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 className="h-9 w-9 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-extrabold text-green-700">অর্ডার সফল! 🎉</h3>
+              <p className="text-muted-foreground text-sm">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
+              <button
+                onClick={() => navigate("/products")}
+                className="mt-2 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl"
+              >
+                আরও কেনাকাটা করুন
+              </button>
+            </div>
+          ) : (
+            <>
+              <h3 className="text-lg font-extrabold mb-1 flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-amber-600" /> অর্ডার করতে নিচের তথ্য দিন
+              </h3>
+              <p className="text-xs text-muted-foreground mb-4">ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে টাকা দিন</p>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-bold mb-1.5 flex items-center gap-1.5"><User className="h-4 w-4" /> আপনার নাম <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                    placeholder="পুরো নাম"
+                    maxLength={100}
+                    className="w-full h-11 px-3 rounded-xl border-2 border-border bg-background focus:border-amber-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-bold mb-1.5 flex items-center gap-1.5"><Phone className="h-4 w-4" /> মোবাইল নম্বর <span className="text-red-500">*</span></label>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={form.phone}
+                    onChange={e => handlePhoneChange(e.target.value)}
+                    placeholder="01XXXXXXXXX"
+                    maxLength={11}
+                    className={`w-full h-11 px-3 rounded-xl border-2 bg-background focus:border-amber-500 outline-none ${phoneError ? "border-red-400" : "border-border"}`}
+                  />
+                  {phoneError && <p className="text-red-500 text-xs mt-1">{phoneError}</p>}
+                </div>
+                <div>
+                  <label className="text-sm font-bold mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4" /> ঠিকানা <span className="text-red-500">*</span></label>
+                  <textarea
+                    value={form.address}
+                    onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
+                    placeholder="সম্পূর্ণ ঠিকানা (গ্রাম/রোড, পোস্ট, থানা, জেলা)"
+                    rows={3}
+                    maxLength={500}
+                    className="w-full px-3 py-2 rounded-xl border-2 border-border bg-background focus:border-amber-500 outline-none resize-none"
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmitOrder}
+                  disabled={submitting}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-2xl shadow-xl text-base"
+                >
+                  <ShoppingBag className="h-5 w-5" />
+                  {submitting ? "অর্ডার হচ্ছে..." : isCombo && comboPrice > 0 ? `অর্ডার কনফার্ম করুন (৳${toBn(comboPrice)})` : "অর্ডার কনফার্ম করুন"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur border-t p-3">
-        <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <div className="flex-1">
-            {isCombo && comboPrice > 0 ? (
-              <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
-            ) : (
-              <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
-            )}
+      {!success && (
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur border-t p-3">
+          <div className="max-w-3xl mx-auto flex items-center gap-3">
+            <div className="flex-1">
+              {isCombo && comboPrice > 0 ? (
+                <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
+              ) : (
+                <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                document.getElementById("offer-order-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-6 py-3 rounded-2xl shadow-xl"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              অর্ডার করুন
+            </button>
           </div>
-          <button
-            onClick={isCombo ? handleOrderCombo : handleOrderSingle}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-6 py-3 rounded-2xl shadow-xl"
-          >
-            <ShoppingBag className="h-5 w-5" />
-            অর্ডার করুন
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
