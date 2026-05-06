@@ -180,9 +180,9 @@ export const CartDrawer = () => {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-1 bg-white rounded-full border border-gray-200">
-                        <button onClick={() => updateQty(it.id, it.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
-                        <span className="text-sm font-bold w-6 text-center">{toBn(it.quantity)}</span>
-                        <button onClick={() => updateQty(it.id, it.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
+                        <button onClick={() => updateQty(it.id, it.min_quantity ? Math.max(it.min_quantity, it.quantity - it.min_quantity) : it.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Minus className="h-3 w-3" /></button>
+                        <span className="text-sm font-bold w-8 text-center">{toBn(it.quantity)}</span>
+                        <button onClick={() => updateQty(it.id, it.min_quantity ? it.quantity + it.min_quantity : it.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-600"><Plus className="h-3 w-3" /></button>
                       </div>
                       <p className="font-extrabold text-sm" style={{ color: BRAND_GREEN }}>৳{toBn(it.unit_price * it.quantity)}</p>
                     </div>
