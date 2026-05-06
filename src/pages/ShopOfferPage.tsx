@@ -155,6 +155,85 @@ export default function ShopOfferPage() {
     cart.open();
   };
 
+  const handlePhoneChange = (val: string) => {
+    const digits = val.replace(/\D/g, "").slice(0, 11);
+    setForm(f => ({ ...f, phone: digits }));
+    setPhoneError(digits.length > 0 && digits.length !== 11 ? "মোবাইল নম্বর ১১ ডিজিটের হতে হবে" : "");
+  };
+
+  const handleSubmitOrder = async () => {
+    if (!productsData || productsData.length === 0) { toast.error("প্রডাক্ট লোড হচ্ছে"); return; }
+    if (!form.name.trim()) return toast.error("নাম দিন");
+    if (form.phone.length !== 11) { setPhoneError("মোবাইল নম্বর ১১ ডিজিটের হতে হবে"); return; }
+    if (!form.address.trim()) return toast.error("ঠিকানা দিন");
+
+    let rows: any[] = [];
+    if (isCombo) {
+      rows = comboItems.map((c: any) => {
+        const p = productsData.find(x => x.id === c.product_id);
+        if (!p) return null;
+        const baseQty = c.quantity || 1;
+        const unitPrice = comboPrice > 0 && comboTotal > 0
+          ? Math.round((Number(p.discount_price ?? p.price ?? 0) * (comboPrice / comboTotal)) * 100) / 100
+          : Number(p.discount_price ?? p.price ?? 0);
+        return {
+          product_id: p.id,
+          product_name: `${p.name} (কম্বো: ${offer.title})`,
+          variant_label: `কম্বো: ${offer.title}`,
+          quantity: baseQty,
+          unit_price: unitPrice,
+          total_amount: unitPrice * baseQty,
+        };
+      }).filter(Boolean);
+    } else {
+      const p = productsData.find(x => x.id === singleId);
+      if (!p) { toast.error("প্রডাক্ট পাওয়া যায়নি"); return; }
+      const base = Number(p.discount_price ?? p.price ?? 0);
+      let unit = base;
+      if (isPct) unit = Math.max(0, base - (base * Number(offer.discount_value || 0)) / 100);
+      else if (offer.discount_type === "fixed") unit = Math.max(0, base - Number(offer.discount_value || 0));
+      rows = [{
+        product_id: p.id,
+        product_name: `${p.name} (অফার: ${offer.title})`,
+        variant_label: `অফার: ${offer.title}`,
+        quantity: 1,
+        unit_price: unit,
+        total_amount: unit,
+      }];
+    }
+
+    if (rows.length === 0) { toast.error("অর্ডার তৈরি করা যায়নি"); return; }
+
+    setSubmitting(true);
+    try {
+      let sharedNumber: number | null = null;
+      if (rows.length > 1) {
+        const { data: numData, error: numErr } = await supabase.rpc("next_order_number" as any);
+        if (numErr) throw numErr;
+        sharedNumber = numData as number;
+      }
+      const insertRows = rows.map((r, idx) => ({
+        ...r,
+        customer_name: form.name.trim(),
+        customer_phone: form.phone,
+        customer_address: form.address.trim(),
+        delivery_charge: 0,
+        shop_customer_id: customer?.id ?? null,
+        payment_method: "cod",
+        ...(sharedNumber ? { order_number: sharedNumber } : {}),
+      }));
+      const { error } = await supabase.from("orders").insert(insertRows as any);
+      if (error) throw error;
+      setSuccess(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      console.error("Offer order error:", err);
+      toast.error("অর্ডার করতে সমস্যা হয়েছে");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const TimeBox = ({ value, label }: { value: number; label: string }) => (
     <div className="flex flex-col items-center bg-white/15 backdrop-blur rounded-xl px-3 py-2 min-w-[60px] border border-white/30">
       <span className="text-2xl md:text-3xl font-extrabold text-white font-mono leading-none">{toBn(value.toString().padStart(2, "0"))}</span>
