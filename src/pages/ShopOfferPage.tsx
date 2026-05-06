@@ -260,10 +260,10 @@ export default function ShopOfferPage() {
 
       {/* Hero */}
       <div className="relative bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 text-white">
-        <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
+        <div className="max-w-3xl mx-auto px-4 py-4 space-y-3">
           {heroImage && (
-            <div className="w-full rounded-2xl overflow-hidden ring-4 ring-white/40 shadow-2xl bg-black/20 flex items-center justify-center">
-              <img src={heroImage} alt={offer.title} className="w-full h-auto max-h-[70vh] object-contain" />
+            <div className="w-full rounded-2xl overflow-hidden ring-2 ring-white/40 shadow-2xl bg-black/20 flex items-center justify-center">
+              <img src={heroImage} alt={offer.title} className="w-full h-auto max-h-[42vh] md:max-h-[50vh] object-contain" />
             </div>
           )}
           <div className="text-center space-y-2">
@@ -271,10 +271,10 @@ export default function ShopOfferPage() {
               <Sparkles className="h-3.5 w-3.5 animate-pulse" />
               {offer.badge_text || "বিশেষ অফার"}
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold drop-shadow">{offer.title}</h2>
-            {offer.description && <p className="text-white/90 text-sm md:text-base">{offer.description}</p>}
+            <h2 className="text-xl md:text-2xl font-extrabold drop-shadow leading-tight">{offer.title}</h2>
+            {offer.description && <p className="text-white/90 text-xs md:text-sm line-clamp-2">{offer.description}</p>}
 
-            <div className="inline-flex items-center gap-2 bg-white text-red-700 font-extrabold text-xl px-5 py-2 rounded-full shadow-xl">
+            <div className="inline-flex items-center gap-2 bg-white text-red-700 font-extrabold text-lg px-4 py-1.5 rounded-full shadow-xl">
               {isFree ? <Truck className="h-5 w-5" /> : isCombo ? <Package className="h-5 w-5" /> : <Tag className="h-5 w-5" />}
               {isFree ? "ফ্রি ডেলিভারি"
                 : isCombo ? (comboPrice ? `৳${toBn(comboPrice)} মাত্র` : "কম্বো অফার")
@@ -283,7 +283,7 @@ export default function ShopOfferPage() {
             </div>
 
             {hasCountdown && (
-              <div className="flex items-center gap-2 justify-center pt-2">
+              <div className="flex items-center gap-2 justify-center pt-1">
                 <Clock className="h-4 w-4" />
                 <span className="text-xs font-bold">শেষ হবে:</span>
                 <div className="flex gap-1.5">
