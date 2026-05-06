@@ -15,6 +15,7 @@ interface Cat {
   label: string;
   value: string;
   icon: string | null;
+  image_url: string | null;
   sort_order: number;
   is_active: boolean;
 }
@@ -26,10 +27,12 @@ const CategoryManager = () => {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Cat | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     label: "",
     value: "",
     icon: "",
+    image_url: "",
     parent_id: "none",
     sort_order: "0",
   });
