@@ -27,6 +27,7 @@ interface Clip {
   sequence_number: number;
   audio_path: string;
   duration_seconds: number | null;
+  is_shot?: boolean;
   signedUrl?: string;
 }
 
