@@ -23,6 +23,7 @@ import AdminShootingExpenses from "./pages/AdminShootingExpenses";
 import AdminChannels from "./pages/AdminChannels";
 import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
+import AdminVoiceNotes from "./pages/AdminVoiceNotes";
 import AdminNotices from "./pages/AdminNotices";
 import AdminBonuses from "./pages/AdminBonuses";
 import AdminAdvances from "./pages/AdminAdvances";
@@ -127,6 +128,7 @@ const App = () => (
             <Route path="/admin/scripts" element={<RouteGuard allowedRoles={["admin"]}><AdminScripts /></RouteGuard>} />
             <Route path="/admin/scripts/:id" element={<RouteGuard allowedRoles={["admin"]}><AdminScriptEdit /></RouteGuard>} />
             <Route path="/admin/scripts/:id/draw" element={<RouteGuard allowedRoles={["admin"]}><ScriptDrawing /></RouteGuard>} />
+            <Route path="/admin/voice-notes" element={<RouteGuard allowedRoles={["admin"]}><AdminVoiceNotes /></RouteGuard>} />
             <Route path="/admin/bonuses" element={<RouteGuard allowedRoles={["admin"]}><AdminBonuses /></RouteGuard>} />
             <Route path="/admin/advances" element={<RouteGuard allowedRoles={["admin"]}><AdminAdvances /></RouteGuard>} />
             <Route path="/admin/account-checking" element={<RouteGuard allowedRoles={["admin"]}><AdminAccountChecking /></RouteGuard>} />
