@@ -3241,6 +3241,39 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_notes: {
+        Row: {
+          audio_path: string
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          sequence: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audio_path: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          sequence?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audio_path?: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          sequence?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
