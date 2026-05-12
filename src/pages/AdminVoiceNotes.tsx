@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
   RefreshCw,
+  Check,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,6 +27,7 @@ interface Clip {
   sequence_number: number;
   audio_path: string;
   duration_seconds: number | null;
+  is_shot?: boolean;
   signedUrl?: string;
 }
 
@@ -230,6 +232,25 @@ export default function AdminVoiceNotes() {
     }
   };
 
+  const toggleShot = async (clip: Clip, next: boolean) => {
+    // optimistic update
+    setGroups((prev) =>
+      prev.map((g) =>
+        g.id === clip.voice_note_id
+          ? { ...g, clips: g.clips.map((c) => (c.id === clip.id ? { ...c, is_shot: next } : c)) }
+          : g
+      )
+    );
+    const { error } = await supabase
+      .from("voice_note_clips")
+      .update({ is_shot: next })
+      .eq("id", clip.id);
+    if (error) {
+      toast.error(error.message);
+      load();
+    }
+  };
+
   const deleteClip = async (clip: Clip) => {
     if (!confirm(`ভয়েস ${toBn(clip.sequence_number)} মুছে ফেলবেন?`)) return;
     await supabase.storage.from("voice-notes").remove([clip.audio_path]);
@@ -357,7 +378,11 @@ export default function AdminVoiceNotes() {
                           return (
                             <div
                               key={c.id}
-                              className="flex items-center gap-2 bg-secondary/40 rounded-lg p-2"
+                              className={`flex items-center gap-2 rounded-lg p-2 transition-colors ${
+                                c.is_shot
+                                  ? "bg-emerald-500/15 border border-emerald-500/40"
+                                  : "bg-secondary/40"
+                              }`}
                             >
                               <Button
                                 size="icon"
@@ -372,8 +397,15 @@ export default function AdminVoiceNotes() {
                                 )}
                               </Button>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground">
+                                <p
+                                  className={`text-sm font-medium ${
+                                    c.is_shot ? "text-emerald-400" : "text-foreground"
+                                  }`}
+                                >
                                   নাম্বার {toBn(c.sequence_number)}
+                                  {c.is_shot && (
+                                    <span className="ml-2 text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
+                                  )}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {c.duration_seconds
@@ -393,6 +425,24 @@ export default function AdminVoiceNotes() {
                                 </Button>
                               ) : (
                                 <>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    title={c.is_shot ? "ডাবল-ক্লিক করে আনটিক করুন" : "শুট সম্পন্ন হিসেবে চিহ্নিত করুন"}
+                                    className={
+                                      c.is_shot
+                                        ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10"
+                                        : "text-muted-foreground hover:text-emerald-400"
+                                    }
+                                    onClick={() => {
+                                      if (!c.is_shot) toggleShot(c, true);
+                                    }}
+                                    onDoubleClick={() => {
+                                      if (c.is_shot) toggleShot(c, false);
+                                    }}
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
                                   <Button
                                     size="icon"
                                     variant="ghost"

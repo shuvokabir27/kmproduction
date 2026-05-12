@@ -1,0 +1,1 @@
+ALTER TABLE public.voice_note_clips ADD COLUMN IF NOT EXISTS is_shot BOOLEAN NOT NULL DEFAULT false;
