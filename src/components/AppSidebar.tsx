@@ -53,6 +53,7 @@ const teamWorkItems = [
   { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
   { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
   { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
+  { title: "ভয়েস নোট", url: "/admin/voice-notes", icon: Mic, color: "text-pink-400", bg: "bg-pink-500/10" },
   { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-purple-400", bg: "bg-purple-500/10" },
   { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
