@@ -23,6 +23,7 @@ import AdminShootingExpenses from "./pages/AdminShootingExpenses";
 import AdminChannels from "./pages/AdminChannels";
 import AdminScripts from "./pages/AdminScripts";
 import AdminScriptEdit from "./pages/AdminScriptEdit";
+import AdminVoiceNotes from "./pages/AdminVoiceNotes";
 import AdminNotices from "./pages/AdminNotices";
 import AdminBonuses from "./pages/AdminBonuses";
 import AdminAdvances from "./pages/AdminAdvances";
