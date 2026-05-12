@@ -3247,6 +3247,7 @@ export type Database = {
           created_at: string
           duration_seconds: number | null
           id: string
+          is_shot: boolean
           sequence_number: number
           updated_at: string
           voice_note_id: string
@@ -3256,6 +3257,7 @@ export type Database = {
           created_at?: string
           duration_seconds?: number | null
           id?: string
+          is_shot?: boolean
           sequence_number: number
           updated_at?: string
           voice_note_id: string
@@ -3265,6 +3267,7 @@ export type Database = {
           created_at?: string
           duration_seconds?: number | null
           id?: string
+          is_shot?: boolean
           sequence_number?: number
           updated_at?: string
           voice_note_id?: string
