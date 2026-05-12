@@ -27,6 +27,7 @@ import {
   Receipt,
   Wallet,
   Calculator,
+  Mic,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
