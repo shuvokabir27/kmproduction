@@ -232,6 +232,25 @@ export default function AdminVoiceNotes() {
     }
   };
 
+  const toggleShot = async (clip: Clip, next: boolean) => {
+    // optimistic update
+    setGroups((prev) =>
+      prev.map((g) =>
+        g.id === clip.voice_note_id
+          ? { ...g, clips: g.clips.map((c) => (c.id === clip.id ? { ...c, is_shot: next } : c)) }
+          : g
+      )
+    );
+    const { error } = await supabase
+      .from("voice_note_clips")
+      .update({ is_shot: next })
+      .eq("id", clip.id);
+    if (error) {
+      toast.error(error.message);
+      load();
+    }
+  };
+
   const deleteClip = async (clip: Clip) => {
     if (!confirm(`ভয়েস ${toBn(clip.sequence_number)} মুছে ফেলবেন?`)) return;
     await supabase.storage.from("voice-notes").remove([clip.audio_path]);
