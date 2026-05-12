@@ -378,7 +378,11 @@ export default function AdminVoiceNotes() {
                           return (
                             <div
                               key={c.id}
-                              className="flex items-center gap-2 bg-secondary/40 rounded-lg p-2"
+                              className={`flex items-center gap-2 rounded-lg p-2 transition-colors ${
+                                c.is_shot
+                                  ? "bg-emerald-500/15 border border-emerald-500/40"
+                                  : "bg-secondary/40"
+                              }`}
                             >
                               <Button
                                 size="icon"
@@ -393,8 +397,15 @@ export default function AdminVoiceNotes() {
                                 )}
                               </Button>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground">
+                                <p
+                                  className={`text-sm font-medium ${
+                                    c.is_shot ? "text-emerald-400" : "text-foreground"
+                                  }`}
+                                >
                                   নাম্বার {toBn(c.sequence_number)}
+                                  {c.is_shot && (
+                                    <span className="ml-2 text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
+                                  )}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {c.duration_seconds
@@ -414,6 +425,24 @@ export default function AdminVoiceNotes() {
                                 </Button>
                               ) : (
                                 <>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    title={c.is_shot ? "ডাবল-ক্লিক করে আনটিক করুন" : "শুট সম্পন্ন হিসেবে চিহ্নিত করুন"}
+                                    className={
+                                      c.is_shot
+                                        ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10"
+                                        : "text-muted-foreground hover:text-emerald-400"
+                                    }
+                                    onClick={() => {
+                                      if (!c.is_shot) toggleShot(c, true);
+                                    }}
+                                    onDoubleClick={() => {
+                                      if (c.is_shot) toggleShot(c, false);
+                                    }}
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
                                   <Button
                                     size="icon"
                                     variant="ghost"
