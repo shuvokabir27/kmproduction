@@ -3241,9 +3241,47 @@ export type Database = {
         }
         Relationships: []
       }
-      voice_notes: {
+      voice_note_clips: {
         Row: {
           audio_path: string
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          sequence_number: number
+          updated_at: string
+          voice_note_id: string
+        }
+        Insert: {
+          audio_path: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          sequence_number: number
+          updated_at?: string
+          voice_note_id: string
+        }
+        Update: {
+          audio_path?: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          sequence_number?: number
+          updated_at?: string
+          voice_note_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_note_clips_voice_note_id_fkey"
+            columns: ["voice_note_id"]
+            isOneToOne: false
+            referencedRelation: "voice_notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voice_notes: {
+        Row: {
+          audio_path: string | null
           created_at: string
           duration_seconds: number | null
           id: string
@@ -3253,7 +3291,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          audio_path: string
+          audio_path?: string | null
           created_at?: string
           duration_seconds?: number | null
           id?: string
@@ -3263,7 +3301,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          audio_path?: string
+          audio_path?: string | null
           created_at?: string
           duration_seconds?: number | null
           id?: string
