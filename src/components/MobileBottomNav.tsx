@@ -44,6 +44,7 @@ const moreItems = [
   { icon: null, label: "— টিম ও কাজ —", path: "__divider__", color: "", bg: "" },
   { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-emerald-400", bg: "bg-emerald-500/10" },
   { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
+  { icon: Mic, label: "ভয়েস নোট", path: "/admin/voice-notes", color: "text-pink-400", bg: "bg-pink-500/10" },
   { icon: Receipt, label: "শুটিং খরচ", path: "/admin/shooting-expenses", color: "text-red-400", bg: "bg-red-500/10" },
   { icon: Briefcase, label: "বাইরের কাজ", path: "/admin/freelance", color: "text-orange-400", bg: "bg-orange-500/10" },
   { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400", bg: "bg-orange-500/10" },
