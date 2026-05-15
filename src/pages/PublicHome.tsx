@@ -116,11 +116,11 @@ const PublicHome = () => {
         <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl saturate-150 border-b border-border/20" />
         <div className="container max-w-6xl mx-auto relative z-10 flex items-center justify-between h-16 px-4">
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center group cursor-pointer">
-            <div className="relative h-14 w-14 md:h-16 md:w-16 overflow-hidden">
+            <div className="relative h-9 w-9 md:h-10 md:w-10 overflow-hidden">
               <img
                 src={kuakataLogo}
                 alt={settings?.site_name || "Kuakata Multimedia"}
-                className="absolute w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_18px_rgba(239,68,68,0.45)]"
+                className="absolute w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(239,68,68,0.45)]"
                 style={{ transform: "scale(1.9) translateY(15%)", transformOrigin: "center" }}
               />
             </div>
