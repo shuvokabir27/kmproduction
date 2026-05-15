@@ -463,6 +463,21 @@ const AdminAttendance = () => {
                         <Pencil className="h-4 w-4" />
                       </Button>
 
+                      {/* Rename shooting */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-amber-400 hover:bg-amber-500/10"
+                        title="শুটিং নাম বদলান"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRenameShootingId(shootingId);
+                          setRenameValue(group.shooting?.name || "");
+                        }}
+                      >
+                        <Type className="h-4 w-4" />
+                      </Button>
+
                       {/* Delete with timer */}
                       {!timerActive ? (
                         <Button
