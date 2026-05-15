@@ -290,124 +290,125 @@ const AdminAttendance = () => {
             <TabsTrigger value="history" className="gap-1.5 text-xs flex-1 md:flex-none text-violet-400 bg-violet-500/10 border border-violet-500/20 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300"><History className="h-3.5 w-3.5" /> হিস্ট্রি</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="manage" className="space-y-3 mt-3">
-            <div className="flex flex-col md:flex-row md:items-end gap-3">
-              <div className="flex-1 md:max-w-xs">
-                <Label className="text-foreground text-xs mb-1 block">শুটিং নির্বাচন</Label>
-                <Select value={selectedShooting} onValueChange={setSelectedShooting}>
-                  <SelectTrigger className="bg-secondary border-border/30 h-10 md:h-9">
-                    <SelectValue placeholder="শুটিং নির্বাচন করুন" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border/30">
-                    {shootings?.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")}) {shootingsWithAttendance?.has(s.id) ? "✏️" : "🆕"}
-                      </SelectItem>
-                    ))}
-                    {(!shootings || shootings.length === 0) && (
-                      <div className="p-3 text-center text-xs text-muted-foreground">চলমান/শেষ কোনো শুটিং নেই</div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-              {selectedShooting && (
-                <Button onClick={handleSave} disabled={saving} className="gap-2 h-10 md:h-9" size="sm">
-                  <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+          <TabsContent value="manage" className="space-y-4 mt-4">
+            {!selectedShooting ? (
+              <Card className="bg-card border-border/30 p-8 md:p-12 flex flex-col items-center justify-center gap-4 text-center">
+                <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-foreground">আজকের হাজিরা নিন</p>
+                  <p className="text-xs text-muted-foreground mt-1">শুটিং নির্বাচন করুন বা নতুন নাম দিয়ে শুরু করুন</p>
+                </div>
+                <Button
+                  size="lg"
+                  className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                  onClick={() => {
+                    setPickedExistingId("");
+                    setCustomName("");
+                    setCustomDate(new Date().toISOString().slice(0, 10));
+                    setPickerOpen(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4" /> হাজিরা নিন
                 </Button>
-              )}
-            </div>
-
-            {selectedShooting && (
+              </Card>
+            ) : (
               <>
-                 {/* Mobile card list */}
-                 <div className="md:hidden space-y-2">
-                   {members?.map((m) => (
-                     <Card key={m.id} className="bg-card border-border/30 p-3">
-                       <div className="flex items-center justify-between gap-3">
-                         <div className="flex items-center gap-2 min-w-0">
-                           <Checkbox
-                             checked={attendanceData[m.id]?.present || false}
-                             onCheckedChange={() => togglePresent(m.id)}
-                           />
-                           <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden flex-shrink-0">
-                             {m.photo_url ? (
-                               <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
-                             ) : (
-                               <span className="text-primary text-xs font-medium">{m.full_name?.charAt(0) || "M"}</span>
-                             )}
-                           </div>
-                          <div className="min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
-                              <p className="text-[10px] text-muted-foreground">ID: {m.member_id} • {m.salary_type === "monthly" ? "মাসিক" : "দৈনিক"}</p>
-                            </div>
+                {/* Header bar with current shooting info */}
+                {(() => {
+                  const current = shootings?.find((s) => s.id === selectedShooting);
+                  return (
+                    <Card className="bg-card border-border/30 p-3 md:p-4 flex items-center justify-between gap-3 flex-wrap">
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">বর্তমান শুটিং</p>
+                        <p className="font-semibold text-foreground truncate">{current?.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {current?.shoot_date ? new Date(current.shoot_date).toLocaleDateString("bn-BD") : ""}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="gap-1.5 text-muted-foreground"
+                          onClick={() => setSelectedShooting("")}
+                        >
+                          <X className="h-3.5 w-3.5" /> বাতিল
+                        </Button>
+                        <Button onClick={handleSave} disabled={saving} className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white" size="sm">
+                          <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })()}
+
+                {/* Members list — large photos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {members?.map((m) => {
+                    const present = attendanceData[m.id]?.present || false;
+                    return (
+                      <Card
+                        key={m.id}
+                        className={`p-3 md:p-4 flex items-center gap-4 border transition-all cursor-pointer ${
+                          present
+                            ? "bg-emerald-500/10 border-emerald-500/40"
+                            : "bg-card border-border/30 hover:border-border/60"
+                        }`}
+                        onClick={() => togglePresent(m.id)}
+                      >
+                        <div className="relative shrink-0">
+                          <div className="h-20 w-20 md:h-24 md:w-24 rounded-xl bg-primary/20 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
+                            {m.photo_url ? (
+                              <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="text-primary text-2xl font-medium">{m.full_name?.charAt(0) || "M"}</span>
+                            )}
                           </div>
-                           {m.salary_type === "monthly" ? (
-                             <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium shrink-0">মাসিক</span>
-                           ) : (
-                             <Input
-                               type="number"
-                               value={attendanceData[m.id]?.rate || "0"}
-                               onChange={(e) => setRate(m.id, e.target.value)}
-                               className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
-                               placeholder="৳"
-                             />
-                           )}
+                          {present && (
+                            <div className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center">
+                              <Check className="h-4 w-4 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+                          <p className="font-semibold text-foreground truncate">{m.full_name}</p>
+                          <p className="text-[11px] text-muted-foreground mb-2">
+                            ID: {m.member_id} • {m.salary_type === "monthly" ? "মাসিক" : "দৈনিক"}
+                          </p>
+                          {m.salary_type === "monthly" ? (
+                            <span className="inline-block text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">মাসিক বেতনভুক্ত</span>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-muted-foreground">৳</span>
+                              <Input
+                                type="number"
+                                value={attendanceData[m.id]?.rate || "0"}
+                                onChange={(e) => setRate(m.id, e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-24 bg-secondary border-border/30 h-9"
+                              />
+                              <span className="text-[10px] text-muted-foreground">/দিন</span>
+                            </div>
+                          )}
                         </div>
                       </Card>
-                    ))}
-                  </div>
+                    );
+                  })}
+                </div>
 
-                 {/* Desktop table */}
-                 <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
-                   <div className="overflow-x-auto">
-                     <table className="w-full text-sm">
-                       <thead>
-                         <tr className="border-b border-border/30">
-                           <th className="text-left p-3 text-muted-foreground font-medium">ছবি</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                           <th className="text-center p-3 text-muted-foreground font-medium">উপস্থিত</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">রেট</th>
-                         </tr>
-                       </thead>
-                       <tbody className="divide-y divide-border/20">
-                         {members?.map((m) => (
-                           <tr key={m.id} className="hover:bg-secondary/30 transition-colors">
-                             <td className="p-3">
-                               <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
-                                 {m.photo_url ? (
-                                   <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
-                                 ) : (
-                                   <span className="text-primary text-xs font-medium">{m.full_name?.charAt(0) || "M"}</span>
-                                 )}
-                               </div>
-                             </td>
-                             <td className="p-3 text-muted-foreground font-mono text-xs">{m.member_id}</td>
-                             <td className="p-3 text-foreground">{m.full_name}</td>
-                             <td className="p-3 text-center">
-                               <Checkbox
-                                 checked={attendanceData[m.id]?.present || false}
-                                 onCheckedChange={() => togglePresent(m.id)}
-                               />
-                             </td>
-                              <td className="p-3">
-                                {m.salary_type === "monthly" ? (
-                                  <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">মাসিক</span>
-                                ) : (
-                                  <Input
-                                    type="number"
-                                    value={attendanceData[m.id]?.rate || "0"}
-                                    onChange={(e) => setRate(m.id, e.target.value)}
-                                    className="w-28 bg-secondary border-border/30 h-8"
-                                  />
-                                )}
-                              </td>
-                           </tr>
-                         ))}
-                       </tbody>
-                     </table>
-                   </div>
-                 </Card>
+                {/* Bottom save bar */}
+                <div className="sticky bottom-2 z-10">
+                  <Button
+                    onClick={handleSave}
+                    disabled={saving}
+                    size="lg"
+                    className="w-full gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
+                  >
+                    <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "হাজিরা সেভ করুন"}
+                  </Button>
+                </div>
               </>
             )}
           </TabsContent>
