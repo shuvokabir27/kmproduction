@@ -7,13 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2, Pencil } from "lucide-react";
+import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2, Pencil, Check, X, ArrowRight, Plus, Type } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const AdminAttendance = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -27,6 +26,18 @@ const AdminAttendance = () => {
   const [editShootingId, setEditShootingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Record<string, { present: boolean; rate: string }>>({});
   const [editSaving, setEditSaving] = useState(false);
+
+  // New flow state
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickedExistingId, setPickedExistingId] = useState<string>("");
+  const [customName, setCustomName] = useState("");
+  const [customDate, setCustomDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
+  const [creatingShooting, setCreatingShooting] = useState(false);
+
+  // Rename shooting from history
+  const [renameShootingId, setRenameShootingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [renameSaving, setRenameSaving] = useState(false);
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-for-attendance"],
@@ -279,124 +290,125 @@ const AdminAttendance = () => {
             <TabsTrigger value="history" className="gap-1.5 text-xs flex-1 md:flex-none text-violet-400 bg-violet-500/10 border border-violet-500/20 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300"><History className="h-3.5 w-3.5" /> হিস্ট্রি</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="manage" className="space-y-3 mt-3">
-            <div className="flex flex-col md:flex-row md:items-end gap-3">
-              <div className="flex-1 md:max-w-xs">
-                <Label className="text-foreground text-xs mb-1 block">শুটিং নির্বাচন</Label>
-                <Select value={selectedShooting} onValueChange={setSelectedShooting}>
-                  <SelectTrigger className="bg-secondary border-border/30 h-10 md:h-9">
-                    <SelectValue placeholder="শুটিং নির্বাচন করুন" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border/30">
-                    {shootings?.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name} ({new Date(s.shoot_date).toLocaleDateString("bn-BD")}) {shootingsWithAttendance?.has(s.id) ? "✏️" : "🆕"}
-                      </SelectItem>
-                    ))}
-                    {(!shootings || shootings.length === 0) && (
-                      <div className="p-3 text-center text-xs text-muted-foreground">চলমান/শেষ কোনো শুটিং নেই</div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-              {selectedShooting && (
-                <Button onClick={handleSave} disabled={saving} className="gap-2 h-10 md:h-9" size="sm">
-                  <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+          <TabsContent value="manage" className="space-y-4 mt-4">
+            {!selectedShooting ? (
+              <Card className="bg-card border-border/30 p-8 md:p-12 flex flex-col items-center justify-center gap-4 text-center">
+                <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-foreground">আজকের হাজিরা নিন</p>
+                  <p className="text-xs text-muted-foreground mt-1">শুটিং নির্বাচন করুন বা নতুন নাম দিয়ে শুরু করুন</p>
+                </div>
+                <Button
+                  size="lg"
+                  className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                  onClick={() => {
+                    setPickedExistingId("");
+                    setCustomName("");
+                    setCustomDate(new Date().toISOString().slice(0, 10));
+                    setPickerOpen(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4" /> হাজিরা নিন
                 </Button>
-              )}
-            </div>
-
-            {selectedShooting && (
+              </Card>
+            ) : (
               <>
-                 {/* Mobile card list */}
-                 <div className="md:hidden space-y-2">
-                   {members?.map((m) => (
-                     <Card key={m.id} className="bg-card border-border/30 p-3">
-                       <div className="flex items-center justify-between gap-3">
-                         <div className="flex items-center gap-2 min-w-0">
-                           <Checkbox
-                             checked={attendanceData[m.id]?.present || false}
-                             onCheckedChange={() => togglePresent(m.id)}
-                           />
-                           <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden flex-shrink-0">
-                             {m.photo_url ? (
-                               <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
-                             ) : (
-                               <span className="text-primary text-xs font-medium">{m.full_name?.charAt(0) || "M"}</span>
-                             )}
-                           </div>
-                          <div className="min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{m.full_name}</p>
-                              <p className="text-[10px] text-muted-foreground">ID: {m.member_id} • {m.salary_type === "monthly" ? "মাসিক" : "দৈনিক"}</p>
-                            </div>
+                {/* Header bar with current shooting info */}
+                {(() => {
+                  const current = shootings?.find((s) => s.id === selectedShooting);
+                  return (
+                    <Card className="bg-card border-border/30 p-3 md:p-4 flex items-center justify-between gap-3 flex-wrap">
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground">বর্তমান শুটিং</p>
+                        <p className="font-semibold text-foreground truncate">{current?.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {current?.shoot_date ? new Date(current.shoot_date).toLocaleDateString("bn-BD") : ""}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="gap-1.5 text-muted-foreground"
+                          onClick={() => setSelectedShooting("")}
+                        >
+                          <X className="h-3.5 w-3.5" /> বাতিল
+                        </Button>
+                        <Button onClick={handleSave} disabled={saving} className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white" size="sm">
+                          <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })()}
+
+                {/* Members list — large photos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {members?.map((m) => {
+                    const present = attendanceData[m.id]?.present || false;
+                    return (
+                      <Card
+                        key={m.id}
+                        className={`p-3 md:p-4 flex items-center gap-4 border transition-all cursor-pointer ${
+                          present
+                            ? "bg-emerald-500/10 border-emerald-500/40"
+                            : "bg-card border-border/30 hover:border-border/60"
+                        }`}
+                        onClick={() => togglePresent(m.id)}
+                      >
+                        <div className="relative shrink-0">
+                          <div className="h-20 w-20 md:h-24 md:w-24 rounded-xl bg-primary/20 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
+                            {m.photo_url ? (
+                              <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="text-primary text-2xl font-medium">{m.full_name?.charAt(0) || "M"}</span>
+                            )}
                           </div>
-                           {m.salary_type === "monthly" ? (
-                             <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium shrink-0">মাসিক</span>
-                           ) : (
-                             <Input
-                               type="number"
-                               value={attendanceData[m.id]?.rate || "0"}
-                               onChange={(e) => setRate(m.id, e.target.value)}
-                               className="w-20 bg-secondary border-border/30 h-8 text-sm text-right"
-                               placeholder="৳"
-                             />
-                           )}
+                          {present && (
+                            <div className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center">
+                              <Check className="h-4 w-4 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+                          <p className="font-semibold text-foreground truncate">{m.full_name}</p>
+                          <p className="text-[11px] text-muted-foreground mb-2">
+                            ID: {m.member_id} • {m.salary_type === "monthly" ? "মাসিক" : "দৈনিক"}
+                          </p>
+                          {m.salary_type === "monthly" ? (
+                            <span className="inline-block text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">মাসিক বেতনভুক্ত</span>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-muted-foreground">৳</span>
+                              <Input
+                                type="number"
+                                value={attendanceData[m.id]?.rate || "0"}
+                                onChange={(e) => setRate(m.id, e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-24 bg-secondary border-border/30 h-9"
+                              />
+                              <span className="text-[10px] text-muted-foreground">/দিন</span>
+                            </div>
+                          )}
                         </div>
                       </Card>
-                    ))}
-                  </div>
+                    );
+                  })}
+                </div>
 
-                 {/* Desktop table */}
-                 <Card className="bg-card border-border/30 overflow-hidden hidden md:block">
-                   <div className="overflow-x-auto">
-                     <table className="w-full text-sm">
-                       <thead>
-                         <tr className="border-b border-border/30">
-                           <th className="text-left p-3 text-muted-foreground font-medium">ছবি</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">আইডি</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">নাম</th>
-                           <th className="text-center p-3 text-muted-foreground font-medium">উপস্থিত</th>
-                           <th className="text-left p-3 text-muted-foreground font-medium">রেট</th>
-                         </tr>
-                       </thead>
-                       <tbody className="divide-y divide-border/20">
-                         {members?.map((m) => (
-                           <tr key={m.id} className="hover:bg-secondary/30 transition-colors">
-                             <td className="p-3">
-                               <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
-                                 {m.photo_url ? (
-                                   <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
-                                 ) : (
-                                   <span className="text-primary text-xs font-medium">{m.full_name?.charAt(0) || "M"}</span>
-                                 )}
-                               </div>
-                             </td>
-                             <td className="p-3 text-muted-foreground font-mono text-xs">{m.member_id}</td>
-                             <td className="p-3 text-foreground">{m.full_name}</td>
-                             <td className="p-3 text-center">
-                               <Checkbox
-                                 checked={attendanceData[m.id]?.present || false}
-                                 onCheckedChange={() => togglePresent(m.id)}
-                               />
-                             </td>
-                              <td className="p-3">
-                                {m.salary_type === "monthly" ? (
-                                  <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">মাসিক</span>
-                                ) : (
-                                  <Input
-                                    type="number"
-                                    value={attendanceData[m.id]?.rate || "0"}
-                                    onChange={(e) => setRate(m.id, e.target.value)}
-                                    className="w-28 bg-secondary border-border/30 h-8"
-                                  />
-                                )}
-                              </td>
-                           </tr>
-                         ))}
-                       </tbody>
-                     </table>
-                   </div>
-                 </Card>
+                {/* Bottom save bar */}
+                <div className="sticky bottom-2 z-10">
+                  <Button
+                    onClick={handleSave}
+                    disabled={saving}
+                    size="lg"
+                    className="w-full gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
+                  >
+                    <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "হাজিরা সেভ করুন"}
+                  </Button>
+                </div>
               </>
             )}
           </TabsContent>
@@ -449,6 +461,21 @@ const AdminAttendance = () => {
                         }}
                       >
                         <Pencil className="h-4 w-4" />
+                      </Button>
+
+                      {/* Rename shooting */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-amber-400 hover:bg-amber-500/10"
+                        title="শুটিং নাম বদলান"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRenameShootingId(shootingId);
+                          setRenameValue(group.shooting?.name || "");
+                        }}
+                      >
+                        <Type className="h-4 w-4" />
                       </Button>
 
                       {/* Delete with timer */}
@@ -706,6 +733,166 @@ const AdminAttendance = () => {
                 </div>
               );
             })()}
+          </DialogContent>
+        </Dialog>
+
+        {/* Picker dialog: choose existing shooting OR create new */}
+        <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+          <DialogContent className="bg-card border-border/50 max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-emerald-400" /> হাজিরার জন্য শুটিং
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {/* Existing shootings without attendance */}
+              {(() => {
+                const available = (shootings ?? []).filter((s: any) => !shootingsWithAttendance?.has(s.id));
+                if (available.length === 0) return null;
+                return (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">বিদ্যমান শুটিং নির্বাচন করুন</p>
+                    <div className="space-y-1.5 max-h-56 overflow-y-auto">
+                      {available.map((s: any) => {
+                        const sel = pickedExistingId === s.id;
+                        return (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => { setPickedExistingId(s.id); setCustomName(""); }}
+                            className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                              sel ? "bg-emerald-500/15 border-emerald-500/40" : "bg-secondary/30 border-border/20 hover:bg-secondary/50"
+                            }`}
+                          >
+                            <p className="text-sm font-medium text-foreground">{s.name}</p>
+                            <p className="text-[11px] text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div className="relative flex items-center gap-2">
+                <div className="flex-1 h-px bg-border/30" />
+                <span className="text-[10px] text-muted-foreground">অথবা</span>
+                <div className="flex-1 h-px bg-border/30" />
+              </div>
+
+              {/* Custom new shooting */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">নতুন শুটিং তৈরি করুন</p>
+                <Input
+                  placeholder="শুটিং নাম লিখুন"
+                  value={customName}
+                  onChange={(e) => { setCustomName(e.target.value); if (e.target.value) setPickedExistingId(""); }}
+                  className="bg-secondary border-border/30"
+                />
+                <Input
+                  type="date"
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  className="bg-secondary border-border/30"
+                />
+              </div>
+            </div>
+            <DialogFooter className="gap-2">
+              <Button variant="ghost" onClick={() => setPickerOpen(false)}>বাতিল</Button>
+              <Button
+                disabled={creatingShooting || (!pickedExistingId && !customName.trim())}
+                className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                onClick={async () => {
+                  setCreatingShooting(true);
+                  try {
+                    let shootingId = pickedExistingId;
+                    let useDate = customDate;
+                    if (!shootingId) {
+                      // Custom — validate no other attendance on the same date
+                      useDate = customDate;
+                      if (!useDate) { toast.error("তারিখ নির্বাচন করুন"); return; }
+                      // find shootings on same date
+                      const { data: sameDate } = await supabase.from("shootings").select("id").eq("shoot_date", useDate);
+                      const sameIds = (sameDate ?? []).map((x: any) => x.id);
+                      if (sameIds.length > 0) {
+                        const { data: existAtt } = await supabase.from("attendance").select("shooting_id").in("shooting_id", sameIds);
+                        if ((existAtt ?? []).length > 0) {
+                          toast.error("এই তারিখে ইতিমধ্যে হাজিরা নেওয়া হয়েছে");
+                          return;
+                        }
+                      }
+                      const { data: created, error: cErr } = await supabase
+                        .from("shootings")
+                        .insert({ name: customName.trim(), shoot_date: useDate, status: "ongoing" })
+                        .select("id")
+                        .single();
+                      if (cErr) throw cErr;
+                      shootingId = created!.id;
+                      queryClient.invalidateQueries({ queryKey: ["admin-shootings-for-attendance"] });
+                    } else {
+                      // Existing — also validate no attendance exists for this date
+                      const picked = shootings?.find((s: any) => s.id === shootingId);
+                      if (picked?.shoot_date) {
+                        const { data: sameDate } = await supabase.from("shootings").select("id").eq("shoot_date", picked.shoot_date).neq("id", shootingId);
+                        const sameIds = (sameDate ?? []).map((x: any) => x.id);
+                        if (sameIds.length > 0) {
+                          const { data: existAtt } = await supabase.from("attendance").select("shooting_id").in("shooting_id", sameIds);
+                          if ((existAtt ?? []).length > 0) {
+                            toast.error("এই তারিখে ইতিমধ্যে হাজিরা নেওয়া হয়েছে");
+                            return;
+                          }
+                        }
+                      }
+                    }
+                    setSelectedShooting(shootingId);
+                    setPickerOpen(false);
+                  } catch (err: any) {
+                    toast.error(err.message);
+                  } finally {
+                    setCreatingShooting(false);
+                  }
+                }}
+              >
+                {creatingShooting ? "অপেক্ষা..." : (<><span>পরবর্তী</span><ArrowRight className="h-4 w-4" /></>)}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Rename shooting dialog */}
+        <Dialog open={!!renameShootingId} onOpenChange={(o) => { if (!o) setRenameShootingId(null); }}>
+          <DialogContent className="bg-card border-border/50 max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Type className="h-4 w-4 text-amber-400" /> শুটিং নাম বদলান
+              </DialogTitle>
+            </DialogHeader>
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              placeholder="নতুন নাম"
+              className="bg-secondary border-border/30"
+            />
+            <DialogFooter className="gap-2">
+              <Button variant="ghost" onClick={() => setRenameShootingId(null)}>বাতিল</Button>
+              <Button
+                disabled={renameSaving || !renameValue.trim()}
+                className="gap-2"
+                onClick={async () => {
+                  if (!renameShootingId) return;
+                  setRenameSaving(true);
+                  const { error } = await supabase.from("shootings").update({ name: renameValue.trim() }).eq("id", renameShootingId);
+                  setRenameSaving(false);
+                  if (error) { toast.error(error.message); return; }
+                  toast.success("নাম আপডেট হয়েছে");
+                  queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
+                  queryClient.invalidateQueries({ queryKey: ["admin-shootings-for-attendance"] });
+                  setRenameShootingId(null);
+                }}
+              >
+                <Save className="h-4 w-4" /> সেভ
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
