@@ -7,13 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2, Pencil } from "lucide-react";
+import { Calendar, Save, History, ChevronDown, ChevronRight, Users, Trash2, Pencil, Check, X, ArrowRight, Plus, Type } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const AdminAttendance = () => {
   const { user, isAdmin, loading } = useAuth();
