@@ -1,7 +1,12 @@
 /// <reference lib="webworker" />
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
+import { clientsClaim } from 'workbox-core';
 
 declare const self: ServiceWorkerGlobalScope;
+
+// Activate new service worker immediately so all users get updates without waiting
+self.skipWaiting();
+clientsClaim();
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);
