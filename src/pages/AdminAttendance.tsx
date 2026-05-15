@@ -27,6 +27,18 @@ const AdminAttendance = () => {
   const [editData, setEditData] = useState<Record<string, { present: boolean; rate: string }>>({});
   const [editSaving, setEditSaving] = useState(false);
 
+  // New flow state
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickedExistingId, setPickedExistingId] = useState<string>("");
+  const [customName, setCustomName] = useState("");
+  const [customDate, setCustomDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
+  const [creatingShooting, setCreatingShooting] = useState(false);
+
+  // Rename shooting from history
+  const [renameShootingId, setRenameShootingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [renameSaving, setRenameSaving] = useState(false);
+
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings-for-attendance"],
     queryFn: async () => {
