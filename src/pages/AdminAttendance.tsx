@@ -735,6 +735,166 @@ const AdminAttendance = () => {
             })()}
           </DialogContent>
         </Dialog>
+
+        {/* Picker dialog: choose existing shooting OR create new */}
+        <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+          <DialogContent className="bg-card border-border/50 max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-emerald-400" /> হাজিরার জন্য শুটিং
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {/* Existing shootings without attendance */}
+              {(() => {
+                const available = (shootings ?? []).filter((s: any) => !shootingsWithAttendance?.has(s.id));
+                if (available.length === 0) return null;
+                return (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">বিদ্যমান শুটিং নির্বাচন করুন</p>
+                    <div className="space-y-1.5 max-h-56 overflow-y-auto">
+                      {available.map((s: any) => {
+                        const sel = pickedExistingId === s.id;
+                        return (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => { setPickedExistingId(s.id); setCustomName(""); }}
+                            className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                              sel ? "bg-emerald-500/15 border-emerald-500/40" : "bg-secondary/30 border-border/20 hover:bg-secondary/50"
+                            }`}
+                          >
+                            <p className="text-sm font-medium text-foreground">{s.name}</p>
+                            <p className="text-[11px] text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}</p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div className="relative flex items-center gap-2">
+                <div className="flex-1 h-px bg-border/30" />
+                <span className="text-[10px] text-muted-foreground">অথবা</span>
+                <div className="flex-1 h-px bg-border/30" />
+              </div>
+
+              {/* Custom new shooting */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">নতুন শুটিং তৈরি করুন</p>
+                <Input
+                  placeholder="শুটিং নাম লিখুন"
+                  value={customName}
+                  onChange={(e) => { setCustomName(e.target.value); if (e.target.value) setPickedExistingId(""); }}
+                  className="bg-secondary border-border/30"
+                />
+                <Input
+                  type="date"
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  className="bg-secondary border-border/30"
+                />
+              </div>
+            </div>
+            <DialogFooter className="gap-2">
+              <Button variant="ghost" onClick={() => setPickerOpen(false)}>বাতিল</Button>
+              <Button
+                disabled={creatingShooting || (!pickedExistingId && !customName.trim())}
+                className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                onClick={async () => {
+                  setCreatingShooting(true);
+                  try {
+                    let shootingId = pickedExistingId;
+                    let useDate = customDate;
+                    if (!shootingId) {
+                      // Custom — validate no other attendance on the same date
+                      useDate = customDate;
+                      if (!useDate) { toast.error("তারিখ নির্বাচন করুন"); return; }
+                      // find shootings on same date
+                      const { data: sameDate } = await supabase.from("shootings").select("id").eq("shoot_date", useDate);
+                      const sameIds = (sameDate ?? []).map((x: any) => x.id);
+                      if (sameIds.length > 0) {
+                        const { data: existAtt } = await supabase.from("attendance").select("shooting_id").in("shooting_id", sameIds);
+                        if ((existAtt ?? []).length > 0) {
+                          toast.error("এই তারিখে ইতিমধ্যে হাজিরা নেওয়া হয়েছে");
+                          return;
+                        }
+                      }
+                      const { data: created, error: cErr } = await supabase
+                        .from("shootings")
+                        .insert({ name: customName.trim(), shoot_date: useDate, status: "ongoing" })
+                        .select("id")
+                        .single();
+                      if (cErr) throw cErr;
+                      shootingId = created!.id;
+                      queryClient.invalidateQueries({ queryKey: ["admin-shootings-for-attendance"] });
+                    } else {
+                      // Existing — also validate no attendance exists for this date
+                      const picked = shootings?.find((s: any) => s.id === shootingId);
+                      if (picked?.shoot_date) {
+                        const { data: sameDate } = await supabase.from("shootings").select("id").eq("shoot_date", picked.shoot_date).neq("id", shootingId);
+                        const sameIds = (sameDate ?? []).map((x: any) => x.id);
+                        if (sameIds.length > 0) {
+                          const { data: existAtt } = await supabase.from("attendance").select("shooting_id").in("shooting_id", sameIds);
+                          if ((existAtt ?? []).length > 0) {
+                            toast.error("এই তারিখে ইতিমধ্যে হাজিরা নেওয়া হয়েছে");
+                            return;
+                          }
+                        }
+                      }
+                    }
+                    setSelectedShooting(shootingId);
+                    setPickerOpen(false);
+                  } catch (err: any) {
+                    toast.error(err.message);
+                  } finally {
+                    setCreatingShooting(false);
+                  }
+                }}
+              >
+                {creatingShooting ? "অপেক্ষা..." : (<><span>পরবর্তী</span><ArrowRight className="h-4 w-4" /></>)}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Rename shooting dialog */}
+        <Dialog open={!!renameShootingId} onOpenChange={(o) => { if (!o) setRenameShootingId(null); }}>
+          <DialogContent className="bg-card border-border/50 max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-foreground flex items-center gap-2">
+                <Type className="h-4 w-4 text-amber-400" /> শুটিং নাম বদলান
+              </DialogTitle>
+            </DialogHeader>
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              placeholder="নতুন নাম"
+              className="bg-secondary border-border/30"
+            />
+            <DialogFooter className="gap-2">
+              <Button variant="ghost" onClick={() => setRenameShootingId(null)}>বাতিল</Button>
+              <Button
+                disabled={renameSaving || !renameValue.trim()}
+                className="gap-2"
+                onClick={async () => {
+                  if (!renameShootingId) return;
+                  setRenameSaving(true);
+                  const { error } = await supabase.from("shootings").update({ name: renameValue.trim() }).eq("id", renameShootingId);
+                  setRenameSaving(false);
+                  if (error) { toast.error(error.message); return; }
+                  toast.success("নাম আপডেট হয়েছে");
+                  queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
+                  queryClient.invalidateQueries({ queryKey: ["admin-shootings-for-attendance"] });
+                  setRenameShootingId(null);
+                }}
+              >
+                <Save className="h-4 w-4" /> সেভ
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
