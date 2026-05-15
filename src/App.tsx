@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,68 +9,85 @@ import { LanguageProvider } from "@/hooks/useLanguage";
 import { RouteGuard } from "@/components/RouteGuard";
 import { CartProvider } from "@/hooks/useCart";
 import { CartDrawer } from "@/components/CartDrawer";
+
+// Eager: landing page (most common first hit) for instant paint
 import PublicHome from "./pages/PublicHome";
-import PublicProfile from "./pages/PublicProfile";
-import ActorPortfolio from "./pages/ActorPortfolio";
-import Login from "./pages/Login";
-import MemberDashboard from "./pages/MemberDashboard";
-import MemberScripts from "./pages/MemberScripts";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminMembers from "./pages/AdminMembers";
-import AdminAttendance from "./pages/AdminAttendance";
-import AdminPayments from "./pages/AdminPayments";
-import AdminShootings from "./pages/AdminShootings";
-import AdminShootingExpenses from "./pages/AdminShootingExpenses";
-import AdminChannels from "./pages/AdminChannels";
-import AdminScripts from "./pages/AdminScripts";
-import AdminScriptEdit from "./pages/AdminScriptEdit";
-import AdminVoiceNotes from "./pages/AdminVoiceNotes";
-import AdminNotices from "./pages/AdminNotices";
-import AdminBonuses from "./pages/AdminBonuses";
-import AdminAdvances from "./pages/AdminAdvances";
-import AdminAccountChecking from "./pages/AdminAccountChecking";
-import AdminSalaryUpdates from "./pages/AdminSalaryUpdates";
-import AdminPublicProfiles from "./pages/AdminPublicProfiles";
-import AdminActorEditor from "./pages/AdminActorEditor";
-import AdminPopularVideos from "./pages/AdminPopularVideos";
-import Chat from "./pages/Chat";
-import AdminContactSettings from "./pages/AdminContactSettings";
-import AdminGallery from "./pages/AdminGallery";
-import Services from "./pages/Services";
-import ServiceDetail from "./pages/ServiceDetail";
-import AdminServices from "./pages/AdminServices";
-import ResetPassword from "./pages/ResetPassword";
-import AllNotifications from "./pages/AllNotifications";
-import MemberSettings from "./pages/MemberSettings";
-import AdminNews from "./pages/AdminNews";
-import AdminSettings from "./pages/AdminSettings";
-import News from "./pages/News";
-import PublisherProfile from "./pages/PublisherProfile";
-import AdminBookings from "./pages/AdminBookings";
-import AdminFreelance from "./pages/AdminFreelance";
-import FreelanceClientView from "./pages/FreelanceClientView";
-import ScriptDrawing from "./pages/ScriptDrawing";
-import AdminDeliverySettings from "./pages/AdminDeliverySettings";
-import ClientDashboard from "./pages/ClientDashboard";
-import ClientProjects from "./pages/ClientProjects";
-import ClientPaymentHistory from "./pages/ClientPaymentHistory";
 import NotFound from "./pages/NotFound";
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import ShopCustomerLogin from "./pages/ShopCustomerLogin";
-import ShopCustomerAccount from "./pages/ShopCustomerAccount";
-import AdminProducts from "./pages/AdminProducts";
-import ShopOfferPage from "./pages/ShopOfferPage";
-import FreeDeliveryPage from "./pages/FreeDeliveryPage";
-import AllCategories from "./pages/AllCategories";
 
-import TasksPage from "./pages/TasksPage";
-import DownloadApp from "./pages/DownloadApp";
-import AdminAppVersions from "./pages/AdminAppVersions";
-import PhotoCard from "./pages/PhotoCard";
-import NewsCard from "./pages/NewsCard";
+// Lazy-loaded routes — each becomes its own chunk so the initial bundle stays small
+const PublicProfile = lazy(() => import("./pages/PublicProfile"));
+const ActorPortfolio = lazy(() => import("./pages/ActorPortfolio"));
+const Login = lazy(() => import("./pages/Login"));
+const MemberDashboard = lazy(() => import("./pages/MemberDashboard"));
+const MemberScripts = lazy(() => import("./pages/MemberScripts"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminMembers = lazy(() => import("./pages/AdminMembers"));
+const AdminAttendance = lazy(() => import("./pages/AdminAttendance"));
+const AdminPayments = lazy(() => import("./pages/AdminPayments"));
+const AdminShootings = lazy(() => import("./pages/AdminShootings"));
+const AdminShootingExpenses = lazy(() => import("./pages/AdminShootingExpenses"));
+const AdminChannels = lazy(() => import("./pages/AdminChannels"));
+const AdminScripts = lazy(() => import("./pages/AdminScripts"));
+const AdminScriptEdit = lazy(() => import("./pages/AdminScriptEdit"));
+const AdminVoiceNotes = lazy(() => import("./pages/AdminVoiceNotes"));
+const AdminNotices = lazy(() => import("./pages/AdminNotices"));
+const AdminBonuses = lazy(() => import("./pages/AdminBonuses"));
+const AdminAdvances = lazy(() => import("./pages/AdminAdvances"));
+const AdminAccountChecking = lazy(() => import("./pages/AdminAccountChecking"));
+const AdminSalaryUpdates = lazy(() => import("./pages/AdminSalaryUpdates"));
+const AdminPublicProfiles = lazy(() => import("./pages/AdminPublicProfiles"));
+const AdminActorEditor = lazy(() => import("./pages/AdminActorEditor"));
+const AdminPopularVideos = lazy(() => import("./pages/AdminPopularVideos"));
+const Chat = lazy(() => import("./pages/Chat"));
+const AdminContactSettings = lazy(() => import("./pages/AdminContactSettings"));
+const AdminGallery = lazy(() => import("./pages/AdminGallery"));
+const Services = lazy(() => import("./pages/Services"));
+const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
+const AdminServices = lazy(() => import("./pages/AdminServices"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const AllNotifications = lazy(() => import("./pages/AllNotifications"));
+const MemberSettings = lazy(() => import("./pages/MemberSettings"));
+const AdminNews = lazy(() => import("./pages/AdminNews"));
+const AdminSettings = lazy(() => import("./pages/AdminSettings"));
+const News = lazy(() => import("./pages/News"));
+const PublisherProfile = lazy(() => import("./pages/PublisherProfile"));
+const AdminBookings = lazy(() => import("./pages/AdminBookings"));
+const AdminFreelance = lazy(() => import("./pages/AdminFreelance"));
+const FreelanceClientView = lazy(() => import("./pages/FreelanceClientView"));
+const ScriptDrawing = lazy(() => import("./pages/ScriptDrawing"));
+const AdminDeliverySettings = lazy(() => import("./pages/AdminDeliverySettings"));
+const ClientDashboard = lazy(() => import("./pages/ClientDashboard"));
+const ClientProjects = lazy(() => import("./pages/ClientProjects"));
+const ClientPaymentHistory = lazy(() => import("./pages/ClientPaymentHistory"));
+const Products = lazy(() => import("./pages/Products"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const ShopCustomerLogin = lazy(() => import("./pages/ShopCustomerLogin"));
+const ShopCustomerAccount = lazy(() => import("./pages/ShopCustomerAccount"));
+const AdminProducts = lazy(() => import("./pages/AdminProducts"));
+const ShopOfferPage = lazy(() => import("./pages/ShopOfferPage"));
+const FreeDeliveryPage = lazy(() => import("./pages/FreeDeliveryPage"));
+const AllCategories = lazy(() => import("./pages/AllCategories"));
+const TasksPage = lazy(() => import("./pages/TasksPage"));
+const DownloadApp = lazy(() => import("./pages/DownloadApp"));
+const AdminAppVersions = lazy(() => import("./pages/AdminAppVersions"));
+const PhotoCard = lazy(() => import("./pages/PhotoCard"));
+const NewsCard = lazy(() => import("./pages/NewsCard"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+const PageFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -81,6 +99,7 @@ const App = () => (
         <Sonner />
         <CartDrawer />
         <BrowserRouter>
+          <Suspense fallback={<PageFallback />}>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<PublicHome />} />
@@ -156,6 +175,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
       </CartProvider>
