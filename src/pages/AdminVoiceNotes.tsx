@@ -88,6 +88,64 @@ export default function AdminVoiceNotes() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
 
+  // Inline sequence-number editor
+  const [editingSeqClipId, setEditingSeqClipId] = useState<string | null>(null);
+  const [editingSeqValue, setEditingSeqValue] = useState<string>("");
+  const [resequencing, setResequencing] = useState(false);
+
+  const resequenceClip = async (clip: Clip, targetNumber: number) => {
+    const group = groups.find((g) => g.id === clip.voice_note_id);
+    if (!group) return;
+    const sorted = [...group.clips].sort((a, b) => a.sequence_number - b.sequence_number);
+    const total = sorted.length;
+    const target = Math.max(1, Math.min(total, Math.floor(targetNumber)));
+    const currentIdx = sorted.findIndex((c) => c.id === clip.id);
+    if (currentIdx === -1 || currentIdx === target - 1) {
+      setEditingSeqClipId(null);
+      return;
+    }
+    const reordered = [...sorted];
+    const [moved] = reordered.splice(currentIdx, 1);
+    reordered.splice(target - 1, 0, moved);
+
+    setResequencing(true);
+    // Optimistic UI
+    setGroups((prev) =>
+      prev.map((g) =>
+        g.id === group.id
+          ? {
+              ...g,
+              clips: reordered.map((c, i) => ({ ...c, sequence_number: i + 1 })),
+            }
+          : g
+      )
+    );
+    setEditingSeqClipId(null);
+    try {
+      // Two-pass to avoid unique (voice_note_id, sequence_number) conflicts
+      for (let i = 0; i < reordered.length; i++) {
+        const { error } = await supabase
+          .from("voice_note_clips")
+          .update({ sequence_number: -(i + 1) })
+          .eq("id", reordered[i].id);
+        if (error) throw error;
+      }
+      for (let i = 0; i < reordered.length; i++) {
+        const { error } = await supabase
+          .from("voice_note_clips")
+          .update({ sequence_number: i + 1 })
+          .eq("id", reordered[i].id);
+        if (error) throw error;
+      }
+      toast.success("দৃশ্য পুনরায় সাজানো হয়েছে");
+    } catch (e: any) {
+      toast.error(e.message || "পুনঃসজ্জা ব্যর্থ");
+      load();
+    } finally {
+      setResequencing(false);
+    }
+  };
+
   // Premium confirm dialog state
   const [confirmState, setConfirmState] = useState<{
     open: boolean;
