@@ -361,7 +361,12 @@ export default function AdminVoiceNotes() {
   };
 
   const deleteClip = async (clip: Clip) => {
-    if (!confirm(`দৃশ্য ${toBn(clip.sequence_number)} মুছে ফেলবেন?`)) return;
+    const ok = await askConfirm({
+      title: "দৃশ্য মুছে ফেলবেন?",
+      description: `দৃশ্য ${toBn(clip.sequence_number)} এবং এর অডিও ও ট্রান্সক্রিপশন স্থায়ীভাবে মুছে যাবে।`,
+      confirmLabel: "মুছে ফেলুন",
+    });
+    if (!ok) return;
     await supabase.storage.from("voice-notes").remove([clip.audio_path]);
     const { error } = await supabase
       .from("voice_note_clips")
