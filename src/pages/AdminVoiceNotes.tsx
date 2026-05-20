@@ -88,6 +88,64 @@ export default function AdminVoiceNotes() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
 
+  // Inline sequence-number editor
+  const [editingSeqClipId, setEditingSeqClipId] = useState<string | null>(null);
+  const [editingSeqValue, setEditingSeqValue] = useState<string>("");
+  const [resequencing, setResequencing] = useState(false);
+
+  const resequenceClip = async (clip: Clip, targetNumber: number) => {
+    const group = groups.find((g) => g.id === clip.voice_note_id);
+    if (!group) return;
+    const sorted = [...group.clips].sort((a, b) => a.sequence_number - b.sequence_number);
+    const total = sorted.length;
+    const target = Math.max(1, Math.min(total, Math.floor(targetNumber)));
+    const currentIdx = sorted.findIndex((c) => c.id === clip.id);
+    if (currentIdx === -1 || currentIdx === target - 1) {
+      setEditingSeqClipId(null);
+      return;
+    }
+    const reordered = [...sorted];
+    const [moved] = reordered.splice(currentIdx, 1);
+    reordered.splice(target - 1, 0, moved);
+
+    setResequencing(true);
+    // Optimistic UI
+    setGroups((prev) =>
+      prev.map((g) =>
+        g.id === group.id
+          ? {
+              ...g,
+              clips: reordered.map((c, i) => ({ ...c, sequence_number: i + 1 })),
+            }
+          : g
+      )
+    );
+    setEditingSeqClipId(null);
+    try {
+      // Two-pass to avoid unique (voice_note_id, sequence_number) conflicts
+      for (let i = 0; i < reordered.length; i++) {
+        const { error } = await supabase
+          .from("voice_note_clips")
+          .update({ sequence_number: -(i + 1) })
+          .eq("id", reordered[i].id);
+        if (error) throw error;
+      }
+      for (let i = 0; i < reordered.length; i++) {
+        const { error } = await supabase
+          .from("voice_note_clips")
+          .update({ sequence_number: i + 1 })
+          .eq("id", reordered[i].id);
+        if (error) throw error;
+      }
+      toast.success("দৃশ্য পুনরায় সাজানো হয়েছে");
+    } catch (e: any) {
+      toast.error(e.message || "পুনঃসজ্জা ব্যর্থ");
+      load();
+    } finally {
+      setResequencing(false);
+    }
+  };
+
   // Premium confirm dialog state
   const [confirmState, setConfirmState] = useState<{
     open: boolean;
@@ -583,7 +641,47 @@ export default function AdminVoiceNotes() {
                                       c.is_shot ? "text-emerald-400" : "text-foreground"
                                     }`}
                                   >
-                                    দৃশ্য {toBn(c.sequence_number)}
+                                    {editingSeqClipId === c.id ? (
+                                      <span className="inline-flex items-center gap-1">
+                                        <span>দৃশ্য</span>
+                                        <Input
+                                          type="number"
+                                          min={1}
+                                          max={g.clips.length}
+                                          value={editingSeqValue}
+                                          autoFocus
+                                          disabled={resequencing}
+                                          onChange={(e) => setEditingSeqValue(e.target.value)}
+                                          onBlur={() => {
+                                            const n = parseInt(editingSeqValue, 10);
+                                            if (!isNaN(n)) resequenceClip(c, n);
+                                            else setEditingSeqClipId(null);
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                              const n = parseInt(editingSeqValue, 10);
+                                              if (!isNaN(n)) resequenceClip(c, n);
+                                              else setEditingSeqClipId(null);
+                                            } else if (e.key === "Escape") {
+                                              setEditingSeqClipId(null);
+                                            }
+                                          }}
+                                          className="h-6 w-14 px-1 text-sm"
+                                        />
+                                      </span>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        title="নাম্বার পরিবর্তন করতে ক্লিক করুন"
+                                        className="hover:underline decoration-dotted underline-offset-4 cursor-pointer"
+                                        onClick={() => {
+                                          setEditingSeqClipId(c.id);
+                                          setEditingSeqValue(String(c.sequence_number));
+                                        }}
+                                      >
+                                        দৃশ্য {toBn(c.sequence_number)}
+                                      </button>
+                                    )}
                                     {c.is_shot && (
                                       <span className="text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
                                     )}
