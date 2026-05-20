@@ -287,7 +287,7 @@ export default function AdminVoiceNotes() {
           .single();
         if (insErr) throw insErr;
         clipId = inserted?.id ?? null;
-        toast.success(`ভয়েস ${toBn(next)} সেভ — টেক্সটে রূপান্তর হচ্ছে...`);
+        toast.success(`দৃশ্য ${toBn(next)} সেভ — টেক্সটে রূপান্তর হচ্ছে...`);
       }
       await load();
       // Fire transcription (don't await to keep UI responsive)
@@ -321,7 +321,7 @@ export default function AdminVoiceNotes() {
   };
 
   const deleteClip = async (clip: Clip) => {
-    if (!confirm(`ভয়েস ${toBn(clip.sequence_number)} মুছে ফেলবেন?`)) return;
+    if (!confirm(`দৃশ্য ${toBn(clip.sequence_number)} মুছে ফেলবেন?`)) return;
     await supabase.storage.from("voice-notes").remove([clip.audio_path]);
     const { error } = await supabase
       .from("voice_note_clips")
@@ -444,7 +444,7 @@ export default function AdminVoiceNotes() {
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-foreground truncate">{g.title}</p>
                       <p className="text-xs text-muted-foreground">
-                        {toBn(g.clips.length)}টি ভয়েস ·{" "}
+                        {toBn(g.clips.length)}টি দৃশ্য ·{" "}
                         {new Date(g.created_at).toLocaleDateString("bn-BD")}
                       </p>
                     </div>
@@ -540,7 +540,7 @@ export default function AdminVoiceNotes() {
                                       c.is_shot ? "text-emerald-400" : "text-foreground"
                                     }`}
                                   >
-                                    নাম্বার {toBn(c.sequence_number)}
+                                    দৃশ্য {toBn(c.sequence_number)}
                                     {c.is_shot && (
                                       <span className="text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
                                     )}
@@ -737,7 +737,7 @@ export default function AdminVoiceNotes() {
                             )}
                             {uploading
                               ? "আপলোড ও ট্রান্সক্রিপশন..."
-                              : `নাম্বার ${toBn(g.clips.length + 1)} রেকর্ড করুন`}
+                              : `দৃশ্য ${toBn(g.clips.length + 1)} রেকর্ড করুন`}
                           </Button>
                         )}
                       </div>
