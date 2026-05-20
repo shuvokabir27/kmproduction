@@ -360,10 +360,10 @@ const MemberDashboard = () => {
         <DailyRashifal mode="all" className="mt-4" />
 
         {/* Meme generator */}
-        <MemeGenerator mode="member" className="mt-4" />
+        {isEnabled("meme_generator") && <MemeGenerator mode="member" className="mt-4" />}
 
         {/* Fun spotlight + member list — visible to everyone, just below advance request */}
-        <ZeroBalanceFun />
+        <ZeroBalanceFun showSpotlight={isEnabled("spotlight")} showMembers={isEnabled("members_list")} />
 
         {/* Balance Cards */}
         {!isZeroBalance && (
