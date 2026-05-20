@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Newspaper, Radio, ExternalLink, Flag, Globe2, X, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 const HIDE_KEY = "news-ticker-hidden";
 
@@ -64,12 +66,15 @@ function interleaveAlternating(list: NewsItem[]): NewsItem[] {
 }
 
 export function NewsTickerBar() {
+  const { isAdmin } = useAuth();
+  const { isEnabled } = useFeatureFlags();
   const [items, setItems] = useState<NewsItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hidden, setHidden] = useState<boolean>(() => {
     try { return localStorage.getItem(HIDE_KEY) === "1"; } catch { return false; }
   });
+  if (!isAdmin && !isEnabled("breaking_news")) return null;
   const rotateTimeoutRef = useRef<number | null>(null);
 
   const setHiddenPersist = (v: boolean) => {

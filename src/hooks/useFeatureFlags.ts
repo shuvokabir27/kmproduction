@@ -1,15 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type FeatureKey = "meme_generator" | "spotlight" | "members_list";
+export type FeatureKey =
+  | "meme_generator"
+  | "spotlight"
+  | "members_list"
+  | "daily_rashifal"
+  | "breaking_news";
 
 export const FEATURE_LABELS: Record<FeatureKey, string> = {
   meme_generator: "মিম জেনারেটর",
   spotlight: "আজকের স্পটলাইট",
   members_list: "সদস্য তালিকা",
+  daily_rashifal: "আজকের রাশিফল",
+  breaking_news: "ব্রেকিং নিউজ",
 };
 
-export const ALL_FEATURES: FeatureKey[] = ["meme_generator", "spotlight", "members_list"];
+export const ALL_FEATURES: FeatureKey[] = [
+  "meme_generator",
+  "spotlight",
+  "members_list",
+  "daily_rashifal",
+  "breaking_news",
+];
 
 export function useFeatureFlags() {
   const { data = {}, isLoading } = useQuery({
