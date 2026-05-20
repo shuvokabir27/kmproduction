@@ -604,7 +604,7 @@ export default function AdminVoiceNotes() {
                                     <Square className="h-3.5 w-3.5" />
                                     {fmt(recordTime)}
                                   </Button>
-                                ) : (
+                                ) : recordTarget ? null : (
                                   <>
                                     <Button
                                       size="icon"
@@ -628,7 +628,7 @@ export default function AdminVoiceNotes() {
                                       size="icon"
                                       variant="ghost"
                                       title="পুনরায় রেকর্ড"
-                                      disabled={!!recordTarget || uploading}
+                                      disabled={uploading}
                                       onClick={() =>
                                         startRecording({
                                           groupId: g.id,
