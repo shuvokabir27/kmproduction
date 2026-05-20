@@ -18,6 +18,7 @@ import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
 import { usePermissions, PERMISSION_LABELS } from "@/hooks/usePermissions";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { Receipt, ShieldCheck } from "lucide-react";
 
 
@@ -26,6 +27,7 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 const MemberDashboard = () => {
   const { user, profile, loading, isAdmin, isClient } = useAuth();
+  const { isEnabled } = useFeatureFlags();
   const [viewScriptOpen, setViewScriptOpen] = useState(false);
   const [viewShooting, setViewShooting] = useState<any>(null);
   const [paymentDetailOpen, setPaymentDetailOpen] = useState(false);
