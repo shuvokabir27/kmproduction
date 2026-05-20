@@ -355,11 +355,15 @@ const MemberDashboard = () => {
         {/* Advance request - moved below the income graph */}
         {!isZeroBalance && <AdvanceRequestCard />}
 
-        {/* Personal horoscope */}
-        <DailyRashifal mode="self" />
+        {isEnabled("daily_rashifal") && (
+          <>
+            {/* Personal horoscope */}
+            <DailyRashifal mode="self" />
 
-        {/* All members rotating horoscope */}
-        <DailyRashifal mode="all" className="mt-4" />
+            {/* All members rotating horoscope */}
+            <DailyRashifal mode="all" className="mt-4" />
+          </>
+        )}
 
         {/* Meme generator */}
         {isEnabled("meme_generator") && <MemeGenerator mode="member" className="mt-4" />}
