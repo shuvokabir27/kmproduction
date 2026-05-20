@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePermissions } from "@/hooks/usePermissions";
 import {
   LayoutDashboard,
   Users,
@@ -30,7 +31,13 @@ import {
   Mic,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const permissionIconMap: Record<string, { icon: any; color: string; bg: string }> = {
+  shooting_expenses: { icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
+  shootings: { icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
+  attendance: { icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+};
 
 const adminTabs = [
   { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-violet-400", bg: "bg-violet-500/15" },
@@ -67,25 +74,58 @@ const moreItems = [
   { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
 ];
 
-const memberTabs = [
+const memberTabsBase = [
   { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-violet-400", bg: "bg-violet-500/15" },
   { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/15" },
   { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/15" },
-  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400", bg: "bg-amber-500/15" },
-];
-
-const memberMoreItems = [
-  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" },
-  { icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400", bg: "bg-amber-500/10" },
-  { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
 ];
 
 export function MobileBottomNav() {
   const { isAdmin, signOut } = useAuth();
+  const { permissions } = usePermissions();
   const location = useLocation();
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
   const [pressedTab, setPressedTab] = useState<string | null>(null);
+
+  const memberMoreItems = useMemo(() => {
+    const items: { icon: any; label: string; path: string; color: string; bg: string }[] = [];
+    if (permissions.length > 0) {
+      items.push({ icon: null, label: "— পারমিশন মেনু —", path: "__divider_perm__", color: "", bg: "" });
+      permissions.forEach((p) => {
+        const mapped = permissionIconMap[p];
+        if (mapped) {
+          items.push({
+            icon: mapped.icon,
+            label: p === "shooting_expenses" ? "শুটিং খরচ" : p === "shootings" ? "শুটিং" : "হাজিরা",
+            path: p === "shooting_expenses" ? "/admin/shooting-expenses" : p === "shootings" ? "/admin/shootings" : "/admin/attendance",
+            color: mapped.color,
+            bg: mapped.bg,
+          });
+        }
+      });
+    }
+    items.push({ icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" });
+    items.push({ icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400", bg: "bg-amber-500/10" });
+    items.push({ icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" });
+    return items;
+  }, [permissions]);
+
+  const memberTabs = useMemo(() => {
+    const permTabs = permissions.map((p) => {
+      const mapped = permissionIconMap[p];
+      if (!mapped) return null;
+      return {
+        icon: mapped.icon,
+        label: p === "shooting_expenses" ? "শুটিং খরচ" : p === "shootings" ? "শুটিং" : "হাজিরা",
+        path: p === "shooting_expenses" ? "/admin/shooting-expenses" : p === "shootings" ? "/admin/shootings" : "/admin/attendance",
+        color: mapped.color,
+        bg: mapped.bg,
+      };
+    }).filter(Boolean) as { icon: any; label: string; path: string; color: string; bg: string }[];
+    return [...memberTabsBase, ...permTabs, { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400", bg: "bg-amber-500/15" }];
+  }, [permissions]);
+
   const tabs = isAdmin ? adminTabs : memberTabs;
   const currentMoreItems = isAdmin ? moreItems : memberMoreItems;
 
