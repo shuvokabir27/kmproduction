@@ -64,12 +64,15 @@ function interleaveAlternating(list: NewsItem[]): NewsItem[] {
 }
 
 export function NewsTickerBar() {
+  const { isAdmin } = useAuth();
+  const { isEnabled } = useFeatureFlags();
   const [items, setItems] = useState<NewsItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hidden, setHidden] = useState<boolean>(() => {
     try { return localStorage.getItem(HIDE_KEY) === "1"; } catch { return false; }
   });
+  if (!isAdmin && !isEnabled("breaking_news")) return null;
   const rotateTimeoutRef = useRef<number | null>(null);
 
   const setHiddenPersist = (v: boolean) => {
