@@ -106,7 +106,12 @@ const drawImageCover = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x:
 const canvasBlob = (canvas: HTMLCanvasElement): Promise<Blob | null> =>
   new Promise((resolve) => canvas.toBlob(resolve, "image/png", 1));
 
-export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: boolean } = {}) {
+export function ZeroBalanceFun({
+  spotlightOnly = false,
+  showSpotlight = true,
+  showMembers = true,
+}: { spotlightOnly?: boolean; showSpotlight?: boolean; showMembers?: boolean } = {}) {
+  if (!showSpotlight && !showMembers) return null;
   const { data: members } = useQuery({
     queryKey: ["zero-balance-members-spotlight"],
     queryFn: async () => {
@@ -596,6 +601,7 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
   return (
     <div className="space-y-6">
       {/* Animated spotlight display */}
+      {showSpotlight && (
       <div ref={containerRef} className={`premium-card rounded-2xl overflow-hidden ${isFullscreen ? "bg-background" : ""}`}>
         <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
           <div className="h-8 w-8 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
@@ -622,9 +628,10 @@ export function ZeroBalanceFun({ spotlightOnly = false }: { spotlightOnly?: bool
         </div>
         <SpotlightStage big={isFullscreen} />
       </div>
+      )}
 
       {/* Full member grid (static) */}
-      {!spotlightOnly && members && members.length > 0 && (
+      {showMembers && !spotlightOnly && members && members.length > 0 && (
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
             <div className="h-8 w-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
