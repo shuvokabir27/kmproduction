@@ -46,6 +46,8 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { usePermissions } from "@/hooks/usePermissions";
+
 
 const teamWorkItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
@@ -91,11 +93,19 @@ const memberItems = [
   { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
 ];
 
+const permissionMenuMap: Record<string, { title: string; url: string; icon: any; color: string; bg: string }> = {
+  shooting_expenses: { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
+  shootings: { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
+  attendance: { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+};
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { isAdmin, isProductAdmin, profile, signOut } = useAuth();
+  const { permissions } = usePermissions();
   const location = useLocation();
+
 
   const isActive = (path: string) =>
     path === "/admin"
@@ -225,7 +235,10 @@ export function AppSidebar() {
               মেনু
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              {renderItems(memberItems)}
+              {renderItems([
+                ...memberItems,
+                ...permissions.map((p) => permissionMenuMap[p]).filter(Boolean),
+              ])}
             </SidebarGroupContent>
           </SidebarGroup>
         )}
