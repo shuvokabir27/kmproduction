@@ -107,7 +107,6 @@ export function WeatherWidget() {
     async function reverseCity(lat: number, lon: number): Promise<string> {
       // Try multiple endpoints; some have CORS restrictions on certain origins
       const endpoints = [
-        `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=bn&count=1`,
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=bn&zoom=10`,
       ];
       for (const url of endpoints) {
