@@ -13,6 +13,7 @@ const DESCRIPTIONS: Record<string, string> = {
   members_list: "সদস্যদের ড্যাশবোর্ডে সদস্য তালিকা গ্রিড দেখাবে কি না",
   daily_rashifal: "সদস্যদের ড্যাশবোর্ডে আজকের রাশিফল সেকশন দেখাবে কি না",
   breaking_news: "উপরের ব্রেকিং নিউজ টিকার সদস্যদের দেখাবে কি না",
+  weather_widget: "হেডারে আবহাওয়া উইজেট দেখাবে কি না (বন্ধ করলে API কল বন্ধ হয়ে স্পিড বাড়বে)",
 };
 
 const AdminFeatureToggles = () => {

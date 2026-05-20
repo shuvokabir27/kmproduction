@@ -6,7 +6,8 @@ export type FeatureKey =
   | "spotlight"
   | "members_list"
   | "daily_rashifal"
-  | "breaking_news";
+  | "breaking_news"
+  | "weather_widget";
 
 export const FEATURE_LABELS: Record<FeatureKey, string> = {
   meme_generator: "মিম জেনারেটর",
@@ -14,6 +15,7 @@ export const FEATURE_LABELS: Record<FeatureKey, string> = {
   members_list: "সদস্য তালিকা",
   daily_rashifal: "আজকের রাশিফল",
   breaking_news: "ব্রেকিং নিউজ",
+  weather_widget: "আবহাওয়া উইজেট",
 };
 
 export const ALL_FEATURES: FeatureKey[] = [
@@ -22,6 +24,7 @@ export const ALL_FEATURES: FeatureKey[] = [
   "members_list",
   "daily_rashifal",
   "breaking_news",
+  "weather_widget",
 ];
 
 export function useFeatureFlags() {
