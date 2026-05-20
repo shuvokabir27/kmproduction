@@ -350,7 +350,7 @@ const AdminAttendance = () => {
 
                 {/* Members list — large photos */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {members?.map((m) => {
+                  {members?.filter((m: any) => m.salary_type !== "monthly").map((m) => {
                     const present = attendanceData[m.id]?.present || false;
                     return (
                       <Card
