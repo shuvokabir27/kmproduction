@@ -94,6 +94,10 @@ export default function AdminVoiceNotes() {
   const [resequencing, setResequencing] = useState(false);
 
   const resequenceClip = async (clip: Clip, targetNumber: number) => {
+    // Close the inline editor first so blur-triggered duplicate calls don't reopen the dialog
+    setEditingSeqClipId(null);
+    setEditingSeqValue("");
+
     const group = groups.find((g) => g.id === clip.voice_note_id);
     if (!group) return;
     const target = Math.floor(targetNumber);
@@ -101,10 +105,8 @@ export default function AdminVoiceNotes() {
       toast.error("সঠিক দৃশ্য নাম্বার দিন (১ বা তার বেশি)");
       return;
     }
-    if (target === clip.sequence_number) {
-      setEditingSeqClipId(null);
-      return;
-    }
+    if (target === clip.sequence_number) return;
+
     // Duplicate check — show popup if another clip already uses this number
     const duplicate = group.clips.find(
       (c) => c.id !== clip.id && c.sequence_number === target
