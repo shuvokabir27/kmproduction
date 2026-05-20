@@ -96,50 +96,52 @@ export default function AdminVoiceNotes() {
   const resequenceClip = async (clip: Clip, targetNumber: number) => {
     const group = groups.find((g) => g.id === clip.voice_note_id);
     if (!group) return;
-    const sorted = [...group.clips].sort((a, b) => a.sequence_number - b.sequence_number);
-    const total = sorted.length;
-    const target = Math.max(1, Math.min(total, Math.floor(targetNumber)));
-    const currentIdx = sorted.findIndex((c) => c.id === clip.id);
-    if (currentIdx === -1 || currentIdx === target - 1) {
+    const target = Math.floor(targetNumber);
+    if (isNaN(target) || target < 1) {
+      toast.error("সঠিক দৃশ্য নাম্বার দিন (১ বা তার বেশি)");
+      return;
+    }
+    if (target === clip.sequence_number) {
       setEditingSeqClipId(null);
       return;
     }
-    const reordered = [...sorted];
-    const [moved] = reordered.splice(currentIdx, 1);
-    reordered.splice(target - 1, 0, moved);
+    // Duplicate check — show popup if another clip already uses this number
+    const duplicate = group.clips.find(
+      (c) => c.id !== clip.id && c.sequence_number === target
+    );
+    if (duplicate) {
+      await askConfirm({
+        title: "এই নাম্বার ইতিমধ্যে ব্যবহৃত",
+        description: `এই গ্রুপে আগে থেকেই দৃশ্য ${toBn(target)} রয়েছে। অনুগ্রহ করে অন্য একটি নাম্বার দিন।`,
+        confirmLabel: "ঠিক আছে",
+      });
+      return;
+    }
 
     setResequencing(true);
-    // Optimistic UI
+    // Optimistic UI — only this clip changes
     setGroups((prev) =>
       prev.map((g) =>
         g.id === group.id
           ? {
               ...g,
-              clips: reordered.map((c, i) => ({ ...c, sequence_number: i + 1 })),
+              clips: g.clips
+                .map((c) => (c.id === clip.id ? { ...c, sequence_number: target } : c))
+                .sort((a, b) => a.sequence_number - b.sequence_number),
             }
           : g
       )
     );
     setEditingSeqClipId(null);
     try {
-      // Two-pass to avoid unique (voice_note_id, sequence_number) conflicts
-      for (let i = 0; i < reordered.length; i++) {
-        const { error } = await supabase
-          .from("voice_note_clips")
-          .update({ sequence_number: -(i + 1) })
-          .eq("id", reordered[i].id);
-        if (error) throw error;
-      }
-      for (let i = 0; i < reordered.length; i++) {
-        const { error } = await supabase
-          .from("voice_note_clips")
-          .update({ sequence_number: i + 1 })
-          .eq("id", reordered[i].id);
-        if (error) throw error;
-      }
-      toast.success("দৃশ্য পুনরায় সাজানো হয়েছে");
+      const { error } = await supabase
+        .from("voice_note_clips")
+        .update({ sequence_number: target })
+        .eq("id", clip.id);
+      if (error) throw error;
+      toast.success(`দৃশ্য নাম্বার ${toBn(target)} সেট হয়েছে`);
     } catch (e: any) {
-      toast.error(e.message || "পুনঃসজ্জা ব্যর্থ");
+      toast.error(e.message || "নাম্বার পরিবর্তন ব্যর্থ");
       load();
     } finally {
       setResequencing(false);
@@ -647,7 +649,7 @@ export default function AdminVoiceNotes() {
                                         <Input
                                           type="number"
                                           min={1}
-                                          max={g.clips.length}
+                                          max={9999}
                                           value={editingSeqValue}
                                           autoFocus
                                           disabled={resequencing}
