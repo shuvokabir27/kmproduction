@@ -451,6 +451,40 @@ export default function AdminVoiceNotes() {
                     <Button
                       size="icon"
                       variant="ghost"
+                      title="PDF ডাউনলোড"
+                      className="text-primary hover:text-primary"
+                      disabled={g.clips.length === 0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast.promise(exportVoiceNotesPdf(g.title, g.clips), {
+                          loading: "PDF তৈরি হচ্ছে...",
+                          success: "PDF ডাউনলোড হয়েছে",
+                          error: "PDF তৈরি ব্যর্থ",
+                        });
+                      }}
+                    >
+                      <FileDown className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      title="Word (DOCX) ডাউনলোড"
+                      className="text-blue-400 hover:text-blue-300"
+                      disabled={g.clips.length === 0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast.promise(exportVoiceNotesDocx(g.title, g.clips), {
+                          loading: "DOCX তৈরি হচ্ছে...",
+                          success: "DOCX ডাউনলোড হয়েছে",
+                          error: "DOCX তৈরি ব্যর্থ",
+                        });
+                      }}
+                    >
+                      <FileType className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
                       className="text-destructive hover:text-destructive"
                       onClick={(e) => {
                         e.stopPropagation();
