@@ -46,6 +46,8 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { usePermissions } from "@/hooks/usePermissions";
+
 
 const teamWorkItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
