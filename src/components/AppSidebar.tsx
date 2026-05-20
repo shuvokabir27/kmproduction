@@ -60,6 +60,7 @@ const teamWorkItems = [
   { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "বাইরের কাজ", url: "/admin/freelance", icon: Briefcase, color: "text-orange-400", bg: "bg-orange-500/10" },
   { title: "সেটিংস", url: "/admin/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
+  { title: "রোল ম্যানেজমেন্ট", url: "/admin/role-management", icon: ShieldCheck, color: "text-cyan-400", bg: "bg-cyan-500/10" },
   { title: "অ্যাপ ভার্সন", url: "/admin/app-versions", icon: Smartphone, color: "text-green-400", bg: "bg-green-500/10" },
 ];
 
