@@ -348,7 +348,19 @@ const AdminAttendance = () => {
                   );
                 })()}
 
-                {/* Members list — large photos */}
+                {/* Info: monthly members are auto-present */}
+                {(() => {
+                  const monthlyCount = (members ?? []).filter((m: any) => m.salary_type === "monthly").length;
+                  if (monthlyCount === 0) return null;
+                  return (
+                    <Card className="bg-primary/5 border-primary/20 p-3 text-xs text-primary flex items-center gap-2">
+                      <Check className="h-4 w-4" />
+                      <span>মাসিক বেতনভুক্ত {monthlyCount} জন সদস্য সব শুটিংয়ে স্বয়ংক্রিয়ভাবে উপস্থিত গণ্য হবেন।</span>
+                    </Card>
+                  );
+                })()}
+
+                {/* Members list — large photos (daily only) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {members?.filter((m: any) => m.salary_type !== "monthly").map((m) => {
                     const present = attendanceData[m.id]?.present || false;
