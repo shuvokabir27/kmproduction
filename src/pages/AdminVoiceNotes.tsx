@@ -112,7 +112,7 @@ export default function AdminVoiceNotes() {
       (c) => c.id !== clip.id && c.sequence_number === target
     );
     if (duplicate) {
-      await askConfirm({
+      showNotice({
         title: "এই নাম্বার ইতিমধ্যে ব্যবহৃত",
         description: `এই গ্রুপে আগে থেকেই দৃশ্য ${toBn(target)} রয়েছে। অনুগ্রহ করে অন্য একটি নাম্বার দিন।`,
         confirmLabel: "ঠিক আছে",
@@ -156,7 +156,8 @@ export default function AdminVoiceNotes() {
     title: string;
     description: string;
     confirmLabel?: string;
-  }>({ open: false, title: "", description: "" });
+    variant?: "confirm" | "notice";
+  }>({ open: false, title: "", description: "", variant: "confirm" });
   const confirmResolverRef = useRef<((v: boolean) => void) | null>(null);
 
   const askConfirm = (opts: {
@@ -171,8 +172,24 @@ export default function AdminVoiceNotes() {
         title: opts.title,
         description: opts.description,
         confirmLabel: opts.confirmLabel,
+        variant: "confirm",
       });
     });
+
+  const showNotice = (opts: {
+    title: string;
+    description: string;
+    confirmLabel?: string;
+  }) => {
+    confirmResolverRef.current = null;
+    setConfirmState({
+      open: true,
+      title: opts.title,
+      description: opts.description,
+      confirmLabel: opts.confirmLabel,
+      variant: "notice",
+    });
+  };
 
   const load = async () => {
     setFetching(true);
@@ -963,7 +980,7 @@ export default function AdminVoiceNotes() {
       <AlertDialog
         open={confirmState.open}
         onOpenChange={(open) => {
-          if (!open) {
+          if (!open && confirmState.variant === "confirm") {
             confirmResolverRef.current?.(false);
             confirmResolverRef.current = null;
             setConfirmState((s) => ({ ...s, open: false }));
@@ -987,17 +1004,20 @@ export default function AdminVoiceNotes() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center gap-2 pt-2">
-            <AlertDialogCancel className="mt-0 min-w-[110px] rounded-full border-border/60 hover:bg-secondary">
-              বাতিল
-            </AlertDialogCancel>
+            {confirmState.variant === "confirm" && (
+              <AlertDialogCancel className="mt-0 min-w-[110px] rounded-full border-border/60 hover:bg-secondary">
+                বাতিল
+              </AlertDialogCancel>
+            )}
             <AlertDialogAction
               onClick={() => {
                 confirmResolverRef.current?.(true);
                 confirmResolverRef.current = null;
+                setConfirmState((s) => ({ ...s, open: false }));
               }}
               className="min-w-[140px] rounded-full bg-gradient-to-br from-destructive to-red-700 text-white shadow-[0_8px_24px_-8px_hsl(var(--destructive)/0.7)] hover:shadow-[0_8px_30px_-6px_hsl(var(--destructive)/0.9)] hover:from-red-600 hover:to-red-800 transition-all"
             >
-              {confirmState.confirmLabel ?? "মুছে ফেলুন"}
+              {confirmState.confirmLabel ?? (confirmState.variant === "notice" ? "ঠিক আছে" : "মুছে ফেলুন")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
