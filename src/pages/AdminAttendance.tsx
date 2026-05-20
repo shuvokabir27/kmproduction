@@ -187,7 +187,11 @@ const AdminAttendance = () => {
     setSaving(true);
     try {
       for (const member of members ?? []) {
-        const data = attendanceData[member.id] || { present: false, rate: "0" };
+        const isMonthly = member.salary_type === "monthly";
+        // Monthly members are automatically present with rate 0 (salary covers it)
+        const data = isMonthly
+          ? { present: true, rate: "0" }
+          : (attendanceData[member.id] || { present: false, rate: "0" });
         const existing = existingAttendance?.find((a) => a.member_id === member.id);
 
         if (existing) {
@@ -204,7 +208,7 @@ const AdminAttendance = () => {
           });
         }
       }
-      toast.success("হাজিরা সেভ হয়েছে!");
+      toast.success("হাজিরা সেভ হয়েছে! মাসিক বেতনভুক্ত সদস্যদের হাজিরা অটো হয়েছে।");
       queryClient.invalidateQueries({ queryKey: ["existing-attendance"] });
       queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
     } catch (err: any) {
