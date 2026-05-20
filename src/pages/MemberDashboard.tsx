@@ -260,6 +260,39 @@ const MemberDashboard = () => {
         {/* Notice Board */}
         <NoticeBoard />
 
+        {/* Granted permission quick-access cards */}
+        {!isAdmin && grantedPermissions.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {grantedPermissions.map((p) => {
+              const meta: Record<string, { url: string; icon: any; gradient: string; iconColor: string }> = {
+                shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/20 to-rose-500/10", iconColor: "text-red-400" },
+                shootings: { url: "/admin/shootings", icon: Film, gradient: "from-rose-500/20 to-pink-500/10", iconColor: "text-rose-400" },
+                attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-cyan-500/20 to-sky-500/10", iconColor: "text-cyan-400" },
+              };
+              const m = meta[p];
+              if (!m) return null;
+              const Icon = m.icon;
+              return (
+                <Link key={p} to={m.url} className="premium-card rounded-2xl p-4 relative overflow-hidden hover:ring-1 hover:ring-primary/40 transition-all active:scale-[0.98]">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${m.gradient} opacity-70`} />
+                  <div className="relative z-10 flex items-center gap-3">
+                    <div className="h-11 w-11 rounded-xl bg-background/40 backdrop-blur flex items-center justify-center">
+                      <Icon className={`h-5 w-5 ${m.iconColor}`} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                        <ShieldCheck className="h-3 w-3" /> অনুমোদিত
+                      </div>
+                      <div className="font-bold">{PERMISSION_LABELS[p]}</div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative flex flex-col items-center text-center gap-1">
           {(() => {
