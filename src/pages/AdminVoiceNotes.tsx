@@ -188,7 +188,12 @@ export default function AdminVoiceNotes() {
   };
 
   const deleteGroup = async (g: Group) => {
-    if (!confirm(`"${g.title}" এবং এর সব ভয়েস মুছে ফেলবেন?`)) return;
+    const ok = await askConfirm({
+      title: "শিরোনাম মুছে ফেলবেন?",
+      description: `"${g.title}" এবং এর অধীনে থাকা ${toBn(g.clips.length)}টি দৃশ্য স্থায়ীভাবে মুছে যাবে। এই কাজটি ফিরিয়ে আনা যাবে না।`,
+      confirmLabel: "হ্যাঁ, মুছে ফেলুন",
+    });
+    if (!ok) return;
     if (g.clips.length) {
       await supabase.storage
         .from("voice-notes")
