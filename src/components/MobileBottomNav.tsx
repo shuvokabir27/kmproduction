@@ -163,7 +163,7 @@ export function MobileBottomNav() {
               className="relative z-[61] mx-auto w-full max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative max-h-[calc(100vh-120px)] overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-card via-card/95 to-secondary/30 p-2 shadow-2xl shadow-primary/10 backdrop-blur-xl">
+              <div className="relative max-h-[calc(100vh-100px)] overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-card via-card/95 to-secondary/30 p-2 shadow-2xl shadow-primary/10 backdrop-blur-xl">
                 <div
                   className="absolute inset-0 opacity-[0.06]"
                   style={{
