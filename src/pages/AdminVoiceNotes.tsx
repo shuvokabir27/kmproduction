@@ -29,6 +29,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { exportVoiceNotesPdf, exportVoiceNotesDocx } from "@/lib/voiceNotesExport";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle } from "lucide-react";
 
 interface Clip {
   id: string;
