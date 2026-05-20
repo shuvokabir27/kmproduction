@@ -35,7 +35,7 @@ export async function exportVoiceNotesPdf(title: string, clips: ClipForExport[])
         (c) => `
       <div style="margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #e5e7eb;">
         <div style="font-weight:600;color:#0e7490;margin-bottom:6px;font-size:15px;">
-          নাম্বার ${safe(toBn(c.sequence_number))}
+          দৃশ্য ${safe(toBn(c.sequence_number))}
         </div>
         <div style="white-space:pre-wrap;color:#111827;">
           ${c.transcript ? safe(c.transcript) : '<span style="color:#9ca3af;font-style:italic;">কোনো টেক্সট নেই</span>'}
@@ -118,7 +118,7 @@ export async function exportVoiceNotesDocx(title: string, clips: ClipForExport[]
       new Paragraph({
         children: [
           new TextRun({
-            text: `নাম্বার ${toBn(c.sequence_number)}`,
+            text: `দৃশ্য ${toBn(c.sequence_number)}`,
             bold: true,
             color: "0E7490",
             size: 26,
