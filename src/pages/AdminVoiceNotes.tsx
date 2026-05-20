@@ -711,34 +711,91 @@ export default function AdminVoiceNotes() {
                         })
                       )}
 
-                      <div className="pt-2">
+                      <div className="pt-4">
                         {isRecordingHere && !recordTarget?.replaceClipId ? (
-                          <Button
-                            onClick={stopRecording}
-                            variant="destructive"
-                            className="w-full gap-2"
-                          >
-                            <Square className="h-4 w-4" />
-                            <span className="inline-flex items-center gap-1">
-                              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-                              রেকর্ড থামান ({fmt(recordTime)})
-                            </span>
-                          </Button>
+                          <div className="relative flex flex-col items-center justify-center rounded-2xl border border-destructive/40 bg-gradient-to-b from-destructive/10 via-background to-background py-8 px-4 overflow-hidden">
+                            {/* Ambient glow */}
+                            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--destructive)/0.25),transparent_60%)] animate-pulse" />
+
+                            {/* Live indicator */}
+                            <div className="relative z-10 mb-4 flex items-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-3 py-1 backdrop-blur-sm">
+                              <span className="relative flex h-2 w-2">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
+                              </span>
+                              <span className="text-[11px] font-semibold tracking-widest text-destructive uppercase">
+                                রেকর্ডিং
+                              </span>
+                            </div>
+
+                            {/* Stop button with multi-layer rings */}
+                            <div className="relative z-10 flex items-center justify-center">
+                              <span className="absolute h-28 w-28 rounded-full bg-destructive/20 animate-ping" />
+                              <span className="absolute h-24 w-24 rounded-full bg-destructive/30 animate-ping [animation-delay:300ms]" />
+                              <span className="absolute h-20 w-20 rounded-full bg-destructive/40 animate-pulse" />
+                              <button
+                                onClick={stopRecording}
+                                aria-label="রেকর্ড থামান"
+                                className="relative h-20 w-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 shadow-[0_0_40px_hsl(var(--destructive)/0.6)] ring-4 ring-destructive/30 transition-transform hover:scale-105 active:scale-95 flex items-center justify-center"
+                              >
+                                <Square className="h-7 w-7 text-white fill-white" />
+                              </button>
+                            </div>
+
+                            {/* Animated waveform bars */}
+                            <div className="relative z-10 mt-6 flex items-end justify-center gap-1 h-8">
+                              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                                <span
+                                  key={i}
+                                  className="w-1 rounded-full bg-gradient-to-t from-destructive/60 to-destructive animate-pulse"
+                                  style={{
+                                    height: `${30 + ((i * 17) % 70)}%`,
+                                    animationDelay: `${i * 90}ms`,
+                                    animationDuration: `${600 + (i % 3) * 200}ms`,
+                                  }}
+                                />
+                              ))}
+                            </div>
+
+                            {/* Timer */}
+                            <div className="relative z-10 mt-4 font-mono text-2xl font-bold tracking-wider text-destructive tabular-nums">
+                              {fmt(recordTime)}
+                            </div>
+                            <p className="relative z-10 mt-1 text-xs text-muted-foreground">
+                              থামাতে লাল বাটনে চাপ দিন
+                            </p>
+                          </div>
                         ) : (
-                          <Button
-                            onClick={() => startRecording({ groupId: g.id })}
-                            disabled={!!recordTarget || uploading}
-                            className="w-full gap-2"
-                          >
-                            {uploading ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Mic className="h-4 w-4" />
-                            )}
-                            {uploading
-                              ? "আপলোড ও ট্রান্সক্রিপশন..."
-                              : `দৃশ্য ${toBn(g.clips.length + 1)} রেকর্ড করুন`}
-                          </Button>
+                          <div className="relative flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-gradient-to-b from-primary/5 via-background to-background py-8 px-4">
+                            <div className="relative z-10 flex items-center justify-center">
+                              {!uploading && !recordTarget && (
+                                <>
+                                  <span className="absolute h-24 w-24 rounded-full bg-primary/10 animate-ping" />
+                                  <span className="absolute h-20 w-20 rounded-full bg-primary/20" />
+                                </>
+                              )}
+                              <button
+                                onClick={() => startRecording({ groupId: g.id })}
+                                disabled={!!recordTarget || uploading}
+                                aria-label="রেকর্ড শুরু করুন"
+                                className="relative h-20 w-20 rounded-full bg-gradient-to-br from-primary to-primary/70 shadow-[0_0_30px_hsl(var(--primary)/0.4)] ring-4 ring-primary/20 transition-all hover:scale-105 hover:shadow-[0_0_40px_hsl(var(--primary)/0.6)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
+                              >
+                                {uploading ? (
+                                  <Loader2 className="h-8 w-8 text-primary-foreground animate-spin" />
+                                ) : (
+                                  <Mic className="h-8 w-8 text-primary-foreground" />
+                                )}
+                              </button>
+                            </div>
+                            <div className="relative z-10 mt-5 text-sm font-semibold text-foreground">
+                              {uploading
+                                ? "আপলোড ও ট্রান্সক্রিপশন..."
+                                : `দৃশ্য ${toBn(g.clips.length + 1)} রেকর্ড করুন`}
+                            </div>
+                            <p className="relative z-10 mt-1 text-xs text-muted-foreground">
+                              {uploading ? "অপেক্ষা করুন" : "মাইক্রোফোন বাটনে চাপ দিন"}
+                            </p>
+                          </div>
                         )}
                       </div>
                     </div>
