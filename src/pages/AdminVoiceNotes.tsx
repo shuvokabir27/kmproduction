@@ -649,7 +649,7 @@ export default function AdminVoiceNotes() {
                                         <Input
                                           type="number"
                                           min={1}
-                                          max={g.clips.length}
+                                          max={9999}
                                           value={editingSeqValue}
                                           autoFocus
                                           disabled={resequencing}
