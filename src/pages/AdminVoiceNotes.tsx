@@ -980,7 +980,7 @@ export default function AdminVoiceNotes() {
       <AlertDialog
         open={confirmState.open}
         onOpenChange={(open) => {
-          if (!open) {
+          if (!open && confirmState.variant === "confirm") {
             confirmResolverRef.current?.(false);
             confirmResolverRef.current = null;
             setConfirmState((s) => ({ ...s, open: false }));
@@ -1004,17 +1004,20 @@ export default function AdminVoiceNotes() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center gap-2 pt-2">
-            <AlertDialogCancel className="mt-0 min-w-[110px] rounded-full border-border/60 hover:bg-secondary">
-              বাতিল
-            </AlertDialogCancel>
+            {confirmState.variant === "confirm" && (
+              <AlertDialogCancel className="mt-0 min-w-[110px] rounded-full border-border/60 hover:bg-secondary">
+                বাতিল
+              </AlertDialogCancel>
+            )}
             <AlertDialogAction
               onClick={() => {
                 confirmResolverRef.current?.(true);
                 confirmResolverRef.current = null;
+                setConfirmState((s) => ({ ...s, open: false }));
               }}
               className="min-w-[140px] rounded-full bg-gradient-to-br from-destructive to-red-700 text-white shadow-[0_8px_24px_-8px_hsl(var(--destructive)/0.7)] hover:shadow-[0_8px_30px_-6px_hsl(var(--destructive)/0.9)] hover:from-red-600 hover:to-red-800 transition-all"
             >
-              {confirmState.confirmLabel ?? "মুছে ফেলুন"}
+              {confirmState.confirmLabel ?? (confirmState.variant === "notice" ? "ঠিক আছে" : "মুছে ফেলুন")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
