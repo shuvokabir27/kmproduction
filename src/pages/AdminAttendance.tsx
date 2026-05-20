@@ -187,7 +187,11 @@ const AdminAttendance = () => {
     setSaving(true);
     try {
       for (const member of members ?? []) {
-        const data = attendanceData[member.id] || { present: false, rate: "0" };
+        const isMonthly = member.salary_type === "monthly";
+        // Monthly members are automatically present with rate 0 (salary covers it)
+        const data = isMonthly
+          ? { present: true, rate: "0" }
+          : (attendanceData[member.id] || { present: false, rate: "0" });
         const existing = existingAttendance?.find((a) => a.member_id === member.id);
 
         if (existing) {
@@ -204,7 +208,7 @@ const AdminAttendance = () => {
           });
         }
       }
-      toast.success("হাজিরা সেভ হয়েছে!");
+      toast.success("হাজিরা সেভ হয়েছে! মাসিক বেতনভুক্ত সদস্যদের হাজিরা অটো হয়েছে।");
       queryClient.invalidateQueries({ queryKey: ["existing-attendance"] });
       queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
     } catch (err: any) {
@@ -344,9 +348,21 @@ const AdminAttendance = () => {
                   );
                 })()}
 
-                {/* Members list — large photos */}
+                {/* Info: monthly members are auto-present */}
+                {(() => {
+                  const monthlyCount = (members ?? []).filter((m: any) => m.salary_type === "monthly").length;
+                  if (monthlyCount === 0) return null;
+                  return (
+                    <Card className="bg-primary/5 border-primary/20 p-3 text-xs text-primary flex items-center gap-2">
+                      <Check className="h-4 w-4" />
+                      <span>মাসিক বেতনভুক্ত {monthlyCount} জন সদস্য সব শুটিংয়ে স্বয়ংক্রিয়ভাবে উপস্থিত গণ্য হবেন।</span>
+                    </Card>
+                  );
+                })()}
+
+                {/* Members list — large photos (daily only) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {members?.map((m) => {
+                  {members?.filter((m: any) => m.salary_type !== "monthly").map((m) => {
                     const present = attendanceData[m.id]?.present || false;
                     return (
                       <Card
