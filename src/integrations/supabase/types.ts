@@ -3302,6 +3302,8 @@ export type Database = {
           id: string
           is_shot: boolean
           sequence_number: number
+          transcript: string | null
+          transcript_status: string | null
           updated_at: string
           voice_note_id: string
         }
@@ -3312,6 +3314,8 @@ export type Database = {
           id?: string
           is_shot?: boolean
           sequence_number: number
+          transcript?: string | null
+          transcript_status?: string | null
           updated_at?: string
           voice_note_id: string
         }
@@ -3322,6 +3326,8 @@ export type Database = {
           id?: string
           is_shot?: boolean
           sequence_number?: number
+          transcript?: string | null
+          transcript_status?: string | null
           updated_at?: string
           voice_note_id?: string
         }

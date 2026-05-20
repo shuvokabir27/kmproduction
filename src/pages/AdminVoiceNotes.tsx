@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Mic,
   Square,
@@ -18,6 +20,10 @@ import {
   ChevronUp,
   RefreshCw,
   Check,
+  Sparkles,
+  Save,
+  FileText,
+  Wand2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -28,6 +34,8 @@ interface Clip {
   audio_path: string;
   duration_seconds: number | null;
   is_shot?: boolean;
+  transcript?: string | null;
+  transcript_status?: string | null;
   signedUrl?: string;
 }
 
@@ -48,6 +56,9 @@ export default function AdminVoiceNotes() {
   const [newTitle, setNewTitle] = useState("");
   const [creating, setCreating] = useState(false);
   const [openGroupId, setOpenGroupId] = useState<string | null>(null);
+  const [editingTranscripts, setEditingTranscripts] = useState<Record<string, string>>({});
+  const [savingTranscript, setSavingTranscript] = useState<string | null>(null);
+  const [retryingTranscript, setRetryingTranscript] = useState<string | null>(null);
 
   // Recording state — scoped to a target (groupId + optional replaceClipId)
   const [recordTarget, setRecordTarget] = useState<{
@@ -111,6 +122,16 @@ export default function AdminVoiceNotes() {
     if (isAdmin) load();
   }, [isAdmin]);
 
+  // Auto-poll while any clip is processing
+  useEffect(() => {
+    const hasProcessing = groups.some((g) =>
+      g.clips.some((c) => c.transcript_status === "processing" || c.transcript_status === "pending")
+    );
+    if (!hasProcessing) return;
+    const t = window.setTimeout(load, 4000);
+    return () => clearTimeout(t);
+  }, [groups]);
+
   const createGroup = async () => {
     if (!newTitle.trim() || !user) return;
     setCreating(true);
@@ -142,6 +163,37 @@ export default function AdminVoiceNotes() {
     }
     toast.success("মুছে ফেলা হয়েছে");
     load();
+  };
+
+  const transcribeClip = async (clipId: string) => {
+    try {
+      const { error } = await supabase.functions.invoke("transcribe-voice", {
+        body: { clipId },
+      });
+      if (error) throw error;
+      await load();
+    } catch (e: any) {
+      console.error(e);
+      toast.error("ট্রান্সক্রিপশন ব্যর্থ — পুনরায় চেষ্টা করুন");
+    }
+  };
+
+  const retryTranscribe = async (clipId: string) => {
+    setRetryingTranscript(clipId);
+    try {
+      // mark processing optimistically
+      setGroups((prev) =>
+        prev.map((g) => ({
+          ...g,
+          clips: g.clips.map((c) =>
+            c.id === clipId ? { ...c, transcript_status: "processing" } : c
+          ),
+        }))
+      );
+      await transcribeClip(clipId);
+    } finally {
+      setRetryingTranscript(null);
+    }
   };
 
   const startRecording = async (target: { groupId: string; replaceClipId?: string }) => {
@@ -188,8 +240,9 @@ export default function AdminVoiceNotes() {
         .upload(path, blob, { contentType: "audio/webm" });
       if (upErr) throw upErr;
 
+      let clipId: string | null = null;
+
       if (target.replaceClipId) {
-        // Replace: get old path, update row, delete old file
         const { data: oldClip } = await supabase
           .from("voice_note_clips")
           .select("audio_path")
@@ -197,15 +250,20 @@ export default function AdminVoiceNotes() {
           .single();
         const { error: updErr } = await supabase
           .from("voice_note_clips")
-          .update({ audio_path: path, duration_seconds: duration })
+          .update({
+            audio_path: path,
+            duration_seconds: duration,
+            transcript: null,
+            transcript_status: "processing",
+          })
           .eq("id", target.replaceClipId);
         if (updErr) throw updErr;
         if (oldClip?.audio_path) {
           await supabase.storage.from("voice-notes").remove([oldClip.audio_path]);
         }
-        toast.success("ভয়েস আপডেট হয়েছে");
+        clipId = target.replaceClipId;
+        toast.success("ভয়েস আপডেট হয়েছে — টেক্সটে রূপান্তর হচ্ছে...");
       } else {
-        // Determine next sequence number
         const { data: existing } = await supabase
           .from("voice_note_clips")
           .select("sequence_number")
@@ -213,16 +271,24 @@ export default function AdminVoiceNotes() {
           .order("sequence_number", { ascending: false })
           .limit(1);
         const next = (existing?.[0]?.sequence_number || 0) + 1;
-        const { error: insErr } = await supabase.from("voice_note_clips").insert({
-          voice_note_id: target.groupId,
-          sequence_number: next,
-          audio_path: path,
-          duration_seconds: duration,
-        });
+        const { data: inserted, error: insErr } = await supabase
+          .from("voice_note_clips")
+          .insert({
+            voice_note_id: target.groupId,
+            sequence_number: next,
+            audio_path: path,
+            duration_seconds: duration,
+            transcript_status: "processing",
+          })
+          .select("id")
+          .single();
         if (insErr) throw insErr;
-        toast.success(`ভয়েস ${toBn(next)} সেভ হয়েছে`);
+        clipId = inserted?.id ?? null;
+        toast.success(`ভয়েস ${toBn(next)} সেভ — টেক্সটে রূপান্তর হচ্ছে...`);
       }
-      load();
+      await load();
+      // Fire transcription (don't await to keep UI responsive)
+      if (clipId) transcribeClip(clipId);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -281,6 +347,35 @@ export default function AdminVoiceNotes() {
     setPlayingClipId(clip.id);
   };
 
+  const startEdit = (clip: Clip) => {
+    setEditingTranscripts((prev) => ({ ...prev, [clip.id]: clip.transcript || "" }));
+  };
+
+  const cancelEdit = (clipId: string) => {
+    setEditingTranscripts((prev) => {
+      const n = { ...prev };
+      delete n[clipId];
+      return n;
+    });
+  };
+
+  const saveTranscript = async (clipId: string) => {
+    const text = editingTranscripts[clipId] ?? "";
+    setSavingTranscript(clipId);
+    const { error } = await supabase
+      .from("voice_note_clips")
+      .update({ transcript: text, transcript_status: "done" })
+      .eq("id", clipId);
+    setSavingTranscript(null);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("টেক্সট সেভ হয়েছে");
+    cancelEdit(clipId);
+    load();
+  };
+
   const fmt = (s: number) => {
     const m = Math.floor(s / 60);
     const r = s % 60;
@@ -294,16 +389,19 @@ export default function AdminVoiceNotes() {
   return (
     <AppLayout>
       <div className="max-w-3xl mx-auto space-y-6 p-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+        <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-primary/10 via-card to-card p-6">
+          <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2 relative">
             <Mic className="h-6 w-6 text-primary" /> ভয়েস নোট
+            <Badge variant="secondary" className="ml-2 gap-1 text-[10px]">
+              <Sparkles className="h-3 w-3" /> AI ট্রান্সক্রিপশন
+            </Badge>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            একটি শিরোনামে ক্রমিক নম্বরে একাধিক ভয়েস রেকর্ড করে রাখুন
+          <p className="text-sm text-muted-foreground mt-2 relative">
+            ভয়েস রেকর্ড করুন — স্বয়ংক্রিয়ভাবে বাংলায় টেক্সট হয়ে যাবে। ভুল হলে পরে এডিট করতে পারবেন।
           </p>
         </div>
 
-        {/* New title */}
         <Card className="p-4 space-y-3 bg-card border-border/50">
           <p className="text-sm text-foreground font-medium">নতুন শিরোনাম যোগ করুন</p>
           <div className="flex gap-2">
@@ -366,7 +464,7 @@ export default function AdminVoiceNotes() {
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 pb-4 space-y-2 border-t border-border/30 pt-3">
+                    <div className="px-4 pb-4 space-y-3 border-t border-border/30 pt-3">
                       {g.clips.length === 0 ? (
                         <p className="text-xs text-muted-foreground text-center py-2">
                           এখনো কোনো ভয়েস নেই
@@ -375,104 +473,207 @@ export default function AdminVoiceNotes() {
                         g.clips.map((c) => {
                           const replacingThis =
                             isRecordingHere && recordTarget?.replaceClipId === c.id;
+                          const isEditing = editingTranscripts[c.id] !== undefined;
+                          const status = c.transcript_status || "pending";
                           return (
                             <div
                               key={c.id}
-                              className={`flex items-center gap-2 rounded-lg p-2 transition-colors ${
+                              className={`rounded-xl p-3 transition-colors space-y-2 ${
                                 c.is_shot
-                                  ? "bg-emerald-500/15 border border-emerald-500/40"
-                                  : "bg-secondary/40"
+                                  ? "bg-emerald-500/10 border border-emerald-500/40"
+                                  : "bg-secondary/40 border border-border/40"
                               }`}
                             >
-                              <Button
-                                size="icon"
-                                variant="secondary"
-                                className="rounded-full h-10 w-10 flex-shrink-0"
-                                onClick={() => togglePlay(c)}
-                              >
-                                {playingClipId === c.id ? (
-                                  <Pause className="h-4 w-4" />
-                                ) : (
-                                  <Play className="h-4 w-4" />
-                                )}
-                              </Button>
-                              <div className="flex-1 min-w-0">
-                                <p
-                                  className={`text-sm font-medium ${
-                                    c.is_shot ? "text-emerald-400" : "text-foreground"
-                                  }`}
-                                >
-                                  নাম্বার {toBn(c.sequence_number)}
-                                  {c.is_shot && (
-                                    <span className="ml-2 text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
-                                  )}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {c.duration_seconds
-                                    ? fmt(Math.round(c.duration_seconds))
-                                    : "—"}
-                                </p>
-                              </div>
-                              {replacingThis ? (
+                              <div className="flex items-center gap-2">
                                 <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  className="gap-1"
-                                  onClick={stopRecording}
+                                  size="icon"
+                                  variant="secondary"
+                                  className="rounded-full h-10 w-10 flex-shrink-0"
+                                  onClick={() => togglePlay(c)}
                                 >
-                                  <Square className="h-3.5 w-3.5" />
-                                  {fmt(recordTime)}
+                                  {playingClipId === c.id ? (
+                                    <Pause className="h-4 w-4" />
+                                  ) : (
+                                    <Play className="h-4 w-4" />
+                                  )}
                                 </Button>
-                              ) : (
-                                <>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    title={c.is_shot ? "ডাবল-ক্লিক করে আনটিক করুন" : "শুট সম্পন্ন হিসেবে চিহ্নিত করুন"}
-                                    className={
-                                      c.is_shot
-                                        ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10"
-                                        : "text-muted-foreground hover:text-emerald-400"
-                                    }
-                                    onClick={() => {
-                                      if (!c.is_shot) toggleShot(c, true);
-                                    }}
-                                    onDoubleClick={() => {
-                                      if (c.is_shot) toggleShot(c, false);
-                                    }}
+                                <div className="flex-1 min-w-0">
+                                  <p
+                                    className={`text-sm font-medium flex items-center gap-2 ${
+                                      c.is_shot ? "text-emerald-400" : "text-foreground"
+                                    }`}
                                   >
-                                    <Check className="h-4 w-4" />
-                                  </Button>
+                                    নাম্বার {toBn(c.sequence_number)}
+                                    {c.is_shot && (
+                                      <span className="text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
+                                    )}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {c.duration_seconds
+                                      ? fmt(Math.round(c.duration_seconds))
+                                      : "—"}
+                                  </p>
+                                </div>
+                                {replacingThis ? (
                                   <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    title="পুনরায় রেকর্ড"
-                                    disabled={!!recordTarget || uploading}
-                                    onClick={() =>
-                                      startRecording({
-                                        groupId: g.id,
-                                        replaceClipId: c.id,
-                                      })
-                                    }
+                                    size="sm"
+                                    variant="destructive"
+                                    className="gap-1"
+                                    onClick={stopRecording}
                                   >
-                                    <RefreshCw className="h-4 w-4" />
+                                    <Square className="h-3.5 w-3.5" />
+                                    {fmt(recordTime)}
                                   </Button>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="text-destructive hover:text-destructive"
-                                    onClick={() => deleteClip(c)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </>
-                              )}
+                                ) : (
+                                  <>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      title={c.is_shot ? "ডাবল-ক্লিক করে আনটিক করুন" : "শুট সম্পন্ন"}
+                                      className={
+                                        c.is_shot
+                                          ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10"
+                                          : "text-muted-foreground hover:text-emerald-400"
+                                      }
+                                      onClick={() => {
+                                        if (!c.is_shot) toggleShot(c, true);
+                                      }}
+                                      onDoubleClick={() => {
+                                        if (c.is_shot) toggleShot(c, false);
+                                      }}
+                                    >
+                                      <Check className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      title="পুনরায় রেকর্ড"
+                                      disabled={!!recordTarget || uploading}
+                                      onClick={() =>
+                                        startRecording({
+                                          groupId: g.id,
+                                          replaceClipId: c.id,
+                                        })
+                                      }
+                                    >
+                                      <RefreshCw className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="text-destructive hover:text-destructive"
+                                      onClick={() => deleteClip(c)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+
+                              {/* Transcript area */}
+                              <div className="pl-1">
+                                {isEditing ? (
+                                  <div className="space-y-2">
+                                    <Textarea
+                                      value={editingTranscripts[c.id]}
+                                      onChange={(e) =>
+                                        setEditingTranscripts((prev) => ({
+                                          ...prev,
+                                          [c.id]: e.target.value,
+                                        }))
+                                      }
+                                      rows={3}
+                                      className="text-sm"
+                                      placeholder="টেক্সট লিখুন..."
+                                    />
+                                    <div className="flex gap-2 justify-end">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => cancelEdit(c.id)}
+                                      >
+                                        বাতিল
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        className="gap-1"
+                                        disabled={savingTranscript === c.id}
+                                        onClick={() => saveTranscript(c.id)}
+                                      >
+                                        {savingTranscript === c.id ? (
+                                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                        ) : (
+                                          <Save className="h-3.5 w-3.5" />
+                                        )}
+                                        সেভ
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : status === "processing" || status === "pending" ? (
+                                  <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 rounded-md p-2">
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                                    <span>AI টেক্সটে রূপান্তর করছে...</span>
+                                  </div>
+                                ) : status === "failed" ? (
+                                  <div className="flex items-center justify-between gap-2 text-xs bg-destructive/10 border border-destructive/30 rounded-md p-2">
+                                    <span className="text-destructive">ট্রান্সক্রিপশন ব্যর্থ</span>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-7 gap-1"
+                                      disabled={retryingTranscript === c.id}
+                                      onClick={() => retryTranscribe(c.id)}
+                                    >
+                                      {retryingTranscript === c.id ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <Wand2 className="h-3 w-3" />
+                                      )}
+                                      পুনরায়
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="group/transcript bg-background/60 rounded-md p-2 border border-border/40">
+                                    <div className="flex items-start gap-2">
+                                      <FileText className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                                      <p className="flex-1 text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                                        {c.transcript || (
+                                          <span className="text-muted-foreground italic">কোনো টেক্সট নেই</span>
+                                        )}
+                                      </p>
+                                    </div>
+                                    <div className="flex gap-1 justify-end mt-1">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-6 px-2 text-[11px] gap-1"
+                                        onClick={() => retryTranscribe(c.id)}
+                                        disabled={retryingTranscript === c.id}
+                                      >
+                                        {retryingTranscript === c.id ? (
+                                          <Loader2 className="h-3 w-3 animate-spin" />
+                                        ) : (
+                                          <Wand2 className="h-3 w-3" />
+                                        )}
+                                        আবার রূপান্তর
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-6 px-2 text-[11px]"
+                                        onClick={() => startEdit(c)}
+                                      >
+                                        এডিট
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           );
                         })
                       )}
 
-                      {/* Add new clip button */}
                       <div className="pt-2">
                         {isRecordingHere && !recordTarget?.replaceClipId ? (
                           <Button
@@ -481,7 +682,10 @@ export default function AdminVoiceNotes() {
                             className="w-full gap-2"
                           >
                             <Square className="h-4 w-4" />
-                            রেকর্ড থামান ({fmt(recordTime)})
+                            <span className="inline-flex items-center gap-1">
+                              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+                              রেকর্ড থামান ({fmt(recordTime)})
+                            </span>
                           </Button>
                         ) : (
                           <Button
@@ -495,7 +699,7 @@ export default function AdminVoiceNotes() {
                               <Mic className="h-4 w-4" />
                             )}
                             {uploading
-                              ? "আপলোড হচ্ছে..."
+                              ? "আপলোড ও ট্রান্সক্রিপশন..."
                               : `নাম্বার ${toBn(g.clips.length + 1)} রেকর্ড করুন`}
                           </Button>
                         )}
