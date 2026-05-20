@@ -112,7 +112,7 @@ export default function AdminVoiceNotes() {
       (c) => c.id !== clip.id && c.sequence_number === target
     );
     if (duplicate) {
-      await askConfirm({
+      showNotice({
         title: "এই নাম্বার ইতিমধ্যে ব্যবহৃত",
         description: `এই গ্রুপে আগে থেকেই দৃশ্য ${toBn(target)} রয়েছে। অনুগ্রহ করে অন্য একটি নাম্বার দিন।`,
         confirmLabel: "ঠিক আছে",
@@ -156,7 +156,8 @@ export default function AdminVoiceNotes() {
     title: string;
     description: string;
     confirmLabel?: string;
-  }>({ open: false, title: "", description: "" });
+    variant?: "confirm" | "notice";
+  }>({ open: false, title: "", description: "", variant: "confirm" });
   const confirmResolverRef = useRef<((v: boolean) => void) | null>(null);
 
   const askConfirm = (opts: {
@@ -171,8 +172,24 @@ export default function AdminVoiceNotes() {
         title: opts.title,
         description: opts.description,
         confirmLabel: opts.confirmLabel,
+        variant: "confirm",
       });
     });
+
+  const showNotice = (opts: {
+    title: string;
+    description: string;
+    confirmLabel?: string;
+  }) => {
+    confirmResolverRef.current = null;
+    setConfirmState({
+      open: true,
+      title: opts.title,
+      description: opts.description,
+      confirmLabel: opts.confirmLabel,
+      variant: "notice",
+    });
+  };
 
   const load = async () => {
     setFetching(true);
