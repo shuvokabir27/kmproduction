@@ -33,6 +33,7 @@ const MemberDashboard = () => {
   const [balanceDetailOpen, setBalanceDetailOpen] = useState(false);
 
   const { data: balance } = useMemberBalance(profile?.id);
+  const { permissions: grantedPermissions } = usePermissions();
 
   const { data: recentPayments } = useQuery({
     queryKey: ["my-payments", profile?.id],
