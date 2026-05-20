@@ -185,7 +185,7 @@ export function MobileBottomNav() {
                   </button>
                 </div>
 
-                <div className="relative z-10 max-h-[calc(100vh-200px)] overflow-y-auto overscroll-contain pr-1">
+                <div className="relative z-10 max-h-[calc(100vh-170px)] overflow-y-auto overscroll-contain pr-1 pb-24">
                   {(() => {
                     const groups: { label?: string; items: typeof currentMoreItems }[] = [];
                     let currentGroup: typeof currentMoreItems = [];
