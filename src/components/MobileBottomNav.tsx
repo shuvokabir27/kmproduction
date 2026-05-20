@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePermissions } from "@/hooks/usePermissions";
 import {
   LayoutDashboard,
   Users,
@@ -30,7 +31,13 @@ import {
   Mic,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const permissionIconMap: Record<string, { icon: any; color: string; bg: string }> = {
+  shooting_expenses: { icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
+  shootings: { icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
+  attendance: { icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+};
 
 const adminTabs = [
   { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-violet-400", bg: "bg-violet-500/15" },
