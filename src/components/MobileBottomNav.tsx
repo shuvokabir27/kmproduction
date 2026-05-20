@@ -81,18 +81,37 @@ const memberTabs = [
   { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400", bg: "bg-amber-500/15" },
 ];
 
-const memberMoreItems = [
-  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" },
-  { icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400", bg: "bg-amber-500/10" },
-  { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
-];
-
 export function MobileBottomNav() {
   const { isAdmin, signOut } = useAuth();
+  const { permissions } = usePermissions();
   const location = useLocation();
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
   const [pressedTab, setPressedTab] = useState<string | null>(null);
+
+  const memberMoreItems = useMemo(() => {
+    const items: { icon: any; label: string; path: string; color: string; bg: string }[] = [];
+    if (permissions.length > 0) {
+      items.push({ icon: null, label: "— পারমিশন মেনু —", path: "__divider_perm__", color: "", bg: "" });
+      permissions.forEach((p) => {
+        const mapped = permissionIconMap[p];
+        if (mapped) {
+          items.push({
+            icon: mapped.icon,
+            label: p === "shooting_expenses" ? "শুটিং খরচ" : p === "shootings" ? "শুটিং" : "হাজিরা",
+            path: p === "shooting_expenses" ? "/admin/shooting-expenses" : p === "shootings" ? "/admin/shootings" : "/admin/attendance",
+            color: mapped.color,
+            bg: mapped.bg,
+          });
+        }
+      });
+    }
+    items.push({ icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" });
+    items.push({ icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400", bg: "bg-amber-500/10" });
+    items.push({ icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" });
+    return items;
+  }, [permissions]);
+
   const tabs = isAdmin ? adminTabs : memberTabs;
   const currentMoreItems = isAdmin ? moreItems : memberMoreItems;
 
