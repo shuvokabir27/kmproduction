@@ -641,7 +641,47 @@ export default function AdminVoiceNotes() {
                                       c.is_shot ? "text-emerald-400" : "text-foreground"
                                     }`}
                                   >
-                                    দৃশ্য {toBn(c.sequence_number)}
+                                    {editingSeqClipId === c.id ? (
+                                      <span className="inline-flex items-center gap-1">
+                                        <span>দৃশ্য</span>
+                                        <Input
+                                          type="number"
+                                          min={1}
+                                          max={g.clips.length}
+                                          value={editingSeqValue}
+                                          autoFocus
+                                          disabled={resequencing}
+                                          onChange={(e) => setEditingSeqValue(e.target.value)}
+                                          onBlur={() => {
+                                            const n = parseInt(editingSeqValue, 10);
+                                            if (!isNaN(n)) resequenceClip(c, n);
+                                            else setEditingSeqClipId(null);
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                              const n = parseInt(editingSeqValue, 10);
+                                              if (!isNaN(n)) resequenceClip(c, n);
+                                              else setEditingSeqClipId(null);
+                                            } else if (e.key === "Escape") {
+                                              setEditingSeqClipId(null);
+                                            }
+                                          }}
+                                          className="h-6 w-14 px-1 text-sm"
+                                        />
+                                      </span>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        title="নাম্বার পরিবর্তন করতে ক্লিক করুন"
+                                        className="hover:underline decoration-dotted underline-offset-4 cursor-pointer"
+                                        onClick={() => {
+                                          setEditingSeqClipId(c.id);
+                                          setEditingSeqValue(String(c.sequence_number));
+                                        }}
+                                      >
+                                        দৃশ্য {toBn(c.sequence_number)}
+                                      </button>
+                                    )}
                                     {c.is_shot && (
                                       <span className="text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
                                     )}
