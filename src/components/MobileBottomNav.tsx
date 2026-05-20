@@ -111,6 +111,21 @@ export function MobileBottomNav() {
     return items;
   }, [permissions]);
 
+  const memberTabs = useMemo(() => {
+    const permTabs = permissions.map((p) => {
+      const mapped = permissionIconMap[p];
+      if (!mapped) return null;
+      return {
+        icon: mapped.icon,
+        label: p === "shooting_expenses" ? "শুটিং খরচ" : p === "shootings" ? "শুটিং" : "হাজিরা",
+        path: p === "shooting_expenses" ? "/admin/shooting-expenses" : p === "shootings" ? "/admin/shootings" : "/admin/attendance",
+        color: mapped.color,
+        bg: mapped.bg,
+      };
+    }).filter(Boolean) as { icon: any; label: string; path: string; color: string; bg: string }[];
+    return [...memberTabsBase, ...permTabs, { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400", bg: "bg-amber-500/15" }];
+  }, [permissions]);
+
   const tabs = isAdmin ? adminTabs : memberTabs;
   const currentMoreItems = isAdmin ? moreItems : memberMoreItems;
 
