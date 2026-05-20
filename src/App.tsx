@@ -71,6 +71,7 @@ const AllCategories = lazy(() => import("./pages/AllCategories"));
 const TasksPage = lazy(() => import("./pages/TasksPage"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const AdminAppVersions = lazy(() => import("./pages/AdminAppVersions"));
+const AdminRoleManagement = lazy(() => import("./pages/AdminRoleManagement"));
 const PhotoCard = lazy(() => import("./pages/PhotoCard"));
 const NewsCard = lazy(() => import("./pages/NewsCard"));
 
