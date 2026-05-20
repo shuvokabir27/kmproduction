@@ -88,6 +88,32 @@ export default function AdminVoiceNotes() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
 
+  // Premium confirm dialog state
+  const [confirmState, setConfirmState] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    confirmLabel?: string;
+    onConfirm?: () => void;
+  }>({ open: false, title: "", description: "" });
+
+  const askConfirm = (opts: {
+    title: string;
+    description: string;
+    confirmLabel?: string;
+  }) =>
+    new Promise<boolean>((resolve) => {
+      setConfirmState({
+        open: true,
+        title: opts.title,
+        description: opts.description,
+        confirmLabel: opts.confirmLabel,
+        onConfirm: () => resolve(true),
+      });
+      // resolve(false) handled in onOpenChange below
+      (askConfirm as any)._reject = () => resolve(false);
+    });
+
   const load = async () => {
     setFetching(true);
     const { data: gData, error: gErr } = await supabase
