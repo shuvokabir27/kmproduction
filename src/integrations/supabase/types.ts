@@ -1376,6 +1376,38 @@ export type Database = {
         }
         Relationships: []
       }
+      member_permissions: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          id: string
+          member_id: string
+          permission: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          member_id: string
+          permission: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          member_id?: string
+          permission?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_permissions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_tasks: {
         Row: {
           assigned_by: string
@@ -3478,6 +3510,10 @@ export type Database = {
       grant_member_achievements: {
         Args: { _member_id: string }
         Returns: undefined
+      }
+      has_permission: {
+        Args: { _permission: string; _user_id: string }
+        Returns: boolean
       }
       has_role: {
         Args: {
