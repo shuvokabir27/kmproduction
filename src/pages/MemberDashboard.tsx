@@ -17,6 +17,8 @@ import { MonthlyIncomeCharts } from "@/components/MonthlyIncomeCharts";
 import { ZeroBalanceFun } from "@/components/ZeroBalanceFun";
 import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
+import { usePermissions, PERMISSION_LABELS } from "@/hooks/usePermissions";
+import { Receipt, ShieldCheck } from "lucide-react";
 
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
