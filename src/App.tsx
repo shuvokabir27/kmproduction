@@ -141,10 +141,11 @@ const App = () => (
             {/* Admin routes */}
             <Route path="/admin" element={<RouteGuard allowedRoles={["admin"]}><AdminDashboard /></RouteGuard>} />
             <Route path="/admin/members" element={<RouteGuard allowedRoles={["admin"]}><AdminMembers /></RouteGuard>} />
-            <Route path="/admin/attendance" element={<RouteGuard allowedRoles={["admin"]}><AdminAttendance /></RouteGuard>} />
+            <Route path="/admin/attendance" element={<PermissionGuard permission="attendance"><AdminAttendance /></PermissionGuard>} />
             <Route path="/admin/payments" element={<RouteGuard allowedRoles={["admin"]}><AdminPayments /></RouteGuard>} />
-            <Route path="/admin/shootings" element={<RouteGuard allowedRoles={["admin"]}><AdminShootings /></RouteGuard>} />
-            <Route path="/admin/shooting-expenses" element={<RouteGuard allowedRoles={["admin"]}><AdminShootingExpenses /></RouteGuard>} />
+            <Route path="/admin/shootings" element={<PermissionGuard permission="shootings"><AdminShootings /></PermissionGuard>} />
+            <Route path="/admin/shooting-expenses" element={<PermissionGuard permission="shooting_expenses"><AdminShootingExpenses /></PermissionGuard>} />
+            <Route path="/admin/role-management" element={<RouteGuard allowedRoles={["admin"]}><AdminRoleManagement /></RouteGuard>} />
             <Route path="/admin/channels" element={<RouteGuard allowedRoles={["admin"]}><AdminChannels /></RouteGuard>} />
             <Route path="/admin/scripts" element={<RouteGuard allowedRoles={["admin"]}><AdminScripts /></RouteGuard>} />
             <Route path="/admin/scripts/:id" element={<RouteGuard allowedRoles={["admin"]}><AdminScriptEdit /></RouteGuard>} />
