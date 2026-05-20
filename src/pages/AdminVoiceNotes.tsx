@@ -24,8 +24,11 @@ import {
   Save,
   FileText,
   Wand2,
+  FileDown,
+  FileType,
 } from "lucide-react";
 import { toast } from "sonner";
+import { exportVoiceNotesPdf, exportVoiceNotesDocx } from "@/lib/voiceNotesExport";
 
 interface Clip {
   id: string;
