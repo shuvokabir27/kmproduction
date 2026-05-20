@@ -94,8 +94,8 @@ export default function AdminVoiceNotes() {
     title: string;
     description: string;
     confirmLabel?: string;
-    onConfirm?: () => void;
   }>({ open: false, title: "", description: "" });
+  const confirmResolverRef = useRef<((v: boolean) => void) | null>(null);
 
   const askConfirm = (opts: {
     title: string;
@@ -103,15 +103,13 @@ export default function AdminVoiceNotes() {
     confirmLabel?: string;
   }) =>
     new Promise<boolean>((resolve) => {
+      confirmResolverRef.current = resolve;
       setConfirmState({
         open: true,
         title: opts.title,
         description: opts.description,
         confirmLabel: opts.confirmLabel,
-        onConfirm: () => resolve(true),
       });
-      // resolve(false) handled in onOpenChange below
-      (askConfirm as any)._reject = () => resolve(false);
     });
 
   const load = async () => {
