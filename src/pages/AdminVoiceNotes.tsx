@@ -851,6 +851,49 @@ export default function AdminVoiceNotes() {
           )}
         </div>
       </div>
+
+      <AlertDialog
+        open={confirmState.open}
+        onOpenChange={(open) => {
+          if (!open) {
+            confirmResolverRef.current?.(false);
+            confirmResolverRef.current = null;
+            setConfirmState((s) => ({ ...s, open: false }));
+          }
+        }}
+      >
+        <AlertDialogContent className="border-destructive/30 bg-gradient-to-b from-card to-background shadow-[0_0_60px_-15px_hsl(var(--destructive)/0.4)] animate-scale-in">
+          <AlertDialogHeader>
+            <div className="mx-auto mb-2 relative flex items-center justify-center">
+              <span className="absolute h-20 w-20 rounded-full bg-destructive/10 animate-ping" />
+              <span className="absolute h-16 w-16 rounded-full bg-destructive/15" />
+              <div className="relative h-14 w-14 rounded-full bg-gradient-to-br from-destructive to-red-700 shadow-[0_0_30px_hsl(var(--destructive)/0.6)] ring-4 ring-destructive/20 flex items-center justify-center">
+                <AlertTriangle className="h-7 w-7 text-white" />
+              </div>
+            </div>
+            <AlertDialogTitle className="text-center text-xl font-bold text-foreground">
+              {confirmState.title}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-sm leading-relaxed text-muted-foreground px-2">
+              {confirmState.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-2 pt-2">
+            <AlertDialogCancel className="mt-0 min-w-[110px] rounded-full border-border/60 hover:bg-secondary">
+              বাতিল
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                confirmResolverRef.current?.(true);
+                confirmResolverRef.current = null;
+              }}
+              className="min-w-[140px] rounded-full bg-gradient-to-br from-destructive to-red-700 text-white shadow-[0_8px_24px_-8px_hsl(var(--destructive)/0.7)] hover:shadow-[0_8px_30px_-6px_hsl(var(--destructive)/0.9)] hover:from-red-600 hover:to-red-800 transition-all"
+            >
+              {confirmState.confirmLabel ?? "মুছে ফেলুন"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppLayout>
   );
 }
