@@ -275,7 +275,9 @@ export default function AdminVoiceNotes() {
     duration: number
   ) => {
     if (!user) return;
-    setUploading(true);
+    // Immediately reset recording UI — upload happens in the background
+    setRecordTarget(null);
+    setRecordTime(0);
     try {
       const path = `${user.id}/${target.groupId}/${Date.now()}.webm`;
       const { error: upErr } = await supabase.storage
