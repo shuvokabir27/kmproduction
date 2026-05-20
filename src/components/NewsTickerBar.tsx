@@ -74,7 +74,6 @@ export function NewsTickerBar() {
   const [hidden, setHidden] = useState<boolean>(() => {
     try { return localStorage.getItem(HIDE_KEY) === "1"; } catch { return false; }
   });
-  if (!isAdmin && !isEnabled("breaking_news")) return null;
   const rotateTimeoutRef = useRef<number | null>(null);
 
   const setHiddenPersist = (v: boolean) => {
@@ -131,6 +130,9 @@ export function NewsTickerBar() {
       }
     };
   }, [idx, items.length, paused]);
+
+  // Hide for non-admin members when feature flag is off (after all hooks)
+  if (!isAdmin && !isEnabled("breaking_news")) return null;
 
   // Collapsed view — small button to re-open
   if (hidden) {
