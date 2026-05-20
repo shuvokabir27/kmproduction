@@ -336,10 +336,6 @@ export default function AdminVoiceNotes() {
       if (clipId) transcribeClip(clipId);
     } catch (err: any) {
       toast.error(err.message);
-    } finally {
-      setUploading(false);
-      setRecordTarget(null);
-      setRecordTime(0);
     }
   };
 
