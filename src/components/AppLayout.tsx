@@ -18,15 +18,17 @@ import { OnlineUsersBar } from "@/components/OnlineUsersBar";
 import { WeatherWidget } from "@/components/WeatherWidget";
 import { HomeTopSection } from "@/components/HomeTopSection";
 import { UpdateNoticeMarquee } from "@/components/UpdateNoticeMarquee";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { profile, user } = useAuth();
+  const { profile, user, isAdmin } = useAuth();
   const isMobile = useIsMobile();
   const location = useLocation();
   const queryClient = useQueryClient();
   const isOnChat = location.pathname === "/chat";
   const { data: unreadCount } = useUnreadMessages();
   const prevUnreadRef = useRef<number | undefined>(undefined);
+  const { isEnabled } = useFeatureFlags();
   usePresenceTracker();
   usePushNotifications();
 
@@ -80,7 +82,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <Globe className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">সাইট দেখুন</span>
               </Link>
-              <WeatherWidget />
+              {(isAdmin || isEnabled("weather_widget")) && <WeatherWidget />}
               <NotificationBell />
               <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
                 {profile?.photo_url ? (
