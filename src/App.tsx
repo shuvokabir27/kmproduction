@@ -72,6 +72,7 @@ const TasksPage = lazy(() => import("./pages/TasksPage"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const AdminAppVersions = lazy(() => import("./pages/AdminAppVersions"));
 const AdminRoleManagement = lazy(() => import("./pages/AdminRoleManagement"));
+const AdminFeatureToggles = lazy(() => import("./pages/AdminFeatureToggles"));
 const PhotoCard = lazy(() => import("./pages/PhotoCard"));
 const NewsCard = lazy(() => import("./pages/NewsCard"));
 
@@ -146,6 +147,7 @@ const App = () => (
             <Route path="/admin/shootings" element={<PermissionGuard permission="shootings"><AdminShootings /></PermissionGuard>} />
             <Route path="/admin/shooting-expenses" element={<PermissionGuard permission="shooting_expenses"><AdminShootingExpenses /></PermissionGuard>} />
             <Route path="/admin/role-management" element={<RouteGuard allowedRoles={["admin"]}><AdminRoleManagement /></RouteGuard>} />
+            <Route path="/admin/feature-toggles" element={<RouteGuard allowedRoles={["admin"]}><AdminFeatureToggles /></RouteGuard>} />
             <Route path="/admin/channels" element={<RouteGuard allowedRoles={["admin"]}><AdminChannels /></RouteGuard>} />
             <Route path="/admin/scripts" element={<RouteGuard allowedRoles={["admin"]}><AdminScripts /></RouteGuard>} />
             <Route path="/admin/scripts/:id" element={<RouteGuard allowedRoles={["admin"]}><AdminScriptEdit /></RouteGuard>} />
