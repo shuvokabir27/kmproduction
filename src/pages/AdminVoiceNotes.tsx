@@ -604,7 +604,7 @@ export default function AdminVoiceNotes() {
                                     <Square className="h-3.5 w-3.5" />
                                     {fmt(recordTime)}
                                   </Button>
-                                ) : (
+                                ) : recordTarget ? null : (
                                   <>
                                     <Button
                                       size="icon"
@@ -628,7 +628,7 @@ export default function AdminVoiceNotes() {
                                       size="icon"
                                       variant="ghost"
                                       title="পুনরায় রেকর্ড"
-                                      disabled={!!recordTarget || uploading}
+                                      disabled={uploading}
                                       onClick={() =>
                                         startRecording({
                                           groupId: g.id,
@@ -808,6 +808,14 @@ export default function AdminVoiceNotes() {
                               থামাতে লাল বাটনে চাপ দিন
                             </p>
                           </div>
+                        ) : recordTarget ? (
+                          <div className="flex items-center justify-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 py-6 text-xs text-muted-foreground">
+                            <span className="relative flex h-2 w-2">
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                              <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
+                            </span>
+                            অন্য দৃশ্য রেকর্ডিং চলছে...
+                          </div>
                         ) : (
                           <div className="relative flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-gradient-to-b from-primary/5 via-background to-background py-8 px-4">
                             <div className="relative z-10 flex items-center justify-center">
@@ -819,7 +827,7 @@ export default function AdminVoiceNotes() {
                               )}
                               <button
                                 onClick={() => startRecording({ groupId: g.id })}
-                                disabled={!!recordTarget || uploading}
+                                disabled={uploading}
                                 aria-label="রেকর্ড শুরু করুন"
                                 className="relative h-20 w-20 rounded-full bg-gradient-to-br from-primary to-primary/70 shadow-[0_0_30px_hsl(var(--primary)/0.4)] ring-4 ring-primary/20 transition-all hover:scale-105 hover:shadow-[0_0_40px_hsl(var(--primary)/0.6)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
                               >
