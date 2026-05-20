@@ -235,7 +235,10 @@ export function AppSidebar() {
               মেনু
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              {renderItems(memberItems)}
+              {renderItems([
+                ...memberItems,
+                ...permissions.map((p) => permissionMenuMap[p]).filter(Boolean),
+              ])}
             </SidebarGroupContent>
           </SidebarGroup>
         )}
