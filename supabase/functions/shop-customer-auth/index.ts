@@ -135,6 +135,38 @@ Deno.serve(async (req) => {
       return ok({ ok: true });
     }
 
+    if (action === "forgot_password") {
+      const phone = String(body.phone || "").replace(/\D/g, "");
+      const newPassword = String(body.new_password || "");
+      if (phone.length !== 11) return bad("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+      if (!/^\d{6,}$/.test(newPassword)) return bad("নতুন পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে");
+
+      const { data: cust } = await supabase
+        .from("shop_customers")
+        .select("id, is_active")
+        .eq("phone", phone).maybeSingle();
+      if (!cust) return bad("এই নম্বরে কোনো অ্যাকাউন্ট নেই", 404);
+      if (!cust.is_active) return bad("আপনার অ্যাকাউন্ট নিষ্ক্রিয়", 403);
+
+      const password_hash = await hash(newPassword, phone);
+      const session_token = genToken();
+      const session_expires_at = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+
+      const { data: updated, error } = await supabase
+        .from("shop_customers")
+        .update({
+          password_hash, session_token, session_expires_at,
+          last_login_at: new Date().toISOString(),
+        })
+        .eq("id", cust.id)
+        .select("id, phone, full_name, address")
+        .single();
+      if (error) return bad(error.message, 500);
+
+      return ok({ customer: updated, token: session_token, expires_at: session_expires_at });
+    }
+
+
     if (action === "update_profile") {
       const token = String(body.token || "");
       if (!token) return bad("টোকেন নেই", 401);
