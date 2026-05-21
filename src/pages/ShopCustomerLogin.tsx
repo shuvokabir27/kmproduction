@@ -180,7 +180,9 @@ export default function ShopCustomerLogin() {
                 </div>
               </div>
               <div>
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">কমপক্ষে ৬-ডিজিট পাসওয়ার্ড</Label>
+                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">
+                  {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
+                </Label>
                 <div className="relative mt-1">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -200,9 +202,20 @@ export default function ShopCustomerLogin() {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                {mode === "login" && (
+                  <div className="text-right mt-1.5">
+                    <button
+                      type="button"
+                      onClick={() => { setMode("forgot"); setConfirmPassword(""); setPassword(""); }}
+                      className="text-[12px] font-bold text-red-700 hover:text-red-900 underline-offset-2 hover:underline"
+                    >
+                      পাসওয়ার্ড ভুলে গেছেন?
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {mode === "register" && (
+              {(mode === "register" || mode === "forgot") && (
                 <div>
                   <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">পাসওয়ার্ড নিশ্চিত করুন</Label>
                   <div className="relative mt-1">
@@ -233,9 +246,21 @@ export default function ShopCustomerLogin() {
                 </div>
               )}
 
+              {mode === "forgot" && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => { setMode("login"); setConfirmPassword(""); setPassword(""); }}
+                    className="text-[12px] font-bold text-gray-600 hover:text-gray-900"
+                  >
+                    ← লগইনে ফিরে যান
+                  </button>
+                </div>
+              )}
+
 
               {(() => {
-                const mismatch = mode === "register" && (confirmPassword.length < 6 || confirmPassword !== password);
+                const mismatch = (mode === "register" || mode === "forgot") && (confirmPassword.length < 6 || confirmPassword !== password);
                 return (
                   <Button
                     onClick={submit}
@@ -245,7 +270,10 @@ export default function ShopCustomerLogin() {
                   >
                     <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent pointer-events-none" />
                     <span className="relative">
-                      {loading ? "অপেক্ষা করুন..." : mode === "login" ? "লগইন করুন" : "অ্যাকাউন্ট তৈরি করুন"}
+                      {loading ? "অপেক্ষা করুন..."
+                       : mode === "login" ? "লগইন করুন"
+                       : mode === "register" ? "অ্যাকাউন্ট তৈরি করুন"
+                       : "পাসওয়ার্ড রিসেট করুন"}
                     </span>
                   </Button>
                 );
