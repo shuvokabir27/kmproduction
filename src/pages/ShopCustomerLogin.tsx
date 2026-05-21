@@ -197,7 +197,6 @@ export default function ShopCustomerLogin() {
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       inputMode="numeric"
-                      maxLength={6}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
                       placeholder="••••••"
@@ -215,7 +214,7 @@ export default function ShopCustomerLogin() {
                   {confirmPassword.length > 0 && confirmPassword !== password && (
                     <p className="text-[11px] text-red-600 font-semibold mt-1 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
                   )}
-                  {confirmPassword.length === 6 && confirmPassword === password && (
+                  {confirmPassword.length >= 6 && confirmPassword === password && (
                     <p className="text-[11px] text-green-600 font-semibold mt-1 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
                   )}
                 </div>
