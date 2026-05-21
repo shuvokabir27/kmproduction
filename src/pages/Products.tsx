@@ -714,7 +714,7 @@ const Products = () => {
                 <div className="absolute -bottom-4 -left-4 px-4 py-2 rounded-2xl text-sm font-bold text-amber-950 shadow-xl bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 ring-1 ring-amber-100/60 shadow-[inset_0_1px_0_0_hsl(45_100%_95%/0.8),0_10px_24px_-8px_hsl(38_90%_40%/0.6)]">
                   ১০০% খাঁটি
                 </div>
-                <div className="absolute -top-4 -right-4 px-4 py-2 rounded-2xl text-sm font-bold text-foreground bg-white/95 backdrop-blur shadow-[inset_0_1px_0_0_hsl(0_0%_100%),0_10px_24px_-8px_hsl(0_0%_0%/0.45)] ring-1 ring-black/5 flex items-center gap-1.5">
+                <div className="absolute -top-4 -right-4 px-4 py-2 rounded-2xl text-sm font-extrabold text-slate-900 bg-white/95 backdrop-blur shadow-[inset_0_1px_0_0_hsl(0_0%_100%),0_10px_24px_-8px_hsl(0_0%_0%/0.45)] ring-1 ring-black/5 flex items-center gap-1.5">
                   <Star className="h-4 w-4 fill-amber-400 text-amber-400" /> <span>৪.৯</span>
                 </div>
               </div>
