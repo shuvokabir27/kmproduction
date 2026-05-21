@@ -92,6 +92,8 @@ const PublicHome = () => {
   const mediaChildren = [
     { label: t("জনপ্রিয়", "Popular"), href: "#popular", icon: Play, bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
     { label: t("নিউজ", "News"), href: "/news", isPage: true, icon: Newspaper, bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-400" },
+    { label: t("ফটো কার্ড", "Photo Card"), href: "/photo-card", isPage: true, icon: Camera, bg: "bg-red-600/15", border: "border-red-600/30", text: "text-red-500" },
+    { label: t("নিউজ কার্ড", "News Card"), href: "/news-card", isPage: true, icon: Newspaper, bg: "bg-rose-600/15", border: "border-rose-600/30", text: "text-rose-400" },
     { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
     { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
     { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
@@ -106,8 +108,6 @@ const PublicHome = () => {
     { label: t("সেবা", "Services"), href: "/services", isPage: true, icon: Film, bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
     { label: t("প্রডাক্ট", "Products"), href: "/products", isPage: true, icon: ShoppingBag, bg: "bg-orange-500/15", border: "border-orange-500/30", text: "text-orange-400" },
     { label: t("মিডিয়া", "Media"), href: "#media", icon: LayoutGrid, bg: "bg-indigo-500/15", border: "border-indigo-500/30", text: "text-indigo-400", children: mediaChildren },
-    { label: t("ফটো কার্ড", "Photo Card"), href: "/photo-card", isPage: true, icon: Camera, bg: "bg-red-600/15", border: "border-red-600/30", text: "text-red-500" },
-    { label: t("নিউজ কার্ড", "News Card"), href: "/news-card", isPage: true, icon: Newspaper, bg: "bg-rose-600/15", border: "border-rose-600/30", text: "text-rose-400" },
     { label: t("অ্যাপ ডাউনলোড", "Download App"), href: "/download", isPage: true, icon: Download, bg: "bg-green-500/15", border: "border-green-500/30", text: "text-green-400" },
   ];
 
