@@ -91,20 +91,28 @@ export default function ShopCustomerLogin() {
             </div>
 
             {/* segmented switch */}
-            <div className="relative flex bg-gradient-to-b from-gray-100 to-gray-200/70 rounded-full p-1 mb-5 text-sm font-bold ring-1 ring-black/5 shadow-inner">
+            <div className="relative grid grid-cols-3 bg-gradient-to-b from-gray-100 to-gray-200/70 rounded-full p-1 mb-5 text-xs md:text-sm font-bold ring-1 ring-black/5 shadow-inner gap-1">
               <button
                 onClick={() => setMode("login")}
-                className={`flex-1 py-2.5 rounded-full transition-all ${mode === "login" ? "text-white shadow-md" : "text-gray-500"}`}
+                className={`py-2.5 rounded-full transition-all ${mode === "login" ? "text-white shadow-md" : "text-gray-500"}`}
                 style={mode === "login" ? { background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` } : {}}
               >
                 লগইন
               </button>
               <button
                 onClick={() => setMode("register")}
-                className={`flex-1 py-2.5 rounded-full transition-all ${mode === "register" ? "text-white shadow-md" : "text-gray-500"}`}
+                className={`py-2.5 rounded-full transition-all ${mode === "register" ? "text-white shadow-md" : "text-gray-500"}`}
                 style={mode === "register" ? { background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` } : {}}
               >
                 রেজিস্টার
+              </button>
+              <button
+                onClick={() => nav("/login")}
+                className="py-2.5 rounded-full transition-all text-white shadow-md inline-flex items-center justify-center gap-1"
+                style={{ background: "linear-gradient(140deg, #b91c1c, #4c0519)" }}
+                title="KM Production মিডিয়া টিম লগইন"
+              >
+                🎬 মিডিয়া লগইন
               </button>
             </div>
 
