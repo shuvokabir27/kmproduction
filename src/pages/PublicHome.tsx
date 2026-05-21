@@ -31,6 +31,7 @@ const item = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transiti
 const PublicHome = () => {
   const { user, isAdmin } = useAuth();
   const { lang, t } = useLanguage();
+  const { isEnabled } = useFeatureFlags();
   const navigate = useNavigate();
   const L = labels[lang];
 
