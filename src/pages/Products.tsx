@@ -609,7 +609,7 @@ const Products = () => {
                 </div>
               </div>
 
-              <div className="relative block mt-4 md:mt-0">
+              <div className="relative block mt-4 md:mt-0 order-1 md:order-2">
                 {(() => {
                   const slides = (products || []).filter((p: any) => p.image_url).slice(0, 8);
                   const current = slides[heroSlide % (slides.length || 1)];
