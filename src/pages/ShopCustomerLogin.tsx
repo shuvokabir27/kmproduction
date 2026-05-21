@@ -91,7 +91,7 @@ export default function ShopCustomerLogin() {
             </div>
 
             {/* segmented switch */}
-            <div className="relative grid grid-cols-3 bg-gradient-to-b from-gray-100 to-gray-200/70 rounded-full p-1 mb-5 text-xs md:text-sm font-bold ring-1 ring-black/5 shadow-inner gap-1">
+            <div className="relative grid grid-cols-2 bg-gradient-to-b from-gray-100 to-gray-200/70 rounded-full p-1 mb-5 text-xs md:text-sm font-bold ring-1 ring-black/5 shadow-inner gap-1">
               <button
                 onClick={() => setMode("login")}
                 className={`py-2.5 rounded-full transition-all ${mode === "login" ? "text-white shadow-md" : "text-gray-500"}`}
@@ -105,14 +105,6 @@ export default function ShopCustomerLogin() {
                 style={mode === "register" ? { background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` } : {}}
               >
                 রেজিস্টার
-              </button>
-              <button
-                onClick={() => nav("/login")}
-                className="py-2.5 rounded-full transition-all text-white shadow-md inline-flex items-center justify-center gap-1"
-                style={{ background: "linear-gradient(140deg, #b91c1c, #4c0519)" }}
-                title="KM Production মিডিয়া টিম লগইন"
-              >
-                🎬 মিডিয়া লগইন
               </button>
             </div>
 
@@ -186,6 +178,19 @@ export default function ShopCustomerLogin() {
             <p className="relative text-center text-[11px] text-gray-400 mt-5">
               🔒 আপনার তথ্য সম্পূর্ণ সুরক্ষিত ও এনক্রিপ্টেড
             </p>
+
+            {/* divider */}
+            <div className="relative my-4 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+
+            {/* media login */}
+            <button
+              onClick={() => nav("/login")}
+              className="relative w-full h-11 rounded-xl text-white text-sm font-bold shadow-md ring-1 ring-white/20 hover:brightness-110 transition inline-flex items-center justify-center gap-2"
+              style={{ background: "linear-gradient(140deg, #b91c1c, #4c0519)" }}
+              title="KM Production মিডিয়া টিম লগইন"
+            >
+              🎬 মিডিয়া লগইন
+            </button>
           </div>
         </div>
       </div>
