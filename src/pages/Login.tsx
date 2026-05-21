@@ -107,9 +107,26 @@ const Login = () => {
   const placeholderHint = currentType === "member" ? "সদস্য আইডি" : currentType === "client" ? "মোবাইল নম্বর" : "ইমেইল";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div
+      className="relative min-h-screen flex flex-col overflow-hidden"
+      style={{
+        backgroundImage: [
+          "radial-gradient(70% 50% at 0% 0%, hsl(0 80% 25% / 0.65), transparent 60%)",
+          "radial-gradient(60% 50% at 100% 10%, hsl(350 70% 30% / 0.55), transparent 60%)",
+          "radial-gradient(80% 60% at 50% 100%, hsl(0 85% 18% / 0.65), transparent 65%)",
+          "linear-gradient(160deg, #1a0608 0%, #2a0a10 35%, #0d0405 70%, #1f0709 100%)",
+        ].join(", "),
+      }}
+    >
+      {/* ambient blobs */}
+      <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-red-600/25 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-rose-700/25 blur-[140px]" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-red-900/15 blur-[160px]" />
+      {/* gold hairline at top */}
+      <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
+
       <div className="h-safe-top" />
-      <div className="flex-1 flex flex-col items-center justify-center p-5">
+      <div className="relative flex-1 flex flex-col items-center justify-center p-5">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,20 +140,29 @@ const Login = () => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-                className="h-16 w-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/10"
+                className="relative h-16 w-16 mx-auto mb-3 rounded-2xl flex items-center justify-center shadow-[0_15px_40px_-10px_rgba(220,38,38,0.55)] ring-1 ring-white/15"
+                style={{ background: "linear-gradient(140deg, #b91c1c, #4c0519)" }}
               >
-                <img src="/favicon.png" alt="KM" className="h-10 w-10 rounded-lg object-contain" />
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-amber-300/50 via-rose-400/40 to-red-700/60 blur-md opacity-80 -z-10" />
+                <img src="/favicon.png" alt="KM" className="h-10 w-10 rounded-lg object-contain drop-shadow" />
               </motion.div>
             </Link>
-            <h1 className="text-xl font-bold text-foreground">স্বাগতম</h1>
-            <p className="text-muted-foreground text-xs mt-1">KM Production House</p>
+            <h1 className="text-2xl font-extrabold bg-gradient-to-r from-amber-200 via-rose-100 to-amber-200 bg-clip-text text-transparent drop-shadow">স্বাগতম</h1>
+            <p className="text-white/60 text-xs mt-1 tracking-wide">KM Production House</p>
           </div>
 
-          {/* Unified Login Card */}
-          <Card className="p-5 bg-card border-border/30 shadow-xl shadow-primary/5">
+          {/* Unified Login Card — gradient ring + dark glass */}
+          <div
+            className="rounded-[26px] p-[1.5px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]"
+            style={{ background: "linear-gradient(140deg, #fbbf24, rgba(255,255,255,0.25) 35%, #b91c1c 70%, #4c0519)" }}
+          >
+            <Card className="relative p-5 rounded-[24px] border-0 bg-[linear-gradient(160deg,rgba(35,8,12,0.92),rgba(15,4,6,0.95))] backdrop-blur-xl overflow-hidden text-white">
+              {/* top sheen */}
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/10 to-transparent" />
+              <div className="pointer-events-none absolute top-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <Label htmlFor="identifier" className="text-foreground text-xs">আইডি / মোবাইল / ইমেইল</Label>
+                <Label htmlFor="identifier" className="text-white/80 text-xs">আইডি / মোবাইল / ইমেইল</Label>
                 <Input
                   id="identifier"
                   type="text"
@@ -144,7 +170,7 @@ const Login = () => {
                   onChange={(e) => { setIdentifier(e.target.value); setErrorMsg(""); }}
                   placeholder="সদস্য আইডি, মোবাইল নম্বর বা ইমেইল"
                   required
-                  className="bg-secondary border-border/30 h-11 text-base"
+                  className="bg-white/[0.06] border-white/15 h-11 text-base text-white placeholder:text-white/40 focus-visible:ring-red-400/50"
                 />
                 {identifier.trim() && (
                   <p className="text-[10px] text-muted-foreground mt-1">
@@ -153,7 +179,7 @@ const Login = () => {
                 )}
               </div>
               <div>
-                <Label htmlFor="password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
+                <Label htmlFor="password" className="text-white/80 text-xs">পাসওয়ার্ড</Label>
                 <Input
                   id="password"
                   type="password"
@@ -162,7 +188,7 @@ const Login = () => {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="bg-secondary border-border/30 h-11 text-base"
+                  className="bg-white/[0.06] border-white/15 h-11 text-base text-white placeholder:text-white/40 focus-visible:ring-red-400/50"
                 />
               </div>
 
@@ -244,6 +270,7 @@ const Login = () => {
               </div>
             </form>
           </Card>
+          </div>
 
           {/* Signup Dialog */}
           <Dialog open={isSignup} onOpenChange={setIsSignup}>
