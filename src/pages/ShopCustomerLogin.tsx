@@ -205,19 +205,22 @@ export default function ShopCustomerLogin() {
               )}
 
 
-              {!(mode === "register" && (confirmPassword.length !== 6 || confirmPassword !== password)) && (
-                <Button
-                  onClick={submit}
-                  disabled={loading}
-                  className="relative w-full h-12 mt-1 font-extrabold rounded-xl text-white text-base shadow-lg overflow-hidden ring-1 ring-white/30 hover:brightness-110 transition"
-                  style={{ background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` }}
-                >
-                  <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent pointer-events-none" />
-                  <span className="relative">
-                    {loading ? "অপেক্ষা করুন..." : mode === "login" ? "লগইন করুন" : "অ্যাকাউন্ট তৈরি করুন"}
-                  </span>
-                </Button>
-              )}
+              {(() => {
+                const mismatch = mode === "register" && (confirmPassword.length !== 6 || confirmPassword !== password);
+                return (
+                  <Button
+                    onClick={submit}
+                    disabled={loading || mismatch}
+                    className="relative w-full h-12 mt-1 font-extrabold rounded-xl text-white text-base shadow-lg overflow-hidden ring-1 ring-white/30 hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100"
+                    style={{ background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` }}
+                  >
+                    <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent pointer-events-none" />
+                    <span className="relative">
+                      {loading ? "অপেক্ষা করুন..." : mode === "login" ? "লগইন করুন" : "অ্যাকাউন্ট তৈরি করুন"}
+                    </span>
+                  </Button>
+                );
+              })()}
             </div>
 
             <p className="relative text-center text-[11px] text-gray-400 mt-5">
