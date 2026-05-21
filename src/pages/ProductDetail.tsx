@@ -330,11 +330,21 @@ const ProductDetail = () => {
               <div className="text-[10px] text-muted-foreground -mt-0.5">কুয়াকাটা</div>
             </div>
           </Link>
-          <Link to="/products">
-            <Button variant="outline" size="sm" className="rounded-full text-xs gap-1">
-              <ChevronLeft className="h-3 w-3" /> শপে ফিরুন
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <button onClick={cart.open} className="relative p-2 rounded-full hover:bg-muted transition-colors text-foreground/80" aria-label="cart">
+              <ShoppingCart className="h-5 w-5" />
+              {cart.count > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-card shadow">
+                  {toBn(cart.count)}
+                </span>
+              )}
+            </button>
+            <Link to="/products">
+              <Button variant="outline" size="sm" className="rounded-full text-xs gap-1">
+                <ChevronLeft className="h-3 w-3" /> শপে ফিরুন
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 

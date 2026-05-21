@@ -17,7 +17,7 @@ const BRAND_GREEN = "#dc2626";
 const BRAND_DARK = "#991b1b";
 
 export const CartDrawer = () => {
-  const { items, total, totalWeightGrams, offer, isOpen, close, updateQty, removeItem, clear } = useCart();
+  const { items, count, total, totalWeightGrams, offer, isOpen, close, updateQty, removeItem, clear } = useCart();
   const { customer } = useShopCustomer();
   const { settings } = useDeliverySettings();
   const delivery = calculateDelivery(total, totalWeightGrams, settings, {
@@ -120,7 +120,7 @@ export const CartDrawer = () => {
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
             <h3 className="font-bold text-lg">আপনার কার্ট</h3>
-            <span className="bg-card/20 text-xs font-bold px-2 py-0.5 rounded-full">{toBn(items.length)}</span>
+            <span className="bg-card/20 text-xs font-bold px-2 py-0.5 rounded-full">{toBn(count)}</span>
           </div>
           <button onClick={closeAll} className="w-8 h-8 rounded-full bg-card/15 flex items-center justify-center hover:bg-card/25"><X className="h-4 w-4" /></button>
         </div>
@@ -217,7 +217,7 @@ export const CartDrawer = () => {
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{toBn(items.length)} টি পণ্য (সাবটোটাল)</span>
+                  <span className="text-muted-foreground">{toBn(count)} টি পণ্য (সাবটোটাল)</span>
                   <span className="font-bold text-foreground">৳{toBn(total)}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
