@@ -462,10 +462,7 @@ const AdminProducts = () => {
           <CategoryManager />
         </TabsContent>
 
-        {/* Orders Tab */}
-        <TabsContent value="orders" className="mt-4">
-          <OrderManagement initialTab={orderInitialTab} />
-        </TabsContent>
+
 
         {/* Customers Tab */}
         <TabsContent value="customers" className="mt-4">
