@@ -2122,6 +2122,54 @@ export type Database = {
           },
         ]
       }
+      product_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          customer_name: string | null
+          id: string
+          product_id: string
+          rating: number
+          shop_customer_id: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          product_id: string
+          rating: number
+          shop_customer_id: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          product_id?: string
+          rating?: number
+          shop_customer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_shop_customer_id_fkey"
+            columns: ["shop_customer_id"]
+            isOneToOne: false
+            referencedRelation: "shop_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_weight_prices: {
         Row: {
           created_at: string
@@ -3585,6 +3633,30 @@ export type Database = {
         Returns: undefined
       }
       send_birthday_notifications: { Args: never; Returns: undefined }
+      submit_product_review: {
+        Args: {
+          _comment: string
+          _product_id: string
+          _rating: number
+          _token: string
+        }
+        Returns: {
+          comment: string | null
+          created_at: string
+          customer_name: string | null
+          id: string
+          product_id: string
+          rating: number
+          shop_customer_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "product_reviews"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       advance_status: "pending" | "approved" | "rejected" | "cancelled"
