@@ -867,7 +867,32 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
               </div>
               <div>
                 <Label>ফোন নম্বর *</Label>
-                <Input value={form.customer_phone} onChange={e => setForm(f => ({ ...f, customer_phone: e.target.value }))} />
+                <Input
+                  value={form.customer_phone}
+                  onChange={e => {
+                    const phone = e.target.value;
+                    setForm(f => ({ ...f, customer_phone: phone }));
+                    const digits = phone.replace(/\D/g, "");
+                    if (!editing && digits.length >= 11) {
+                      supabase
+                        .from("orders")
+                        .select("customer_name, customer_address")
+                        .eq("customer_phone", phone)
+                        .order("created_at", { ascending: false })
+                        .limit(1)
+                        .maybeSingle()
+                        .then(({ data }) => {
+                          if (data) {
+                            setForm(f => ({
+                              ...f,
+                              customer_name: f.customer_name || data.customer_name || "",
+                              customer_address: f.customer_address || data.customer_address || "",
+                            }));
+                          }
+                        });
+                    }
+                  }}
+                />
               </div>
             </div>
             <div>
