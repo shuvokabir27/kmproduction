@@ -14,7 +14,7 @@ const BRAND_GOLD = "#fbbf24";
 
 export default function ShopCustomerLogin() {
   const nav = useNavigate();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,16 +27,23 @@ export default function ShopCustomerLogin() {
     if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
     if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
-    if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
+    if ((mode === "register" || mode === "forgot") && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
 
     setLoading(true);
+    const action = mode === "forgot" ? "forgot_password" : mode;
+    const payload: Record<string, unknown> = {
+      action,
+      phone: phone.replace(/\D/g, ""),
+    };
+    if (mode === "forgot") {
+      payload.new_password = password;
+    } else {
+      payload.password = password;
+      payload.full_name = fullName.trim();
+    }
+
     const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
-      body: {
-        action: mode,
-        phone: phone.replace(/\D/g, ""),
-        password,
-        full_name: fullName.trim(),
-      },
+      body: payload,
     });
     setLoading(false);
 
@@ -45,7 +52,11 @@ export default function ShopCustomerLogin() {
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
-    toast.success(mode === "login" ? "সফলভাবে লগইন হয়েছে" : "অ্যাকাউন্ট তৈরি হয়েছে");
+    toast.success(
+      mode === "login" ? "সফলভাবে লগইন হয়েছে"
+      : mode === "register" ? "অ্যাকাউন্ট তৈরি হয়েছে"
+      : "পাসওয়ার্ড পরিবর্তন হয়েছে"
+    );
     nav("/shop/account");
   };
 
@@ -106,7 +117,9 @@ export default function ShopCustomerLogin() {
               </h1>
               <p className="text-xs text-gray-500 mt-1.5 inline-flex items-center gap-1">
                 <Sparkles className="h-3 w-3" style={{ color: BRAND_GOLD }} />
-                {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন" : "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"}
+                {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
+                 : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
+                 : "মোবাইল নম্বর দিয়ে নতুন পাসওয়ার্ড সেট করুন"}
               </p>
             </div>
 
@@ -167,7 +180,9 @@ export default function ShopCustomerLogin() {
                 </div>
               </div>
               <div>
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">কমপক্ষে ৬-ডিজিট পাসওয়ার্ড</Label>
+                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">
+                  {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
+                </Label>
                 <div className="relative mt-1">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -187,9 +202,20 @@ export default function ShopCustomerLogin() {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                {mode === "login" && (
+                  <div className="text-right mt-1.5">
+                    <button
+                      type="button"
+                      onClick={() => { setMode("forgot"); setConfirmPassword(""); setPassword(""); }}
+                      className="text-[12px] font-bold text-red-700 hover:text-red-900 underline-offset-2 hover:underline"
+                    >
+                      পাসওয়ার্ড ভুলে গেছেন?
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {mode === "register" && (
+              {(mode === "register" || mode === "forgot") && (
                 <div>
                   <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">পাসওয়ার্ড নিশ্চিত করুন</Label>
                   <div className="relative mt-1">
@@ -220,9 +246,21 @@ export default function ShopCustomerLogin() {
                 </div>
               )}
 
+              {mode === "forgot" && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => { setMode("login"); setConfirmPassword(""); setPassword(""); }}
+                    className="text-[12px] font-bold text-gray-600 hover:text-gray-900"
+                  >
+                    ← লগইনে ফিরে যান
+                  </button>
+                </div>
+              )}
+
 
               {(() => {
-                const mismatch = mode === "register" && (confirmPassword.length < 6 || confirmPassword !== password);
+                const mismatch = (mode === "register" || mode === "forgot") && (confirmPassword.length < 6 || confirmPassword !== password);
                 return (
                   <Button
                     onClick={submit}
@@ -232,7 +270,10 @@ export default function ShopCustomerLogin() {
                   >
                     <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent pointer-events-none" />
                     <span className="relative">
-                      {loading ? "অপেক্ষা করুন..." : mode === "login" ? "লগইন করুন" : "অ্যাকাউন্ট তৈরি করুন"}
+                      {loading ? "অপেক্ষা করুন..."
+                       : mode === "login" ? "লগইন করুন"
+                       : mode === "register" ? "অ্যাকাউন্ট তৈরি করুন"
+                       : "পাসওয়ার্ড রিসেট করুন"}
                     </span>
                   </Button>
                 );
