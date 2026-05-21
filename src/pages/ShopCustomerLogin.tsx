@@ -117,8 +117,9 @@ export default function ShopCustomerLogin() {
               </h1>
               <p className="text-xs text-gray-500 mt-1.5 inline-flex items-center gap-1">
                 <Sparkles className="h-3 w-3" style={{ color: BRAND_GOLD }} />
-                {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন" : "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"}
-              </p>
+                {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
+                 : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
+                 : "মোবাইল নম্বর দিয়ে নতুন পাসওয়ার্ড সেট করুন"}
             </div>
 
             {/* segmented switch */}
