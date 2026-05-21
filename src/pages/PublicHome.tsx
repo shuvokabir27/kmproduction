@@ -15,6 +15,8 @@ import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
 import kuakataLogo from "@/assets/logo.png";
 import { BestSellersSection } from "@/components/BestSellersSection";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
+
 
 
 const extractYouTubeId = (url: string): string | null => {
@@ -29,6 +31,7 @@ const item = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transiti
 const PublicHome = () => {
   const { user, isAdmin } = useAuth();
   const { lang, t } = useLanguage();
+  const { isEnabled } = useFeatureFlags();
   const navigate = useNavigate();
   const L = labels[lang];
 
@@ -194,14 +197,18 @@ const PublicHome = () => {
       </div>
 
       {/* Public horoscope */}
-      <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
-        <DailyRashifal mode="public" />
-      </div>
+      {isEnabled("daily_rashifal") && (
+        <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
+          <DailyRashifal mode="public" />
+        </div>
+      )}
 
       {/* Meme generator */}
-      <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
-        <MemeGenerator mode="public" />
-      </div>
+      {isEnabled("meme_generator") && (
+        <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
+          <MemeGenerator mode="public" />
+        </div>
+      )}
 
       {/* Today's Birthday */}
       <div className="mt-6">
