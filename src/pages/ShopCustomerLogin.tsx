@@ -53,12 +53,28 @@ export default function ShopCustomerLogin() {
       className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 overflow-hidden"
       style={{
         fontFamily: "'Tiro Bangla', serif",
-        background: `radial-gradient(1200px 600px at -10% -20%, ${BRAND_GREEN}66, transparent 60%), radial-gradient(900px 500px at 110% 110%, ${BRAND_GOLD}33, transparent 60%), linear-gradient(135deg, ${BRAND_DARK}, #120308 55%, #000000)`,
+        background: `
+          radial-gradient(1200px 700px at 0% 0%, rgba(185,28,28,0.45), transparent 60%),
+          radial-gradient(900px 600px at 100% 100%, rgba(251,191,36,0.18), transparent 60%),
+          radial-gradient(600px 400px at 50% 50%, rgba(76,5,25,0.55), transparent 70%),
+          linear-gradient(135deg, #1a0608 0%, #2a0a10 35%, #0a0203 70%, #000000 100%)
+        `,
       }}
     >
+      {/* premium grain overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")`,
+        }}
+      />
+      {/* gold hairline top */}
+      <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
       {/* glossy blobs */}
-      <div className="pointer-events-none absolute -top-32 -left-24 h-72 w-72 rounded-full bg-red-400/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-red-300/20 blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-red-500/25 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-rose-700/25 blur-[140px]" />
+      <div className="pointer-events-none absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-amber-500/10 blur-[100px]" />
+
 
       <div className="relative w-full max-w-md">
         <Link to="/products" className="text-white/80 hover:text-white text-sm flex items-center gap-1 mb-4">
