@@ -42,8 +42,14 @@ const AdminProducts = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [orderInitialTab, setOrderInitialTab] = useState<string | undefined>(undefined);
   const goToTab = (tab: string, orderTab?: string) => {
-    setActiveTab(tab);
-    if (orderTab) setOrderInitialTab(orderTab);
+    // Orders now live inside the dashboard tab
+    setActiveTab(tab === "orders" ? "dashboard" : tab);
+    if (orderTab) {
+      setOrderInitialTab(orderTab);
+      setTimeout(() => {
+        document.getElementById("dashboard-orders")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
   };
   const [productCategory, setProductCategory] = useState<"taler_gur" | "other">("taler_gur");
   const { data: categoryData } = useProductCategories();
@@ -241,7 +247,6 @@ const AdminProducts = () => {
         dot: "bg-amber-400",
       },
       items: [
-        { value: "orders", label: "অর্ডার", icon: ShoppingBag },
         { value: "customers", label: "কাস্টমার", icon: Users },
         { value: "reports", label: "রিপোর্ট", icon: BarChart3 },
       ],
@@ -343,8 +348,11 @@ const AdminProducts = () => {
 
 
         {/* Dashboard Tab */}
-        <TabsContent value="dashboard" className="mt-4">
+        <TabsContent value="dashboard" className="mt-4 space-y-6">
           <ProductDashboardStats onNavigate={goToTab} />
+          <div id="dashboard-orders" className="pt-2">
+            <OrderManagement initialTab={orderInitialTab} />
+          </div>
         </TabsContent>
 
         <TabsContent value="products" className="mt-4 space-y-4">
@@ -454,10 +462,7 @@ const AdminProducts = () => {
           <CategoryManager />
         </TabsContent>
 
-        {/* Orders Tab */}
-        <TabsContent value="orders" className="mt-4">
-          <OrderManagement initialTab={orderInitialTab} />
-        </TabsContent>
+
 
         {/* Customers Tab */}
         <TabsContent value="customers" className="mt-4">
