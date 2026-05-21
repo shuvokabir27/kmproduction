@@ -192,9 +192,11 @@ const PublicHome = () => {
       {/* Shop Offer Banner removed from main homepage — only on /products */}
 
       {/* Spotlight monitor — Right under the menu bar */}
-      <div className="px-4 max-w-6xl mx-auto w-full">
-        <ZeroBalanceFun spotlightOnly />
-      </div>
+      {isEnabled("spotlight") && (
+        <div className="px-4 max-w-6xl mx-auto w-full">
+          <ZeroBalanceFun spotlightOnly />
+        </div>
+      )}
 
       {/* Public horoscope */}
       {isEnabled("daily_rashifal") && (
