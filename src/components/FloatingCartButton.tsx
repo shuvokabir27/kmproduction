@@ -11,7 +11,7 @@ export default function FloatingCartButton() {
     <button
       onClick={cart.open}
       aria-label="cart"
-      className="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center justify-center gap-1 w-[78px] py-4 rounded-l-2xl text-white shadow-[-6px_8px_24px_-6px_rgba(0,0,0,0.4)] ring-1 ring-white/15 hover:w-[86px] transition-all duration-300 group"
+      className="flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center justify-center gap-1 w-[64px] md:w-[78px] py-3 md:py-4 rounded-l-2xl text-white shadow-[-6px_8px_24px_-6px_rgba(0,0,0,0.4)] ring-1 ring-white/15 hover:w-[72px] md:hover:w-[86px] transition-all duration-300 group"
       style={{
         background:
           "linear-gradient(160deg, #f59e0b 0%, #ef4444 55%, #b91c1c 100%)",
