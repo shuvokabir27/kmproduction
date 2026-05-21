@@ -418,7 +418,15 @@ const AdminProducts = () => {
         <TabsContent value="footer" className="mt-4">
           <ShopFooterEditor />
         </TabsContent>
+          </div>
+        </div>
       </Tabs>
+
+      {/* Mobile Bottom Menu (last 6) */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur border-t border-border/40 px-2 py-2 grid grid-cols-3 gap-1.5 shadow-[0_-4px_12px_-2px_rgba(0,0,0,0.3)]">
+        {mobileBottom.map(item => <MenuButton key={item.value} item={item} />)}
+      </div>
+
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
