@@ -239,37 +239,43 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Header */}
-      <header className="bg-card shadow-sm sticky top-0 z-40">
+      {/* Header — Premium */}
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-[linear-gradient(180deg,hsl(0_0%_4%/0.92)_0%,hsl(0_0%_6%/0.85)_100%)] backdrop-blur-xl shadow-[0_8px_32px_-12px_hsl(0_0%_0%/0.6),inset_0_-1px_0_0_hsl(0_85%_50%/0.18)]">
+        {/* top hairline accent */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <Link to="/products" className="flex items-center gap-2 shrink-0 hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: BRAND_GREEN }}>
-              KM
+          <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-red-500/60 via-rose-500/40 to-red-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-red-500 via-rose-600 to-red-800 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
+                KM
+              </div>
             </div>
             <div className="hidden sm:block">
-              <div className="font-bold text-base md:text-lg" style={{ color: BRAND_GREEN }}>কে এম শপ</div>
-              <div className="text-[10px] md:text-xs text-muted-foreground -mt-0.5">KM Shop · কুয়াকাটা</div>
+              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-red-300 via-rose-200 to-red-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
+              <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">KM Shop · কুয়াকাটা</div>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-foreground/80">
-            <Link to="/products" className="hover:text-foreground flex items-center gap-1"><Home className="h-4 w-4" /> হোম</Link>
-            <a href="#shop" className="hover:text-foreground">শপ</a>
-            <Link to="/categories" className="hover:text-foreground">ক্যাটাগরি</Link>
-            <a href="#about" className="hover:text-foreground">আমাদের সম্পর্কে</a>
-            <a href="#contact" className="hover:text-foreground">যোগাযোগ</a>
+          <nav className="hidden md:flex items-center gap-1 text-sm font-semibold text-foreground/75">
+            <Link to="/products" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors flex items-center gap-1.5"><Home className="h-4 w-4" /> হোম</Link>
+            <a href="#shop" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors">শপ</a>
+            <Link to="/categories" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors">ক্যাটাগরি</Link>
+            <a href="#about" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors">আমাদের সম্পর্কে</a>
+            <a href="#contact" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors">যোগাযোগ</a>
+
+            <div className="mx-2 h-6 w-px bg-white/10" />
+
             <button
               onClick={() => featured[0] && openOrderDialog(featured[0])}
-              className="text-white font-bold text-xs px-4 py-2 rounded-full flex items-center gap-1.5 shadow"
-              style={{ backgroundColor: ACCENT_RED }}
+              className="glossy-btn-amber font-bold text-xs px-4 h-9 rounded-full inline-flex items-center gap-1.5"
             >
               🔥 অফার
             </button>
             {shopCustomer ? (
               <Link
                 to="/shop/account"
-                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold"
-                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                className="glossy-btn-ghost flex items-center gap-1.5 text-xs px-3.5 h-9 rounded-full font-bold"
               >
                 <User className="h-3.5 w-3.5" />
                 {shopCustomer.full_name?.split(" ")[0] || "অ্যাকাউন্ট"}
@@ -277,61 +283,56 @@ const Products = () => {
             ) : (
               <Link
                 to="/shop/login"
-                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold hover:bg-muted"
-                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                className="glossy-btn-ghost flex items-center gap-1.5 text-xs px-3.5 h-9 rounded-full font-bold"
               >
                 <LogIn className="h-3.5 w-3.5" /> লগইন
               </Link>
             )}
             <button
               onClick={cart.open}
-              className="relative flex items-center gap-1.5 text-xs px-3 py-2 rounded-full font-bold text-white"
-              style={{ backgroundColor: BRAND_GREEN }}
+              className="glossy-btn relative flex items-center gap-1.5 text-xs px-3.5 h-9 rounded-full font-bold"
               aria-label="cart"
             >
               <ShoppingCart className="h-3.5 w-3.5" /> কার্ট
               {cart.count > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 bg-amber-300 text-amber-950 text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-black/40 shadow">
                   {toBn(cart.count)}
                 </span>
               )}
             </button>
           </nav>
 
-          <div className="hidden lg:flex items-center bg-muted rounded-full px-4 py-2 w-72">
-            <Search className="h-4 w-4 text-muted-foreground mr-2" />
+          <div className="hidden lg:flex items-center bg-white/[0.04] hover:bg-white/[0.07] focus-within:bg-white/[0.07] border border-white/10 hover:border-white/20 focus-within:border-red-400/40 transition-all rounded-full px-4 h-10 w-72 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.05)]">
+            <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="পণ্য খুঁজুন..."
-              className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground"
+              className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground/70"
             />
           </div>
 
           <div className="md:hidden flex items-center gap-1">
-            <Link to="/products" className="p-2 rounded-lg hover:bg-muted" aria-label="shop home">
-              <Home className="h-5 w-5" style={{ color: BRAND_GREEN }} />
-            </Link>
-            <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-lg hover:bg-muted" aria-label="search">
-              <Search className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+            <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-full hover:bg-white/5 transition-colors text-foreground/80" aria-label="search">
+              <Search className="h-5 w-5" />
             </button>
-            <button onClick={cart.open} className="relative p-2 rounded-lg hover:bg-muted" aria-label="cart">
-              <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+            <button onClick={cart.open} className="relative p-2 rounded-full hover:bg-white/5 transition-colors text-foreground/80" aria-label="cart">
+              <ShoppingCart className="h-5 w-5" />
               {cart.count > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 bg-amber-300 text-amber-950 text-[10px] font-extrabold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center ring-2 ring-black/40">
                   {toBn(cart.count)}
                 </span>
               )}
             </button>
             <Link
               to={shopCustomer ? "/shop/account" : "/shop/login"}
-              className="p-2 rounded-lg hover:bg-muted"
+              className="p-2 rounded-full hover:bg-white/5 transition-colors text-foreground/80"
               aria-label="login"
             >
-              <User className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+              <User className="h-5 w-5" />
             </Link>
-            <button onClick={() => setMobileMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-muted">
-              <Menu className="h-5 w-5 text-foreground/80" />
+            <button onClick={() => setMobileMenuOpen(v => !v)} className="p-2 rounded-full hover:bg-white/5 transition-colors text-foreground/80">
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
