@@ -162,7 +162,7 @@ const Login = () => {
               <div className="pointer-events-none absolute top-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <Label htmlFor="identifier" className="text-foreground text-xs">আইডি / মোবাইল / ইমেইল</Label>
+                <Label htmlFor="identifier" className="text-white/80 text-xs">আইডি / মোবাইল / ইমেইল</Label>
                 <Input
                   id="identifier"
                   type="text"
@@ -170,7 +170,7 @@ const Login = () => {
                   onChange={(e) => { setIdentifier(e.target.value); setErrorMsg(""); }}
                   placeholder="সদস্য আইডি, মোবাইল নম্বর বা ইমেইল"
                   required
-                  className="bg-secondary border-border/30 h-11 text-base"
+                  className="bg-white/[0.06] border-white/15 h-11 text-base text-white placeholder:text-white/40 focus-visible:ring-red-400/50"
                 />
                 {identifier.trim() && (
                   <p className="text-[10px] text-muted-foreground mt-1">
@@ -179,7 +179,7 @@ const Login = () => {
                 )}
               </div>
               <div>
-                <Label htmlFor="password" className="text-foreground text-xs">পাসওয়ার্ড</Label>
+                <Label htmlFor="password" className="text-white/80 text-xs">পাসওয়ার্ড</Label>
                 <Input
                   id="password"
                   type="password"
@@ -188,7 +188,7 @@ const Login = () => {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="bg-secondary border-border/30 h-11 text-base"
+                  className="bg-white/[0.06] border-white/15 h-11 text-base text-white placeholder:text-white/40 focus-visible:ring-red-400/50"
                 />
               </div>
 
