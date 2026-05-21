@@ -2221,6 +2221,8 @@ export type Database = {
           is_featured: boolean
           name: string
           price: number
+          short_description: string | null
+          short_description_html: string | null
           sort_order: number | null
           stock_status: string
           suggested_product_ids: string[]
@@ -2243,6 +2245,8 @@ export type Database = {
           is_featured?: boolean
           name: string
           price?: number
+          short_description?: string | null
+          short_description_html?: string | null
           sort_order?: number | null
           stock_status?: string
           suggested_product_ids?: string[]
@@ -2265,6 +2269,8 @@ export type Database = {
           is_featured?: boolean
           name?: string
           price?: number
+          short_description?: string | null
+          short_description_html?: string | null
           sort_order?: number | null
           stock_status?: string
           suggested_product_ids?: string[]

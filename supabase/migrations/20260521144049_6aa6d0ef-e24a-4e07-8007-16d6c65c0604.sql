@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS short_description text, ADD COLUMN IF NOT EXISTS short_description_html text;
