@@ -561,7 +561,7 @@ const Products = () => {
             <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-rose-400/20 blur-3xl pointer-events-none" />
 
             <div className="relative grid md:grid-cols-2 gap-8 items-center p-7 md:p-14" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-              <div className="text-white text-center md:text-left">
+              <div className="text-white text-center md:text-left order-2 md:order-1">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-white/25 bg-white/10 backdrop-blur-xl shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-60 animate-ping" />
