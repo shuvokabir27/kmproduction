@@ -236,7 +236,29 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+    <div
+      className="relative min-h-screen pb-16 md:pb-0 text-foreground"
+      style={{
+        fontFamily: "'Tiro Bangla', serif",
+        backgroundImage: [
+          "radial-gradient(80% 50% at 0% 0%, hsl(0 75% 22% / 0.55), transparent 60%)",
+          "radial-gradient(70% 50% at 100% 10%, hsl(350 70% 28% / 0.5), transparent 60%)",
+          "radial-gradient(90% 60% at 50% 100%, hsl(0 80% 18% / 0.55), transparent 65%)",
+          "linear-gradient(160deg, #1a0608 0%, #2a0a0e 25%, #0d0405 55%, #2a0a0e 85%, #1a0608 100%)",
+        ].join(", "),
+      }}
+    >
+      {/* ambient blobs + grain */}
+      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
+        <div className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-red-600/20 blur-[120px]" />
+        <div className="absolute bottom-10 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-700/20 blur-[140px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full bg-red-900/15 blur-[160px]" />
+        <div
+          className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+          style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")" }}
+        />
+      </div>
+      <div className="relative z-10">
 
       {/* Top Strip */}
       <div className="text-white text-xs md:text-sm py-2 px-4" style={{ backgroundColor: BRAND_GREEN }}>
@@ -691,6 +713,7 @@ const ProductDetail = () => {
         </div>
       )}
       <MobileShopNav />
+      </div>
     </div>
   );
 };
