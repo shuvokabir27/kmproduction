@@ -885,7 +885,7 @@ const Products = () => {
                   const grand = total + dlv.charge;
                   return (
                     <div className="mx-5 mt-4 space-y-3">
-                      <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
+                      <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
                         {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
                         <div className="flex-1">
                           <p className="text-xs text-gray-500">পণ্যের মূল্য</p>

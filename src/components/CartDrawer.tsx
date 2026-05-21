@@ -215,7 +215,7 @@ export const CartDrawer = () => {
         ) : (
           <>
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
-              <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 space-y-1.5">
+              <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-600">{toBn(items.length)} টি পণ্য (সাবটোটাল)</span>
                   <span className="font-bold text-gray-900">৳{toBn(total)}</span>
@@ -226,7 +226,7 @@ export const CartDrawer = () => {
                     ? <span className="font-bold text-red-700">ফ্রি</span>
                     : <span className="font-bold text-gray-900">৳{toBn(delivery.charge)}</span>}
                 </div>
-                <div className="flex items-center justify-between border-t border-[#bbf7d0] pt-1.5">
+                <div className="flex items-center justify-between border-t border-[#fecaca] pt-1.5">
                   <span className="text-sm font-bold text-gray-700">মোট পরিশোধ</span>
                   <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(grandTotal)}</span>
                 </div>
