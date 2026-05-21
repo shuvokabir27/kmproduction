@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
-  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree, Truck, Sparkles
+  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree, Truck, Sparkles, Megaphone
 } from "lucide-react";
 
 import OrderManagement from "@/components/OrderManagement";
@@ -28,6 +28,7 @@ import WeightPricingEditor from "@/components/WeightPricingEditor";
 import ProductVideoManager from "@/components/ProductVideoManager";
 import CategoryManager from "@/components/CategoryManager";
 import ShopFooterEditor from "@/components/ShopFooterEditor";
+import ScrollingTextEditor from "@/components/ScrollingTextEditor";
 import { useProductCategories } from "@/hooks/useProductCategories";
 import { RichTextEditor } from "@/components/RichTextEditor";
 
@@ -212,6 +213,7 @@ const AdminProducts = () => {
     { value: "reports", label: "রিপোর্ট", icon: BarChart3 },
     { value: "offers", label: "অফার", icon: Sparkles },
     { value: "freedelivery", label: "ফ্রি ডেলিভারি", icon: Truck },
+    { value: "scrolling", label: "স্ক্রলিং টেক্সট", icon: Megaphone },
     { value: "footer", label: "ফুটার", icon: FileText },
   ];
   const mobileTop = menuItems.slice(0, 6);
@@ -413,6 +415,10 @@ const AdminProducts = () => {
 
         <TabsContent value="freedelivery" className="mt-4">
           <FreeDeliveryCampaignManager />
+        </TabsContent>
+
+        <TabsContent value="scrolling" className="mt-4">
+          <ScrollingTextEditor />
         </TabsContent>
 
         <TabsContent value="footer" className="mt-4">
