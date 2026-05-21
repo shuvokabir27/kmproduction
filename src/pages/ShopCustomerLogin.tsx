@@ -8,9 +8,9 @@ import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles } from "lucide-reac
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import MobileShopNav from "@/components/MobileShopNav";
 
-const BRAND_GREEN = "#1f7a3a";
-const BRAND_DARK = "#0d3a1d";
-const BRAND_GOLD = "#e8c468";
+const BRAND_GREEN = "#b91c1c"; // primary red (kept name for minimal diff)
+const BRAND_DARK = "#1a0608";  // deep black-red
+const BRAND_GOLD = "#fbbf24";
 
 export default function ShopCustomerLogin() {
   const nav = useNavigate();
