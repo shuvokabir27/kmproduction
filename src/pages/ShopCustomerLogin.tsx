@@ -25,7 +25,7 @@ export default function ShopCustomerLogin() {
 
   const submit = async () => {
     if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
-    if (!/^\d{6}$/.test(password)) { toast.error("পাসওয়ার্ড অবশ্যই ৬ ডিজিট সংখ্যা"); return; }
+    if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
 
