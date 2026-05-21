@@ -62,6 +62,21 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
     },
   });
 
+  const { data: productList = [] } = useQuery({
+    queryKey: ["admin-order-products"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("id, name, price, discount_price, image_url, stock_status")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      return data ?? [];
+    },
+  });
+
+  const [productPickerOpen, setProductPickerOpen] = useState(false);
+  const [productSearch, setProductSearch] = useState("");
+
   const resetForm = () => {
     setForm({
       customer_name: "", customer_phone: "", customer_address: "",
