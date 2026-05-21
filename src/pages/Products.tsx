@@ -773,7 +773,7 @@ const Products = () => {
 
       {/* Contact CTA */}
       <section id="contact" className="px-4 py-10">
-        <div className="max-w-3xl mx-auto rounded-3xl p-8 text-center text-white shadow-xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
+        <div className="max-w-3xl mx-auto glossy-section-pink p-8 text-center text-white shadow-xl">
           <h2 className="text-xl md:text-2xl font-bold mb-2">এখনই যোগাযোগ করুন</h2>
           <p className="text-white/80 text-sm mb-5">যেকোনো প্রশ্ন বা অর্ডারের জন্য সরাসরি কল বা WhatsApp করুন</p>
           <div className="flex flex-wrap gap-3 justify-center">
