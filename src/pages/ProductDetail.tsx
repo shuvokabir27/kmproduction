@@ -474,7 +474,7 @@ const ProductDetail = () => {
                         key={i}
                         type="button"
                         onClick={() => setSelectedVariantIdx(i)}
-                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-border bg-card hover:border-border"}`}
+                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-500 bg-gradient-to-br from-red-950/80 via-red-900/60 to-rose-900/50 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.55)]" : "border-border bg-card hover:border-red-500/40"}`}
                       >
                         <div className="font-bold text-sm text-foreground">{v.label}</div>
                         <div className="text-xs">
