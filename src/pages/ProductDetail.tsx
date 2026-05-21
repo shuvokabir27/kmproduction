@@ -1,7 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ShoppingCart, Phone, MessageCircle, Minus, Plus, ChevronLeft, ChevronRight, Share2, ShieldCheck, Truck, Tag, X, CheckCircle, Home, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Phone, MessageCircle, Minus, Plus, ChevronLeft, ChevronRight, Share2, ShieldCheck, Truck, Tag, X, CheckCircle, Home, ShoppingBag, Star } from "lucide-react";
+import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import { Truck as TruckIcon } from "lucide-react";
 import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
