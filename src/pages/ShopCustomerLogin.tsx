@@ -222,7 +222,7 @@ export default function ShopCustomerLogin() {
 
 
               {(() => {
-                const mismatch = mode === "register" && (confirmPassword.length !== 6 || confirmPassword !== password);
+                const mismatch = mode === "register" && (confirmPassword.length < 6 || confirmPassword !== password);
                 return (
                   <Button
                     onClick={submit}
