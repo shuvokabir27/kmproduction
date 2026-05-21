@@ -19,6 +19,7 @@ import MobileShopNav from "@/components/MobileShopNav";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
 import ShopCategoryGrid from "@/components/ShopCategoryGrid";
 import FreeDeliveryHomeCTA from "@/components/FreeDeliveryHomeCTA";
+import FloatingCartButton from "@/components/FloatingCartButton";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
