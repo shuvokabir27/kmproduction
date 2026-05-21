@@ -725,7 +725,7 @@ const NewsCard = () => {
                     type="checkbox"
                     checked={customAdEnabled}
                     onChange={(e) => setCustomAdEnabled(e.target.checked)}
-                    className="w-4 h-4 accent-amber-500"
+                    className="w-4 h-4 accent-red-500"
                   />
                   <span className="text-xs font-semibold text-red-400">
                     নিজস্ব বিজ্ঞাপন যোগ করুন
