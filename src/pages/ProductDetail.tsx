@@ -19,8 +19,8 @@ import WatermarkedImage from "@/components/WatermarkedImage";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const BRAND_GREEN = "#1f7a3a";
-const BRAND_DARK = "#155c2c";
+const BRAND_GREEN = "#dc2626";
+const BRAND_DARK = "#991b1b";
 const ACCENT_RED = "#d6302c";
 
 const ProductDetail = () => {
@@ -310,7 +310,7 @@ const ProductDetail = () => {
             {images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {images.map((im, i) => (
-                  <button key={i} onClick={() => setActiveImg(i)} className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImg === i ? 'border-[#1f7a3a]' : 'border-transparent opacity-70 hover:opacity-100'}`}>
+                  <button key={i} onClick={() => setActiveImg(i)} className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImg === i ? 'border-[#dc2626]' : 'border-transparent opacity-70 hover:opacity-100'}`}>
                     {im ? <img src={im} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gray-100" />}
                   </button>
                 ))}
@@ -490,7 +490,7 @@ const ProductDetail = () => {
         <div className="bg-white rounded-2xl mt-6 border border-gray-100 shadow-sm overflow-hidden">
           <div className="flex border-b">
             {[{k:"desc",l:"DESCRIPTION"},{k:"reviews",l:"REVIEWS (০)"}].map(t => (
-              <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#1f7a3a] text-[#1f7a3a]' : 'border-transparent text-gray-500 hover:text-gray-900'}`}>
+              <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#dc2626] text-[#dc2626]' : 'border-transparent text-gray-500 hover:text-gray-900'}`}>
                 {t.l}
               </button>
             ))}
@@ -584,7 +584,7 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="mx-5 mt-4 space-y-3">
-                  <div className="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 flex items-center gap-3">
+                  <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
                     {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
                     <div className="flex-1">
                       <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
