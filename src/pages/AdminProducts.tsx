@@ -156,6 +156,8 @@ const AdminProducts = () => {
     if (!form.name.trim()) { toast.error("প্রডাক্টের নাম দিন"); return; }
     const payload = {
       name: form.name.trim(),
+      short_description: form.short_description.trim() || null,
+      short_description_html: form.short_description_html?.trim() || null,
       description: form.description.trim() || null,
       description_html: form.description_html?.trim() || null,
       price: Number(form.price) || 0,
