@@ -197,14 +197,18 @@ const PublicHome = () => {
       </div>
 
       {/* Public horoscope */}
-      <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
-        <DailyRashifal mode="public" />
-      </div>
+      {isEnabled("daily_rashifal") && (
+        <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
+          <DailyRashifal mode="public" />
+        </div>
+      )}
 
       {/* Meme generator */}
-      <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
-        <MemeGenerator mode="public" />
-      </div>
+      {isEnabled("meme_generator") && (
+        <div className="mt-6 px-4 max-w-6xl mx-auto w-full">
+          <MemeGenerator mode="public" />
+        </div>
+      )}
 
       {/* Today's Birthday */}
       <div className="mt-6">
