@@ -656,3 +656,8 @@
   .mq-italic { font-style: italic; }
   .mq-bold { font-weight: 800; }
 }
+
+@keyframes shimmer {
+  0% { transform: translateX(0) rotate(12deg); }
+  100% { transform: translateX(450%) rotate(12deg); }
+}
