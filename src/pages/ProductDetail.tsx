@@ -1,7 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ShoppingCart, Phone, MessageCircle, Minus, Plus, ChevronLeft, ChevronRight, Share2, ShieldCheck, Truck, Tag, X, CheckCircle, Home, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Phone, MessageCircle, Minus, Plus, ChevronLeft, ChevronRight, Share2, ShieldCheck, Truck, Tag, X, CheckCircle, Home, ShoppingBag, Star } from "lucide-react";
+import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import { Truck as TruckIcon } from "lucide-react";
 import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
@@ -27,9 +28,10 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const cart = useCart();
-  const { customer: shopCustomer } = useShopCustomer();
+  const { customer: shopCustomer, orders: customerOrders } = useShopCustomer();
   const [searchParams] = useSearchParams();
   const { settings: deliverySettings } = useDeliverySettings();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (searchParams.get("order") === "1") setOrderOpen(true);
@@ -48,6 +50,9 @@ const ProductDetail = () => {
   const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", payment_method: "cod" as "cod" | "bkash" | "nagad" | "rocket", payment_sender_no: "", payment_trx_id: "" });
   const [phoneError, setPhoneError] = useState("");
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product-detail", id],
@@ -103,6 +108,48 @@ const ProductDetail = () => {
     },
   });
   const categoryLabel = product?.category ? (categoryMap?.[product.category] || product.category) : "";
+
+  const { data: reviews = [], refetch: refetchReviews } = useQuery({
+    queryKey: ["product-reviews", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("product_reviews")
+        .select("id,rating,comment,customer_name,created_at,shop_customer_id")
+        .eq("product_id", id!)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const hasPurchased = !!shopCustomer && (customerOrders || []).some((o: any) => o.product_id === id);
+  const myReview = reviews.find((r: any) => r.shop_customer_id === shopCustomer?.id);
+
+  useEffect(() => {
+    if (myReview) {
+      setReviewRating(myReview.rating);
+      setReviewComment(myReview.comment || "");
+    }
+  }, [myReview?.id]);
+
+  const submitReview = async () => {
+    const token = localStorage.getItem(SHOP_TOKEN_KEY);
+    if (!token || !id) return;
+    setSubmittingReview(true);
+    const { error } = await supabase.rpc("submit_product_review", {
+      _token: token,
+      _product_id: id,
+      _rating: reviewRating,
+      _comment: reviewComment,
+    });
+    setSubmittingReview(false);
+    if (error) {
+      toast.error(error.message || "রিভিউ জমা দিতে ব্যর্থ");
+      return;
+    }
+    toast.success("রিভিউ জমা হয়েছে");
+    refetchReviews();
+  };
 
   const contactPhone = product?.contact_info || siteSettings?.contact_phone || "";
   const whatsappNo = siteSettings?.whatsapp_no || contactPhone;
@@ -526,7 +573,7 @@ const ProductDetail = () => {
         {/* Tabs */}
         <div className="bg-card rounded-2xl mt-6 border border-border shadow-sm overflow-hidden">
           <div className="flex border-b">
-            {[{k:"desc",l:"DESCRIPTION"},{k:"reviews",l:"REVIEWS (০)"}].map(t => (
+            {[{k:"desc",l:"DESCRIPTION"},{k:"reviews",l:`REVIEWS (${toBn(reviews.length)})`}].map(t => (
               <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#dc2626] text-[#dc2626]' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                 {t.l}
               </button>
@@ -553,7 +600,59 @@ const ProductDetail = () => {
                 )}
               </div>
             ) : (
-              <p className="text-muted-foreground text-center py-8">এখনো কোনো রিভিউ নেই</p>
+              <div className="space-y-6">
+                {reviews.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-6">এখনো কোনো রিভিউ নেই</p>
+                ) : (
+                  <div className="space-y-4">
+                    {reviews.map((r: any) => (
+                      <div key={r.id} className="border border-border rounded-xl p-4 bg-background/40">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-semibold text-foreground text-sm">{r.customer_name || "গ্রাহক"}</div>
+                          <div className="text-[11px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString("bn-BD")}</div>
+                        </div>
+                        <div className="flex gap-0.5 mb-2">
+                          {[1,2,3,4,5].map(n => (
+                            <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? 'fill-[#dc2626] text-[#dc2626]' : 'text-muted-foreground/40'}`} />
+                          ))}
+                        </div>
+                        {r.comment && <p className="text-sm text-foreground/90 whitespace-pre-wrap">{r.comment}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="border-t border-border pt-5">
+                  {!shopCustomer ? (
+                    <div className="text-center py-4">
+                      <p className="text-muted-foreground text-sm mb-3">রিভিউ দিতে হলে লগইন করুন</p>
+                      <Link to="/shop/login" className="inline-flex items-center px-5 py-2 rounded-lg bg-[#dc2626] text-white text-sm font-semibold hover:brightness-110">লগইন</Link>
+                    </div>
+                  ) : !hasPurchased ? (
+                    <p className="text-center text-muted-foreground text-sm py-4">শুধুমাত্র যারা এই পণ্যটি কিনেছেন তারাই রিভিউ দিতে পারবেন।</p>
+                  ) : (
+                    <div className="space-y-3">
+                      <h4 className="font-bold text-foreground text-sm">{myReview ? "আপনার রিভিউ আপডেট করুন" : "আপনার রিভিউ দিন"}</h4>
+                      <div className="flex items-center gap-1">
+                        {[1,2,3,4,5].map(n => (
+                          <button key={n} type="button" onClick={() => setReviewRating(n)} className="p-1">
+                            <Star className={`h-6 w-6 transition ${n <= reviewRating ? 'fill-[#dc2626] text-[#dc2626]' : 'text-muted-foreground/40'}`} />
+                          </button>
+                        ))}
+                      </div>
+                      <Textarea
+                        placeholder="পণ্য সম্পর্কে আপনার মতামত লিখুন..."
+                        value={reviewComment}
+                        onChange={(e) => setReviewComment(e.target.value)}
+                        rows={3}
+                      />
+                      <Button onClick={submitReview} disabled={submittingReview} className="bg-[#dc2626] hover:bg-[#b91c1c] text-white">
+                        {submittingReview ? "জমা হচ্ছে..." : myReview ? "আপডেট করুন" : "জমা দিন"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </div>
