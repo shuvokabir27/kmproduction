@@ -331,10 +331,10 @@ const ProductDetail = () => {
             </div>
           </Link>
           <div className="flex items-center gap-2">
-            <button onClick={cart.open} className="relative p-2 rounded-full hover:bg-muted transition-colors text-foreground/80" aria-label="cart">
+            <button onClick={cart.open} className="relative p-2.5 rounded-full hover:bg-muted transition-colors text-foreground/80" aria-label="cart">
               <ShoppingCart className="h-5 w-5" />
               {cart.count > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-card shadow">
+                <span className="absolute -top-1 -right-1 z-20 bg-primary text-primary-foreground text-[10px] leading-none font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center ring-2 ring-card shadow-lg">
                   {toBn(cart.count)}
                 </span>
               )}
