@@ -4,7 +4,7 @@ import { useCart } from "@/hooks/useCart";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const BRAND_GREEN = "#1f7a3a";
+const BRAND_GREEN = "#dc2626";
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 export default function MobileShopNav() {
