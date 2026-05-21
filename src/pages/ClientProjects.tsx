@@ -23,8 +23,8 @@ import { cn } from "@/lib/utils";
 
 const statusMap: Record<string, { label: string; color: string; bg: string }> = {
   upcoming: { label: "আসন্ন", color: "text-sky-400", bg: "bg-sky-500/15 border-sky-500/20" },
-  ongoing: { label: "চলছে", color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/20" },
-  completed: { label: "সম্পন্ন", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/20" },
+  ongoing: { label: "চলছে", color: "text-red-400", bg: "bg-red-500/15 border-red-500/20" },
+  completed: { label: "সম্পন্ন", color: "text-red-400", bg: "bg-red-500/15 border-red-500/20" },
   paid: { label: "পেইড", color: "text-violet-400", bg: "bg-violet-500/15 border-violet-500/20" },
 };
 
@@ -302,11 +302,11 @@ export default function ClientProjects() {
                     {artTotals.count > 0 && (
                       <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/15">
                         আর্টিস্ট ৳{artTotals.bill.toLocaleString("bn-BD")}
-                        {artTotals.due > 0 && <span className="text-amber-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
+                        {artTotals.due > 0 && <span className="text-red-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
                       </span>
                     )}
                     {projExpenseTotal > 0 && (
-                      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/15">
+                      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/15">
                         খরচ ৳{projExpenseTotal.toLocaleString("bn-BD")}
                       </span>
                     )}
@@ -502,8 +502,8 @@ function ProjectBudgetSummary({ productionBudget, productionPaid, artistBill, ar
         <div className="text-[10px] text-muted-foreground mb-1">সর্বমোট প্রজেক্ট বাজেট</div>
         <div className="text-2xl font-bold text-primary">৳{grandTotal.toLocaleString("bn-BD")}</div>
         <div className="flex items-center justify-center gap-3 mt-2">
-          <span className="text-[10px] text-emerald-400">পেইড: ৳{grandPaid.toLocaleString("bn-BD")}</span>
-          {grandDue > 0 && <span className="text-[10px] text-amber-400">বাকি: ৳{grandDue.toLocaleString("bn-BD")}</span>}
+          <span className="text-[10px] text-red-400">পেইড: ৳{grandPaid.toLocaleString("bn-BD")}</span>
+          {grandDue > 0 && <span className="text-[10px] text-red-400">বাকি: ৳{grandDue.toLocaleString("bn-BD")}</span>}
           <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
         </div>
       </button>
@@ -529,14 +529,14 @@ function ProjectBudgetSummary({ productionBudget, productionPaid, artistBill, ar
                     <div className="h-1.5 rounded-full bg-secondary/40 overflow-hidden mb-1">
                       <div
                         className={cn("h-full rounded-full transition-all",
-                          s.color === "sky" ? "bg-sky-400" : s.color === "violet" ? "bg-violet-400" : "bg-orange-400"
+                          s.color === "sky" ? "bg-sky-400" : s.color === "violet" ? "bg-violet-400" : "bg-red-400"
                         )}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
                     <div className="flex gap-3 text-[10px]">
-                      <span className="text-emerald-400">পেইড: ৳{s.paid.toLocaleString("bn-BD")}</span>
-                      {due > 0 && <span className="text-amber-400">বাকি: ৳{due.toLocaleString("bn-BD")}</span>}
+                      <span className="text-red-400">পেইড: ৳{s.paid.toLocaleString("bn-BD")}</span>
+                      {due > 0 && <span className="text-red-400">বাকি: ৳{due.toLocaleString("bn-BD")}</span>}
                     </div>
                     {/* শুটিং খরচের সাব-ক্যাটেগরি */}
                     {s.label === "শুটিং খরচ" && Object.keys(expByCategory).length > 0 && (
@@ -563,8 +563,8 @@ function ProjectBudgetSummary({ productionBudget, productionPaid, artistBill, ar
 /* ═══ Collapsible Section Component ═══ */
 const COLOR_MAP: Record<string, { bg: string; border: string; text: string; iconBg: string }> = {
   violet: { bg: "from-violet-500/8 to-violet-500/3", border: "border-violet-500/20", text: "text-violet-400", iconBg: "bg-violet-500/15" },
-  orange: { bg: "from-orange-500/8 to-orange-500/3", border: "border-orange-500/20", text: "text-orange-400", iconBg: "bg-orange-500/15" },
-  teal: { bg: "from-teal-500/8 to-teal-500/3", border: "border-teal-500/20", text: "text-teal-400", iconBg: "bg-teal-500/15" },
+  orange: { bg: "from-red-500/8 to-red-500/3", border: "border-red-500/20", text: "text-red-400", iconBg: "bg-red-500/15" },
+  teal: { bg: "from-red-500/8 to-red-500/3", border: "border-red-500/20", text: "text-red-400", iconBg: "bg-red-500/15" },
   indigo: { bg: "from-indigo-500/8 to-indigo-500/3", border: "border-indigo-500/20", text: "text-indigo-400", iconBg: "bg-indigo-500/15" },
 };
 

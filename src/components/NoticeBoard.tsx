@@ -269,7 +269,7 @@ export function NoticeBoard() {
           {/* Inner background */}
           <div className="absolute inset-[2px] rounded-[10px] bg-card z-[1]" />
 
-          <Card className="relative z-[2] bg-gradient-to-br from-cyan-500/10 via-card to-emerald-500/5 border-0 overflow-hidden shadow-lg shadow-cyan-500/10">
+          <Card className="relative z-[2] bg-gradient-to-br from-cyan-500/10 via-card to-red-500/5 border-0 overflow-hidden shadow-lg shadow-cyan-500/10">
             <div className="p-4 md:p-5 flex items-center gap-3 bg-gradient-to-r from-cyan-500/15 via-cyan-500/5 to-transparent border-b border-cyan-500/20">
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 flex items-center justify-center ring-1 ring-cyan-500/30 shadow-sm shadow-cyan-500/20">
                 <Film className="h-5 w-5 text-cyan-400" />
@@ -490,7 +490,7 @@ export function NoticeBoard() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06, type: "spring", stiffness: 200 }}
-                className="p-3.5 md:p-4 bg-gradient-to-r from-emerald-500/8 via-transparent to-transparent"
+                className="p-3.5 md:p-4 bg-gradient-to-r from-red-500/8 via-transparent to-transparent"
               >
                 <PollCard poll={poll} compact />
               </motion.div>
@@ -503,15 +503,15 @@ export function NoticeBoard() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: (activePolls?.filter((p: any) => p.is_pinned).length ?? 0) * 0.06 + i * 0.06, type: "spring", stiffness: 200 }}
-                className="p-3.5 md:p-4 cursor-pointer transition-all duration-200 group bg-gradient-to-r from-amber-500/8 via-transparent to-transparent hover:from-amber-500/15"
+                className="p-3.5 md:p-4 cursor-pointer transition-all duration-200 group bg-gradient-to-r from-red-500/8 via-transparent to-transparent hover:from-red-500/15"
                 onClick={() => setSelectedNotice(notice)}
               >
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 shrink-0 h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center bg-amber-500/15 ring-1 ring-amber-500/20">
-                    <Pin className="h-3.5 w-3.5 md:h-4 md:w-4 text-amber-400" />
+                  <div className="mt-0.5 shrink-0 h-8 w-8 md:h-9 md:w-9 rounded-lg flex items-center justify-center bg-red-500/15 ring-1 ring-red-500/20">
+                    <Pin className="h-3.5 w-3.5 md:h-4 md:w-4 text-red-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm md:text-[15px] font-semibold leading-snug text-amber-300 transition-colors">
+                    <h3 className="text-sm md:text-[15px] font-semibold leading-snug text-red-300 transition-colors">
                       {notice.title}
                     </h3>
                     <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 mt-1 leading-relaxed">{notice.content}</p>
@@ -666,15 +666,15 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
       {/* Highlighted Call Time + Countdown */}
       {shooting.call_time && (
       <div className="mt-3 flex flex-wrap items-center gap-3">
-          <div className="relative flex items-center gap-2 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-2.5 shadow-lg shadow-amber-500/10">
-            <div className="absolute inset-0 rounded-xl bg-amber-400/5 animate-pulse" />
+          <div className="relative flex items-center gap-2 bg-gradient-to-r from-red-500/20 via-red-500/15 to-red-500/10 border border-red-500/30 rounded-xl px-4 py-2.5 shadow-lg shadow-red-500/10">
+            <div className="absolute inset-0 rounded-xl bg-red-400/5 animate-pulse" />
             <div className="relative flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                <Clock className="h-4.5 w-4.5 text-amber-400" />
+              <div className="h-8 w-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+                <Clock className="h-4.5 w-4.5 text-red-400" />
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-amber-400/70 font-medium">কলটাইম</p>
-                <p className="text-lg font-bold text-amber-300 leading-tight">
+                <p className="text-[10px] uppercase tracking-wider text-red-400/70 font-medium">কলটাইম</p>
+                <p className="text-lg font-bold text-red-300 leading-tight">
                   {(() => {
                     const [h, m] = shooting.call_time.split(":").map(Number);
                     const ampm = h >= 12 ? "PM" : "AM";
@@ -710,7 +710,7 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
             </div>
           )}
           {countdown?.expired && (
-            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 animate-pulse text-sm px-3 py-1.5">
+            <Badge className="bg-red-500/20 text-red-300 border-red-500/30 animate-pulse text-sm px-3 py-1.5">
               🎬 শুটিং চলছে!
             </Badge>
           )}
@@ -735,18 +735,18 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
       {/* Personalized participation message */}
       <div className={`mt-3 p-3 rounded-lg ${
         iAmIn 
-          ? "bg-emerald-500/10 border border-emerald-500/20" 
+          ? "bg-red-500/10 border border-red-500/20" 
           : "bg-rose-500/10 border border-rose-500/20"
       }`}>
         {iAmIn ? (
           <div className="space-y-2">
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="h-5 w-5 text-red-400 shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-emerald-300">
+                <p className="text-sm font-semibold text-red-300">
                   {effectiveStatus === "ongoing" ? "🎬 শুটিং চলছে!" : "কাল শুটিং শুরু হবে! 🎉"}
                 </p>
-                <p className="text-xs text-emerald-400/80 mt-0.5">
+                <p className="text-xs text-red-400/80 mt-0.5">
                   {effectiveStatus === "ongoing" 
                     ? "আপনি এই শুটিংয়ে রয়েছেন। শুভ শুটিং!" 
                     : "আপনি এই শুটিংয়ে রয়েছেন। শুভ কামনা আপনার জন্য!"}
@@ -754,26 +754,26 @@ function ShootingItem({ shooting, iAmIn, myInfo }: { shooting: any; iAmIn: boole
               </div>
             </div>
           {(myInfo?.character_name || myInfo?.costume || myInfo?.props) && (
-              <div className="ml-7 space-y-1.5 pt-1 border-t border-emerald-500/15">
+              <div className="ml-7 space-y-1.5 pt-1 border-t border-red-500/15">
                 {myInfo.character_name && (
                   <div className="flex items-center gap-2 text-xs">
-                    <UserCircle className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <UserCircle className="h-3.5 w-3.5 text-red-400/70 shrink-0" />
                     <span className="text-muted-foreground">চরিত্র:</span>
-                    <span className="text-emerald-300 font-semibold">{myInfo.character_name}</span>
+                    <span className="text-red-300 font-semibold">{myInfo.character_name}</span>
                   </div>
                 )}
                 {myInfo.costume && (
                   <div className="flex items-center gap-2 text-xs">
-                    <Shirt className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <Shirt className="h-3.5 w-3.5 text-red-400/70 shrink-0" />
                     <span className="text-muted-foreground">পোশাক:</span>
-                    <span className="text-emerald-300 font-medium">{myInfo.costume}</span>
+                    <span className="text-red-300 font-medium">{myInfo.costume}</span>
                   </div>
                 )}
                 {myInfo.props && (
                   <div className="flex items-center gap-2 text-xs">
-                    <Package className="h-3.5 w-3.5 text-emerald-400/70 shrink-0" />
+                    <Package className="h-3.5 w-3.5 text-red-400/70 shrink-0" />
                     <span className="text-muted-foreground">প্রপস:</span>
-                    <span className="text-emerald-300 font-medium">{myInfo.props}</span>
+                    <span className="text-red-300 font-medium">{myInfo.props}</span>
                   </div>
                 )}
               </div>

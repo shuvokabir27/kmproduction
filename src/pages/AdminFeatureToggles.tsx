@@ -50,7 +50,7 @@ const AdminFeatureToggles = () => {
             const on = isEnabled(key);
             return (
               <div key={key} className="p-4 flex items-center gap-4">
-                <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${on ? "bg-emerald-500/10 text-emerald-400" : "bg-muted text-muted-foreground"}`}>
+                <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${on ? "bg-red-500/10 text-red-400" : "bg-muted text-muted-foreground"}`}>
                   {on ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                 </div>
                 <div className="flex-1 min-w-0">

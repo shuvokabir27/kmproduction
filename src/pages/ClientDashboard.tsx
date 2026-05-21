@@ -31,8 +31,8 @@ import { LiveClockBar } from "@/components/LiveClockBar";
 
 const statusMap: Record<string, { label: string; color: string; bg: string }> = {
   upcoming: { label: "আসন্ন", color: "text-sky-400", bg: "bg-sky-500/15 border-sky-500/20" },
-  ongoing: { label: "চলছে", color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/20" },
-  completed: { label: "সম্পন্ন", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/20" },
+  ongoing: { label: "চলছে", color: "text-red-400", bg: "bg-red-500/15 border-red-500/20" },
+  completed: { label: "সম্পন্ন", color: "text-red-400", bg: "bg-red-500/15 border-red-500/20" },
   paid: { label: "পেইড", color: "text-violet-400", bg: "bg-violet-500/15 border-violet-500/20" },
 };
 
@@ -247,7 +247,7 @@ export default function ClientDashboard() {
                     </span>
                   )}
                 </div>
-                <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background" />
+                <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-red-500 border-2 border-background" />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-foreground leading-tight">
@@ -329,7 +329,7 @@ export default function ClientDashboard() {
                   </div>
                   <div className="h-2 rounded-full bg-secondary/60 overflow-hidden">
                     <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500"
+                      className="h-full rounded-full bg-gradient-to-r from-primary to-red-500"
                       initial={{ width: 0 }}
                       animate={{ width: `${paidPercent}%` }}
                       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -350,24 +350,24 @@ export default function ClientDashboard() {
                     {expandedStat === "total" ? <ChevronUp className="h-3 w-3 text-primary mx-auto mt-1" /> : <ChevronDown className="h-3 w-3 text-muted-foreground mx-auto mt-1" />}
                   </button>
                   <button
-                    className={cn("rounded-xl border p-2.5 text-center transition-all", expandedStat === "paid" ? "bg-emerald-500/10 border-emerald-500/30 shadow-lg shadow-emerald-500/5" : "bg-emerald-500/8 border-emerald-500/15 hover:border-emerald-500/25")}
+                    className={cn("rounded-xl border p-2.5 text-center transition-all", expandedStat === "paid" ? "bg-red-500/10 border-red-500/30 shadow-lg shadow-red-500/5" : "bg-red-500/8 border-red-500/15 hover:border-red-500/25")}
                     onClick={() => setExpandedStat(expandedStat === "paid" ? null : "paid")}
                   >
-                    <div className="text-[10px] text-emerald-400/70 mb-0.5">পেইড</div>
-                    <div className="text-sm font-bold text-emerald-400">
+                    <div className="text-[10px] text-red-400/70 mb-0.5">পেইড</div>
+                    <div className="text-sm font-bold text-red-400">
                       {showBalance ? <AnimatedValue value={grandPaid} /> : "•••"}
                     </div>
-                    {expandedStat === "paid" ? <ChevronUp className="h-3 w-3 text-emerald-400 mx-auto mt-1" /> : <ChevronDown className="h-3 w-3 text-muted-foreground mx-auto mt-1" />}
+                    {expandedStat === "paid" ? <ChevronUp className="h-3 w-3 text-red-400 mx-auto mt-1" /> : <ChevronDown className="h-3 w-3 text-muted-foreground mx-auto mt-1" />}
                   </button>
                   <button
-                    className={cn("rounded-xl border p-2.5 text-center transition-all", expandedStat === "due" ? "bg-amber-500/10 border-amber-500/30 shadow-lg shadow-amber-500/5" : "bg-amber-500/8 border-amber-500/15 hover:border-amber-500/25")}
+                    className={cn("rounded-xl border p-2.5 text-center transition-all", expandedStat === "due" ? "bg-red-500/10 border-red-500/30 shadow-lg shadow-red-500/5" : "bg-red-500/8 border-red-500/15 hover:border-red-500/25")}
                     onClick={() => setExpandedStat(expandedStat === "due" ? null : "due")}
                   >
-                    <div className="text-[10px] text-amber-400/70 mb-0.5">বাকি</div>
-                    <div className="text-sm font-bold text-amber-400">
+                    <div className="text-[10px] text-red-400/70 mb-0.5">বাকি</div>
+                    <div className="text-sm font-bold text-red-400">
                       {showBalance ? <AnimatedValue value={Math.max(0, grandDue)} /> : "•••"}
                     </div>
-                    {expandedStat === "due" ? <ChevronUp className="h-3 w-3 text-amber-400 mx-auto mt-1" /> : <ChevronDown className="h-3 w-3 text-muted-foreground mx-auto mt-1" />}
+                    {expandedStat === "due" ? <ChevronUp className="h-3 w-3 text-red-400 mx-auto mt-1" /> : <ChevronDown className="h-3 w-3 text-muted-foreground mx-auto mt-1" />}
                   </button>
                 </div>
 
@@ -391,9 +391,9 @@ export default function ClientDashboard() {
                           </div>
                           <span className="text-sm font-bold text-foreground">৳{totalArtistBill.toLocaleString("bn-BD")}</span>
                         </div>
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-orange-500/15">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-red-500/15">
                           <div className="flex items-center gap-2">
-                            <div className="h-7 w-7 rounded-lg bg-orange-500/15 flex items-center justify-center"><Receipt className="h-3.5 w-3.5 text-orange-400" /></div>
+                            <div className="h-7 w-7 rounded-lg bg-red-500/15 flex items-center justify-center"><Receipt className="h-3.5 w-3.5 text-red-400" /></div>
                             <span className="text-sm text-foreground">শুটিং খরচ</span>
                           </div>
                           <span className="text-sm font-bold text-foreground">৳{totalExpenses.toLocaleString("bn-BD")}</span>
@@ -403,56 +403,56 @@ export default function ClientDashboard() {
                   )}
                   {expandedStat === "paid" && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-2 mt-3">
-                        <h4 className="text-xs font-semibold text-emerald-400 mb-3">ক্যাটাগরি অনুযায়ী পেমেন্ট</h4>
+                      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 space-y-2 mt-3">
+                        <h4 className="text-xs font-semibold text-red-400 mb-3">ক্যাটাগরি অনুযায়ী পেমেন্ট</h4>
                         <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-sky-500/15">
                           <div className="flex items-center gap-2">
                             <div className="h-7 w-7 rounded-lg bg-sky-500/15 flex items-center justify-center"><Banknote className="h-3.5 w-3.5 text-sky-400" /></div>
                             <span className="text-sm text-foreground">প্রোডাকশন</span>
                           </div>
-                          <span className="text-sm font-bold text-emerald-400">৳{totalProductionPaid.toLocaleString("bn-BD")}</span>
+                          <span className="text-sm font-bold text-red-400">৳{totalProductionPaid.toLocaleString("bn-BD")}</span>
                         </div>
                         <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-violet-500/15">
                           <div className="flex items-center gap-2">
                             <div className="h-7 w-7 rounded-lg bg-violet-500/15 flex items-center justify-center"><Users className="h-3.5 w-3.5 text-violet-400" /></div>
                             <span className="text-sm text-foreground">আর্টিস্ট</span>
                           </div>
-                          <span className="text-sm font-bold text-emerald-400">৳{totalArtistPaid.toLocaleString("bn-BD")}</span>
+                          <span className="text-sm font-bold text-red-400">৳{totalArtistPaid.toLocaleString("bn-BD")}</span>
                         </div>
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-orange-500/15">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-red-500/15">
                           <div className="flex items-center gap-2">
-                            <div className="h-7 w-7 rounded-lg bg-orange-500/15 flex items-center justify-center"><Receipt className="h-3.5 w-3.5 text-orange-400" /></div>
+                            <div className="h-7 w-7 rounded-lg bg-red-500/15 flex items-center justify-center"><Receipt className="h-3.5 w-3.5 text-red-400" /></div>
                             <span className="text-sm text-foreground">শুটিং খরচ</span>
                           </div>
-                          <span className="text-sm font-bold text-emerald-400">৳{totalExpensesPaid.toLocaleString("bn-BD")}</span>
+                          <span className="text-sm font-bold text-red-400">৳{totalExpensesPaid.toLocaleString("bn-BD")}</span>
                         </div>
                       </div>
                     </motion.div>
                   )}
                   {expandedStat === "due" && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-2 mt-3">
-                        <h4 className="text-xs font-semibold text-amber-400 mb-3">ক্যাটাগরি অনুযায়ী বাকি</h4>
+                      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 space-y-2 mt-3">
+                        <h4 className="text-xs font-semibold text-red-400 mb-3">ক্যাটাগরি অনুযায়ী বাকি</h4>
                         <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-sky-500/15">
                           <div className="flex items-center gap-2">
                             <div className="h-7 w-7 rounded-lg bg-sky-500/15 flex items-center justify-center"><Banknote className="h-3.5 w-3.5 text-sky-400" /></div>
                             <span className="text-sm text-foreground">প্রোডাকশন</span>
                           </div>
-                          <span className="text-sm font-bold text-amber-400">৳{Math.max(0, productionDue).toLocaleString("bn-BD")}</span>
+                          <span className="text-sm font-bold text-red-400">৳{Math.max(0, productionDue).toLocaleString("bn-BD")}</span>
                         </div>
                         <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-violet-500/15">
                           <div className="flex items-center gap-2">
                             <div className="h-7 w-7 rounded-lg bg-violet-500/15 flex items-center justify-center"><Users className="h-3.5 w-3.5 text-violet-400" /></div>
                             <span className="text-sm text-foreground">আর্টিস্ট</span>
                           </div>
-                          <span className="text-sm font-bold text-amber-400">৳{Math.max(0, artistDue).toLocaleString("bn-BD")}</span>
+                          <span className="text-sm font-bold text-red-400">৳{Math.max(0, artistDue).toLocaleString("bn-BD")}</span>
                         </div>
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-orange-500/15">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-red-500/15">
                           <div className="flex items-center gap-2">
-                            <div className="h-7 w-7 rounded-lg bg-orange-500/15 flex items-center justify-center"><Receipt className="h-3.5 w-3.5 text-orange-400" /></div>
+                            <div className="h-7 w-7 rounded-lg bg-red-500/15 flex items-center justify-center"><Receipt className="h-3.5 w-3.5 text-red-400" /></div>
                             <span className="text-sm text-foreground">শুটিং খরচ</span>
                           </div>
-                          <span className="text-sm font-bold text-amber-400">৳{Math.max(0, expenseDue).toLocaleString("bn-BD")}</span>
+                          <span className="text-sm font-bold text-red-400">৳{Math.max(0, expenseDue).toLocaleString("bn-BD")}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -552,8 +552,8 @@ export default function ClientDashboard() {
                       className="p-4 pb-3 flex items-center gap-2 cursor-pointer active:bg-secondary/20 transition-colors"
                       onClick={() => setShowPaymentHistory(!showPaymentHistory)}
                     >
-                      <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                        <History className="h-3.5 w-3.5 text-emerald-400" />
+                      <div className="h-7 w-7 rounded-lg bg-red-500/15 flex items-center justify-center">
+                        <History className="h-3.5 w-3.5 text-red-400" />
                       </div>
                       <h3 className="text-sm font-semibold text-foreground">পেমেন্ট হিস্ট্রি</h3>
                       <Badge variant="outline" className="ml-auto text-[10px] h-5 border-border/50">{totalHistoryCount}</Badge>
@@ -582,8 +582,8 @@ export default function ClientDashboard() {
                             {derivedRecords.map((rec, idx: number) => (
                               <motion.div key={rec.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: (allPayments.length + idx) * 0.03 }}
                                 className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/20">
-                                <div className={`h-9 w-9 rounded-xl ${rec.type === "artist" ? "bg-violet-500/10" : "bg-orange-500/10"} flex items-center justify-center shrink-0`}>
-                                  {rec.type === "artist" ? <Users className="h-4 w-4 text-violet-400" /> : <Receipt className="h-4 w-4 text-orange-400" />}
+                                <div className={`h-9 w-9 rounded-xl ${rec.type === "artist" ? "bg-violet-500/10" : "bg-red-500/10"} flex items-center justify-center shrink-0`}>
+                                  {rec.type === "artist" ? <Users className="h-4 w-4 text-violet-400" /> : <Receipt className="h-4 w-4 text-red-400" />}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="text-sm font-semibold text-foreground">৳{rec.amount.toLocaleString("bn-BD")}</div>
@@ -593,7 +593,7 @@ export default function ClientDashboard() {
                                   <div className="text-[10px] text-muted-foreground/70 truncate">{rec.projectName}</div>
                                 </div>
                                 {rec.type === "artist" && (
-                                  <Badge variant="outline" className={cn("text-[9px] h-4 shrink-0", rec.isPaid ? "border-emerald-500/50 text-emerald-500" : "border-amber-500/50 text-amber-500")}>
+                                  <Badge variant="outline" className={cn("text-[9px] h-4 shrink-0", rec.isPaid ? "border-red-500/50 text-red-500" : "border-red-500/50 text-red-500")}>
                                     {rec.isPaid ? "পেইড" : "আংশিক"}
                                   </Badge>
                                 )}
@@ -606,8 +606,8 @@ export default function ClientDashboard() {
                             {clientPaymentHistory.map((ph: any, idx: number) => {
                               const details = ph.details || {};
                               const typeLabel = ph.payment_type === "artist" ? "আর্টিস্ট" : "শুটিং খরচ";
-                              const typeIcon = ph.payment_type === "artist" ? <Users className="h-4 w-4 text-violet-400" /> : <Receipt className="h-4 w-4 text-orange-400" />;
-                              const typeBg = ph.payment_type === "artist" ? "bg-violet-500/10" : "bg-orange-500/10";
+                              const typeIcon = ph.payment_type === "artist" ? <Users className="h-4 w-4 text-violet-400" /> : <Receipt className="h-4 w-4 text-red-400" />;
+                              const typeBg = ph.payment_type === "artist" ? "bg-violet-500/10" : "bg-red-500/10";
                               return (
                                 <motion.div key={ph.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}
                                   className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/20">
@@ -699,11 +699,11 @@ export default function ClientDashboard() {
                         {artTotals.count > 0 && (
                           <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/15">
                             আর্টিস্ট ৳{artTotals.bill.toLocaleString("bn-BD")}
-                            {artTotals.due > 0 && <span className="text-amber-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
+                            {artTotals.due > 0 && <span className="text-red-400">(বাকি ৳{artTotals.due.toLocaleString("bn-BD")})</span>}
                           </span>
                         )}
                         {projExpenseTotal > 0 && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/15">
+                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/15">
                             খরচ ৳{projExpenseTotal.toLocaleString("bn-BD")}
                           </span>
                         )}
@@ -1335,17 +1335,17 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
               )}
               {totalExpenseDue > 0 && (
                 <button
-                  className="w-full flex items-center gap-3 p-4 rounded-2xl border border-border/50 hover:border-orange-500/40 hover:bg-orange-500/5 transition-all text-left group"
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl border border-border/50 hover:border-red-500/40 hover:bg-red-500/5 transition-all text-left group"
                   onClick={() => { setStep("expense"); selectAllExpenses(); }}
                 >
-                  <div className="h-12 w-12 rounded-xl bg-orange-500/15 flex items-center justify-center shrink-0">
-                    <Receipt className="h-5 w-5 text-orange-400" />
+                  <div className="h-12 w-12 rounded-xl bg-red-500/15 flex items-center justify-center shrink-0">
+                    <Receipt className="h-5 w-5 text-red-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold text-foreground">শুটিং খরচ</div>
                     <div className="text-xs text-muted-foreground">বাকি আছে ৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-400 transition-colors" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-red-400 transition-colors" />
                 </button>
               )}
             </div>
@@ -1368,11 +1368,11 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                       <div className="text-sm font-medium text-foreground truncate">{group.name}</div>
                       <div className="text-[10px] text-muted-foreground">{group.entries.length} টি প্রজেক্ট • ৳{group.totalBill.toLocaleString("bn-BD")}</div>
                       <div className="w-full h-1.5 bg-secondary/50 rounded-full mt-1.5">
-                        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${paidPct}%` }} />
+                        <div className="h-full bg-red-500 rounded-full transition-all" style={{ width: `${paidPct}%` }} />
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="text-sm font-bold text-amber-400">৳{group.totalDue.toLocaleString("bn-BD")}</div>
+                      <div className="text-sm font-bold text-red-400">৳{group.totalDue.toLocaleString("bn-BD")}</div>
                       <div className="text-[9px] text-muted-foreground">বাকি</div>
                     </div>
                   </button>
@@ -1398,13 +1398,13 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                     <div className="text-[9px] text-muted-foreground">মোট বিল</div>
                     <div className="text-sm font-bold text-foreground">৳{selectedGroup.totalBill.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
-                    <div className="text-[9px] text-emerald-400/70">পেইড</div>
-                    <div className="text-sm font-bold text-emerald-400">৳{selectedGroup.totalPaid.toLocaleString("bn-BD")}</div>
+                  <div className="rounded-xl bg-red-500/8 p-2.5">
+                    <div className="text-[9px] text-red-400/70">পেইড</div>
+                    <div className="text-sm font-bold text-red-400">৳{selectedGroup.totalPaid.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-xl bg-amber-500/8 p-2.5">
-                    <div className="text-[9px] text-amber-400/70">বাকি</div>
-                    <div className="text-sm font-bold text-amber-400">৳{selectedGroup.totalDue.toLocaleString("bn-BD")}</div>
+                  <div className="rounded-xl bg-red-500/8 p-2.5">
+                    <div className="text-[9px] text-red-400/70">বাকি</div>
+                    <div className="text-sm font-bold text-red-400">৳{selectedGroup.totalDue.toLocaleString("bn-BD")}</div>
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -1415,7 +1415,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                     return (
                       <div key={entry.id} className="flex items-center justify-between text-[11px] px-3 py-2 rounded-lg bg-secondary/15">
                         <span className="text-foreground truncate mr-2">{projName}</span>
-                        <span className="text-amber-400 shrink-0 font-medium">বাকি ৳{(rem - paid).toLocaleString("bn-BD")}</span>
+                        <span className="text-red-400 shrink-0 font-medium">বাকি ৳{(rem - paid).toLocaleString("bn-BD")}</span>
                       </div>
                     );
                   })}
@@ -1437,7 +1437,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-foreground font-medium">৳{p.amount.toLocaleString("bn-BD")}</span>
                         <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0",
-                          p.status === "Paid" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                          p.status === "Paid" ? "bg-red-500/10 text-red-400 border-red-500/30" : "bg-red-500/10 text-red-400 border-red-500/30"
                         )}>{p.status === "Paid" ? "পেইড" : "আংশিক"}</Badge>
                       </div>
                     </div>
@@ -1462,13 +1462,13 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                     <div className="text-[9px] text-muted-foreground">মোট বিল</div>
                     <div className="text-sm font-bold text-foreground">৳{totalBudget.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
-                    <div className="text-[9px] text-emerald-400/70">পেইড</div>
-                    <div className="text-sm font-bold text-emerald-400">৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
+                  <div className="rounded-xl bg-red-500/8 p-2.5">
+                    <div className="text-[9px] text-red-400/70">পেইড</div>
+                    <div className="text-sm font-bold text-red-400">৳{totalProductionPaid.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-xl bg-amber-500/8 p-2.5">
-                    <div className="text-[9px] text-amber-400/70">বাকি</div>
-                    <div className="text-sm font-bold text-amber-400">৳{totalProductionDue.toLocaleString("bn-BD")}</div>
+                  <div className="rounded-xl bg-red-500/8 p-2.5">
+                    <div className="text-[9px] text-red-400/70">বাকি</div>
+                    <div className="text-sm font-bold text-red-400">৳{totalProductionDue.toLocaleString("bn-BD")}</div>
                   </div>
                 </div>
               </div>
@@ -1480,7 +1480,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                       বাজেট: ৳{Number(project.total_budget).toLocaleString("bn-BD")} • পেইড: ৳{paid.toLocaleString("bn-BD")}
                     </div>
                   </div>
-                  <div className="text-sm font-bold text-amber-400 shrink-0">৳{due.toLocaleString("bn-BD")}</div>
+                  <div className="text-sm font-bold text-red-400 shrink-0">৳{due.toLocaleString("bn-BD")}</div>
                 </div>
               ))}
               <p className="text-[11px] text-muted-foreground italic text-center pt-1">প্রোডাকশন পেমেন্ট অ্যাডমিন দ্বারা পরিচালিত হয়</p>
@@ -1491,13 +1491,13 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
             <div className="space-y-3">
               <div className="rounded-2xl border border-border/40 p-4 space-y-3">
                 <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="rounded-xl bg-amber-500/8 p-2.5">
-                    <div className="text-[9px] text-amber-400/70">মোট বাকি</div>
-                    <div className="text-sm font-bold text-amber-400">৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
+                  <div className="rounded-xl bg-red-500/8 p-2.5">
+                    <div className="text-[9px] text-red-400/70">মোট বাকি</div>
+                    <div className="text-sm font-bold text-red-400">৳{totalExpenseDue.toLocaleString("bn-BD")}</div>
                   </div>
-                  <div className="rounded-xl bg-emerald-500/8 p-2.5">
-                    <div className="text-[9px] text-emerald-400/70">{expensePayMode === "select" ? "সিলেক্টেড" : "কাস্টম"}</div>
-                    <div className="text-sm font-bold text-emerald-400">৳{expensePayAmount.toLocaleString("bn-BD")}</div>
+                  <div className="rounded-xl bg-red-500/8 p-2.5">
+                    <div className="text-[9px] text-red-400/70">{expensePayMode === "select" ? "সিলেক্টেড" : "কাস্টম"}</div>
+                    <div className="text-sm font-bold text-red-400">৳{expensePayAmount.toLocaleString("bn-BD")}</div>
                   </div>
                 </div>
               </div>
@@ -1559,7 +1559,7 @@ function PaymentDialog({ allProjectArtists, allPayments, projects, clientName, c
                       <div key={project?.id || "unknown"} className="rounded-xl border border-border/30 overflow-hidden">
                         <div className="px-3 py-2 bg-secondary/20 text-xs font-medium text-foreground flex items-center justify-between">
                           <span className="truncate">{project?.name || "অজানা প্রজেক্ট"}</span>
-                          <span className="text-amber-400 shrink-0 ml-2">৳{totalDue.toLocaleString("bn-BD")}</span>
+                          <span className="text-red-400 shrink-0 ml-2">৳{totalDue.toLocaleString("bn-BD")}</span>
                         </div>
                         <div className="divide-y divide-border/20">
                           {expenses.map((exp: any) => {

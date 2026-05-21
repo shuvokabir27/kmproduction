@@ -222,13 +222,13 @@ const AdminNotices = () => {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 via-pink-400 to-violet-400 bg-clip-text text-transparent">নোটিশ বোর্ড</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-violet-400 bg-clip-text text-transparent">নোটিশ বোর্ড</h1>
             <p className="text-sm text-muted-foreground">সকল সদস্যদের জন্য নোটিশ প্রকাশ করুন</p>
           </div>
           <Button onClick={() => setCreateOpen(true)} className="gap-2 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white border-0" size="sm">
             <Plus className="h-4 w-4" /> নোটিশ
           </Button>
-          <Button onClick={() => setPollCreateOpen(true)} className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white border-0" size="sm">
+          <Button onClick={() => setPollCreateOpen(true)} className="gap-2 bg-gradient-to-r from-red-500 to-cyan-500 hover:from-red-600 hover:to-cyan-600 text-white border-0" size="sm">
             <Vote className="h-4 w-4" /> ভোটিং
           </Button>
         </div>
@@ -249,7 +249,7 @@ const AdminNotices = () => {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      {notice.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-400 shrink-0" />}
+                      {notice.is_pinned && <Pin className="h-3.5 w-3.5 text-red-400 shrink-0" />}
                       {!notice.is_active && <EyeOff className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
                       <h3 className="font-semibold text-foreground truncate">{notice.title}</h3>
                     </div>
@@ -274,7 +274,7 @@ const AdminNotices = () => {
                       title={notice.is_active ? "নোটিশ বন্ধ করুন" : "নোটিশ চালু করুন"}
                       onClick={(e) => { e.stopPropagation(); toggleActive(notice.id, notice.is_active); }}
                     >
-                      {notice.is_active ? <Eye className="h-3.5 w-3.5 text-green-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
+                      {notice.is_active ? <Eye className="h-3.5 w-3.5 text-red-500" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
                     </Button>
                     <Button
                       variant="ghost" size="icon" className="h-8 w-8"
@@ -299,7 +299,7 @@ const AdminNotices = () => {
         {polls && polls.length > 0 && (
           <div className="space-y-3">
             <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-              <Vote className="h-5 w-5 text-emerald-400" /> ভোটিং সমূহ
+              <Vote className="h-5 w-5 text-red-400" /> ভোটিং সমূহ
             </h2>
             {polls.map((poll: any) => {
               const opts = pollOptions?.[poll.id] ?? [];
@@ -312,15 +312,15 @@ const AdminNotices = () => {
                   <Card className={`p-4 bg-card border-border/50 ${!poll.is_active ? "opacity-60" : ""}`}>
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-2">
-                        {poll.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-400 shrink-0" />}
-                        <Vote className="h-4 w-4 text-emerald-400 shrink-0" />
+                        {poll.is_pinned && <Pin className="h-3.5 w-3.5 text-red-400 shrink-0" />}
+                        <Vote className="h-4 w-4 text-red-400 shrink-0" />
                         <h3 className="font-semibold text-foreground text-sm">{poll.question}</h3>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
                         {poll.is_active && (
                           <Button variant="ghost" size="icon" className="h-8 w-8" title="ভোটিং বন্ধ করুন"
                             onClick={() => setClosePollConfirm(poll.id)}>
-                            <EyeOff className="h-3.5 w-3.5 text-orange-400" />
+                            <EyeOff className="h-3.5 w-3.5 text-red-400" />
                           </Button>
                         )}
                         {!poll.is_active && (
@@ -350,11 +350,11 @@ const AdminNotices = () => {
                                 initial={{ width: 0 }}
                                 animate={{ width: `${pct}%` }}
                                 transition={{ duration: 0.8 }}
-                                className={`absolute inset-y-0 left-0 ${isWinner ? "bg-emerald-500/20" : "bg-primary/10"} rounded-lg`}
+                                className={`absolute inset-y-0 left-0 ${isWinner ? "bg-red-500/20" : "bg-primary/10"} rounded-lg`}
                               />
                               <div className="relative flex items-center justify-between px-3 py-2">
                                 <span className="text-xs text-foreground flex items-center gap-1.5">
-                                  {isWinner && <Trophy className="h-3 w-3 text-amber-400" />}
+                                  {isWinner && <Trophy className="h-3 w-3 text-red-400" />}
                                   {opt.option_text}
                                 </span>
                                 <span className="text-xs font-bold text-muted-foreground">{pct}% ({detail.count})</span>
@@ -461,7 +461,7 @@ const AdminNotices = () => {
                 className="w-full max-w-sm rounded-2xl bg-card border border-border/50 shadow-2xl overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="bg-gradient-to-r from-destructive/15 via-orange-500/10 to-destructive/15 px-5 pt-5 pb-4">
+                <div className="bg-gradient-to-r from-destructive/15 via-red-500/10 to-destructive/15 px-5 pt-5 pb-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="h-10 w-10 rounded-xl bg-destructive/20 ring-1 ring-destructive/30 flex items-center justify-center">
                       <Ban className="h-5 w-5 text-destructive" />
@@ -477,9 +477,9 @@ const AdminNotices = () => {
                 </div>
 
                 <div className="px-5 py-3">
-                  <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/8 border border-amber-500/15 px-3.5 py-3">
-                    <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                    <p className="text-xs text-amber-300/90 leading-relaxed">
+                  <div className="flex items-start gap-2.5 rounded-xl bg-red-500/8 border border-red-500/15 px-3.5 py-3">
+                    <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-red-300/90 leading-relaxed">
                       একবার বন্ধ করলে আর চালু করা যাবে না। সদস্যরা আর ভোট দিতে পারবে না।
                     </p>
                   </div>
@@ -494,7 +494,7 @@ const AdminNotices = () => {
                     বাতিল
                   </Button>
                   <Button
-                    className="flex-1 rounded-xl bg-gradient-to-r from-destructive to-orange-600 hover:from-destructive/90 hover:to-orange-700 text-white border-0 h-11 font-semibold"
+                    className="flex-1 rounded-xl bg-gradient-to-r from-destructive to-red-600 hover:from-destructive/90 hover:to-red-700 text-white border-0 h-11 font-semibold"
                     onClick={closePoll}
                   >
                     <Ban className="h-4 w-4 mr-1.5" />

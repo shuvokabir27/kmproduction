@@ -34,15 +34,15 @@ type TaskPriority = "low" | "medium" | "high" | "urgent";
 
 const PRIORITY_CONFIG: Record<TaskPriority, { label: string; color: string; icon: string }> = {
   urgent: { label: "জরুরি", color: "bg-red-500/20 text-red-300 border-red-400/40", icon: "🔴" },
-  high: { label: "উচ্চ", color: "bg-orange-500/20 text-orange-300 border-orange-400/40", icon: "🟠" },
-  medium: { label: "মাঝারি", color: "bg-yellow-500/20 text-yellow-300 border-yellow-400/40", icon: "🟡" },
-  low: { label: "কম", color: "bg-green-500/20 text-green-300 border-green-400/40", icon: "🟢" },
+  high: { label: "উচ্চ", color: "bg-red-500/20 text-red-300 border-red-400/40", icon: "🟠" },
+  medium: { label: "মাঝারি", color: "bg-red-500/20 text-red-300 border-red-400/40", icon: "🟡" },
+  low: { label: "কম", color: "bg-red-500/20 text-red-300 border-red-400/40", icon: "🟢" },
 };
 
 const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; Icon: typeof Circle }> = {
   todo: { label: "করতে হবে", color: "text-slate-300", Icon: Circle },
   in_progress: { label: "চলছে", color: "text-cyan-300", Icon: PlayCircle },
-  done: { label: "সম্পন্ন", color: "text-emerald-300", Icon: CheckCircle2 },
+  done: { label: "সম্পন্ন", color: "text-red-300", Icon: CheckCircle2 },
   cancelled: { label: "বাতিল", color: "text-rose-300", Icon: XCircle },
 };
 

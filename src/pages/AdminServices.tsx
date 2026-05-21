@@ -218,7 +218,7 @@ const AdminServices = () => {
           <h1 className="text-2xl font-bold text-foreground">সেবা / প্যাকেজ</h1>
           <div className="flex items-center gap-2">
             <a href="/admin/bookings">
-              <Button variant="outline" className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10">
+              <Button variant="outline" className="border-red-500/40 text-red-400 hover:bg-red-500/10">
                 📋 বুকিং দেখুন
               </Button>
             </a>
@@ -229,13 +229,13 @@ const AdminServices = () => {
         </div>
 
         {/* Offer Management Section */}
-        <Card className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-red-500/10 border-amber-500/30">
+        <Card className="bg-gradient-to-br from-red-500/10 via-red-500/5 to-red-500/10 border-red-500/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2 text-amber-400">
+              <CardTitle className="text-lg flex items-center gap-2 text-red-400">
                 <Gift className="h-5 w-5" /> অফার ম্যানেজমেন্ট
               </CardTitle>
-              <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-white" onClick={() => { resetOfferForm(); setOfferDialogOpen(true); }}>
+              <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white" onClick={() => { resetOfferForm(); setOfferDialogOpen(true); }}>
                 <Plus className="h-4 w-4 mr-1" /> নতুন অফার
               </Button>
             </div>
@@ -245,12 +245,12 @@ const AdminServices = () => {
             {offers?.map((offer: any) => {
               const isExpired = new Date(offer.offer_end_date) < new Date();
               return (
-                <div key={offer.id} className={`flex items-center justify-between p-3 rounded-xl border ${isExpired ? "border-red-500/20 bg-red-500/5 opacity-60" : "border-amber-500/20 bg-amber-500/5"}`}>
+                <div key={offer.id} className={`flex items-center justify-between p-3 rounded-xl border ${isExpired ? "border-red-500/20 bg-red-500/5 opacity-60" : "border-red-500/20 bg-red-500/5"}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <Percent className="h-4 w-4 text-amber-400 shrink-0" />
+                      <Percent className="h-4 w-4 text-red-400 shrink-0" />
                       <span className="font-semibold text-foreground">{offer.title}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">{offer.discount_percentage}% ছাড়</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 font-bold">{offer.discount_percentage}% ছাড়</span>
                       {isExpired && <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">মেয়াদ শেষ</span>}
                       {!offer.is_active && <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">নিষ্ক্রিয়</span>}
                     </div>
@@ -288,7 +288,7 @@ const AdminServices = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-foreground truncate">{s.title}</h3>
                       {s.is_featured && <Star className="h-4 w-4 text-primary fill-primary flex-shrink-0" />}
-                      {s.discount_percentage && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">{s.discount_percentage}% ছাড়</span>}
+                      {s.discount_percentage && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 font-bold">{s.discount_percentage}% ছাড়</span>}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {s.category}
@@ -455,7 +455,7 @@ const AdminServices = () => {
         <Dialog open={offerDialogOpen} onOpenChange={setOfferDialogOpen}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-amber-400">
+              <DialogTitle className="flex items-center gap-2 text-red-400">
                 <Gift className="h-5 w-5" /> {offerEditId ? "অফার সম্পাদনা" : "নতুন অফার যোগ করুন"}
               </DialogTitle>
             </DialogHeader>
@@ -511,7 +511,7 @@ const AdminServices = () => {
                 <Switch checked={offerActive} onCheckedChange={setOfferActive} />
                 <Label>সক্রিয়</Label>
               </div>
-              <Button onClick={saveOffer} disabled={!offerDiscount || !offerEndDate} className="w-full bg-amber-500 hover:bg-amber-600 text-white">
+              <Button onClick={saveOffer} disabled={!offerDiscount || !offerEndDate} className="w-full bg-red-500 hover:bg-red-600 text-white">
                 {offerEditId ? "আপডেট করুন" : "অফার যোগ করুন"}
               </Button>
             </div>

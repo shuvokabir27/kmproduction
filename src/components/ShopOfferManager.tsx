@@ -194,7 +194,7 @@ export default function ShopOfferManager() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-amber-500" />
+          <Sparkles className="h-5 w-5 text-red-500" />
           <h2 className="text-lg font-bold">অফার ম্যানেজমেন্ট</h2>
         </div>
         <Button onClick={() => { reset(); setOpen(true); }} size="sm" className="gap-1.5">
@@ -219,7 +219,7 @@ export default function ShopOfferManager() {
                   {o.image_url && <img src={o.image_url} className="w-16 h-16 rounded-lg object-cover" />}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold">{o.badge_text}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-700 dark:text-red-400 font-bold">{o.badge_text}</span>
                       {!o.is_active && <span className="text-xs px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">নিষ্ক্রিয়</span>}
                       {o.show_popup && <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">পপআপ</span>}
                     </div>
@@ -283,7 +283,7 @@ export default function ShopOfferManager() {
               <Input value={form.badge_text} onChange={e => setForm(f => ({ ...f, badge_text: e.target.value }))} placeholder="বিশেষ অফার" />
             </div>
             {/* Product picker - always shown */}
-            <div className="space-y-2 p-3 rounded-lg border bg-amber-50/50 dark:bg-amber-950/20">
+            <div className="space-y-2 p-3 rounded-lg border bg-red-50/50 dark:bg-red-950/20">
               <div className="flex items-center justify-between">
                 <Label className="font-bold">কম্বোতে প্রডাক্টসমূহ *</Label>
                 <Button type="button" size="sm" variant="outline" onClick={() => setForm(f => ({ ...f, combo_products: [...f.combo_products, { product_id: "", quantity: 1 }] }))}>
@@ -349,7 +349,7 @@ export default function ShopOfferManager() {
                     <div className="flex justify-between"><span className="text-muted-foreground">মোট মূল্য:</span><span className="font-bold">৳{total}</span></div>
                     {newPrice > 0 && form.offer_mode !== "free_delivery" && (
                       <>
-                        <div className="flex justify-between"><span className="text-muted-foreground">অফার মূল্য:</span><span className="font-bold text-green-600">৳{newPrice}</span></div>
+                        <div className="flex justify-between"><span className="text-muted-foreground">অফার মূল্য:</span><span className="font-bold text-red-600">৳{newPrice}</span></div>
                         {savings > 0 && (
                           <div className="flex justify-between text-xs"><span className="text-muted-foreground">সাশ্রয়:</span><span className="font-bold text-red-600">৳{savings} ({pct}%)</span></div>
                         )}

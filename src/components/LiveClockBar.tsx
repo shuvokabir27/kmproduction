@@ -142,7 +142,7 @@ export function LiveClockBar() {
   const dateViews = [
     { icon: Calendar, label: banglaDateStr, sub: bnWeekDay, color: "text-violet-300", bg: "from-violet-500/15 to-fuchsia-500/10", border: "border-violet-500/25" },
     { icon: Calendar, label: enDate.split(",").slice(1).join(",").trim(), sub: enDate.split(",")[0], color: "text-cyan-300", bg: "from-cyan-500/15 to-blue-500/10", border: "border-cyan-500/25" },
-    { icon: Moon, label: hijriDateStr, sub: "চান্দ্র মাস", color: "text-amber-300", bg: "from-amber-500/15 to-orange-500/10", border: "border-amber-500/25" },
+    { icon: Moon, label: hijriDateStr, sub: "চান্দ্র মাস", color: "text-red-300", bg: "from-red-500/15 to-red-500/10", border: "border-red-500/25" },
   ];
 
   const current = dateViews[rotateIdx];
@@ -181,7 +181,7 @@ export function LiveClockBar() {
             <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>:</motion.span>
             <span>{toBnDigits(mm)}</span>
             <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>:</motion.span>
-            <span className="text-emerald-300 [-webkit-text-fill-color:initial]">{toBnDigits(ss)}</span>
+            <span className="text-red-300 [-webkit-text-fill-color:initial]">{toBnDigits(ss)}</span>
           </div>
           <span className="text-[9px] md:text-[10px] font-bold text-violet-200 px-1.5 py-0.5 rounded-md bg-gradient-to-br from-violet-500/25 to-fuchsia-500/20 border border-violet-500/30 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)]">
             {ampm}
@@ -237,25 +237,25 @@ export function LiveClockBar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="relative border-t border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 via-teal-500/15 to-emerald-500/10 overflow-hidden"
+            className="relative border-t border-red-500/20 bg-gradient-to-r from-red-500/10 via-red-500/15 to-red-500/10 overflow-hidden"
           >
             {/* Shimmer */}
             <motion.div
               animate={{ x: ["-100%", "200%"] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-              className="absolute -inset-y-2 w-1/3 bg-gradient-to-r from-transparent via-emerald-300/20 to-transparent skew-x-12 pointer-events-none"
+              className="absolute -inset-y-2 w-1/3 bg-gradient-to-r from-transparent via-red-300/20 to-transparent skew-x-12 pointer-events-none"
             />
             <div className="relative z-10 flex items-center justify-center gap-2 px-3 py-1.5 overflow-hidden">
               <motion.div
                 animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.15, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <Sparkles className="h-3 w-3 md:h-3.5 md:w-3.5 text-emerald-300" />
+                <Sparkles className="h-3 w-3 md:h-3.5 md:w-3.5 text-red-300" />
               </motion.div>
               <motion.span
                 animate={{ opacity: [0.85, 1, 0.85] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="text-[10px] md:text-xs font-bold bg-gradient-to-r from-emerald-200 via-teal-200 to-emerald-200 bg-clip-text text-transparent text-center"
+                className="text-[10px] md:text-xs font-bold bg-gradient-to-r from-red-200 via-red-200 to-red-200 bg-clip-text text-transparent text-center"
               >
                 🕌 আজ পবিত্র জুমার দিন — সময়মতো জুমার নামাজ আদায় করুন 🤲
               </motion.span>
@@ -263,7 +263,7 @@ export function LiveClockBar() {
                 animate={{ rotate: [0, -15, 15, 0], scale: [1, 1.15, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <Sparkles className="h-3 w-3 md:h-3.5 md:w-3.5 text-emerald-300" />
+                <Sparkles className="h-3 w-3 md:h-3.5 md:w-3.5 text-red-300" />
               </motion.div>
             </div>
           </motion.div>

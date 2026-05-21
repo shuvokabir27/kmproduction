@@ -248,12 +248,12 @@ const MemberDashboard = () => {
     <AppLayout>
       <div className="max-w-5xl mx-auto space-y-6">
         {isClient && (
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
-            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
               <Eye className="h-4 w-4" />
               <span>আপনি মেম্বার ড্যাশবোর্ড দেখছেন (শুধু পঠনযোগ্য)</span>
             </div>
-            <Link to="/client" className="text-xs font-medium text-amber-700 dark:text-amber-300 hover:underline whitespace-nowrap">
+            <Link to="/client" className="text-xs font-medium text-red-700 dark:text-red-300 hover:underline whitespace-nowrap">
               ক্লায়েন্ট ড্যাশবোর্ডে ফিরে যান
             </Link>
           </div>
@@ -307,8 +307,8 @@ const MemberDashboard = () => {
               h < 21 ? "শুভ সন্ধ্যা" : "শুভ রাত্রি";
             const greetColor =
               h < 5 || h >= 21 ? "text-indigo-400" :
-              h < 12 ? "text-amber-400" :
-              h < 16 ? "text-orange-400" :
+              h < 12 ? "text-red-400" :
+              h < 16 ? "text-red-400" :
               h < 18 ? "text-pink-400" : "text-purple-400";
             return <p className={`${greetColor} text-sm md:text-base font-semibold`}>{greeting} 👋</p>;
           })()}
@@ -418,7 +418,7 @@ const MemberDashboard = () => {
               const statusMap: Record<string, { label: string; color: string }> = {
                 plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
                 upcoming: { label: "আসন্ন", color: "bg-warning/10 text-warning" },
-                calltime: { label: "কলটাইম", color: "bg-orange-500/10 text-orange-400" },
+                calltime: { label: "কলটাইম", color: "bg-red-500/10 text-red-400" },
                 ongoing: { label: "চলছে", color: "bg-primary/10 text-primary" },
                 completed: { label: "শুটিং শেষ", color: "bg-success/10 text-success" },
                 editing: { label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
@@ -469,8 +469,8 @@ const MemberDashboard = () => {
         {!isZeroBalance && (
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <Gift className="h-4 w-4 text-emerald-400" />
+            <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <Gift className="h-4 w-4 text-red-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">বোনাস ও গাড়ি ভাড়া</h2>
           </div>
@@ -505,15 +505,15 @@ const MemberDashboard = () => {
           const totalDue = Math.max(0, totalEarning - totalPaid);
           const statusMap: Record<string, { label: string; cls: string }> = {
             upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
-            ongoing:  { label: "চলছে", cls: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
-            completed:{ label: "সম্পন্ন", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
+            ongoing:  { label: "চলছে", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
+            completed:{ label: "সম্পন্ন", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
             paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
           };
           return (
             <div className="premium-card rounded-2xl overflow-hidden">
               <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                  <Briefcase className="h-4 w-4 text-orange-400" />
+                <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-red-400" />
                 </div>
                 <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ (Outsourcing)</h2>
                 <span className="ml-auto text-xs text-muted-foreground">{normalizedFreelanceList.length} টি প্রজেক্ট</span>
@@ -521,13 +521,13 @@ const MemberDashboard = () => {
 
               {/* Summary strip */}
               <div className="grid grid-cols-3 gap-2 p-3 md:p-4 bg-secondary/10">
-                <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-3">
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3">
                   <p className="text-[10px] text-muted-foreground">মোট আয়</p>
-                  <p className="text-sm md:text-base font-bold text-orange-400 mt-0.5">৳{totalEarning.toLocaleString("bn-BD")}</p>
+                  <p className="text-sm md:text-base font-bold text-red-400 mt-0.5">৳{totalEarning.toLocaleString("bn-BD")}</p>
                 </div>
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3">
                   <p className="text-[10px] text-muted-foreground">পেইড</p>
-                  <p className="text-sm md:text-base font-bold text-emerald-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
+                  <p className="text-sm md:text-base font-bold text-red-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
                 </div>
                 <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3">
                   <p className="text-[10px] text-muted-foreground">বাকি</p>
@@ -579,9 +579,9 @@ const MemberDashboard = () => {
                           <p className="text-[9px] text-muted-foreground">পাওনা</p>
                           <p className="text-xs font-bold text-foreground">৳{rate.toLocaleString("bn-BD")}</p>
                         </div>
-                        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1.5">
+                        <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-2.5 py-1.5">
                           <p className="text-[9px] text-muted-foreground">পেইড</p>
-                          <p className="text-xs font-bold text-emerald-400">৳{paid.toLocaleString("bn-BD")}</p>
+                          <p className="text-xs font-bold text-red-400">৳{paid.toLocaleString("bn-BD")}</p>
                         </div>
                         <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2.5 py-1.5">
                           <p className="text-[9px] text-muted-foreground">বাকি</p>
@@ -605,8 +605,8 @@ const MemberDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="premium-card rounded-2xl overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                <CreditCard className="h-4 w-4 text-amber-400" />
+              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <CreditCard className="h-4 w-4 text-red-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">পেমেন্ট হিস্ট্রি</h2>
             </div>
@@ -737,8 +737,8 @@ const MemberDashboard = () => {
             </div>
 
             {/* Note */}
-            <div className="rounded-lg bg-amber-500/10 border border-amber-500/15 p-3">
-              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+            <div className="rounded-lg bg-red-500/10 border border-red-500/15 p-3">
+              <p className="text-[11px] text-red-300/90 leading-relaxed">
                 📌 <span className="font-medium">বিশেষ দ্রষ্টব্য:</span> এই হিসাব অ্যাপ চালু হওয়ার পর থেকে গণনা করা হচ্ছে। অ্যাপ চালুর পূর্বের কোনো লেনদেন এখানে অন্তর্ভুক্ত নয়।
               </p>
             </div>
@@ -775,7 +775,7 @@ const MemberDashboard = () => {
         <DialogContent className="bg-card border-border/50 max-w-md max-h-[85vh] overflow-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground">
-              <Briefcase className="h-5 w-5 text-orange-400" /> বাইরের আয় বিস্তারিত
+              <Briefcase className="h-5 w-5 text-red-400" /> বাইরের আয় বিস্তারিত
             </DialogTitle>
           </DialogHeader>
           {(() => {
@@ -789,21 +789,21 @@ const MemberDashboard = () => {
             const totalDue = Math.max(0, totalEarning - totalPaid);
             const statusMap: Record<string, { label: string; cls: string }> = {
               upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
-              ongoing:  { label: "চলছে", cls: "bg-amber-500/15 text-amber-400 border-amber-500/30" },
-              completed:{ label: "সম্পন্ন", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
+              ongoing:  { label: "চলছে", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
+              completed:{ label: "সম্পন্ন", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
               paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
             };
             return (
               <div className="space-y-4">
                 {/* Summary 3-grid */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-3 text-center">
+                  <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">মোট আয়</p>
-                    <p className="text-sm font-bold text-orange-400 mt-0.5">৳{totalEarning.toLocaleString("bn-BD")}</p>
+                    <p className="text-sm font-bold text-red-400 mt-0.5">৳{totalEarning.toLocaleString("bn-BD")}</p>
                   </div>
-                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-center">
+                  <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">পেইড</p>
-                    <p className="text-sm font-bold text-emerald-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
+                    <p className="text-sm font-bold text-red-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
                   </div>
                   <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">বাকি</p>
@@ -854,9 +854,9 @@ const MemberDashboard = () => {
                               <p className="text-[9px] text-muted-foreground">পাওনা</p>
                               <p className="text-xs font-bold text-foreground">৳{rate.toLocaleString("bn-BD")}</p>
                             </div>
-                            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2 py-1.5 text-center">
+                            <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-2 py-1.5 text-center">
                               <p className="text-[9px] text-muted-foreground">পেইড</p>
-                              <p className="text-xs font-bold text-emerald-400">৳{paid.toLocaleString("bn-BD")}</p>
+                              <p className="text-xs font-bold text-red-400">৳{paid.toLocaleString("bn-BD")}</p>
                             </div>
                             <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2 py-1.5 text-center">
                               <p className="text-[9px] text-muted-foreground">বাকি</p>
@@ -895,9 +895,9 @@ const MemberDashboard = () => {
 
             return (
               <div className="space-y-4 mt-2">
-                <div className={`rounded-xl p-4 border ${internalDue > 0 ? "bg-red-500/10 border-red-500/30" : internalDue < 0 ? "bg-emerald-500/10 border-emerald-500/30" : "bg-blue-500/10 border-blue-500/30"}`}>
+                <div className={`rounded-xl p-4 border ${internalDue > 0 ? "bg-red-500/10 border-red-500/30" : internalDue < 0 ? "bg-red-500/10 border-red-500/30" : "bg-blue-500/10 border-blue-500/30"}`}>
                   <p className="text-xs text-muted-foreground">{internalDue > 0 ? "KM Production থেকে বকেয়া" : internalDue < 0 ? "KM Production-এ অগ্রিম" : "সমন্বয়কৃত"}</p>
-                  <p className={`text-2xl font-bold ${internalDue > 0 ? "text-red-400" : internalDue < 0 ? "text-emerald-400" : "text-blue-400"}`}>
+                  <p className={`text-2xl font-bold ${internalDue > 0 ? "text-red-400" : internalDue < 0 ? "text-red-400" : "text-blue-400"}`}>
                     ৳{Math.abs(internalDue).toLocaleString("bn-BD")}
                   </p>
                 </div>

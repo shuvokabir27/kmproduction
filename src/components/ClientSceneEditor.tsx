@@ -195,7 +195,7 @@ export function ClientSceneEditor({ projectId, scenes, onUpdate }: Props) {
                       <td className="p-2 align-top">
                         <div className="flex gap-1">
                           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleUpdate(s.id)} disabled={saving === s.id}>
-                            {saving === s.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5 text-emerald-400" />}
+                            {saving === s.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5 text-red-400" />}
                           </Button>
                           <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingId(null)}>
                             <span className="text-xs">✕</span>

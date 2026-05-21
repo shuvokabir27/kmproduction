@@ -212,7 +212,7 @@ const PublicProfile = () => {
               {avgRating && (
                 <div className="mt-3 flex items-center justify-center gap-1">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className={`h-4 w-4 ${s <= Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                    <Star key={s} className={`h-4 w-4 ${s <= Math.round(Number(avgRating)) ? "fill-red-400 text-red-400" : "text-muted-foreground/30"}`} />
                   ))}
                   <span className="text-foreground font-bold text-sm ml-1">{avgRating}</span>
                   <span className="text-muted-foreground text-xs">({ratingsCount})</span>

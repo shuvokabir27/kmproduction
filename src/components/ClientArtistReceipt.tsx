@@ -146,7 +146,7 @@ const ClientArtistReceipt = ({ receiptData, onClose }: ClientArtistReceiptProps)
                   {receiptData.remaining > 0 ? "অবশিষ্ট বকেয়া" : receiptData.remaining < 0 ? "অতিরিক্ত" : "সমন্বয়কৃত"}
                 </span>
                 <span
-                  className={`font-bold ${receiptData.remaining > 0 ? "text-red-600" : receiptData.remaining < 0 ? "text-green-600" : "text-blue-600"}`}
+                  className={`font-bold ${receiptData.remaining > 0 ? "text-red-600" : receiptData.remaining < 0 ? "text-red-600" : "text-blue-600"}`}
                 >
                   ৳{Math.abs(receiptData.remaining).toLocaleString()}
                 </span>

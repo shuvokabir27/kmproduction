@@ -17,7 +17,7 @@ interface Props {
 
 const META: Record<Exclude<PaymentMethod, "cod">, { label: string; emoji: string; bg: string; ring: string }> = {
   bkash: { label: "বিকাশ", emoji: "📱", bg: "bg-pink-50", ring: "ring-pink-400" },
-  nagad: { label: "নগদ", emoji: "📲", bg: "bg-orange-50", ring: "ring-orange-400" },
+  nagad: { label: "নগদ", emoji: "📲", bg: "bg-red-50", ring: "ring-red-400" },
   rocket: { label: "রকেট", emoji: "🚀", bg: "bg-purple-50", ring: "ring-purple-400" },
 };
 
@@ -66,7 +66,7 @@ export default function PaymentMethodPicker({
               type="button"
               onClick={() => onMethodChange(o.val)}
               className={`px-3 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${
-                active ? "border-emerald-600 bg-emerald-50 text-emerald-800" : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                active ? "border-red-600 bg-red-50 text-red-800" : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
               }`}
             >
               <span>{o.emoji}</span>
@@ -77,14 +77,14 @@ export default function PaymentMethodPicker({
       </div>
 
       {showAcc && (
-        <div className={`mt-3 rounded-xl border-2 ${m?.bg ?? ""} border-amber-200 p-3 space-y-2.5`}>
+        <div className={`mt-3 rounded-xl border-2 ${m?.bg ?? ""} border-red-200 p-3 space-y-2.5`}>
           {accNo ? (
-            <div className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-amber-300">
+            <div className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-red-300">
               <div>
                 <p className="text-[11px] text-gray-500 leading-tight">{m?.label} মার্চেন্ট/পার্সোনাল নম্বর</p>
                 <p className="text-base font-extrabold tracking-wider text-gray-900">{accNo}</p>
               </div>
-              <button type="button" onClick={copy} className="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center gap-1">
+              <button type="button" onClick={copy} className="px-2.5 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold flex items-center gap-1">
                 <Copy className="h-3 w-3" /> কপি
               </button>
             </div>

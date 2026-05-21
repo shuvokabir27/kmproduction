@@ -21,7 +21,7 @@ interface ClientProjectExpensesProps {
 }
 
 const categoryConfig = {
-  food: { label: "খাবার", icon: UtensilsCrossed, color: "text-orange-400" },
+  food: { label: "খাবার", icon: UtensilsCrossed, color: "text-red-400" },
   costume: { label: "কস্টিউম", icon: Shirt, color: "text-pink-400" },
   transport: { label: "যাতায়াত", icon: Bus, color: "text-sky-400" },
 };
@@ -175,7 +175,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                 onClick={() => setIsPaid(true)}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
                   isPaid
-                    ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                    ? "bg-red-500/15 border-red-500/30 text-red-400"
                     : "bg-secondary/30 border-border/30 text-muted-foreground"
                 }`}
               >
@@ -186,7 +186,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                 onClick={() => setIsPaid(false)}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-all ${
                   !isPaid
-                    ? "bg-amber-500/15 border-amber-500/30 text-amber-400"
+                    ? "bg-red-500/15 border-red-500/30 text-red-400"
                     : "bg-secondary/30 border-border/30 text-muted-foreground"
                 }`}
               >
@@ -232,11 +232,11 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs font-medium text-foreground">{config?.label || exp.category}</span>
                           {paid ? (
-                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-emerald-500/30 text-emerald-400 bg-emerald-500/10">পেইড</Badge>
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-red-500/30 text-red-400 bg-red-500/10">পেইড</Badge>
                           ) : isPartial ? (
                             <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-blue-500/30 text-blue-400 bg-blue-500/10">আংশিক (৳{paidAmt.toLocaleString("bn-BD")})</Badge>
                           ) : (
-                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-amber-500/30 text-amber-400 bg-amber-500/10">বাকি</Badge>
+                            <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-red-500/30 text-red-400 bg-red-500/10">বাকি</Badge>
                           )}
                         </div>
                         {exp.description && <div className="text-[10px] text-muted-foreground truncate">{exp.description}</div>}
@@ -248,7 +248,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                             variant="ghost"
                             size="sm"
                             onClick={() => handleTogglePaid(exp.id, paid, expAmt)}
-                            className="h-7 w-7 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                            className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
                             title="পেইড করুন"
                           >
                             <CheckCircle2 className="h-3.5 w-3.5" />
@@ -259,7 +259,7 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                             variant="ghost"
                             size="sm"
                             onClick={() => handleTogglePaid(exp.id, paid, expAmt)}
-                            className="h-7 w-7 p-0 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                            className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
                             title="বাকি করুন"
                           >
                             <Clock className="h-3.5 w-3.5" />
@@ -288,13 +288,13 @@ export function ClientProjectExpenses({ projectId, clientProfileId }: ClientProj
                 <span className="text-sm font-bold text-foreground">৳{totalExpense.toLocaleString("bn-BD")}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-emerald-400">পেইড</span>
-                <span className="text-xs font-semibold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</span>
+                <span className="text-[10px] text-red-400">পেইড</span>
+                <span className="text-xs font-semibold text-red-400">৳{totalPaid.toLocaleString("bn-BD")}</span>
               </div>
               {totalDue > 0 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-amber-400">বাকি</span>
-                  <span className="text-xs font-semibold text-amber-400">৳{totalDue.toLocaleString("bn-BD")}</span>
+                  <span className="text-[10px] text-red-400">বাকি</span>
+                  <span className="text-xs font-semibold text-red-400">৳{totalDue.toLocaleString("bn-BD")}</span>
                 </div>
               )}
             </CardContent>

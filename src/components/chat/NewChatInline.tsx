@@ -161,13 +161,13 @@ export function NewChatInline({ type, onCreated, onBack }: NewChatInlineProps) {
                   </AvatarFallback>
                 </Avatar>
                 {onlineMap && isUserOnline(onlineMap.get(m.user_id)) && (
-                  <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 border border-background" />
+                  <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-red-500 border border-background" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-foreground truncate">{m.full_name}</p>
                 <p className="text-[10px] text-muted-foreground truncate">
-                  #{m.member_id} • {onlineMap && isUserOnline(onlineMap.get(m.user_id)) ? <span className="text-green-500">অনলাইন</span> : getLastSeenText(onlineMap?.get(m.user_id))}
+                  #{m.member_id} • {onlineMap && isUserOnline(onlineMap.get(m.user_id)) ? <span className="text-red-500">অনলাইন</span> : getLastSeenText(onlineMap?.get(m.user_id))}
                 </p>
               </div>
               {type === "personal" && selectedUsers.includes(m.user_id) && (

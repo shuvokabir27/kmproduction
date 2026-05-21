@@ -93,8 +93,8 @@ const WeightPricingEditor = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-          <Weight className="h-5 w-5 text-amber-500" />
+        <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+          <Weight className="h-5 w-5 text-red-500" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-foreground">ওজন অনুযায়ী দাম</h2>
@@ -144,7 +144,7 @@ const WeightPricingEditor = () => {
                 <X className="h-3 w-3" /> বাতিল
               </Button>
             )}
-            <Button size="sm" onClick={handleSave} className="gap-1 text-xs bg-amber-600 hover:bg-amber-700">
+            <Button size="sm" onClick={handleSave} className="gap-1 text-xs bg-red-600 hover:bg-red-700">
               <Save className="h-3 w-3" /> {editing ? "আপডেট" : "যুক্ত করুন"}
             </Button>
           </div>
@@ -164,20 +164,20 @@ const WeightPricingEditor = () => {
               <div key={p.id} className={`bg-card border rounded-xl p-4 ${p.is_active ? "border-border/50" : "border-red-500/20 opacity-60"}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-amber-500/10 flex flex-col items-center justify-center">
-                      <span className="text-xs font-bold text-amber-600">{p.weight_label}</span>
+                    <div className="w-12 h-12 rounded-lg bg-red-500/10 flex flex-col items-center justify-center">
+                      <span className="text-xs font-bold text-red-600">{p.weight_label}</span>
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-foreground text-sm">{p.weight_label}</span>
-                        {p.label && <span className="text-[10px] bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded">{p.label}</span>}
+                        {p.label && <span className="text-[10px] bg-red-500/10 text-red-600 px-1.5 py-0.5 rounded">{p.label}</span>}
                         {!p.is_active && <span className="text-[10px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded">নিষ্ক্রিয়</span>}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         {hasDiscount ? (
                           <>
                             <span className="text-xs line-through text-muted-foreground">৳{toBn(p.price)}</span>
-                            <span className="text-sm font-bold text-green-600">৳{toBn(p.discount_price)}</span>
+                            <span className="text-sm font-bold text-red-600">৳{toBn(p.discount_price)}</span>
                             <span className="text-[10px] text-red-500">
                               {toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}% ছাড়
                             </span>

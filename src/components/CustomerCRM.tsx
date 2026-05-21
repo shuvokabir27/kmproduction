@@ -188,9 +188,9 @@ const CustomerCRM = () => {
 
       {/* Offer Settings Panel */}
       {showOfferSettings && (
-        <div className="bg-card border border-green-500/20 rounded-xl p-4 space-y-4">
+        <div className="bg-card border border-red-500/20 rounded-xl p-4 space-y-4">
           <div className="flex items-center gap-2 mb-1">
-            <MessageCircle className="h-4 w-4 text-green-500" />
+            <MessageCircle className="h-4 w-4 text-red-500" />
             <h3 className="font-bold text-foreground text-sm">WhatsApp অফার ম্যাসেজ সেটিংস</h3>
           </div>
           <p className="text-[11px] text-muted-foreground -mt-2">
@@ -236,16 +236,16 @@ const CustomerCRM = () => {
             )}
           </div>
 
-          <Button onClick={saveOfferSettings} size="sm" className="gap-1.5 bg-green-600 hover:bg-green-700">
+          <Button onClick={saveOfferSettings} size="sm" className="gap-1.5 bg-red-600 hover:bg-red-700">
             <Save className="h-3 w-3" /> সেভ করুন
           </Button>
 
           {/* Preview */}
           {(offerMsg || offerImg) && (
-            <div className="bg-green-500/5 border border-green-500/10 rounded-lg p-3 mt-2">
+            <div className="bg-red-500/5 border border-red-500/10 rounded-lg p-3 mt-2">
               <p className="text-[10px] text-muted-foreground mb-1">প্রিভিউ:</p>
               {offerMsg && <p className="text-xs text-foreground whitespace-pre-wrap">{offerMsg}</p>}
-              {offerImg && <p className="text-[10px] text-green-500 mt-1">🖼️ প্রডাক্ট দেখুন: {offerImg.slice(0, 50)}...</p>}
+              {offerImg && <p className="text-[10px] text-red-500 mt-1">🖼️ প্রডাক্ট দেখুন: {offerImg.slice(0, 50)}...</p>}
             </div>
           )}
         </div>
@@ -258,7 +258,7 @@ const CustomerCRM = () => {
           <p className="text-xs text-muted-foreground">মোট কাস্টমার</p>
         </div>
         <div className="bg-card border border-border/50 rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-emerald-500">
+          <p className="text-2xl font-bold text-red-500">
             {toBn(customers.filter(c => c.totalOrders > 1).length)}
           </p>
           <p className="text-xs text-muted-foreground">রিটার্ন কাস্টমার</p>
@@ -327,7 +327,7 @@ const CustomerCRM = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 text-xs h-8 gap-1.5 text-green-600 border-green-500/30 hover:bg-green-500/10"
+                    className="flex-1 text-xs h-8 gap-1.5 text-red-600 border-red-500/30 hover:bg-red-500/10"
                     onClick={() => openWhatsApp(c.phone)}
                   >
                     <MessageCircle className="h-3.5 w-3.5" /> WhatsApp

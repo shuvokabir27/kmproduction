@@ -469,8 +469,8 @@ const AdminPayments = () => {
                   >
                     {/* Glass shine effect */}
                     <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.12] to-transparent pointer-events-none rounded-t-2xl" />
-                    <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-yellow-400/[0.08] pointer-events-none" />
-                    <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-orange-400/[0.06] pointer-events-none" />
+                    <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-red-400/[0.08] pointer-events-none" />
+                    <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-red-400/[0.06] pointer-events-none" />
 
                     {/* Header: Name + Photo centered */}
                     <div className="relative flex flex-col items-center gap-2">
@@ -493,7 +493,7 @@ const AdminPayments = () => {
                       <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
                         {(memberBalance?.balance ?? 0) > 0 ? "বকেয়া ব্যালেন্স" : (memberBalance?.balance ?? 0) < 0 ? "অগ্রিম ব্যালেন্স" : "সমন্বয়কৃত"}
                       </p>
-                      <p className={`text-3xl font-black tracking-tight ${(memberBalance?.balance ?? 0) > 0 ? "text-red-300" : (memberBalance?.balance ?? 0) < 0 ? "text-emerald-300" : "text-cyan-300"}`}>
+                      <p className={`text-3xl font-black tracking-tight ${(memberBalance?.balance ?? 0) > 0 ? "text-red-300" : (memberBalance?.balance ?? 0) < 0 ? "text-red-300" : "text-cyan-300"}`}>
                         ৳{Math.abs(memberBalance?.balance ?? 0).toLocaleString()}
                       </p>
                     </div>
@@ -502,12 +502,12 @@ const AdminPayments = () => {
                     <div className="relative flex items-center justify-between px-2">
                       <div className="text-center">
                         <p className="text-[9px] uppercase tracking-wider text-white/35">মোট আয়</p>
-                        <p className="text-xs font-bold text-emerald-300/90">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</p>
+                        <p className="text-xs font-bold text-red-300/90">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</p>
                       </div>
                       <div className="w-px h-6 bg-white/10" />
                       <div className="text-center">
                         <p className="text-[9px] uppercase tracking-wider text-white/35">বাইরের আয়</p>
-                        <p className="text-xs font-bold text-orange-300/90">৳{memberBalance?.totalFreelance?.toLocaleString() || "0"}</p>
+                        <p className="text-xs font-bold text-red-300/90">৳{memberBalance?.totalFreelance?.toLocaleString() || "0"}</p>
                       </div>
                       <div className="w-px h-6 bg-white/10" />
                       <div className="text-center">
@@ -570,7 +570,7 @@ const AdminPayments = () => {
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between rounded-lg bg-white/[0.06] px-3 py-1.5">
                             <div className="flex items-center gap-2">
-                              <Smartphone className="h-3 w-3 text-orange-400/60" />
+                              <Smartphone className="h-3 w-3 text-red-400/60" />
                               <span className="text-[11px] text-white/70">নগদ: {selectedProfile.nagad_no}</span>
                             </div>
                             <button type="button" onClick={() => { navigator.clipboard.writeText(selectedProfile.nagad_no || ""); toast.success("নগদ নম্বর কপি হয়েছে!"); }} className="text-white/30 hover:text-white/70 transition-colors">
@@ -669,8 +669,8 @@ const AdminPayments = () => {
               <thead>
                 <tr className="border-b border-border/30 bg-secondary/30">
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
-                  <th className="text-left p-3 text-emerald-400 font-medium text-xs">পরিমাণ</th>
-                  <th className="text-left p-3 text-amber-400 font-medium text-xs hidden sm:table-cell">মাধ্যম</th>
+                  <th className="text-left p-3 text-red-400 font-medium text-xs">পরিমাণ</th>
+                  <th className="text-left p-3 text-red-400 font-medium text-xs hidden sm:table-cell">মাধ্যম</th>
                   <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">লাস্ট ৪ ডিজিট</th>
                   <th className="text-left p-3 text-pink-400 font-medium text-xs">তারিখ</th>
                   <th className="text-center p-3 text-blue-400 font-medium text-xs">রিসিট / WhatsApp</th>
@@ -711,11 +711,11 @@ const AdminPayments = () => {
                           <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-primary/30 hover:bg-primary/10" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
                             <Download className="h-4 w-4 text-primary" />
                           </Button>
-                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-green-500/40 hover:bg-green-500/10" onClick={() => sendWhatsAppFromRow(p)} disabled={whatsappSendingId === p.id} title="WhatsApp-এ রিসিট লিংক পাঠান">
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-red-500/40 hover:bg-red-500/10" onClick={() => sendWhatsAppFromRow(p)} disabled={whatsappSendingId === p.id} title="WhatsApp-এ রিসিট লিংক পাঠান">
                             {whatsappSendingId === p.id ? (
-                              <span className="h-3 w-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                              <span className="h-3 w-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
                             ) : (
-                              <MessageCircle className="h-4 w-4 text-green-500" />
+                              <MessageCircle className="h-4 w-4 text-red-500" />
                             )}
                           </Button>
                         </div>

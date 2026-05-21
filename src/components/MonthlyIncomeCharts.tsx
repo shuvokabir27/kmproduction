@@ -247,15 +247,15 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
           <button
             type="button"
             onClick={onClientClick}
-            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)] hover:ring-1 hover:ring-orange-500/40 active:scale-[0.98] transition-all"
+            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-            <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-orange-500/25 blur-3xl" />
+            <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">
-              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500/40 to-orange-600/10 border border-orange-500/30 flex items-center justify-center shadow-inner shrink-0">
-                <Briefcase className="h-3.5 w-3.5 text-orange-400" />
+              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/40 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner shrink-0">
+                <Briefcase className="h-3.5 w-3.5 text-red-400" />
               </div>
-              <p className="text-[10px] uppercase tracking-wider text-orange-400/90 font-semibold truncate">
+              <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">
                 {clientNames.length > 0 ? clientNames.join(", ") : "Client"}
               </p>
             </div>
@@ -318,12 +318,12 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
       </div>
 
       {showClient && (
-      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-orange-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.25)]">
+      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-        <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-orange-500/20 blur-3xl" />
+        <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/20 blur-3xl" />
         <div className="relative flex items-center gap-2 mb-2">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500/30 to-orange-600/10 border border-orange-500/30 flex items-center justify-center shadow-inner">
-            <Briefcase className="h-3.5 w-3.5 text-orange-400" />
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/30 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
+            <Briefcase className="h-3.5 w-3.5 text-red-400" />
           </div>
           <div className="min-w-0">
             <h3 className="font-semibold text-foreground text-[13px] leading-tight">বাইরের ক্লায়েন্ট আয়</h3>

@@ -520,7 +520,7 @@ const AdminMembers = () => {
                   </div>
                   <div>
                     <Label className="text-foreground flex items-center gap-1">
-                      <MessageCircle className="h-3.5 w-3.5 text-green-500" /> WhatsApp নাম্বার
+                      <MessageCircle className="h-3.5 w-3.5 text-red-500" /> WhatsApp নাম্বার
                     </Label>
                     <div className="flex gap-1.5">
                       <Input
@@ -534,7 +534,7 @@ const AdminMembers = () => {
                           type="button"
                           variant="outline"
                           size="icon"
-                          className="shrink-0 border-green-500/40 hover:bg-green-500/10"
+                          className="shrink-0 border-red-500/40 hover:bg-red-500/10"
                           title="ফোনবুক থেকে বাছাই করুন"
                           onClick={async () => {
                             try {
@@ -552,7 +552,7 @@ const AdminMembers = () => {
                             }
                           }}
                         >
-                          <BookUser className="h-4 w-4 text-green-500" />
+                          <BookUser className="h-4 w-4 text-red-500" />
                         </Button>
                       )}
                     </div>
@@ -915,12 +915,12 @@ const AdminMembers = () => {
                   <th className="text-left p-3 text-blue-400 font-medium text-xs">আইডি</th>
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">নাম</th>
                    <th className="text-left p-3 text-violet-400 font-medium text-xs">পদবী</th>
-                   <th className="text-left p-3 text-amber-400 font-medium text-xs">বেতন ধরন</th>
-                   <th className="text-left p-3 text-emerald-400 font-medium text-xs">ভেরিফাইড</th>
+                   <th className="text-left p-3 text-red-400 font-medium text-xs">বেতন ধরন</th>
+                   <th className="text-left p-3 text-red-400 font-medium text-xs">ভেরিফাইড</th>
                    <th className="text-left p-3 text-fuchsia-400 font-medium text-xs">স্পটলাইট</th>
                    <th className="text-left p-3 text-sky-400 font-medium text-xs">ক্রম</th>
                    <th className="text-left p-3 text-pink-400 font-medium text-xs">স্ট্যাটাস</th>
-                  <th className="text-right p-3 text-orange-400 font-medium text-xs">অ্যাকশন</th>
+                  <th className="text-right p-3 text-red-400 font-medium text-xs">অ্যাকশন</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/20">
@@ -1003,7 +1003,7 @@ const AdminMembers = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between mt-6">
               <h2 className="text-base md:text-lg font-bold text-foreground flex items-center gap-2">
-                <ShieldAlert className="h-4 w-4 text-amber-400" /> এডমিন ও ক্লায়েন্ট
+                <ShieldAlert className="h-4 w-4 text-red-400" /> এডমিন ও ক্লায়েন্ট
               </h2>
               <p className="text-xs text-muted-foreground">{staffList.length} জন</p>
             </div>
@@ -1026,7 +1026,7 @@ const AdminMembers = () => {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <p className="text-sm font-semibold text-foreground truncate">{m.full_name}</p>
                           {isAdmin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-destructive/15 text-destructive">এডমিন</span>}
-                          {isProductAdmin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500">প্রডাক্ট এডমিন</span>}
+                          {isProductAdmin && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/15 text-red-500">প্রডাক্ট এডমিন</span>}
                           {isClient && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-500">ক্লায়েন্ট</span>}
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{m.email || m.designation || "—"}</p>

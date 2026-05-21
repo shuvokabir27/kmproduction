@@ -305,10 +305,10 @@ const AdminDashboard = () => {
 
   const stats = [
     { label: "মোট সদস্য", value: memberCount ?? 0, icon: Users, gradient: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400", iconBg: "bg-violet-500/10", onClick: () => navigate("/admin/members") },
-    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400", iconBg: "bg-emerald-500/10", onClick: () => navigate("/admin/shootings") },
-    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400", iconBg: "bg-amber-500/10", onClick: () => navigate("/admin/payments") },
+    { label: "মোট শুটিং", value: shootingCount ?? 0, icon: Film, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400", iconBg: "bg-red-500/10", onClick: () => navigate("/admin/shootings") },
+    { label: "মোট পেমেন্ট", value: `৳${(totalPayments ?? 0).toLocaleString("bn-BD")}`, icon: CreditCard, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400", iconBg: "bg-red-500/10", onClick: () => navigate("/admin/payments") },
     { label: "মোট বকেয়া", value: `৳${(totalDue?.due ?? 0).toLocaleString("bn-BD")}`, icon: Wallet, gradient: "from-rose-500/20 to-rose-500/5", iconColor: "text-rose-400", iconBg: "bg-rose-500/10", onClick: () => setDueDialogOpen(true) },
-    { label: "অগ্রিম", value: `৳${(advanceSummary?.remaining ?? 0).toLocaleString("bn-BD")}`, icon: HandCoins, gradient: "from-orange-500/20 to-orange-500/5", iconColor: "text-orange-400", iconBg: "bg-orange-500/10", onClick: () => setAdvanceDialogOpen(true) },
+    { label: "অগ্রিম", value: `৳${(advanceSummary?.remaining ?? 0).toLocaleString("bn-BD")}`, icon: HandCoins, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400", iconBg: "bg-red-500/10", onClick: () => setAdvanceDialogOpen(true) },
   ];
 
   return (
@@ -394,8 +394,8 @@ const AdminDashboard = () => {
         <div className="premium-card rounded-2xl overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/20 flex items-center justify-between">
             <h2 className="font-semibold text-foreground text-sm md:text-base flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                <TrendingUp className="h-4 w-4 text-amber-400" />
+              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-red-400" />
               </div>
               সাম্প্রতিক পেমেন্ট
             </h2>
@@ -456,11 +456,11 @@ const AdminDashboard = () => {
                 </div>
                 <div className="divide-y divide-border/15">
                   {[
-                    { label: "শুটিং থেকে আয়", value: filteredData.totalEarned, color: "text-emerald-400", sign: "+" },
-                    { label: "বোনাস ও যাতায়াত", value: (filteredData as any).totalBonus ?? 0, color: "text-amber-400", sign: "+" },
+                    { label: "শুটিং থেকে আয়", value: filteredData.totalEarned, color: "text-red-400", sign: "+" },
+                    { label: "বোনাস ও যাতায়াত", value: (filteredData as any).totalBonus ?? 0, color: "text-red-400", sign: "+" },
                     { label: "মাসিক বেতন", value: (filteredData as any).totalSalary ?? 0, color: "text-violet-400", sign: "+" },
                     { label: "বাইরের কাজ থেকে আয়", value: (filteredData as any).totalFreelance ?? 0, color: "text-cyan-400", sign: "+" },
-                    { label: "পূর্ববর্তী বকেয়া", value: (filteredData as any).totalPrevious ?? 0, color: "text-orange-400", sign: "+" },
+                    { label: "পূর্ববর্তী বকেয়া", value: (filteredData as any).totalPrevious ?? 0, color: "text-red-400", sign: "+" },
                     { label: "প্রদানকৃত পেমেন্ট", value: filteredData.totalPaid, color: "text-rose-400", sign: "−" },
                     { label: "বাইরের কাজের পেমেন্ট", value: (filteredData as any).totalFreelancePaid ?? 0, color: "text-rose-400", sign: "−" },
                   ].filter(r => r.value > 0).map((row, i) => (
@@ -557,7 +557,7 @@ const AdminDashboard = () => {
         <DialogContent className="bg-card border-border/30 max-w-2xl max-h-[85vh] overflow-y-auto mx-2">
           <DialogHeader>
             <DialogTitle className="text-foreground text-base flex items-center gap-2">
-              <HandCoins className="h-5 w-5 text-orange-400" /> অগ্রিম বিস্তারিত
+              <HandCoins className="h-5 w-5 text-red-400" /> অগ্রিম বিস্তারিত
             </DialogTitle>
           </DialogHeader>
 
@@ -565,13 +565,13 @@ const AdminDashboard = () => {
             <div className="space-y-4 py-2">
               {/* Summary Hero */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500/15 to-orange-500/5 border border-orange-500/30 text-center">
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-red-500/15 to-red-500/5 border border-red-500/30 text-center">
                   <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">বকেয়া অগ্রিম</p>
-                  <p className="text-base md:text-lg font-bold text-orange-400">৳{advanceSummary.remaining.toLocaleString("bn-BD")}</p>
+                  <p className="text-base md:text-lg font-bold text-red-400">৳{advanceSummary.remaining.toLocaleString("bn-BD")}</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 border border-emerald-500/30 text-center">
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-red-500/15 to-red-500/5 border border-red-500/30 text-center">
                   <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">কাটা হয়েছে</p>
-                  <p className="text-base md:text-lg font-bold text-emerald-400">৳{advanceSummary.totalDeducted.toLocaleString("bn-BD")}</p>
+                  <p className="text-base md:text-lg font-bold text-red-400">৳{advanceSummary.totalDeducted.toLocaleString("bn-BD")}</p>
                 </div>
                 <div className="p-3 rounded-2xl bg-gradient-to-br from-violet-500/15 to-violet-500/5 border border-violet-500/30 text-center">
                   <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">মোট দেওয়া</p>
@@ -583,7 +583,7 @@ const AdminDashboard = () => {
               <div className="rounded-2xl border border-border/30 overflow-hidden">
                 <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
                   <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
-                    <Users className="h-3.5 w-3.5 text-orange-400" /> কার কাছে কত অগ্রিম বকেয়া
+                    <Users className="h-3.5 w-3.5 text-red-400" /> কার কাছে কত অগ্রিম বকেয়া
                   </h3>
                   <span className="text-[10px] text-muted-foreground">{advanceSummary.memberList.length} জন</span>
                 </div>
@@ -594,11 +594,11 @@ const AdminDashboard = () => {
                   {advanceSummary.memberList.map((m: any) => (
                     <div key={m.id} className="px-4 py-3 flex items-center justify-between hover:bg-secondary/20 transition-colors">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="h-9 w-9 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center overflow-hidden shrink-0">
+                        <div className="h-9 w-9 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center overflow-hidden shrink-0">
                           {m.photo_url ? (
                             <img src={m.photo_url} alt={m.full_name} className="h-full w-full object-cover" />
                           ) : (
-                            <span className="text-orange-400 text-xs font-bold">{m.full_name?.charAt(0)}</span>
+                            <span className="text-red-400 text-xs font-bold">{m.full_name?.charAt(0)}</span>
                           )}
                         </div>
                         <div className="min-w-0">
@@ -606,7 +606,7 @@ const AdminDashboard = () => {
                           <p className="text-[10px] text-muted-foreground">কাটা: ৳{m.deducted.toLocaleString("bn-BD")} / ৳{m.total.toLocaleString("bn-BD")}</p>
                         </div>
                       </div>
-                      <span className="text-sm font-bold text-orange-400 ml-2 shrink-0">
+                      <span className="text-sm font-bold text-red-400 ml-2 shrink-0">
                         ৳{m.remaining.toLocaleString("bn-BD")}
                       </span>
                     </div>
@@ -618,7 +618,7 @@ const AdminDashboard = () => {
               <div className="rounded-2xl border border-border/30 overflow-hidden">
                 <div className="px-4 py-2.5 bg-secondary/40 border-b border-border/20 flex items-center justify-between">
                   <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" /> সাম্প্রতিক কাটার রিপোর্ট
+                    <TrendingUp className="h-3.5 w-3.5 text-red-400" /> সাম্প্রতিক কাটার রিপোর্ট
                   </h3>
                   <span className="text-[10px] text-muted-foreground">শেষ ৫০টি</span>
                 </div>
@@ -641,7 +641,7 @@ const AdminDashboard = () => {
                           <p className="text-[10px] text-muted-foreground">{new Date(d.created_at).toLocaleDateString("bn-BD")} · {d.notes || ""}</p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-emerald-400 ml-2 shrink-0">
+                      <span className="text-xs font-bold text-red-400 ml-2 shrink-0">
                         − ৳{Number(d.amount).toLocaleString("bn-BD")}
                       </span>
                     </div>

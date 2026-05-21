@@ -486,7 +486,7 @@ const PhotoCard = () => {
             {/* Crop / Zoom controls */}
             <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3 space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-amber-400">🔍 জুম ও পজিশন</p>
+                <p className="text-xs font-semibold text-red-400">🔍 জুম ও পজিশন</p>
                 <button
                   onClick={() => { setZoom(1); setOffset({ x: 0, y: 0 }); }}
                   className="text-[11px] px-2 py-1 rounded-full bg-background/50 text-foreground/70 border border-red-500/20 hover:border-red-500/50"
@@ -516,8 +516,8 @@ const PhotoCard = () => {
             {/* Slogan selector */}
             <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <p className="text-xs font-semibold text-amber-400">স্লোগান নির্বাচন করুন</p>
+                <Sparkles className="w-4 h-4 text-red-400" />
+                <p className="text-xs font-semibold text-red-400">স্লোগান নির্বাচন করুন</p>
               </div>
               <div className="flex gap-2 flex-wrap">
                 {SLOGAN_OPTIONS.map((s) => (

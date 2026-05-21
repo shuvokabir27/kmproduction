@@ -190,7 +190,7 @@ const AdminBookings = () => {
                               ৳{(final || orig || 0).toLocaleString("bn-BD")}
                             </span>
                             {disc > 0 && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 font-bold">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-500 font-bold">
                                 -৳{disc.toLocaleString("bn-BD")} ছাড়
                               </span>
                             )}
@@ -272,7 +272,7 @@ const AdminBookings = () => {
                       </a>
                       {waUrl && (
                         <a href={waUrl} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[100px]">
-                          <Button size="sm" className="w-full text-xs bg-green-600 hover:bg-green-700 text-white">
+                          <Button size="sm" className="w-full text-xs bg-red-600 hover:bg-red-700 text-white">
                             <MessageCircle className="h-3 w-3 mr-1" /> WhatsApp
                           </Button>
                         </a>

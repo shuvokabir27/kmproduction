@@ -224,7 +224,7 @@ const AdminAppVersions = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
                     <Smartphone className="w-5 h-5 text-white" />
                   </div>
                   Android Versions ({androidVersions.length})
@@ -406,7 +406,7 @@ const VersionRow = ({
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-bold">v{v.version}</span>
           {v.is_active ? (
-            <Badge variant="default" className="bg-green-600 hover:bg-green-700 gap-1">
+            <Badge variant="default" className="bg-red-600 hover:bg-red-700 gap-1">
               <CheckCircle2 className="w-3 h-3" />
               সক্রিয়
             </Badge>
@@ -427,7 +427,7 @@ const VersionRow = ({
         </Button>
         {!v.is_active && (
           <Button variant="ghost" size="icon" onClick={onSetActive} title="Set as active">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
+            <CheckCircle2 className="w-4 h-4 text-red-600" />
           </Button>
         )}
         <Button variant="ghost" size="icon" onClick={onDelete} title="Delete">

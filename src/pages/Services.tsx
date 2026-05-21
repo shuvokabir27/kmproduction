@@ -218,7 +218,7 @@ const Services = () => {
             </Link>
             {(settings as any)?.whatsapp_no && (
               <a href={`https://wa.me/${(settings as any).whatsapp_no.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white font-semibold">
+                <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-semibold">
                   <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
                 </Button>
               </a>
@@ -248,7 +248,7 @@ const Services = () => {
               <span className="gradient-text">{t("সম্পূর্ণ সমাধান", "Complete Solution")}</span>
             </h1>
             <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto leading-relaxed">
-              আমরা <span className="font-bold text-amber-400">কুয়াকাটা মাল্টিমিডিয়া টিম</span> — <span className="font-bold text-cyan-400">দীর্ঘ ৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।
+              আমরা <span className="font-bold text-red-400">কুয়াকাটা মাল্টিমিডিয়া টিম</span> — <span className="font-bold text-cyan-400">দীর্ঘ ৭ বছর</span> ধরে এই সেক্টরে অভিজ্ঞ ও দক্ষ টিম নিয়ে কাজ করে আসছি। বিজ্ঞাপন, বিয়ে বাড়ি, নাটক নির্মাণ থেকে শুরু করে ভিডিও এডিটিং — সবকিছুর জন্য আমরা আপনার পাশে।
             </p>
           </motion.div>
         </div>
@@ -262,22 +262,22 @@ const Services = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, type: "spring" }}
-              className="relative overflow-hidden rounded-xl sm:rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-red-500/15 backdrop-blur-xl p-4 sm:p-6 md:p-8"
+              className="relative overflow-hidden rounded-xl sm:rounded-2xl border-2 border-red-500/40 bg-gradient-to-r from-red-500/15 via-red-500/10 to-red-500/15 backdrop-blur-xl p-4 sm:p-6 md:p-8"
             >
               {/* Animated bg dots */}
               <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-              <div className="absolute -top-10 -left-10 w-28 sm:w-40 h-28 sm:h-40 bg-amber-500/20 rounded-full blur-3xl" />
+              <div className="absolute -top-10 -left-10 w-28 sm:w-40 h-28 sm:h-40 bg-red-500/20 rounded-full blur-3xl" />
               <div className="absolute -bottom-10 -right-10 w-28 sm:w-40 h-28 sm:h-40 bg-red-500/20 rounded-full blur-3xl" />
 
               <div className="relative z-10 text-center">
-                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 mb-3 sm:mb-4">
-                  <Gift className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
-                  <span className="text-xs sm:text-sm font-bold text-amber-300">{activeOffer.title}</span>
-                  <Percent className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-red-500/20 border border-red-500/30 mb-3 sm:mb-4">
+                  <Gift className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400" />
+                  <span className="text-xs sm:text-sm font-bold text-red-300">{activeOffer.title}</span>
+                  <Percent className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-400" />
                 </div>
 
                 <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1.5 sm:mb-2">
-                  <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-red-400 via-red-400 to-red-400 bg-clip-text text-transparent">
                     {activeOffer.discount_percentage}% ডিসকাউন্ট
                   </span>
                 </h3>
@@ -288,8 +288,8 @@ const Services = () => {
                 {/* Countdown */}
                 <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-5">
                   {[
-                    { value: timeLeft.days, label: t("দিন", "Days"), color: "from-amber-500 to-amber-600" },
-                    { value: timeLeft.hours, label: t("ঘণ্টা", "Hours"), color: "from-orange-500 to-orange-600" },
+                    { value: timeLeft.days, label: t("দিন", "Days"), color: "from-red-500 to-red-600" },
+                    { value: timeLeft.hours, label: t("ঘণ্টা", "Hours"), color: "from-red-500 to-red-600" },
                     { value: timeLeft.minutes, label: t("মিনিট", "Min"), color: "from-red-500 to-red-600" },
                     { value: timeLeft.seconds, label: t("সেকেন্ড", "Sec"), color: "from-pink-500 to-pink-600" },
                   ].map((unit, i) => (
@@ -299,7 +299,7 @@ const Services = () => {
                         initial={{ scale: 1.2, opacity: 0.5 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.3 }}
-                        className={`h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-xl sm:rounded-2xl bg-gradient-to-br ${unit.color} flex items-center justify-center shadow-lg shadow-amber-500/10`}
+                        className={`h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-xl sm:rounded-2xl bg-gradient-to-br ${unit.color} flex items-center justify-center shadow-lg shadow-red-500/10`}
                       >
                         <span className="text-xl sm:text-2xl md:text-3xl font-black text-white tabular-nums">
                           {String(unit.value).padStart(2, '0')}
@@ -346,8 +346,8 @@ const Services = () => {
                 const features = (service.features as string[]) || [];
                 const cardColors = [
                   { gradient: "from-violet-600/25 via-purple-500/15 to-indigo-500/10", border: "border-violet-500/30", icon: "bg-violet-500/20 text-violet-400", glow: "bg-violet-500/20", accent: "text-violet-400", checkBg: "bg-violet-500/10", checkIcon: "text-violet-400", tag: "text-violet-300" },
-                  { gradient: "from-primary/30 via-orange-500/15 to-amber-500/10", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
-                  { gradient: "from-emerald-600/25 via-teal-500/15 to-cyan-500/10", border: "border-emerald-500/30", icon: "bg-emerald-500/20 text-emerald-400", glow: "bg-emerald-500/20", accent: "text-emerald-400", checkBg: "bg-emerald-500/10", checkIcon: "text-emerald-400", tag: "text-emerald-300" },
+                  { gradient: "from-primary/30 via-red-500/15 to-red-500/10", border: "border-primary/30", icon: "bg-primary/20 text-primary", glow: "bg-primary/20", accent: "text-primary", checkBg: "bg-primary/10", checkIcon: "text-primary", tag: "text-primary" },
+                  { gradient: "from-red-600/25 via-red-500/15 to-cyan-500/10", border: "border-red-500/30", icon: "bg-red-500/20 text-red-400", glow: "bg-red-500/20", accent: "text-red-400", checkBg: "bg-red-500/10", checkIcon: "text-red-400", tag: "text-red-300" },
                 ];
                 const c = cardColors[index % cardColors.length];
                 return (
@@ -365,7 +365,7 @@ const Services = () => {
                       <div className={`absolute -bottom-10 -left-10 w-32 h-32 ${c.glow} rounded-full blur-3xl opacity-30`} />
                       
                       {index === 1 && (
-                        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary via-red-500 to-orange-500 text-white text-center py-1.5 text-xs font-bold tracking-wider uppercase">
+                        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary via-red-500 to-red-500 text-white text-center py-1.5 text-xs font-bold tracking-wider uppercase">
                           ★ {t("সবচেয়ে জনপ্রিয়", "Most Popular")}
                         </div>
                       )}
@@ -426,7 +426,7 @@ const Services = () => {
                                     <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                     <div className="flex items-center gap-2">
                                       <span className={`text-3xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                                     </div>
                                   </div>
                                 ) : (
@@ -460,7 +460,7 @@ const Services = () => {
                                     <span className="text-base text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                     <div className="flex items-center gap-2">
                                       <span className={`text-3xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                                     </div>
                                   </div>
                                 ) : (
@@ -477,7 +477,7 @@ const Services = () => {
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2 flex-wrap">
                                       <span className="text-xl text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
-                                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                                     </div>
                                     <span className={`text-3xl font-black ${c.accent}`}>৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                   </div>
@@ -561,10 +561,10 @@ const Services = () => {
                 const shouldCenter = remainder === 1 && isLastRow;
                 const otherColors = [
                   { gradient: "from-sky-600/25 via-blue-500/15 to-cyan-500/10", border: "border-sky-500/25", icon: "bg-sky-500/15 text-sky-400", accent: "text-sky-400", checkIcon: "text-sky-400", tag: "text-sky-300", glow: "bg-sky-500/20" },
-                  { gradient: "from-amber-600/25 via-yellow-500/15 to-orange-500/10", border: "border-amber-500/25", icon: "bg-amber-500/15 text-amber-400", accent: "text-amber-400", checkIcon: "text-amber-400", tag: "text-amber-300", glow: "bg-amber-500/20" },
+                  { gradient: "from-red-600/25 via-red-500/15 to-red-500/10", border: "border-red-500/25", icon: "bg-red-500/15 text-red-400", accent: "text-red-400", checkIcon: "text-red-400", tag: "text-red-300", glow: "bg-red-500/20" },
                   { gradient: "from-rose-600/25 via-pink-500/15 to-red-500/10", border: "border-rose-500/25", icon: "bg-rose-500/15 text-rose-400", accent: "text-rose-400", checkIcon: "text-rose-400", tag: "text-rose-300", glow: "bg-rose-500/20" },
                   { gradient: "from-indigo-600/25 via-blue-500/15 to-violet-500/10", border: "border-indigo-500/25", icon: "bg-indigo-500/15 text-indigo-400", accent: "text-indigo-400", checkIcon: "text-indigo-400", tag: "text-indigo-300", glow: "bg-indigo-500/20" },
-                  { gradient: "from-teal-600/25 via-emerald-500/15 to-green-500/10", border: "border-teal-500/25", icon: "bg-teal-500/15 text-teal-400", accent: "text-teal-400", checkIcon: "text-teal-400", tag: "text-teal-300", glow: "bg-teal-500/20" },
+                  { gradient: "from-red-600/25 via-red-500/15 to-red-500/10", border: "border-red-500/25", icon: "bg-red-500/15 text-red-400", accent: "text-red-400", checkIcon: "text-red-400", tag: "text-red-300", glow: "bg-red-500/20" },
                   { gradient: "from-fuchsia-600/25 via-purple-500/15 to-pink-500/10", border: "border-fuchsia-500/25", icon: "bg-fuchsia-500/15 text-fuchsia-400", accent: "text-fuchsia-400", checkIcon: "text-fuchsia-400", tag: "text-fuchsia-300", glow: "bg-fuchsia-500/20" },
                 ];
                 const c = otherColors[index % otherColors.length];
@@ -641,7 +641,7 @@ const Services = () => {
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
                                     <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
                               ) : (
@@ -675,7 +675,7 @@ const Services = () => {
                                   <span className="text-sm text-muted-foreground line-through">৳{totalPrice.toLocaleString('bn-BD')}</span>
                                   <div className="flex items-center gap-2">
                                     <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(totalPrice, discount).toLocaleString('bn-BD')}</span>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                                   </div>
                                 </div>
                               ) : (
@@ -692,7 +692,7 @@ const Services = () => {
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <span className="text-base text-muted-foreground line-through">৳{numPrice.toLocaleString('bn-BD')}</span>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                                   </div>
                                   <span className={`text-2xl font-black ${c.accent}`}>৳{getDiscountedPrice(numPrice, discount).toLocaleString('bn-BD')}</span>
                                 </div>
@@ -768,7 +768,7 @@ const Services = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8">
+                  <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white font-semibold px-8">
                     <MessageCircle className="h-5 w-5 mr-2" /> {t("WhatsApp এ মেসেজ করুন", "Message on WhatsApp")}
                   </Button>
                 </a>
@@ -908,7 +908,7 @@ const Services = () => {
                         )}
                         <span className="text-3xl font-black text-primary">৳{(finalPrice || rawPrice)!.toLocaleString('bn-BD')}</span>
                         {discount > 0 && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                         )}
                       </div>
                     </div>
@@ -953,7 +953,7 @@ const Services = () => {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                        className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center shadow-xl shadow-green-500/30"
+                        className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-red-500 to-red-400 flex items-center justify-center shadow-xl shadow-red-500/30"
                       >
                         <Check className="h-10 w-10 text-white" />
                       </motion.div>
@@ -967,7 +967,7 @@ const Services = () => {
                         <h3 className="text-2xl font-black text-foreground">
                           🎉 {t("বুকিং সফল!", "Booking Successful!")}
                         </h3>
-                        <div className="rounded-xl bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-teal-500/10 border border-green-500/20 p-4 space-y-2">
+                        <div className="rounded-xl bg-gradient-to-br from-red-500/10 via-red-500/5 to-red-500/10 border border-red-500/20 p-4 space-y-2">
                           <p className="text-sm text-foreground leading-relaxed">
                             আপনার বুকিং সফলভাবে সাবমিট হয়েছে। ✅
                           </p>
@@ -975,7 +975,7 @@ const Services = () => {
                             শীঘ্রই আমাদের প্রতিনিধি আপনাকে <span className="font-bold text-primary">কল করে বুকিং কনফার্ম</span> করবেন।
                           </p>
                         </div>
-                        <p className="text-base font-semibold bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
+                        <p className="text-base font-semibold bg-gradient-to-r from-red-400 via-red-400 to-rose-400 bg-clip-text text-transparent">
                           🙏 আমাদের সেবা নেওয়ার জন্য আপনাকে অসংখ্য ধন্যবাদ!
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -1016,14 +1016,14 @@ const Services = () => {
                       )}
                       {(settings as any)?.whatsapp_no && (
                         <a href={waUrl} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button className="w-full font-bold py-6 text-base rounded-xl bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white shadow-xl shadow-green-600/30 hover:shadow-green-500/40 transition-all duration-300 hover:scale-[1.02] border-0">
+                          <Button className="w-full font-bold py-6 text-base rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white shadow-xl shadow-red-600/30 hover:shadow-red-500/40 transition-all duration-300 hover:scale-[1.02] border-0">
                             <MessageCircle className="h-5 w-5 mr-2" /> WhatsApp
                           </Button>
                         </a>
                       )}
                       <Button
                         onClick={() => setBookingStep('form')}
-                        className="w-full font-bold py-6 text-base rounded-xl bg-gradient-to-r from-orange-500 via-red-500 to-rose-500 hover:from-orange-400 hover:via-red-400 hover:to-rose-400 text-white shadow-xl shadow-red-500/30 hover:shadow-red-500/40 transition-all duration-300 hover:scale-[1.02] border-0"
+                        className="w-full font-bold py-6 text-base rounded-xl bg-gradient-to-r from-red-500 via-red-500 to-rose-500 hover:from-red-400 hover:via-red-400 hover:to-rose-400 text-white shadow-xl shadow-red-500/30 hover:shadow-red-500/40 transition-all duration-300 hover:scale-[1.02] border-0"
                       >
                         <ChevronRight className="h-5 w-5 mr-2" /> {t("বুকিং করুন", "Book Now")}
                       </Button>

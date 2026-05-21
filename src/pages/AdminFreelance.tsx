@@ -54,8 +54,8 @@ type FreelanceAssignment = {
 
 const statusMap: Record<string, { label: string; color: string }> = {
   upcoming: { label: "আসন্ন", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
-  ongoing: { label: "চলছে", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  completed: { label: "সম্পন্ন", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  ongoing: { label: "চলছে", color: "bg-red-500/20 text-red-400 border-red-500/30" },
+  completed: { label: "সম্পন্ন", color: "bg-red-500/20 text-red-400 border-red-500/30" },
   paid: { label: "পেইড", color: "bg-violet-500/20 text-violet-400 border-violet-500/30" },
 };
 
@@ -365,8 +365,8 @@ export default function AdminFreelance() {
       <div className="p-4 md:p-6 space-y-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <Briefcase className="h-5 w-5 text-orange-400" />
+            <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+              <Briefcase className="h-5 w-5 text-red-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">বাইরের কাজ</h1>
@@ -422,7 +422,7 @@ export default function AdminFreelance() {
                             </div>
                             <div className="text-right shrink-0">
                               <div className="text-sm font-medium text-foreground">বাজেট: ৳{p.total_budget.toLocaleString("bn-BD")}</div>
-                              <div className={`text-xs ${profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                              <div className={`text-xs ${profit >= 0 ? "text-red-400" : "text-red-400"}`}>
                                 লাভ: ৳{profit.toLocaleString("bn-BD")}
                               </div>
                               {isOpen ? <ChevronUp className="h-4 w-4 mt-1 ml-auto text-muted-foreground" /> : <ChevronDown className="h-4 w-4 mt-1 ml-auto text-muted-foreground" />}
@@ -446,17 +446,17 @@ export default function AdminFreelance() {
                                     <div className="text-xs text-muted-foreground">বাজেট</div>
                                     <div className="font-bold text-sky-400">৳{p.total_budget.toLocaleString("bn-BD")}</div>
                                   </div>
-                                  <div className="rounded-lg bg-amber-500/10 p-3 text-center">
+                                  <div className="rounded-lg bg-red-500/10 p-3 text-center">
                                     <div className="text-xs text-muted-foreground">অন্যান্য খরচ</div>
-                                    <div className="font-bold text-amber-400">৳{p.total_expense.toLocaleString("bn-BD")}</div>
+                                    <div className="font-bold text-red-400">৳{p.total_expense.toLocaleString("bn-BD")}</div>
                                   </div>
                                   <div className="rounded-lg bg-violet-500/10 p-3 text-center">
                                     <div className="text-xs text-muted-foreground">সদস্য খরচ</div>
                                     <div className="font-bold text-violet-400">৳{memberCost.toLocaleString("bn-BD")}</div>
                                   </div>
-                                  <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
+                                  <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-red-500/10" : "bg-red-500/10"}`}>
                                     <div className="text-xs text-muted-foreground">লাভ</div>
-                                    <div className={`font-bold ${profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
+                                    <div className={`font-bold ${profit >= 0 ? "text-red-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
                                   </div>
                                 </div>
 
@@ -500,7 +500,7 @@ export default function AdminFreelance() {
                                           <Button
                                             size="sm"
                                             variant={a.is_paid ? "default" : "outline"}
-                                            className={`h-7 text-xs gap-1 ${a.is_paid ? "bg-emerald-600 hover:bg-emerald-700" : ""}`}
+                                            className={`h-7 text-xs gap-1 ${a.is_paid ? "bg-red-600 hover:bg-red-700" : ""}`}
                                             onClick={() => togglePaidMutation.mutate({ id: a.id, is_paid: a.is_paid, rate: a.rate })}
                                           >
                                             {a.is_paid ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
@@ -606,13 +606,13 @@ export default function AdminFreelance() {
                       <Card className="border-border/50">
                         <CardContent className="p-3 text-center">
                           <div className="text-xs text-muted-foreground">মোট পেমেন্ট</div>
-                          <div className="text-lg font-bold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
+                          <div className="text-lg font-bold text-red-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
                         </CardContent>
                       </Card>
                       <Card className="border-border/50">
                         <CardContent className="p-3 text-center">
                           <div className="text-xs text-muted-foreground">বাকি</div>
-                          <div className={`text-lg font-bold ${due > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                          <div className={`text-lg font-bold ${due > 0 ? "text-red-400" : "text-red-400"}`}>
                             ৳{Math.max(0, due).toLocaleString("bn-BD")}
                           </div>
                         </CardContent>
@@ -753,17 +753,17 @@ export default function AdminFreelance() {
                             <div className="text-xs text-muted-foreground">মোট আয়</div>
                             <div className="font-bold text-sky-400">৳{s.budget.toLocaleString("bn-BD")}</div>
                           </div>
-                          <div className="rounded-lg bg-amber-500/10 p-3 text-center">
+                          <div className="rounded-lg bg-red-500/10 p-3 text-center">
                             <div className="text-xs text-muted-foreground">অন্যান্য খরচ</div>
-                            <div className="font-bold text-amber-400">৳{s.expense.toLocaleString("bn-BD")}</div>
+                            <div className="font-bold text-red-400">৳{s.expense.toLocaleString("bn-BD")}</div>
                           </div>
                           <div className="rounded-lg bg-violet-500/10 p-3 text-center">
                             <div className="text-xs text-muted-foreground">সদস্য খরচ</div>
                             <div className="font-bold text-violet-400">৳{s.memberCost.toLocaleString("bn-BD")}</div>
                           </div>
-                          <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
+                          <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-red-500/10" : "bg-red-500/10"}`}>
                             <div className="text-xs text-muted-foreground">মোট লাভ</div>
-                            <div className={`font-bold ${profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
+                            <div className={`font-bold ${profit >= 0 ? "text-red-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
                           </div>
                         </div>
                       </CardContent>
@@ -878,7 +878,7 @@ export default function AdminFreelance() {
                 return (
                   <div className="space-y-2 border-t border-border/30 pt-3">
                     <h4 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                      <FileText className="h-4 w-4 text-amber-400" /> ক্লায়েন্টের স্ক্রিপ্ট
+                      <FileText className="h-4 w-4 text-red-400" /> ক্লায়েন্টের স্ক্রিপ্ট
                     </h4>
                     {proj.client_script && (
                       <div className="p-3 rounded-lg bg-secondary/30 text-sm text-foreground whitespace-pre-wrap">

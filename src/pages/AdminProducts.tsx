@@ -211,7 +211,7 @@ const AdminProducts = () => {
             <p className="text-xs text-muted-foreground">প্রডাক্ট ও অর্ডার ম্যানেজমেন্ট</p>
           </div>
         </div>
-        <Link to="/admin/delivery-settings" className="inline-flex items-center gap-1.5 text-xs font-bold bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-lg">
+        <Link to="/admin/delivery-settings" className="inline-flex items-center gap-1.5 text-xs font-bold bg-red-700 hover:bg-red-800 text-white px-3 py-2 rounded-lg">
           <Truck className="h-4 w-4" /> <span className="hidden sm:inline">ডেলিভারি সেটিংস</span>
         </Link>
       </div>
@@ -723,15 +723,15 @@ const ReportsSection = () => {
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-card border border-border/30 rounded-2xl p-4">
           <p className="text-xs text-muted-foreground">এই মাসের আয়</p>
-          <p className="text-2xl font-extrabold text-emerald-400 mt-1">৳{toBn(thisMonthRev)}</p>
+          <p className="text-2xl font-extrabold text-red-400 mt-1">৳{toBn(thisMonthRev)}</p>
         </div>
         <div className="bg-card border border-border/30 rounded-2xl p-4">
           <p className="text-xs text-muted-foreground">গত মাসের আয়</p>
-          <p className="text-2xl font-extrabold text-amber-400 mt-1">৳{toBn(lastMonthRev)}</p>
+          <p className="text-2xl font-extrabold text-red-400 mt-1">৳{toBn(lastMonthRev)}</p>
         </div>
         <div className="bg-card border border-border/30 rounded-2xl p-4">
           <p className="text-xs text-muted-foreground">প্রবৃদ্ধি</p>
-          <p className={`text-2xl font-extrabold mt-1 ${growth >= 0 ? "text-emerald-400" : "text-destructive"}`}>
+          <p className={`text-2xl font-extrabold mt-1 ${growth >= 0 ? "text-red-400" : "text-destructive"}`}>
             {growth >= 0 ? "+" : ""}{toBn(growth)}%
           </p>
         </div>

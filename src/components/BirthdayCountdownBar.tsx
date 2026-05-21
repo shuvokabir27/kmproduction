@@ -226,8 +226,8 @@ export function BirthdayCountdownBar() {
         <div
           className={`relative border border-border/30 rounded-xl backdrop-blur-xl overflow-hidden ${
             showPlanBanner
-              ? "bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-pink-500/15"
-              : "bg-gradient-to-r from-cyan-500/10 via-card/50 to-emerald-500/10"
+              ? "bg-gradient-to-r from-red-500/15 via-red-500/10 to-pink-500/15"
+              : "bg-gradient-to-r from-cyan-500/10 via-card/50 to-red-500/10"
           }`}
         >
           <div className="relative px-2 md:px-3 py-1.5">
@@ -275,7 +275,7 @@ export function BirthdayCountdownBar() {
                         {current.full_name}
                       </span>
                       {showPlanBanner ? (
-                        <span className="text-[9px] md:text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-400/40 font-bold">
+                        <span className="text-[9px] md:text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-200 border border-red-400/40 font-bold">
                           শুভেচ্ছা প্ল্যান করুন
                         </span>
                       ) : (

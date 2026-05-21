@@ -8,7 +8,7 @@ export default function ClientBottomNav() {
 
   const tabs = [
     { path: "/client", label: "ড্যাশবোর্ড", icon: Sparkles, activeColor: "text-primary", activeBg: "bg-primary/25", inactiveBg: "bg-primary/10" },
-    { path: "/client/payments", label: "পেমেন্ট হিস্ট্রি", icon: History, activeColor: "text-emerald-400", activeBg: "bg-emerald-500/25", inactiveBg: "bg-emerald-500/10" },
+    { path: "/client/payments", label: "পেমেন্ট হিস্ট্রি", icon: History, activeColor: "text-red-400", activeBg: "bg-red-500/25", inactiveBg: "bg-red-500/10" },
     { path: "/client/projects", label: "প্রজেক্ট সমূহ", icon: FileText, activeColor: "text-violet-400", activeBg: "bg-violet-500/25", inactiveBg: "bg-violet-500/10" },
   ];
 

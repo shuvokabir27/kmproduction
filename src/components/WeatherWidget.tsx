@@ -13,8 +13,8 @@ function describe(code: number, isDay: boolean) {
   // https://open-meteo.com/en/docs (WMO codes)
   if (code === 0) return {
     Icon: Sun, label: isDay ? "পরিষ্কার" : "পরিষ্কার রাত",
-    grad: "from-amber-400 via-orange-400 to-rose-400",
-    glow: "shadow-amber-500/40", color: "text-amber-300",
+    grad: "from-red-400 via-red-400 to-rose-400",
+    glow: "shadow-red-500/40", color: "text-red-300",
   };
   if (code === 1 || code === 2) return {
     Icon: Cloud, label: "আংশিক মেঘলা",
@@ -33,7 +33,7 @@ function describe(code: number, isDay: boolean) {
   };
   if (code >= 51 && code <= 57) return {
     Icon: CloudDrizzle, label: "গুঁড়ি বৃষ্টি",
-    grad: "from-cyan-400 via-teal-400 to-blue-400",
+    grad: "from-cyan-400 via-red-400 to-blue-400",
     glow: "shadow-cyan-500/40", color: "text-cyan-200",
   };
   if (code >= 61 && code <= 67) return {
@@ -53,7 +53,7 @@ function describe(code: number, isDay: boolean) {
   };
   if (code >= 95 && code <= 99) return {
     Icon: CloudLightning, label: "বজ্রঝড়",
-    grad: "from-fuchsia-500 via-purple-500 to-amber-400",
+    grad: "from-fuchsia-500 via-purple-500 to-red-400",
     glow: "shadow-fuchsia-500/40", color: "text-fuchsia-200",
   };
   return {
@@ -297,11 +297,11 @@ export function WeatherWidget() {
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5 pt-1">
-                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-orange-500/25 via-rose-500/20 to-pink-500/15 border border-orange-400/40 shadow-md shadow-orange-500/10">
-                    <div className="flex items-center gap-1 text-[9px] font-semibold text-orange-300">
+                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-red-500/25 via-rose-500/20 to-pink-500/15 border border-red-400/40 shadow-md shadow-red-500/10">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-red-300">
                       <Sun className="h-2.5 w-2.5" /> অনুভূত
                     </div>
-                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-orange-300 to-rose-400 bg-clip-text text-transparent">
+                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-red-300 to-rose-400 bg-clip-text text-transparent">
                       {toBnDigits(data.feels)}°
                     </div>
                   </div>
@@ -313,11 +313,11 @@ export function WeatherWidget() {
                       {toBnDigits(data.humidity)}%
                     </div>
                   </div>
-                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-emerald-500/25 via-teal-500/20 to-green-500/15 border border-emerald-400/40 shadow-md shadow-emerald-500/10">
-                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-300">
+                  <div className="relative rounded-lg p-2 bg-gradient-to-br from-red-500/25 via-red-500/20 to-red-500/15 border border-red-400/40 shadow-md shadow-red-500/10">
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-red-300">
                       <Wind className="h-2.5 w-2.5" /> বাতাস
                     </div>
-                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-emerald-300 to-teal-400 bg-clip-text text-transparent">
+                    <div className="text-xs font-extrabold tabular-nums mt-0.5 bg-gradient-to-br from-red-300 to-red-400 bg-clip-text text-transparent">
                       {toBnDigits(data.wind)}
                     </div>
                   </div>

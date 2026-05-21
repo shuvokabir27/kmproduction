@@ -112,7 +112,7 @@ export default function MonthlyExpenseChart() {
             >
               ৳{grandTotal.toLocaleString("bn-BD")}
             </motion.p>
-            <div className={`text-[9px] md:text-[10px] mt-0.5 inline-flex items-center gap-1 ${diff >= 0 ? "text-rose-400" : "text-emerald-400"}`}>
+            <div className={`text-[9px] md:text-[10px] mt-0.5 inline-flex items-center gap-1 ${diff >= 0 ? "text-rose-400" : "text-red-400"}`}>
               {diff >= 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
               {Math.abs(pct)}% {diff >= 0 ? "বৃদ্ধি" : "হ্রাস"}
             </div>

@@ -76,7 +76,7 @@ export function AdminPollCreate({ open, onOpenChange, userId }: AdminPollCreateP
       <DialogContent className="bg-card border-border/50 max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-foreground flex items-center gap-2">
-            <Vote className="h-5 w-5 text-emerald-400" />
+            <Vote className="h-5 w-5 text-red-400" />
             নতুন ভোটিং তৈরি
           </DialogTitle>
         </DialogHeader>
@@ -129,7 +129,7 @@ export function AdminPollCreate({ open, onOpenChange, userId }: AdminPollCreateP
           <Button
             onClick={handleCreate}
             disabled={saving}
-            className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white border-0"
+            className="w-full bg-gradient-to-r from-red-500 to-cyan-500 hover:from-red-600 hover:to-cyan-600 text-white border-0"
           >
             {saving ? "প্রকাশ হচ্ছে..." : "ভোটিং প্রকাশ করুন"}
           </Button>

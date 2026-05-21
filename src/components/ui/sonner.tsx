@@ -31,8 +31,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           closeButton:
             "group-[.toast]:bg-background group-[.toast]:border-border/60 group-[.toast]:text-foreground",
           success:
-            "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-emerald-500/15 group-[.toaster]:!to-background/95 " +
-            "group-[.toaster]:!border-emerald-500/40 group-[.toaster]:!text-emerald-50 " +
+            "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-red-500/15 group-[.toaster]:!to-background/95 " +
+            "group-[.toaster]:!border-red-500/40 group-[.toaster]:!text-red-50 " +
             "group-[.toaster]:!shadow-[0_20px_50px_-12px_hsl(160_84%_39%/0.35),0_0_0_1px_hsl(160_84%_39%/0.3)]",
           error:
             "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-destructive/20 group-[.toaster]:!to-background/95 " +
@@ -43,8 +43,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
             "group-[.toaster]:!border-primary/40 group-[.toaster]:!text-foreground " +
             "group-[.toaster]:!shadow-[0_20px_50px_-12px_hsl(var(--primary)/0.4),0_0_0_1px_hsl(var(--primary)/0.3)]",
           warning:
-            "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-amber-500/15 group-[.toaster]:!to-background/95 " +
-            "group-[.toaster]:!border-amber-500/40 group-[.toaster]:!text-amber-50 " +
+            "group-[.toaster]:!bg-gradient-to-br group-[.toaster]:!from-red-500/15 group-[.toaster]:!to-background/95 " +
+            "group-[.toaster]:!border-red-500/40 group-[.toaster]:!text-red-50 " +
             "group-[.toaster]:!shadow-[0_20px_50px_-12px_hsl(38_92%_50%/0.4),0_0_0_1px_hsl(38_92%_50%/0.3)]",
         },
       }}

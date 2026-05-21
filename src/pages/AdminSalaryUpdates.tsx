@@ -232,8 +232,8 @@ const AdminSalaryUpdates = () => {
       <div className="container mx-auto p-4 md:p-6 space-y-6 max-w-6xl">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-amber-500/20 border border-emerald-500/30">
-            <Wallet className="h-6 w-6 text-emerald-400" />
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-red-500/20 to-red-500/20 border border-red-500/30">
+            <Wallet className="h-6 w-6 text-red-400" />
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold">বেতন আপডেট</h1>
@@ -313,7 +313,7 @@ const AdminSalaryUpdates = () => {
 
               {selectedProfile && (
                 <div className="flex items-center gap-3 pt-2 border-t">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-500/30 to-amber-500/30 flex items-center justify-center overflow-hidden border">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-red-500/30 to-red-500/30 flex items-center justify-center overflow-hidden border">
                     {selectedProfile.photo_url ? (
                       <img
                         src={selectedProfile.photo_url}
@@ -321,7 +321,7 @@ const AdminSalaryUpdates = () => {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <UserIcon className="h-6 w-6 text-emerald-400" />
+                      <UserIcon className="h-6 w-6 text-red-400" />
                     )}
                   </div>
                   <div className="flex-1">
@@ -364,7 +364,7 @@ const AdminSalaryUpdates = () => {
                       </SelectContent>
                     </Select>
                     {isTypeChanged && (
-                      <p className="text-[10px] text-amber-400 mt-1">
+                      <p className="text-[10px] text-red-400 mt-1">
                         ⚠️ ধরন পরিবর্তন হচ্ছে: {oldType === "monthly" ? "মাসিক" : "দৈনিক"} → {salaryType === "monthly" ? "মাসিক" : "দৈনিক"}
                       </p>
                     )}
@@ -388,13 +388,13 @@ const AdminSalaryUpdates = () => {
                   <div
                     className={`p-3 rounded-lg border ${
                       changeKind === "amount_increase"
-                        ? "bg-emerald-500/10 border-emerald-500/30"
+                        ? "bg-red-500/10 border-red-500/30"
                         : "bg-rose-500/10 border-rose-500/30"
                     }`}
                   >
                     <div className="flex items-center gap-2 text-sm">
                       {changeKind === "amount_increase" ? (
-                        <TrendingUp className="h-4 w-4 text-emerald-400" />
+                        <TrendingUp className="h-4 w-4 text-red-400" />
                       ) : (
                         <TrendingDown className="h-4 w-4 text-rose-400" />
                       )}
@@ -406,7 +406,7 @@ const AdminSalaryUpdates = () => {
                         variant="outline"
                         className={
                           changeKind === "amount_increase"
-                            ? "ml-auto border-emerald-500/40 text-emerald-400"
+                            ? "ml-auto border-red-500/40 text-red-400"
                             : "ml-auto border-rose-500/40 text-rose-400"
                         }
                       >
@@ -494,7 +494,7 @@ const AdminSalaryUpdates = () => {
 };
 
 const Sparkle = () => (
-  <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+  <span className="inline-block h-2 w-2 rounded-full bg-red-400 animate-pulse" />
 );
 
 const HistoryItem = ({ change }: { change: any }) => {
@@ -502,14 +502,14 @@ const HistoryItem = ({ change }: { change: any }) => {
   const isDown = change.change_type === "amount_decrease";
   const isType = change.change_type === "type_change";
   const tone = isUp
-    ? "border-emerald-500/30 bg-emerald-500/5"
+    ? "border-red-500/30 bg-red-500/5"
     : isDown
     ? "border-rose-500/30 bg-rose-500/5"
     : "border-blue-500/30 bg-blue-500/5";
   return (
     <div className={`p-3 rounded-lg border ${tone}`}>
       <div className="flex items-center gap-2 text-sm">
-        {isUp && <TrendingUp className="h-4 w-4 text-emerald-400" />}
+        {isUp && <TrendingUp className="h-4 w-4 text-red-400" />}
         {isDown && <TrendingDown className="h-4 w-4 text-rose-400" />}
         {isType && <RefreshCw className="h-4 w-4 text-blue-400" />}
         <span className="font-medium">
@@ -534,7 +534,7 @@ const HistoryItem = ({ change }: { change: any }) => {
             variant="outline"
             className={
               isUp
-                ? "border-emerald-500/40 text-emerald-400"
+                ? "border-red-500/40 text-red-400"
                 : "border-rose-500/40 text-rose-400"
             }
           >

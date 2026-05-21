@@ -10,12 +10,12 @@ interface MemberBadgesProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  amber: "from-amber-500/30 to-yellow-500/20 border-amber-400/50 text-amber-200",
+  amber: "from-red-500/30 to-red-500/20 border-red-400/50 text-red-200",
   blue: "from-blue-500/30 to-cyan-500/20 border-blue-400/50 text-blue-200",
   purple: "from-purple-500/30 to-fuchsia-500/20 border-purple-400/50 text-purple-200",
   rose: "from-rose-500/30 to-pink-500/20 border-rose-400/50 text-rose-200",
-  green: "from-emerald-500/30 to-green-500/20 border-emerald-400/50 text-emerald-200",
-  cyan: "from-cyan-500/30 to-teal-500/20 border-cyan-400/50 text-cyan-200",
+  green: "from-red-500/30 to-red-500/20 border-red-400/50 text-red-200",
+  cyan: "from-cyan-500/30 to-red-500/20 border-cyan-400/50 text-cyan-200",
   indigo: "from-indigo-500/30 to-violet-500/20 border-indigo-400/50 text-indigo-200",
   pink: "from-pink-500/30 to-rose-500/20 border-pink-400/50 text-pink-200",
 };

@@ -22,8 +22,8 @@ function bnNum(n: number | string): string {
 }
 
 const STATUS_META: Record<string, { label: string; icon: any; color: string; bg: string; border: string }> = {
-  pending: { label: "অপেক্ষমান", icon: Clock, color: "text-amber-300", bg: "bg-amber-500/10", border: "border-amber-500/40" },
-  approved: { label: "অনুমোদিত", icon: CheckCircle2, color: "text-emerald-300", bg: "bg-emerald-500/10", border: "border-emerald-500/40" },
+  pending: { label: "অপেক্ষমান", icon: Clock, color: "text-red-300", bg: "bg-red-500/10", border: "border-red-500/40" },
+  approved: { label: "অনুমোদিত", icon: CheckCircle2, color: "text-red-300", bg: "bg-red-500/10", border: "border-red-500/40" },
   rejected: { label: "বাতিল", icon: XCircle, color: "text-red-300", bg: "bg-red-500/10", border: "border-red-500/40" },
   cancelled: { label: "সদস্য বাতিল করেছেন", icon: AlertCircle, color: "text-muted-foreground", bg: "bg-muted/30", border: "border-border/40" },
 };
@@ -132,7 +132,7 @@ export default function AdminAdvances() {
       <div className="max-w-6xl mx-auto space-y-4">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-red-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-red-500/30">
             <Wallet className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -143,15 +143,15 @@ export default function AdminAdvances() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-          <div className="rounded-xl p-3 bg-amber-500/10 border border-amber-500/30">
-            <div className="text-[10px] text-amber-200/70 uppercase font-semibold">অপেক্ষমান</div>
-            <div className="text-xl font-extrabold text-amber-300">{bnNum(counts.pending)}</div>
-            <div className="text-[10px] text-amber-200/70">৳{bnNum(totalPending)}</div>
+          <div className="rounded-xl p-3 bg-red-500/10 border border-red-500/30">
+            <div className="text-[10px] text-red-200/70 uppercase font-semibold">অপেক্ষমান</div>
+            <div className="text-xl font-extrabold text-red-300">{bnNum(counts.pending)}</div>
+            <div className="text-[10px] text-red-200/70">৳{bnNum(totalPending)}</div>
           </div>
-          <div className="rounded-xl p-3 bg-emerald-500/10 border border-emerald-500/30">
-            <div className="text-[10px] text-emerald-200/70 uppercase font-semibold">অনুমোদিত</div>
-            <div className="text-xl font-extrabold text-emerald-300">{bnNum(counts.approved)}</div>
-            <div className="text-[10px] text-emerald-200/70">৳{bnNum(totalApproved)}</div>
+          <div className="rounded-xl p-3 bg-red-500/10 border border-red-500/30">
+            <div className="text-[10px] text-red-200/70 uppercase font-semibold">অনুমোদিত</div>
+            <div className="text-xl font-extrabold text-red-300">{bnNum(counts.approved)}</div>
+            <div className="text-[10px] text-red-200/70">৳{bnNum(totalApproved)}</div>
           </div>
           <div className="rounded-xl p-3 bg-red-500/10 border border-red-500/30">
             <div className="text-[10px] text-red-200/70 uppercase font-semibold">বাতিল</div>
@@ -228,7 +228,7 @@ export default function AdminAdvances() {
                         <div className="flex flex-wrap items-baseline gap-3 mb-1">
                           <div className="text-2xl font-extrabold text-foreground">৳{bnNum(r.amount)}</div>
                           {r.status === "approved" && r.approved_amount && Number(r.approved_amount) !== Number(r.amount) && (
-                            <div className="text-sm font-bold text-emerald-300">
+                            <div className="text-sm font-bold text-red-300">
                               অনুমোদিত: ৳{bnNum(r.approved_amount)}
                             </div>
                           )}
@@ -239,7 +239,7 @@ export default function AdminAdvances() {
                           </div>
                         )}
                         {r.admin_note && (
-                          <div className={`text-[11px] mt-1.5 p-2 rounded ${r.status === "rejected" ? "bg-red-500/10 text-red-200" : "bg-emerald-500/10 text-emerald-200"}`}>
+                          <div className={`text-[11px] mt-1.5 p-2 rounded ${r.status === "rejected" ? "bg-red-500/10 text-red-200" : "bg-red-500/10 text-red-200"}`}>
                             <span className="font-semibold">আপনার বার্তা:</span> {r.admin_note}
                           </div>
                         )}
@@ -252,7 +252,7 @@ export default function AdminAdvances() {
                           <div className="flex gap-2 mt-3">
                             <Button
                               onClick={() => openAction("approve", r)}
-                              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-9"
+                              className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold h-9"
                               size="sm"
                             >
                               <CheckCircle2 className="h-4 w-4 mr-1" />
@@ -275,7 +275,7 @@ export default function AdminAdvances() {
                           <div className="flex gap-2 mt-3">
                             <Button
                               onClick={() => openAction("approve", r)}
-                              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-9"
+                              className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold h-9"
                               size="sm"
                             >
                               <CheckCircle2 className="h-4 w-4 mr-1" />
@@ -320,7 +320,7 @@ export default function AdminAdvances() {
             <DialogTitle className="flex items-center gap-2">
               {actionDialog?.type === "approve" ? (
                 <>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                  <CheckCircle2 className="h-5 w-5 text-red-400" />
                   <span>অ্যাডভান্স অনুমোদন</span>
                 </>
               ) : (
@@ -372,7 +372,7 @@ export default function AdminAdvances() {
                   rows={3}
                 />
                 {actionDialog.type === "reject" && (
-                  <p className="text-[10px] text-amber-300 mt-1">⚠️ সদস্য এই কারণটি দেখতে পাবেন</p>
+                  <p className="text-[10px] text-red-300 mt-1">⚠️ সদস্য এই কারণটি দেখতে পাবেন</p>
                 )}
               </div>
 
@@ -396,7 +396,7 @@ export default function AdminAdvances() {
                   disabled={reviewMut.isPending}
                   className={`flex-1 font-bold ${
                     actionDialog.type === "approve"
-                      ? "bg-emerald-500 hover:bg-emerald-600"
+                      ? "bg-red-500 hover:bg-red-600"
                       : "bg-red-500 hover:bg-red-600"
                   } text-white`}
                 >

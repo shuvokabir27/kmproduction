@@ -18,20 +18,20 @@ import {
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-  pending: { label: "পেন্ডিং", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", icon: Clock },
+  pending: { label: "পেন্ডিং", color: "bg-red-500/10 text-red-600 border-red-500/20", icon: Clock },
   confirmed: { label: "কনফার্মড", color: "bg-blue-500/10 text-blue-600 border-blue-500/20", icon: CheckCircle2 },
   processing: { label: "প্রসেসিং", color: "bg-purple-500/10 text-purple-600 border-purple-500/20", icon: Package },
   shipped: { label: "শিপড", color: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20", icon: Truck },
-  delivered: { label: "ডেলিভারড", color: "bg-green-500/10 text-green-600 border-green-500/20", icon: CheckCircle2 },
+  delivered: { label: "ডেলিভারড", color: "bg-red-500/10 text-red-600 border-red-500/20", icon: CheckCircle2 },
   cancelled: { label: "ক্যান্সেলড", color: "bg-red-500/10 text-red-600 border-red-500/20", icon: XCircle },
   returned: { label: "রিটার্নড", color: "bg-rose-500/10 text-rose-700 border-rose-500/20", icon: RotateCcw },
-  abandoned: { label: "অসম্পূর্ণ", color: "bg-orange-500/10 text-orange-600 border-orange-500/20", icon: Clock },
+  abandoned: { label: "অসম্পূর্ণ", color: "bg-red-500/10 text-red-600 border-red-500/20", icon: Clock },
 };
 
 const paymentStatusConfig: Record<string, { label: string; color: string }> = {
   unpaid: { label: "বাকি", color: "bg-red-500/10 text-red-600" },
-  partial: { label: "আংশিক", color: "bg-yellow-500/10 text-yellow-600" },
-  paid: { label: "পেইড", color: "bg-green-500/10 text-green-600" },
+  partial: { label: "আংশিক", color: "bg-red-500/10 text-red-600" },
+  paid: { label: "পেইড", color: "bg-red-500/10 text-red-600" },
 };
 
 const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
@@ -314,17 +314,17 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
         </div>
         <div className="bg-card border border-border/50 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-1">
-            <Clock className="h-4 w-4 text-yellow-500" />
+            <Clock className="h-4 w-4 text-red-500" />
             <span className="text-xs text-muted-foreground">পেন্ডিং</span>
           </div>
-          <span className="text-2xl font-bold text-yellow-600">{toBn(stats.pending)}</span>
+          <span className="text-2xl font-bold text-red-600">{toBn(stats.pending)}</span>
         </div>
         <div className="bg-card border border-border/50 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-1">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <CheckCircle2 className="h-4 w-4 text-red-500" />
             <span className="text-xs text-muted-foreground">ডেলিভারড</span>
           </div>
-          <span className="text-2xl font-bold text-green-600">{toBn(stats.delivered)}</span>
+          <span className="text-2xl font-bold text-red-600">{toBn(stats.delivered)}</span>
         </div>
         <div className="bg-card border border-border/50 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-1">
@@ -421,7 +421,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
               <p className="text-xs text-muted-foreground">
                 🔍 সার্চ: <span className="font-bold text-primary text-sm">{verifyInput}</span>
                 {verifiedOrders.length > 0
-                  ? <span className="text-green-600 ml-2">✅ {toBn(verifiedOrders.length)}টি অর্ডার পাওয়া গেছে</span>
+                  ? <span className="text-red-600 ml-2">✅ {toBn(verifiedOrders.length)}টি অর্ডার পাওয়া গেছে</span>
                   : <span className="text-red-500 ml-2">❌ কোনো ম্যাচ নেই</span>
                 }
               </p>
@@ -432,10 +432,10 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                 const remaining = totalAmt - paidNum;
                 const payStatus = paidNum >= totalAmt ? "paid" : paidNum > 0 ? "partial" : "unpaid";
                 return (
-                <div key={o.id} className="bg-green-500/5 border border-green-500/20 rounded-xl p-3">
+                <div key={o.id} className="bg-red-500/5 border border-red-500/20 rounded-xl p-3">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">#{toBn(o.order_number)}</span>
-                    <Badge variant="outline" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20">
+                    <Badge variant="outline" className="text-[10px] bg-red-500/10 text-red-600 border-red-500/20">
                       ✅ ম্যাচ
                     </Badge>
                   </div>
@@ -456,14 +456,14 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                       max={totalAmt}
                     />
                     {remaining > 0 && paidNum > 0 && (
-                      <p className="text-[10px] text-yellow-600">⚠️ বাকি থাকবে: ৳{toBn(remaining)}</p>
+                      <p className="text-[10px] text-red-600">⚠️ বাকি থাকবে: ৳{toBn(remaining)}</p>
                     )}
                     {paidNum >= totalAmt && (
-                      <p className="text-[10px] text-green-600">✅ সম্পূর্ণ পেইড</p>
+                      <p className="text-[10px] text-red-600">✅ সম্পূর্ণ পেইড</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <Button size="sm" variant="outline" className={`text-xs h-7 gap-1 ${payStatus === "paid" ? "text-green-600 border-green-500/30" : "text-yellow-600 border-yellow-500/30"}`}
+                    <Button size="sm" variant="outline" className={`text-xs h-7 gap-1 ${payStatus === "paid" ? "text-red-600 border-red-500/30" : "text-red-600 border-red-500/30"}`}
                       onClick={() => {
                         quickStatusUpdate(o.id, "confirmed");
                         const notes = paidNum < totalAmt
@@ -516,12 +516,12 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
               typeof it.variant_label === "string" && it.variant_label.includes("কম্বো")
             );
             return (
-              <div key={grp.order_number} className={`bg-card border rounded-xl p-4 hover:border-primary/20 transition-all ${isOfferOrder ? "border-amber-500/50 ring-1 ring-amber-500/20" : "border-border/50"}`}>
+              <div key={grp.order_number} className={`bg-card border rounded-xl p-4 hover:border-primary/20 transition-all ${isOfferOrder ? "border-red-500/50 ring-1 ring-red-500/20" : "border-border/50"}`}>
                 {/* Top row */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isOfferOrder ? "bg-amber-500/15" : "bg-primary/10"}`}>
-                      <StatusIcon className={`h-4 w-4 ${isOfferOrder ? "text-amber-600" : "text-primary"}`} />
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isOfferOrder ? "bg-red-500/15" : "bg-primary/10"}`}>
+                      <StatusIcon className={`h-4 w-4 ${isOfferOrder ? "text-red-600" : "text-primary"}`} />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -533,12 +533,12 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                           #{toBn(order.order_number)}
                         </button>
                         {isOfferOrder && (
-                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-sm flex items-center gap-1">
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow-sm flex items-center gap-1">
                             ✨ {isComboOrder ? "কম্বো অফার" : "অফার"}
                           </span>
                         )}
                         {isMulti && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">
                             {toBn(grp.items.length)} পণ্য
                           </span>
                         )}
@@ -586,14 +586,14 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                   <div className="flex flex-wrap items-center gap-1.5 mb-3">
                     {orderLast4 && (
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-red-100 text-red-700"
                       }`}>
                         {orderPayLabel === "বিকাশ" ? "📱" : "📲"} {orderPayLabel} • লাস্ট ৪: <span className="tracking-wider">{orderLast4}</span>
                       </span>
                     )}
                     {orderTrxId && (
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-orange-100 text-orange-700"
+                        orderPayLabel === "বিকাশ" ? "bg-pink-100 text-pink-700" : "bg-red-100 text-red-700"
                       }`}>
                         🔑 TrxID: <span className="tracking-wider">{orderTrxId}</span>
                       </span>
@@ -627,7 +627,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                 {/* Follow-up buttons */}
                 <div className="flex gap-2 mt-2">
                   <a href={`https://wa.me/88${order.customer_phone?.replace(/\D/g, "")}?text=${encodeURIComponent(`আসসালামু আলাইকুম ${order.customer_name}, আপনার অর্ডার #${order.order_number} সম্পর্কে জানাচ্ছি।`)}`} target="_blank" rel="noopener noreferrer" className="flex-1">
-                    <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10">
+                    <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10">
                       <MessageCircle className="h-3 w-3" /> WhatsApp
                     </Button>
                   </a>
@@ -640,7 +640,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
 
                 {order.status === "pending" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
-                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
                       onClick={() => groupStatusUpdate(grp.order_number, "confirmed")}>
                       <CheckCircle2 className="h-3 w-3" /> কনফার্ম
                     </Button>
@@ -652,7 +652,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                 )}
                 {order.status === "cancelled" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
-                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10"
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
                       onClick={() => groupStatusUpdate(grp.order_number, "pending")}>
                       <Clock className="h-3 w-3" /> পেন্ডিংয়ে ফেরাও
                     </Button>
@@ -676,7 +676,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                 )}
                 {order.status === "shipped" && (
                   <div className="flex gap-2 mt-3 pt-2 border-t border-border/30">
-                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
                       onClick={() => groupStatusUpdate(grp.order_number, "delivered")}>
                       <CheckCircle2 className="h-3 w-3" /> ডেলিভারড
                     </Button>
@@ -703,7 +703,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                   <div className="flex gap-2 mt-3 pt-2 border-t border-rose-200/50 bg-rose-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
                     <div className="w-full">
                       <p className="text-[10px] text-rose-600 mb-2">রিটার্ন মূল্য: ৳{toBn(Number(order.return_amount || grp.total_amount || 0))}</p>
-                      <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10"
+                      <Button size="sm" variant="outline" className="w-full text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
                         onClick={async () => {
                           await supabase.from("orders").update({
                             status: "pending",
@@ -719,8 +719,8 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                   </div>
                 )}
                 {order.status === "abandoned" && (
-                  <div className="flex gap-2 mt-3 pt-2 border-t border-orange-200/50 bg-orange-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
-                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-green-600 border-green-500/30 hover:bg-green-500/10"
+                  <div className="flex gap-2 mt-3 pt-2 border-t border-red-200/50 bg-red-50/30 -mx-4 -mb-4 px-4 pb-4 rounded-b-xl">
+                    <Button size="sm" variant="outline" className="flex-1 text-xs h-8 gap-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
                       onClick={() => groupStatusUpdate(grp.order_number, "pending")}>
                       <CheckCircle2 className="h-3 w-3" /> পেন্ডিং করুন
                     </Button>

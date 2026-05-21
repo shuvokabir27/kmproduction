@@ -316,13 +316,13 @@ const AdminAccountChecking = () => {
           <>
             {/* Summary cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Card className="p-4 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/30">
+              <Card className="p-4 bg-gradient-to-br from-red-500/10 to-red-500/5 border-red-500/30">
                 <div className="flex items-center justify-between mb-2">
-                  <ArrowUpRight className="h-5 w-5 text-emerald-500" />
-                  <Badge variant="outline" className="text-[10px] border-emerald-500/40 text-emerald-400">আয়</Badge>
+                  <ArrowUpRight className="h-5 w-5 text-red-500" />
+                  <Badge variant="outline" className="text-[10px] border-red-500/40 text-red-400">আয়</Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">মোট আয় (KM)</div>
-                <div className="text-lg md:text-xl font-bold text-emerald-400">
+                <div className="text-lg md:text-xl font-bold text-red-400">
                   {fmt(b.totalEarned + b.totalBonuses + b.totalSalaryCredits + b.previousBalance)}
                 </div>
               </Card>
@@ -352,7 +352,7 @@ const AdminAccountChecking = () => {
                   <Badge variant="outline" className="text-[10px] border-violet-500/40 text-violet-400">ব্যালান্স</Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">মোট ব্যালান্স</div>
-                <div className={`text-lg md:text-xl font-bold ${b.balance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                <div className={`text-lg md:text-xl font-bold ${b.balance >= 0 ? "text-red-400" : "text-rose-400"}`}>
                   {fmt(b.balance)}
                 </div>
                 <div className="text-[10px] text-muted-foreground">
@@ -379,7 +379,7 @@ const AdminAccountChecking = () => {
                 <TabsContent value="summary" className="space-y-3 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <Card className="p-4 space-y-2">
-                      <div className="text-sm font-semibold flex items-center gap-2 text-emerald-400">
+                      <div className="text-sm font-semibold flex items-center gap-2 text-red-400">
                         <TrendingUp className="h-4 w-4" /> আয়ের উৎসসমূহ
                       </div>
                       <div className="space-y-1.5 text-sm">
@@ -416,7 +416,7 @@ const AdminAccountChecking = () => {
                             label="মোট পাওনা"
                             value={fmt(b.balance)}
                             bold
-                            className={b.balance >= 0 ? "text-emerald-400" : "text-rose-400"}
+                            className={b.balance >= 0 ? "text-red-400" : "text-rose-400"}
                           />
                         </div>
                       </div>
@@ -434,7 +434,7 @@ const AdminAccountChecking = () => {
                         fmtDate(a.shootings?.shoot_date || a.created_at),
                         a.shootings?.name || "-",
                         a.shootings?.location || "-",
-                        <span className="font-semibold text-emerald-400">{fmt(a.daily_rate)}</span>,
+                        <span className="font-semibold text-red-400">{fmt(a.daily_rate)}</span>,
                       ]) || []
                     }
                     total={fmt(b.totalEarned)}
@@ -444,7 +444,7 @@ const AdminAccountChecking = () => {
                 {/* Bonuses Tab */}
                 <TabsContent value="bonuses" className="mt-4">
                   <DataTable
-                    icon={<Gift className="h-4 w-4 text-green-400" />}
+                    icon={<Gift className="h-4 w-4 text-red-400" />}
                     headers={["তারিখ", "ধরন", "নোট", "পরিমাণ"]}
                     rows={
                       bonuses?.map((bn: any) => [
@@ -453,7 +453,7 @@ const AdminAccountChecking = () => {
                           {bn.type === "transport" ? "যাতায়াত" : "বোনাস"}
                         </Badge>,
                         bn.notes || "-",
-                        <span className="font-semibold text-emerald-400">{fmt(bn.amount)}</span>,
+                        <span className="font-semibold text-red-400">{fmt(bn.amount)}</span>,
                       ]) || []
                     }
                     total={fmt(b.totalBonuses)}
@@ -463,13 +463,13 @@ const AdminAccountChecking = () => {
                 {/* Salary Credits Tab */}
                 <TabsContent value="salary" className="mt-4">
                   <DataTable
-                    icon={<Wallet className="h-4 w-4 text-amber-400" />}
+                    icon={<Wallet className="h-4 w-4 text-red-400" />}
                     headers={["মাস", "ক্রেডিট তারিখ", "পরিমাণ"]}
                     rows={
                       salaryCredits?.map((s: any) => [
                         format(new Date(s.credit_month), "MMM yyyy", { locale: bn }),
                         fmtDate(s.created_at),
-                        <span className="font-semibold text-emerald-400">{fmt(s.amount)}</span>,
+                        <span className="font-semibold text-red-400">{fmt(s.amount)}</span>,
                       ]) || []
                     }
                     total={fmt(b.totalSalaryCredits)}
@@ -481,7 +481,7 @@ const AdminAccountChecking = () => {
                   <div>
                     <div className="text-xs font-semibold text-muted-foreground mb-2">অ্যাসাইনমেন্ট</div>
                     <DataTable
-                      icon={<Briefcase className="h-4 w-4 text-orange-400" />}
+                      icon={<Briefcase className="h-4 w-4 text-red-400" />}
                       headers={["তারিখ", "প্রজেক্ট", "ক্লায়েন্ট", "ভূমিকা", "রেট", "পরিশোধ"]}
                       rows={
                         freelanceWork?.assignments?.map((f: any) => [
@@ -489,7 +489,7 @@ const AdminAccountChecking = () => {
                           f.freelance_projects?.name || "-",
                           f.freelance_projects?.client_name || "-",
                           f.role_label || "-",
-                          <span className="font-semibold text-emerald-400">{fmt(f.rate)}</span>,
+                          <span className="font-semibold text-red-400">{fmt(f.rate)}</span>,
                           <span className="text-rose-400">{fmt(f.paid_amount)}</span>,
                         ]) || []
                       }
@@ -505,7 +505,7 @@ const AdminAccountChecking = () => {
                           fmtDate(c.freelance_projects?.project_date),
                           c.freelance_projects?.name || "-",
                           c.freelance_projects?.client_name || "-",
-                          <span className="font-semibold text-emerald-400">{fmt(c.remuneration)}</span>,
+                          <span className="font-semibold text-red-400">{fmt(c.remuneration)}</span>,
                           <span className="text-rose-400">{fmt(c.paid_amount)}</span>,
                         ]) || []
                       }

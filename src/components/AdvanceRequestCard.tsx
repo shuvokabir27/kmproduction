@@ -19,8 +19,8 @@ function bnNum(n: number | string): string {
 }
 
 const STATUS_META: Record<string, { label: string; icon: any; color: string; bg: string; border: string }> = {
-  pending: { label: "অপেক্ষমান", icon: Clock, color: "text-amber-300", bg: "bg-amber-500/10", border: "border-amber-500/40" },
-  approved: { label: "অনুমোদিত", icon: CheckCircle2, color: "text-emerald-300", bg: "bg-emerald-500/10", border: "border-emerald-500/40" },
+  pending: { label: "অপেক্ষমান", icon: Clock, color: "text-red-300", bg: "bg-red-500/10", border: "border-red-500/40" },
+  approved: { label: "অনুমোদিত", icon: CheckCircle2, color: "text-red-300", bg: "bg-red-500/10", border: "border-red-500/40" },
   rejected: { label: "বাতিল", icon: XCircle, color: "text-red-300", bg: "bg-red-500/10", border: "border-red-500/40" },
   cancelled: { label: "নিজে বাতিল করেছেন", icon: AlertCircle, color: "text-muted-foreground", bg: "bg-muted/30", border: "border-border/40" },
 };
@@ -114,7 +114,7 @@ export function AdvanceRequestCard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-cyan-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
+        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-cyan-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
       >
         {/* Decorative background */}
         <motion.div
@@ -131,7 +131,7 @@ export function AdvanceRequestCard() {
         <div className="relative p-4 md:p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-red-500/30">
                 <Wallet className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -152,15 +152,15 @@ export function AdvanceRequestCard() {
 
           {/* Pending request indicator */}
           {pending.length > 0 && (
-            <div className="mb-3 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-amber-400 animate-pulse shrink-0" />
+            <div className="mb-3 p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-red-400 animate-pulse shrink-0" />
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-bold text-amber-200">
+                <div className="text-xs font-bold text-red-200">
                   ৳{bnNum(pending[0].amount)} — অপেক্ষমান
                 </div>
-                <div className="text-[10px] text-amber-200/70">অ্যাডমিনের অনুমোদনের অপেক্ষায়</div>
+                <div className="text-[10px] text-red-200/70">অ্যাডমিনের অনুমোদনের অপেক্ষায়</div>
               </div>
-              <span className="shrink-0 text-[10px] px-2 py-1 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30 font-semibold">
+              <span className="shrink-0 text-[10px] px-2 py-1 rounded-md bg-red-500/20 text-red-200 border border-red-500/30 font-semibold">
                 প্রসেসিং
               </span>
             </div>
@@ -181,9 +181,9 @@ export function AdvanceRequestCard() {
 
           {/* Cooldown / daily limit notice */}
           {(cooldownActive || dailyLimitReached) && pending.length === 0 && (
-            <div className="mb-3 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-amber-400 shrink-0" />
-              <div className="text-[11px] text-amber-200/90 flex-1">
+            <div className="mb-3 p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-red-400 shrink-0" />
+              <div className="text-[11px] text-red-200/90 flex-1">
                 {dailyLimitReached
                   ? `আজ আপনি ${bnNum(todayCount)}টি রিকোয়েস্ট করেছেন। একদিনে সর্বোচ্চ ৩টি রিকোয়েস্ট করা যায়।`
                   : `বাতিল হওয়ার পর পুনরায় রিকোয়েস্ট করতে আরো ${bnNum(cooldownMinutes)} মিনিট অপেক্ষা করুন।`}
@@ -215,7 +215,7 @@ export function AdvanceRequestCard() {
             className={`relative w-full overflow-hidden inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-extrabold text-sm transition-colors ${
               blocked
                 ? "bg-muted/40 text-muted-foreground cursor-not-allowed"
-                : "bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white"
+                : "bg-gradient-to-r from-red-500 via-red-500 to-cyan-500 text-white"
             }`}
           >
             {!blocked && (
@@ -238,10 +238,10 @@ export function AdvanceRequestCard() {
 
       {/* Create Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-w-md bg-gradient-to-br from-emerald-500/5 via-card to-cyan-500/5 border-emerald-500/30">
+        <DialogContent className="max-w-md bg-gradient-to-br from-red-500/5 via-card to-cyan-500/5 border-red-500/30">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
-              <Wallet className="h-4 w-4 text-emerald-400" />
+              <Wallet className="h-4 w-4 text-red-400" />
               <span>অ্যাডভান্স রিকোয়েস্ট</span>
             </DialogTitle>
           </DialogHeader>
@@ -274,7 +274,7 @@ export function AdvanceRequestCard() {
                 rows={3}
               />
             </div>
-            <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-200/90">
+            <div className="rounded-lg p-3 bg-red-500/10 border border-red-500/30 text-[11px] text-red-200/90">
               💡 অ্যাডমিন আপনার রিকোয়েস্ট রিভিউ করে অনুমোদন বা বাতিল করবেন। অনুমোদিত হলে নোটিফিকেশন পাবেন।
             </div>
             <div className="flex gap-2">
@@ -288,7 +288,7 @@ export function AdvanceRequestCard() {
               <Button
                 onClick={() => createMut.mutate()}
                 disabled={createMut.isPending || !amount}
-                className="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white font-bold"
+                className="flex-1 bg-gradient-to-r from-red-500 to-cyan-500 hover:from-red-600 hover:to-cyan-600 text-white font-bold"
               >
                 {createMut.isPending ? "পাঠানো হচ্ছে..." : "রিকোয়েস্ট পাঠান"}
               </Button>
@@ -302,7 +302,7 @@ export function AdvanceRequestCard() {
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <History className="h-4 w-4 text-emerald-400" />
+              <History className="h-4 w-4 text-red-400" />
               <span>অ্যাডভান্স রিকোয়েস্ট ইতিহাস</span>
             </DialogTitle>
           </DialogHeader>
@@ -342,12 +342,12 @@ export function AdvanceRequestCard() {
                       </div>
                     )}
                     {r.admin_note && (
-                      <div className={`text-[11px] mt-1.5 p-2 rounded ${r.status === "rejected" ? "bg-red-500/10 text-red-200" : "bg-emerald-500/10 text-emerald-200"}`}>
+                      <div className={`text-[11px] mt-1.5 p-2 rounded ${r.status === "rejected" ? "bg-red-500/10 text-red-200" : "bg-red-500/10 text-red-200"}`}>
                         <span className="font-semibold">অ্যাডমিন বার্তা:</span> {r.admin_note}
                       </div>
                     )}
                     {r.status === "approved" && r.approved_amount && Number(r.approved_amount) !== Number(r.amount) && (
-                      <div className="text-[11px] text-emerald-300 mt-1">
+                      <div className="text-[11px] text-red-300 mt-1">
                         ✅ অনুমোদিত: ৳{bnNum(r.approved_amount)}
                       </div>
                     )}
