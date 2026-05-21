@@ -201,21 +201,47 @@ const AdminProducts = () => {
 
   const useProductLayout = isProductAdmin && !isAdmin;
 
-  const menuItems = [
-    { value: "dashboard", label: "ড্যাশবোর্ড", icon: LayoutDashboard },
-    { value: "products", label: "প্রডাক্ট", icon: Package },
-    { value: "categories", label: "ক্যাটাগরি", icon: FolderTree },
-    { value: "orders", label: "অর্ডার", icon: ShoppingBag },
-    { value: "customers", label: "কাস্টমার", icon: Users },
-    { value: "users", label: "ইউজার", icon: Users },
-    { value: "pricing", label: "প্রাইসিং", icon: Weight },
-    { value: "videos", label: "ভিডিও", icon: Play },
-    { value: "reports", label: "রিপোর্ট", icon: BarChart3 },
-    { value: "offers", label: "অফার", icon: Sparkles },
-    { value: "freedelivery", label: "ফ্রি ডেলিভারি", icon: Truck },
-    { value: "scrolling", label: "স্ক্রলিং টেক্সট", icon: Megaphone },
-    { value: "footer", label: "ফুটার", icon: FileText },
+  const menuGroups = [
+    {
+      label: "ড্যাশবোর্ড",
+      items: [
+        { value: "dashboard", label: "ড্যাশবোর্ড", icon: LayoutDashboard },
+      ],
+    },
+    {
+      label: "প্রডাক্ট ম্যানেজমেন্ট",
+      items: [
+        { value: "products", label: "প্রডাক্ট", icon: Package },
+        { value: "categories", label: "ক্যাটাগরি", icon: FolderTree },
+        { value: "pricing", label: "প্রাইসিং", icon: Weight },
+        { value: "videos", label: "ভিডিও", icon: Play },
+      ],
+    },
+    {
+      label: "অর্ডার ম্যানেজমেন্ট",
+      items: [
+        { value: "orders", label: "অর্ডার", icon: ShoppingBag },
+        { value: "customers", label: "কাস্টমার", icon: Users },
+        { value: "reports", label: "রিপোর্ট", icon: BarChart3 },
+      ],
+    },
+    {
+      label: "হোম পেইজ ম্যানেজমেন্ট",
+      items: [
+        { value: "offers", label: "অফার", icon: Sparkles },
+        { value: "freedelivery", label: "ফ্রি ডেলিভারি", icon: Truck },
+        { value: "scrolling", label: "স্ক্রলিং টেক্সট", icon: Megaphone },
+      ],
+    },
+    {
+      label: "সাইট সেটিংস",
+      items: [
+        { value: "users", label: "ইউজার", icon: Users },
+        { value: "footer", label: "ফুটার", icon: FileText },
+      ],
+    },
   ];
+  const menuItems = menuGroups.flatMap(g => g.items);
   const mobileTop = menuItems.slice(0, 6);
   const mobileBottom = menuItems.slice(6);
 
@@ -262,8 +288,15 @@ const AdminProducts = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="md:grid md:grid-cols-[220px_1fr] md:gap-5">
           <aside className="hidden md:block">
-            <nav className="sticky top-4 bg-card border border-border/40 rounded-2xl p-2 space-y-1">
-              {menuItems.map(item => <MenuButton key={item.value} item={item} />)}
+            <nav className="sticky top-4 bg-card border border-border/40 rounded-2xl p-2 space-y-3">
+              {menuGroups.map(group => (
+                <div key={group.label} className="space-y-1">
+                  <div className="px-2 pt-1.5 pb-1 text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70">
+                    {group.label}
+                  </div>
+                  {group.items.map(item => <MenuButton key={item.value} item={item} />)}
+                </div>
+              ))}
             </nav>
           </aside>
 
