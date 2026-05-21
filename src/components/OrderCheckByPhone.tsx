@@ -126,10 +126,11 @@ export default function OrderCheckByPhone() {
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(stats).map(([k, v]) => {
                     const entry = v as { count: number; amount: number };
+                    const meta = STATUS_META[k] || { label: k, icon: Clock, cls: "text-foreground bg-muted border-border" };
                     const Icon = meta.icon;
                     return (
                       <div key={k} className={`px-3 py-1.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 ${meta.cls}`}>
-                        <Icon className="h-3.5 w-3.5" /> {meta.label}: {toBn(v.count)}
+                        <Icon className="h-3.5 w-3.5" /> {meta.label}: {toBn(entry.count)}
                       </div>
                     );
                   })}
