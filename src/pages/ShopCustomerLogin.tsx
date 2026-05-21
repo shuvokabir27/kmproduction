@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles } from "lucide-react";
+import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff } from "lucide-react";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import MobileShopNav from "@/components/MobileShopNav";
 
@@ -19,6 +19,8 @@ export default function ShopCustomerLogin() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const submit = async () => {
@@ -169,7 +171,7 @@ export default function ShopCustomerLogin() {
                 <div className="relative mt-1">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     inputMode="numeric"
                     maxLength={6}
                     value={password}
@@ -177,6 +179,14 @@ export default function ShopCustomerLogin() {
                     placeholder="••••••"
                     className={inputClass}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -186,7 +196,7 @@ export default function ShopCustomerLogin() {
                   <div className="relative mt-1">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <input
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       inputMode="numeric"
                       maxLength={6}
                       value={confirmPassword}
@@ -194,6 +204,14 @@ export default function ShopCustomerLogin() {
                       placeholder="••••••"
                       className={inputClass}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
                   {confirmPassword.length > 0 && confirmPassword !== password && (
                     <p className="text-[11px] text-red-600 font-semibold mt-1 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
