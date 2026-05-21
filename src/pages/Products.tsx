@@ -597,30 +597,32 @@ const Products = () => {
       <ShopCategoryGrid />
 
       {/* Trust Bar */}
-      <section className="px-4 pb-2">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { icon: Truck, title: "দ্রুত ডেলিভারি", desc: "সারা দেশে" },
-            { icon: ShieldCheck, title: "১০০% খাঁটি", desc: "গ্যারান্টি সহ" },
-            { icon: Tag, title: "সেরা দাম", desc: "সরাসরি উৎস থেকে" },
-            { icon: MessageCircle, title: "২৪/৭ সাপোর্ট", desc: "WhatsApp এ যোগাযোগ" },
-          ].map((t, i) => (
-            <div key={i} className="glossy-card p-3 md:p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${BRAND_GREEN}15` }}>
-                <t.icon className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+      <section className="px-4 pb-2 pt-4">
+        <div className="max-w-7xl mx-auto glossy-section-amber p-4 md:p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+            {[
+              { icon: Truck, title: "দ্রুত ডেলিভারি", desc: "সারা দেশে" },
+              { icon: ShieldCheck, title: "১০০% খাঁটি", desc: "গ্যারান্টি সহ" },
+              { icon: Tag, title: "সেরা দাম", desc: "সরাসরি উৎস থেকে" },
+              { icon: MessageCircle, title: "২৪/৭ সাপোর্ট", desc: "WhatsApp এ যোগাযোগ" },
+            ].map((t, i) => (
+              <div key={i} className="glossy-card p-3 md:p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-amber-500/15">
+                  <t.icon className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <div className="font-bold text-xs md:text-sm text-foreground">{t.title}</div>
+                  <div className="text-[10px] md:text-xs text-muted-foreground">{t.desc}</div>
+                </div>
               </div>
-              <div>
-                <div className="font-bold text-xs md:text-sm text-foreground">{t.title}</div>
-                <div className="text-[10px] md:text-xs text-muted-foreground">{t.desc}</div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Featured Products */}
       <section id="shop" className="px-4 py-10">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto glossy-section-violet p-6 md:p-10">
           <div className="text-center mb-8">
             <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>
               {showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
@@ -672,8 +674,7 @@ const Products = () => {
                     <div className="mt-3 flex flex-col gap-2">
                       <Button
                         onClick={() => openOrderDialog(p)}
-                        className="w-full text-white font-bold tracking-wide text-sm h-10 rounded-md"
-                        style={{ backgroundColor: BRAND_GREEN }}
+                        className="w-full font-bold tracking-wide text-sm h-10 rounded-md"
                       >
                         এখনই কিনুন
                       </Button>
@@ -682,8 +683,7 @@ const Products = () => {
                           const variants = Array.isArray(p.variants) ? p.variants : [];
                           addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
                         }}
-                        className="w-full text-white font-bold tracking-wide text-sm h-10 rounded-md gap-1.5"
-                        style={{ backgroundColor: BRAND_DARK }}
+                        className="glossy-btn-amber w-full font-bold tracking-wide text-sm h-10 rounded-md gap-1.5 inline-flex items-center justify-center"
                       >
                         <ShoppingCart className="h-3.5 w-3.5" /> কার্টে যোগ করুন
                       </Button>
@@ -762,11 +762,10 @@ const Products = () => {
 
       {/* About Strip */}
       <section id="about" className="px-4 py-12">
-        <div className="max-w-5xl mx-auto glossy-section p-8 md:p-12 text-center">
-
-          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>ABOUT KM SHOP</span>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
-          <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto glossy-section-cyan p-8 md:p-12 text-center">
+          <span className="text-xs font-bold tracking-widest uppercase text-cyan-400">ABOUT KM SHOP</span>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4 relative z-10">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
+          <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto relative z-10">
             কে এম শপ কুয়াকাটার স্থানীয় কৃষক, জেলে ও কারিগরদের সাথে সরাসরি কাজ করে। আমাদের প্রতিটি পণ্য — শুঁটকি মাছ থেকে শুরু করে হস্তশিল্প, নারকেল পণ্য, তালের গুড় ও স্মৃতিচিহ্ন — যত্ন সহকারে বাছাই করা ও পরীক্ষিত। আমরা চাই কুয়াকাটার অথেনটিক স্বাদ ও সংস্কৃতি দেশের প্রতিটি কোণে পৌঁছে দিতে।
           </p>
         </div>
@@ -774,7 +773,7 @@ const Products = () => {
 
       {/* Contact CTA */}
       <section id="contact" className="px-4 py-10">
-        <div className="max-w-3xl mx-auto rounded-3xl p-8 text-center text-white shadow-xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
+        <div className="max-w-3xl mx-auto glossy-section-pink p-8 text-center text-white shadow-xl">
           <h2 className="text-xl md:text-2xl font-bold mb-2">এখনই যোগাযোগ করুন</h2>
           <p className="text-white/80 text-sm mb-5">যেকোনো প্রশ্ন বা অর্ডারের জন্য সরাসরি কল বা WhatsApp করুন</p>
           <div className="flex flex-wrap gap-3 justify-center">

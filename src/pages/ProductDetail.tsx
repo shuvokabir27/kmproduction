@@ -428,9 +428,7 @@ const ProductDetail = () => {
                   toast.success("কার্টে যুক্ত হয়েছে");
                   cart.open();
                 }}
-                variant="outline"
-                className="h-12 rounded-full font-bold border-2 gap-2"
-                style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
+                className="glossy-btn-amber h-12 rounded-full font-bold gap-2 inline-flex items-center justify-center px-6"
               >
                 <ShoppingCart className="h-4 w-4" /> কার্টে যোগ করুন
               </Button>
@@ -439,8 +437,7 @@ const ProductDetail = () => {
                   if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
                   openOrder();
                 }}
-                className="h-12 rounded-full font-bold text-white gap-2"
-                style={{ backgroundColor: ACCENT_RED }}
+                className="h-12 rounded-full font-bold gap-2"
               >
                 এখনই কিনুন
               </Button>

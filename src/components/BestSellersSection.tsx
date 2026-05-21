@@ -93,7 +93,7 @@ export function BestSellersSection() {
                       </div>
                       <Button
                         size="sm"
-                        className="mt-3 w-full bg-red-500 hover:bg-red-600 text-white gap-1 h-9"
+                        className="glossy-btn-emerald mt-3 w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
                         onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.id}?order=1`); }}
                       >
                         <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
