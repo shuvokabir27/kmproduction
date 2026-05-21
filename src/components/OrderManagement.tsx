@@ -875,12 +875,20 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-xl max-h-[92vh] overflow-y-auto p-0 gap-0 border-red-500/20">
           <DialogHeader className="px-6 pt-6 pb-4 border-b border-border bg-gradient-to-br from-red-500/10 via-background to-background sticky top-0 z-10 backdrop-blur">
-            <DialogTitle className="flex items-center gap-2 text-xl">
+            <DialogTitle className="flex items-center gap-2 text-xl pr-10">
               <div className="h-9 w-9 rounded-lg bg-red-500/15 text-red-500 grid place-items-center">
                 <ShoppingCart className="h-5 w-5" />
               </div>
               {editing ? "অর্ডার এডিট" : "নতুন অর্ডার"}
             </DialogTitle>
+            <button
+              type="button"
+              onClick={() => setDialogOpen(false)}
+              aria-label="বন্ধ করুন"
+              className="absolute right-3 top-3 h-9 w-9 rounded-lg bg-red-500/15 hover:bg-red-500/30 text-red-500 grid place-items-center transition-colors z-20"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </DialogHeader>
 
           <div className="px-6 py-5 space-y-5">
