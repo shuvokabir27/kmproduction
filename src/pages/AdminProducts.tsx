@@ -204,12 +204,26 @@ const AdminProducts = () => {
   const menuGroups = [
     {
       label: "ড্যাশবোর্ড",
+      theme: {
+        label: "text-cyan-400/80",
+        wrap: "bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-2",
+        activeBg: "bg-cyan-500/15 text-cyan-300 ring-1 ring-cyan-500/40 shadow-[0_0_12px_-2px_rgba(34,211,238,0.4)]",
+        idleHover: "text-cyan-100/60 hover:text-cyan-200 hover:bg-cyan-500/10",
+        dot: "bg-cyan-400",
+      },
       items: [
         { value: "dashboard", label: "ড্যাশবোর্ড", icon: LayoutDashboard },
       ],
     },
     {
       label: "প্রডাক্ট ম্যানেজমেন্ট",
+      theme: {
+        label: "text-emerald-400/80",
+        wrap: "bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-2",
+        activeBg: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/40 shadow-[0_0_12px_-2px_rgba(16,185,129,0.4)]",
+        idleHover: "text-emerald-100/60 hover:text-emerald-200 hover:bg-emerald-500/10",
+        dot: "bg-emerald-400",
+      },
       items: [
         { value: "products", label: "প্রডাক্ট", icon: Package },
         { value: "categories", label: "ক্যাটাগরি", icon: FolderTree },
@@ -219,6 +233,13 @@ const AdminProducts = () => {
     },
     {
       label: "অর্ডার ম্যানেজমেন্ট",
+      theme: {
+        label: "text-amber-400/80",
+        wrap: "bg-amber-500/5 border border-amber-500/20 rounded-xl p-2",
+        activeBg: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/40 shadow-[0_0_12px_-2px_rgba(245,158,11,0.4)]",
+        idleHover: "text-amber-100/60 hover:text-amber-200 hover:bg-amber-500/10",
+        dot: "bg-amber-400",
+      },
       items: [
         { value: "orders", label: "অর্ডার", icon: ShoppingBag },
         { value: "customers", label: "কাস্টমার", icon: Users },
@@ -227,6 +248,13 @@ const AdminProducts = () => {
     },
     {
       label: "হোম পেইজ ম্যানেজমেন্ট",
+      theme: {
+        label: "text-rose-400/80",
+        wrap: "bg-rose-500/5 border border-rose-500/20 rounded-xl p-2",
+        activeBg: "bg-rose-500/15 text-rose-300 ring-1 ring-rose-500/40 shadow-[0_0_12px_-2px_rgba(244,63,94,0.4)]",
+        idleHover: "text-rose-100/60 hover:text-rose-200 hover:bg-rose-500/10",
+        dot: "bg-rose-400",
+      },
       items: [
         { value: "offers", label: "অফার", icon: Sparkles },
         { value: "freedelivery", label: "ফ্রি ডেলিভারি", icon: Truck },
@@ -235,6 +263,13 @@ const AdminProducts = () => {
     },
     {
       label: "সাইট সেটিংস",
+      theme: {
+        label: "text-violet-400/80",
+        wrap: "bg-violet-500/5 border border-violet-500/20 rounded-xl p-2",
+        activeBg: "bg-violet-500/15 text-violet-300 ring-1 ring-violet-500/40 shadow-[0_0_12px_-2px_rgba(139,92,246,0.4)]",
+        idleHover: "text-violet-100/60 hover:text-violet-200 hover:bg-violet-500/10",
+        dot: "bg-violet-400",
+      },
       items: [
         { value: "users", label: "ইউজার", icon: Users },
         { value: "footer", label: "ফুটার", icon: FileText },
@@ -245,19 +280,20 @@ const AdminProducts = () => {
   const mobileTop = menuItems.slice(0, 6);
   const mobileBottom = menuItems.slice(6);
 
-  const MenuButton = ({ item }: { item: typeof menuItems[number] }) => {
+  const MenuButton = ({ item, theme }: { item: typeof menuItems[number]; theme?: typeof menuGroups[number]["theme"] }) => {
     const Icon = item.icon;
     const active = activeTab === item.value;
+    const activeCls = theme?.activeBg ?? "bg-primary/15 text-primary ring-1 ring-primary/30 shadow-sm";
+    const idleCls = theme?.idleHover ?? "text-muted-foreground hover:text-foreground hover:bg-muted/60";
     return (
       <button
         onClick={() => setActiveTab(item.value)}
         className={`flex md:w-full items-center justify-center md:justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all whitespace-nowrap ${
-          active
-            ? "bg-primary/15 text-primary ring-1 ring-primary/30 shadow-sm"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          active ? activeCls : idleCls
         }`}
       >
         <Icon className="h-4 w-4 shrink-0" />
+
         <span>{item.label}</span>
       </button>
     );
@@ -288,13 +324,16 @@ const AdminProducts = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="md:grid md:grid-cols-[220px_1fr] md:gap-5">
           <aside className="hidden md:block">
-            <nav className="sticky top-4 bg-card border border-border/40 rounded-2xl p-2 space-y-3">
+            <nav className="sticky top-4 bg-card/60 border border-border/40 rounded-2xl p-2 space-y-2">
               {menuGroups.map(group => (
-                <div key={group.label} className="space-y-1">
-                  <div className="px-2 pt-1.5 pb-1 text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70">
+                <div key={group.label} className={group.theme.wrap}>
+                  <div className={`flex items-center gap-1.5 px-2 pt-1 pb-1.5 text-[10px] uppercase tracking-wider font-bold ${group.theme.label}`}>
+                    <span className={`h-1.5 w-1.5 rounded-full ${group.theme.dot}`} />
                     {group.label}
                   </div>
-                  {group.items.map(item => <MenuButton key={item.value} item={item} />)}
+                  <div className="space-y-1">
+                    {group.items.map(item => <MenuButton key={item.value} item={item} theme={group.theme} />)}
+                  </div>
                 </div>
               ))}
             </nav>
