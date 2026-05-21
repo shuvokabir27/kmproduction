@@ -605,7 +605,7 @@ const Products = () => {
             { icon: Tag, title: "সেরা দাম", desc: "সরাসরি উৎস থেকে" },
             { icon: MessageCircle, title: "২৪/৭ সাপোর্ট", desc: "WhatsApp এ যোগাযোগ" },
           ].map((t, i) => (
-            <div key={i} className="bg-card rounded-xl p-3 md:p-4 flex items-center gap-3 shadow-sm border border-border">
+            <div key={i} className="glossy-card p-3 md:p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${BRAND_GREEN}15` }}>
                 <t.icon className="h-5 w-5" style={{ color: BRAND_GREEN }} />
               </div>
@@ -641,7 +641,7 @@ const Products = () => {
               const hasDiscount = p.discount_price && p.discount_price < p.price;
               const discountPct = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
               return (
-                <div key={p.id} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border flex flex-col">
+                <div key={p.id} className="group glossy-card overflow-hidden flex flex-col">
                   <Link to={`/products/${p.id}`} className="relative aspect-square bg-muted overflow-hidden block">
                     {p.image_url ? (
                       <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -761,8 +761,9 @@ const Products = () => {
       </section>
 
       {/* About Strip */}
-      <section id="about" className="px-4 py-12 bg-card">
-        <div className="max-w-5xl mx-auto text-center">
+      <section id="about" className="px-4 py-12">
+        <div className="max-w-5xl mx-auto glossy-section p-8 md:p-12 text-center">
+
           <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>ABOUT KM SHOP</span>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
           <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">

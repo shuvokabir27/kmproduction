@@ -69,7 +69,7 @@ export function BestSellersSection() {
               const price = hasDiscount ? p.discount_price : p.price;
               return (
                 <CarouselItem key={p.id} className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
-                  <div className="premium-card rounded-2xl overflow-hidden group cursor-pointer h-full flex flex-col" onClick={() => navigate(`/products/${p.id}`)}>
+                  <div className="glossy-card overflow-hidden group cursor-pointer h-full flex flex-col" onClick={() => navigate(`/products/${p.id}`)}>
                     <div className="relative aspect-square overflow-hidden bg-muted">
                       {p.image_url ? (
                         <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
