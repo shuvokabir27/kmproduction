@@ -53,7 +53,7 @@ export default function ShopCustomerLogin() {
       className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 overflow-hidden"
       style={{
         fontFamily: "'Tiro Bangla', serif",
-        background: `radial-gradient(1200px 600px at -10% -20%, ${BRAND_GREEN}55, transparent 60%), radial-gradient(900px 500px at 110% 110%, ${BRAND_GOLD}40, transparent 60%), linear-gradient(135deg, ${BRAND_DARK}, #0a2614 60%, #050f08)`,
+        background: `radial-gradient(1200px 600px at -10% -20%, ${BRAND_GREEN}66, transparent 60%), radial-gradient(900px 500px at 110% 110%, ${BRAND_GOLD}33, transparent 60%), linear-gradient(135deg, ${BRAND_DARK}, #120308 55%, #000000)`,
       }}
     >
       {/* glossy blobs */}
