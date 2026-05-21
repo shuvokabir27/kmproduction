@@ -109,6 +109,48 @@ const ProductDetail = () => {
   });
   const categoryLabel = product?.category ? (categoryMap?.[product.category] || product.category) : "";
 
+  const { data: reviews = [], refetch: refetchReviews } = useQuery({
+    queryKey: ["product-reviews", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("product_reviews")
+        .select("id,rating,comment,customer_name,created_at,shop_customer_id")
+        .eq("product_id", id!)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const hasPurchased = !!shopCustomer && (customerOrders || []).some((o: any) => o.product_id === id);
+  const myReview = reviews.find((r: any) => r.shop_customer_id === shopCustomer?.id);
+
+  useEffect(() => {
+    if (myReview) {
+      setReviewRating(myReview.rating);
+      setReviewComment(myReview.comment || "");
+    }
+  }, [myReview?.id]);
+
+  const submitReview = async () => {
+    const token = localStorage.getItem(SHOP_TOKEN_KEY);
+    if (!token || !id) return;
+    setSubmittingReview(true);
+    const { error } = await supabase.rpc("submit_product_review", {
+      _token: token,
+      _product_id: id,
+      _rating: reviewRating,
+      _comment: reviewComment,
+    });
+    setSubmittingReview(false);
+    if (error) {
+      toast.error(error.message || "রিভিউ জমা দিতে ব্যর্থ");
+      return;
+    }
+    toast.success("রিভিউ জমা হয়েছে");
+    refetchReviews();
+  };
+
   const contactPhone = product?.contact_info || siteSettings?.contact_phone || "";
   const whatsappNo = siteSettings?.whatsapp_no || contactPhone;
 
