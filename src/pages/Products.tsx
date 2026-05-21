@@ -328,18 +328,20 @@ const Products = () => {
                 <LogIn className="h-3.5 w-3.5" /> লগইন
               </Link>
             )}
-            <button
-              onClick={cart.open}
-              className="glossy-btn relative flex items-center gap-1.5 text-xs px-3.5 h-9 rounded-full font-bold"
-              aria-label="cart"
-            >
-              <ShoppingCart className="h-3.5 w-3.5" />
+            <div className="relative overflow-visible">
+              <button
+                onClick={cart.open}
+                className="glossy-btn flex items-center justify-center h-9 w-9 rounded-full font-bold"
+                aria-label="cart"
+              >
+                <ShoppingCart className="h-4 w-4" />
+              </button>
               {cart.count > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-amber-300 text-amber-950 text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-black/40 shadow">
+                <span className="pointer-events-none absolute -top-2 -right-2 z-20 bg-amber-300 text-amber-950 text-[10px] leading-none font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center ring-2 ring-background shadow-lg">
                   {toBn(cart.count)}
                 </span>
               )}
-            </button>
+            </div>
           </nav>
 
           <div className="hidden lg:flex items-center bg-white/[0.04] hover:bg-white/[0.07] focus-within:bg-white/[0.07] border border-white/10 hover:border-white/20 focus-within:border-red-400/40 transition-all rounded-full px-4 h-10 w-72 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.05)]">
@@ -356,10 +358,10 @@ const Products = () => {
             <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-full hover:bg-white/5 transition-colors text-foreground/80" aria-label="search">
               <Search className="h-5 w-5" />
             </button>
-            <button onClick={cart.open} className="relative p-2 rounded-full hover:bg-white/5 transition-colors text-foreground/80" aria-label="cart">
+            <button onClick={cart.open} className="relative p-2.5 rounded-full hover:bg-white/5 transition-colors text-foreground/80" aria-label="cart">
               <ShoppingCart className="h-5 w-5" />
               {cart.count > 0 && (
-                <span className="absolute top-0.5 right-0.5 bg-amber-300 text-amber-950 text-[10px] font-extrabold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center ring-2 ring-black/40">
+                <span className="absolute -top-1 -right-1 z-20 bg-amber-300 text-amber-950 text-[10px] leading-none font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center ring-2 ring-background shadow-lg">
                   {toBn(cart.count)}
                 </span>
               )}
