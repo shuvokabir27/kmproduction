@@ -20,19 +20,19 @@ export default function MobileShopNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t shadow-[0_-2px_10px_rgba(0,0,0,0.06)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t shadow-[0_-2px_10px_rgba(0,0,0,0.06)]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)", fontFamily: "'Tiro Bangla', serif" }}
     >
-      <div className="grid grid-cols-4 text-[11px] font-semibold text-gray-700">
-        <Link to="/products" className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50">
+      <div className="grid grid-cols-4 text-[11px] font-semibold text-foreground/80">
+        <Link to="/products" className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-muted">
           <Home className="h-5 w-5" style={{ color: BRAND_GREEN }} />
           <span>হোম</span>
         </Link>
-        <Link to="/products#shop" className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50">
+        <Link to="/products#shop" className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-muted">
           <ShoppingBag className="h-5 w-5" style={{ color: BRAND_GREEN }} />
           <span>শপ</span>
         </Link>
-        <button onClick={cart.open} className="relative flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50">
+        <button onClick={cart.open} className="relative flex flex-col items-center justify-center py-2 gap-0.5 active:bg-muted">
           <div className="relative">
             <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
             {cart.count > 0 && (
@@ -48,13 +48,13 @@ export default function MobileShopNav() {
             href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50"
+            className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-muted"
           >
             <MessageCircle className="h-5 w-5 text-red-600" />
             <span>WhatsApp</span>
           </a>
         ) : (
-          <span className="flex flex-col items-center justify-center py-2 gap-0.5 text-gray-400">
+          <span className="flex flex-col items-center justify-center py-2 gap-0.5 text-muted-foreground">
             <MessageCircle className="h-5 w-5" />
             <span>WhatsApp</span>
           </span>
