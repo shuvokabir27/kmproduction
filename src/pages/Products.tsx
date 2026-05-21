@@ -761,8 +761,9 @@ const Products = () => {
       </section>
 
       {/* About Strip */}
-      <section id="about" className="px-4 py-12 bg-card">
-        <div className="max-w-5xl mx-auto text-center">
+      <section id="about" className="px-4 py-12">
+        <div className="max-w-5xl mx-auto glossy-section p-8 md:p-12 text-center">
+
           <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>ABOUT KM SHOP</span>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
           <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
