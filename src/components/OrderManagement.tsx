@@ -946,7 +946,90 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
               </div>
               <div>
                 <Label className="text-xs">প্রডাক্টের নাম *</Label>
-                <Input value={form.product_name} onChange={e => setForm(f => ({ ...f, product_name: e.target.value }))} className="mt-1" />
+                <Popover open={productPickerOpen} onOpenChange={setProductPickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      className="mt-1 w-full justify-between font-normal h-10"
+                    >
+                      <span className={form.product_name ? "" : "text-muted-foreground"}>
+                        {form.product_name || "প্রডাক্ট খুঁজুন বা সিলেক্ট করুন..."}
+                      </span>
+                      <ChevronsUpDown className="h-4 w-4 opacity-50 shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="প্রডাক্ট নাম লিখুন..."
+                        value={productSearch}
+                        onValueChange={setProductSearch}
+                      />
+                      <CommandList>
+                        <CommandEmpty>
+                          <div className="py-2 px-2 text-sm text-muted-foreground">
+                            কোনো প্রডাক্ট পাওয়া যায়নি।
+                            {productSearch.trim() && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="mt-2 w-full"
+                                onClick={() => {
+                                  setForm(f => ({ ...f, product_name: productSearch.trim() }));
+                                  setProductPickerOpen(false);
+                                  setProductSearch("");
+                                }}
+                              >
+                                "{productSearch}" ব্যবহার করুন
+                              </Button>
+                            )}
+                          </div>
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {productList
+                            .filter(p => !productSearch.trim() || p.name.toLowerCase().includes(productSearch.toLowerCase()))
+                            .slice(0, 50)
+                            .map(p => {
+                              const effectivePrice = Number(p.discount_price ?? p.price ?? 0);
+                              const selected = form.product_name === p.name;
+                              return (
+                                <CommandItem
+                                  key={p.id}
+                                  value={p.id}
+                                  onSelect={() => {
+                                    const price = String(effectivePrice);
+                                    setForm(f => {
+                                      const qty = Number(f.quantity) || 1;
+                                      return {
+                                        ...f,
+                                        product_name: p.name,
+                                        unit_price: price,
+                                        total_amount: String(effectivePrice * qty),
+                                      };
+                                    });
+                                    setProductPickerOpen(false);
+                                    setProductSearch("");
+                                  }}
+                                  className="flex items-center gap-2"
+                                >
+                                  {p.image_url && (
+                                    <img src={p.image_url} alt="" className="h-8 w-8 rounded object-cover shrink-0" />
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="truncate text-sm">{p.name}</div>
+                                    <div className="text-xs text-muted-foreground">৳ {toBn(effectivePrice)}</div>
+                                  </div>
+                                  {selected && <Check className="h-4 w-4 text-primary shrink-0" />}
+                                </CommandItem>
+                              );
+                            })}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
