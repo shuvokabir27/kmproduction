@@ -46,6 +46,23 @@ const ShopCategoryGrid = () => {
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
 
+  // Auto-scroll every 1 second, loop back to start when reaching end
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    if (paused || cats.length === 0) return;
+    const id = setInterval(() => {
+      const el = scrollerRef.current;
+      if (!el) return;
+      const step = 140;
+      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 4) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: step, behavior: "smooth" });
+      }
+    }, 1000);
+    return () => clearInterval(id);
+  }, [paused, cats.length]);
+
   if (cats.length === 0) return null;
 
   return (
@@ -92,6 +109,10 @@ const ShopCategoryGrid = () => {
 
           <div
             ref={scrollerRef}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onTouchStart={() => setPaused(true)}
+            onTouchEnd={() => setPaused(false)}
             className="flex gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {cats.map((c, i) => {
