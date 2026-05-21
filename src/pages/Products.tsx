@@ -304,7 +304,33 @@ const Products = () => {
             <a href="#about" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors">আমাদের সম্পর্কে</a>
             <a href="#contact" className="px-3 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors">যোগাযোগ</a>
 
+            {whatsappNo && (
+              <a
+                href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="flex items-center justify-center h-9 w-9 rounded-full text-white shadow-md hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: "#25D366" }}
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M20.52 3.48A11.86 11.86 0 0 0 12.04 0C5.5 0 .2 5.3.2 11.84c0 2.09.55 4.13 1.6 5.93L0 24l6.38-1.67a11.86 11.86 0 0 0 5.66 1.44h.01c6.54 0 11.84-5.3 11.84-11.84 0-3.16-1.23-6.13-3.37-8.45zM12.05 21.4h-.01a9.55 9.55 0 0 1-4.87-1.33l-.35-.21-3.78.99 1.01-3.69-.23-.38a9.54 9.54 0 0 1-1.46-5.06c0-5.27 4.29-9.56 9.57-9.56 2.56 0 4.95.99 6.76 2.81a9.52 9.52 0 0 1 2.81 6.77c0 5.27-4.29 9.56-9.45 9.66zm5.25-7.16c-.29-.14-1.7-.84-1.96-.94-.26-.1-.45-.14-.64.14-.19.29-.74.94-.91 1.13-.17.19-.34.21-.62.07-.29-.14-1.21-.45-2.31-1.42-.85-.76-1.43-1.7-1.6-1.99-.17-.29-.02-.45.13-.59.13-.13.29-.34.43-.51.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.14-.64-1.54-.88-2.11-.23-.55-.47-.48-.64-.49l-.55-.01c-.19 0-.5.07-.76.36-.26.29-1 .98-1 2.38 0 1.41 1.03 2.77 1.17 2.96.14.19 2.02 3.09 4.9 4.33.69.3 1.22.47 1.64.6.69.22 1.32.19 1.81.12.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.33z"/>
+                </svg>
+              </a>
+            )}
+            {contactPhone && (
+              <a
+                href={`tel:${contactPhone.replace(/\s/g, "")}`}
+                aria-label="Call"
+                className="flex items-center justify-center h-9 w-9 rounded-full text-white shadow-md hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: "#1e3a8a" }}
+              >
+                <Phone className="h-4 w-4" />
+              </a>
+            )}
+
             <div className="mx-2 h-6 w-px bg-white/10" />
+
 
             <button
               onClick={() => featured[0] && openOrderDialog(featured[0])}
