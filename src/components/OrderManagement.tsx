@@ -967,7 +967,7 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                         value={productSearch}
                         onValueChange={setProductSearch}
                       />
-                      <CommandList>
+                      <CommandList className="product-picker-scrollbar max-h-72 overflow-y-scroll overscroll-contain pr-1 [scrollbar-gutter:stable]">
                         <CommandEmpty>
                           <div className="py-2 px-2 text-sm text-muted-foreground">
                             কোনো প্রডাক্ট পাওয়া যায়নি।
