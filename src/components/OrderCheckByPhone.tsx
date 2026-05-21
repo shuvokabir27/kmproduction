@@ -125,7 +125,7 @@ export default function OrderCheckByPhone() {
                 {/* Status breakdown */}
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(stats).map(([k, v]) => {
-                    const meta = STATUS_META[k] || { label: k, icon: Clock, cls: "text-foreground bg-muted border-border" };
+                    const entry = v as { count: number; amount: number };
                     const Icon = meta.icon;
                     return (
                       <div key={k} className={`px-3 py-1.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 ${meta.cls}`}>
