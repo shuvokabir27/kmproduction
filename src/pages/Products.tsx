@@ -762,11 +762,10 @@ const Products = () => {
 
       {/* About Strip */}
       <section id="about" className="px-4 py-12">
-        <div className="max-w-5xl mx-auto glossy-section p-8 md:p-12 text-center">
-
-          <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>ABOUT KM SHOP</span>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
-          <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto glossy-section-cyan p-8 md:p-12 text-center">
+          <span className="text-xs font-bold tracking-widest uppercase text-cyan-400">ABOUT KM SHOP</span>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4 relative z-10">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
+          <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto relative z-10">
             কে এম শপ কুয়াকাটার স্থানীয় কৃষক, জেলে ও কারিগরদের সাথে সরাসরি কাজ করে। আমাদের প্রতিটি পণ্য — শুঁটকি মাছ থেকে শুরু করে হস্তশিল্প, নারকেল পণ্য, তালের গুড় ও স্মৃতিচিহ্ন — যত্ন সহকারে বাছাই করা ও পরীক্ষিত। আমরা চাই কুয়াকাটার অথেনটিক স্বাদ ও সংস্কৃতি দেশের প্রতিটি কোণে পৌঁছে দিতে।
           </p>
         </div>
