@@ -105,7 +105,8 @@ const App = () => (
           <Suspense fallback={<PageFallback />}>
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<PublicHome />} />
+            <Route path="/" element={<Products />} />
+            <Route path="/media" element={<PublicHome />} />
             <Route path="/member/:memberId" element={<PublicProfile />} />
             <Route path="/actor/:id" element={<ActorPortfolio />} />
             <Route path="/login" element={<Login />} />
