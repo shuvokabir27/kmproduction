@@ -846,27 +846,48 @@ const Products = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="text-white pt-10 pb-6 px-4" style={{ backgroundColor: BRAND_DARK }}>
-        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
+      {/* Footer — Premium */}
+      <footer
+        className="relative text-white pt-14 pb-6 px-4 overflow-hidden border-t border-white/10"
+        style={{
+          backgroundImage: [
+            "radial-gradient(60% 50% at 10% 0%, hsl(0 80% 30% / 0.55), transparent 60%)",
+            "radial-gradient(50% 50% at 90% 10%, hsl(340 70% 35% / 0.45), transparent 60%)",
+            "radial-gradient(80% 60% at 50% 100%, hsl(0 75% 20% / 0.6), transparent 65%)",
+            "linear-gradient(160deg, #1a0608 0%, #2a0a10 35%, #0d0405 70%, #2a0a10 100%)",
+          ].join(", "),
+        }}
+      >
+        {/* gold hairline */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
+        {/* ambient blobs */}
+        <div className="pointer-events-none absolute -top-20 -left-16 w-80 h-80 rounded-full bg-rose-600/25 blur-[120px]" />
+        <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-red-800/30 blur-[140px]" />
+
+        <div className="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-10 h-10 rounded-full bg-card/15 flex items-center justify-center font-bold">KM</div>
-              <div className="font-bold text-lg">{siteSettings?.shop_name || "কে এম শপ"}</div>
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-rose-400/50 to-red-700/60 blur-md opacity-80" />
+                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-red-500 via-rose-600 to-red-800 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
+              </div>
+              <div className="font-extrabold text-lg bg-gradient-to-r from-amber-200 via-rose-100 to-amber-200 bg-clip-text text-transparent">
+                {siteSettings?.shop_name || "কে এম শপ"}
+              </div>
             </div>
-            <p className="text-white/70 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
+            <p className="text-white/75 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
           </div>
           <div>
-            <h4 className="font-bold mb-3">দ্রুত লিংক</h4>
-            <ul className="space-y-2 text-white/70">
-              <li><a href="#shop" className="hover:text-white">শপ</a></li>
-              <li><a href="#about" className="hover:text-white">আমাদের সম্পর্কে</a></li>
-              <li><a href="#contact" className="hover:text-white">যোগাযোগ</a></li>
+            <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
+            <ul className="space-y-2 text-white/75">
+              <li><a href="#shop" className="hover:text-amber-200 transition-colors">শপ</a></li>
+              <li><a href="#about" className="hover:text-amber-200 transition-colors">আমাদের সম্পর্কে</a></li>
+              <li><a href="#contact" className="hover:text-amber-200 transition-colors">যোগাযোগ</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-bold mb-3">যোগাযোগ</h4>
-            <ul className="space-y-2 text-white/70">
+            <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">যোগাযোগ</h4>
+            <ul className="space-y-2 text-white/75">
               {contactPhone && <li>📞 {contactPhone}</li>}
               {whatsappNo && <li>💬 WhatsApp: +{whatsappNo}</li>}
               {(siteSettings as any)?.shop_email && <li>✉️ {(siteSettings as any).shop_email}</li>}
@@ -874,7 +895,8 @@ const Products = () => {
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto border-t border-white/10 mt-8 pt-4 text-center text-xs text-white/60">
+        <div className="relative max-w-7xl mx-auto mt-10 pt-4 text-center text-xs text-white/60">
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
           © {toBn(new Date().getFullYear())} {(siteSettings as any)?.shop_copyright || "কে এম শপ। সর্বস্বত্ব সংরক্ষিত।"}
         </div>
       </footer>
