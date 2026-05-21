@@ -115,6 +115,27 @@
   .glass-surface {
     @apply bg-card/70 backdrop-blur-2xl border border-border/40;
   }
+  .product-picker-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary)) hsl(var(--muted));
+  }
+  .product-picker-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    display: block;
+  }
+  .product-picker-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-left: 1px solid hsl(var(--border));
+    border-radius: 999px;
+  }
+  .product-picker-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border: 2px solid hsl(var(--muted));
+    border-radius: 999px;
+  }
+  .product-picker-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.85);
+  }
   .glass-premium {
     background: linear-gradient(135deg, hsl(0 5% 8% / 0.9), hsl(0 3% 5% / 0.95));
     backdrop-filter: blur(24px) saturate(1.5);
