@@ -200,8 +200,43 @@ const AdminProducts = () => {
 
   const useProductLayout = isProductAdmin && !isAdmin;
 
+  const menuItems = [
+    { value: "dashboard", label: "ড্যাশবোর্ড", icon: LayoutDashboard },
+    { value: "products", label: "প্রডাক্ট", icon: Package },
+    { value: "categories", label: "ক্যাটাগরি", icon: FolderTree },
+    { value: "orders", label: "অর্ডার", icon: ShoppingBag },
+    { value: "customers", label: "কাস্টমার", icon: Users },
+    { value: "users", label: "ইউজার", icon: Users },
+    { value: "pricing", label: "প্রাইসিং", icon: Weight },
+    { value: "videos", label: "ভিডিও", icon: Play },
+    { value: "reports", label: "রিপোর্ট", icon: BarChart3 },
+    { value: "offers", label: "অফার", icon: Sparkles },
+    { value: "freedelivery", label: "ফ্রি ডেলিভারি", icon: Truck },
+    { value: "footer", label: "ফুটার", icon: FileText },
+  ];
+  const mobileTop = menuItems.slice(0, 6);
+  const mobileBottom = menuItems.slice(6);
+
+  const MenuButton = ({ item }: { item: typeof menuItems[number] }) => {
+    const Icon = item.icon;
+    const active = activeTab === item.value;
+    return (
+      <button
+        onClick={() => setActiveTab(item.value)}
+        className={`flex md:w-full items-center justify-center md:justify-start gap-2 px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all whitespace-nowrap ${
+          active
+            ? "bg-primary/15 text-primary ring-1 ring-primary/30 shadow-sm"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+        }`}
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+        <span>{item.label}</span>
+      </button>
+    );
+  };
+
   const content = (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-4">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4 pb-24 md:pb-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -216,58 +251,22 @@ const AdminProducts = () => {
         </Link>
       </div>
 
-      {/* Tab Navigation */}
+      {/* Mobile Top Menu (first 6) */}
+      <div className="md:hidden grid grid-cols-3 gap-1.5 bg-card border border-border/40 rounded-2xl p-2 sticky top-0 z-30 backdrop-blur shadow-sm">
+        {mobileTop.map(item => <MenuButton key={item.value} item={item} />)}
+      </div>
+
+      {/* Desktop Sidebar + Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 sm:grid-cols-12 h-auto sm:h-11 bg-muted/50 rounded-xl flex-wrap">
-          <TabsTrigger value="dashboard" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <LayoutDashboard className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ড্যাশবোর্ড</span>
-          </TabsTrigger>
-          <TabsTrigger value="products" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Package className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">প্রডাক্ট</span>
-          </TabsTrigger>
-          <TabsTrigger value="categories" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <FolderTree className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ক্যাটাগরি</span>
-          </TabsTrigger>
-          <TabsTrigger value="orders" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <ShoppingBag className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">অর্ডার</span>
-          </TabsTrigger>
-          <TabsTrigger value="customers" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Users className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">কাস্টমার</span>
-          </TabsTrigger>
-          <TabsTrigger value="users" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Users className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ইউজার</span>
-          </TabsTrigger>
-          <TabsTrigger value="pricing" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Weight className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">প্রাইসিং</span>
-          </TabsTrigger>
-          <TabsTrigger value="videos" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Play className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ভিডিও</span>
-          </TabsTrigger>
-          <TabsTrigger value="reports" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <BarChart3 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">রিপোর্ট</span>
-          </TabsTrigger>
-          <TabsTrigger value="offers" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">অফার</span>
-          </TabsTrigger>
-          <TabsTrigger value="freedelivery" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <Truck className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ফ্রি ডেলিভারি</span>
-          </TabsTrigger>
-          <TabsTrigger value="footer" className="text-xs gap-1 data-[state=active]:bg-card rounded-lg">
-            <FileText className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">ফুটার</span>
-          </TabsTrigger>
-        </TabsList>
+        <div className="md:grid md:grid-cols-[220px_1fr] md:gap-5">
+          <aside className="hidden md:block">
+            <nav className="sticky top-4 bg-card border border-border/40 rounded-2xl p-2 space-y-1">
+              {menuItems.map(item => <MenuButton key={item.value} item={item} />)}
+            </nav>
+          </aside>
+
+          <div className="min-w-0">
+
 
         {/* Dashboard Tab */}
         <TabsContent value="dashboard" className="mt-4">
@@ -419,7 +418,15 @@ const AdminProducts = () => {
         <TabsContent value="footer" className="mt-4">
           <ShopFooterEditor />
         </TabsContent>
+          </div>
+        </div>
       </Tabs>
+
+      {/* Mobile Bottom Menu (last 6) */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur border-t border-border/40 px-2 py-2 grid grid-cols-3 gap-1.5 shadow-[0_-4px_12px_-2px_rgba(0,0,0,0.3)]">
+        {mobileBottom.map(item => <MenuButton key={item.value} item={item} />)}
+      </div>
+
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
