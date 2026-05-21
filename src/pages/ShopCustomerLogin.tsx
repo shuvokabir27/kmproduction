@@ -196,7 +196,7 @@ export default function ShopCustomerLogin() {
                   <div className="relative mt-1">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <input
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       inputMode="numeric"
                       maxLength={6}
                       value={confirmPassword}
@@ -204,6 +204,14 @@ export default function ShopCustomerLogin() {
                       placeholder="••••••"
                       className={inputClass}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
                   {confirmPassword.length > 0 && confirmPassword !== password && (
                     <p className="text-[11px] text-red-600 font-semibold mt-1 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
