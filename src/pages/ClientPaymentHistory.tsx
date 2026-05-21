@@ -326,13 +326,13 @@ export default function ClientPaymentHistory() {
   const renderIcon = (cat: string) => {
     if (cat === "production") return <Banknote className="h-4 w-4 text-sky-400" />;
     if (cat === "artist") return <Users className="h-4 w-4 text-violet-400" />;
-    return <Receipt className="h-4 w-4 text-orange-400" />;
+    return <Receipt className="h-4 w-4 text-red-400" />;
   };
 
   const renderIconBg = (cat: string) => {
     if (cat === "production") return "bg-sky-500/10";
     if (cat === "artist") return "bg-violet-500/10";
-    return "bg-orange-500/10";
+    return "bg-red-500/10";
   };
 
   return (
@@ -343,11 +343,11 @@ export default function ClientPaymentHistory() {
           <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl" onClick={() => navigate("/client")}>
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-            <History className="h-3.5 w-3.5 text-emerald-400" />
+          <div className="h-7 w-7 rounded-lg bg-red-500/15 flex items-center justify-center">
+            <History className="h-3.5 w-3.5 text-red-400" />
           </div>
           <h1 className="text-base font-bold text-foreground">পেমেন্ট হিস্ট্রি</h1>
-          <Badge variant="outline" className="ml-auto text-[10px] px-2 py-0.5 border-emerald-500/20 text-emerald-400">
+          <Badge variant="outline" className="ml-auto text-[10px] px-2 py-0.5 border-red-500/20 text-red-400">
             {allRecords.length}টি
           </Badge>
         </div>
@@ -411,8 +411,8 @@ export default function ClientPaymentHistory() {
         {/* Records */}
         {filteredRecords.length === 0 ? (
           <div className="text-center py-20">
-            <div className="h-16 w-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-              <History className="h-8 w-8 text-emerald-400/50" />
+            <div className="h-16 w-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+              <History className="h-8 w-8 text-red-400/50" />
             </div>
             <p className="text-muted-foreground text-sm">
               {searchText || activeFilter !== "all" ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট রেকর্ড নেই"}
@@ -433,7 +433,7 @@ export default function ClientPaymentHistory() {
                 {rec.projectName && <div className="text-[10px] text-muted-foreground/70 truncate">{rec.projectName}</div>}
               </div>
               {rec.source === "derived" && rec.derivedType === "artist" && (
-                <Badge variant="outline" className={cn("text-[9px] h-4 shrink-0", rec.isPaid ? "border-emerald-500/50 text-emerald-500" : "border-amber-500/50 text-amber-500")}>
+                <Badge variant="outline" className={cn("text-[9px] h-4 shrink-0", rec.isPaid ? "border-red-500/50 text-red-500" : "border-red-500/50 text-red-500")}>
                   {rec.isPaid ? "পেইড" : "আংশিক"}
                 </Badge>
               )}

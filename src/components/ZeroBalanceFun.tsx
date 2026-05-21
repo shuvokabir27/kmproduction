@@ -413,7 +413,7 @@ export function ZeroBalanceFun({
       }}
     >
       {paused && (
-        <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] md:text-xs font-semibold backdrop-blur pointer-events-none">
+        <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-red-500/20 border border-red-400/40 text-red-300 text-[10px] md:text-xs font-semibold backdrop-blur pointer-events-none">
           ⏸ পজড — ট্যাপ করে চালু করুন
         </div>
       )}
@@ -509,7 +509,7 @@ export function ZeroBalanceFun({
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               />
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-amber-400 blur-2xl opacity-50 animate-pulse" />
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-fuchsia-500 to-red-400 blur-2xl opacity-50 animate-pulse" />
               <div className="relative rounded-full overflow-hidden">
                 {spotMember.photo_url ? (
                   <img
@@ -575,7 +575,7 @@ export function ZeroBalanceFun({
                   if (isNaN(d.getTime())) return null;
                   const months = ["জানু","ফেব্রু","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্ট","অক্টো","নভে","ডিসে"];
                   return (
-                    <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-amber-100/90 font-medium backdrop-blur-sm flex items-center gap-1">
+                    <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-red-100/90 font-medium backdrop-blur-sm flex items-center gap-1">
                       <span>🎂</span> {d.getDate()} {months[d.getMonth()]}
                     </span>
                   );

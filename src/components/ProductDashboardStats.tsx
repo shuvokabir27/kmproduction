@@ -164,7 +164,7 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
       {/* Quick Settings */}
       <div className="bg-card border border-border/30 rounded-2xl p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Truck className="h-5 w-5 text-emerald-400" />
+          <Truck className="h-5 w-5 text-red-400" />
           <div>
             <p className="font-semibold text-foreground text-sm">ফ্রি ডেলিভারি</p>
             <p className="text-[11px] text-muted-foreground">চালু থাকলে ল্যান্ডিং পেজে ডেলিভারি সংক্রান্ত লেখা দেখাবে</p>
@@ -178,18 +178,18 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
       </div>
 
       {/* Daily Focus */}
-      <div className="bg-gradient-to-r from-emerald-900/30 to-amber-900/20 border border-emerald-500/20 rounded-2xl p-4 md:p-5">
+      <div className="bg-gradient-to-r from-red-900/30 to-red-900/20 border border-red-500/20 rounded-2xl p-4 md:p-5">
         <div className="flex items-center gap-2 mb-3">
-          <Calendar className="h-5 w-5 text-emerald-400" />
+          <Calendar className="h-5 w-5 text-red-400" />
           <h3 className="font-bold text-foreground">আজকের ফোকাস</h3>
         </div>
         <div className="grid grid-cols-3 gap-3">
           <button onClick={() => nav("orders", "all")} className="text-center hover:opacity-80 transition-opacity">
-            <p className="text-2xl font-extrabold text-emerald-400">{toBn(todayOrders.length)}</p>
+            <p className="text-2xl font-extrabold text-red-400">{toBn(todayOrders.length)}</p>
             <p className="text-[11px] text-muted-foreground">অর্ডার</p>
           </button>
           <button onClick={() => nav("orders", "delivered")} className="text-center hover:opacity-80 transition-opacity">
-            <p className="text-2xl font-extrabold text-amber-400">৳{toBn(todayRevenue)}</p>
+            <p className="text-2xl font-extrabold text-red-400">৳{toBn(todayRevenue)}</p>
             <p className="text-[11px] text-muted-foreground">আয়</p>
           </button>
           <button onClick={() => nav("orders", "pending")} className="text-center hover:opacity-80 transition-opacity">
@@ -202,9 +202,9 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard icon={ShoppingCart} label="মোট অর্ডার" value={toBn(totalOrders)} color="text-blue-400" bg="bg-blue-500/10" onClick={() => nav("orders", "all")} />
-        <StatCard icon={Clock} label="পেন্ডিং" value={toBn(pendingOrders)} color="text-yellow-400" bg="bg-yellow-500/10" onClick={() => nav("orders", "pending")} />
-        <StatCard icon={Truck} label="ডেলিভারড" value={toBn(deliveredOrders)} color="text-emerald-400" bg="bg-emerald-500/10" onClick={() => nav("orders", "delivered")} />
-        <StatCard icon={TrendingUp} label="মোট আয়" value={`৳${toBn(totalRevenue)}`} color="text-amber-400" bg="bg-amber-500/10" onClick={() => nav("orders", "delivered")} />
+        <StatCard icon={Clock} label="পেন্ডিং" value={toBn(pendingOrders)} color="text-red-400" bg="bg-red-500/10" onClick={() => nav("orders", "pending")} />
+        <StatCard icon={Truck} label="ডেলিভারড" value={toBn(deliveredOrders)} color="text-red-400" bg="bg-red-500/10" onClick={() => nav("orders", "delivered")} />
+        <StatCard icon={TrendingUp} label="মোট আয়" value={`৳${toBn(totalRevenue)}`} color="text-red-400" bg="bg-red-500/10" onClick={() => nav("orders", "delivered")} />
       </div>
 
       {/* Customer Stats */}
@@ -212,7 +212,7 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
         <StatCard icon={Users} label="মোট কাস্টমার" value={toBn(totalCustomers)} color="text-purple-400" bg="bg-purple-500/10" onClick={() => nav("customers")} />
         <StatCard icon={UserPlus} label="নতুন কাস্টমার" value={toBn(newCustomers)} color="text-cyan-400" bg="bg-cyan-500/10" onClick={() => nav("customers")} />
         <StatCard icon={RotateCcw} label="রিটার্ন কাস্টমার" value={toBn(returnCustomers)} color="text-pink-400" bg="bg-pink-500/10" onClick={() => nav("customers")} />
-        <StatCard icon={RotateCcw} label="রিটার্ন %" value={`${toBn(returnPercent)}%`} color="text-orange-400" bg="bg-orange-500/10" onClick={() => nav("customers")} />
+        <StatCard icon={RotateCcw} label="রিটার্ন %" value={`${toBn(returnPercent)}%`} color="text-red-400" bg="bg-red-500/10" onClick={() => nav("customers")} />
       </div>
 
       {/* Charts Row */}
@@ -220,7 +220,7 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
         {/* Monthly Revenue */}
         <div className="bg-card border border-border/30 rounded-2xl p-4">
           <h4 className="font-bold text-foreground text-sm mb-3 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-emerald-400" /> মাসিক আয়
+            <TrendingUp className="h-4 w-4 text-red-400" /> মাসিক আয়
           </h4>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
@@ -268,7 +268,7 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
         {/* Peak Order Hours */}
         <div className="bg-card border border-border/30 rounded-2xl p-4">
           <h4 className="font-bold text-foreground text-sm mb-3 flex items-center gap-2">
-            <Clock className="h-4 w-4 text-amber-400" /> কোন সময়ে বেশি অর্ডার
+            <Clock className="h-4 w-4 text-red-400" /> কোন সময়ে বেশি অর্ডার
           </h4>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
@@ -325,7 +325,7 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
       {/* Monthly Revenue */}
       <div className="bg-card border border-border/30 rounded-2xl p-4">
         <h4 className="font-bold text-foreground text-sm mb-3">মাসিক আয়</h4>
-        <p className="text-3xl font-extrabold text-emerald-400">৳{toBn(monthRevenue)}</p>
+        <p className="text-3xl font-extrabold text-red-400">৳{toBn(monthRevenue)}</p>
         <p className="text-xs text-muted-foreground mt-1">{monthNames[now.getMonth()]} মাসের আয়</p>
       </div>
 
@@ -337,7 +337,7 @@ const ProductDashboardStats = ({ onNavigate }: { onNavigate?: NavFn } = {}) => {
         <div className="space-y-2 max-h-72 overflow-y-auto">
           {recentCustomers.map((c, i) => (
             <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 flex items-center justify-center text-xs font-bold text-foreground flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-500/20 to-cyan-500/20 flex items-center justify-center text-xs font-bold text-foreground flex-shrink-0">
                 {c.name?.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">

@@ -577,7 +577,7 @@ const NewsCard = () => {
             }}
             className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-bold transition-all ${
               mode === "custom"
-                ? "bg-amber-600 text-white shadow-lg shadow-amber-900/40"
+                ? "bg-red-600 text-white shadow-lg shadow-red-900/40"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -649,10 +649,10 @@ const NewsCard = () => {
 
             {/* Custom mode: image upload */}
             {mode === "custom" && (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 space-y-3">
+              <div className="rounded-xl border border-red-500/30 bg-red-950/20 p-3 space-y-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <p className="text-xs font-semibold text-amber-400">কাস্টম ছবি আপলোড করুন</p>
+                  <Sparkles className="w-4 h-4 text-red-400" />
+                  <p className="text-xs font-semibold text-red-400">কাস্টম ছবি আপলোড করুন</p>
                 </div>
                 <input
                   ref={fileInputRef}
@@ -677,7 +677,7 @@ const NewsCard = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 border-amber-500/40 text-amber-400"
+                    className="flex-1 border-red-500/40 text-red-400"
                   >
                     📷 {customImageUrl ? "ছবি পরিবর্তন করুন" : "ছবি আপলোড করুন"}
                   </Button>
@@ -699,8 +699,8 @@ const NewsCard = () => {
             {/* Custom headline override */}
             <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-3">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <p className="text-xs font-semibold text-amber-400">
+                <Sparkles className="w-4 h-4 text-red-400" />
+                <p className="text-xs font-semibold text-red-400">
                   {mode === "custom" ? "হেডলাইন লিখুন" : "হেডলাইন এডিট করুন (ঐচ্ছিক)"}
                 </p>
               </div>
@@ -719,15 +719,15 @@ const NewsCard = () => {
 
             {/* Custom mode: custom advertisement */}
             {mode === "custom" && (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 space-y-3">
+              <div className="rounded-xl border border-red-500/30 bg-red-950/20 p-3 space-y-3">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={customAdEnabled}
                     onChange={(e) => setCustomAdEnabled(e.target.checked)}
-                    className="w-4 h-4 accent-amber-500"
+                    className="w-4 h-4 accent-red-500"
                   />
-                  <span className="text-xs font-semibold text-amber-400">
+                  <span className="text-xs font-semibold text-red-400">
                     নিজস্ব বিজ্ঞাপন যোগ করুন
                   </span>
                 </label>
@@ -739,13 +739,13 @@ const NewsCard = () => {
                         value={customAdEmoji}
                         onChange={(e) => setCustomAdEmoji(e.target.value.slice(0, 2))}
                         placeholder="✨"
-                        className="w-16 text-center border-amber-500/30 bg-background/50"
+                        className="w-16 text-center border-red-500/30 bg-background/50"
                       />
                       <Input
                         value={customAdBrand}
                         onChange={(e) => setCustomAdBrand(e.target.value)}
                         placeholder="ব্র্যান্ডের নাম"
-                        className="flex-1 border-amber-500/30 bg-background/50"
+                        className="flex-1 border-red-500/30 bg-background/50"
                         style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
                       />
                     </div>
@@ -753,14 +753,14 @@ const NewsCard = () => {
                       value={customAdTagline}
                       onChange={(e) => setCustomAdTagline(e.target.value)}
                       placeholder="ট্যাগলাইন (যেমন: সেরা মানের গ্যারান্টি!)"
-                      className="border-amber-500/30 bg-background/50"
+                      className="border-red-500/30 bg-background/50"
                       style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
                     />
                     <Input
                       value={customAdOffer}
                       onChange={(e) => setCustomAdOffer(e.target.value)}
                       placeholder="স্পেশাল অফার (যেমন: ২টি কিনলে ১টি ফ্রি)"
-                      className="border-amber-500/30 bg-background/50"
+                      className="border-red-500/30 bg-background/50"
                       style={{ fontFamily: '"Hind Siliguri", sans-serif' }}
                     />
                   </div>
@@ -822,7 +822,7 @@ const NewsCard = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setAdIndex((i) => (i + 1 + Math.floor(Math.random() * (FUNNY_ADS.length - 1))) % FUNNY_ADS.length)}
-                className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+                className="w-full border-red-500/40 text-red-400 hover:bg-red-500/10"
               >
                 <Sparkles className="w-4 h-4 mr-2" /> অন্য বিজ্ঞাপন দেখাও
               </Button>

@@ -16,7 +16,7 @@ import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
 import { bn } from "date-fns/locale";
 
 const CATEGORIES = [
-  { value: "food", label: "খাবার", icon: Utensils, color: "text-orange-400" },
+  { value: "food", label: "খাবার", icon: Utensils, color: "text-red-400" },
   { value: "transport", label: "গাড়িভাড়া", icon: Car, color: "text-blue-400" },
   { value: "props", label: "পপস", icon: Package, color: "text-purple-400" },
   { value: "other", label: "অন্যান্য", icon: MoreHorizontal, color: "text-muted-foreground" },

@@ -196,8 +196,8 @@ const AdminBonuses = () => {
         <div className="flex gap-2">
           {[
             { value: "all", label: "সব", color: "text-blue-400 border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20", activeColor: "bg-blue-500/25 text-blue-300 border-blue-500/40" },
-            { value: "bonus", label: "বোনাস", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20", activeColor: "bg-emerald-500/25 text-emerald-300 border-emerald-500/40" },
-            { value: "transport", label: "গাড়ি ভাড়া", color: "text-amber-400 border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20", activeColor: "bg-amber-500/25 text-amber-300 border-amber-500/40" },
+            { value: "bonus", label: "বোনাস", color: "text-red-400 border-red-500/30 bg-red-500/10 hover:bg-red-500/20", activeColor: "bg-red-500/25 text-red-300 border-red-500/40" },
+            { value: "transport", label: "গাড়ি ভাড়া", color: "text-red-400 border-red-500/30 bg-red-500/10 hover:bg-red-500/20", activeColor: "bg-red-500/25 text-red-300 border-red-500/40" },
           ].map((f) => (
             <Button
               key={f.value}
@@ -220,8 +220,8 @@ const AdminBonuses = () => {
             {bonuses?.map((b: any) => (
               <div key={b.id} className="p-4 flex items-center justify-between hover:bg-secondary/30 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${b.type === "bonus" ? "bg-emerald-500/15" : "bg-amber-500/15"}`}>
-                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-emerald-400" /> : <Car className="h-4 w-4 text-amber-400" />}
+                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${b.type === "bonus" ? "bg-red-500/15" : "bg-red-500/15"}`}>
+                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-red-400" /> : <Car className="h-4 w-4 text-red-400" />}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{b.profiles?.full_name} <span className="text-muted-foreground">#{b.profiles?.member_id}</span></p>
@@ -233,7 +233,7 @@ const AdminBonuses = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-foreground">৳{Number(b.amount).toLocaleString("bn-BD")}</span>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-emerald-400" onClick={() => showCardForRow(b)} title="কার্ড দেখুন">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-400" onClick={() => showCardForRow(b)} title="কার্ড দেখুন">
                     <ImageIcon className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deleteBonus.mutate(b.id)}>

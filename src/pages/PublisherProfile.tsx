@@ -190,9 +190,9 @@ export default function PublisherProfile() {
 
           {/* Fun Fact */}
           {publisher.fun_fact && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4">
               <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-amber-500" /> মজার তথ্য
+                <Sparkles className="h-5 w-5 text-red-500" /> মজার তথ্য
               </h2>
               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
                 {publisher.fun_fact}

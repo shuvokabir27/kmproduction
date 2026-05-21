@@ -125,10 +125,10 @@ const DownloadApp = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <Card className="overflow-hidden border-2 hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/10 h-full">
-              <div className="bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent p-6 border-b border-border">
+              <div className="bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent p-6 border-b border-border">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg">
                       <Smartphone className="w-9 h-9 text-white" />
                     </div>
                     <div>
@@ -137,7 +137,7 @@ const DownloadApp = () => {
                     </div>
                   </div>
                   {androidFile && (
-                    <Badge variant="outline" className="border-green-500/30 text-green-600 dark:text-green-400 gap-1 shrink-0">
+                    <Badge variant="outline" className="border-red-500/30 text-red-600 dark:text-red-400 gap-1 shrink-0">
                       <Tag className="w-3 h-3" />
                       v{androidFile.version}
                     </Badge>
@@ -158,14 +158,14 @@ const DownloadApp = () => {
                         <span>{formatBytes(androidFile.file_size)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="w-4 h-4 text-green-500" />
+                        <Calendar className="w-4 h-4 text-red-500" />
                         <span>{formatDate(androidFile.released_at)}</span>
                       </div>
                     </div>
 
                     {androidFile.release_notes && (
-                      <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-3">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-green-700 dark:text-green-400 mb-1.5">
+                      <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-red-700 dark:text-red-400 mb-1.5">
                           <FileText className="w-3.5 h-3.5" />
                           <span>এই ভার্সনে নতুন:</span>
                         </div>
@@ -178,7 +178,7 @@ const DownloadApp = () => {
                     <Button
                       asChild
                       size="lg"
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg"
+                      className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
                     >
                       <a href={androidFile.url} download>
                         <Download className="w-5 h-5 mr-2" />
@@ -284,7 +284,7 @@ const DownloadApp = () => {
                         <span>{formatBytes(iosFile.file_size)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="w-4 h-4 text-green-500" />
+                        <Calendar className="w-4 h-4 text-red-500" />
                         <span>{formatDate(iosFile.released_at)}</span>
                       </div>
                     </div>

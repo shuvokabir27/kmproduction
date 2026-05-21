@@ -175,7 +175,7 @@ function CampaignRow({ c, products, onEdit, onDelete }: { c: Campaign; products:
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-bold">{c.title}</h3>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${c.is_active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full ${c.is_active ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-600"}`}>
               {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
             </span>
             <span className="text-xs text-muted-foreground">প্রতি মোবাইল: {c.max_orders_per_phone}</span>

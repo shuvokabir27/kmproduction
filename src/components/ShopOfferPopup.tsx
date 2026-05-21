@@ -143,7 +143,7 @@ export default function ShopOfferPopup() {
       onClick={dismiss}
     >
       <div
-        className="relative w-full max-w-md bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-amber-950 dark:via-slate-900 dark:to-orange-950 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-gradient-to-br from-red-50 via-white to-red-50 dark:from-red-950 dark:via-slate-900 dark:to-red-950 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
       >
@@ -162,7 +162,7 @@ export default function ShopOfferPopup() {
           <X className="h-5 w-5" />
         </button>
 
-        <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 px-6 py-3 text-center">
+        <div className="relative bg-gradient-to-r from-red-500 via-red-500 to-red-500 px-6 py-3 text-center">
           <div className="inline-flex items-center gap-2 text-white font-bold text-sm tracking-wide">
             <Sparkles className="h-4 w-4 animate-pulse" />
             {offer.badge_text || "বিশেষ অফার"}
@@ -172,17 +172,17 @@ export default function ShopOfferPopup() {
 
         <div className="relative p-6 space-y-4 text-center">
           {(offer.image_url || product?.image_url) && !isCombo && (
-            <div className="mx-auto w-32 h-32 rounded-2xl overflow-hidden shadow-lg ring-4 ring-amber-300/40">
+            <div className="mx-auto w-32 h-32 rounded-2xl overflow-hidden shadow-lg ring-4 ring-red-300/40">
               <img src={offer.image_url || product?.image_url} alt={offer.title} className="w-full h-full object-cover" />
             </div>
           )}
 
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-amber-50 leading-tight">{offer.title}</h2>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-red-50 leading-tight">{offer.title}</h2>
             {offer.description && <p className="text-sm text-slate-700 dark:text-slate-300 mt-2">{offer.description}</p>}
           </div>
 
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white font-extrabold text-xl px-6 py-3 rounded-full shadow-lg">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-600 text-white font-extrabold text-xl px-6 py-3 rounded-full shadow-lg">
             {isFree ? <Truck className="h-5 w-5" /> : isCombo ? <Package className="h-5 w-5" /> : <Tag className="h-5 w-5" />}
             {discountText}
           </div>
@@ -190,7 +190,7 @@ export default function ShopOfferPopup() {
           {/* Combo product list */}
           {isCombo && comboProducts && comboProducts.length > 0 && (
             <div className="bg-white/70 dark:bg-slate-800/50 rounded-2xl p-3 space-y-2 text-left">
-              <div className="text-xs font-bold text-slate-700 dark:text-amber-200 text-center mb-1">এই কম্বোতে যা থাকছে</div>
+              <div className="text-xs font-bold text-slate-700 dark:text-red-200 text-center mb-1">এই কম্বোতে যা থাকছে</div>
               {comboItems.map((c: any, idx: number) => {
                 const p = comboProducts.find(x => x.id === c.product_id);
                 if (!p) return null;
@@ -208,7 +208,7 @@ export default function ShopOfferPopup() {
                 <div className="text-center text-xs text-slate-600 dark:text-slate-300 pt-1">
                   <span className="line-through">৳{toBn(comboOriginalTotal)}</span>{" "}
                   <span className="font-extrabold text-red-600 dark:text-red-400">৳{toBn(offer.combo_price)}</span>{" "}
-                  <span className="font-bold text-green-700 dark:text-green-400">({toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়)</span>
+                  <span className="font-bold text-red-700 dark:text-red-400">({toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়)</span>
                 </div>
               )}
             </div>
@@ -221,7 +221,7 @@ export default function ShopOfferPopup() {
           )}
 
           {countdown && (
-            <div className="inline-flex items-center gap-2 bg-slate-900/90 dark:bg-amber-100 text-amber-300 dark:text-slate-900 font-mono font-bold px-4 py-2 rounded-xl text-sm">
+            <div className="inline-flex items-center gap-2 bg-slate-900/90 dark:bg-red-100 text-red-300 dark:text-slate-900 font-mono font-bold px-4 py-2 rounded-xl text-sm">
               <Clock className="h-4 w-4" />
               শেষ হবে: {countdown}
             </div>
@@ -230,7 +230,7 @@ export default function ShopOfferPopup() {
           <Link
             to={offer.slug ? `/o/${offer.slug}` : `/offer/${offer.id}`}
             onClick={dismiss}
-            className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+            className="block w-full bg-gradient-to-r from-red-600 to-red-600 hover:from-red-700 hover:to-red-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
           >
             <span className="inline-flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />

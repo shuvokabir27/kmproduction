@@ -290,15 +290,15 @@ const AdminAttendance = () => {
 
         <Tabs defaultValue="manage" className="w-full">
           <TabsList className="bg-secondary/50 border border-border/20 w-full md:w-auto gap-1 p-1">
-            <TabsTrigger value="manage" className="gap-1.5 text-xs flex-1 md:flex-none text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 data-[state=active]:bg-emerald-500/25 data-[state=active]:text-emerald-300"><Calendar className="h-3.5 w-3.5" /> হাজিরা দিন</TabsTrigger>
+            <TabsTrigger value="manage" className="gap-1.5 text-xs flex-1 md:flex-none text-red-400 bg-red-500/10 border border-red-500/20 data-[state=active]:bg-red-500/25 data-[state=active]:text-red-300"><Calendar className="h-3.5 w-3.5" /> হাজিরা দিন</TabsTrigger>
             <TabsTrigger value="history" className="gap-1.5 text-xs flex-1 md:flex-none text-violet-400 bg-violet-500/10 border border-violet-500/20 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300"><History className="h-3.5 w-3.5" /> হিস্ট্রি</TabsTrigger>
           </TabsList>
 
           <TabsContent value="manage" className="space-y-4 mt-4">
             {!selectedShooting ? (
               <Card className="bg-card border-border/30 p-8 md:p-12 flex flex-col items-center justify-center gap-4 text-center">
-                <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                  <Calendar className="h-8 w-8 text-emerald-400" />
+                <div className="h-16 w-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-red-400" />
                 </div>
                 <div>
                   <p className="text-lg font-semibold text-foreground">আজকের হাজিরা নিন</p>
@@ -306,7 +306,7 @@ const AdminAttendance = () => {
                 </div>
                 <Button
                   size="lg"
-                  className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                  className="gap-2 bg-red-500 hover:bg-red-600 text-white"
                   onClick={() => {
                     setPickedExistingId("");
                     setCustomName("");
@@ -340,7 +340,7 @@ const AdminAttendance = () => {
                         >
                           <X className="h-3.5 w-3.5" /> বাতিল
                         </Button>
-                        <Button onClick={handleSave} disabled={saving} className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white" size="sm">
+                        <Button onClick={handleSave} disabled={saving} className="gap-2 bg-red-500 hover:bg-red-600 text-white" size="sm">
                           <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
                         </Button>
                       </div>
@@ -369,7 +369,7 @@ const AdminAttendance = () => {
                         key={m.id}
                         className={`p-3 md:p-4 flex items-center gap-4 border transition-all cursor-pointer ${
                           present
-                            ? "bg-emerald-500/10 border-emerald-500/40"
+                            ? "bg-red-500/10 border-red-500/40"
                             : "bg-card border-border/30 hover:border-border/60"
                         }`}
                         onClick={() => togglePresent(m.id)}
@@ -383,7 +383,7 @@ const AdminAttendance = () => {
                             )}
                           </div>
                           {present && (
-                            <div className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center">
+                            <div className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-red-500 border-2 border-background flex items-center justify-center">
                               <Check className="h-4 w-4 text-white" />
                             </div>
                           )}
@@ -420,7 +420,7 @@ const AdminAttendance = () => {
                     onClick={handleSave}
                     disabled={saving}
                     size="lg"
-                    className="w-full gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
+                    className="w-full gap-2 bg-red-500 hover:bg-red-600 text-white shadow-lg"
                   >
                     <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "হাজিরা সেভ করুন"}
                   </Button>
@@ -483,7 +483,7 @@ const AdminAttendance = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-amber-400 hover:bg-amber-500/10"
+                        className="h-8 w-8 text-red-400 hover:bg-red-500/10"
                         title="শুটিং নাম বদলান"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -652,7 +652,7 @@ const AdminAttendance = () => {
                       {availableMembers.map((m: any) => {
                         const isAdded = !!editData[m.id];
                         return (
-                          <div key={m.id} className={`flex items-center justify-between gap-3 p-2 rounded-lg border transition-colors ${isAdded ? "bg-emerald-500/5 border-emerald-500/20" : "bg-secondary/10 border-border/10"}`}>
+                          <div key={m.id} className={`flex items-center justify-between gap-3 p-2 rounded-lg border transition-colors ${isAdded ? "bg-red-500/5 border-red-500/20" : "bg-secondary/10 border-border/10"}`}>
                             <div className="flex items-center gap-2 min-w-0">
                               <Checkbox
                                 checked={isAdded}
@@ -757,7 +757,7 @@ const AdminAttendance = () => {
           <DialogContent className="bg-card border-border/50 max-w-lg">
             <DialogHeader>
               <DialogTitle className="text-foreground flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-emerald-400" /> হাজিরার জন্য শুটিং
+                <Calendar className="h-4 w-4 text-red-400" /> হাজিরার জন্য শুটিং
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
@@ -777,7 +777,7 @@ const AdminAttendance = () => {
                             type="button"
                             onClick={() => { setPickedExistingId(s.id); setCustomName(""); }}
                             className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                              sel ? "bg-emerald-500/15 border-emerald-500/40" : "bg-secondary/30 border-border/20 hover:bg-secondary/50"
+                              sel ? "bg-red-500/15 border-red-500/40" : "bg-secondary/30 border-border/20 hover:bg-secondary/50"
                             }`}
                           >
                             <p className="text-sm font-medium text-foreground">{s.name}</p>
@@ -817,7 +817,7 @@ const AdminAttendance = () => {
               <Button variant="ghost" onClick={() => setPickerOpen(false)}>বাতিল</Button>
               <Button
                 disabled={creatingShooting || (!pickedExistingId && !customName.trim())}
-                className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                className="gap-2 bg-red-500 hover:bg-red-600 text-white"
                 onClick={async () => {
                   setCreatingShooting(true);
                   try {
@@ -880,7 +880,7 @@ const AdminAttendance = () => {
           <DialogContent className="bg-card border-border/50 max-w-md">
             <DialogHeader>
               <DialogTitle className="text-foreground flex items-center gap-2">
-                <Type className="h-4 w-4 text-amber-400" /> শুটিং নাম বদলান
+                <Type className="h-4 w-4 text-red-400" /> শুটিং নাম বদলান
               </DialogTitle>
             </DialogHeader>
             <Input

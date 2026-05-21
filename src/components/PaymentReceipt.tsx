@@ -119,7 +119,7 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
             <button
               onClick={handleWhatsApp}
               title="WhatsApp-এ পাঠান"
-              className="bg-green-600 text-white rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"
+              className="bg-red-600 text-white rounded-full p-1.5 shadow-lg hover:scale-110 transition-transform"
             >
               <MessageCircle className="h-4 w-4" />
             </button>
@@ -259,7 +259,7 @@ const PaymentReceipt = forwardRef<HTMLDivElement, PaymentReceiptProps>(
                       {receiptData.balance > 0 ? "অবশিষ্ট বকেয়া" : receiptData.balance < 0 ? "অগ্রিম (কোম্পানি পাবে)" : "সমন্বয়কৃত"}
                     </span>
                     <span
-                      className={`font-bold ${receiptData.balance > 0 ? "text-red-600" : receiptData.balance < 0 ? "text-orange-600" : "text-blue-600"}`}
+                      className={`font-bold ${receiptData.balance > 0 ? "text-red-600" : receiptData.balance < 0 ? "text-red-600" : "text-blue-600"}`}
                     >
                       ৳{Math.abs(receiptData.balance).toLocaleString()}
                     </span>

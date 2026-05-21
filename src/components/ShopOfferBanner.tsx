@@ -138,7 +138,7 @@ export default function ShopOfferBanner() {
       className="relative w-full overflow-hidden"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
     >
-      <div className="relative bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 dark:from-amber-700 dark:via-orange-800 dark:to-red-800">
+      <div className="relative bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800">
         {/* sparkle bg */}
         <div className="absolute inset-0 pointer-events-none opacity-20 select-none">
           <div className="absolute top-4 left-[10%] text-3xl animate-pulse">✨</div>
@@ -200,7 +200,7 @@ export default function ShopOfferBanner() {
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                     {offer.combo_price && comboOriginalTotal > Number(offer.combo_price) && (
-                      <div className="inline-flex items-center gap-1.5 bg-green-500 rounded-full px-3 py-1 text-xs font-bold">
+                      <div className="inline-flex items-center gap-1.5 bg-red-500 rounded-full px-3 py-1 text-xs font-bold">
                         <span className="line-through opacity-80">৳{toBn(comboOriginalTotal)}</span>
                         <span>{toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়</span>
                       </div>
@@ -231,7 +231,7 @@ export default function ShopOfferBanner() {
               <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
                 <Link
                   to={offer.slug ? `/o/${offer.slug}` : `/offer/${offer.id}`}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
                 >
                   <ShoppingBag className="h-5 w-5" />
                   অফার দেখুন ও অর্ডার করুন
@@ -288,13 +288,13 @@ export default function ShopOfferBanner() {
                   )}
                 </p>
               </div>
-              <div className="bg-orange-100 text-orange-700 font-bold px-3 py-1.5 rounded-xl text-sm">
+              <div className="bg-red-100 text-red-700 font-bold px-3 py-1.5 rounded-xl text-sm">
                 কম্বোতে × {toBn(previewProduct.qty)}
               </div>
             </div>
             <button
               onClick={() => setPreviewProduct(null)}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white font-bold py-3 rounded-2xl"
+              className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 rounded-2xl"
             >
               বন্ধ করুন
             </button>

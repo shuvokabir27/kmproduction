@@ -99,7 +99,7 @@ const AdminContactSettings = () => {
           <CardContent className="space-y-4">
             <div>
               <Label className="flex items-center gap-2 mb-1.5">
-                <MessageCircle className="h-4 w-4 text-green-500" /> WhatsApp নাম্বার
+                <MessageCircle className="h-4 w-4 text-red-500" /> WhatsApp নাম্বার
               </Label>
               <Input
                 placeholder="+8801XXXXXXXXX"

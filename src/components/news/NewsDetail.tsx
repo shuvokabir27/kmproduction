@@ -137,7 +137,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
                 <button onClick={() => onShare("facebook", news)} className="h-7 w-7 rounded-sm bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors">
                   <Facebook className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => onShare("whatsapp", news)} className="h-7 w-7 rounded-sm bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors">
+                <button onClick={() => onShare("whatsapp", news)} className="h-7 w-7 rounded-sm bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 transition-colors">
                   <MessageCircle className="h-3.5 w-3.5" />
                 </button>
                 <button onClick={() => onShare("copy", news)} className="h-7 w-7 rounded-sm bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
@@ -173,7 +173,7 @@ export default function NewsDetail({ news, categories, onBack, onShare, publishe
             <div className="flex items-center gap-3 mt-10 pt-4 border-t border-gray-200">
               <span className="text-[10px] text-gray-600 uppercase tracking-wider font-semibold">শেয়ার করুন</span>
               <button onClick={() => onShare("facebook", news)} className="text-xs text-blue-600 hover:underline flex items-center gap-1"><Facebook className="h-3 w-3" /> Facebook</button>
-              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-green-600 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
+              <button onClick={() => onShare("whatsapp", news)} className="text-xs text-red-600 hover:underline flex items-center gap-1"><MessageCircle className="h-3 w-3" /> WhatsApp</button>
               <button onClick={() => onShare("copy", news)} className="text-xs text-gray-700 hover:underline flex items-center gap-1"><Link2 className="h-3 w-3" /> লিংক কপি</button>
             </div>
 

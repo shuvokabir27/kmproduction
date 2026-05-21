@@ -137,7 +137,7 @@ export function NewsTickerBar() {
   // Collapsed view — small button to re-open
   if (hidden) {
     return (
-      <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-amber-500/10 backdrop-blur-xl">
+      <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-red-500/10 backdrop-blur-xl">
         <button
           onClick={() => setHiddenPersist(false)}
           className="w-full flex items-center justify-center gap-1.5 px-3 py-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
@@ -152,7 +152,7 @@ export function NewsTickerBar() {
 
   if (items.length === 0) {
     return (
-      <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-amber-500/10 backdrop-blur-xl">
+      <div className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-card/70 to-red-500/10 backdrop-blur-xl">
         <div className="flex items-center gap-2 px-3 py-1.5">
           <motion.div
             animate={{ rotate: 360 }}
@@ -168,12 +168,12 @@ export function NewsTickerBar() {
 
   const current = items[idx];
   const FlagIcon = current.bangladeshi ? Flag : Globe2;
-  const colorClass = current.bangladeshi ? "text-emerald-300" : "text-cyan-300";
-  const dotColor = current.bangladeshi ? "bg-emerald-400" : "bg-cyan-400";
+  const colorClass = current.bangladeshi ? "text-red-300" : "text-cyan-300";
+  const dotColor = current.bangladeshi ? "bg-red-400" : "bg-cyan-400";
 
   return (
     <div
-      className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-cyan-500/10 backdrop-blur-xl"
+      className="relative border-b border-border/30 bg-gradient-to-r from-rose-500/10 via-red-500/5 to-cyan-500/10 backdrop-blur-xl"
       onPointerEnter={(e) => { if (e.pointerType === "mouse") setPaused(true); }}
       onPointerLeave={(e) => { if (e.pointerType === "mouse") setPaused(false); }}
     >
@@ -197,7 +197,7 @@ export function NewsTickerBar() {
           initial={{ width: "0%" }}
           animate={{ width: "100%" }}
           transition={{ duration: ROTATE_MS / 1000, ease: "linear" }}
-          className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 z-20 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
+          className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-rose-400 via-red-400 to-red-400 z-20 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
         />
       )}
 
@@ -252,7 +252,7 @@ export function NewsTickerBar() {
                   <span
                     className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] md:text-[10px] font-extrabold uppercase tracking-wider shrink-0 max-w-[55%]
                       ${current.bangladeshi
-                        ? "bg-gradient-to-r from-emerald-500/25 to-green-500/20 text-emerald-200 border border-emerald-400/40"
+                        ? "bg-gradient-to-r from-red-500/25 to-red-500/20 text-red-200 border border-red-400/40"
                         : "bg-gradient-to-r from-cyan-500/25 to-blue-500/20 text-cyan-200 border border-cyan-400/40"
                       }`}
                   >

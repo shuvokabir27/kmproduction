@@ -356,7 +356,7 @@ export function PublicBirthdaySection() {
                     top: `${(i * 41) % 100}%`,
                   }}
                 >
-                  <Sparkles className="h-4 w-4 text-yellow-300" style={{ filter: "drop-shadow(0 0 6px #fde047)" }} />
+                  <Sparkles className="h-4 w-4 text-red-300" style={{ filter: "drop-shadow(0 0 6px #fde047)" }} />
                 </motion.div>
               ))}
 

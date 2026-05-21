@@ -236,9 +236,9 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
                 </div>
                 <div className="text-right">
                   <div className="text-foreground">মোট: ৳{a.totalRemuneration.toLocaleString("bn-BD")}</div>
-                  <div className="text-emerald-500">পেইড: ৳{a.totalPaid.toLocaleString("bn-BD")}</div>
+                  <div className="text-red-500">পেইড: ৳{a.totalPaid.toLocaleString("bn-BD")}</div>
                   {a.totalRemuneration - a.totalPaid > 0 && (
-                    <div className="text-amber-500">বাকি: ৳{(a.totalRemuneration - a.totalPaid).toLocaleString("bn-BD")}</div>
+                    <div className="text-red-500">বাকি: ৳{(a.totalRemuneration - a.totalPaid).toLocaleString("bn-BD")}</div>
                   )}
                 </div>
               </div>
@@ -346,12 +346,12 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="font-medium text-foreground truncate">{artist.artist_name}</span>
                           {artist.is_paid && (
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                            <CheckCircle2 className="h-3.5 w-3.5 text-red-400 shrink-0" />
                           )}
                         </div>
                         <span className="text-right w-16 text-foreground font-medium">৳{rem.toLocaleString("bn-BD")}</span>
-                        <span className="text-right w-14 text-emerald-400">৳{paid.toLocaleString("bn-BD")}</span>
-                        <span className={`text-right w-14 font-medium ${due > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                        <span className="text-right w-14 text-red-400">৳{paid.toLocaleString("bn-BD")}</span>
+                        <span className={`text-right w-14 font-medium ${due > 0 ? "text-red-400" : "text-red-400"}`}>
                           ৳{Math.max(0, due).toLocaleString("bn-BD")}
                         </span>
                       </div>
@@ -359,7 +359,7 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
                       {/* Progress Bar */}
                       <div className="h-1 rounded-full bg-secondary/50 overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                          className="h-full rounded-full bg-red-500 transition-all duration-500"
                           style={{ width: `${rem > 0 ? Math.min((paid / rem) * 100, 100) : 0}%` }}
                         />
                       </div>
@@ -392,11 +392,11 @@ export function ClientArtistBilling({ projectId, clientProfileId }: ClientArtist
                 </div>
                 <div>
                   <div className="text-muted-foreground">মোট পেইড</div>
-                  <div className="font-bold text-emerald-400 text-sm">৳{totalPaid.toLocaleString("bn-BD")}</div>
+                  <div className="font-bold text-red-400 text-sm">৳{totalPaid.toLocaleString("bn-BD")}</div>
                 </div>
                 <div>
                   <div className="text-muted-foreground">মোট বাকি</div>
-                  <div className="font-bold text-amber-400 text-sm">৳{Math.max(0, totalDue).toLocaleString("bn-BD")}</div>
+                  <div className="font-bold text-red-400 text-sm">৳{Math.max(0, totalDue).toLocaleString("bn-BD")}</div>
                 </div>
               </div>
             </CardContent>

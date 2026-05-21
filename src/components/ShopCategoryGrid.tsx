@@ -24,7 +24,7 @@ const ShopCategoryGrid = () => {
           <h2 className="text-xl md:text-2xl font-bold text-gray-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>
             ক্যাটাগরি
           </h2>
-          <a href="#shop" className="text-xs font-semibold text-emerald-700 hover:underline">সব দেখুন →</a>
+          <a href="#shop" className="text-xs font-semibold text-red-700 hover:underline">সব দেখুন →</a>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 md:p-4">
@@ -41,9 +41,9 @@ const ShopCategoryGrid = () => {
                     // Best effort: dispatch a custom event for category filter (caught by Products page if implemented)
                     window.dispatchEvent(new CustomEvent("shop:filter-category", { detail: { value: c.value } }));
                   }}
-                  className="group flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-emerald-50 transition-colors"
+                  className="group flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-red-50 transition-colors"
                 >
-                  <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 ring-1 ring-gray-200 group-hover:ring-emerald-400 transition">
+                  <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 ring-1 ring-gray-200 group-hover:ring-red-400 transition">
                     <img
                       src={img}
                       alt={c.label}

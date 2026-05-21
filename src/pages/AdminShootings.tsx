@@ -21,13 +21,13 @@ import { ShootingSceneTracker } from "@/components/ShootingSceneTracker";
 
 const statusOptions = [
   { value: "plan", label: "প্লান", color: "bg-violet-500/15 text-violet-400", tabColor: "text-violet-400 bg-violet-500/10 data-[state=active]:bg-violet-500/25 data-[state=active]:text-violet-300 border border-violet-500/20" },
-  { value: "upcoming", label: "আসন্ন", color: "bg-amber-500/15 text-amber-400", tabColor: "text-amber-400 bg-amber-500/10 data-[state=active]:bg-amber-500/25 data-[state=active]:text-amber-300 border border-amber-500/20" },
-  { value: "calltime", label: "কলটাইম", color: "bg-orange-500/15 text-orange-400", tabColor: "text-orange-400 bg-orange-500/10 data-[state=active]:bg-orange-500/25 data-[state=active]:text-orange-300 border border-orange-500/20" },
+  { value: "upcoming", label: "আসন্ন", color: "bg-red-500/15 text-red-400", tabColor: "text-red-400 bg-red-500/10 data-[state=active]:bg-red-500/25 data-[state=active]:text-red-300 border border-red-500/20" },
+  { value: "calltime", label: "কলটাইম", color: "bg-red-500/15 text-red-400", tabColor: "text-red-400 bg-red-500/10 data-[state=active]:bg-red-500/25 data-[state=active]:text-red-300 border border-red-500/20" },
   { value: "ongoing", label: "চলছে", color: "bg-cyan-500/15 text-cyan-400", tabColor: "text-cyan-400 bg-cyan-500/10 data-[state=active]:bg-cyan-500/25 data-[state=active]:text-cyan-300 border border-cyan-500/20" },
-  { value: "completed", label: "শুটিং শেষ", color: "bg-emerald-500/15 text-emerald-400", tabColor: "text-emerald-400 bg-emerald-500/10 data-[state=active]:bg-emerald-500/25 data-[state=active]:text-emerald-300 border border-emerald-500/20" },
+  { value: "completed", label: "শুটিং শেষ", color: "bg-red-500/15 text-red-400", tabColor: "text-red-400 bg-red-500/10 data-[state=active]:bg-red-500/25 data-[state=active]:text-red-300 border border-red-500/20" },
   { value: "editing", label: "এডিটিং চলছে", color: "bg-pink-500/15 text-pink-400", tabColor: "text-pink-400 bg-pink-500/10 data-[state=active]:bg-pink-500/25 data-[state=active]:text-pink-300 border border-pink-500/20" },
-  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-teal-500/15 text-teal-400", tabColor: "text-teal-400 bg-teal-500/10 data-[state=active]:bg-teal-500/25 data-[state=active]:text-teal-300 border border-teal-500/20" },
-  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-green-500/15 text-green-400", tabColor: "text-green-400 bg-green-500/10 data-[state=active]:bg-green-500/25 data-[state=active]:text-green-300 border border-green-500/20" },
+  { value: "editing_done", label: "এডিটিং শেষ", color: "bg-red-500/15 text-red-400", tabColor: "text-red-400 bg-red-500/10 data-[state=active]:bg-red-500/25 data-[state=active]:text-red-300 border border-red-500/20" },
+  { value: "published", label: "পাবলিশ হয়েছে", color: "bg-red-500/15 text-red-400", tabColor: "text-red-400 bg-red-500/10 data-[state=active]:bg-red-500/25 data-[state=active]:text-red-300 border border-red-500/20" },
 ];
 
 const getStatusInfo = (status: string | null) =>
@@ -574,7 +574,7 @@ const AdminShootings = () => {
                                 <FileText className="h-3.5 w-3.5" />
                                 <span>স্ক্রিপ্ট</span>
                               </Button>
-                              <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1 text-amber-400" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                              <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] gap-1 text-red-400" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
                                 <Clapperboard className="h-3.5 w-3.5" />
                                 <span>দৃশ্য</span>
                               </Button>
@@ -591,7 +591,7 @@ const AdminShootings = () => {
                           {s.status === "published" ? (
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-1.5">
-                                <Lock className="h-3 w-3 text-green-400/60" />
+                                <Lock className="h-3 w-3 text-red-400/60" />
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
                                 <span className="text-[9px] text-muted-foreground">(স্ট্যাটাস লক)</span>
                               </div>
@@ -665,7 +665,7 @@ const AdminShootings = () => {
                               <td className="p-3">
                                 {s.status === "published" ? (
                                   <div className="flex items-center gap-1.5">
-                                    <Lock className="h-3 w-3 text-green-400/60" />
+                                    <Lock className="h-3 w-3 text-red-400/60" />
                                     <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
                                     <Button variant="ghost" size="sm" className="h-6 text-[10px] text-primary gap-1 px-1.5 ml-1" onClick={() => {
                                       setPublishShootingId(s.id);
@@ -703,7 +703,7 @@ const AdminShootings = () => {
                                        <Users className="h-4 w-4" />
                                      </Button>
                                    )}
-                                    <Button variant="ghost" size="sm" className="text-amber-400 hover:text-amber-300 gap-1" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
+                                    <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 gap-1" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
                                       <Clapperboard className="h-4 w-4" />
                                       <span className="text-xs">দৃশ্য</span>
                                     </Button>
@@ -999,13 +999,13 @@ const AdminShootings = () => {
         <DialogContent className="bg-card border-border/50 max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
-              <Lock className="h-5 w-5 text-amber-400" />
+              <Lock className="h-5 w-5 text-red-400" />
               স্ট্যাটাস পেছনে নেওয়া
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="rounded-lg bg-amber-500/10 border border-amber-500/15 p-3">
-              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+            <div className="rounded-lg bg-red-500/10 border border-red-500/15 p-3">
+              <p className="text-[11px] text-red-300/90 leading-relaxed">
                 ⚠️ আপনি স্ট্যাটাস পেছনে নিয়ে যেতে চাচ্ছেন। এই কাজটি সম্পন্ন করতে আপনার এডমিন পাসওয়ার্ড প্রয়োজন।
               </p>
             </div>

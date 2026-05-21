@@ -639,7 +639,7 @@ export default function AdminVoiceNotes() {
                               key={c.id}
                               className={`rounded-xl p-3 transition-colors space-y-2 ${
                                 c.is_shot
-                                  ? "bg-emerald-500/10 border border-emerald-500/40"
+                                  ? "bg-red-500/10 border border-red-500/40"
                                   : "bg-secondary/40 border border-border/40"
                               }`}
                             >
@@ -659,7 +659,7 @@ export default function AdminVoiceNotes() {
                                 <div className="flex-1 min-w-0">
                                   <p
                                     className={`text-sm font-medium flex items-center gap-2 ${
-                                      c.is_shot ? "text-emerald-400" : "text-foreground"
+                                      c.is_shot ? "text-red-400" : "text-foreground"
                                     }`}
                                   >
                                     {editingSeqClipId === c.id ? (
@@ -704,7 +704,7 @@ export default function AdminVoiceNotes() {
                                       </button>
                                     )}
                                     {c.is_shot && (
-                                      <span className="text-[10px] text-emerald-400/80">✓ শুট সম্পন্ন</span>
+                                      <span className="text-[10px] text-red-400/80">✓ শুট সম্পন্ন</span>
                                     )}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
@@ -731,8 +731,8 @@ export default function AdminVoiceNotes() {
                                       title={c.is_shot ? "ডাবল-ক্লিক করে আনটিক করুন" : "শুট সম্পন্ন"}
                                       className={
                                         c.is_shot
-                                          ? "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10"
-                                          : "text-muted-foreground hover:text-emerald-400"
+                                          ? "text-red-400 hover:text-red-300 bg-red-500/10"
+                                          : "text-muted-foreground hover:text-red-400"
                                       }
                                       onClick={() => {
                                         if (!c.is_shot) toggleShot(c, true);

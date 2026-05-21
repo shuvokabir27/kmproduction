@@ -428,8 +428,8 @@ export default function AdminNews() {
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <Newspaper className="h-5 w-5 text-orange-400" />
+            <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+              <Newspaper className="h-5 w-5 text-red-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">নিউজ ম্যানেজমেন্ট</h1>
@@ -821,7 +821,7 @@ export default function AdminNews() {
                             {categories.find(c => c.value === news.category)?.label || news.category}
                           </Badge>
                           {news.is_featured && (
-                            <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+                            <Star className="h-3.5 w-3.5 text-red-400 fill-red-400" />
                           )}
                         </div>
                         <h3 className="font-semibold text-sm text-foreground truncate">{news.title}</h3>
@@ -871,7 +871,7 @@ export default function AdminNews() {
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Newspaper className="h-5 w-5 text-orange-400" />
+                <Newspaper className="h-5 w-5 text-red-400" />
                 {editingNews ? "নিউজ সম্পাদনা" : "নতুন নিউজ"}
               </DialogTitle>
             </DialogHeader>

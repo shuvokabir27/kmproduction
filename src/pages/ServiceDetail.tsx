@@ -226,7 +226,7 @@ const ServiceDetail = () => {
             </Button>
             {waUrl && (
               <a href={waUrl} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white font-semibold">
+                <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-semibold">
                   <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
                 </Button>
               </a>
@@ -322,7 +322,7 @@ const ServiceDetail = () => {
                       ৳{(finalPrice || rawPrice)!.toLocaleString("bn-BD")}
                     </span>
                     {discount > 0 && (
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                     )}
                   </div>
                 </div>
@@ -339,7 +339,7 @@ const ServiceDetail = () => {
                       ৳{getDiscountedPrice(numPrice, discount).toLocaleString("bn-BD")}
                     </span>
                     {discount > 0 && (
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500 text-amber-950 font-bold">-{discount}%</span>
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-red-500 text-red-950 font-bold">-{discount}%</span>
                     )}
                   </div>
                 </div>
@@ -382,7 +382,7 @@ const ServiceDetail = () => {
                   </Button>
                   {waUrl && (
                     <a href={waUrl} target="_blank" rel="noopener noreferrer" className="block">
-                      <Button variant="outline" className="w-full font-bold text-base py-6 border-green-500/30 text-green-400 hover:bg-green-600/10">
+                      <Button variant="outline" className="w-full font-bold text-base py-6 border-red-500/30 text-red-400 hover:bg-red-600/10">
                         <MessageCircle className="h-5 w-5 mr-2" />
                         {t("WhatsApp এ বুকিং দিন", "Book via WhatsApp")}
                       </Button>
@@ -472,7 +472,7 @@ const ServiceDetail = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center py-6 space-y-4"
                 >
-                  <div className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center shadow-xl shadow-green-500/30">
+                  <div className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-red-500 to-red-400 flex items-center justify-center shadow-xl shadow-red-500/30">
                     <Check className="h-10 w-10 text-white" />
                   </div>
                   <h3 className="text-2xl font-black text-foreground">বুকিং সফল হয়েছে!</h3>

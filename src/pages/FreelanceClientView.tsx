@@ -92,8 +92,8 @@ export default function FreelanceClientView() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <Briefcase className="h-5 w-5 text-orange-400" />
+            <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+              <Briefcase className="h-5 w-5 text-red-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">{project.name}</h1>
@@ -127,17 +127,17 @@ export default function FreelanceClientView() {
                 <div className="text-xs text-muted-foreground">বাজেট</div>
                 <div className="font-bold text-sky-400">৳{Number(project.total_budget).toLocaleString("bn-BD")}</div>
               </div>
-              <div className="rounded-lg bg-amber-500/10 p-3 text-center">
+              <div className="rounded-lg bg-red-500/10 p-3 text-center">
                 <div className="text-xs text-muted-foreground">অন্যান্য খরচ</div>
-                <div className="font-bold text-amber-400">৳{Number(project.total_expense).toLocaleString("bn-BD")}</div>
+                <div className="font-bold text-red-400">৳{Number(project.total_expense).toLocaleString("bn-BD")}</div>
               </div>
               <div className="rounded-lg bg-violet-500/10 p-3 text-center">
                 <div className="text-xs text-muted-foreground">সদস্য খরচ</div>
                 <div className="font-bold text-violet-400">৳{memberCost.toLocaleString("bn-BD")}</div>
               </div>
-              <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-emerald-500/10" : "bg-red-500/10"}`}>
+              <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-red-500/10" : "bg-red-500/10"}`}>
                 <div className="text-xs text-muted-foreground">লাভ</div>
-                <div className={`font-bold ${profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
+                <div className={`font-bold ${profit >= 0 ? "text-red-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
               </div>
             </div>
           </CardContent>
@@ -160,7 +160,7 @@ export default function FreelanceClientView() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</div>
-                    <div className={`text-[10px] ${a.is_paid ? "text-emerald-400" : "text-amber-400"}`}>
+                    <div className={`text-[10px] ${a.is_paid ? "text-red-400" : "text-red-400"}`}>
                       {a.is_paid ? "✅ পেমেন্ট সম্পন্ন" : "⏳ বাকি আছে"}
                     </div>
                   </div>
@@ -218,7 +218,7 @@ export default function FreelanceClientView() {
                   <div className="flex flex-wrap gap-4 text-sm" style={{ color: "#000" }}>
                     <span>বাজেট: <strong>৳{Number(project.total_budget).toLocaleString("bn-BD")}</strong></span>
                     <span>খরচ: <strong>৳{totalCost.toLocaleString("bn-BD")}</strong></span>
-                    <span>লাভ: <strong className={profit >= 0 ? "text-emerald-600" : "text-red-600"}>৳{profit.toLocaleString("bn-BD")}</strong></span>
+                    <span>লাভ: <strong className={profit >= 0 ? "text-red-600" : "text-red-600"}>৳{profit.toLocaleString("bn-BD")}</strong></span>
                   </div>
                 </div>
               </div>

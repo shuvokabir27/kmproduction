@@ -122,7 +122,7 @@ export function ProfileReviews({ profileId, profileName }: ProfileReviewsProps) 
               key={s}
               className={`h-5 w-5 ${
                 avgRating && s <= Math.round(Number(avgRating))
-                  ? "fill-amber-400 text-amber-400"
+                  ? "fill-red-400 text-red-400"
                   : "text-muted-foreground/30"
               }`}
             />
@@ -158,14 +158,14 @@ export function ProfileReviews({ profileId, profileName }: ProfileReviewsProps) 
               <Star
                 className={`h-6 w-6 transition-colors ${
                   s <= displayRating
-                    ? "fill-amber-400 text-amber-400"
-                    : "text-muted-foreground/40 hover:text-amber-300"
+                    ? "fill-red-400 text-red-400"
+                    : "text-muted-foreground/40 hover:text-red-300"
                 }`}
               />
             </button>
           ))}
           {displayRating > 0 && (
-            <span className="text-amber-400 text-sm font-medium ml-1">{displayRating}/5</span>
+            <span className="text-red-400 text-sm font-medium ml-1">{displayRating}/5</span>
           )}
         </div>
 

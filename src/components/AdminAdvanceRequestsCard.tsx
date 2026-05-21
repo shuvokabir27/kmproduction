@@ -87,14 +87,14 @@ export function AdminAdvanceRequestsCard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-orange-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
+        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-red-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
       >
         <div className="relative p-2.5 md:p-3">
           {/* Header */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <div className="relative shrink-0">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/30">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-red-500 to-red-500 flex items-center justify-center shadow-md shadow-red-500/30">
                   <Wallet className="h-4 w-4 text-white" />
                 </div>
                 {count > 0 && (
@@ -110,7 +110,7 @@ export function AdminAdvanceRequestsCard() {
               <div className="min-w-0">
                 <h3 className="text-xs md:text-sm font-extrabold text-foreground flex items-center gap-1 truncate">
                   অ্যাডভান্স রিকোয়েস্ট
-                  {count > 0 && <Bell className="h-3 w-3 text-amber-400 animate-pulse shrink-0" />}
+                  {count > 0 && <Bell className="h-3 w-3 text-red-400 animate-pulse shrink-0" />}
                 </h3>
                 <p className="text-[10px] text-muted-foreground truncate">
                   {count > 0 ? `${bnNum(count)}টি অপেক্ষমান` : "✅ সব রিভিউ করা হয়েছে"}
@@ -138,7 +138,7 @@ export function AdminAdvanceRequestsCard() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 10 }}
-                      className="p-3 rounded-xl bg-card/70 border border-amber-500/20 hover:border-amber-500/50 transition-colors"
+                      className="p-3 rounded-xl bg-card/70 border border-red-500/20 hover:border-red-500/50 transition-colors"
                     >
                       <div className="flex items-start gap-2.5">
                         {/* Avatar */}
@@ -146,10 +146,10 @@ export function AdminAdvanceRequestsCard() {
                           <img
                             src={member.photo_url}
                             alt={member.full_name}
-                            className="h-9 w-9 rounded-full object-cover border border-amber-500/30 shrink-0"
+                            className="h-9 w-9 rounded-full object-cover border border-red-500/30 shrink-0"
                           />
                         ) : (
-                          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center text-amber-400 font-bold text-sm shrink-0">
+                          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-red-500/20 to-red-500/20 flex items-center justify-center text-red-400 font-bold text-sm shrink-0">
                             {member?.full_name?.[0] ?? "?"}
                           </div>
                         )}
@@ -166,7 +166,7 @@ export function AdminAdvanceRequestsCard() {
                             )}
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-base font-extrabold text-amber-300">
+                            <span className="text-base font-extrabold text-red-300">
                               ৳{bnNum(r.amount)}
                             </span>
                             <span className="text-[10px] text-muted-foreground inline-flex items-center gap-1">
@@ -188,7 +188,7 @@ export function AdminAdvanceRequestsCard() {
                                 setApprovedAmount(String(r.amount));
                                 setAdminNote("");
                               }}
-                              className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold transition-colors"
+                              className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-md bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 text-[11px] font-bold transition-colors"
                             >
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               অনুমোদন
@@ -222,7 +222,7 @@ export function AdminAdvanceRequestsCard() {
             <DialogTitle className="flex items-center gap-2">
               {actionDialog?.type === "approve" ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <CheckCircle2 className="h-4 w-4 text-red-400" />
                   <span>অ্যাডভান্স অনুমোদন</span>
                 </>
               ) : (
@@ -242,7 +242,7 @@ export function AdminAdvanceRequestsCard() {
                   {members?.[actionDialog.req.member_id]?.full_name ?? "অজানা"}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">রিকোয়েস্ট পরিমাণ</div>
-                <div className="text-base font-extrabold text-amber-300">
+                <div className="text-base font-extrabold text-red-300">
                   ৳{bnNum(actionDialog.req.amount)}
                 </div>
                 {actionDialog.req.reason && (
@@ -312,7 +312,7 @@ export function AdminAdvanceRequestsCard() {
                   disabled={reviewMut.isPending}
                   className={`flex-1 font-bold text-white ${
                     actionDialog.type === "approve"
-                      ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+                      ? "bg-gradient-to-r from-red-500 to-red-500 hover:from-red-600 hover:to-red-600"
                       : "bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
                   }`}
                 >

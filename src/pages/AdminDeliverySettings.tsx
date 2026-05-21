@@ -68,14 +68,14 @@ const AdminDeliverySettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-50 py-6 px-4" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-50 py-6 px-4" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="sm" onClick={() => navigate("/admin/products")}>
             <ArrowLeft className="h-4 w-4 mr-1" /> ফিরে যান
           </Button>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Truck className="h-6 w-6 text-green-700" /> ডেলিভারি সেটিংস
+            <Truck className="h-6 w-6 text-red-700" /> ডেলিভারি সেটিংস
           </h1>
         </div>
 
@@ -105,10 +105,10 @@ const AdminDeliverySettings = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between bg-green-50 rounded-xl p-4 border border-green-100">
+          <div className="flex items-center justify-between bg-red-50 rounded-xl p-4 border border-red-100">
             <div>
-              <p className="font-bold text-green-900">ফ্রি ডেলিভারি অফার</p>
-              <p className="text-xs text-green-700">টার্গেট অ্যামাউন্ট ক্রস করলে ডেলিভারি ফ্রি</p>
+              <p className="font-bold text-red-900">ফ্রি ডেলিভারি অফার</p>
+              <p className="text-xs text-red-700">টার্গেট অ্যামাউন্ট ক্রস করলে ডেলিভারি ফ্রি</p>
             </div>
             <Switch
               checked={form.free_delivery_enabled}
@@ -116,7 +116,7 @@ const AdminDeliverySettings = () => {
             />
           </div>
 
-          <Button onClick={save} disabled={saving} className="w-full bg-green-700 hover:bg-green-800 text-white h-11 gap-2">
+          <Button onClick={save} disabled={saving} className="w-full bg-red-700 hover:bg-red-800 text-white h-11 gap-2">
             <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
           </Button>
         </div>
@@ -129,7 +129,7 @@ const AdminDeliverySettings = () => {
               return (
                 <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-sm">
                   <span className="text-gray-700">{p.name}</span>
-                  <span className={`font-bold ${r.isFree ? "text-green-700" : "text-gray-900"}`}>
+                  <span className={`font-bold ${r.isFree ? "text-red-700" : "text-gray-900"}`}>
                     {r.isFree ? "ফ্রি ডেলিভারি 🎉" : `৳${r.charge}`}
                   </span>
                 </div>

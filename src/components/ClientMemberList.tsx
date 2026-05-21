@@ -116,7 +116,7 @@ export default function ClientMemberList({ allProjectArtists }: Props) {
                           </div>
                         )}
                         {isPaid && (
-                          <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background" />
+                          <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-red-500 border-2 border-background" />
                         )}
                       </div>
 
@@ -132,12 +132,12 @@ export default function ClientMemberList({ allProjectArtists }: Props) {
                       <div className="text-right shrink-0">
                         <div className="text-[10px] text-muted-foreground">বিল ৳{m.bill.toLocaleString("bn-BD")}</div>
                         {due > 0 ? (
-                          <div className="text-sm font-bold text-amber-400">বাকি ৳{due.toLocaleString("bn-BD")}</div>
+                          <div className="text-sm font-bold text-red-400">বাকি ৳{due.toLocaleString("bn-BD")}</div>
                         ) : (
-                          <div className="text-sm font-bold text-emerald-400">পরিশোধিত</div>
+                          <div className="text-sm font-bold text-red-400">পরিশোধিত</div>
                         )}
                         {m.paid > 0 && due > 0 && (
-                          <div className="text-[9px] text-emerald-400/80">পেইড ৳{m.paid.toLocaleString("bn-BD")}</div>
+                          <div className="text-[9px] text-red-400/80">পেইড ৳{m.paid.toLocaleString("bn-BD")}</div>
                         )}
                       </div>
                     </motion.div>
@@ -154,11 +154,11 @@ export default function ClientMemberList({ allProjectArtists }: Props) {
                     </div>
                     <div className="text-right">
                       <div className="text-[9px] text-muted-foreground">পেইড</div>
-                      <div className="text-xs font-bold text-emerald-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
+                      <div className="text-xs font-bold text-red-400">৳{totalPaid.toLocaleString("bn-BD")}</div>
                     </div>
                     <div className="text-right">
                       <div className="text-[9px] text-muted-foreground">বাকি</div>
-                      <div className="text-xs font-bold text-amber-400">৳{Math.max(0, totalDue).toLocaleString("bn-BD")}</div>
+                      <div className="text-xs font-bold text-red-400">৳{Math.max(0, totalDue).toLocaleString("bn-BD")}</div>
                     </div>
                   </div>
                 </div>

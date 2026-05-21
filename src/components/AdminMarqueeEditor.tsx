@@ -438,7 +438,7 @@ export function AdminMarqueeEditor() {
 
                   {/* Effect */}
                   <div className="flex items-center gap-1 flex-wrap">
-                    <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                    <Sparkles className="h-3.5 w-3.5 text-red-300" />
                     {EFFECTS.map((ef) => (
                       <Button
                         key={ef.key}
@@ -469,7 +469,7 @@ export function AdminMarqueeEditor() {
                     </span>
                   )}
                   {seg.text && !matches && (
-                    <span className="ml-2 text-[10px] text-amber-400">
+                    <span className="ml-2 text-[10px] text-red-400">
                       ⚠ বেস টেক্সটে এই শব্দ নেই — শেষে যুক্ত হবে
                     </span>
                   )}

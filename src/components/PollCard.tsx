@@ -100,25 +100,25 @@ export function PollCard({ poll, compact }: PollCardProps) {
 
   // Colors for bars
   const barColors = [
-    "from-emerald-500 to-cyan-500",
+    "from-red-500 to-cyan-500",
     "from-violet-500 to-pink-500",
-    "from-amber-500 to-orange-500",
+    "from-red-500 to-red-500",
     "from-blue-500 to-indigo-500",
     "from-rose-500 to-red-500",
-    "from-teal-500 to-green-500",
+    "from-red-500 to-red-500",
   ];
 
   return (
     <div className={compact ? "" : "p-4"}>
       {/* Question */}
       <div className="flex items-start gap-2.5 mb-3">
-        <div className="shrink-0 h-8 w-8 rounded-lg bg-emerald-500/15 ring-1 ring-emerald-500/20 flex items-center justify-center">
-          <Vote className="h-4 w-4 text-emerald-400" />
+        <div className="shrink-0 h-8 w-8 rounded-lg bg-red-500/15 ring-1 ring-red-500/20 flex items-center justify-center">
+          <Vote className="h-4 w-4 text-red-400" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm md:text-[15px] font-semibold text-foreground leading-snug">{poll.question}</h3>
           <div className="flex items-center gap-2 mt-1">
-            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${poll.is_active ? "text-emerald-400 bg-emerald-500/10" : "text-destructive bg-destructive/10"}`}>
+            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${poll.is_active ? "text-red-400 bg-red-500/10" : "text-destructive bg-destructive/10"}`}>
               {poll.is_active ? "ভোটিং চলছে" : "ভোটিং শেষ"}
             </span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
@@ -150,7 +150,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
                     ? "cursor-default"
                     : "cursor-pointer hover:ring-1 hover:ring-primary/30 active:scale-[0.98]"
                   }
-                  ${isMyVote ? "ring-1 ring-emerald-500/40" : ""}
+                  ${isMyVote ? "ring-1 ring-red-500/40" : ""}
                   bg-secondary/50
                 `}
                 whileTap={!hasVoted && poll.is_active ? { scale: 0.98 } : {}}
@@ -168,7 +168,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
                 <div className="relative flex items-center gap-3 px-3.5 py-2.5">
                   {showResults ? (
                     isMyVote ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-red-400 shrink-0" />
                     ) : (
                       <div className="h-4 w-4 rounded-full border border-border/50 shrink-0" />
                     )
@@ -182,8 +182,8 @@ export function PollCard({ poll, compact }: PollCardProps) {
 
                   {showResults && (
                     <div className="flex items-center gap-1.5 shrink-0">
-                      {isWinner && <Trophy className="h-3.5 w-3.5 text-amber-400" />}
-                      <span className={`text-xs font-bold ${isWinner ? "text-amber-400" : "text-muted-foreground"}`}>
+                      {isWinner && <Trophy className="h-3.5 w-3.5 text-red-400" />}
+                      <span className={`text-xs font-bold ${isWinner ? "text-red-400" : "text-muted-foreground"}`}>
                         {pct}%
                       </span>
                     </div>
@@ -227,10 +227,10 @@ export function PollCard({ poll, compact }: PollCardProps) {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header gradient */}
-              <div className="bg-gradient-to-r from-emerald-500/15 via-cyan-500/10 to-emerald-500/15 px-5 pt-5 pb-4">
+              <div className="bg-gradient-to-r from-red-500/15 via-cyan-500/10 to-red-500/15 px-5 pt-5 pb-4">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-500/20 ring-1 ring-emerald-500/30 flex items-center justify-center">
-                    <Vote className="h-5 w-5 text-emerald-400" />
+                  <div className="h-10 w-10 rounded-xl bg-red-500/20 ring-1 ring-red-500/30 flex items-center justify-center">
+                    <Vote className="h-5 w-5 text-red-400" />
                   </div>
                   <button onClick={() => setConfirmVote(null)} className="h-8 w-8 rounded-full bg-secondary/80 flex items-center justify-center hover:bg-secondary transition-colors">
                     <X className="h-4 w-4 text-muted-foreground" />
@@ -244,9 +244,9 @@ export function PollCard({ poll, compact }: PollCardProps) {
 
               {/* Warning */}
               <div className="px-5 py-3">
-                <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/8 border border-amber-500/15 px-3.5 py-3">
-                  <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-300/90 leading-relaxed">
+                <div className="flex items-start gap-2.5 rounded-xl bg-red-500/8 border border-red-500/15 px-3.5 py-3">
+                  <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-300/90 leading-relaxed">
                     একবার ভোট দিলে আর পরিবর্তন করা যাবে না। সাবধানে নির্বাচন করুন।
                   </p>
                 </div>
@@ -262,7 +262,7 @@ export function PollCard({ poll, compact }: PollCardProps) {
                   বাতিল
                 </Button>
                 <Button
-                  className="flex-1 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white border-0 h-11 font-semibold"
+                  className="flex-1 rounded-xl bg-gradient-to-r from-red-500 to-cyan-500 hover:from-red-600 hover:to-cyan-600 text-white border-0 h-11 font-semibold"
                   onClick={handleVoteConfirm}
                 >
                   <CheckCircle2 className="h-4 w-4 mr-1.5" />

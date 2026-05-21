@@ -74,16 +74,16 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
                 animate={{ rotate: [0, 0, -10, 0, 10, 0] }}
                 transition={{ duration: 3, repeat: Infinity, times: [0, 0.7, 0.75, 0.8, 0.85, 1] }}
               >
-                <Wifi className="h-3 w-3 text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.8)]" />
+                <Wifi className="h-3 w-3 text-red-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.8)]" />
               </motion.div>
               <motion.span
                 animate={{ scale: [1, 2, 1], opacity: [0.8, 0, 0.8] }}
                 transition={{ duration: 1.6, repeat: Infinity }}
-                className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400"
+                className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-red-400"
               />
-              <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,1)]" />
+              <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(52,211,153,1)]" />
             </div>
-            <span className="text-[10px] font-black bg-gradient-to-r from-emerald-300 via-cyan-300 to-emerald-300 bg-clip-text text-transparent tabular-nums">
+            <span className="text-[10px] font-black bg-gradient-to-r from-red-300 via-cyan-300 to-red-300 bg-clip-text text-transparent tabular-nums">
               {onlineUsers.length.toLocaleString("bn-BD")}
             </span>
           </div>
@@ -106,8 +106,8 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
                 // Cycle through vibrant gradient colors per user
                 const colors = [
                   { ring: "ring-rose-400/60", grad: "from-rose-300 via-pink-300 to-fuchsia-300" },
-                  { ring: "ring-amber-400/60", grad: "from-amber-300 via-orange-300 to-yellow-300" },
-                  { ring: "ring-emerald-400/60", grad: "from-emerald-300 via-teal-300 to-cyan-300" },
+                  { ring: "ring-red-400/60", grad: "from-red-300 via-red-300 to-red-300" },
+                  { ring: "ring-red-400/60", grad: "from-red-300 via-red-300 to-cyan-300" },
                   { ring: "ring-cyan-400/60", grad: "from-cyan-300 via-sky-300 to-blue-300" },
                   { ring: "ring-violet-400/60", grad: "from-violet-300 via-purple-300 to-fuchsia-300" },
                 ];
@@ -147,7 +147,7 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative border-b border-border/30 bg-gradient-to-r from-emerald-500/8 via-card/60 to-emerald-500/8 backdrop-blur-xl overflow-hidden"
+      className="relative border-b border-border/30 bg-gradient-to-r from-red-500/8 via-card/60 to-red-500/8 backdrop-blur-xl overflow-hidden"
     >
       <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
       <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
@@ -156,16 +156,16 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
       <div className="relative flex items-center h-9 md:h-10">
         <div className="shrink-0 flex items-center gap-1.5 pl-3 md:pl-4 pr-3 z-20 bg-gradient-to-r from-background via-background to-transparent">
           <div className="relative">
-            <Wifi className="h-3.5 w-3.5 text-emerald-400" />
+            <Wifi className="h-3.5 w-3.5 text-red-400" />
             <motion.span
               animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
               transition={{ duration: 1.6, repeat: Infinity }}
-              className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400"
+              className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-400"
             />
-            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
           </div>
-          <span className="text-[10px] md:text-xs font-semibold text-emerald-400 hidden sm:inline">অনলাইন</span>
-          <span className="text-[10px] md:text-xs font-bold text-foreground bg-emerald-500/15 border border-emerald-500/25 rounded-full px-1.5 py-0.5">
+          <span className="text-[10px] md:text-xs font-semibold text-red-400 hidden sm:inline">অনলাইন</span>
+          <span className="text-[10px] md:text-xs font-bold text-foreground bg-red-500/15 border border-red-500/25 rounded-full px-1.5 py-0.5">
             {onlineUsers.length.toLocaleString("bn-BD")}
           </span>
         </div>
@@ -184,20 +184,20 @@ export function OnlineUsersBar({ variant = "bar" }: Props) {
               <div
                 key={`${u.id}-${i}`}
                 className="shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-full
-                  bg-gradient-to-br from-emerald-500/10 to-emerald-500/5
-                  border border-emerald-500/20
+                  bg-gradient-to-br from-red-500/10 to-red-500/5
+                  border border-red-500/20
                   shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]
-                  hover:from-emerald-500/20 hover:to-emerald-500/10 transition-colors"
+                  hover:from-red-500/20 hover:to-red-500/10 transition-colors"
               >
                 <div className="relative shrink-0">
                   {u.photo ? (
-                    <img src={u.photo} alt={u.name} className="h-5 w-5 rounded-full object-cover border border-emerald-500/30" />
+                    <img src={u.photo} alt={u.name} className="h-5 w-5 rounded-full object-cover border border-red-500/30" />
                   ) : (
-                    <div className="h-5 w-5 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-[9px] font-bold text-emerald-300">
+                    <div className="h-5 w-5 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-[9px] font-bold text-red-300">
                       {u.name.charAt(0)}
                     </div>
                   )}
-                  <span className="absolute -bottom-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-400 border border-background shadow-[0_0_4px_rgba(52,211,153,0.9)]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-red-400 border border-background shadow-[0_0_4px_rgba(52,211,153,0.9)]" />
                 </div>
                 <span className="text-[10px] md:text-xs font-medium text-foreground/90 max-w-[100px] truncate">
                   {u.name}

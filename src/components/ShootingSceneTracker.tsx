@@ -103,13 +103,13 @@ export function ShootingSceneTracker({ shootingId, shootingName, open, onOpenCha
               <span className="text-muted-foreground">
                 শুট সম্পন্ন: <span className="text-primary font-semibold">{shotCount}/{totalCount}</span>
               </span>
-              <span className={`font-medium ${progress === 100 ? "text-emerald-400" : "text-primary"}`}>
+              <span className={`font-medium ${progress === 100 ? "text-red-400" : "text-primary"}`}>
                 {Math.round(progress)}%
               </span>
             </div>
             <div className="h-2 bg-secondary rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${progress === 100 ? "bg-emerald-500" : "bg-primary"}`}
+                className={`h-full rounded-full transition-all duration-500 ${progress === 100 ? "bg-red-500" : "bg-primary"}`}
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -147,7 +147,7 @@ export function ShootingSceneTracker({ shootingId, shootingName, open, onOpenCha
               key={scene.id}
               className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border transition-all ${
                 scene.is_shot
-                  ? "bg-emerald-500/10 border-emerald-500/20"
+                  ? "bg-red-500/10 border-red-500/20"
                   : "bg-secondary/50 border-border/30 hover:border-border/50"
               }`}
             >
@@ -155,14 +155,14 @@ export function ShootingSceneTracker({ shootingId, shootingName, open, onOpenCha
               <Checkbox
                 checked={scene.is_shot}
                 onCheckedChange={() => toggleShot(scene.id, scene.is_shot)}
-                className={scene.is_shot ? "border-emerald-500 data-[state=checked]:bg-emerald-500" : ""}
+                className={scene.is_shot ? "border-red-500 data-[state=checked]:bg-red-500" : ""}
               />
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium truncate ${scene.is_shot ? "text-emerald-400 line-through" : "text-foreground"}`}>
+                <p className={`text-sm font-medium truncate ${scene.is_shot ? "text-red-400 line-through" : "text-foreground"}`}>
                   {scene.scene_label}
                 </p>
                 {scene.is_shot && scene.shot_at && (
-                  <p className="text-[10px] text-emerald-400/60 mt-0.5">
+                  <p className="text-[10px] text-red-400/60 mt-0.5">
                     ✓ {new Date(scene.shot_at).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" })}
                   </p>
                 )}
@@ -181,7 +181,7 @@ export function ShootingSceneTracker({ shootingId, shootingName, open, onOpenCha
 
         {/* Summary footer */}
         {totalCount > 0 && progress === 100 && (
-          <div className="text-center py-2 text-emerald-400 text-sm font-medium flex items-center justify-center gap-1.5">
+          <div className="text-center py-2 text-red-400 text-sm font-medium flex items-center justify-center gap-1.5">
             <Check className="h-4 w-4" /> সব দৃশ্য শুট সম্পন্ন! 🎬
           </div>
         )}
