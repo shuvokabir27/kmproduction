@@ -544,16 +544,29 @@ const AdminProducts = () => {
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="যেমন: তালের গুড় ১ কেজি" />
             </div>
             <div>
-              <Label>বিবরণ (ফরম্যাটিং সহ)</Label>
-              <p className="text-[11px] text-muted-foreground mb-1.5">টেক্সট হাইলাইট, রং, হেডিং ও লিস্ট ব্যবহার করে সুন্দর বিবরণ লিখুন।</p>
+              <Label>সংক্ষিপ্ত বিবরণ (Short Description)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">প্রডাক্ট পেজের উপরের অংশে (দামের নিচে) দেখা যাবে — সংক্ষিপ্ত ও আকর্ষণীয় রাখুন।</p>
+              <RichTextEditor
+                value={form.short_description_html || form.short_description}
+                onChange={(html) => {
+                  const plain = html.replace(/<[^>]+>/g, "").trim();
+                  setForm((f) => ({ ...f, short_description_html: html, short_description: plain }));
+                }}
+                placeholder="যেমন: ১০০% খাঁটি, ঘরোয়া স্বাদ, প্রিমিয়াম মানের..."
+                minHeight={100}
+              />
+            </div>
+            <div>
+              <Label>বিস্তারিত বিবরণ (Detailed Description)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">DESCRIPTION ট্যাবে দেখা যাবে — সম্পূর্ণ বিবরণ, বৈশিষ্ট্য ও তথ্য।</p>
               <RichTextEditor
                 value={form.description_html || form.description}
                 onChange={(html) => {
                   const plain = html.replace(/<[^>]+>/g, "").trim();
                   setForm((f) => ({ ...f, description_html: html, description: plain }));
                 }}
-                placeholder="প্রডাক্টের বিবরণ লিখুন..."
-                minHeight={140}
+                placeholder="প্রডাক্টের বিস্তারিত বিবরণ লিখুন..."
+                minHeight={160}
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
