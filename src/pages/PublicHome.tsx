@@ -15,6 +15,8 @@ import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
 import kuakataLogo from "@/assets/logo.png";
 import { BestSellersSection } from "@/components/BestSellersSection";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
+
 
 
 const extractYouTubeId = (url: string): string | null => {
