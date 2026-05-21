@@ -105,6 +105,8 @@ const AdminProducts = () => {
     setEditingProduct(p);
     setForm({
       name: p.name || "",
+      short_description: p.short_description || "",
+      short_description_html: p.short_description_html || "",
       description: p.description || "",
       description_html: p.description_html || "",
       price: String(p.price || 0),
