@@ -353,8 +353,7 @@ const AdminProducts = () => {
 
         {/* Dashboard Tab */}
         <TabsContent value="dashboard" className="mt-4 space-y-6">
-          <ProductDashboardStats onNavigate={goToTab} />
-          <div id="dashboard-orders" className="pt-2">
+          <div id="dashboard-orders">
             <OrderManagement initialTab={orderInitialTab} />
           </div>
         </TabsContent>
