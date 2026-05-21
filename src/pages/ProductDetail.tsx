@@ -430,8 +430,8 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {((product as any).description_html || product.description) && (
-              (product as any).description_html ? (
+            {((product as any).short_description_html || (product as any).short_description) && (
+              (product as any).short_description_html ? (
                 <div
                   className="rich-desc text-sm text-foreground leading-relaxed mt-4 max-w-none
                     [&_h1]:text-xl [&_h1]:font-bold [&_h1]:my-2 [&_h1]:text-foreground
@@ -441,10 +441,10 @@ const ProductDetail = () => {
                     [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-1.5
                     [&_strong]:font-bold [&_em]:italic [&_u]:underline
                     [&_a]:text-blue-600 [&_a]:underline"
-                  dangerouslySetInnerHTML={{ __html: (product as any).description_html }}
+                  dangerouslySetInnerHTML={{ __html: (product as any).short_description_html }}
                 />
               ) : (
-                <p className="text-foreground/80 text-sm leading-relaxed mt-4 whitespace-pre-wrap">{product.description}</p>
+                <p className="text-foreground/80 text-sm leading-relaxed mt-4 whitespace-pre-wrap">{(product as any).short_description}</p>
               )
             )}
 
