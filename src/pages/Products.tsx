@@ -220,56 +220,54 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-background noise-bg pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
 
-      {/* Top Strip — Premium */}
-      <div
-        className="relative overflow-hidden text-white text-xs md:text-sm py-2 px-4"
-        style={{
-          backgroundImage: [
-            "linear-gradient(90deg, #4a0a0a 0%, #b91c1c 25%, #e11d48 50%, #b91c1c 75%, #4a0a0a 100%)",
-          ].join(", "),
-        }}
-      >
-        {/* gold hairlines */}
-        <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
-        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
-        {/* moving shine */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent rotate-12 animate-[shimmer_4s_linear_infinite]" />
-        </div>
-        {/* sheen overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(255,255,255,0.18),transparent_55%)]" />
+      {/* Top Strip — Scrolling Marquee */}
+      {siteSettings?.top_strip_enabled !== false && (siteSettings?.top_strip_text || whatsappNo || contactPhone) && (
+        <div
+          className="relative overflow-hidden text-white text-xs md:text-sm py-2"
+          style={{
+            backgroundImage: "linear-gradient(90deg, #4a0a0a 0%, #b91c1c 25%, #e11d48 50%, #b91c1c 75%, #4a0a0a 100%)",
+          }}
+        >
+          <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+          <div className="pointer-events-none absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center font-medium drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse shadow-[0_0_8px_2px_rgba(252,211,77,0.6)]" />
-            আমাদের যে কোন পণ্য অর্ডার করতে WhatsApp করুন:
-          </span>
-          {whatsappNo && (
-            <a
-              href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-extrabold px-2.5 py-0.5 rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur hover:bg-white/25 transition-colors bg-gradient-to-r from-amber-100 via-white to-amber-100 bg-clip-text text-transparent"
-              style={{ WebkitTextFillColor: "transparent" }}
-            >
-              +{whatsappNo}
-            </a>
-          )}
-          {contactPhone && (
-            <>
-              <span className="hidden md:inline text-amber-200/60">◆</span>
-              <span>বা কল করুন:</span>
-              <a
-                href={`tel:${contactPhone}`}
-                className="font-extrabold px-2.5 py-0.5 rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur hover:bg-white/25 transition-colors bg-gradient-to-r from-amber-100 via-white to-amber-100 bg-clip-text text-transparent"
-                style={{ WebkitTextFillColor: "transparent" }}
-              >
-                {contactPhone}
-              </a>
-            </>
-          )}
+          <div
+            className="flex whitespace-nowrap will-change-transform"
+            style={{ animation: `kmTopMarquee ${siteSettings?.top_strip_speed || 30}s linear infinite` }}
+          >
+            {[0, 1].map((k) => (
+              <div key={k} className="flex items-center gap-6 px-6 shrink-0 font-medium" aria-hidden={k === 1}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <span key={i} className="inline-flex items-center gap-3">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_2px_rgba(252,211,77,0.6)]" />
+                    <span>{siteSettings?.top_strip_text || "আমাদের যে কোন পণ্য অর্ডার করতে WhatsApp অথবা কল করুন।"}</span>
+                    {whatsappNo && (
+                      <a
+                        href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-extrabold px-2.5 py-0.5 rounded-full bg-white/15 ring-1 ring-white/30 hover:bg-white/25 transition-colors text-amber-100"
+                      >
+                        WhatsApp: +{whatsappNo}
+                      </a>
+                    )}
+                    {contactPhone && (
+                      <a
+                        href={`tel:${contactPhone}`}
+                        className="font-extrabold px-2.5 py-0.5 rounded-full bg-white/15 ring-1 ring-white/30 hover:bg-white/25 transition-colors text-amber-100"
+                      >
+                        কল: {contactPhone}
+                      </a>
+                    )}
+                    <span className="text-amber-200/60">◆</span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+          <style>{`@keyframes kmTopMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }`}</style>
         </div>
-      </div>
+      )}
 
       {/* Header — Premium */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[linear-gradient(115deg,hsl(0_70%_8%/0.92)_0%,hsl(340_60%_10%/0.9)_35%,hsl(260_50%_10%/0.88)_70%,hsl(210_60%_10%/0.92)_100%)] backdrop-blur-2xl shadow-[0_10px_40px_-12px_hsl(0_0%_0%/0.7),inset_0_-1px_0_0_hsl(40_90%_55%/0.18)]">

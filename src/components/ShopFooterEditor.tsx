@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2, Save } from "lucide-react";
 
@@ -22,14 +23,17 @@ export default function ShopFooterEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [id, setId] = useState<string | null>(null);
-  const [form, setForm] = useState<Record<string, string>>({});
+  const [form, setForm] = useState<Record<string, any>>({});
 
   useEffect(() => {
     supabase.from("site_settings").select("*").maybeSingle().then(({ data }) => {
       if (data) {
         setId(data.id);
-        const next: Record<string, string> = {};
+        const next: Record<string, any> = {};
         FIELDS.forEach(f => { next[f.key] = (data as any)[f.key] ?? ""; });
+        next.top_strip_text = (data as any).top_strip_text ?? "";
+        next.top_strip_enabled = (data as any).top_strip_enabled ?? true;
+        next.top_strip_speed = (data as any).top_strip_speed ?? 30;
         setForm(next);
       }
       setLoading(false);
@@ -42,15 +46,45 @@ export default function ShopFooterEditor() {
     const { error } = await supabase.from("site_settings").update(form as any).eq("id", id);
     setSaving(false);
     if (error) toast.error("সংরক্ষণ ব্যর্থ");
-    else toast.success("ফুটার আপডেট হয়েছে");
+    else toast.success("সেটিংস আপডেট হয়েছে");
   };
 
   if (loading) return <div className="flex items-center justify-center py-10"><Loader2 className="h-5 w-5 animate-spin" /></div>;
 
   return (
     <div className="bg-card border rounded-2xl p-5 max-w-2xl">
-      <h3 className="text-lg font-bold mb-1">ফুটার সেটিংস</h3>
-      <p className="text-xs text-muted-foreground mb-4">প্রডাক্ট পেজের নিচের ফুটার এখান থেকে এডিট করুন</p>
+      <h3 className="text-lg font-bold mb-1">ফুটার ও টপ স্ট্রিপ সেটিংস</h3>
+      <p className="text-xs text-muted-foreground mb-4">প্রডাক্ট পেজের ফুটার এবং উপরের স্ক্রলিং বার এখান থেকে এডিট করুন</p>
+
+      {/* Scrolling Top Strip Section */}
+      <div className="border rounded-xl p-4 mb-5 bg-muted/30">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <Label className="text-sm font-bold">উপরের স্ক্রলিং বার</Label>
+            <p className="text-[11px] text-muted-foreground">হেডারের উপরে চলমান টেক্সট</p>
+          </div>
+          <Switch
+            checked={!!form.top_strip_enabled}
+            onCheckedChange={(v) => setForm(s => ({ ...s, top_strip_enabled: v }))}
+          />
+        </div>
+        <Label className="text-xs font-semibold mb-1.5 block">স্ক্রলিং টেক্সট</Label>
+        <Textarea
+          value={form.top_strip_text || ""}
+          onChange={e => setForm(s => ({ ...s, top_strip_text: e.target.value }))}
+          placeholder="আমাদের যে কোন পণ্য অর্ডার করতে WhatsApp অথবা কল করুন।"
+          rows={2}
+        />
+        <Label className="text-xs font-semibold mb-1.5 mt-3 block">স্ক্রল স্পিড (সেকেন্ড) — কম মান = দ্রুত</Label>
+        <Input
+          type="number"
+          min={5}
+          max={120}
+          value={form.top_strip_speed ?? 30}
+          onChange={e => setForm(s => ({ ...s, top_strip_speed: Number(e.target.value) || 30 }))}
+        />
+      </div>
+
       <div className="space-y-4">
         {FIELDS.map(f => (
           <div key={f.key}>

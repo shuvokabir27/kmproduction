@@ -3221,6 +3221,9 @@ export type Database = {
           ticker_enabled: boolean | null
           ticker_speed: number | null
           tiktok_url: string | null
+          top_strip_enabled: boolean
+          top_strip_speed: number
+          top_strip_text: string | null
           updated_at: string
           whatsapp_no: string | null
           whatsapp_offer_image: string | null
@@ -3258,6 +3261,9 @@ export type Database = {
           ticker_enabled?: boolean | null
           ticker_speed?: number | null
           tiktok_url?: string | null
+          top_strip_enabled?: boolean
+          top_strip_speed?: number
+          top_strip_text?: string | null
           updated_at?: string
           whatsapp_no?: string | null
           whatsapp_offer_image?: string | null
@@ -3295,6 +3301,9 @@ export type Database = {
           ticker_enabled?: boolean | null
           ticker_speed?: number | null
           tiktok_url?: string | null
+          top_strip_enabled?: boolean
+          top_strip_speed?: number
+          top_strip_text?: string | null
           updated_at?: string
           whatsapp_no?: string | null
           whatsapp_offer_image?: string | null
