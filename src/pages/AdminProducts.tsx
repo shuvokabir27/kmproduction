@@ -58,6 +58,8 @@ const AdminProducts = () => {
 
   const [form, setForm] = useState({
     name: "",
+    short_description: "",
+    short_description_html: "",
     description: "",
     description_html: "",
     price: "",
@@ -89,7 +91,7 @@ const AdminProducts = () => {
 
   const resetForm = () => {
     setForm({
-      name: "", description: "", description_html: "", price: "", discount_price: "", image_url: "",
+      name: "", short_description: "", short_description_html: "", description: "", description_html: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
       sort_order: "0", contact_info: "", unit_type: "piece", weight_grams: "", variants: [],
       suggested_product_ids: [],
@@ -103,6 +105,8 @@ const AdminProducts = () => {
     setEditingProduct(p);
     setForm({
       name: p.name || "",
+      short_description: p.short_description || "",
+      short_description_html: p.short_description_html || "",
       description: p.description || "",
       description_html: p.description_html || "",
       price: String(p.price || 0),
@@ -152,6 +156,8 @@ const AdminProducts = () => {
     if (!form.name.trim()) { toast.error("প্রডাক্টের নাম দিন"); return; }
     const payload = {
       name: form.name.trim(),
+      short_description: form.short_description.trim() || null,
+      short_description_html: form.short_description_html?.trim() || null,
       description: form.description.trim() || null,
       description_html: form.description_html?.trim() || null,
       price: Number(form.price) || 0,
@@ -538,16 +544,29 @@ const AdminProducts = () => {
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="যেমন: তালের গুড় ১ কেজি" />
             </div>
             <div>
-              <Label>বিবরণ (ফরম্যাটিং সহ)</Label>
-              <p className="text-[11px] text-muted-foreground mb-1.5">টেক্সট হাইলাইট, রং, হেডিং ও লিস্ট ব্যবহার করে সুন্দর বিবরণ লিখুন।</p>
+              <Label>সংক্ষিপ্ত বিবরণ (Short Description)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">প্রডাক্ট পেজের উপরের অংশে (দামের নিচে) দেখা যাবে — সংক্ষিপ্ত ও আকর্ষণীয় রাখুন।</p>
+              <RichTextEditor
+                value={form.short_description_html || form.short_description}
+                onChange={(html) => {
+                  const plain = html.replace(/<[^>]+>/g, "").trim();
+                  setForm((f) => ({ ...f, short_description_html: html, short_description: plain }));
+                }}
+                placeholder="যেমন: ১০০% খাঁটি, ঘরোয়া স্বাদ, প্রিমিয়াম মানের..."
+                minHeight={100}
+              />
+            </div>
+            <div>
+              <Label>বিস্তারিত বিবরণ (Detailed Description)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">DESCRIPTION ট্যাবে দেখা যাবে — সম্পূর্ণ বিবরণ, বৈশিষ্ট্য ও তথ্য।</p>
               <RichTextEditor
                 value={form.description_html || form.description}
                 onChange={(html) => {
                   const plain = html.replace(/<[^>]+>/g, "").trim();
                   setForm((f) => ({ ...f, description_html: html, description: plain }));
                 }}
-                placeholder="প্রডাক্টের বিবরণ লিখুন..."
-                minHeight={140}
+                placeholder="প্রডাক্টের বিস্তারিত বিবরণ লিখুন..."
+                minHeight={160}
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
