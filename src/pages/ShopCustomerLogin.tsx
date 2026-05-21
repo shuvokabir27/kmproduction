@@ -167,13 +167,12 @@ export default function ShopCustomerLogin() {
                 </div>
               </div>
               <div>
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">৬-ডিজিট পাসওয়ার্ড</Label>
+                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">কমপক্ষে ৬-ডিজিট পাসওয়ার্ড</Label>
                 <div className="relative mt-1">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     type={showPassword ? "text" : "password"}
                     inputMode="numeric"
-                    maxLength={6}
                     value={password}
                     onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
                     placeholder="••••••"
