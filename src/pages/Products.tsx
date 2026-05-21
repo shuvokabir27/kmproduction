@@ -240,7 +240,7 @@ const Products = () => {
       </div>
 
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
+      <header className="bg-card shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/products" className="flex items-center gap-2 shrink-0 hover:opacity-90 transition-opacity">
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: BRAND_GREEN }}>
@@ -248,16 +248,16 @@ const Products = () => {
             </div>
             <div className="hidden sm:block">
               <div className="font-bold text-base md:text-lg" style={{ color: BRAND_GREEN }}>কে এম শপ</div>
-              <div className="text-[10px] md:text-xs text-gray-500 -mt-0.5">KM Shop · কুয়াকাটা</div>
+              <div className="text-[10px] md:text-xs text-muted-foreground -mt-0.5">KM Shop · কুয়াকাটা</div>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-gray-700">
-            <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-4 w-4" /> হোম</Link>
-            <a href="#shop" className="hover:text-gray-900">শপ</a>
-            <Link to="/categories" className="hover:text-gray-900">ক্যাটাগরি</Link>
-            <a href="#about" className="hover:text-gray-900">আমাদের সম্পর্কে</a>
-            <a href="#contact" className="hover:text-gray-900">যোগাযোগ</a>
+          <nav className="hidden md:flex items-center gap-5 text-sm font-semibold text-foreground/80">
+            <Link to="/products" className="hover:text-foreground flex items-center gap-1"><Home className="h-4 w-4" /> হোম</Link>
+            <a href="#shop" className="hover:text-foreground">শপ</a>
+            <Link to="/categories" className="hover:text-foreground">ক্যাটাগরি</Link>
+            <a href="#about" className="hover:text-foreground">আমাদের সম্পর্কে</a>
+            <a href="#contact" className="hover:text-foreground">যোগাযোগ</a>
             <button
               onClick={() => featured[0] && openOrderDialog(featured[0])}
               className="text-white font-bold text-xs px-4 py-2 rounded-full flex items-center gap-1.5 shadow"
@@ -277,7 +277,7 @@ const Products = () => {
             ) : (
               <Link
                 to="/shop/login"
-                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold hover:bg-gray-50"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-full border-2 font-bold hover:bg-muted"
                 style={{ borderColor: BRAND_GREEN, color: BRAND_GREEN }}
               >
                 <LogIn className="h-3.5 w-3.5" /> লগইন
@@ -298,24 +298,24 @@ const Products = () => {
             </button>
           </nav>
 
-          <div className="hidden lg:flex items-center bg-gray-100 rounded-full px-4 py-2 w-72">
-            <Search className="h-4 w-4 text-gray-400 mr-2" />
+          <div className="hidden lg:flex items-center bg-muted rounded-full px-4 py-2 w-72">
+            <Search className="h-4 w-4 text-muted-foreground mr-2" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="পণ্য খুঁজুন..."
-              className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
+              className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="md:hidden flex items-center gap-1">
-            <Link to="/products" className="p-2 rounded-lg hover:bg-gray-100" aria-label="shop home">
+            <Link to="/products" className="p-2 rounded-lg hover:bg-muted" aria-label="shop home">
               <Home className="h-5 w-5" style={{ color: BRAND_GREEN }} />
             </Link>
-            <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-lg hover:bg-gray-100" aria-label="search">
+            <button onClick={() => setMobileSearchOpen(v => !v)} className="p-2 rounded-lg hover:bg-muted" aria-label="search">
               <Search className="h-5 w-5" style={{ color: BRAND_GREEN }} />
             </button>
-            <button onClick={cart.open} className="relative p-2 rounded-lg hover:bg-gray-100" aria-label="cart">
+            <button onClick={cart.open} className="relative p-2 rounded-lg hover:bg-muted" aria-label="cart">
               <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
               {cart.count > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] px-1 flex items-center justify-center">
@@ -325,20 +325,20 @@ const Products = () => {
             </button>
             <Link
               to={shopCustomer ? "/shop/account" : "/shop/login"}
-              className="p-2 rounded-lg hover:bg-gray-100"
+              className="p-2 rounded-lg hover:bg-muted"
               aria-label="login"
             >
               <User className="h-5 w-5" style={{ color: BRAND_GREEN }} />
             </Link>
-            <button onClick={() => setMobileMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-gray-100">
-              <Menu className="h-5 w-5 text-gray-700" />
+            <button onClick={() => setMobileMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-muted">
+              <Menu className="h-5 w-5 text-foreground/80" />
             </button>
           </div>
         </div>
         {mobileSearchOpen && (
-          <div className="md:hidden border-t bg-white px-4 py-3">
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
-              <Search className="h-4 w-4 text-gray-400 mr-2" />
+          <div className="md:hidden border-t bg-card px-4 py-3">
+            <div className="flex items-center bg-muted rounded-full px-4 py-2">
+              <Search className="h-4 w-4 text-muted-foreground mr-2" />
               <input
                 autoFocus
                 value={search}
@@ -352,16 +352,16 @@ const Products = () => {
                   }
                 }}
                 placeholder="পণ্য খুঁজুন..."
-                className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
+                className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="ml-2 p-1 hover:bg-gray-200 rounded-full"><X className="h-3.5 w-3.5 text-gray-500" /></button>
+                <button onClick={() => setSearch("")} className="ml-2 p-1 hover:bg-muted rounded-full"><X className="h-3.5 w-3.5 text-muted-foreground" /></button>
               )}
             </div>
             {search.trim() && (
-              <div className="mt-2 max-h-72 overflow-y-auto rounded-xl border bg-white shadow-sm divide-y">
+              <div className="mt-2 max-h-72 overflow-y-auto rounded-xl border bg-card shadow-sm divide-y">
                 {filteredProducts.length === 0 ? (
-                  <div className="px-4 py-3 text-sm text-gray-500">কোন পণ্য পাওয়া যায়নি</div>
+                  <div className="px-4 py-3 text-sm text-muted-foreground">কোন পণ্য পাওয়া যায়নি</div>
                 ) : (
                   filteredProducts.slice(0, 8).map((p: any) => (
                     <Link
@@ -371,15 +371,15 @@ const Products = () => {
                         setMobileSearchOpen(false);
                         setSearch("");
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-50"
+                      className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-muted"
                     >
                       {p.image_url && (
                         <img src={p.image_url} alt={p.name} className="h-10 w-10 rounded object-cover" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 truncate">{p.name}</div>
+                        <div className="text-sm font-medium text-foreground truncate">{p.name}</div>
                         {p.price != null && (
-                          <div className="text-xs text-gray-500">৳ {toBn(Number(p.discount_price ?? p.price))}</div>
+                          <div className="text-xs text-muted-foreground">৳ {toBn(Number(p.discount_price ?? p.price))}</div>
                         )}
                       </div>
                     </Link>
@@ -390,25 +390,25 @@ const Products = () => {
           </div>
         )}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t bg-white px-4 py-3 space-y-1">
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 mb-2">
-              <Search className="h-4 w-4 text-gray-400 mr-2" />
+          <div className="md:hidden border-t bg-card px-4 py-3 space-y-1">
+            <div className="flex items-center bg-muted rounded-full px-4 py-2 mb-2">
+              <Search className="h-4 w-4 text-muted-foreground mr-2" />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="পণ্য খুঁজুন..."
-                className="bg-transparent flex-1 text-sm outline-none text-gray-900 placeholder:text-gray-400"
+                className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground"
               />
             </div>
-            <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Home className="h-4 w-4" style={{ color: BRAND_GREEN }} /> হোম</Link>
-            <a href="#shop" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><ShoppingBag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> শপ</a>
-            <Link to="/categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</Link>
-            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><ShieldCheck className="h-4 w-4" style={{ color: BRAND_GREEN }} /> আমাদের সম্পর্কে</a>
-            <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><Phone className="h-4 w-4" style={{ color: BRAND_GREEN }} /> যোগাযোগ</a>
+            <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Home className="h-4 w-4" style={{ color: BRAND_GREEN }} /> হোম</Link>
+            <a href="#shop" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><ShoppingBag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> শপ</a>
+            <Link to="/categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</Link>
+            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><ShieldCheck className="h-4 w-4" style={{ color: BRAND_GREEN }} /> আমাদের সম্পর্কে</a>
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Phone className="h-4 w-4" style={{ color: BRAND_GREEN }} /> যোগাযোগ</a>
             {shopCustomer ? (
-              <Link to="/shop/account" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><User className="h-4 w-4" style={{ color: BRAND_GREEN }} /> অ্যাকাউন্ট</Link>
+              <Link to="/shop/account" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><User className="h-4 w-4" style={{ color: BRAND_GREEN }} /> অ্যাকাউন্ট</Link>
             ) : (
-              <Link to="/shop/login" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-50 flex items-center gap-2"><LogIn className="h-4 w-4" style={{ color: BRAND_GREEN }} /> লগইন / রেজিস্টার</Link>
+              <Link to="/shop/login" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><LogIn className="h-4 w-4" style={{ color: BRAND_GREEN }} /> লগইন / রেজিস্টার</Link>
             )}
           </div>
         )}
@@ -416,7 +416,7 @@ const Products = () => {
         {/* Categories Mega Bar — hidden */}
         <div className="hidden">
           <div className="max-w-7xl mx-auto px-4">
-            <ul className="flex items-stretch gap-1 text-sm font-semibold text-gray-700 overflow-x-auto">
+            <ul className="flex items-stretch gap-1 text-sm font-semibold text-foreground/80 overflow-x-auto">
               <li>
                 <a href="#shop" className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap" style={{ ['--g' as any]: BRAND_GREEN }}>
                   বেস্ট সেলার
@@ -438,12 +438,12 @@ const Products = () => {
                     {m.children.length > 0 && <span className="text-xs">▾</span>}
                   </a>
                   {m.children.length > 0 && (
-                    <div className="absolute left-0 top-full hidden group-hover:block bg-white shadow-xl border rounded-b-lg min-w-[220px] z-50 py-2">
+                    <div className="absolute left-0 top-full hidden group-hover:block bg-card shadow-xl border rounded-b-lg min-w-[220px] z-50 py-2">
                       {m.children.map((s) => (
                         <a
                           key={s.id}
                           href="#shop"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[--g]"
+                          className="block px-4 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-[--g]"
                           style={{ ['--g' as any]: BRAND_GREEN }}
                         >
                           {s.label}
@@ -462,8 +462,8 @@ const Products = () => {
 
         {/* Mobile Categories Accordion */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t bg-white px-4 py-3 space-y-1 max-h-[60vh] overflow-y-auto">
-            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">ক্যাটাগরি</div>
+          <div className="md:hidden border-t bg-card px-4 py-3 space-y-1 max-h-[60vh] overflow-y-auto">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">ক্যাটাগরি</div>
             <details className="group border-b">
               <summary className="flex items-center justify-between py-2 text-sm font-semibold cursor-pointer list-none">
                 <span>বেস্ট সেলার</span>
@@ -478,12 +478,12 @@ const Products = () => {
               <details key={m.id} className="group border-b">
                 <summary className="flex items-center justify-between py-2 text-sm font-semibold cursor-pointer list-none">
                   <span>{m.icon} {m.label}</span>
-                  {m.children.length > 0 && <span className="text-xs text-gray-400 group-open:rotate-180 transition-transform">▾</span>}
+                  {m.children.length > 0 && <span className="text-xs text-muted-foreground group-open:rotate-180 transition-transform">▾</span>}
                 </summary>
                 {m.children.length > 0 && (
                   <div className="pl-3 pb-2 space-y-1">
                     {m.children.map((s) => (
-                      <a key={s.id} href="#shop" className="block py-1.5 text-xs text-gray-600">— {s.label}</a>
+                      <a key={s.id} href="#shop" className="block py-1.5 text-xs text-muted-foreground">— {s.label}</a>
                     ))}
                   </div>
                 )}
@@ -507,7 +507,7 @@ const Products = () => {
             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_50%,white,transparent_60%)]" />
             <div className="relative grid md:grid-cols-2 gap-6 items-center p-6 md:p-12" style={{ fontFamily: "'Tiro Bangla', serif" }}>
               <div className="text-white text-center md:text-left">
-                <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs mb-4" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                <div className="inline-flex items-center gap-2 bg-card/15 backdrop-blur px-3 py-1 rounded-full text-xs mb-4" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <span className="w-2 h-2 bg-red-300 rounded-full animate-pulse" />
                   কুয়াকাটার অথেনটিক পণ্য
                 </div>
@@ -526,7 +526,7 @@ const Products = () => {
                   </a>
                   {whatsappNo && (
                     <a href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white font-bold rounded-full px-6 h-12 gap-2">
+                      <Button variant="outline" className="bg-card/10 border-white/30 text-white hover:bg-card/20 hover:text-white font-bold rounded-full px-6 h-12 gap-2">
                         <Phone className="h-4 w-4" /> অর্ডার করুন
                       </Button>
                     </a>
@@ -539,7 +539,7 @@ const Products = () => {
                   const current = slides[heroSlide % (slides.length || 1)];
                   return (
                     <>
-                      <div className="aspect-square bg-white/10 rounded-3xl backdrop-blur border border-white/20 overflow-hidden relative">
+                      <div className="aspect-square bg-card/10 rounded-3xl backdrop-blur border border-white/20 overflow-hidden relative">
                         {current ? (
                           <Link to={`/products/${current.id}`} className="block w-full h-full group">
                             {slides.map((p: any, i: number) => (
@@ -570,7 +570,7 @@ const Products = () => {
                             <button
                               key={i}
                               onClick={() => setHeroSlide(i)}
-                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-red-300' : 'w-1.5 bg-white/40'}`}
+                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-red-300' : 'w-1.5 bg-card/40'}`}
                             />
                           ))}
                         </div>
@@ -581,7 +581,7 @@ const Products = () => {
                 <div className="absolute -bottom-3 -left-3 bg-red-400 text-red-900 px-4 py-2 rounded-2xl shadow-lg font-bold text-sm">
                   ১০০% খাঁটি
                 </div>
-                <div className="absolute -top-3 -right-3 bg-white text-gray-900 px-4 py-2 rounded-2xl shadow-lg font-bold text-sm flex items-center gap-1">
+                <div className="absolute -top-3 -right-3 bg-card text-foreground px-4 py-2 rounded-2xl shadow-lg font-bold text-sm flex items-center gap-1">
                   <Star className="h-4 w-4 fill-red-400 text-red-400" /> ৪.৯
                 </div>
               </div>
@@ -605,13 +605,13 @@ const Products = () => {
             { icon: Tag, title: "সেরা দাম", desc: "সরাসরি উৎস থেকে" },
             { icon: MessageCircle, title: "২৪/৭ সাপোর্ট", desc: "WhatsApp এ যোগাযোগ" },
           ].map((t, i) => (
-            <div key={i} className="bg-white rounded-xl p-3 md:p-4 flex items-center gap-3 shadow-sm border border-gray-100">
+            <div key={i} className="bg-card rounded-xl p-3 md:p-4 flex items-center gap-3 shadow-sm border border-border">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${BRAND_GREEN}15` }}>
                 <t.icon className="h-5 w-5" style={{ color: BRAND_GREEN }} />
               </div>
               <div>
-                <div className="font-bold text-xs md:text-sm text-gray-900">{t.title}</div>
-                <div className="text-[10px] md:text-xs text-gray-500">{t.desc}</div>
+                <div className="font-bold text-xs md:text-sm text-foreground">{t.title}</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">{t.desc}</div>
               </div>
             </div>
           ))}
@@ -625,14 +625,14 @@ const Products = () => {
             <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>
               {showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2">
               {showAllProducts ? "ক্যাটাগরি অনুযায়ী সকল পণ্য" : "আমাদের সেরা পণ্য সমূহ"}
             </h2>
             <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ backgroundColor: BRAND_GREEN }} />
           </div>
 
           {filteredProducts.length === 0 ? (
-            <div className="text-center py-16 text-gray-500">
+            <div className="text-center py-16 text-muted-foreground">
               <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-gray-300" />
               কোনো পণ্য পাওয়া যায়নি
             </div>
@@ -641,8 +641,8 @@ const Products = () => {
               const hasDiscount = p.discount_price && p.discount_price < p.price;
               const discountPct = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
               return (
-                <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
-                  <Link to={`/products/${p.id}`} className="relative aspect-square bg-gray-100 overflow-hidden block">
+                <div key={p.id} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border flex flex-col">
+                  <Link to={`/products/${p.id}`} className="relative aspect-square bg-muted overflow-hidden block">
                     {p.image_url ? (
                       <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
@@ -651,7 +651,7 @@ const Products = () => {
                       </div>
                     )}
                     {hasDiscount && (
-                      <div className="absolute top-2 left-2 bg-white shadow text-red-600 font-bold text-xs px-2 py-1 rounded">
+                      <div className="absolute top-2 left-2 bg-card shadow text-red-600 font-bold text-xs px-2 py-1 rounded">
                         -{toBn(discountPct)}%
                       </div>
                     )}
@@ -660,13 +660,13 @@ const Products = () => {
                     </div>
                   </Link>
                   <div className="p-3 md:p-4 flex flex-col flex-1">
-                    <Link to={`/products/${p.id}`} className="font-bold text-sm md:text-base text-gray-900 line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
+                    <Link to={`/products/${p.id}`} className="font-bold text-sm md:text-base text-foreground line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
                     <div className="flex items-baseline gap-2 mt-2">
                       <span className="text-lg font-extrabold" style={{ color: BRAND_GREEN }}>
                         ৳{toBn(hasDiscount ? p.discount_price : p.price)}
                       </span>
                       {hasDiscount && (
-                        <span className="text-xs text-gray-400 line-through">৳{toBn(p.price)}</span>
+                        <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>
                       )}
                     </div>
                     <div className="mt-3 flex flex-col gap-2">
@@ -733,11 +733,11 @@ const Products = () => {
                 {catNames.map(cat => (
                   <div key={cat}>
                     <div className="flex items-center gap-3 mb-5">
-                      <h3 className="text-xl md:text-2xl font-bold text-gray-900">{catLabelMap[cat] || cat}</h3>
+                      <h3 className="text-xl md:text-2xl font-bold text-foreground">{catLabelMap[cat] || cat}</h3>
                       <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: BRAND_GREEN }}>
                         {toBn(groups[cat].length)}
                       </span>
-                      <div className="flex-1 h-px bg-gray-200" />
+                      <div className="flex-1 h-px bg-muted" />
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                       {groups[cat].map(renderCard)}
@@ -761,11 +761,11 @@ const Products = () => {
       </section>
 
       {/* About Strip */}
-      <section id="about" className="px-4 py-12 bg-white">
+      <section id="about" className="px-4 py-12 bg-card">
         <div className="max-w-5xl mx-auto text-center">
           <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>ABOUT KM SHOP</span>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-2 mb-4">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
-          <p className="text-gray-600 leading-relaxed max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2 mb-4">কুয়াকাটার ঐতিহ্য, আপনার দোরগোড়ায়</h2>
+          <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             কে এম শপ কুয়াকাটার স্থানীয় কৃষক, জেলে ও কারিগরদের সাথে সরাসরি কাজ করে। আমাদের প্রতিটি পণ্য — শুঁটকি মাছ থেকে শুরু করে হস্তশিল্প, নারকেল পণ্য, তালের গুড় ও স্মৃতিচিহ্ন — যত্ন সহকারে বাছাই করা ও পরীক্ষিত। আমরা চাই কুয়াকাটার অথেনটিক স্বাদ ও সংস্কৃতি দেশের প্রতিটি কোণে পৌঁছে দিতে।
           </p>
         </div>
@@ -800,7 +800,7 @@ const Products = () => {
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center font-bold">KM</div>
+              <div className="w-10 h-10 rounded-full bg-card/15 flex items-center justify-center font-bold">KM</div>
               <div className="font-bold text-lg">{siteSettings?.shop_name || "কে এম শপ"}</div>
             </div>
             <p className="text-white/70 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
@@ -831,7 +831,7 @@ const Products = () => {
       {/* Order Popup */}
       {orderOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {orderSuccess ? (
               <div className="p-8 text-center">
                 <div className="relative w-20 h-20 mx-auto mb-5">
@@ -840,8 +840,8 @@ const Products = () => {
                     <CheckCircle className="h-10 w-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">অর্ডার সফল হয়েছে! 🎉</h3>
-                <p className="text-gray-500 text-sm mb-6 leading-relaxed">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।<br />ধন্যবাদ আমাদের বেছে নেওয়ার জন্য!</p>
+                <h3 className="text-2xl font-bold text-foreground mb-2">অর্ডার সফল হয়েছে! 🎉</h3>
+                <p className="text-muted-foreground text-sm mb-6 leading-relaxed">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।<br />ধন্যবাদ আমাদের বেছে নেওয়ার জন্য!</p>
                 <Button onClick={() => setOrderOpen(false)} className="w-full text-white font-bold py-4 rounded-2xl text-base shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                   ঠিক আছে
                 </Button>
@@ -851,7 +851,7 @@ const Products = () => {
                 <div className="relative px-5 py-5" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                      <div className="w-10 h-10 bg-card/20 rounded-xl flex items-center justify-center">
                         <ShoppingCart className="h-5 w-5 text-white" />
                       </div>
                       <div>
@@ -859,7 +859,7 @@ const Products = () => {
                         <p className="text-white/70 text-xs">তথ্য দিয়ে অর্ডার কনফার্ম করুন</p>
                       </div>
                     </div>
-                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80 hover:bg-white/25">
+                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-card/15 flex items-center justify-center text-white/80 hover:bg-card/25">
                       <X className="h-4 w-4" />
                     </button>
                   </div>
@@ -888,18 +888,18 @@ const Products = () => {
                       <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
                         {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
                         <div className="flex-1">
-                          <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
+                          <p className="text-xs text-muted-foreground">পণ্যের মূল্য</p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
-                            {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(origPrice * Math.max(1, quantity))}</span>}
+                            {hasDiscount && <span className="line-through text-muted-foreground text-xs">৳{toBn(origPrice * Math.max(1, quantity))}</span>}
                           </div>
-                          <p className="text-[11px] text-gray-500 line-clamp-1">{p.name}</p>
+                          <p className="text-[11px] text-muted-foreground line-clamp-1">{p.name}</p>
                         </div>
                       </div>
 
                       {variants.length > 0 && (
                         <div>
-                          <Label className="text-gray-800 font-bold text-sm mb-2 block">
+                          <Label className="text-foreground font-bold text-sm mb-2 block">
                             {p.unit_type === "kg" ? "ওজন বাছাই করুন" : p.unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"} <span className="text-red-500">*</span>
                           </Label>
                           <div className="grid grid-cols-2 gap-2">
@@ -911,13 +911,13 @@ const Products = () => {
                                   key={i}
                                   type="button"
                                   onClick={() => setSelectedVariantIdx(i)}
-                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-border bg-card hover:border-border"}`}
                                 >
-                                  <div className="font-bold text-sm text-gray-900">{v.label}</div>
+                                  <div className="font-bold text-sm text-foreground">{v.label}</div>
                                   <div className="text-xs">
                                     <span className="font-bold" style={{ color: BRAND_GREEN }}>৳{toBn(Number(vPrice))}</span>
                                     {v.discount_price != null && Number(v.discount_price) < Number(v.price) && (
-                                      <span className="line-through text-gray-400 ml-1">৳{toBn(Number(v.price))}</span>
+                                      <span className="line-through text-muted-foreground ml-1">৳{toBn(Number(v.price))}</span>
                                     )}
                                   </div>
                                 </button>
@@ -928,16 +928,16 @@ const Products = () => {
                       )}
 
                       <div>
-                        <Label className="text-gray-800 font-bold text-sm mb-2 block">পরিমাণ ({unitLabel})</Label>
+                        <Label className="text-foreground font-bold text-sm mb-2 block">পরিমাণ ({unitLabel})</Label>
                         <div className="flex items-center gap-3">
                           <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                            className="w-10 h-10 rounded-full border-2 border-gray-200 font-bold text-lg">−</button>
+                            className="w-10 h-10 rounded-full border-2 border-border font-bold text-lg">−</button>
                           <Input type="number" min={1} value={quantity}
                             onChange={e => setQuantity(Math.max(1, Number(e.target.value) || 1))}
-                            className="h-10 w-20 text-center rounded-xl border-2 border-gray-200" />
+                            className="h-10 w-20 text-center rounded-xl border-2 border-border" />
                           <button type="button" onClick={() => setQuantity(q => q + 1)}
-                            className="w-10 h-10 rounded-full border-2 border-gray-200 font-bold text-lg">+</button>
-                          <span className="text-xs text-gray-500">× ৳{toBn(basePrice)} / {unitLabel}</span>
+                            className="w-10 h-10 rounded-full border-2 border-border font-bold text-lg">+</button>
+                          <span className="text-xs text-muted-foreground">× ৳{toBn(basePrice)} / {unitLabel}</span>
                         </div>
                         {(p.unit_type === "piece" || p.unit_type === "kg") && (
                           <div className="flex flex-wrap gap-2 mt-3">
@@ -949,7 +949,7 @@ const Products = () => {
                                 className={`px-4 h-9 rounded-full border-2 text-xs font-bold transition ${
                                   quantity === n
                                     ? "bg-red-600 text-white border-red-600"
-                                    : "bg-white text-gray-700 border-gray-200 hover:border-red-400"
+                                    : "bg-card text-foreground/80 border-border hover:border-red-400"
                                 }`}
                               >
                                 {toBn(n)} {unitLabel}
@@ -964,17 +964,17 @@ const Products = () => {
 
                 <div className="p-5 space-y-4">
                   <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
-                    <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="আপনার পুরো নাম" className="h-12 rounded-2xl border-2 border-gray-200 bg-white text-gray-900 placeholder:text-gray-400" />
+                    <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                    <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="আপনার পুরো নাম" className="h-12 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground" />
                   </div>
                   <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
-                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-white text-gray-900 placeholder:text-gray-400 ${phoneError ? 'border-red-300' : 'border-gray-200'}`} />
+                    <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
+                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? 'border-red-300' : 'border-border'}`} />
                     {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
                   </div>
                   <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
-                    <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="আপনার সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 resize-none" />
+                    <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                    <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="আপনার সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground resize-none" />
                   </div>
                   <PaymentMethodPicker
                     settings={siteSettings}
@@ -1003,7 +1003,7 @@ const Products = () => {
                       <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-red-300 via-red-400 to-red-500 shadow-lg">
                         <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 p-3.5 space-y-2 text-sm">
                           <div className="flex items-center justify-between">
-                            <span className="text-gray-700 flex items-center gap-2 font-medium">
+                            <span className="text-foreground/80 flex items-center gap-2 font-medium">
                               <span className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-sm">
                                 <TruckIcon className="h-3.5 w-3.5 text-white" />
                               </span>
@@ -1012,7 +1012,7 @@ const Products = () => {
                             {dlv.isFree ? (
                               <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow">🎉 ফ্রি</span>
                             ) : (
-                              <span className="font-extrabold text-gray-900">৳{toBn(dlv.charge)}</span>
+                              <span className="font-extrabold text-foreground">৳{toBn(dlv.charge)}</span>
                             )}
                           </div>
                           {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
@@ -1021,7 +1021,7 @@ const Products = () => {
                             </div>
                           )}
                           <div className="flex items-center justify-between pt-2 border-t border-dashed border-red-300">
-                            <span className="font-bold text-gray-900 text-base">মোট পেমেন্ট</span>
+                            <span className="font-bold text-foreground text-base">মোট পেমেন্ট</span>
                             <span
                               className="font-extrabold text-2xl bg-clip-text text-transparent"
                               style={{ backgroundImage: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}
@@ -1049,7 +1049,7 @@ const Products = () => {
                   >
                     <ShoppingCart className="h-4 w-4" /> কার্টে যুক্ত করুন (আরো প্রডাক্ট কিনুন)
                   </Button>
-                  <p className="text-center text-gray-400 text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
+                  <p className="text-center text-muted-foreground text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
                 </div>
               </>
             )}

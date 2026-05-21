@@ -221,13 +221,13 @@ const ProductDetail = () => {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen bg-[#f7f5ee] flex items-center justify-center text-gray-500">লোড হচ্ছে...</div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   }
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#f7f5ee] flex flex-col items-center justify-center gap-4 p-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 p-4">
         <ShoppingBag className="h-16 w-16 text-gray-300" />
-        <p className="text-gray-600">পণ্য পাওয়া যায়নি</p>
+        <p className="text-muted-foreground">পণ্য পাওয়া যায়নি</p>
         <Button onClick={() => navigate("/products")} style={{ backgroundColor: BRAND_GREEN }} className="text-white rounded-full">
           শপে ফিরে যান
         </Button>
@@ -236,7 +236,7 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f5ee] pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+    <div className="min-h-screen bg-background pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
 
       {/* Top Strip */}
       <div className="text-white text-xs md:text-sm py-2 px-4" style={{ backgroundColor: BRAND_GREEN }}>
@@ -252,13 +252,13 @@ const ProductDetail = () => {
       </div>
 
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
+      <header className="bg-card shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/products" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: BRAND_GREEN }}>KM</div>
             <div>
               <div className="font-bold text-base" style={{ color: BRAND_GREEN }}>কে এম শপ</div>
-              <div className="text-[10px] text-gray-500 -mt-0.5">কুয়াকাটা</div>
+              <div className="text-[10px] text-muted-foreground -mt-0.5">কুয়াকাটা</div>
             </div>
           </Link>
           <Link to="/products">
@@ -270,27 +270,27 @@ const ProductDetail = () => {
       </header>
 
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 pt-4 text-xs md:text-sm text-gray-500 flex items-center gap-1.5 flex-wrap">
-        <Link to="/products" className="hover:text-gray-900 flex items-center gap-1"><Home className="h-3 w-3" /> Home</Link>
+      <div className="max-w-7xl mx-auto px-4 pt-4 text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
+        <Link to="/products" className="hover:text-foreground flex items-center gap-1"><Home className="h-3 w-3" /> Home</Link>
         <span>/</span>
-        {product.category && <><span className="hover:text-gray-900">{categoryLabel}</span><span>/</span></>}
-        <span className="text-gray-900 font-medium line-clamp-1">{product.name}</span>
+        {product.category && <><span className="hover:text-foreground">{categoryLabel}</span><span>/</span></>}
+        <span className="text-foreground font-medium line-clamp-1">{product.name}</span>
       </div>
 
       {/* Main */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid md:grid-cols-2 gap-6 md:gap-10 bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-10 bg-card rounded-2xl p-4 md:p-6 shadow-sm border border-border">
 
           {/* Image gallery */}
           <div>
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 mb-3">
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted mb-3">
               {images[activeImg] ? (
                 <WatermarkedImage src={images[activeImg]} alt={product.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-20 w-20 text-gray-300" /></div>
               )}
               {hasDiscount && (
-                <div className="absolute top-3 left-3 bg-white shadow text-red-600 font-bold text-sm px-3 py-1.5 rounded">
+                <div className="absolute top-3 left-3 bg-card shadow text-red-600 font-bold text-sm px-3 py-1.5 rounded">
                   -{toBn(discountPct)}%
                 </div>
               )}
@@ -298,10 +298,10 @@ const ProductDetail = () => {
 
               {images.length > 1 && (
                 <>
-                  <button onClick={() => setActiveImg((activeImg - 1 + images.length) % images.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 rounded-full shadow flex items-center justify-center hover:bg-white">
+                  <button onClick={() => setActiveImg((activeImg - 1 + images.length) % images.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-card/90 rounded-full shadow flex items-center justify-center hover:bg-card">
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  <button onClick={() => setActiveImg((activeImg + 1) % images.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 rounded-full shadow flex items-center justify-center hover:bg-white">
+                  <button onClick={() => setActiveImg((activeImg + 1) % images.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-card/90 rounded-full shadow flex items-center justify-center hover:bg-card">
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </>
@@ -311,7 +311,7 @@ const ProductDetail = () => {
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {images.map((im, i) => (
                   <button key={i} onClick={() => setActiveImg(i)} className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImg === i ? 'border-[#dc2626]' : 'border-transparent opacity-70 hover:opacity-100'}`}>
-                    {im ? <img src={im} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gray-100" />}
+                    {im ? <img src={im} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-muted" />}
                   </button>
                 ))}
               </div>
@@ -320,10 +320,10 @@ const ProductDetail = () => {
 
           {/* Info */}
           <div className="flex flex-col">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{product.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">{product.name}</h1>
 
             <div className="flex items-baseline gap-3 mt-4 pb-4 border-b">
-              {hasDiscount && <span className="text-lg text-gray-400 line-through">৳{toBn(origPrice)}</span>}
+              {hasDiscount && <span className="text-lg text-muted-foreground line-through">৳{toBn(origPrice)}</span>}
               <span className="text-3xl font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(unitPrice)}</span>
               {hasDiscount && (
                 <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
@@ -335,9 +335,9 @@ const ProductDetail = () => {
             {((product as any).description_html || product.description) && (
               (product as any).description_html ? (
                 <div
-                  className="rich-desc text-sm text-gray-800 leading-relaxed mt-4 max-w-none
-                    [&_h1]:text-xl [&_h1]:font-bold [&_h1]:my-2 [&_h1]:text-gray-900
-                    [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-gray-900
+                  className="rich-desc text-sm text-foreground leading-relaxed mt-4 max-w-none
+                    [&_h1]:text-xl [&_h1]:font-bold [&_h1]:my-2 [&_h1]:text-foreground
+                    [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-foreground
                     [&_p]:my-1.5
                     [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-1.5
                     [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-1.5
@@ -346,7 +346,7 @@ const ProductDetail = () => {
                   dangerouslySetInnerHTML={{ __html: (product as any).description_html }}
                 />
               ) : (
-                <p className="text-gray-700 text-sm leading-relaxed mt-4 whitespace-pre-wrap">{product.description}</p>
+                <p className="text-foreground/80 text-sm leading-relaxed mt-4 whitespace-pre-wrap">{product.description}</p>
               )
             )}
 
@@ -356,13 +356,13 @@ const ProductDetail = () => {
                 <span className={`w-1.5 h-1.5 rounded-full ${product.stock_status === 'out_of_stock' ? 'bg-red-500' : 'bg-red-500'}`} />
                 {product.stock_status === 'out_of_stock' ? 'স্টক শেষ' : 'স্টকে আছে'}
               </span>
-              {product.category && <span className="text-gray-500">ক্যাটাগরি: <span className="text-gray-800 font-medium">{categoryLabel}</span></span>}
+              {product.category && <span className="text-muted-foreground">ক্যাটাগরি: <span className="text-foreground font-medium">{categoryLabel}</span></span>}
             </div>
 
             {/* Variants (size / weight / option) */}
             {variants.length > 0 && (
               <div className="mt-6">
-                <Label className="text-sm font-semibold text-gray-800 block mb-2">
+                <Label className="text-sm font-semibold text-foreground block mb-2">
                   {(product as any).unit_type === "kg" ? "ওজন বাছাই করুন" : (product as any).unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"}
                   <span className="text-red-500"> *</span>
                 </Label>
@@ -376,12 +376,12 @@ const ProductDetail = () => {
                         key={i}
                         type="button"
                         onClick={() => setSelectedVariantIdx(i)}
-                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-border bg-card hover:border-border"}`}
                       >
-                        <div className="font-bold text-sm text-gray-900">{v.label}</div>
+                        <div className="font-bold text-sm text-foreground">{v.label}</div>
                         <div className="text-xs">
                           <span className="font-bold" style={{ color: BRAND_GREEN }}>৳{toBn(Number(vPrice))}</span>
-                          {vDiscount && <span className="line-through text-gray-400 ml-1">৳{toBn(Number(v.price))}</span>}
+                          {vDiscount && <span className="line-through text-muted-foreground ml-1">৳{toBn(Number(v.price))}</span>}
                         </div>
                       </button>
                     );
@@ -392,18 +392,18 @@ const ProductDetail = () => {
 
             {/* Quantity */}
             <div className="mt-6">
-              <Label className="text-sm font-semibold text-gray-800 block mb-2">পরিমাণ</Label>
+              <Label className="text-sm font-semibold text-foreground block mb-2">পরিমাণ</Label>
               <div className="flex items-center gap-3">
-                <div className="flex items-center border-2 border-gray-200 rounded-full overflow-hidden">
-                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 flex items-center justify-center hover:bg-gray-100">
+                <div className="flex items-center border-2 border-border rounded-full overflow-hidden">
+                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 flex items-center justify-center hover:bg-muted">
                     <Minus className="h-4 w-4" />
                   </button>
-                  <input type="number" value={qty} onChange={e => setQty(Math.max(1, parseInt(e.target.value) || 1))} className="w-12 h-10 text-center font-bold outline-none bg-white text-gray-900" />
-                  <button onClick={() => setQty(qty + 1)} className="w-10 h-10 flex items-center justify-center hover:bg-gray-100">
+                  <input type="number" value={qty} onChange={e => setQty(Math.max(1, parseInt(e.target.value) || 1))} className="w-12 h-10 text-center font-bold outline-none bg-card text-foreground" />
+                  <button onClick={() => setQty(qty + 1)} className="w-10 h-10 flex items-center justify-center hover:bg-muted">
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-muted-foreground">
                   মোট: <span className="font-bold text-base" style={{ color: BRAND_GREEN }}>৳{toBn(total)}</span>
                 </div>
               </div>
@@ -474,36 +474,36 @@ const ProductDetail = () => {
                   <div className="w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-1" style={{ backgroundColor: `${BRAND_GREEN}15` }}>
                     <it.icon className="h-5 w-5" style={{ color: BRAND_GREEN }} />
                   </div>
-                  <div className="text-[11px] text-gray-600 font-medium">{it.t}</div>
+                  <div className="text-[11px] text-muted-foreground font-medium">{it.t}</div>
                 </div>
               ))}
             </div>
 
             {/* Share */}
-            <button onClick={handleShare} className="mt-5 inline-flex items-center gap-2 text-xs text-gray-500 hover:text-gray-900 self-start">
+            <button onClick={handleShare} className="mt-5 inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground self-start">
               <Share2 className="h-3.5 w-3.5" /> শেয়ার করুন
             </button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-2xl mt-6 border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl mt-6 border border-border shadow-sm overflow-hidden">
           <div className="flex border-b">
             {[{k:"desc",l:"DESCRIPTION"},{k:"reviews",l:"REVIEWS (০)"}].map(t => (
-              <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#dc2626] text-[#dc2626]' : 'border-transparent text-gray-500 hover:text-gray-900'}`}>
+              <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#dc2626] text-[#dc2626]' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                 {t.l}
               </button>
             ))}
           </div>
-          <div className="p-6 text-sm text-gray-800 leading-relaxed">
+          <div className="p-6 text-sm text-foreground leading-relaxed">
             {tab === "desc" ? (
               <div className="space-y-3">
-                <h3 className="font-bold text-base text-gray-900">{product.name}</h3>
+                <h3 className="font-bold text-base text-foreground">{product.name}</h3>
                 {(product as any).description_html ? (
                   <div
                     className="rich-desc max-w-none
-                      [&_h1]:text-xl [&_h1]:font-bold [&_h1]:my-2 [&_h1]:text-gray-900
-                      [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-gray-900
+                      [&_h1]:text-xl [&_h1]:font-bold [&_h1]:my-2 [&_h1]:text-foreground
+                      [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:my-2 [&_h2]:text-foreground
                       [&_p]:my-1.5
                       [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-1.5
                       [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-1.5
@@ -516,7 +516,7 @@ const ProductDetail = () => {
                 )}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-8">এখনো কোনো রিভিউ নেই</p>
+              <p className="text-muted-foreground text-center py-8">এখনো কোনো রিভিউ নেই</p>
             )}
           </div>
         </div>
@@ -524,20 +524,20 @@ const ProductDetail = () => {
         {/* Related */}
         {related && related.length > 0 && (
           <div className="mt-10">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">সম্পর্কিত পণ্য</h2>
+            <h2 className="text-xl font-bold text-foreground mb-4">সম্পর্কিত পণ্য</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {related.map((p: any) => {
                 const hd = p.discount_price && p.discount_price < p.price;
                 return (
-                  <Link key={p.id} to={`/products/${p.id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
-                    <div className="aspect-square bg-gray-100 overflow-hidden">
+                  <Link key={p.id} to={`/products/${p.id}`} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border">
+                    <div className="aspect-square bg-muted overflow-hidden">
                       {p.image_url ? <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-10 w-10 text-gray-300" /></div>}
                     </div>
                     <div className="p-3">
-                      <h3 className="font-bold text-sm text-gray-900 line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
+                      <h3 className="font-bold text-sm text-foreground line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
                       <div className="flex items-baseline gap-2 mt-1">
                         <span className="text-base font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(hd ? p.discount_price : p.price)}</span>
-                        {hd && <span className="text-xs text-gray-400 line-through">৳{toBn(p.price)}</span>}
+                        {hd && <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>}
                       </div>
                     </div>
                   </Link>
@@ -555,7 +555,7 @@ const ProductDetail = () => {
       {/* Order Popup */}
       {orderOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeOrderDialog}>
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {orderSuccess ? (
               <div className="p-8 text-center">
                 <div className="relative w-20 h-20 mx-auto mb-5">
@@ -564,8 +564,8 @@ const ProductDetail = () => {
                     <CheckCircle className="h-10 w-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">অর্ডার সফল! 🎉</h3>
-                <p className="text-gray-500 text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
+                <h3 className="text-2xl font-bold text-foreground mb-2">অর্ডার সফল! 🎉</h3>
+                <p className="text-muted-foreground text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
                 <Button onClick={() => setOrderOpen(false)} className="w-full text-white font-bold py-4 rounded-2xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>ঠিক আছে</Button>
               </div>
             ) : (
@@ -573,13 +573,13 @@ const ProductDetail = () => {
                 <div className="relative px-5 py-5" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"><ShoppingCart className="h-5 w-5 text-white" /></div>
+                      <div className="w-10 h-10 bg-card/20 rounded-xl flex items-center justify-center"><ShoppingCart className="h-5 w-5 text-white" /></div>
                       <div>
                         <h3 className="text-lg font-bold text-white">অর্ডার করুন</h3>
                         <p className="text-white/70 text-xs">তথ্য দিয়ে কনফার্ম করুন</p>
                       </div>
                     </div>
-                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white/80"><X className="h-4 w-4" /></button>
+                    <button onClick={closeOrderDialog} className="w-8 h-8 rounded-full bg-card/15 flex items-center justify-center text-white/80"><X className="h-4 w-4" /></button>
                   </div>
                 </div>
 
@@ -587,12 +587,12 @@ const ProductDetail = () => {
                   <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
                     {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500">পণ্যের মূল্য</p>
+                      <p className="text-xs text-muted-foreground">পণ্যের মূল্য</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(total)}</span>
-                        {hasDiscount && <span className="line-through text-gray-400 text-xs">৳{toBn(origPrice * qty)}</span>}
+                        {hasDiscount && <span className="line-through text-muted-foreground text-xs">৳{toBn(origPrice * qty)}</span>}
                       </div>
-                      <p className="text-[11px] text-gray-500 line-clamp-1">
+                      <p className="text-[11px] text-muted-foreground line-clamp-1">
                         {product.name}{chosenVariant ? ` — ${chosenVariant.label}` : ""}
                       </p>
                     </div>
@@ -603,17 +603,17 @@ const ProductDetail = () => {
 
                 <div className="p-5 space-y-4">
                   <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
-                    <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-gray-200 bg-white text-gray-900 placeholder:text-gray-400" />
+                    <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                    <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground" />
                   </div>
                   <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">মোবাইল <span className="text-red-500">*</span></Label>
-                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-white text-gray-900 placeholder:text-gray-400 ${phoneError ? 'border-red-300' : 'border-gray-200'}`} />
+                    <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল <span className="text-red-500">*</span></Label>
+                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? 'border-red-300' : 'border-border'}`} />
                     {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
                   </div>
                   <div>
-                    <Label className="text-gray-800 font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
-                    <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 resize-none" />
+                    <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                    <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground resize-none" />
                   </div>
                   <PaymentMethodPicker
                     settings={siteSettings}
@@ -628,7 +628,7 @@ const ProductDetail = () => {
                   <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-red-300 via-red-400 to-red-500 shadow-lg">
                     <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 p-3.5 space-y-2 text-sm">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-700 flex items-center gap-2 font-medium">
+                        <span className="text-foreground/80 flex items-center gap-2 font-medium">
                           <span className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-sm">
                             <TruckIcon className="h-3.5 w-3.5 text-white" />
                           </span>
@@ -637,7 +637,7 @@ const ProductDetail = () => {
                         {dlv.isFree ? (
                           <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow">🎉 ফ্রি</span>
                         ) : (
-                          <span className="font-extrabold text-gray-900">৳{toBn(dlv.charge)}</span>
+                          <span className="font-extrabold text-foreground">৳{toBn(dlv.charge)}</span>
                         )}
                       </div>
                       {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
@@ -646,7 +646,7 @@ const ProductDetail = () => {
                         </div>
                       )}
                       <div className="flex items-center justify-between pt-2 border-t border-dashed border-red-300">
-                        <span className="font-bold text-gray-900 text-base">মোট পেমেন্ট</span>
+                        <span className="font-bold text-foreground text-base">মোট পেমেন্ট</span>
                         <span className="font-extrabold text-2xl bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                           ৳{toBn(grandTotal)}
                         </span>
@@ -686,7 +686,7 @@ const ProductDetail = () => {
                       WhatsApp এ অর্ডার পাঠান
                     </Button>
                   )}
-                  <p className="text-center text-gray-400 text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
+                  <p className="text-center text-muted-foreground text-xs">🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
                 </div>
               </>
             )}
