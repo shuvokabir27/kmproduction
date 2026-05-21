@@ -857,6 +857,7 @@ const ProductDetail = () => {
         </div>
       )}
       <MobileShopNav />
+      <FloatingCartButton />
       </div>
     </div>
   );
