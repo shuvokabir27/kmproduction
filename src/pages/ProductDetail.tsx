@@ -28,9 +28,10 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const cart = useCart();
-  const { customer: shopCustomer } = useShopCustomer();
+  const { customer: shopCustomer, orders: customerOrders } = useShopCustomer();
   const [searchParams] = useSearchParams();
   const { settings: deliverySettings } = useDeliverySettings();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (searchParams.get("order") === "1") setOrderOpen(true);
