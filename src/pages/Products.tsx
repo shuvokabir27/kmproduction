@@ -959,6 +959,13 @@ const Products = () => {
               </div>
             </div>
             <p className="text-white/75 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
+            <Link
+              to="/media"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-rose-500 to-red-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
+            >
+              <Star className="h-4 w-4 fill-white text-white" />
+              KM Production ভিজিট করুন
+            </Link>
           </div>
           <div>
             <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
