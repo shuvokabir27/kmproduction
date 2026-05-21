@@ -713,6 +713,7 @@ const ProductDetail = () => {
         </div>
       )}
       <MobileShopNav />
+      </div>
     </div>
   );
 };
