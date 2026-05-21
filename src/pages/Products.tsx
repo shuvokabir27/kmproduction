@@ -240,9 +240,17 @@ const Products = () => {
       </div>
 
       {/* Header — Premium */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-[linear-gradient(180deg,hsl(0_0%_4%/0.92)_0%,hsl(0_0%_6%/0.85)_100%)] backdrop-blur-xl shadow-[0_8px_32px_-12px_hsl(0_0%_0%/0.6),inset_0_-1px_0_0_hsl(0_85%_50%/0.18)]">
-        {/* top hairline accent */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[linear-gradient(115deg,hsl(0_70%_8%/0.92)_0%,hsl(340_60%_10%/0.9)_35%,hsl(260_50%_10%/0.88)_70%,hsl(210_60%_10%/0.92)_100%)] backdrop-blur-2xl shadow-[0_10px_40px_-12px_hsl(0_0%_0%/0.7),inset_0_-1px_0_0_hsl(40_90%_55%/0.18)]">
+        {/* ambient color blooms */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -left-10 w-72 h-40 bg-rose-500/20 blur-3xl rounded-full" />
+          <div className="absolute -top-20 left-1/3 w-72 h-40 bg-fuchsia-500/15 blur-3xl rounded-full" />
+          <div className="absolute -top-24 right-10 w-72 h-40 bg-amber-400/15 blur-3xl rounded-full" />
+          <div className="absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-20%,rgba(255,255,255,0.06),transparent_60%)]" />
+        </div>
+        {/* top hairline accent — gold→rose→indigo */}
+        <div className="relative h-px w-full bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-rose-500/0 via-rose-400/60 to-indigo-400/0" />
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
             <div className="relative">
