@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper, ShoppingBag, Download, Camera } from "lucide-react";
+import { Users, Film, Mail, Phone, MapPin, Facebook, Youtube, Instagram, Play, ChevronRight, ExternalLink, MessageCircle, Menu, X, Tv, Image, Newspaper, ShoppingBag, Download, Camera, LayoutGrid, ChevronDown } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { useLanguage, labels } from "@/hooks/useLanguage";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -88,18 +89,26 @@ const PublicHome = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
-  const navItems = [
-    { label: t("টিম", "Team"), href: "#team", icon: Users, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
-    { label: t("জনপ্রিয়", "Popular"), href: "#popular", icon: Play, gradient: "from-rose-500 to-pink-600", bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
-    { label: t("সেবা", "Services"), href: "/services", isPage: true, icon: Film, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
-    { label: t("প্রডাক্ট", "Products"), href: "/products", isPage: true, icon: ShoppingBag, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/15", border: "border-orange-500/30", text: "text-orange-400" },
-    { label: t("নিউজ", "News"), href: "/news", isPage: true, icon: Newspaper, gradient: "from-red-500 to-orange-600", bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-400" },
-    { label: t("ফটো কার্ড", "Photo Card"), href: "/photo-card", isPage: true, icon: Camera, gradient: "from-red-600 to-rose-700", bg: "bg-red-600/15", border: "border-red-600/30", text: "text-red-500" },
-    { label: t("নিউজ কার্ড", "News Card"), href: "/news-card", isPage: true, icon: Newspaper, gradient: "from-rose-600 to-red-800", bg: "bg-rose-600/15", border: "border-rose-600/30", text: "text-rose-400" },
-    { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, gradient: "from-emerald-500 to-green-600", bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
-    { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, gradient: "from-cyan-500 to-blue-600", bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
-    { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, gradient: "from-fuchsia-500 to-pink-600", bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
-    { label: t("অ্যাপ ডাউনলোড", "Download App"), href: "/download", isPage: true, icon: Download, gradient: "from-green-500 to-emerald-600", bg: "bg-green-500/15", border: "border-green-500/30", text: "text-green-400" },
+  const mediaChildren = [
+    { label: t("জনপ্রিয়", "Popular"), href: "#popular", icon: Play, bg: "bg-rose-500/15", border: "border-rose-500/30", text: "text-rose-400" },
+    { label: t("নিউজ", "News"), href: "/news", isPage: true, icon: Newspaper, bg: "bg-red-500/15", border: "border-red-500/30", text: "text-red-400" },
+    { label: t("চ্যানেল", "Channels"), href: "#channels", icon: Tv, bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
+    { label: t("গ্যালারী", "Gallery"), href: "#gallery", icon: Image, bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
+    { label: t("যোগাযোগ", "Contact"), href: "#contact", icon: Mail, bg: "bg-fuchsia-500/15", border: "border-fuchsia-500/30", text: "text-fuchsia-400" },
+  ];
+
+  const navItems: Array<{
+    label: string; href: string; isPage?: boolean; icon: any;
+    bg: string; border: string; text: string;
+    children?: typeof mediaChildren;
+  }> = [
+    { label: t("টিম", "Team"), href: "#team", icon: Users, bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
+    { label: t("সেবা", "Services"), href: "/services", isPage: true, icon: Film, bg: "bg-amber-500/15", border: "border-amber-500/30", text: "text-amber-400" },
+    { label: t("প্রডাক্ট", "Products"), href: "/products", isPage: true, icon: ShoppingBag, bg: "bg-orange-500/15", border: "border-orange-500/30", text: "text-orange-400" },
+    { label: t("মিডিয়া", "Media"), href: "#media", icon: LayoutGrid, bg: "bg-indigo-500/15", border: "border-indigo-500/30", text: "text-indigo-400", children: mediaChildren },
+    { label: t("ফটো কার্ড", "Photo Card"), href: "/photo-card", isPage: true, icon: Camera, bg: "bg-red-600/15", border: "border-red-600/30", text: "text-red-500" },
+    { label: t("নিউজ কার্ড", "News Card"), href: "/news-card", isPage: true, icon: Newspaper, bg: "bg-rose-600/15", border: "border-rose-600/30", text: "text-rose-400" },
+    { label: t("অ্যাপ ডাউনলোড", "Download App"), href: "/download", isPage: true, icon: Download, bg: "bg-green-500/15", border: "border-green-500/30", text: "text-green-400" },
   ];
 
   const handleNavClick = (nav: { href: string; isPage?: boolean }) => {
@@ -133,6 +142,36 @@ const PublicHome = () => {
           <nav className="hidden md:flex items-center gap-4">
             {navItems.map((nav) => {
               const Icon = nav.icon;
+              if (nav.children) {
+                return (
+                  <DropdownMenu key={nav.href}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`flex items-center gap-1.5 text-sm font-medium ${nav.text} hover:opacity-80 transition-all duration-300 whitespace-nowrap`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {nav.label}
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="bg-background/95 backdrop-blur-xl border-border/40">
+                      {nav.children.map((c) => {
+                        const CIcon = c.icon;
+                        return (
+                          <DropdownMenuItem
+                            key={c.href}
+                            onClick={() => handleNavClick(c)}
+                            className={`gap-2 cursor-pointer ${c.text}`}
+                          >
+                            <CIcon className="h-4 w-4" />
+                            {c.label}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              }
               return (
                 <button
                   key={nav.href}
@@ -169,6 +208,36 @@ const PublicHome = () => {
           <div className="flex flex-wrap justify-center gap-2">
             {navItems.map((nav) => {
               const Icon = nav.icon;
+              if (nav.children) {
+                return (
+                  <DropdownMenu key={nav.href}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 ${nav.bg} ${nav.border} border ${nav.text} hover:scale-105 active:scale-95`}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                        {nav.label}
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="center" className="bg-background/95 backdrop-blur-xl border-border/40">
+                      {nav.children.map((c) => {
+                        const CIcon = c.icon;
+                        return (
+                          <DropdownMenuItem
+                            key={c.href}
+                            onClick={() => handleNavClick(c)}
+                            className={`gap-2 cursor-pointer ${c.text}`}
+                          >
+                            <CIcon className="h-4 w-4" />
+                            {c.label}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              }
               return (
                 <button
                   key={nav.href}
