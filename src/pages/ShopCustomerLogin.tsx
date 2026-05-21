@@ -14,7 +14,7 @@ const BRAND_GOLD = "#fbbf24";
 
 export default function ShopCustomerLogin() {
   const nav = useNavigate();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,16 +27,23 @@ export default function ShopCustomerLogin() {
     if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
     if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
-    if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
+    if ((mode === "register" || mode === "forgot") && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
 
     setLoading(true);
+    const action = mode === "forgot" ? "forgot_password" : mode;
+    const payload: Record<string, unknown> = {
+      action,
+      phone: phone.replace(/\D/g, ""),
+    };
+    if (mode === "forgot") {
+      payload.new_password = password;
+    } else {
+      payload.password = password;
+      payload.full_name = fullName.trim();
+    }
+
     const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
-      body: {
-        action: mode,
-        phone: phone.replace(/\D/g, ""),
-        password,
-        full_name: fullName.trim(),
-      },
+      body: payload,
     });
     setLoading(false);
 
@@ -45,7 +52,11 @@ export default function ShopCustomerLogin() {
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
-    toast.success(mode === "login" ? "সফলভাবে লগইন হয়েছে" : "অ্যাকাউন্ট তৈরি হয়েছে");
+    toast.success(
+      mode === "login" ? "সফলভাবে লগইন হয়েছে"
+      : mode === "register" ? "অ্যাকাউন্ট তৈরি হয়েছে"
+      : "পাসওয়ার্ড পরিবর্তন হয়েছে"
+    );
     nav("/shop/account");
   };
 
