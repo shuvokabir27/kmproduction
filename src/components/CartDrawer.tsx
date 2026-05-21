@@ -147,14 +147,14 @@ export const CartDrawer = () => {
             {!offer && settings.free_delivery_enabled && (
               <div className="mx-4 mt-4">
                 {delivery.isFree ? (
-                  <div className="bg-green-50 border border-green-200 text-green-800 rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-2">
+                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-2">
                     <Sparkles className="h-4 w-4" /> অভিনন্দন! আপনি ফ্রি ডেলিভারি পাচ্ছেন 🎉
                   </div>
                 ) : (
-                  <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl px-3 py-2 text-xs">
+                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl px-3 py-2 text-xs">
                     আর মাত্র <span className="font-extrabold">৳{toBn(delivery.amountToFree)}</span> এর বাজার করলেই ফ্রি ডেলিভারি!
-                    <div className="h-1.5 mt-1.5 bg-amber-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-amber-500" style={{ width: `${Math.min(100, (total / settings.free_delivery_threshold) * 100)}%` }} />
+                    <div className="h-1.5 mt-1.5 bg-red-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-red-500" style={{ width: `${Math.min(100, (total / settings.free_delivery_threshold) * 100)}%` }} />
                     </div>
                   </div>
                 )}
@@ -198,7 +198,7 @@ export const CartDrawer = () => {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600 flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> ডেলিভারি চার্জ</span>
                 {delivery.isFree ? (
-                  <span className="font-bold text-green-700">ফ্রি</span>
+                  <span className="font-bold text-red-700">ফ্রি</span>
                 ) : (
                   <span className="font-bold text-gray-900">৳{toBn(delivery.charge)}</span>
                 )}
@@ -223,7 +223,7 @@ export const CartDrawer = () => {
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-600 flex items-center gap-1"><Truck className="h-3 w-3" /> ডেলিভারি চার্জ {totalWeightGrams > 0 && !delivery.isFree ? `(${toBn(totalWeightGrams / 1000)} কেজি)` : ""}</span>
                   {delivery.isFree
-                    ? <span className="font-bold text-green-700">ফ্রি</span>
+                    ? <span className="font-bold text-red-700">ফ্রি</span>
                     : <span className="font-bold text-gray-900">৳{toBn(delivery.charge)}</span>}
                 </div>
                 <div className="flex items-center justify-between border-t border-[#bbf7d0] pt-1.5">
@@ -274,8 +274,8 @@ export const CartDrawer = () => {
                                 onClick={() => updateQty(it.id, n)}
                                 className={`px-2.5 h-6 rounded-full border text-[10px] font-bold transition ${
                                   it.quantity === n
-                                    ? "bg-green-600 text-white border-green-600"
-                                    : "bg-white text-gray-700 border-gray-200 hover:border-green-400"
+                                    ? "bg-red-600 text-white border-red-600"
+                                    : "bg-white text-gray-700 border-gray-200 hover:border-red-400"
                                 }`}
                               >
                                 {toBn(n)} {unitLabel}
@@ -284,7 +284,7 @@ export const CartDrawer = () => {
                             <button
                               type="button"
                               onClick={() => updateQty(it.id, it.quantity + 1)}
-                              className="px-2.5 h-6 rounded-full border border-dashed border-green-400 text-[10px] font-bold text-green-700 bg-green-50"
+                              className="px-2.5 h-6 rounded-full border border-dashed border-red-400 text-[10px] font-bold text-red-700 bg-red-50"
                             >
                               + আরও
                             </button>

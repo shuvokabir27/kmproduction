@@ -50,7 +50,7 @@ export default function MobileShopNav() {
             rel="noopener noreferrer"
             className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-gray-50"
           >
-            <MessageCircle className="h-5 w-5 text-green-600" />
+            <MessageCircle className="h-5 w-5 text-red-600" />
             <span>WhatsApp</span>
           </a>
         ) : (

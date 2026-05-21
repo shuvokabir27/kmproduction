@@ -46,7 +46,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputClass =
-    "w-full h-12 pl-11 pr-4 rounded-xl bg-white/80 backdrop-blur border border-white/60 text-gray-900 placeholder:text-gray-400 outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.9)] focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200 transition";
+    "w-full h-12 pl-11 pr-4 rounded-xl bg-white/80 backdrop-blur border border-white/60 text-gray-900 placeholder:text-gray-400 outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.9)] focus:border-red-400 focus:ring-2 focus:ring-red-200 transition";
 
   return (
     <div
@@ -57,8 +57,8 @@ export default function ShopCustomerLogin() {
       }}
     >
       {/* glossy blobs */}
-      <div className="pointer-events-none absolute -top-32 -left-24 h-72 w-72 rounded-full bg-emerald-400/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-amber-300/20 blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 -left-24 h-72 w-72 rounded-full bg-red-400/30 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-red-300/20 blur-3xl" />
 
       <div className="relative w-full max-w-md">
         <Link to="/products" className="text-white/80 hover:text-white text-sm flex items-center gap-1 mb-4">
@@ -113,7 +113,7 @@ export default function ShopCustomerLogin() {
               className="relative mb-5 rounded-2xl p-[1.2px] shadow-md"
               style={{ background: "linear-gradient(135deg, #ef4444, #f59e0b, #ef4444)" }}
             >
-              <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-amber-50 px-3.5 py-3 text-[12.5px] leading-relaxed text-red-700 font-semibold flex gap-2">
+              <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 px-3.5 py-3 text-[12.5px] leading-relaxed text-red-700 font-semibold flex gap-2">
                 <span className="text-base leading-none">⚠️</span>
                 <span>
                   <span className="font-extrabold text-red-800">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
