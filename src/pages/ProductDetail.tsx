@@ -293,7 +293,7 @@ const ProductDetail = () => {
 
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 pt-4 text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
-        <Link to="/products" className="hover:text-foreground flex items-center gap-1"><Home className="h-3 w-3" /> Home</Link>
+        <Link to="/products" className="hover:text-foreground flex items-center gap-1"><Home className="h-3 w-3" /> হোম</Link>
         <span>/</span>
         {product.category && <><span className="hover:text-foreground">{categoryLabel}</span><span>/</span></>}
         <span className="text-foreground font-medium line-clamp-1">{product.name}</span>
