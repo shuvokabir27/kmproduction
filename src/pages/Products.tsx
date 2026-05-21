@@ -597,24 +597,26 @@ const Products = () => {
       <ShopCategoryGrid />
 
       {/* Trust Bar */}
-      <section className="px-4 pb-2">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { icon: Truck, title: "দ্রুত ডেলিভারি", desc: "সারা দেশে" },
-            { icon: ShieldCheck, title: "১০০% খাঁটি", desc: "গ্যারান্টি সহ" },
-            { icon: Tag, title: "সেরা দাম", desc: "সরাসরি উৎস থেকে" },
-            { icon: MessageCircle, title: "২৪/৭ সাপোর্ট", desc: "WhatsApp এ যোগাযোগ" },
-          ].map((t, i) => (
-            <div key={i} className="glossy-card p-3 md:p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${BRAND_GREEN}15` }}>
-                <t.icon className="h-5 w-5" style={{ color: BRAND_GREEN }} />
+      <section className="px-4 pb-2 pt-4">
+        <div className="max-w-7xl mx-auto glossy-section-amber p-4 md:p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+            {[
+              { icon: Truck, title: "দ্রুত ডেলিভারি", desc: "সারা দেশে" },
+              { icon: ShieldCheck, title: "১০০% খাঁটি", desc: "গ্যারান্টি সহ" },
+              { icon: Tag, title: "সেরা দাম", desc: "সরাসরি উৎস থেকে" },
+              { icon: MessageCircle, title: "২৪/৭ সাপোর্ট", desc: "WhatsApp এ যোগাযোগ" },
+            ].map((t, i) => (
+              <div key={i} className="glossy-card p-3 md:p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-amber-500/15">
+                  <t.icon className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <div className="font-bold text-xs md:text-sm text-foreground">{t.title}</div>
+                  <div className="text-[10px] md:text-xs text-muted-foreground">{t.desc}</div>
+                </div>
               </div>
-              <div>
-                <div className="font-bold text-xs md:text-sm text-foreground">{t.title}</div>
-                <div className="text-[10px] md:text-xs text-muted-foreground">{t.desc}</div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
