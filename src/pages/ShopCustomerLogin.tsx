@@ -25,7 +25,7 @@ export default function ShopCustomerLogin() {
 
   const submit = async () => {
     if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
-    if (!/^\d{6}$/.test(password)) { toast.error("পাসওয়ার্ড অবশ্যই ৬ ডিজিট সংখ্যা"); return; }
+    if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
 
@@ -167,13 +167,12 @@ export default function ShopCustomerLogin() {
                 </div>
               </div>
               <div>
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">৬-ডিজিট পাসওয়ার্ড</Label>
+                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">কমপক্ষে ৬-ডিজিট পাসওয়ার্ড</Label>
                 <div className="relative mt-1">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     type={showPassword ? "text" : "password"}
                     inputMode="numeric"
-                    maxLength={6}
                     value={password}
                     onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
                     placeholder="••••••"
@@ -198,7 +197,6 @@ export default function ShopCustomerLogin() {
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       inputMode="numeric"
-                      maxLength={6}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
                       placeholder="••••••"
@@ -216,7 +214,7 @@ export default function ShopCustomerLogin() {
                   {confirmPassword.length > 0 && confirmPassword !== password && (
                     <p className="text-[11px] text-red-600 font-semibold mt-1 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
                   )}
-                  {confirmPassword.length === 6 && confirmPassword === password && (
+                  {confirmPassword.length >= 6 && confirmPassword === password && (
                     <p className="text-[11px] text-green-600 font-semibold mt-1 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
                   )}
                 </div>
@@ -224,7 +222,7 @@ export default function ShopCustomerLogin() {
 
 
               {(() => {
-                const mismatch = mode === "register" && (confirmPassword.length !== 6 || confirmPassword !== password);
+                const mismatch = mode === "register" && (confirmPassword.length < 6 || confirmPassword !== password);
                 return (
                   <Button
                     onClick={submit}
