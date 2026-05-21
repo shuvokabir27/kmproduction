@@ -1088,10 +1088,6 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label className="text-xs flex items-center gap-1.5"><Calendar className="h-3 w-3" /> ডেলিভারি তারিখ</Label>
-                  <Input type="date" value={form.delivery_date} onChange={e => setForm(f => ({ ...f, delivery_date: e.target.value }))} className="mt-1" />
-                </div>
               </div>
             </div>
 
