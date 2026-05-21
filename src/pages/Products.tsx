@@ -622,7 +622,7 @@ const Products = () => {
 
       {/* Featured Products */}
       <section id="shop" className="px-4 py-10">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto glossy-section-violet p-6 md:p-10">
           <div className="text-center mb-8">
             <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>
               {showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
