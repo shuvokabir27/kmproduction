@@ -58,6 +58,8 @@ const AdminProducts = () => {
 
   const [form, setForm] = useState({
     name: "",
+    short_description: "",
+    short_description_html: "",
     description: "",
     description_html: "",
     price: "",
