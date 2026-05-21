@@ -605,20 +605,37 @@ const ProductDetail = () => {
                   <p className="text-muted-foreground text-center py-6">এখনো কোনো রিভিউ নেই</p>
                 ) : (
                   <div className="space-y-4">
-                    {reviews.map((r: any) => (
-                      <div key={r.id} className="border border-border rounded-xl p-4 bg-background/40">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <div className="font-semibold text-foreground text-sm">{r.customer_name || "গ্রাহক"}</div>
-                          <div className="text-[11px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString("bn-BD")}</div>
+                    {reviews.map((r: any) => {
+                      const name = (r.customer_name || "গ্রাহক").trim();
+                      const initial = name.charAt(0).toUpperCase();
+                      const colors = ["#dc2626","#7c3aed","#0891b2","#ea580c","#16a34a","#db2777","#2563eb","#ca8a04"];
+                      const hue = colors[(name.charCodeAt(0) || 0) % colors.length];
+                      return (
+                        <div key={r.id} className="border border-border rounded-xl p-4 bg-background/40">
+                          <div className="flex items-start gap-3 mb-2">
+                            <div
+                              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base shrink-0 shadow-sm"
+                              style={{ backgroundColor: hue }}
+                              aria-hidden
+                            >
+                              {initial}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="font-semibold text-foreground text-sm truncate">{name}</div>
+                                <div className="text-[11px] text-muted-foreground shrink-0">{new Date(r.created_at).toLocaleDateString("bn-BD")}</div>
+                              </div>
+                              <div className="flex gap-0.5 mt-1">
+                                {[1,2,3,4,5].map(n => (
+                                  <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? 'fill-[#dc2626] text-[#dc2626]' : 'text-muted-foreground/40'}`} />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          {r.comment && <p className="text-sm text-foreground/90 whitespace-pre-wrap pl-[52px]">{r.comment}</p>}
                         </div>
-                        <div className="flex gap-0.5 mb-2">
-                          {[1,2,3,4,5].map(n => (
-                            <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? 'fill-[#dc2626] text-[#dc2626]' : 'text-muted-foreground/40'}`} />
-                          ))}
-                        </div>
-                        {r.comment && <p className="text-sm text-foreground/90 whitespace-pre-wrap">{r.comment}</p>}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 
