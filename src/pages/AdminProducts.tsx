@@ -324,13 +324,16 @@ const AdminProducts = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="md:grid md:grid-cols-[220px_1fr] md:gap-5">
           <aside className="hidden md:block">
-            <nav className="sticky top-4 bg-card border border-border/40 rounded-2xl p-2 space-y-3">
+            <nav className="sticky top-4 bg-card/60 border border-border/40 rounded-2xl p-2 space-y-2">
               {menuGroups.map(group => (
-                <div key={group.label} className="space-y-1">
-                  <div className="px-2 pt-1.5 pb-1 text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70">
+                <div key={group.label} className={group.theme.wrap}>
+                  <div className={`flex items-center gap-1.5 px-2 pt-1 pb-1.5 text-[10px] uppercase tracking-wider font-bold ${group.theme.label}`}>
+                    <span className={`h-1.5 w-1.5 rounded-full ${group.theme.dot}`} />
                     {group.label}
                   </div>
-                  {group.items.map(item => <MenuButton key={item.value} item={item} />)}
+                  <div className="space-y-1">
+                    {group.items.map(item => <MenuButton key={item.value} item={item} theme={group.theme} />)}
+                  </div>
                 </div>
               ))}
             </nav>
