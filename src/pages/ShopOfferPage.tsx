@@ -259,7 +259,7 @@ export default function ShopOfferPage() {
       </div>
 
       {/* Hero */}
-      <div className="relative bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 text-white">
+      <div className="relative bg-gradient-to-br from-red-500 via-red-600 to-red-600 text-white">
         <div className="max-w-3xl mx-auto px-4 py-4 space-y-3">
           {heroImage && (
             <div className="w-full rounded-2xl overflow-hidden ring-2 ring-white/40 shadow-2xl bg-black/20 flex items-center justify-center">
@@ -303,7 +303,7 @@ export default function ShopOfferPage() {
         {isCombo ? (
           <>
             <h3 className="text-lg font-bold flex items-center gap-2">
-              <Package className="h-5 w-5 text-amber-600" /> কম্বোতে যা যা থাকছে
+              <Package className="h-5 w-5 text-red-600" /> কম্বোতে যা যা থাকছে
             </h3>
             <div className="space-y-2">
               {comboItems.map((c: any, idx: number) => {
@@ -333,13 +333,13 @@ export default function ShopOfferPage() {
               {comboPrice > 0 && (
                 <div className="flex justify-between text-lg">
                   <span className="font-bold">কম্বো মূল্য:</span>
-                  <span className="font-extrabold text-green-600">৳{toBn(comboPrice)}</span>
+                  <span className="font-extrabold text-red-600">৳{toBn(comboPrice)}</span>
                 </div>
               )}
               {savings > 0 && (
-                <div className="flex justify-between text-sm bg-green-50 dark:bg-green-950/30 rounded-lg p-2">
-                  <span className="text-green-700 dark:text-green-400 font-bold">আপনার সাশ্রয়:</span>
-                  <span className="text-green-700 dark:text-green-400 font-extrabold">৳{toBn(savings)} ({toBn(savingsPct)}%)</span>
+                <div className="flex justify-between text-sm bg-red-50 dark:bg-red-950/30 rounded-lg p-2">
+                  <span className="text-red-700 dark:text-red-400 font-bold">আপনার সাশ্রয়:</span>
+                  <span className="text-red-700 dark:text-red-400 font-extrabold">৳{toBn(savings)} ({toBn(savingsPct)}%)</span>
                 </div>
               )}
               {offer.combo_free_delivery && (
@@ -354,31 +354,31 @@ export default function ShopOfferPage() {
             {productsData[0].image_url && <img src={productsData[0].image_url} className="w-20 h-20 rounded-lg object-cover" alt={productsData[0].name} />}
             <div className="flex-1">
               <p className="font-bold">{productsData[0].name}</p>
-              <p className="text-amber-600 font-extrabold text-lg">৳{toBn(Number(productsData[0].discount_price ?? productsData[0].price ?? 0))}</p>
+              <p className="text-red-600 font-extrabold text-lg">৳{toBn(Number(productsData[0].discount_price ?? productsData[0].price ?? 0))}</p>
             </div>
           </div>
         ) : null}
 
         <ul className="space-y-1 text-sm text-muted-foreground pt-2">
-          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600" /> অরিজিনাল পণ্যের নিশ্চয়তা</li>
-          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600" /> ক্যাশ অন ডেলিভারি</li>
+          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-red-600" /> অরিজিনাল পণ্যের নিশ্চয়তা</li>
+          <li className="flex items-center gap-2"><Check className="h-4 w-4 text-red-600" /> ক্যাশ অন ডেলিভারি</li>
           {(offer.combo_free_delivery || isFree) && (
-            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600" /> ডেলিভারি চার্জ ফ্রি</li>
+            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-red-600" /> ডেলিভারি চার্জ ফ্রি</li>
           )}
         </ul>
 
         {/* Inline Order Form */}
-        <div id="offer-order-form" className="bg-card border-2 border-amber-500/30 rounded-2xl p-5 mt-6 shadow-xl">
+        <div id="offer-order-form" className="bg-card border-2 border-red-500/30 rounded-2xl p-5 mt-6 shadow-xl">
           {success ? (
             <div className="flex flex-col items-center text-center py-6 gap-3">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                <CheckCircle2 className="h-9 w-9 text-green-600" />
+              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                <CheckCircle2 className="h-9 w-9 text-red-600" />
               </div>
-              <h3 className="text-2xl font-extrabold text-green-700">অর্ডার সফল! 🎉</h3>
+              <h3 className="text-2xl font-extrabold text-red-700">অর্ডার সফল! 🎉</h3>
               <p className="text-muted-foreground text-sm">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
               <button
                 onClick={() => navigate("/products")}
-                className="mt-2 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl"
+                className="mt-2 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl"
               >
                 আরও কেনাকাটা করুন
               </button>
@@ -386,7 +386,7 @@ export default function ShopOfferPage() {
           ) : (
             <>
               <h3 className="text-lg font-extrabold mb-1 flex items-center gap-2">
-                <ShoppingBag className="h-5 w-5 text-amber-600" /> অর্ডার করতে নিচের তথ্য দিন
+                <ShoppingBag className="h-5 w-5 text-red-600" /> অর্ডার করতে নিচের তথ্য দিন
               </h3>
               <p className="text-xs text-muted-foreground mb-4">ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে টাকা দিন</p>
 
@@ -399,7 +399,7 @@ export default function ShopOfferPage() {
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="পুরো নাম"
                     maxLength={100}
-                    className="w-full h-11 px-3 rounded-xl border-2 border-border bg-background focus:border-amber-500 outline-none"
+                    className="w-full h-11 px-3 rounded-xl border-2 border-border bg-background focus:border-red-500 outline-none"
                   />
                 </div>
                 <div>
@@ -411,7 +411,7 @@ export default function ShopOfferPage() {
                     onChange={e => handlePhoneChange(e.target.value)}
                     placeholder="01XXXXXXXXX"
                     maxLength={11}
-                    className={`w-full h-11 px-3 rounded-xl border-2 bg-background focus:border-amber-500 outline-none ${phoneError ? "border-red-400" : "border-border"}`}
+                    className={`w-full h-11 px-3 rounded-xl border-2 bg-background focus:border-red-500 outline-none ${phoneError ? "border-red-400" : "border-border"}`}
                   />
                   {phoneError && <p className="text-red-500 text-xs mt-1">{phoneError}</p>}
                 </div>
@@ -423,14 +423,14 @@ export default function ShopOfferPage() {
                     placeholder="সম্পূর্ণ ঠিকানা (গ্রাম/রোড, পোস্ট, থানা, জেলা)"
                     rows={3}
                     maxLength={500}
-                    className="w-full px-3 py-2 rounded-xl border-2 border-border bg-background focus:border-amber-500 outline-none resize-none"
+                    className="w-full px-3 py-2 rounded-xl border-2 border-border bg-background focus:border-red-500 outline-none resize-none"
                   />
                 </div>
 
                 <button
                   onClick={handleSubmitOrder}
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-2xl shadow-xl text-base"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-2xl shadow-xl text-base"
                 >
                   <ShoppingBag className="h-5 w-5" />
                   {submitting ? "অর্ডার হচ্ছে..." : isCombo && comboPrice > 0 ? `অর্ডার কনফার্ম করুন (৳${toBn(comboPrice)})` : "অর্ডার কনফার্ম করুন"}
@@ -447,7 +447,7 @@ export default function ShopOfferPage() {
           <div className="max-w-3xl mx-auto flex items-center gap-3">
             <div className="flex-1">
               {isCombo && comboPrice > 0 ? (
-                <p className="text-xl font-extrabold text-amber-600">৳{toBn(comboPrice)}</p>
+                <p className="text-xl font-extrabold text-red-600">৳{toBn(comboPrice)}</p>
               ) : (
                 <p className="text-lg font-bold">এখনই অর্ডার করুন</p>
               )}
@@ -456,7 +456,7 @@ export default function ShopOfferPage() {
               onClick={() => {
                 document.getElementById("offer-order-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
               }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-extrabold px-6 py-3 rounded-2xl shadow-xl"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-extrabold px-6 py-3 rounded-2xl shadow-xl"
             >
               <ShoppingBag className="h-5 w-5" />
               অর্ডার করুন

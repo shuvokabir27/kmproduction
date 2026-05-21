@@ -24,9 +24,9 @@ export default function FreeDeliveryHomeCTA() {
     <section className="px-4 pt-2 pb-2">
       <div className="max-w-7xl mx-auto">
         <Link to="/free-delivery" className="block group">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-4 md:p-5 shadow-xl ring-2 ring-amber-300/60 hover:shadow-2xl transition-all">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500 via-red-500 to-red-500 p-4 md:p-5 shadow-xl ring-2 ring-red-300/60 hover:shadow-2xl transition-all">
             <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_50%,white,transparent_60%)]" />
-            <div className="absolute -top-8 -right-8 w-32 h-32 bg-yellow-300/30 rounded-full blur-2xl animate-pulse" />
+            <div className="absolute -top-8 -right-8 w-32 h-32 bg-red-300/30 rounded-full blur-2xl animate-pulse" />
             <div className="relative flex items-center gap-3 md:gap-4">
               <div className="bg-white/20 backdrop-blur p-3 rounded-xl">
                 <Truck className="h-7 w-7 md:h-9 md:w-9 text-white" />
@@ -40,7 +40,7 @@ export default function FreeDeliveryHomeCTA() {
                   <p className="text-xs md:text-sm text-white/90 line-clamp-1">{campaign.description}</p>
                 )}
               </div>
-              <div className="bg-white text-orange-600 font-bold rounded-full px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex items-center gap-1 group-hover:gap-2 transition-all shadow-lg" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+              <div className="bg-white text-red-600 font-bold rounded-full px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex items-center gap-1 group-hover:gap-2 transition-all shadow-lg" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                 Get Free Delivery <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
               </div>
             </div>

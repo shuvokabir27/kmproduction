@@ -17,10 +17,10 @@ const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২�
 
 const statusLabel = (s: string) => {
   const m: Record<string, { t: string; cls: string }> = {
-    pending: { t: "অপেক্ষমান", cls: "bg-amber-100 text-amber-800" },
+    pending: { t: "অপেক্ষমান", cls: "bg-red-100 text-red-800" },
     confirmed: { t: "নিশ্চিত", cls: "bg-blue-100 text-blue-800" },
     shipped: { t: "পাঠানো হয়েছে", cls: "bg-indigo-100 text-indigo-800" },
-    delivered: { t: "ডেলিভারড", cls: "bg-green-100 text-green-800" },
+    delivered: { t: "ডেলিভারড", cls: "bg-red-100 text-red-800" },
     cancelled: { t: "বাতিল", cls: "bg-red-100 text-red-800" },
     returned: { t: "ফেরত", cls: "bg-gray-200 text-gray-800" },
     abandoned: { t: "অসম্পূর্ণ", cls: "bg-gray-100 text-gray-600" },
@@ -307,7 +307,7 @@ export default function ShopCustomerAccount() {
                               <span className="font-extrabold tracking-wide px-2 py-0.5 rounded-md text-white text-xs" style={{ backgroundColor: BRAND_GREEN }}>
                                 #{toBn(head.order_number)}
                               </span>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800">
                                 {toBn(groupOrders.length)}টি প্রোডাক্ট
                               </span>
                             </div>
@@ -405,7 +405,7 @@ export default function ShopCustomerAccount() {
                 {/* Premium gradient header */}
                 <div className="relative px-6 pt-6 pb-8 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, #0d3a1d 0%, ${BRAND_GREEN} 60%, #2da159 100%)` }}>
                   <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-                  <div className="absolute -bottom-12 -left-8 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+                  <div className="absolute -bottom-12 -left-8 w-32 h-32 rounded-full bg-red-300/20 blur-2xl" />
                   <div className="relative flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
@@ -424,7 +424,7 @@ export default function ShopCustomerAccount() {
                     <div className="text-[15px] font-bold leading-snug">{trackOrder.product_name}</div>
                     <div className="flex items-center justify-between mt-1.5 text-xs text-white/80">
                       <span>অর্ডার #{toBn(trackOrder.order_number)}</span>
-                      <span className="font-bold text-amber-200 text-sm">৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</span>
+                      <span className="font-bold text-red-200 text-sm">৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</span>
                     </div>
                   </div>
                 </div>

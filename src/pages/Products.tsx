@@ -508,19 +508,19 @@ const Products = () => {
             <div className="relative grid md:grid-cols-2 gap-6 items-center p-6 md:p-12" style={{ fontFamily: "'Tiro Bangla', serif" }}>
               <div className="text-white text-center md:text-left">
                 <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1 rounded-full text-xs mb-4" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-                  <span className="w-2 h-2 bg-yellow-300 rounded-full animate-pulse" />
+                  <span className="w-2 h-2 bg-red-300 rounded-full animate-pulse" />
                   কুয়াকাটার অথেনটিক পণ্য
                 </div>
                 <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   প্রতিদিনের সুস্থতায় হোক<br />
-                  <span className="text-yellow-300">খাঁটি পণ্য</span>
+                  <span className="text-red-300">খাঁটি পণ্য</span>
                 </h1>
                 <p className="text-white/85 text-sm md:text-base mb-6 max-w-md mx-auto md:mx-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   সরাসরি কুয়াকাটার সমুদ্র সৈকত ও স্থানীয় কৃষক থেকে সংগ্রহ করা ১০০% খাঁটি ও তাজা পণ্য — শুঁটকি, মধু, তালের গুড়, হস্তশিল্প আরও অনেক কিছু।
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <a href="#shop">
-                    <Button className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold rounded-full px-6 h-12 gap-2">
+                    <Button className="bg-red-400 hover:bg-red-500 text-red-900 font-bold rounded-full px-6 h-12 gap-2">
                       <ShoppingBag className="h-4 w-4" /> এখনই কিনুন
                     </Button>
                   </a>
@@ -552,7 +552,7 @@ const Products = () => {
                             ))}
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
                               <p className="font-bold text-lg line-clamp-1">{current.name}</p>
-                              <p className="text-yellow-300 font-extrabold text-xl">
+                              <p className="text-red-300 font-extrabold text-xl">
                                 ৳{toBn(Number(current.discount_price ?? current.price ?? 0))}
                                 {current.discount_price && current.discount_price < current.price && (
                                   <span className="text-xs line-through text-white/60 ml-2">৳{toBn(Number(current.price))}</span>
@@ -570,7 +570,7 @@ const Products = () => {
                             <button
                               key={i}
                               onClick={() => setHeroSlide(i)}
-                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-yellow-300' : 'w-1.5 bg-white/40'}`}
+                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-red-300' : 'w-1.5 bg-white/40'}`}
                             />
                           ))}
                         </div>
@@ -578,11 +578,11 @@ const Products = () => {
                     </>
                   );
                 })()}
-                <div className="absolute -bottom-3 -left-3 bg-yellow-400 text-green-900 px-4 py-2 rounded-2xl shadow-lg font-bold text-sm">
+                <div className="absolute -bottom-3 -left-3 bg-red-400 text-red-900 px-4 py-2 rounded-2xl shadow-lg font-bold text-sm">
                   ১০০% খাঁটি
                 </div>
                 <div className="absolute -top-3 -right-3 bg-white text-gray-900 px-4 py-2 rounded-2xl shadow-lg font-bold text-sm flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> ৪.৯
+                  <Star className="h-4 w-4 fill-red-400 text-red-400" /> ৪.৯
                 </div>
               </div>
             </div>
@@ -779,7 +779,7 @@ const Products = () => {
           <div className="flex flex-wrap gap-3 justify-center">
             {contactPhone && (
               <a href={`tel:${contactPhone}`}>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold rounded-full px-6 h-12 gap-2">
+                <Button className="bg-red-400 hover:bg-red-500 text-red-900 font-bold rounded-full px-6 h-12 gap-2">
                   <Phone className="h-4 w-4" /> {contactPhone}
                 </Button>
               </a>
@@ -911,7 +911,7 @@ const Products = () => {
                                   key={i}
                                   type="button"
                                   onClick={() => setSelectedVariantIdx(i)}
-                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-green-600 bg-green-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
                                 >
                                   <div className="font-bold text-sm text-gray-900">{v.label}</div>
                                   <div className="text-xs">
@@ -948,8 +948,8 @@ const Products = () => {
                                 onClick={() => setQuantity(n)}
                                 className={`px-4 h-9 rounded-full border-2 text-xs font-bold transition ${
                                   quantity === n
-                                    ? "bg-green-600 text-white border-green-600"
-                                    : "bg-white text-gray-700 border-gray-200 hover:border-green-400"
+                                    ? "bg-red-600 text-white border-red-600"
+                                    : "bg-white text-gray-700 border-gray-200 hover:border-red-400"
                                 }`}
                               >
                                 {toBn(n)} {unitLabel}
@@ -1000,27 +1000,27 @@ const Products = () => {
                     const dlv = calculateDelivery(total, totalWeight, deliverySettings);
                     const grand = total + dlv.charge;
                     return (
-                      <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 shadow-lg">
-                        <div className="rounded-[14px] bg-gradient-to-br from-amber-50 via-white to-yellow-50 p-3.5 space-y-2 text-sm">
+                      <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-red-300 via-red-400 to-red-500 shadow-lg">
+                        <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 p-3.5 space-y-2 text-sm">
                           <div className="flex items-center justify-between">
                             <span className="text-gray-700 flex items-center gap-2 font-medium">
-                              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-sm">
                                 <TruckIcon className="h-3.5 w-3.5 text-white" />
                               </span>
                               ডেলিভারি চার্জ
                             </span>
                             {dlv.isFree ? (
-                              <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow">🎉 ফ্রি</span>
+                              <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow">🎉 ফ্রি</span>
                             ) : (
                               <span className="font-extrabold text-gray-900">৳{toBn(dlv.charge)}</span>
                             )}
                           </div>
                           {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
-                            <div className="text-[11px] text-amber-800 bg-amber-100/70 border border-amber-200 rounded-lg px-2.5 py-1.5">
+                            <div className="text-[11px] text-red-800 bg-red-100/70 border border-red-200 rounded-lg px-2.5 py-1.5">
                               🚚 আর মাত্র <span className="font-extrabold">৳{toBn(dlv.amountToFree)}</span> অর্ডার করলেই <span className="font-extrabold">ফ্রি ডেলিভারি!</span>
                             </div>
                           )}
-                          <div className="flex items-center justify-between pt-2 border-t border-dashed border-amber-300">
+                          <div className="flex items-center justify-between pt-2 border-t border-dashed border-red-300">
                             <span className="font-bold text-gray-900 text-base">মোট পেমেন্ট</span>
                             <span
                               className="font-extrabold text-2xl bg-clip-text text-transparent"
