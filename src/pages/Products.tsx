@@ -672,8 +672,7 @@ const Products = () => {
                     <div className="mt-3 flex flex-col gap-2">
                       <Button
                         onClick={() => openOrderDialog(p)}
-                        className="w-full text-white font-bold tracking-wide text-sm h-10 rounded-md"
-                        style={{ backgroundColor: BRAND_GREEN }}
+                        className="w-full font-bold tracking-wide text-sm h-10 rounded-md"
                       >
                         এখনই কিনুন
                       </Button>
@@ -682,8 +681,7 @@ const Products = () => {
                           const variants = Array.isArray(p.variants) ? p.variants : [];
                           addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
                         }}
-                        className="w-full text-white font-bold tracking-wide text-sm h-10 rounded-md gap-1.5"
-                        style={{ backgroundColor: BRAND_DARK }}
+                        className="glossy-btn-amber w-full font-bold tracking-wide text-sm h-10 rounded-md gap-1.5 inline-flex items-center justify-center"
                       >
                         <ShoppingCart className="h-3.5 w-3.5" /> কার্টে যোগ করুন
                       </Button>
