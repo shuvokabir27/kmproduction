@@ -855,115 +855,153 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editing ? "অর্ডার এডিট" : "নতুন অর্ডার"}</DialogTitle>
+        <DialogContent className="max-w-xl max-h-[92vh] overflow-y-auto p-0 gap-0 border-red-500/20">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border bg-gradient-to-br from-red-500/10 via-background to-background sticky top-0 z-10 backdrop-blur">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <div className="h-9 w-9 rounded-lg bg-red-500/15 text-red-500 grid place-items-center">
+                <ShoppingCart className="h-5 w-5" />
+              </div>
+              {editing ? "অর্ডার এডিট" : "নতুন অর্ডার"}
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>কাস্টমারের নাম *</Label>
-                <Input value={form.customer_name} onChange={e => setForm(f => ({ ...f, customer_name: e.target.value }))} />
+
+          <div className="px-6 py-5 space-y-5">
+            {/* Phone — highlighted hero field */}
+            <div className="relative rounded-xl border-2 border-red-500/40 bg-gradient-to-br from-red-500/10 to-red-500/5 p-4">
+              <Label className="flex items-center gap-2 text-red-500 font-bold mb-2 text-sm">
+                <Phone className="h-4 w-4" />
+                ফোন নম্বর *
+                <span className="text-xs font-normal text-muted-foreground">(আগের অর্ডার থাকলে অটো ফিল হবে)</span>
+              </Label>
+              <Input
+                value={form.customer_phone}
+                placeholder="01XXXXXXXXX"
+                className="h-12 text-lg font-semibold tracking-wider bg-background border-red-500/30 focus-visible:ring-red-500/40"
+                onChange={e => {
+                  const phone = e.target.value;
+                  setForm(f => ({ ...f, customer_phone: phone }));
+                  const digits = phone.replace(/\D/g, "");
+                  if (!editing && digits.length >= 11) {
+                    supabase
+                      .from("orders")
+                      .select("customer_name, customer_address")
+                      .eq("customer_phone", phone)
+                      .order("created_at", { ascending: false })
+                      .limit(1)
+                      .maybeSingle()
+                      .then(({ data }) => {
+                        if (data) {
+                          setForm(f => ({
+                            ...f,
+                            customer_name: f.customer_name || data.customer_name || "",
+                            customer_address: f.customer_address || data.customer_address || "",
+                          }));
+                          toast.success("পূর্বের কাস্টমারের তথ্য বসানো হয়েছে");
+                        }
+                      });
+                  }
+                }}
+              />
+            </div>
+
+            {/* Customer info */}
+            <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <div className="h-1 w-6 rounded-full bg-primary" />
+                কাস্টমার তথ্য
               </div>
               <div>
-                <Label>ফোন নম্বর *</Label>
-                <Input
-                  value={form.customer_phone}
-                  onChange={e => {
-                    const phone = e.target.value;
-                    setForm(f => ({ ...f, customer_phone: phone }));
-                    const digits = phone.replace(/\D/g, "");
-                    if (!editing && digits.length >= 11) {
-                      supabase
-                        .from("orders")
-                        .select("customer_name, customer_address")
-                        .eq("customer_phone", phone)
-                        .order("created_at", { ascending: false })
-                        .limit(1)
-                        .maybeSingle()
-                        .then(({ data }) => {
-                          if (data) {
-                            setForm(f => ({
-                              ...f,
-                              customer_name: f.customer_name || data.customer_name || "",
-                              customer_address: f.customer_address || data.customer_address || "",
-                            }));
-                          }
-                        });
-                    }
-                  }}
-                />
+                <Label className="text-xs">কাস্টমারের নাম *</Label>
+                <Input value={form.customer_name} onChange={e => setForm(f => ({ ...f, customer_name: e.target.value }))} className="mt-1" />
+              </div>
+              <div>
+                <Label className="text-xs flex items-center gap-1.5"><MapPin className="h-3 w-3" /> ঠিকানা</Label>
+                <Textarea value={form.customer_address} onChange={e => setForm(f => ({ ...f, customer_address: e.target.value }))} rows={2} className="mt-1" />
               </div>
             </div>
+
+            {/* Product info */}
+            <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <div className="h-1 w-6 rounded-full bg-blue-500" />
+                প্রডাক্ট তথ্য
+              </div>
+              <div>
+                <Label className="text-xs">প্রডাক্টের নাম *</Label>
+                <Input value={form.product_name} onChange={e => setForm(f => ({ ...f, product_name: e.target.value }))} className="mt-1" />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <Label className="text-xs">পরিমাণ</Label>
+                  <Input type="number" value={form.quantity} onChange={e => updateTotal(e.target.value, form.unit_price)} className="mt-1" />
+                </div>
+                <div>
+                  <Label className="text-xs">একক মূল্য (৳)</Label>
+                  <Input type="number" value={form.unit_price} onChange={e => updateTotal(form.quantity, e.target.value)} className="mt-1" />
+                </div>
+                <div>
+                  <Label className="text-xs">মোট (৳)</Label>
+                  <Input type="number" value={form.total_amount} onChange={e => setForm(f => ({ ...f, total_amount: e.target.value }))} className="mt-1 font-bold text-red-500" />
+                </div>
+              </div>
+            </div>
+
+            {/* Status & payment */}
+            <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <div className="h-1 w-6 rounded-full bg-amber-500" />
+                স্ট্যাটাস ও পেমেন্ট
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs">অর্ডার স্ট্যাটাস</Label>
+                  <Select value={form.status} onValueChange={v => setForm(f => ({ ...f, status: v }))}>
+                    <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(statusConfig).map(([k, v]) => (
+                        <SelectItem key={k} value={k}>{v.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-xs">পেমেন্ট স্ট্যাটাস</Label>
+                  <Select value={form.payment_status} onValueChange={v => setForm(f => ({ ...f, payment_status: v }))}>
+                    <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(paymentStatusConfig).map(([k, v]) => (
+                        <SelectItem key={k} value={k}>{v.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-xs flex items-center gap-1.5"><CreditCard className="h-3 w-3" /> পেমেন্ট মেথড</Label>
+                  <Select value={form.payment_method} onValueChange={v => setForm(f => ({ ...f, payment_method: v }))}>
+                    <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cash">ক্যাশ</SelectItem>
+                      <SelectItem value="bkash">বিকাশ</SelectItem>
+                      <SelectItem value="nagad">নগদ</SelectItem>
+                      <SelectItem value="bank">ব্যাংক</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-xs flex items-center gap-1.5"><Calendar className="h-3 w-3" /> ডেলিভারি তারিখ</Label>
+                  <Input type="date" value={form.delivery_date} onChange={e => setForm(f => ({ ...f, delivery_date: e.target.value }))} className="mt-1" />
+                </div>
+              </div>
+            </div>
+
             <div>
-              <Label>ঠিকানা</Label>
-              <Textarea value={form.customer_address} onChange={e => setForm(f => ({ ...f, customer_address: e.target.value }))} rows={2} />
+              <Label className="text-xs">নোট</Label>
+              <Textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={2} className="mt-1" placeholder="অতিরিক্ত তথ্য..." />
             </div>
-            <div>
-              <Label>প্রডাক্টের নাম *</Label>
-              <Input value={form.product_name} onChange={e => setForm(f => ({ ...f, product_name: e.target.value }))} />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <Label>পরিমাণ</Label>
-                <Input type="number" value={form.quantity} onChange={e => updateTotal(e.target.value, form.unit_price)} />
-              </div>
-              <div>
-                <Label>একক মূল্য (৳)</Label>
-                <Input type="number" value={form.unit_price} onChange={e => updateTotal(form.quantity, e.target.value)} />
-              </div>
-              <div>
-                <Label>মোট (৳)</Label>
-                <Input type="number" value={form.total_amount} onChange={e => setForm(f => ({ ...f, total_amount: e.target.value }))} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>অর্ডার স্ট্যাটাস</Label>
-                <Select value={form.status} onValueChange={v => setForm(f => ({ ...f, status: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(statusConfig).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>পেমেন্ট স্ট্যাটাস</Label>
-                <Select value={form.payment_status} onValueChange={v => setForm(f => ({ ...f, payment_status: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(paymentStatusConfig).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>পেমেন্ট মেথড</Label>
-                <Select value={form.payment_method} onValueChange={v => setForm(f => ({ ...f, payment_method: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cash">ক্যাশ</SelectItem>
-                    <SelectItem value="bkash">বিকাশ</SelectItem>
-                    <SelectItem value="nagad">নগদ</SelectItem>
-                    <SelectItem value="bank">ব্যাংক</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>ডেলিভারি তারিখ</Label>
-                <Input type="date" value={form.delivery_date} onChange={e => setForm(f => ({ ...f, delivery_date: e.target.value }))} />
-              </div>
-            </div>
-            <div>
-              <Label>নোট</Label>
-              <Textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={2} />
-            </div>
-            <Button onClick={handleSave} className="w-full">{editing ? "আপডেট করুন" : "অর্ডার যোগ করুন"}</Button>
+
+            <Button onClick={handleSave} size="lg" className="w-full h-12 text-base font-semibold bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 shadow-lg shadow-red-500/30">
+              {editing ? "আপডেট করুন" : "অর্ডার যোগ করুন"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
