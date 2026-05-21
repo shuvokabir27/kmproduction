@@ -333,7 +333,7 @@ const Products = () => {
               className="glossy-btn relative flex items-center gap-1.5 text-xs px-3.5 h-9 rounded-full font-bold"
               aria-label="cart"
             >
-              <ShoppingCart className="h-3.5 w-3.5" /> কার্ট
+              <ShoppingCart className="h-3.5 w-3.5" />
               {cart.count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-amber-300 text-amber-950 text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-black/40 shadow">
                   {toBn(cart.count)}
