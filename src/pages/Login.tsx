@@ -270,6 +270,7 @@ const Login = () => {
               </div>
             </form>
           </Card>
+          </div>
 
           {/* Signup Dialog */}
           <Dialog open={isSignup} onOpenChange={setIsSignup}>
