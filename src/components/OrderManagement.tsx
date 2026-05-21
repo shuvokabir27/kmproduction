@@ -380,18 +380,21 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
             className="pl-9"
           />
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex md:grid gap-1.5 md:gap-2.5 md:grid-cols-3 overflow-x-auto md:overflow-visible pb-1 scrollbar-hide">
           {tabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`whitespace-nowrap md:whitespace-normal px-3 md:px-5 py-1.5 md:py-3.5 rounded-full md:rounded-xl text-xs md:text-base font-medium md:font-semibold transition-all md:flex md:items-center md:justify-between md:gap-3 md:border ${
                 activeTab === tab.key
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+                  ? "bg-primary text-primary-foreground md:border-primary md:shadow-[0_0_18px_-4px_hsl(var(--primary)/0.6)]"
+                  : "bg-secondary text-muted-foreground hover:bg-secondary/80 md:border-border/50 md:hover:border-primary/40"
               }`}
             >
-              {tab.label} ({toBn(tab.count)})
+              <span>{tab.label}</span>
+              <span className={`md:ml-auto md:inline-flex md:items-center md:justify-center md:min-w-[28px] md:h-6 md:px-2 md:rounded-full md:text-xs md:font-bold ${activeTab === tab.key ? "md:bg-primary-foreground/20" : "md:bg-background/60"}`}>
+                {" "}({toBn(tab.count)})
+              </span>
             </button>
           ))}
         </div>
