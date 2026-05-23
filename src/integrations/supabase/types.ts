@@ -768,6 +768,36 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_password_otps: {
+        Row: {
+          attempts: number
+          created_at: string
+          expires_at: string
+          id: string
+          otp_hash: string
+          phone: string
+          used_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          expires_at: string
+          id?: string
+          otp_hash: string
+          phone: string
+          used_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          otp_hash?: string
+          phone?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       delivery_settings: {
         Row: {
           base_charge: number

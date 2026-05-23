@@ -15,6 +15,9 @@ const BRAND_GOLD = "#fbbf24";
 export default function ShopCustomerLogin() {
   const nav = useNavigate();
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
+  const [forgotStep, setForgotStep] = useState<"phone" | "otp">("phone");
+  const [otp, setOtp] = useState("");
+  const [resendIn, setResendIn] = useState(0);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,24 +26,65 @@ export default function ShopCustomerLogin() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+
+  const requestOtp = async () => {
+    if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+    setLoading(true);
+    const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
+      body: { action: "request_otp", phone: phone.replace(/\D/g, "") },
+    });
+    setLoading(false);
+    if (error || (data as any)?.error) {
+      toast.error((data as any)?.error || error?.message || "OTP পাঠানো যায়নি");
+      return;
+    }
+    toast.success("OTP পাঠানো হয়েছে আপনার মোবাইলে");
+    setForgotStep("otp");
+    setResendIn(60);
+    const timer = setInterval(() => {
+      setResendIn((s) => {
+        if (s <= 1) { clearInterval(timer); return 0; }
+        return s - 1;
+      });
+    }, 1000);
+  };
+
   const submit = async () => {
     if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+
+    // forgot password — step 1 = send OTP, step 2 = verify + reset
+    if (mode === "forgot") {
+      if (forgotStep === "phone") { await requestOtp(); return; }
+      if (otp.length !== 6) { toast.error("৬ ডিজিটের OTP দিন"); return; }
+      if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
+      if (password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
+
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
+        body: { action: "reset_with_otp", phone: phone.replace(/\D/g, ""), otp, new_password: password },
+      });
+      setLoading(false);
+      if (error || (data as any)?.error) {
+        toast.error((data as any)?.error || error?.message || "রিসেট ব্যর্থ");
+        return;
+      }
+      localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
+      toast.success("পাসওয়ার্ড পরিবর্তন হয়েছে");
+      nav("/shop/account");
+      return;
+    }
+
     if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
-    if ((mode === "register" || mode === "forgot") && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
+    if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
 
     setLoading(true);
-    const action = mode === "forgot" ? "forgot_password" : mode;
     const payload: Record<string, unknown> = {
-      action,
+      action: mode,
       phone: phone.replace(/\D/g, ""),
+      password,
+      full_name: fullName.trim(),
     };
-    if (mode === "forgot") {
-      payload.new_password = password;
-    } else {
-      payload.password = password;
-      payload.full_name = fullName.trim();
-    }
 
     const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
       body: payload,
@@ -52,12 +96,16 @@ export default function ShopCustomerLogin() {
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
-    toast.success(
-      mode === "login" ? "সফলভাবে লগইন হয়েছে"
-      : mode === "register" ? "অ্যাকাউন্ট তৈরি হয়েছে"
-      : "পাসওয়ার্ড পরিবর্তন হয়েছে"
-    );
+    toast.success(mode === "login" ? "সফলভাবে লগইন হয়েছে" : "অ্যাকাউন্ট তৈরি হয়েছে");
     nav("/shop/account");
+  };
+
+  const resetForgot = () => {
+    setForgotStep("phone");
+    setOtp("");
+    setPassword("");
+    setConfirmPassword("");
+    setResendIn(0);
   };
 
   const inputClass =
@@ -93,20 +141,21 @@ export default function ShopCustomerLogin() {
               <Sparkles className="h-3 w-3" />
               {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
                : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
-               : "মোবাইল নম্বর দিয়ে নতুন পাসওয়ার্ড সেট করুন"}
+               : forgotStep === "phone" ? "OTP পাঠাবো আপনার মোবাইলে"
+               : "OTP ও নতুন পাসওয়ার্ড দিন"}
             </p>
           </div>
 
           {/* segmented switch */}
           <div className="relative grid grid-cols-2 bg-black/40 border border-white/10 rounded-full p-1 mb-5 text-xs md:text-sm font-bold gap-1">
             <button
-              onClick={() => setMode("login")}
+              onClick={() => { setMode("login"); resetForgot(); }}
               className={`py-2.5 rounded-full transition-all ${mode === "login" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
               লগইন
             </button>
             <button
-              onClick={() => setMode("register")}
+              onClick={() => { setMode("register"); resetForgot(); }}
               className={`py-2.5 rounded-full transition-all ${mode === "register" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
               রেজিস্টার
@@ -143,81 +192,128 @@ export default function ShopCustomerLogin() {
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                   placeholder="01XXXXXXXXX"
                   className={inputClass}
+                  disabled={mode === "forgot" && forgotStep === "otp"}
                 />
               </div>
-            </div>
-            <div>
-              <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">
-                {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  inputMode="numeric"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
-                  placeholder="••••••"
-                  className={inputClass}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-              {mode === "login" && (
-                <div className="text-right mt-1.5">
-                  <button
-                    type="button"
-                    onClick={() => { setMode("forgot"); setConfirmPassword(""); setPassword(""); }}
-                    className="text-[12px] font-medium text-red-400 hover:text-red-300 transition-colors"
-                  >
-                    পাসওয়ার্ড ভুলে গেছেন?
-                  </button>
-                </div>
-              )}
             </div>
 
-            {(mode === "register" || mode === "forgot") && (
+            {/* OTP step input */}
+            {mode === "forgot" && forgotStep === "otp" && (
               <div>
-                <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">পাসওয়ার্ড নিশ্চিত করুন</Label>
+                <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">৬-ডিজিট OTP কোড</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <Sparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-400" />
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type="text"
                     inputMode="numeric"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
-                    placeholder="••••••"
-                    className={inputClass}
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="● ● ● ● ● ●"
+                    className={inputClass + " tracking-[0.5em] text-center font-bold text-lg"}
+                    autoFocus
                   />
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-[11px] text-gray-500">SMS এ পাঠানো ৬-ডিজিট কোড দিন (৫ মিনিটে মেয়াদ শেষ)</p>
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
-                    tabIndex={-1}
+                    onClick={requestOtp}
+                    disabled={resendIn > 0 || loading}
+                    className="text-[11px] font-bold text-red-400 hover:text-red-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
                   >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
                   </button>
                 </div>
-                {confirmPassword.length > 0 && confirmPassword !== password && (
-                  <p className="text-[11px] text-red-400 font-medium mt-1.5 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
-                )}
-                {confirmPassword.length >= 6 && confirmPassword === password && (
-                  <p className="text-[11px] text-green-400 font-medium mt-1.5 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
-                )}
               </div>
+            )}
+
+            {/* Password fields — only on login/register or forgot step 2 */}
+            {(mode !== "forgot" || forgotStep === "otp") && (
+              <>
+                {mode === "register" && (
+                  <div>
+                    <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">আপনার নাম</Label>
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="পূর্ণ নাম" className={inputClass} />
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">
+                    {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      inputMode="numeric"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
+                      placeholder="••••••"
+                      className={inputClass}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {mode === "login" && (
+                    <div className="text-right mt-1.5">
+                      <button
+                        type="button"
+                        onClick={() => { setMode("forgot"); resetForgot(); }}
+                        className="text-[12px] font-medium text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        পাসওয়ার্ড ভুলে গেছেন?
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {(mode === "register" || mode === "forgot") && (
+                  <div>
+                    <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">পাসওয়ার্ড নিশ্চিত করুন</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        inputMode="numeric"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
+                        placeholder="••••••"
+                        className={inputClass}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+                        tabIndex={-1}
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    {confirmPassword.length > 0 && confirmPassword !== password && (
+                      <p className="text-[11px] text-red-400 font-medium mt-1.5 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
+                    )}
+                    {confirmPassword.length >= 6 && confirmPassword === password && (
+                      <p className="text-[11px] text-green-400 font-medium mt-1.5 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             {mode === "forgot" && (
               <div className="text-center">
                 <button
                   type="button"
-                  onClick={() => { setMode("login"); setConfirmPassword(""); setPassword(""); }}
+                  onClick={() => { setMode("login"); resetForgot(); }}
                   className="text-[12px] font-medium text-gray-400 hover:text-white transition-colors"
                 >
                   ← লগইনে ফিরে যান
@@ -226,7 +322,8 @@ export default function ShopCustomerLogin() {
             )}
 
             {(() => {
-              const mismatch = (mode === "register" || mode === "forgot") && (confirmPassword.length < 6 || confirmPassword !== password);
+              const mismatch = (mode === "register" || (mode === "forgot" && forgotStep === "otp")) && (confirmPassword.length < 6 || confirmPassword !== password);
+              const isOtpStep = mode === "forgot" && forgotStep === "otp";
               return (
                 <button
                   type="button"
@@ -238,7 +335,8 @@ export default function ShopCustomerLogin() {
                     {loading ? "অপেক্ষা করুন..."
                      : mode === "login" ? "লগইন করুন"
                      : mode === "register" ? "অ্যাকাউন্ট তৈরি করুন"
-                     : "পাসওয়ার্ড রিসেট করুন"}
+                     : isOtpStep ? "পাসওয়ার্ড রিসেট করুন"
+                     : "OTP পাঠান"}
                   </span>
                   <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 </button>

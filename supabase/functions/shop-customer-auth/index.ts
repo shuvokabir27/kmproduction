@@ -135,18 +135,80 @@ Deno.serve(async (req) => {
       return ok({ ok: true });
     }
 
-    if (action === "forgot_password") {
+    if (action === "request_otp") {
       const phone = String(body.phone || "").replace(/\D/g, "");
+      if (phone.length !== 11) return bad("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+
+      const { data: cust } = await supabase
+        .from("shop_customers").select("id, is_active").eq("phone", phone).maybeSingle();
+      if (!cust) return bad("এই নম্বরে কোনো অ্যাকাউন্ট নেই", 404);
+      if (!cust.is_active) return bad("আপনার অ্যাকাউন্ট নিষ্ক্রিয়", 403);
+
+      // Rate limit: max 3 OTP per phone in last 10 minutes
+      const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+      const { count } = await supabase.from("customer_password_otps")
+        .select("id", { count: "exact", head: true })
+        .eq("phone", phone).gte("created_at", tenMinAgo);
+      if ((count || 0) >= 3) return bad("অনেক বার চেষ্টা করেছেন, ১০ মিনিট পরে আবার চেষ্টা করুন", 429);
+
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      const otp_hash = await hash(otp, phone);
+      const expires_at = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+      await supabase.from("customer_password_otps").insert({ phone, otp_hash, expires_at });
+
+      const SMS_API_KEY = Deno.env.get("BULK_SMS_API_KEY");
+      const SENDER_ID = Deno.env.get("BULK_SMS_SENDER_ID");
+      if (!SMS_API_KEY || !SENDER_ID) return bad("SMS সার্ভিস কনফিগার করা নেই", 500);
+
+      const message = `Apnar KM Shop OTP: ${otp}\n5 minute er moddhe babohar korun. Karo sathe share korben na.`;
+      const smsUrl = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(SMS_API_KEY)}&type=text&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(SENDER_ID)}&message=${encodeURIComponent(message)}`;
+
+      try {
+        const smsRes = await fetch(smsUrl);
+        const smsText = await smsRes.text();
+        console.log("BulkSMSBD response:", smsRes.status, smsText);
+        // BulkSMSBD returns JSON with response_code 202 = success
+        let parsed: any = null;
+        try { parsed = JSON.parse(smsText); } catch { /* plain text */ }
+        if (parsed && parsed.response_code && parsed.response_code !== 202) {
+          return bad(`SMS পাঠানো যায়নি: ${parsed.error_message || smsText}`, 500);
+        }
+      } catch (e: any) {
+        console.error("SMS error:", e);
+        return bad("SMS পাঠাতে সমস্যা হয়েছে: " + (e?.message || ""), 500);
+      }
+
+      return ok({ ok: true, message: "OTP পাঠানো হয়েছে আপনার মোবাইলে", expires_in: 300 });
+    }
+
+    if (action === "reset_with_otp") {
+      const phone = String(body.phone || "").replace(/\D/g, "");
+      const otp = String(body.otp || "").replace(/\D/g, "");
       const newPassword = String(body.new_password || "");
       if (phone.length !== 11) return bad("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+      if (otp.length !== 6) return bad("৬ ডিজিটের OTP দিন");
       if (!/^\d{6,}$/.test(newPassword)) return bad("নতুন পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে");
 
       const { data: cust } = await supabase
-        .from("shop_customers")
-        .select("id, is_active")
-        .eq("phone", phone).maybeSingle();
+        .from("shop_customers").select("id, is_active").eq("phone", phone).maybeSingle();
       if (!cust) return bad("এই নম্বরে কোনো অ্যাকাউন্ট নেই", 404);
       if (!cust.is_active) return bad("আপনার অ্যাকাউন্ট নিষ্ক্রিয়", 403);
+
+      const { data: otpRow } = await supabase
+        .from("customer_password_otps")
+        .select("id, otp_hash, expires_at, attempts, used_at")
+        .eq("phone", phone).is("used_at", null)
+        .order("created_at", { ascending: false }).limit(1).maybeSingle();
+      if (!otpRow) return bad("OTP পাওয়া যায়নি, আবার অনুরোধ করুন", 400);
+      if (new Date(otpRow.expires_at) < new Date()) return bad("OTP এর মেয়াদ শেষ, নতুন OTP নিন", 400);
+      if (otpRow.attempts >= 5) return bad("অনেকবার ভুল চেষ্টা হয়েছে, নতুন OTP নিন", 429);
+
+      const otpHash = await hash(otp, phone);
+      if (otpHash !== otpRow.otp_hash) {
+        await supabase.from("customer_password_otps").update({ attempts: otpRow.attempts + 1 }).eq("id", otpRow.id);
+        return bad("OTP ভুল", 400);
+      }
 
       const password_hash = await hash(newPassword, phone);
       const session_token = genToken();
@@ -154,14 +216,11 @@ Deno.serve(async (req) => {
 
       const { data: updated, error } = await supabase
         .from("shop_customers")
-        .update({
-          password_hash, session_token, session_expires_at,
-          last_login_at: new Date().toISOString(),
-        })
-        .eq("id", cust.id)
-        .select("id, phone, full_name, address")
-        .single();
+        .update({ password_hash, session_token, session_expires_at, last_login_at: new Date().toISOString() })
+        .eq("id", cust.id).select("id, phone, full_name, address").single();
       if (error) return bad(error.message, 500);
+
+      await supabase.from("customer_password_otps").update({ used_at: new Date().toISOString() }).eq("id", otpRow.id);
 
       return ok({ customer: updated, token: session_token, expires_at: session_expires_at });
     }
