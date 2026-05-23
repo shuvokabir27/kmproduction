@@ -16,6 +16,7 @@ import { DailyRashifal } from "@/components/DailyRashifal";
 import { MemeGenerator } from "@/components/MemeGenerator";
 import kuakataLogo from "@/assets/logo.png";
 import { BestSellersSection } from "@/components/BestSellersSection";
+import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 
