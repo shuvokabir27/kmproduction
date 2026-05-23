@@ -34,26 +34,32 @@ function normalizeBdPhone(input: string): string | null {
 
 async function findUser(scope: "member" | "client", identifier: string) {
   if (scope === "member") {
-    // identifier is member_id (integer)
     const memberId = parseInt(identifier.trim(), 10);
-    if (!Number.isFinite(memberId)) return null;
-    const { data } = await supabase.from("profiles")
-      .select("user_id, phone, full_name")
-      .eq("member_id", memberId).maybeSingle();
-    if (!data) return null;
-    const phone = normalizeBdPhone(data.phone || "");
-    if (!phone) return null;
-    return { user_id: data.user_id, phone, name: data.full_name || "" };
-  } else {
-    // identifier is phone
-    const phone = normalizeBdPhone(identifier);
-    if (!phone) return null;
-    const { data } = await supabase.from("client_profiles")
-      .select("user_id, phone, name")
-      .eq("phone", phone).maybeSingle();
-    if (!data) return null;
-    return { user_id: data.user_id, phone, name: data.name || "" };
+    if (Number.isFinite(memberId)) {
+      const { data } = await supabase.from("profiles")
+        .select("user_id, phone, full_name")
+        .eq("member_id", memberId).maybeSingle();
+      if (data) {
+        const phone = normalizeBdPhone(data.phone || "");
+        if (phone) return { user_id: data.user_id, phone, name: data.full_name || "" };
+      }
+    }
+    return null;
   }
+  // scope === "client" — identifier is phone. Try client_profiles first, then members by phone.
+  const phone = normalizeBdPhone(identifier);
+  if (!phone) return null;
+  const { data: client } = await supabase.from("client_profiles")
+    .select("user_id, phone, name")
+    .eq("phone", phone).maybeSingle();
+  if (client?.user_id) return { user_id: client.user_id, phone, name: client.name || "" };
+
+  // Fallback: phone may belong to a member. Try both 11-digit and +880 forms.
+  const { data: member } = await supabase.from("profiles")
+    .select("user_id, phone, full_name")
+    .or(`phone.eq.${phone},phone.eq.+88${phone},phone.eq.88${phone}`).maybeSingle();
+  if (member?.user_id) return { user_id: member.user_id, phone, name: member.full_name || "" };
+  return null;
 }
 
 Deno.serve(async (req) => {
