@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import PaymentReceipt from "@/components/PaymentReceipt";
+import { sendTeamSms, toBn } from "@/lib/sendTeamSms";
 
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -190,6 +191,13 @@ const AdminPayments = () => {
       });
       if (error) throw error;
       toast.success("পেমেন্ট সফল! রিসিট দেখতে পেমেন্ট হিস্ট্রি থেকে ক্লিক করুন।");
+      // SMS notification to member
+      const mName = selectedProfile?.full_name || "সদস্য";
+      const mLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
+      sendTeamSms({
+        member_id: selectedMember,
+        message: `প্রিয় ${mName}, আপনার পেমেন্ট ৳${toBn(amount)} (${mLabel[method] || method}) সফলভাবে সম্পন্ন হয়েছে। - KM Multimedia`,
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);

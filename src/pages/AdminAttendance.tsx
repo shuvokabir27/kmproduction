@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { sendTeamSms, toBn } from "@/lib/sendTeamSms";
 
 const AdminAttendance = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -185,6 +186,7 @@ const AdminAttendance = () => {
   const handleSave = async () => {
     if (!selectedShooting) return;
     setSaving(true);
+    const newlyPresent: { member_id: string; name: string; rate: number }[] = [];
     try {
       for (const member of members ?? []) {
         const isMonthly = member.salary_type === "monthly";
@@ -199,6 +201,10 @@ const AdminAttendance = () => {
             is_present: data.present,
             daily_rate: Number(data.rate) || 0,
           }).eq("id", existing.id);
+          // SMS only if newly turned present (was absent before)
+          if (data.present && !existing.is_present && !isMonthly) {
+            newlyPresent.push({ member_id: member.id, name: member.full_name, rate: Number(data.rate) || 0 });
+          }
         } else {
           await supabase.from("attendance").insert({
             shooting_id: selectedShooting,
@@ -206,9 +212,22 @@ const AdminAttendance = () => {
             is_present: data.present,
             daily_rate: Number(data.rate) || 0,
           });
+          if (data.present && !isMonthly) {
+            newlyPresent.push({ member_id: member.id, name: member.full_name, rate: Number(data.rate) || 0 });
+          }
         }
       }
       toast.success("হাজিরা সেভ হয়েছে! মাসিক বেতনভুক্ত সদস্যদের হাজিরা অটো হয়েছে।");
+      // Fire SMS notifications
+      const shooting = shootings?.find((s) => s.id === selectedShooting);
+      const shootName = shooting?.name || "শুটিং";
+      for (const m of newlyPresent) {
+        const rateText = m.rate > 0 ? ` (৳${toBn(m.rate)})` : "";
+        sendTeamSms({
+          member_id: m.member_id,
+          message: `প্রিয় ${m.name}, "${shootName}" শুটিং-এ আপনার হাজিরা${rateText} রেকর্ড করা হয়েছে। - KM Multimedia`,
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["existing-attendance"] });
       queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
     } catch (err: any) {
