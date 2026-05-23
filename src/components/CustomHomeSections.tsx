@@ -3,8 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "sonner";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
