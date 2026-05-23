@@ -60,6 +60,7 @@ const emptyForm = {
   discount_value: 0,
   order_btn_color: "",
   bg_color: "",
+  bg_color_2: "",
   title_color: "",
 };
 
