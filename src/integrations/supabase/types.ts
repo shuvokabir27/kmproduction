@@ -3552,6 +3552,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bn_to_en: { Args: { input: string }; Returns: string }
       cleanup_old_receipts: { Args: never; Returns: undefined }
       free_delivery_phone_order_count: {
         Args: { _campaign_id: string; _phone: string }
