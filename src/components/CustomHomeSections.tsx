@@ -36,6 +36,7 @@ function SectionBlock({ section }: { section: any }) {
   const badgeAccent = accentMap[section.badge_color] || accent;
   const BadgeIcon = iconForBadge(section.badge_text);
   const { addItem, open: openCart } = useCart();
+  const [orderProduct, setOrderProduct] = useState<any | null>(null);
 
   const { data: products } = useQuery({
     queryKey: ["home-section-products", section.id, section.section_type, section.category_value, section.max_items],
