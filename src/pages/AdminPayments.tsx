@@ -184,7 +184,8 @@ const AdminPayments = () => {
     const response = failed?.response || result?.results?.[0]?.response || result;
     const rawMessage = response?.error_message || failed?.error || result?.reason || result?.error || "SMS পাঠানো যায়নি";
     if (String(rawMessage).toLowerCase().includes("not whitelisted")) {
-      return "SMS সার্ভিসে IP whitelist করা নেই। BulkSMSBD Phonebook-এ 3.0.200.88 IP whitelist করতে হবে।";
+      const ip = String(rawMessage).match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/)?.[0];
+      return `SMS সার্ভিসে IP whitelist করা নেই। BulkSMSBD Phonebook-এ${ip ? ` ${ip}` : " এই"} IP whitelist করুন, অথবা IP restriction বন্ধ করুন।`;
     }
     return rawMessage;
   };
