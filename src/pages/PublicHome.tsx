@@ -17,6 +17,7 @@ import { MemeGenerator } from "@/components/MemeGenerator";
 import kuakataLogo from "@/assets/logo.png";
 import { BestSellersSection } from "@/components/BestSellersSection";
 import { FeaturedProductsSection } from "@/components/FeaturedProductsSection";
+import { CustomHomeSections } from "@/components/CustomHomeSections";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 
 
@@ -289,6 +290,9 @@ const PublicHome = () => {
 
       {/* Featured Products (admin-managed) */}
       <FeaturedProductsSection />
+
+      {/* Custom admin-managed home sections */}
+      <CustomHomeSections />
 
       {/* Best Sellers */}
       <BestSellersSection />

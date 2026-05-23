@@ -1,0 +1,1 @@
+ALTER TABLE public.home_sections ADD COLUMN category_value TEXT;

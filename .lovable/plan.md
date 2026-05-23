@@ -1,60 +1,43 @@
+## লক্ষ্য
+হোম পেইজে "বাছাইকৃত পণ্য" সেকশনের মতো একাধিক কাস্টম সেকশন এডমিন প্যানেল থেকে তৈরি ও ম্যানেজ করার সুবিধা যোগ করা। প্রতিটি সেকশন হতে পারে:
+- **ক্যাটাগরি সেকশন** — একটি নির্দিষ্ট ক্যাটাগরির প্রডাক্টগুলো দেখাবে
+- **অফার সেকশন** — এডমিন নিজে বেছে নেওয়া প্রডাক্টগুলো দেখাবে (ফ্রি ডেলিভারি / স্পেশাল অফার ব্যাজসহ)
 
-# ক্লায়েন্ট প্রফাইল ও লগইন সিস্টেম
+## ডেটাবেস
+নতুন দুটি টেবিল তৈরি হবে:
 
-## সারসংক্ষেপ
-অ্যাডমিন ক্লায়েন্ট অ্যাকাউন্ট তৈরি করবে (আইডি + পাসওয়ার্ড)। ক্লায়েন্ট লগইন করে শুধুমাত্র তার প্রজেক্টের তথ্য, লাইনআপ ও পেমেন্ট স্ট্যাটাস দেখতে পারবে।
+**`home_sections`**
+- `title` (সেকশনের বাংলা নাম, যেমন "ফ্রি ডেলিভারি অফার")
+- `subtitle` / `eyebrow` (ছোট লেবেল, যেমন "SPECIAL OFFER")
+- `section_type` — `category` বা `manual`
+- `category_id` (যদি `category` টাইপ হয়)
+- `badge_text` (ঐচ্ছিক, যেমন "ফ্রি ডেলিভারি", "৫০% ছাড়")
+- `badge_color` (amber / red / green / blue)
+- `accent_color` (সেকশনের রঙ থিম)
+- `cta_label` ও `cta_link` (ঐচ্ছিক "সব দেখুন" বাটন)
+- `max_items` (ডিফল্ট ১২)
+- `sort_order`, `is_active`
 
-## ডাটাবেস পরিবর্তন
+**`home_section_products`** (manual টাইপের জন্য)
+- `section_id`, `product_id`, `sort_order`
 
-### 1. নতুন টেবিল: `client_profiles`
-| কলাম | টাইপ | বিবরণ |
-|---|---|---|
-| id | uuid | PK |
-| user_id | uuid | auth.users এর রেফারেন্স |
-| client_id | text (unique) | ক্লায়েন্ট আইডি (যেমন: CLIENT-001) |
-| name | text | ক্লায়েন্টের নাম |
-| phone | text | ফোন নম্বর |
-| email | text | ইমেইল |
-| company | text | কোম্পানির নাম |
-| address | text | ঠিকানা |
-| photo_url | text | ছবি |
+RLS: সবাই active সেকশন পড়তে পারবে; শুধু admin/product_admin তৈরি/এডিট/ডিলিট করতে পারবে।
 
-### 2. `user_roles` enum-এ `client` যুক্ত
-- বিদ্যমান `app_role` enum-এ `client` ভ্যালু যুক্ত
+## অ্যাডমিন প্যানেল (`AdminProducts` এর ভেতরে নতুন ট্যাব)
+"হোম সেকশন" নামে নতুন ট্যাব যোগ হবে যেখানে:
+- সব সেকশনের তালিকা (drag-friendly sort, active toggle, delete)
+- "নতুন সেকশন" বাটন → ডায়ালগে টাইটেল, eyebrow, টাইপ (ক্যাটাগরি / ম্যানুয়াল), ক্যাটাগরি সিলেক্টর অথবা প্রডাক্ট মাল্টি-সিলেক্টর, ব্যাজ টেক্সট/কালার, CTA, max items
+- এডিট/আপডেটও একই ডায়ালগ দিয়ে
 
-### 3. `freelance_projects` টেবিলে `client_profile_id` কলাম
-- ক্লায়েন্ট প্রফাইলের সাথে প্রজেক্ট লিংক করার জন্য
+## ফ্রন্টএন্ড কম্পোনেন্ট
+- `CustomHomeSections.tsx` — সব active সেকশন এনে রেন্ডার করবে
+- প্রতিটি সেকশন `FeaturedProductsSection` এর মতোই carousel UI ব্যবহার করবে, কিন্তু সেকশনের নিজস্ব accent কালার ও ব্যাজ থাকবে
+- `PublicHome.tsx` এ `FeaturedProductsSection` এর নিচে `CustomHomeSections` বসবে
 
-### 4. RLS নীতি
-- ক্লায়েন্ট শুধু নিজের প্রজেক্টের তথ্য দেখতে পারবে
-- অ্যাডমিন সব ম্যানেজ করতে পারবে
+## কারিগরি বিস্তারিত
+- নতুন কম্পোনেন্ট: `src/components/CustomHomeSections.tsx`, `src/components/admin/HomeSectionsManager.tsx`
+- কুয়েরি: section → products। `manual` হলে `home_section_products` জয়েন; `category` হলে `products` থেকে `category_id` ফিল্টার + `is_active=true` + `sort_order` অনুযায়ী।
+- ক্যারোসেল, ব্যাজ, ও বাটন স্টাইল `FeaturedProductsSection` থেকে রিইউজ — শুধু রঙ ডায়নামিক।
+- `PublicHome.tsx` এবং `AdminProducts.tsx` এ ইন্টিগ্রেশন।
 
-## ফ্রন্টএন্ড পরিবর্তন
-
-### 1. Edge Function: `create-client`
-- অ্যাডমিন থেকে কল হবে
-- auth.users-এ ক্লায়েন্ট তৈরি, user_roles-এ client রোল, client_profiles-এ প্রফাইল তৈরি
-
-### 2. `AdminFreelance.tsx` — ক্লায়েন্ট ম্যানেজমেন্ট ট্যাব
-- ক্লায়েন্ট তৈরি ফর্ম (নাম, ফোন, ইমেইল, কোম্পানি, ঠিকানা, পাসওয়ার্ড)
-- ক্লায়েন্ট তালিকা
-- প্রজেক্ট তৈরি/এডিটের সময় ক্লায়েন্ট সিলেক্ট অপশন
-
-### 3. `ClientDashboard.tsx` — নতুন পেজ
-- ক্লায়েন্ট লগইনের পর এই পেজে রিডাইরেক্ট হবে
-- নিজের প্রজেক্ট লিস্ট দেখাবে
-- প্রতিটি প্রজেক্টে: আর্থিক সামারি, টিম মেম্বার, শুটিং লাইনআপ
-
-### 4. `Login.tsx` আপডেট
-- ক্লায়েন্ট রোল ডিটেক্ট করে ClientDashboard-এ রিডাইরেক্ট
-
-### 5. রাউট: `/client` → ClientDashboard
-
-## ফাইল পরিবর্তন:
-1. ডাটাবেস মাইগ্রেশন
-2. Edge Function: `create-client`
-3. `src/pages/AdminFreelance.tsx` — ক্লায়েন্ট ট্যাব
-4. `src/pages/ClientDashboard.tsx` — নতুন পেজ
-5. `src/pages/Login.tsx` — ক্লায়েন্ট রিডাইরেক্ট
-6. `src/hooks/useAuth.tsx` — ক্লায়েন্ট রোল চেক
-7. `src/App.tsx` — রাউট যুক্ত
+প্রথমে মাইগ্রেশন রান হবে, এপ্রুভাল পেলে কোড লেখা হবে।

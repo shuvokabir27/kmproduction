@@ -15,8 +15,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Plus, Pencil, Trash2, ShoppingBag, Upload, Image, LogOut,
-  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree, Truck, Sparkles, Megaphone
+  LayoutDashboard, Package, FileText, BarChart3, Weight, Users, Play, FolderTree, Truck, Sparkles, Megaphone, Layers
 } from "lucide-react";
+
+import HomeSectionsManager from "@/components/HomeSectionsManager";
 
 import OrderManagement from "@/components/OrderManagement";
 import ShopOfferManager from "@/components/ShopOfferManager";
@@ -268,6 +270,7 @@ const AdminProducts = () => {
         dot: "bg-rose-400",
       },
       items: [
+        { value: "homesections", label: "হোম সেকশন", icon: Layers },
         { value: "offers", label: "অফার", icon: Sparkles },
         { value: "freedelivery", label: "ফ্রি ডেলিভারি", icon: Truck },
         { value: "scrolling", label: "স্ক্রলিং টেক্সট", icon: Megaphone },
@@ -493,6 +496,10 @@ const AdminProducts = () => {
         {/* Reports Tab */}
         <TabsContent value="reports" className="mt-4">
           <ReportsSection />
+        </TabsContent>
+
+        <TabsContent value="homesections" className="mt-4">
+          <HomeSectionsManager />
         </TabsContent>
 
         <TabsContent value="offers" className="mt-4">

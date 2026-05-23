@@ -1265,6 +1265,95 @@ export type Database = {
         }
         Relationships: []
       }
+      home_section_products: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          section_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          section_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          section_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_section_products_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "home_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      home_sections: {
+        Row: {
+          accent_color: string
+          badge_color: string
+          badge_text: string | null
+          category_id: string | null
+          category_value: string | null
+          created_at: string
+          cta_label: string | null
+          cta_link: string | null
+          eyebrow: string | null
+          id: string
+          is_active: boolean
+          max_items: number
+          section_type: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string
+          badge_color?: string
+          badge_text?: string | null
+          category_id?: string | null
+          category_value?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_link?: string | null
+          eyebrow?: string | null
+          id?: string
+          is_active?: boolean
+          max_items?: number
+          section_type?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string
+          badge_color?: string
+          badge_text?: string | null
+          category_id?: string | null
+          category_value?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_link?: string | null
+          eyebrow?: string | null
+          id?: string
+          is_active?: boolean
+          max_items?: number
+          section_type?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       landing_page_sections: {
         Row: {
           content: string | null
