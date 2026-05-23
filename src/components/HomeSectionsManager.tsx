@@ -432,6 +432,33 @@ export default function HomeSectionsManager() {
                 />
               </div>
               <div>
+                <Label>ব্যাকগ্রাউন্ড ২য় কালার (গ্রেডিয়েন্ট)</Label>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {PRESET_HEXES.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => setForm({ ...form, bg_color_2: hex })}
+                      className={`w-6 h-6 rounded-full border-2 ${form.bg_color_2 === hex ? "border-foreground" : "border-transparent"}`}
+                      style={{ backgroundColor: hex }}
+                      title={hex}
+                    />
+                  ))}
+                </div>
+                <Input
+                  className="mt-1.5"
+                  placeholder="#1e293b (গ্রেডিয়েন্টের জন্য)"
+                  value={form.bg_color_2}
+                  onChange={(e) => setForm({ ...form, bg_color_2: e.target.value })}
+                />
+                {form.bg_color && form.bg_color_2 && (
+                  <div
+                    className="mt-1.5 h-6 rounded"
+                    style={{ background: `linear-gradient(135deg, ${form.bg_color}, ${form.bg_color_2})` }}
+                  />
+                )}
+              </div>
+              <div>
                 <Label>সেকশন টাইটেল কালার</Label>
                 <div className="flex flex-wrap gap-1 mt-1.5">
                   {PRESET_HEXES.map((hex) => (
