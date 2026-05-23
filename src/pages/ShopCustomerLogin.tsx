@@ -15,6 +15,9 @@ const BRAND_GOLD = "#fbbf24";
 export default function ShopCustomerLogin() {
   const nav = useNavigate();
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
+  const [forgotStep, setForgotStep] = useState<"phone" | "otp">("phone");
+  const [otp, setOtp] = useState("");
+  const [resendIn, setResendIn] = useState(0);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,24 +26,70 @@ export default function ShopCustomerLogin() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // resend countdown
+  useState(() => {
+    const t = setInterval(() => setResendIn((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  });
+
+  const requestOtp = async () => {
+    if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+    setLoading(true);
+    const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
+      body: { action: "request_otp", phone: phone.replace(/\D/g, "") },
+    });
+    setLoading(false);
+    if (error || (data as any)?.error) {
+      toast.error((data as any)?.error || error?.message || "OTP পাঠানো যায়নি");
+      return;
+    }
+    toast.success("OTP পাঠানো হয়েছে আপনার মোবাইলে");
+    setForgotStep("otp");
+    setResendIn(60);
+    const timer = setInterval(() => {
+      setResendIn((s) => {
+        if (s <= 1) { clearInterval(timer); return 0; }
+        return s - 1;
+      });
+    }, 1000);
+  };
+
   const submit = async () => {
     if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+
+    // forgot password — step 1 = send OTP, step 2 = verify + reset
+    if (mode === "forgot") {
+      if (forgotStep === "phone") { await requestOtp(); return; }
+      if (otp.length !== 6) { toast.error("৬ ডিজিটের OTP দিন"); return; }
+      if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
+      if (password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
+
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
+        body: { action: "reset_with_otp", phone: phone.replace(/\D/g, ""), otp, new_password: password },
+      });
+      setLoading(false);
+      if (error || (data as any)?.error) {
+        toast.error((data as any)?.error || error?.message || "রিসেট ব্যর্থ");
+        return;
+      }
+      localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
+      toast.success("পাসওয়ার্ড পরিবর্তন হয়েছে");
+      nav("/shop/account");
+      return;
+    }
+
     if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
-    if ((mode === "register" || mode === "forgot") && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
+    if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
 
     setLoading(true);
-    const action = mode === "forgot" ? "forgot_password" : mode;
     const payload: Record<string, unknown> = {
-      action,
+      action: mode,
       phone: phone.replace(/\D/g, ""),
+      password,
+      full_name: fullName.trim(),
     };
-    if (mode === "forgot") {
-      payload.new_password = password;
-    } else {
-      payload.password = password;
-      payload.full_name = fullName.trim();
-    }
 
     const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
       body: payload,
@@ -52,12 +101,16 @@ export default function ShopCustomerLogin() {
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
-    toast.success(
-      mode === "login" ? "সফলভাবে লগইন হয়েছে"
-      : mode === "register" ? "অ্যাকাউন্ট তৈরি হয়েছে"
-      : "পাসওয়ার্ড পরিবর্তন হয়েছে"
-    );
+    toast.success(mode === "login" ? "সফলভাবে লগইন হয়েছে" : "অ্যাকাউন্ট তৈরি হয়েছে");
     nav("/shop/account");
+  };
+
+  const resetForgot = () => {
+    setForgotStep("phone");
+    setOtp("");
+    setPassword("");
+    setConfirmPassword("");
+    setResendIn(0);
   };
 
   const inputClass =
