@@ -287,6 +287,9 @@ const PublicHome = () => {
         <PublicBirthdaySection />
       </div>
 
+      {/* Featured Products (admin-managed) */}
+      <FeaturedProductsSection />
+
       {/* Best Sellers */}
       <BestSellersSection />
 
