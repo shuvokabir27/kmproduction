@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useProductCategories } from "@/hooks/useProductCategories";
 
 const DEMO_IMAGES = [
@@ -15,6 +16,7 @@ const DEMO_IMAGES = [
 
 const ShopCategoryGrid = () => {
   const { data } = useProductCategories();
+  const navigate = useNavigate();
   const cats = data?.tree ?? [];
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
