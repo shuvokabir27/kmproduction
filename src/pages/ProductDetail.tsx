@@ -59,10 +59,13 @@ const ProductDetail = () => {
     queryKey: ["product-detail", id],
     enabled: !!id,
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("*").eq("id", id!).maybeSingle();
+      const isUuid = !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const query = supabase.from("products").select("*");
+      const { data } = await (isUuid ? query.eq("id", id!) : query.eq("slug", id!)).maybeSingle();
       return data;
     },
   });
+
 
   useEffect(() => {
     const v: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
