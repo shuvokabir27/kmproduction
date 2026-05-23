@@ -280,7 +280,7 @@ export default function ShopCustomerAccount() {
                             </Button>
                           )}
                           {o.status === "delivered" && productAvailable && prod && (
-                            <Button size="sm" onClick={() => nav(`/products/${prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
+                            <Button size="sm" onClick={() => nav(`/products/${prod.slug || prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
                               <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার
                             </Button>
                           )}
@@ -350,7 +350,7 @@ export default function ShopCustomerAccount() {
                                 {itAvail && itProd && (
                                   <Button
                                     size="sm"
-                                    onClick={() => nav(`/products/${itProd.id}?order=1`)}
+                                    onClick={() => nav(`/products/${itProd.slug || itProd.id}?order=1`)}
                                     className="mt-2 w-full text-white gap-1.5 h-8 rounded-lg text-xs"
                                     style={{ backgroundColor: BRAND_GREEN }}
                                   >

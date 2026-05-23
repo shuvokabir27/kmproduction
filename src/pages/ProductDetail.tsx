@@ -697,7 +697,7 @@ const ProductDetail = () => {
               {related.map((p: any) => {
                 const hd = p.discount_price && p.discount_price < p.price;
                 return (
-                  <Link key={p.id} to={`/products/${p.id}`} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border">
+                  <Link key={p.id} to={`/products/${p.slug || p.id}`} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border">
                     <div className="aspect-square bg-muted overflow-hidden">
                       {p.image_url ? <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-10 w-10 text-gray-300" /></div>}
                     </div>
