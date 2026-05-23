@@ -76,9 +76,9 @@ function SectionBlock({ section }: { section: any }) {
   if (!products || products.length === 0) return null;
 
   return (
-    <section className="py-10 relative">
+    <section className="px-4 py-6 relative">
       <div
-        className="container max-w-6xl mx-auto relative z-10 rounded-2xl px-4 py-8 md:py-10 overflow-hidden"
+        className="max-w-7xl mx-auto relative z-10 rounded-2xl px-5 py-7 md:p-7 overflow-hidden"
         style={section.bg_color ? { backgroundColor: section.bg_color } : undefined}
       >
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px] pointer-events-none`} />
