@@ -122,11 +122,10 @@ const ShopCategoryGrid = () => {
               return (
                 <a
                   key={c.id}
-                  href="#shop"
+                  href={`/category/${encodeURIComponent(c.value)}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
-                    window.dispatchEvent(new CustomEvent("shop:filter-category", { detail: { value: c.value } }));
+                    navigate(`/category/${encodeURIComponent(c.value)}`);
                   }}
                   style={{ animationDelay: `${i * 60}ms` }}
                   className="group cat-card-enter snap-start shrink-0 w-[120px] sm:w-[140px] md:w-[160px] flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-fuchsia-300/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_18px_36px_-14px_hsl(290_85%_55%/0.7)]"

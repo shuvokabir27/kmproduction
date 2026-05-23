@@ -34,11 +34,7 @@ export default function AllCategories() {
   }, [q, tree]);
 
   const goToShop = (value: string) => {
-    navigate("/products#shop");
-    setTimeout(() => {
-      document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
-      window.dispatchEvent(new CustomEvent("shop:filter-category", { detail: { value } }));
-    }, 100);
+    navigate(`/category/${encodeURIComponent(value)}`);
   };
 
   return (
