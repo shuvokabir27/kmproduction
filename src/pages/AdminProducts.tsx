@@ -60,6 +60,7 @@ const AdminProducts = () => {
 
   const [form, setForm] = useState({
     name: "",
+    slug: "",
     short_description: "",
     short_description_html: "",
     description: "",
@@ -78,6 +79,7 @@ const AdminProducts = () => {
     variants: [] as { label: string; price: string; discount_price: string; weight_grams: string }[],
     suggested_product_ids: [] as string[],
   });
+
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
