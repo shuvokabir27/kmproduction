@@ -259,8 +259,9 @@ export default function ShopOfferPage() {
       </div>
 
       {/* Hero */}
-      <div className="relative bg-gradient-to-br from-red-500 via-red-600 to-red-600 text-white">
-        <div className="max-w-3xl mx-auto px-4 py-4 space-y-3">
+      <div className="max-w-3xl mx-auto px-4 pt-4">
+       <div className="relative bg-gradient-to-br from-red-500 via-red-600 to-red-600 text-white rounded-3xl shadow-xl overflow-hidden">
+        <div className="px-4 py-4 space-y-3">
           {heroImage && (
             <div className="w-full rounded-2xl overflow-hidden ring-2 ring-white/40 shadow-2xl bg-black/20 flex items-center justify-center">
               <img src={heroImage} alt={offer.title} className="w-full h-auto max-h-[42vh] md:max-h-[50vh] object-contain" />
