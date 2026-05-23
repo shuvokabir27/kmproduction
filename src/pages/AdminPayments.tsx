@@ -721,6 +721,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-red-400 font-medium text-xs hidden sm:table-cell">মাধ্যম</th>
                   <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">লাস্ট ৪ ডিজিট</th>
                   <th className="text-left p-3 text-pink-400 font-medium text-xs">তারিখ</th>
+                  <th className="text-center p-3 text-emerald-400 font-medium text-xs">SMS</th>
                   <th className="text-center p-3 text-blue-400 font-medium text-xs">রিসিট / WhatsApp</th>
                   <th className="text-center p-3 text-red-400 font-medium text-xs">ডিলিট</th>
                 </tr>
