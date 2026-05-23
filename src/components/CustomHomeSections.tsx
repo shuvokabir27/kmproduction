@@ -96,7 +96,7 @@ function SectionBlock({ section }: { section: any }) {
               </span>
             )}
             <h2
-              className="font-display text-3xl md:text-5xl mt-3 tracking-wider"
+              className="font-display font-bold text-3xl md:text-5xl mt-3 tracking-wider"
               style={section.title_color ? { color: section.title_color } : undefined}
             >
               {section.title}
