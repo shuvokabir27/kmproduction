@@ -126,6 +126,7 @@ export default function HomeSectionsManager() {
       discount_value: Number(s.discount_value || 0),
       order_btn_color: s.order_btn_color || "",
       bg_color: s.bg_color || "",
+      bg_color_2: s.bg_color_2 || "",
       title_color: s.title_color || "",
     });
     // load products if manual
