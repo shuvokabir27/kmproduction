@@ -2034,6 +2034,39 @@ export type Database = {
           },
         ]
       }
+      password_reset_otps: {
+        Row: {
+          attempts: number
+          created_at: string
+          expires_at: string
+          id: string
+          otp_hash: string
+          phone: string
+          scope: string
+          used_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          expires_at: string
+          id?: string
+          otp_hash: string
+          phone: string
+          scope: string
+          used_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          otp_hash?: string
+          phone?: string
+          scope?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
