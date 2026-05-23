@@ -19,7 +19,6 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import PaymentReceipt from "@/components/PaymentReceipt";
-import { sendTeamSms, toBn } from "@/lib/sendTeamSms";
 
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -171,6 +170,20 @@ const AdminPayments = () => {
   };
 
   const selectedProfile = members?.find((m) => m.id === selectedMember);
+
+  const normalizeSmsPhone = (value: string) => {
+    const digits = String(value || "").replace(/\D/g, "");
+    if (digits.length === 11 && digits.startsWith("01")) return `88${digits}`;
+    if (digits.length === 10 && digits.startsWith("1")) return `880${digits}`;
+    if (digits.length === 13 && digits.startsWith("8801")) return digits;
+    return "";
+  };
+
+  const getSmsErrorMessage = (result: any) => {
+    const failed = Array.isArray(result?.results) ? result.results.find((r: any) => !r?.ok) : null;
+    const response = failed?.response || result?.results?.[0]?.response || result;
+    return response?.error_message || failed?.error || result?.reason || result?.error || "SMS পাঠানো যায়নি";
+  };
 
   // Auto-fill SMS phone when member selected
   useEffect(() => {
