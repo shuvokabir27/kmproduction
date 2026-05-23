@@ -64,7 +64,7 @@ interface MemberForm {
 }
 
 const emptyForm: MemberForm = {
-  full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
+  full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "", sms_mobile: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
   bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "",
