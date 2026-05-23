@@ -68,6 +68,7 @@ const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const ShopOfferPage = lazy(() => import("./pages/ShopOfferPage"));
 const FreeDeliveryPage = lazy(() => import("./pages/FreeDeliveryPage"));
 const AllCategories = lazy(() => import("./pages/AllCategories"));
+const CategoryProducts = lazy(() => import("./pages/CategoryProducts"));
 const TasksPage = lazy(() => import("./pages/TasksPage"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const AdminAppVersions = lazy(() => import("./pages/AdminAppVersions"));
@@ -118,6 +119,7 @@ const App = () => (
             <Route path="/o/:slug" element={<ShopOfferPage />} />
             <Route path="/free-delivery" element={<FreeDeliveryPage />} />
             <Route path="/categories" element={<AllCategories />} />
+            <Route path="/category/:value" element={<CategoryProducts />} />
             <Route path="/shop/login" element={<ShopCustomerLogin />} />
             <Route path="/shop/account" element={<ShopCustomerAccount />} />
             
