@@ -31,6 +31,7 @@ type Section = {
   discount_value: number;
   order_btn_color: string | null;
   bg_color: string | null;
+  bg_color_2: string | null;
   title_color: string | null;
 };
 
@@ -59,6 +60,7 @@ const emptyForm = {
   discount_value: 0,
   order_btn_color: "",
   bg_color: "",
+  bg_color_2: "",
   title_color: "",
 };
 
@@ -124,6 +126,7 @@ export default function HomeSectionsManager() {
       discount_value: Number(s.discount_value || 0),
       order_btn_color: s.order_btn_color || "",
       bg_color: s.bg_color || "",
+      bg_color_2: s.bg_color_2 || "",
       title_color: s.title_color || "",
     });
     // load products if manual
@@ -162,6 +165,7 @@ export default function HomeSectionsManager() {
       discount_value: Number(form.discount_value) || 0,
       order_btn_color: form.order_btn_color.trim() || null,
       bg_color: form.bg_color.trim() || null,
+      bg_color_2: form.bg_color_2.trim() || null,
       title_color: form.title_color.trim() || null,
     };
 
@@ -426,6 +430,33 @@ export default function HomeSectionsManager() {
                   value={form.bg_color}
                   onChange={(e) => setForm({ ...form, bg_color: e.target.value })}
                 />
+              </div>
+              <div>
+                <Label>ব্যাকগ্রাউন্ড ২য় কালার (গ্রেডিয়েন্ট)</Label>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {PRESET_HEXES.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => setForm({ ...form, bg_color_2: hex })}
+                      className={`w-6 h-6 rounded-full border-2 ${form.bg_color_2 === hex ? "border-foreground" : "border-transparent"}`}
+                      style={{ backgroundColor: hex }}
+                      title={hex}
+                    />
+                  ))}
+                </div>
+                <Input
+                  className="mt-1.5"
+                  placeholder="#1e293b (গ্রেডিয়েন্টের জন্য)"
+                  value={form.bg_color_2}
+                  onChange={(e) => setForm({ ...form, bg_color_2: e.target.value })}
+                />
+                {form.bg_color && form.bg_color_2 && (
+                  <div
+                    className="mt-1.5 h-6 rounded"
+                    style={{ background: `linear-gradient(135deg, ${form.bg_color}, ${form.bg_color_2})` }}
+                  />
+                )}
               </div>
               <div>
                 <Label>সেকশন টাইটেল কালার</Label>
