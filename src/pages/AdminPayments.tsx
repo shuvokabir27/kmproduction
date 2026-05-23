@@ -202,6 +202,27 @@ const AdminPayments = () => {
 
   const { data: memberBalance } = useMemberBalance(selectedMember || undefined);
 
+  // SMS preview & cost calculator
+  const smsPreview = useMemo(() => {
+    if (!selectedProfile) return null;
+    const mName = selectedProfile.full_name || "Member";
+    const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
+    const prevDue = Number(memberBalance?.balance || 0);
+    const newDue = Math.max(0, prevDue - Number(amount || 0));
+    const dateStr = format(new Date(), "dd/MM/yyyy");
+    const msg = `Dear ${mName}, Payment Tk ${Number(amount || 0).toLocaleString("en-US")} received via ${mLabelEn[method] || method || "Cash"} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
+    return msg;
+  }, [selectedProfile, amount, method, transactionId, memberBalance]);
+
+  const smsCost = useMemo(() => {
+    if (!smsPreview) return null;
+    const len = smsPreview.length;
+    const perSegment = 0.35;
+    const segments = len <= 160 ? 1 : Math.ceil(len / 153);
+    const cost = (segments * perSegment).toFixed(2);
+    return { len, segments, cost };
+  }, [smsPreview]);
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
