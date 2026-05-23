@@ -31,6 +31,7 @@ type Section = {
   discount_value: number;
   order_btn_color: string | null;
   bg_color: string | null;
+  bg_color_2: string | null;
   title_color: string | null;
 };
 
