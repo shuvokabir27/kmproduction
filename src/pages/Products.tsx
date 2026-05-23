@@ -18,6 +18,7 @@ import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import MobileShopNav from "@/components/MobileShopNav";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
 import ShopCategoryGrid from "@/components/ShopCategoryGrid";
+import { CustomHomeSections } from "@/components/CustomHomeSections";
 import FreeDeliveryHomeCTA from "@/components/FreeDeliveryHomeCTA";
 import FloatingCartButton from "@/components/FloatingCartButton";
 
