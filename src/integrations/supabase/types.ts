@@ -1307,6 +1307,8 @@ export type Database = {
           created_at: string
           cta_label: string | null
           cta_link: string | null
+          discount_type: string
+          discount_value: number
           eyebrow: string | null
           id: string
           is_active: boolean
@@ -1325,6 +1327,8 @@ export type Database = {
           created_at?: string
           cta_label?: string | null
           cta_link?: string | null
+          discount_type?: string
+          discount_value?: number
           eyebrow?: string | null
           id?: string
           is_active?: boolean
@@ -1343,6 +1347,8 @@ export type Database = {
           created_at?: string
           cta_label?: string | null
           cta_link?: string | null
+          discount_type?: string
+          discount_value?: number
           eyebrow?: string | null
           id?: string
           is_active?: boolean

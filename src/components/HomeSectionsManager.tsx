@@ -27,6 +27,8 @@ type Section = {
   max_items: number;
   sort_order: number;
   is_active: boolean;
+  discount_type: "none" | "percent" | "fixed";
+  discount_value: number;
 };
 
 const COLORS = ["amber", "red", "green", "blue", "rose", "violet"];
@@ -44,6 +46,8 @@ const emptyForm = {
   max_items: 12,
   sort_order: 0,
   is_active: true,
+  discount_type: "none" as "none" | "percent" | "fixed",
+  discount_value: 0,
 };
 
 export default function HomeSectionsManager() {
@@ -80,6 +84,7 @@ export default function HomeSectionsManager() {
   const [form, setForm] = useState({ ...emptyForm });
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [productSearch, setProductSearch] = useState("");
+  const [pickerCategory, setPickerCategory] = useState<string>("all");
 
   const openCreate = () => {
     setEditing(null);
@@ -103,6 +108,8 @@ export default function HomeSectionsManager() {
       max_items: s.max_items,
       sort_order: s.sort_order,
       is_active: s.is_active,
+      discount_type: (s.discount_type || "none") as "none" | "percent" | "fixed",
+      discount_value: Number(s.discount_value || 0),
     });
     // load products if manual
     if (s.section_type === "manual") {
@@ -136,6 +143,8 @@ export default function HomeSectionsManager() {
       max_items: Number(form.max_items) || 12,
       sort_order: Number(form.sort_order) || 0,
       is_active: form.is_active,
+      discount_type: form.discount_type,
+      discount_value: Number(form.discount_value) || 0,
     };
 
     let sectionId = editing?.id;
@@ -192,9 +201,11 @@ export default function HomeSectionsManager() {
     setSelectedProductIds(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
   };
 
-  const filteredProducts = products.filter((p: any) =>
-    !productSearch || p.name?.toLowerCase().includes(productSearch.toLowerCase())
-  );
+  const filteredProducts = products.filter((p: any) => {
+    if (pickerCategory !== "all" && p.category !== pickerCategory) return false;
+    if (productSearch && !p.name?.toLowerCase().includes(productSearch.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-4">
@@ -328,15 +339,53 @@ export default function HomeSectionsManager() {
               </div>
             </div>
 
+            <div className="grid sm:grid-cols-2 gap-3 p-3 border border-dashed border-border/50 rounded-lg bg-muted/20">
+              <div>
+                <Label>কাস্টম ডিসকাউন্ট টাইপ</Label>
+                <Select value={form.discount_type} onValueChange={(v: any) => setForm({ ...form, discount_type: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">কোনো ডিসকাউন্ট না</SelectItem>
+                    <SelectItem value="percent">শতাংশ (%)</SelectItem>
+                    <SelectItem value="fixed">নির্দিষ্ট টাকা (৳)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>ডিসকাউন্ট পরিমাণ</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={form.discount_value}
+                  onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })}
+                  disabled={form.discount_type === "none"}
+                  placeholder={form.discount_type === "percent" ? "যেমন: 10" : "যেমন: 50"}
+                />
+              </div>
+              <p className="sm:col-span-2 text-[11px] text-muted-foreground">
+                এই সেকশনে দেখানো সকল পণ্যের উপর এই ডিসকাউন্ট স্বয়ংক্রিয়ভাবে প্রয়োগ হবে (পণ্যের নিজস্ব ডিসকাউন্ট থাকলে এটি প্রাধান্য পাবে)।
+              </p>
+            </div>
+
             {form.section_type === "manual" && (
               <div>
-                <Label className="mb-2 block">পণ্য বাছাই ({selectedProductIds.length} টি)</Label>
-                <Input
-                  placeholder="পণ্য খুঁজুন..."
-                  value={productSearch}
-                  onChange={(e) => setProductSearch(e.target.value)}
-                  className="mb-2"
-                />
+                <Label className="mb-2 block">পণ্য বাছাই ({selectedProductIds.length} টি) — সকল ক্যাটাগরি থেকে</Label>
+                <div className="grid sm:grid-cols-[1fr_200px] gap-2 mb-2">
+                  <Input
+                    placeholder="পণ্য খুঁজুন..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                  />
+                  <Select value={pickerCategory} onValueChange={setPickerCategory}>
+                    <SelectTrigger><SelectValue placeholder="সকল ক্যাটাগরি" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">সকল ক্যাটাগরি</SelectItem>
+                      {allCategories.map((c) => (
+                        <SelectItem key={c.id} value={c.value}>{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="max-h-64 overflow-y-auto border border-border/40 rounded-lg divide-y divide-border/20">
                   {filteredProducts.map((p: any) => (
                     <label key={p.id} className="flex items-center gap-3 p-2 hover:bg-muted/40 cursor-pointer">
