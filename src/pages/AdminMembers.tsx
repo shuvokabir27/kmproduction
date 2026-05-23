@@ -25,6 +25,7 @@ interface MemberForm {
   email: string;
   phone: string;
   whatsapp_no: string;
+  sms_mobile: string;
   designation: string;
   designation_en: string;
   bio: string;
