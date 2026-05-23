@@ -323,6 +323,7 @@ const AdminMembers = () => {
           email: form.email || null,
           phone: form.phone || null,
           whatsapp_no: form.whatsapp_no || null,
+          sms_mobile: form.sms_mobile || null,
           designation: form.designation || null,
           designation_en: form.designation_en || null,
           bio: form.bio || null,
