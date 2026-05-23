@@ -198,7 +198,7 @@ const AdminPayments = () => {
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
       const sp: any = selectedProfile || {};
-      const phoneCandidate = sp.phone || sp.whatsapp_no || sp.bkash_number || sp.nagad_number || sp.mobile_number || "";
+      const phoneCandidate = (smsPhone.trim() || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").toString();
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
       try {
         const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms",
