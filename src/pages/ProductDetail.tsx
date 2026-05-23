@@ -139,11 +139,11 @@ const ProductDetail = () => {
 
   const submitReview = async () => {
     const token = localStorage.getItem(SHOP_TOKEN_KEY);
-    if (!token || !id) return;
+    if (!token || !product?.id) return;
     setSubmittingReview(true);
     const { error } = await supabase.rpc("submit_product_review", {
       _token: token,
-      _product_id: id,
+      _product_id: product.id,
       _rating: reviewRating,
       _comment: reviewComment,
     });
