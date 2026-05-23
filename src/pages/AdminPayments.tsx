@@ -182,7 +182,11 @@ const AdminPayments = () => {
   const getSmsErrorMessage = (result: any) => {
     const failed = Array.isArray(result?.results) ? result.results.find((r: any) => !r?.ok) : null;
     const response = failed?.response || result?.results?.[0]?.response || result;
-    return response?.error_message || failed?.error || result?.reason || result?.error || "SMS পাঠানো যায়নি";
+    const rawMessage = response?.error_message || failed?.error || result?.reason || result?.error || "SMS পাঠানো যায়নি";
+    if (String(rawMessage).toLowerCase().includes("not whitelisted")) {
+      return "SMS সার্ভিসে IP whitelist করা নেই। BulkSMSBD Phonebook-এ 3.0.200.88 IP whitelist করতে হবে।";
+    }
+    return rawMessage;
   };
 
   // Auto-fill SMS phone when member selected
