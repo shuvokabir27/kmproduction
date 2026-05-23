@@ -90,15 +90,32 @@ const Login = () => {
         const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
         if (error) throw error;
       } else if (type === "client") {
-        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/client-login`, {
+        // First try admin-phone-login (some admins log in by phone)
+        const adminRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-phone-login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ phone: identifier.trim(), password }),
         });
-        const result = await res.json();
-        if (!res.ok) throw new Error(result.error);
-        const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
-        if (error) throw error;
+        if (adminRes.ok) {
+          const adminResult = await adminRes.json();
+          const { error } = await supabase.auth.setSession({ access_token: adminResult.access_token, refresh_token: adminResult.refresh_token });
+          if (error) throw error;
+        } else if (adminRes.status === 401) {
+          // Phone matched an admin but password was wrong — surface that error
+          const adminResult = await adminRes.json();
+          throw new Error(adminResult.error || "পাসওয়ার্ড ভুল");
+        } else {
+          // Not an admin phone — fall back to client login
+          const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/client-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone: identifier.trim(), password }),
+          });
+          const result = await res.json();
+          if (!res.ok) throw new Error(result.error);
+          const { error } = await supabase.auth.setSession({ access_token: result.access_token, refresh_token: result.refresh_token });
+          if (error) throw error;
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: identifier.trim(), password });
         if (error) throw error;
