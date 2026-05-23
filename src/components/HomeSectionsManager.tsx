@@ -29,6 +29,9 @@ type Section = {
   is_active: boolean;
   discount_type: "none" | "percent" | "fixed";
   discount_value: number;
+  order_btn_color: string | null;
+  bg_color: string | null;
+  title_color: string | null;
 };
 
 const COLORS = ["amber", "red", "green", "blue", "rose", "violet"];
