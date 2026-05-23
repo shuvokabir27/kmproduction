@@ -555,6 +555,18 @@ const AdminProducts = () => {
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="যেমন: তালের গুড় ১ কেজি" />
             </div>
             <div>
+              <Label>প্রডাক্ট লিংক (Slug)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">খালি রাখলে নাম থেকে অটো তৈরি হবে। শুধু অক্ষর, সংখ্যা ও হাইফেন (-) ব্যবহার করুন।</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">/products/</span>
+                <Input
+                  value={form.slug}
+                  onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                  placeholder="auto-generated-from-name"
+                />
+              </div>
+            </div>
+            <div>
               <Label>সংক্ষিপ্ত বিবরণ (Short Description)</Label>
               <p className="text-[11px] text-muted-foreground mb-1.5">প্রডাক্ট পেজের উপরের অংশে (দামের নিচে) দেখা যাবে — সংক্ষিপ্ত ও আকর্ষণীয় রাখুন।</p>
               <RichTextEditor
