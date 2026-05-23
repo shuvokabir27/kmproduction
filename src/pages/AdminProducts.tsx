@@ -60,6 +60,7 @@ const AdminProducts = () => {
 
   const [form, setForm] = useState({
     name: "",
+    slug: "",
     short_description: "",
     short_description_html: "",
     description: "",
@@ -79,6 +80,7 @@ const AdminProducts = () => {
     suggested_product_ids: [] as string[],
   });
 
+
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
     queryFn: async () => {
@@ -93,7 +95,7 @@ const AdminProducts = () => {
 
   const resetForm = () => {
     setForm({
-      name: "", short_description: "", short_description_html: "", description: "", description_html: "", price: "", discount_price: "", image_url: "",
+      name: "", slug: "", short_description: "", short_description_html: "", description: "", description_html: "", price: "", discount_price: "", image_url: "",
       category: "", is_active: true, is_featured: false, stock_status: "in_stock",
       sort_order: "0", contact_info: "", unit_type: "piece", weight_grams: "", variants: [],
       suggested_product_ids: [],
@@ -107,6 +109,7 @@ const AdminProducts = () => {
     setEditingProduct(p);
     setForm({
       name: p.name || "",
+      slug: p.slug || "",
       short_description: p.short_description || "",
       short_description_html: p.short_description_html || "",
       description: p.description || "",
@@ -158,6 +161,7 @@ const AdminProducts = () => {
     if (!form.name.trim()) { toast.error("প্রডাক্টের নাম দিন"); return; }
     const payload = {
       name: form.name.trim(),
+      slug: form.slug.trim() || null,
       short_description: form.short_description.trim() || null,
       short_description_html: form.short_description_html?.trim() || null,
       description: form.description.trim() || null,
@@ -549,6 +553,18 @@ const AdminProducts = () => {
             <div>
               <Label>প্রডাক্টের নাম *</Label>
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="যেমন: তালের গুড় ১ কেজি" />
+            </div>
+            <div>
+              <Label>প্রডাক্ট লিংক (Slug)</Label>
+              <p className="text-[11px] text-muted-foreground mb-1.5">খালি রাখলে নাম থেকে অটো তৈরি হবে। শুধু অক্ষর, সংখ্যা ও হাইফেন (-) ব্যবহার করুন।</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">/products/</span>
+                <Input
+                  value={form.slug}
+                  onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                  placeholder="auto-generated-from-name"
+                />
+              </div>
             </div>
             <div>
               <Label>সংক্ষিপ্ত বিবরণ (Short Description)</Label>

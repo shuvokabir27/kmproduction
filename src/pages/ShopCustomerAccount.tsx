@@ -34,8 +34,8 @@ export default function ShopCustomerAccount() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", address: "" });
-  const [productMap, setProductMap] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
-  const [productByName, setProductByName] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
+  const [productMap, setProductMap] = useState<Record<string, { id: string; slug: string | null; stock_status: string; is_active: boolean }>>({});
+  const [productByName, setProductByName] = useState<Record<string, { id: string; slug: string | null; stock_status: string; is_active: boolean }>>({});
   const [trackOrder, setTrackOrder] = useState<any | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
@@ -77,7 +77,7 @@ export default function ShopCustomerAccount() {
   useEffect(() => {
     if (orders.length === 0) { setProductMap({}); setProductByName({}); return; }
     (async () => {
-      const { data: allProducts } = await supabase.from("products").select("id, name, stock_status, is_active");
+      const { data: allProducts } = await supabase.from("products").select("id, name, slug, stock_status, is_active");
       const mapId: Record<string, any> = {};
       const mapName: Record<string, any> = {};
       (allProducts || []).forEach((p: any) => {
@@ -280,7 +280,7 @@ export default function ShopCustomerAccount() {
                             </Button>
                           )}
                           {o.status === "delivered" && productAvailable && prod && (
-                            <Button size="sm" onClick={() => nav(`/products/${prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
+                            <Button size="sm" onClick={() => nav(`/products/${prod.slug || prod.id}?order=1`)} className="text-white gap-1.5 h-9 rounded-xl flex-1" style={{ backgroundColor: BRAND_GREEN }}>
                               <RefreshCw className="h-3.5 w-3.5" /> পুনরায় অর্ডার
                             </Button>
                           )}
@@ -350,7 +350,7 @@ export default function ShopCustomerAccount() {
                                 {itAvail && itProd && (
                                   <Button
                                     size="sm"
-                                    onClick={() => nav(`/products/${itProd.id}?order=1`)}
+                                    onClick={() => nav(`/products/${itProd.slug || itProd.id}?order=1`)}
                                     className="mt-2 w-full text-white gap-1.5 h-8 rounded-lg text-xs"
                                     style={{ backgroundColor: BRAND_GREEN }}
                                   >

@@ -2330,6 +2330,7 @@ export type Database = {
           price: number
           short_description: string | null
           short_description_html: string | null
+          slug: string | null
           sort_order: number | null
           stock_status: string
           suggested_product_ids: string[]
@@ -2354,6 +2355,7 @@ export type Database = {
           price?: number
           short_description?: string | null
           short_description_html?: string | null
+          slug?: string | null
           sort_order?: number | null
           stock_status?: string
           suggested_product_ids?: string[]
@@ -2378,6 +2380,7 @@ export type Database = {
           price?: number
           short_description?: string | null
           short_description_html?: string | null
+          slug?: string | null
           sort_order?: number | null
           stock_status?: string
           suggested_product_ids?: string[]
@@ -3554,6 +3557,10 @@ export type Database = {
         Args: { _campaign_id: string; _phone: string }
         Returns: number
       }
+      generate_unique_product_slug: {
+        Args: { exclude_id?: string; input: string }
+        Returns: string
+      }
       get_approved_profile_comments: {
         Args: { _profile_id: string }
         Returns: {
@@ -3755,6 +3762,7 @@ export type Database = {
         Returns: undefined
       }
       send_birthday_notifications: { Args: never; Returns: undefined }
+      slugify: { Args: { input: string }; Returns: string }
       submit_product_review: {
         Args: {
           _comment: string

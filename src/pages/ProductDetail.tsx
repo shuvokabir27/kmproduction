@@ -59,10 +59,13 @@ const ProductDetail = () => {
     queryKey: ["product-detail", id],
     enabled: !!id,
     queryFn: async () => {
-      const { data } = await supabase.from("products").select("*").eq("id", id!).maybeSingle();
+      const isUuid = !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const query = supabase.from("products").select("*");
+      const { data } = await (isUuid ? query.eq("id", id!) : query.eq("slug", id!)).maybeSingle();
       return data;
     },
   });
+
 
   useEffect(() => {
     const v: any[] = Array.isArray((product as any)?.variants) ? (product as any).variants : [];
@@ -84,7 +87,7 @@ const ProductDetail = () => {
           .eq("is_active", true);
         if (data && data.length > 0) return data;
       }
-      const q = supabase.from("products").select("*").eq("is_active", true).neq("id", id!).limit(4);
+      const q = supabase.from("products").select("*").eq("is_active", true).neq("id", product!.id).limit(4);
       if (product?.category) q.eq("category", product.category);
       const { data } = await q;
       return data ?? [];
@@ -111,19 +114,20 @@ const ProductDetail = () => {
   const categoryLabel = product?.category ? (categoryMap?.[product.category] || product.category) : "";
 
   const { data: reviews = [], refetch: refetchReviews } = useQuery({
-    queryKey: ["product-reviews", id],
-    enabled: !!id,
+    queryKey: ["product-reviews", product?.id],
+    enabled: !!product?.id,
     queryFn: async () => {
       const { data } = await supabase
         .from("product_reviews")
         .select("id,rating,comment,customer_name,created_at,shop_customer_id")
-        .eq("product_id", id!)
+        .eq("product_id", product!.id)
         .order("created_at", { ascending: false });
       return data ?? [];
     },
   });
 
-  const hasPurchased = !!shopCustomer && (customerOrders || []).some((o: any) => o.product_id === id);
+  const hasPurchased = !!shopCustomer && !!product && (customerOrders || []).some((o: any) => o.product_id === product.id);
+
   const myReview = reviews.find((r: any) => r.shop_customer_id === shopCustomer?.id);
 
   useEffect(() => {
@@ -135,11 +139,11 @@ const ProductDetail = () => {
 
   const submitReview = async () => {
     const token = localStorage.getItem(SHOP_TOKEN_KEY);
-    if (!token || !id) return;
+    if (!token || !product?.id) return;
     setSubmittingReview(true);
     const { error } = await supabase.rpc("submit_product_review", {
       _token: token,
-      _product_id: id,
+      _product_id: product.id,
       _rating: reviewRating,
       _comment: reviewComment,
     });
@@ -693,7 +697,7 @@ const ProductDetail = () => {
               {related.map((p: any) => {
                 const hd = p.discount_price && p.discount_price < p.price;
                 return (
-                  <Link key={p.id} to={`/products/${p.id}`} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border">
+                  <Link key={p.id} to={`/products/${p.slug || p.id}`} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border">
                     <div className="aspect-square bg-muted overflow-hidden">
                       {p.image_url ? <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-10 w-10 text-gray-300" /></div>}
                     </div>

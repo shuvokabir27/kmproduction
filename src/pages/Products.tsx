@@ -460,7 +460,7 @@ const Products = () => {
                   filteredProducts.slice(0, 8).map((p: any) => (
                     <Link
                       key={p.id}
-                      to={`/products/${p.id}`}
+                      to={`/products/${p.slug || p.id}`}
                       onClick={() => {
                         setMobileSearchOpen(false);
                         setSearch("");
@@ -670,7 +670,7 @@ const Products = () => {
                       <div className="relative rounded-[26px] p-[1.5px] bg-gradient-to-br from-amber-300/70 via-white/10 to-rose-400/60 shadow-[0_30px_60px_-20px_hsl(0_70%_15%/0.6)]">
                         <div className="aspect-square rounded-[24px] overflow-hidden relative bg-black/30 backdrop-blur-xl border border-white/10">
                           {current ? (
-                            <Link to={`/products/${current.id}`} className="block w-full h-full group">
+                            <Link to={`/products/${current.slug || current.id}`} className="block w-full h-full group">
                               {slides.map((p: any, i: number) => (
                                 <img
                                   key={p.id}
@@ -758,7 +758,7 @@ const Products = () => {
               const discountPct = hasDiscount ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
               return (
                 <div key={p.id} className="group glossy-card overflow-hidden flex flex-col">
-                  <Link to={`/products/${p.id}`} className="relative aspect-square bg-muted overflow-hidden block">
+                  <Link to={`/products/${p.slug || p.id}`} className="relative aspect-square bg-muted overflow-hidden block">
                     {p.image_url ? (
                       <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
@@ -776,7 +776,7 @@ const Products = () => {
                     </div>
                   </Link>
                   <div className="p-3 md:p-4 flex flex-col flex-1">
-                    <Link to={`/products/${p.id}`} className="font-bold text-sm md:text-base text-foreground line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
+                    <Link to={`/products/${p.slug || p.id}`} className="font-bold text-sm md:text-base text-foreground line-clamp-2 min-h-[2.5rem] hover:underline">{p.name}</Link>
                     <div className="flex items-baseline gap-2 mt-2">
                       <span className="text-lg font-extrabold" style={{ color: BRAND_GREEN }}>
                         ৳{toBn(hasDiscount ? p.discount_price : p.price)}
