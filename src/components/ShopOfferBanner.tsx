@@ -135,10 +135,10 @@ export default function ShopOfferBanner() {
   return (
     <>
     <section
-      className="relative w-full px-4 py-20"
+      className="relative w-full py-20"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
     >
-      <div className="relative max-w-6xl mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800 shadow-xl">
+      <div className="relative w-full rounded-none overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800 shadow-xl">
         {/* sparkle bg */}
         <div className="absolute inset-0 pointer-events-none opacity-20 select-none">
           <div className="absolute top-4 left-[10%] text-3xl animate-pulse">✨</div>
