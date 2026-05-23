@@ -129,13 +129,38 @@ function SectionBlock({ section }: { section: any }) {
                         <span className="text-base font-bold text-primary">৳{toBn(price)}</span>
                         {hasDiscount && <span className="text-xs line-through text-muted-foreground">৳{toBn(p.price)}</span>}
                       </div>
-                      <Button
-                        size="sm"
-                        className="glossy-btn-emerald mt-3 w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
-                        onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.id}?order=1`); }}
-                      >
-                        <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
-                      </Button>
+                      <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
+                        <Button
+                          size="sm"
+                          className="glossy-btn-emerald w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
+                          onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.id}?order=1`); }}
+                        >
+                          <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className={`h-9 w-9 p-0 ${accent.ring}`}
+                          title="কার্টে যোগ করুন"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addItem({
+                              product_id: p.id,
+                              product_name: p.name,
+                              image_url: p.image_url,
+                              unit_price: price,
+                              quantity: 1,
+                              unit_type: p.unit_type,
+                              weight_grams: p.weight_grams,
+                            });
+                            toast.success("কার্টে যোগ হয়েছে");
+                            openCart();
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+
                     </div>
                   </div>
                 </CarouselItem>
