@@ -114,19 +114,20 @@ const ProductDetail = () => {
   const categoryLabel = product?.category ? (categoryMap?.[product.category] || product.category) : "";
 
   const { data: reviews = [], refetch: refetchReviews } = useQuery({
-    queryKey: ["product-reviews", id],
-    enabled: !!id,
+    queryKey: ["product-reviews", product?.id],
+    enabled: !!product?.id,
     queryFn: async () => {
       const { data } = await supabase
         .from("product_reviews")
         .select("id,rating,comment,customer_name,created_at,shop_customer_id")
-        .eq("product_id", id!)
+        .eq("product_id", product!.id)
         .order("created_at", { ascending: false });
       return data ?? [];
     },
   });
 
-  const hasPurchased = !!shopCustomer && (customerOrders || []).some((o: any) => o.product_id === id);
+  const hasPurchased = !!shopCustomer && !!product && (customerOrders || []).some((o: any) => o.product_id === product.id);
+
   const myReview = reviews.find((r: any) => r.shop_customer_id === shopCustomer?.id);
 
   useEffect(() => {
