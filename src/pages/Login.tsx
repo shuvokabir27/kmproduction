@@ -27,6 +27,14 @@ const Login = () => {
   const [signupName, setSignupName] = useState("");
   const [signupSubmitting, setSignupSubmitting] = useState(false);
 
+  // OTP reset state (for member / client)
+  const [resetIdent, setResetIdent] = useState("");
+  const [resetStep, setResetStep] = useState<"ident" | "otp">("ident");
+  const [resetOtp, setResetOtp] = useState("");
+  const [resetNewPass, setResetNewPass] = useState("");
+  const [resetMaskedPhone, setResetMaskedPhone] = useState("");
+  const [resetScope, setResetScope] = useState<"member" | "client">("member");
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -215,7 +223,13 @@ const Login = () => {
                 নতুন অ্যাকাউন্ট তৈরি করুন
               </button>
               <div className="w-8 h-px bg-white/10 mx-auto" />
-              <Dialog open={resetOpen} onOpenChange={setResetOpen}>
+              <Dialog open={resetOpen} onOpenChange={(open) => {
+                setResetOpen(open);
+                if (!open) {
+                  setResetStep("ident"); setResetIdent(""); setResetOtp("");
+                  setResetNewPass(""); setResetMaskedPhone(""); setResetEmail("");
+                }
+              }}>
                 <DialogTrigger asChild>
                   <button type="button" className="block w-full text-xs text-gray-500 hover:text-gray-300 transition-colors duration-300">
                     পাসওয়ার্ড ভুলে গেছেন?
@@ -225,43 +239,120 @@ const Login = () => {
                   <DialogHeader>
                     <DialogTitle className="text-base">পাসওয়ার্ড রিসেট</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-3 pt-2">
-                    <p className="text-xs text-muted-foreground">
-                      আপনার ইমেইল দিন — রিসেট লিংক পাঠানো হবে। অথবা এডমিনের সাথে যোগাযোগ করুন।
-                    </p>
-                    <Input
-                      type="email"
-                      placeholder="আপনার ইমেইল"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      className="bg-secondary border-border/30 h-10 text-sm"
-                    />
-                    <Button
-                      className="w-full h-10 text-sm"
-                      disabled={resetSending || !resetEmail.trim()}
-                      onClick={async () => {
-                        setResetSending(true);
-                        try {
-                          const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
-                            redirectTo: `${window.location.origin}/reset-password`,
-                          });
-                          if (error) throw error;
-                          toast.success("রিসেট লিংক পাঠানো হয়েছে। ইমেইল চেক করুন।");
-                          setResetOpen(false);
-                          setResetEmail("");
-                        } catch (err: any) {
-                          toast.error(err.message || "লিংক পাঠানো যায়নি।");
-                        } finally {
-                          setResetSending(false);
-                        }
-                      }}
-                    >
-                      {resetSending ? "পাঠানো হচ্ছে..." : "রিসেট লিংক পাঠান"}
-                    </Button>
-                    <p className="text-[10px] text-muted-foreground text-center">
-                      অথবা <span className="text-primary">এডমিনের সাথে যোগাযোগ করুন।</span>
-                    </p>
-                  </div>
+                  {resetStep === "ident" ? (
+                    <div className="space-y-3 pt-2">
+                      <p className="text-xs text-muted-foreground">
+                        আপনার <span className="text-foreground font-medium">সদস্য আইডি / মোবাইল নম্বর / ইমেইল</span> দিন।
+                        সদস্য বা ক্লায়েন্ট হলে মোবাইলে OTP পাঠানো হবে। এডমিন হলে ইমেইলে লিংক যাবে।
+                      </p>
+                      <Input
+                        type="text"
+                        placeholder="সদস্য আইডি, মোবাইল বা ইমেইল"
+                        value={resetIdent}
+                        onChange={(e) => setResetIdent(e.target.value)}
+                        className="bg-secondary border-border/30 h-10 text-sm"
+                      />
+                      <Button
+                        className="w-full h-10 text-sm"
+                        disabled={resetSending || !resetIdent.trim()}
+                        onClick={async () => {
+                          const trimmed = resetIdent.trim();
+                          const type = detectType(trimmed);
+                          setResetSending(true);
+                          try {
+                            if (type === "admin") {
+                              // email reset link
+                              const { error } = await supabase.auth.resetPasswordForEmail(trimmed, {
+                                redirectTo: `${window.location.origin}/reset-password`,
+                              });
+                              if (error) throw error;
+                              toast.success("রিসেট লিংক পাঠানো হয়েছে। ইমেইল চেক করুন।");
+                              setResetOpen(false);
+                            } else {
+                              // member or client — OTP via SMS
+                              const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/password-reset-otp`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ action: "request_otp", scope: type, identifier: trimmed }),
+                              });
+                              const result = await res.json();
+                              if (!res.ok) throw new Error(result.error || "OTP পাঠানো যায়নি");
+                              setResetScope(type);
+                              setResetMaskedPhone(result.masked_phone || "");
+                              setResetStep("otp");
+                              toast.success("OTP পাঠানো হয়েছে আপনার মোবাইলে");
+                            }
+                          } catch (err: any) {
+                            toast.error(err.message || "চেষ্টা ব্যর্থ হয়েছে");
+                          } finally {
+                            setResetSending(false);
+                          }
+                        }}
+                      >
+                        {resetSending ? "পাঠানো হচ্ছে..." : "পরবর্তী"}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 pt-2">
+                      <p className="text-xs text-muted-foreground">
+                        <span className="text-foreground font-medium">{resetMaskedPhone}</span> নম্বরে পাঠানো ৬ ডিজিটের OTP এবং নতুন পাসওয়ার্ড দিন।
+                      </p>
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        placeholder="৬ ডিজিটের OTP"
+                        value={resetOtp}
+                        onChange={(e) => setResetOtp(e.target.value.replace(/\D/g, ""))}
+                        className="bg-secondary border-border/30 h-10 text-sm tracking-widest text-center"
+                      />
+                      <Input
+                        type="password"
+                        placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+                        value={resetNewPass}
+                        onChange={(e) => setResetNewPass(e.target.value)}
+                        minLength={6}
+                        className="bg-secondary border-border/30 h-10 text-sm"
+                      />
+                      <Button
+                        className="w-full h-10 text-sm"
+                        disabled={resetSending || resetOtp.length !== 6 || resetNewPass.length < 6}
+                        onClick={async () => {
+                          setResetSending(true);
+                          try {
+                            const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/password-reset-otp`, {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                action: "reset_with_otp",
+                                scope: resetScope,
+                                identifier: resetIdent.trim(),
+                                otp: resetOtp,
+                                new_password: resetNewPass,
+                              }),
+                            });
+                            const result = await res.json();
+                            if (!res.ok) throw new Error(result.error || "রিসেট ব্যর্থ");
+                            toast.success("পাসওয়ার্ড রিসেট হয়েছে। এখন নতুন পাসওয়ার্ড দিয়ে লগইন করুন।");
+                            setResetOpen(false);
+                          } catch (err: any) {
+                            toast.error(err.message || "রিসেট ব্যর্থ হয়েছে");
+                          } finally {
+                            setResetSending(false);
+                          }
+                        }}
+                      >
+                        {resetSending ? "রিসেট হচ্ছে..." : "পাসওয়ার্ড রিসেট করুন"}
+                      </Button>
+                      <button
+                        type="button"
+                        onClick={() => { setResetStep("ident"); setResetOtp(""); setResetNewPass(""); }}
+                        className="block w-full text-[11px] text-muted-foreground hover:text-foreground"
+                      >
+                        ← পিছনে যান
+                      </button>
+                    </div>
+                  )}
                 </DialogContent>
               </Dialog>
             </div>
