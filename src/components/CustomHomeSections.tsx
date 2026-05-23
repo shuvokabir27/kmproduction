@@ -76,7 +76,7 @@ function SectionBlock({ section }: { section: any }) {
   if (!products || products.length === 0) return null;
 
   return (
-    <section className="py-16 px-4 relative">
+    <section className="py-16 px-4 relative" style={section.bg_color ? { backgroundColor: section.bg_color } : undefined}>
       <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px]`} />
       <div className="container max-w-6xl mx-auto relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
@@ -86,7 +86,12 @@ function SectionBlock({ section }: { section: any }) {
                 <Sparkles className="h-4 w-4" /> {section.eyebrow}
               </span>
             )}
-            <h2 className="font-display text-3xl md:text-5xl text-foreground mt-3 tracking-wider">{section.title}</h2>
+            <h2
+              className="font-display text-3xl md:text-5xl mt-3 tracking-wider"
+              style={section.title_color ? { color: section.title_color } : undefined}
+            >
+              {section.title}
+            </h2>
             <div className={`h-1 w-20 bg-gradient-to-r ${accent.from} to-transparent rounded-full mt-4`} />
             {section.badge_text && (
               <div className={`inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full ${badgeAccent.btn} text-white text-xs font-bold shadow`}>
