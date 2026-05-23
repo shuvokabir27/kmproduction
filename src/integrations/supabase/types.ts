@@ -99,6 +99,24 @@ export type Database = {
           },
         ]
       }
+      admin_phone_logins: {
+        Row: {
+          created_at: string
+          phone: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          phone: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          phone?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       advance_deductions: {
         Row: {
           advance_request_id: string
