@@ -268,6 +268,36 @@ const AdminPayments = () => {
 
   // Quick WhatsApp send: render receipt off-screen → upload PNG to storage → open wa.me with link
   const [whatsappSendingId, setWhatsappSendingId] = useState<string | null>(null);
+  const [smsSendingId, setSmsSendingId] = useState<string | null>(null);
+
+  const sendSmsFromRow = async (payment: any) => {
+    setSmsSendingId(payment.id);
+    try {
+      const { data: profile } = await (supabase as any)
+        .from("profiles")
+        .select("full_name, phone, whatsapp_no, bkash_number, nagad_number, mobile_number")
+        .eq("id", payment.member_id).maybeSingle();
+      const phoneCandidate = profile?.phone || profile?.whatsapp_no || profile?.bkash_number || profile?.nagad_number || profile?.mobile_number || "";
+      if (!phoneCandidate) { toast.error("সদস্যের কোনো ফোন নাম্বার নেই"); return; }
+      const mName = profile?.full_name || "Member";
+      const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
+      const dateStr = format(new Date(payment.payment_date), "dd/MM/yyyy");
+      const msg = `Dear ${mName}, Payment Tk ${Number(payment.amount).toLocaleString("en-US")} received via ${mLabelEn[payment.payment_method] || payment.payment_method} on ${dateStr}.${payment.transaction_id ? ` TrxID: ${payment.transaction_id}.` : ""} Thank you. - KM Multimedia`;
+      const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms", { body: { phone: String(phoneCandidate), message: msg } });
+      if (smsErr || !smsRes || (smsRes.sent ?? 0) === 0) {
+        toast.error("SMS পাঠানো যায়নি");
+        return;
+      }
+      await supabase.from("payments").update({ sms_sent_at: new Date().toISOString() } as any).eq("id", payment.id);
+      toast.success("SMS পাঠানো হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
+    } catch (e: any) {
+      toast.error(e?.message || "SMS পাঠাতে সমস্যা হয়েছে");
+    } finally {
+      setSmsSendingId(null);
+    }
+  };
+
   const sendWhatsAppFromRow = async (payment: any) => {
     setWhatsappSendingId(payment.id);
     try {
