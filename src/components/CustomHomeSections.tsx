@@ -104,8 +104,20 @@ function SectionBlock({ section }: { section: any }) {
         <Carousel opts={{ align: "start", loop: products.length > 4 }} className="w-full">
           <CarouselContent className="-ml-3">
             {products.map((p: any) => {
-              const hasDiscount = p.discount_price && p.discount_price < p.price;
-              const price = hasDiscount ? p.discount_price : p.price;
+              // section-level discount overrides product discount when set
+              const sectionDiscounted = (() => {
+                if (section.discount_type === "percent" && section.discount_value > 0) {
+                  return Math.max(0, Math.round(p.price * (1 - section.discount_value / 100)));
+                }
+                if (section.discount_type === "fixed" && section.discount_value > 0) {
+                  return Math.max(0, p.price - section.discount_value);
+                }
+                return null;
+              })();
+              const productDiscounted = p.discount_price && p.discount_price < p.price ? p.discount_price : null;
+              const finalPrice = sectionDiscounted ?? productDiscounted ?? p.price;
+              const hasDiscount = finalPrice < p.price;
+              const price = finalPrice;
               return (
                 <CarouselItem key={p.id} className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
                   <div className="glossy-card overflow-hidden group cursor-pointer h-full flex flex-col" onClick={() => navigate(`/products/${p.id}`)}>
@@ -122,7 +134,7 @@ function SectionBlock({ section }: { section: any }) {
                       )}
                       {hasDiscount && (
                         <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold">
-                          -{toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}%
+                          -{toBn(Math.round(((p.price - price) / p.price) * 100))}%
                         </div>
                       )}
                     </div>
@@ -136,7 +148,7 @@ function SectionBlock({ section }: { section: any }) {
                         <Button
                           size="sm"
                           className="glossy-btn-emerald w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
-                          onClick={(e) => { e.stopPropagation(); setOrderProduct(p); }}
+                          onClick={(e) => { e.stopPropagation(); setOrderProduct({ ...p, discount_price: hasDiscount ? price : p.discount_price }); }}
                         >
                           <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
                         </Button>
