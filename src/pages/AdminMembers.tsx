@@ -263,6 +263,7 @@ const AdminMembers = () => {
       email: member.email || "",
       phone: member.phone || "",
       whatsapp_no: (member as any).whatsapp_no || "",
+      sms_mobile: (member as any).sms_mobile || "",
       designation: member.designation || "",
       designation_en: member.designation_en || "",
       bio: member.bio || "",
