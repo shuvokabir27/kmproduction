@@ -146,7 +146,8 @@ export default function ShopCustomerLogin() {
               <Sparkles className="h-3 w-3" />
               {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
                : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
-               : "মোবাইল নম্বর দিয়ে নতুন পাসওয়ার্ড সেট করুন"}
+               : forgotStep === "phone" ? "OTP পাঠাবো আপনার মোবাইলে"
+               : "OTP ও নতুন পাসওয়ার্ড দিন"}
             </p>
           </div>
 
