@@ -297,7 +297,9 @@ export default function ShopOfferPage() {
             )}
           </div>
         </div>
+       </div>
       </div>
+
 
       {/* Combo product list with prices */}
       <div className="max-w-3xl mx-auto px-4 mt-6 space-y-3">
