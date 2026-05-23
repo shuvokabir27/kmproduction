@@ -18,6 +18,7 @@ import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import MobileShopNav from "@/components/MobileShopNav";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
 import ShopCategoryGrid from "@/components/ShopCategoryGrid";
+import { CustomHomeSections } from "@/components/CustomHomeSections";
 import FreeDeliveryHomeCTA from "@/components/FreeDeliveryHomeCTA";
 import FloatingCartButton from "@/components/FloatingCartButton";
 
@@ -730,6 +731,10 @@ const Products = () => {
 
       {/* Categories Grid */}
       <ShopCategoryGrid />
+
+      {/* Custom admin-managed home sections */}
+      <CustomHomeSections />
+
 
       {/* Trust Bar */}
       <section className="px-4 pb-2 pt-4">
