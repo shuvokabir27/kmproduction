@@ -122,6 +122,9 @@ export default function HomeSectionsManager() {
       is_active: s.is_active,
       discount_type: (s.discount_type || "none") as "none" | "percent" | "fixed",
       discount_value: Number(s.discount_value || 0),
+      order_btn_color: s.order_btn_color || "",
+      bg_color: s.bg_color || "",
+      title_color: s.title_color || "",
     });
     // load products if manual
     if (s.section_type === "manual") {
