@@ -1302,6 +1302,7 @@ export type Database = {
           accent_color: string
           badge_color: string
           badge_text: string | null
+          bg_color: string | null
           category_id: string | null
           category_value: string | null
           created_at: string
@@ -1313,15 +1314,18 @@ export type Database = {
           id: string
           is_active: boolean
           max_items: number
+          order_btn_color: string | null
           section_type: string
           sort_order: number
           title: string
+          title_color: string | null
           updated_at: string
         }
         Insert: {
           accent_color?: string
           badge_color?: string
           badge_text?: string | null
+          bg_color?: string | null
           category_id?: string | null
           category_value?: string | null
           created_at?: string
@@ -1333,15 +1337,18 @@ export type Database = {
           id?: string
           is_active?: boolean
           max_items?: number
+          order_btn_color?: string | null
           section_type?: string
           sort_order?: number
           title: string
+          title_color?: string | null
           updated_at?: string
         }
         Update: {
           accent_color?: string
           badge_color?: string
           badge_text?: string | null
+          bg_color?: string | null
           category_id?: string | null
           category_value?: string | null
           created_at?: string
@@ -1353,9 +1360,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           max_items?: number
+          order_btn_color?: string | null
           section_type?: string
           sort_order?: number
           title?: string
+          title_color?: string | null
           updated_at?: string
         }
         Relationships: []

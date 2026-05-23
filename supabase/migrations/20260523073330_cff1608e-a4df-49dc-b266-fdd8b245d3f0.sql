@@ -1,0 +1,4 @@
+ALTER TABLE public.home_sections
+ADD COLUMN order_btn_color TEXT DEFAULT NULL,
+ADD COLUMN bg_color TEXT DEFAULT NULL,
+ADD COLUMN title_color TEXT DEFAULT NULL;
