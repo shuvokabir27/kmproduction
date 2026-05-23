@@ -76,9 +76,12 @@ function SectionBlock({ section }: { section: any }) {
   if (!products || products.length === 0) return null;
 
   return (
-    <section className="py-16 px-4 relative" style={section.bg_color ? { backgroundColor: section.bg_color } : undefined}>
-      <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px]`} />
-      <div className="container max-w-6xl mx-auto relative z-10">
+    <section className="py-10 px-4 relative">
+      <div
+        className="container max-w-6xl mx-auto relative z-10 rounded-2xl p-6 md:p-10 overflow-hidden"
+        style={section.bg_color ? { backgroundColor: section.bg_color } : undefined}
+      >
+        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px] pointer-events-none`} />
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
           <div>
             {section.eyebrow && (
