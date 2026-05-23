@@ -287,9 +287,9 @@ const AdminPayments = () => {
     try {
       const { data: profile } = await (supabase as any)
         .from("profiles")
-        .select("full_name, phone, whatsapp_no, bkash_no, nagad_no")
+        .select("full_name, phone, whatsapp_no, bkash_no, nagad_no, sms_mobile")
         .eq("id", payment.member_id).maybeSingle();
-      const phoneCandidate = profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "";
+      const phoneCandidate = profile?.sms_mobile || profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "";
       if (!phoneCandidate) { toast.error("সদস্যের কোনো ফোন নাম্বার নেই"); return; }
       const mName = profile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
