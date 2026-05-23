@@ -201,9 +201,11 @@ export default function HomeSectionsManager() {
     setSelectedProductIds(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
   };
 
-  const filteredProducts = products.filter((p: any) =>
-    !productSearch || p.name?.toLowerCase().includes(productSearch.toLowerCase())
-  );
+  const filteredProducts = products.filter((p: any) => {
+    if (pickerCategory !== "all" && p.category !== pickerCategory) return false;
+    if (productSearch && !p.name?.toLowerCase().includes(productSearch.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-4">
