@@ -79,7 +79,13 @@ function SectionBlock({ section }: { section: any }) {
     <section className="px-4 py-6 relative">
       <div
         className="max-w-7xl mx-auto relative z-10 rounded-2xl px-5 py-7 md:p-7 overflow-hidden"
-        style={section.bg_color ? { backgroundColor: section.bg_color } : undefined}
+        style={(() => {
+          if (section.bg_color && section.bg_color_2) {
+            return { background: `linear-gradient(135deg, ${section.bg_color}, ${section.bg_color_2})` };
+          }
+          if (section.bg_color) return { backgroundColor: section.bg_color };
+          return undefined;
+        })()}
       >
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px] pointer-events-none`} />
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
