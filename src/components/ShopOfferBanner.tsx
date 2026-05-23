@@ -138,7 +138,7 @@ export default function ShopOfferBanner() {
       className="relative w-full px-4 py-2"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
     >
-      <div className="relative max-w-7xl mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800 shadow-xl">
+      <div className="relative max-w-7xl mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800 shadow-xl pt-0">
         {/* sparkle bg */}
         <div className="absolute inset-0 pointer-events-none opacity-20 select-none">
           <div className="absolute top-4 left-[10%] text-3xl animate-pulse">✨</div>
@@ -147,7 +147,7 @@ export default function ShopOfferBanner() {
           <div className="absolute bottom-10 right-[10%] text-3xl animate-pulse" style={{ animationDelay: "900ms" }}>🎉</div>
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <div className="relative max-w-6xl mx-auto px-4 py-6 md:py-10 mx-[3px]">
           <div className="flex flex-col md:flex-row items-center gap-5 md:gap-8">
             {heroImage && (
               <div className="shrink-0 w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/40">
