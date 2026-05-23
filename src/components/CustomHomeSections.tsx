@@ -2,12 +2,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QuickOrderDialog from "@/components/QuickOrderDialog";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -37,6 +37,20 @@ function SectionBlock({ section }: { section: any }) {
   const BadgeIcon = iconForBadge(section.badge_text);
   const { addItem, open: openCart } = useCart();
   const [orderProduct, setOrderProduct] = useState<any | null>(null);
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  useEffect(() => {
+    if (!api) return;
+    const update = () => {
+      setCanPrev(api.canScrollPrev());
+      setCanNext(api.canScrollNext());
+    };
+    update();
+    api.on("select", update);
+    api.on("reInit", update);
+  }, [api]);
 
   const { data: products } = useQuery({
     queryKey: ["home-section-products", section.id, section.section_type, section.category_value, section.max_items],
