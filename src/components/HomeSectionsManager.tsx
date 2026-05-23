@@ -142,6 +142,8 @@ export default function HomeSectionsManager() {
       max_items: Number(form.max_items) || 12,
       sort_order: Number(form.sort_order) || 0,
       is_active: form.is_active,
+      discount_type: form.discount_type,
+      discount_value: Number(form.discount_value) || 0,
     };
 
     let sectionId = editing?.id;
