@@ -154,13 +154,13 @@ export default function ShopCustomerLogin() {
           {/* segmented switch */}
           <div className="relative grid grid-cols-2 bg-black/40 border border-white/10 rounded-full p-1 mb-5 text-xs md:text-sm font-bold gap-1">
             <button
-              onClick={() => setMode("login")}
+              onClick={() => { setMode("login"); resetForgot(); }}
               className={`py-2.5 rounded-full transition-all ${mode === "login" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
               লগইন
             </button>
             <button
-              onClick={() => setMode("register")}
+              onClick={() => { setMode("register"); resetForgot(); }}
               className={`py-2.5 rounded-full transition-all ${mode === "register" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
               রেজিস্টার
