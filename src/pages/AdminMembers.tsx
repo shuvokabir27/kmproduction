@@ -386,6 +386,7 @@ const AdminMembers = () => {
             profile_data: {
               phone: form.phone || null,
               whatsapp_no: form.whatsapp_no || null,
+              sms_mobile: form.sms_mobile || null,
               designation: form.designation || null,
               bio: form.bio || null,
               bank_name: form.bank_name || null,
