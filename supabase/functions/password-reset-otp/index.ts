@@ -1,0 +1,151 @@
+// Member / Client password reset via OTP (SMS)
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+);
+
+async function hash(otp: string, phone: string) {
+  const data = new TextEncoder().encode(`kmreset:${phone}:${otp}`);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function ok(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status, headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+const bad = (e: string, s = 400) => ok({ error: e }, s);
+
+function normalizeBdPhone(input: string): string | null {
+  const digits = String(input || "").replace(/\D/g, "");
+  // Accept 11-digit local (01XXXXXXXXX) or 13-digit (8801XXXXXXXXX)
+  if (digits.length === 11 && digits.startsWith("01")) return digits;
+  if (digits.length === 13 && digits.startsWith("8801")) return digits.slice(2);
+  return null;
+}
+
+async function findUser(scope: "member" | "client", identifier: string) {
+  if (scope === "member") {
+    // identifier is member_id (integer)
+    const memberId = parseInt(identifier.trim(), 10);
+    if (!Number.isFinite(memberId)) return null;
+    const { data } = await supabase.from("profiles")
+      .select("user_id, phone, full_name")
+      .eq("member_id", memberId).maybeSingle();
+    if (!data) return null;
+    const phone = normalizeBdPhone(data.phone || "");
+    if (!phone) return null;
+    return { user_id: data.user_id, phone, name: data.full_name || "" };
+  } else {
+    // identifier is phone
+    const phone = normalizeBdPhone(identifier);
+    if (!phone) return null;
+    const { data } = await supabase.from("client_profiles")
+      .select("user_id, phone, name")
+      .eq("phone", phone).maybeSingle();
+    if (!data) return null;
+    return { user_id: data.user_id, phone, name: data.name || "" };
+  }
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  try {
+    const body = await req.json();
+    const action = String(body.action || "");
+    const scope = (String(body.scope || "") as "member" | "client");
+    if (!["member", "client"].includes(scope)) return bad("scope ভুল");
+
+    if (action === "request_otp") {
+      const identifier = String(body.identifier || "").trim();
+      if (!identifier) return bad("আইডি / মোবাইল নম্বর দিন");
+
+      const found = await findUser(scope, identifier);
+      if (!found) return bad("এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি বা ফোন নম্বর সেট করা নেই", 404);
+
+      const phone = found.phone;
+
+      // Rate limit: max 3 per phone in last 10 min
+      const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+      const { count } = await supabase.from("password_reset_otps")
+        .select("id", { count: "exact", head: true })
+        .eq("scope", scope).eq("phone", phone).gte("created_at", tenMinAgo);
+      if ((count || 0) >= 3) return bad("অনেকবার চেষ্টা করেছেন, ১০ মিনিট পর আবার চেষ্টা করুন", 429);
+
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      const otp_hash = await hash(otp, phone);
+      const expires_at = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+      await supabase.from("password_reset_otps").insert({ scope, phone, otp_hash, expires_at });
+
+      const SMS_API_KEY = Deno.env.get("BULK_SMS_API_KEY");
+      const SENDER_ID = Deno.env.get("BULK_SMS_SENDER_ID");
+      if (!SMS_API_KEY || !SENDER_ID) return bad("SMS সার্ভিস কনফিগার করা নেই", 500);
+
+      const message = `Apnar KM Production password reset OTP: ${otp}\n5 minute er moddhe babohar korun. Karo sathe share korben na.`;
+      const smsUrl = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(SMS_API_KEY)}&type=text&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(SENDER_ID)}&message=${encodeURIComponent(message)}`;
+
+      try {
+        const r = await fetch(smsUrl);
+        const t = await r.text();
+        console.log("BulkSMSBD:", r.status, t);
+        let parsed: any = null;
+        try { parsed = JSON.parse(t); } catch { /* */ }
+        if (parsed && parsed.response_code && parsed.response_code !== 202) {
+          return bad(`SMS পাঠানো যায়নি: ${parsed.error_message || t}`, 500);
+        }
+      } catch (e: any) {
+        console.error("SMS error", e);
+        return bad("SMS পাঠাতে সমস্যা: " + (e?.message || ""), 500);
+      }
+
+      // Mask the phone in response: 01XXX***XXXX
+      const masked = phone.slice(0, 5) + "***" + phone.slice(-3);
+      return ok({ ok: true, message: "OTP পাঠানো হয়েছে", masked_phone: masked, expires_in: 300 });
+    }
+
+    if (action === "reset_with_otp") {
+      const identifier = String(body.identifier || "").trim();
+      const otp = String(body.otp || "").replace(/\D/g, "");
+      const newPassword = String(body.new_password || "");
+      if (otp.length !== 6) return bad("৬ ডিজিটের OTP দিন");
+      if (newPassword.length < 6) return bad("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
+
+      const found = await findUser(scope, identifier);
+      if (!found) return bad("অ্যাকাউন্ট পাওয়া যায়নি", 404);
+
+      const { data: row } = await supabase.from("password_reset_otps")
+        .select("id, otp_hash, expires_at, attempts, used_at")
+        .eq("scope", scope).eq("phone", found.phone).is("used_at", null)
+        .order("created_at", { ascending: false }).limit(1).maybeSingle();
+      if (!row) return bad("OTP পাওয়া যায়নি, আবার অনুরোধ করুন");
+      if (new Date(row.expires_at) < new Date()) return bad("OTP এর মেয়াদ শেষ, নতুন OTP নিন");
+      if (row.attempts >= 5) return bad("অনেকবার ভুল চেষ্টা হয়েছে, নতুন OTP নিন", 429);
+
+      const otpHash = await hash(otp, found.phone);
+      if (otpHash !== row.otp_hash) {
+        await supabase.from("password_reset_otps").update({ attempts: row.attempts + 1 }).eq("id", row.id);
+        return bad("OTP ভুল");
+      }
+
+      const { error } = await supabase.auth.admin.updateUserById(found.user_id, { password: newPassword });
+      if (error) return bad(error.message, 500);
+
+      await supabase.from("password_reset_otps").update({ used_at: new Date().toISOString() }).eq("id", row.id);
+      return ok({ ok: true, message: "পাসওয়ার্ড সফলভাবে রিসেট হয়েছে। এখন লগইন করুন।" });
+    }
+
+    return bad("Unknown action");
+  } catch (e: any) {
+    console.error(e);
+    return bad(e?.message || "Server error", 500);
+  }
+});
