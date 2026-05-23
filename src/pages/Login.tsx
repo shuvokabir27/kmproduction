@@ -27,6 +27,14 @@ const Login = () => {
   const [signupName, setSignupName] = useState("");
   const [signupSubmitting, setSignupSubmitting] = useState(false);
 
+  // OTP reset state (for member / client)
+  const [resetIdent, setResetIdent] = useState("");
+  const [resetStep, setResetStep] = useState<"ident" | "otp">("ident");
+  const [resetOtp, setResetOtp] = useState("");
+  const [resetNewPass, setResetNewPass] = useState("");
+  const [resetMaskedPhone, setResetMaskedPhone] = useState("");
+  const [resetScope, setResetScope] = useState<"member" | "client">("member");
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
