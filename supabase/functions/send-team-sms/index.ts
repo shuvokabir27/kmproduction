@@ -14,10 +14,10 @@ const supabase = createClient(
 function normalizePhone(p: string): string | null {
   const digits = String(p || "").replace(/\D/g, "");
   if (!digits) return null;
-  // Accept 01XXXXXXXXX (11) or 8801XXXXXXXXX (13)
+  // Accept 01XXXXXXXXX, 1XXXXXXXXX, +8801XXXXXXXXX, or 8801XXXXXXXXX.
   if (digits.length === 11 && digits.startsWith("01")) return "88" + digits;
+  if (digits.length === 10 && digits.startsWith("1")) return "880" + digits;
   if (digits.length === 13 && digits.startsWith("8801")) return digits;
-  if (digits.length === 14 && digits.startsWith("8801")) return digits;
   return null;
 }
 
@@ -29,7 +29,12 @@ async function sendOne(phone: string, message: string) {
   try {
     const res = await fetch(url);
     const text = await res.text();
-    return { ok: res.ok, response: text };
+    let parsed: any = null;
+    try { parsed = JSON.parse(text); } catch { /* Provider may return plain text */ }
+    const providerAccepted = parsed
+      ? Number(parsed.response_code) === 202
+      : /(^|\D)202($|\D)|submitted|success/i.test(text);
+    return { ok: res.ok && providerAccepted, status: res.status, response: parsed || text };
   } catch (e: any) {
     return { ok: false, error: e.message };
   }
@@ -60,9 +65,9 @@ Deno.serve(async (req) => {
     if (Array.isArray(body.member_ids)) ids.push(...body.member_ids.map((x: any) => String(x)));
 
     if (ids.length > 0) {
-      const { data } = await supabase.from("profiles").select("phone").in("id", ids);
+      const { data } = await supabase.from("profiles").select("sms_mobile, phone, whatsapp_no, bkash_no, nagad_no").in("id", ids);
       for (const row of data || []) {
-        const n = normalizePhone((row as any).phone || "");
+        const n = normalizePhone((row as any).sms_mobile || (row as any).phone || (row as any).whatsapp_no || (row as any).bkash_no || (row as any).nagad_no || "");
         if (n) phones.push(n);
       }
     }
