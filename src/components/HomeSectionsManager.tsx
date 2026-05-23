@@ -84,6 +84,7 @@ export default function HomeSectionsManager() {
   const [form, setForm] = useState({ ...emptyForm });
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [productSearch, setProductSearch] = useState("");
+  const [pickerCategory, setPickerCategory] = useState<string>("all");
 
   const openCreate = () => {
     setEditing(null);
