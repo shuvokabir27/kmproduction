@@ -171,6 +171,17 @@ const AdminPayments = () => {
   };
 
   const selectedProfile = members?.find((m) => m.id === selectedMember);
+
+  // Auto-fill SMS phone when member selected
+  useEffect(() => {
+    if (!selectedMember) { setSmsPhone(""); return; }
+    const sp: any = selectedProfile || {};
+    const raw = String(sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").replace(/\D/g, "");
+    // Strip leading 88 if present so user sees 01XXXXXXXXX
+    const local = raw.startsWith("88") ? raw.slice(2) : raw;
+    setSmsPhone(local.slice(0, 11));
+  }, [selectedMember, selectedProfile]);
+
   const { data: memberBalance } = useMemberBalance(selectedMember || undefined);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
