@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown, MessageCircle } from "lucide-react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown, MessageCircle, Send, CheckCircle2 } from "lucide-react";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -181,14 +181,14 @@ const AdminPayments = () => {
     if (!selectedMember || !amount || !method) return;
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("payments").insert({
+      const { data: inserted, error } = await supabase.from("payments").insert({
         member_id: selectedMember,
         amount: Number(amount),
         payment_method: method as any,
         transaction_id: transactionId || null,
         notes: notes || null,
         paid_by: user!.id,
-      });
+      }).select("id").single();
       if (error) throw error;
       toast.success("পেমেন্ট সফল! রিসিট দেখতে পেমেন্ট হিস্ট্রি থেকে ক্লিক করুন।");
       // SMS payment confirmation to member (English-only for BulkSMSBD non-unicode)
@@ -201,10 +201,11 @@ const AdminPayments = () => {
       const phoneCandidate = sp.phone || sp.whatsapp_no || sp.bkash_number || sp.nagad_number || sp.mobile_number || "";
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
       try {
-        if (phoneCandidate) {
-          await sendTeamSms({ phone: String(phoneCandidate), message: msg });
-        } else {
-          await sendTeamSms({ member_id: selectedMember, message: msg });
+        const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms",
+          phoneCandidate ? { body: { phone: String(phoneCandidate), message: msg } } : { body: { member_id: selectedMember, message: msg } }
+        );
+        if (!smsErr && smsRes && (smsRes.sent ?? 0) > 0 && inserted?.id) {
+          await supabase.from("payments").update({ sms_sent_at: new Date().toISOString() } as any).eq("id", inserted.id);
         }
       } catch (e) { console.warn("SMS send failed", e); }
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
@@ -267,6 +268,36 @@ const AdminPayments = () => {
 
   // Quick WhatsApp send: render receipt off-screen → upload PNG to storage → open wa.me with link
   const [whatsappSendingId, setWhatsappSendingId] = useState<string | null>(null);
+  const [smsSendingId, setSmsSendingId] = useState<string | null>(null);
+
+  const sendSmsFromRow = async (payment: any) => {
+    setSmsSendingId(payment.id);
+    try {
+      const { data: profile } = await (supabase as any)
+        .from("profiles")
+        .select("full_name, phone, whatsapp_no, bkash_number, nagad_number, mobile_number")
+        .eq("id", payment.member_id).maybeSingle();
+      const phoneCandidate = profile?.phone || profile?.whatsapp_no || profile?.bkash_number || profile?.nagad_number || profile?.mobile_number || "";
+      if (!phoneCandidate) { toast.error("সদস্যের কোনো ফোন নাম্বার নেই"); return; }
+      const mName = profile?.full_name || "Member";
+      const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
+      const dateStr = format(new Date(payment.payment_date), "dd/MM/yyyy");
+      const msg = `Dear ${mName}, Payment Tk ${Number(payment.amount).toLocaleString("en-US")} received via ${mLabelEn[payment.payment_method] || payment.payment_method} on ${dateStr}.${payment.transaction_id ? ` TrxID: ${payment.transaction_id}.` : ""} Thank you. - KM Multimedia`;
+      const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms", { body: { phone: String(phoneCandidate), message: msg } });
+      if (smsErr || !smsRes || (smsRes.sent ?? 0) === 0) {
+        toast.error("SMS পাঠানো যায়নি");
+        return;
+      }
+      await supabase.from("payments").update({ sms_sent_at: new Date().toISOString() } as any).eq("id", payment.id);
+      toast.success("SMS পাঠানো হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
+    } catch (e: any) {
+      toast.error(e?.message || "SMS পাঠাতে সমস্যা হয়েছে");
+    } finally {
+      setSmsSendingId(null);
+    }
+  };
+
   const sendWhatsAppFromRow = async (payment: any) => {
     setWhatsappSendingId(payment.id);
     try {
@@ -690,6 +721,7 @@ const AdminPayments = () => {
                   <th className="text-left p-3 text-red-400 font-medium text-xs hidden sm:table-cell">মাধ্যম</th>
                   <th className="text-left p-3 text-violet-400 font-medium text-xs hidden md:table-cell">লাস্ট ৪ ডিজিট</th>
                   <th className="text-left p-3 text-pink-400 font-medium text-xs">তারিখ</th>
+                  <th className="text-center p-3 text-emerald-400 font-medium text-xs">SMS</th>
                   <th className="text-center p-3 text-blue-400 font-medium text-xs">রিসিট / WhatsApp</th>
                   <th className="text-center p-3 text-red-400 font-medium text-xs">ডিলিট</th>
                 </tr>
@@ -723,6 +755,24 @@ const AdminPayments = () => {
                       </td>
                       <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{p.transaction_id || "—"}</td>
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
+                      <td className="p-3 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          {p.sms_sent_at ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30" title={`পাঠানো: ${new Date(p.sms_sent_at).toLocaleString("bn-BD")}`}>
+                              <CheckCircle2 className="h-3 w-3" /> পাঠানো
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground">পাঠানো হয়নি</span>
+                          )}
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-emerald-500/40 hover:bg-emerald-500/10" onClick={() => sendSmsFromRow(p)} disabled={smsSendingId === p.id} title={p.sms_sent_at ? "আবার SMS পাঠান" : "SMS পাঠান"}>
+                            {smsSendingId === p.id ? (
+                              <span className="h-3 w-3 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Send className="h-3.5 w-3.5 text-emerald-500" />
+                            )}
+                          </Button>
+                        </div>
+                      </td>
                       <td className="p-3 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-primary/30 hover:bg-primary/10" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
@@ -765,7 +815,7 @@ const AdminPayments = () => {
                   );
                 })}
                 {filteredPayments.length === 0 && (
-                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">{searchText.trim() ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট নেই"}</td></tr>
+                  <tr><td colSpan={8} className="p-4 text-center text-muted-foreground">{searchText.trim() ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট নেই"}</td></tr>
                 )}
               </tbody>
             </table>

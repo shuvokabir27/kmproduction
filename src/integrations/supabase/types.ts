@@ -2078,6 +2078,7 @@ export type Database = {
           paid_by: string | null
           payment_date: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          sms_sent_at: string | null
           transaction_id: string | null
         }
         Insert: {
@@ -2090,6 +2091,7 @@ export type Database = {
           paid_by?: string | null
           payment_date?: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          sms_sent_at?: string | null
           transaction_id?: string | null
         }
         Update: {
@@ -2102,6 +2104,7 @@ export type Database = {
           paid_by?: string | null
           payment_date?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
+          sms_sent_at?: string | null
           transaction_id?: string | null
         }
         Relationships: [
