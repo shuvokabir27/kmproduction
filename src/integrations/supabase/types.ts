@@ -2596,6 +2596,7 @@ export type Database = {
           show_on_public: boolean | null
           showreel_url: string | null
           skin_tone: string | null
+          sms_mobile: string | null
           special_skills: string[] | null
           spotlight_priority: number
           stage_name: string | null
@@ -2669,6 +2670,7 @@ export type Database = {
           show_on_public?: boolean | null
           showreel_url?: string | null
           skin_tone?: string | null
+          sms_mobile?: string | null
           special_skills?: string[] | null
           spotlight_priority?: number
           stage_name?: string | null
@@ -2742,6 +2744,7 @@ export type Database = {
           show_on_public?: boolean | null
           showreel_url?: string | null
           skin_tone?: string | null
+          sms_mobile?: string | null
           special_skills?: string[] | null
           spotlight_priority?: number
           stage_name?: string | null
