@@ -1,0 +1,1 @@
+ALTER TABLE public.home_sections ADD COLUMN IF NOT EXISTS bg_color_2 text;

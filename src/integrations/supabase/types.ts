@@ -1303,6 +1303,7 @@ export type Database = {
           badge_color: string
           badge_text: string | null
           bg_color: string | null
+          bg_color_2: string | null
           category_id: string | null
           category_value: string | null
           created_at: string
@@ -1326,6 +1327,7 @@ export type Database = {
           badge_color?: string
           badge_text?: string | null
           bg_color?: string | null
+          bg_color_2?: string | null
           category_id?: string | null
           category_value?: string | null
           created_at?: string
@@ -1349,6 +1351,7 @@ export type Database = {
           badge_color?: string
           badge_text?: string | null
           bg_color?: string | null
+          bg_color_2?: string | null
           category_id?: string | null
           category_value?: string | null
           created_at?: string
