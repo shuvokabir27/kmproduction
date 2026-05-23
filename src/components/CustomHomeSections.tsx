@@ -174,6 +174,7 @@ function SectionBlock({ section }: { section: any }) {
           <CarouselNext className="hidden md:flex -right-4" />
         </Carousel>
       </div>
+      <QuickOrderDialog product={orderProduct} open={!!orderProduct} onClose={() => setOrderProduct(null)} />
     </section>
   );
 }
