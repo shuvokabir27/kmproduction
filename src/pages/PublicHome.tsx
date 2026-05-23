@@ -909,6 +909,18 @@ const PublicHome = () => {
               © {new Date().getFullYear()} {settings?.site_name || "KM Production House"}. {t("সর্বস্বত্ব সংরক্ষিত।", "All rights reserved.")}
             </p>
           </div>
+
+          {/* Media team login */}
+          <div className="mt-6 flex justify-center">
+            <a
+              href="/login"
+              className="inline-flex items-center justify-center gap-2 px-6 h-11 rounded-xl text-white text-sm font-bold shadow-md ring-1 ring-white/20 hover:brightness-110 transition"
+              style={{ background: "linear-gradient(140deg, #b91c1c, #4c0519)" }}
+              title="KM Production মিডিয়া টিম লগইন"
+            >
+              🎬 মিডিয়া লগইন
+            </a>
+          </div>
         </div>
       </footer>
 

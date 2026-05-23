@@ -284,18 +284,6 @@ export default function ShopCustomerLogin() {
               🔒 আপনার তথ্য সম্পূর্ণ সুরক্ষিত ও এনক্রিপ্টেড
             </p>
 
-            {/* divider */}
-            <div className="relative my-4 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-
-            {/* media login */}
-            <button
-              onClick={() => nav("/login")}
-              className="relative w-full h-11 rounded-xl text-white text-sm font-bold shadow-md ring-1 ring-white/20 hover:brightness-110 transition inline-flex items-center justify-center gap-2"
-              style={{ background: "linear-gradient(140deg, #b91c1c, #4c0519)" }}
-              title="KM Production মিডিয়া টিম লগইন"
-            >
-              🎬 মিডিয়া লগইন
-            </button>
           </div>
         </div>
       </div>
