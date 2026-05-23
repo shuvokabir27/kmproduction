@@ -745,6 +745,31 @@ const AdminPayments = () => {
                   <p className="text-[10px] text-muted-foreground mt-1">খালি রাখলে সদস্যের প্রোফাইল নাম্বারে যাবে। ০ থেকে ১১ ডিজিট লিখুন।</p>
                 </div>
 
+                {/* SMS Demo Preview */}
+                {smsPreview && smsCost && (
+                  <div className="rounded-lg border border-border/40 bg-secondary/40 p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-medium text-foreground flex items-center gap-1.5">
+                        <MessageCircle className="h-3 w-3 text-primary" /> SMS প্রিভিউ
+                      </span>
+                      <span className={`text-[11px] font-bold ${smsCost.segments > 1 ? "text-amber-400" : "text-emerald-400"}`}>
+                        {smsCost.segments} টি SMS × ৳0.35 = ৳{smsCost.cost}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed break-words font-mono bg-background/60 rounded px-2 py-1.5 border border-border/30">
+                      {smsPreview}
+                    </p>
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <span>{smsCost.len} অক্ষর</span>
+                      <span>
+                        {smsCost.segments > 1
+                          ? `প্রতি SMS ১৫৩ অক্ষর — বেশি অক্ষরের জন্য ${smsCost.segments}টি SMS পাঠাতে হবে`
+                          : "একটি SMS-এ পাঠানো যাবে"}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <Label className="text-foreground">নোট (ঐচ্ছিক)</Label>
                   <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="bg-secondary border-border/50" />
