@@ -116,7 +116,7 @@ function SectionBlock({ section }: { section: any }) {
         </motion.div>
 
         <Carousel opts={{ align: "start", loop: products.length > 4 }} className="w-full">
-          <CarouselContent className="-ml-3">
+          <CarouselContent className={`-ml-3 ${products.length < 5 ? "justify-center" : ""}`}>
             {products.map((p: any) => {
               // section-level discount overrides product discount when set
               const sectionDiscounted = (() => {
