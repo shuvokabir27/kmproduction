@@ -202,6 +202,27 @@ const AdminPayments = () => {
 
   const { data: memberBalance } = useMemberBalance(selectedMember || undefined);
 
+  // SMS preview & cost calculator
+  const smsPreview = useMemo(() => {
+    if (!selectedProfile) return null;
+    const mName = selectedProfile.full_name || "Member";
+    const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
+    const prevDue = Number(memberBalance?.balance || 0);
+    const newDue = Math.max(0, prevDue - Number(amount || 0));
+    const dateStr = format(new Date(), "dd/MM/yyyy");
+    const msg = `Dear ${mName}, Payment Tk ${Number(amount || 0).toLocaleString("en-US")} received via ${mLabelEn[method] || method || "Cash"} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
+    return msg;
+  }, [selectedProfile, amount, method, transactionId, memberBalance]);
+
+  const smsCost = useMemo(() => {
+    if (!smsPreview) return null;
+    const len = smsPreview.length;
+    const perSegment = 0.35;
+    const segments = len <= 160 ? 1 : Math.ceil(len / 153);
+    const cost = (segments * perSegment).toFixed(2);
+    return { len, segments, cost };
+  }, [smsPreview]);
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
@@ -723,6 +744,31 @@ const AdminPayments = () => {
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-1">খালি রাখলে সদস্যের প্রোফাইল নাম্বারে যাবে। ০ থেকে ১১ ডিজিট লিখুন।</p>
                 </div>
+
+                {/* SMS Demo Preview */}
+                {smsPreview && smsCost && (
+                  <div className="rounded-lg border border-border/40 bg-secondary/40 p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-medium text-foreground flex items-center gap-1.5">
+                        <MessageCircle className="h-3 w-3 text-primary" /> SMS প্রিভিউ
+                      </span>
+                      <span className={`text-[11px] font-bold ${smsCost.segments > 1 ? "text-amber-400" : "text-emerald-400"}`}>
+                        {smsCost.segments} টি SMS × ৳0.35 = ৳{smsCost.cost}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed break-words font-mono bg-background/60 rounded px-2 py-1.5 border border-border/30">
+                      {smsPreview}
+                    </p>
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <span>{smsCost.len} অক্ষর</span>
+                      <span>
+                        {smsCost.segments > 1
+                          ? `প্রতি SMS ১৫৩ অক্ষর — বেশি অক্ষরের জন্য ${smsCost.segments}টি SMS পাঠাতে হবে`
+                          : "একটি SMS-এ পাঠানো যাবে"}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 <div>
                   <Label className="text-foreground">নোট (ঐচ্ছিক)</Label>
