@@ -136,7 +136,7 @@ function SectionBlock({ section }: { section: any }) {
                         <Button
                           size="sm"
                           className="glossy-btn-emerald w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
-                          onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.id}?order=1`); }}
+                          onClick={(e) => { e.stopPropagation(); setOrderProduct(p); }}
                         >
                           <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
                         </Button>
