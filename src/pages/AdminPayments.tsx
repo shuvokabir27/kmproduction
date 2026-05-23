@@ -212,7 +212,7 @@ const AdminPayments = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
-      setSelectedMember(""); setAmount(""); setMethod(""); setTransactionId(""); setNotes("");
+      setSelectedMember(""); setAmount(""); setMethod(""); setTransactionId(""); setNotes(""); setSmsPhone("");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
