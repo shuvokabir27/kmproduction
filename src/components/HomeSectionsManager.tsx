@@ -107,6 +107,8 @@ export default function HomeSectionsManager() {
       max_items: s.max_items,
       sort_order: s.sort_order,
       is_active: s.is_active,
+      discount_type: (s.discount_type || "none") as "none" | "percent" | "fixed",
+      discount_value: Number(s.discount_value || 0),
     });
     // load products if manual
     if (s.section_type === "manual") {
