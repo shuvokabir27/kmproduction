@@ -34,8 +34,8 @@ export default function ShopCustomerAccount() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", address: "" });
-  const [productMap, setProductMap] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
-  const [productByName, setProductByName] = useState<Record<string, { id: string; stock_status: string; is_active: boolean }>>({});
+  const [productMap, setProductMap] = useState<Record<string, { id: string; slug: string | null; stock_status: string; is_active: boolean }>>({});
+  const [productByName, setProductByName] = useState<Record<string, { id: string; slug: string | null; stock_status: string; is_active: boolean }>>({});
   const [trackOrder, setTrackOrder] = useState<any | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
@@ -77,7 +77,7 @@ export default function ShopCustomerAccount() {
   useEffect(() => {
     if (orders.length === 0) { setProductMap({}); setProductByName({}); return; }
     (async () => {
-      const { data: allProducts } = await supabase.from("products").select("id, name, stock_status, is_active");
+      const { data: allProducts } = await supabase.from("products").select("id, name, slug, stock_status, is_active");
       const mapId: Record<string, any> = {};
       const mapName: Record<string, any> = {};
       (allProducts || []).forEach((p: any) => {
