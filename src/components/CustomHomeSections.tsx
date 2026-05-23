@@ -7,6 +7,8 @@ import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus } fro
 import { motion } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
+import { useState } from "react";
+import QuickOrderDialog from "@/components/QuickOrderDialog";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -34,6 +36,7 @@ function SectionBlock({ section }: { section: any }) {
   const badgeAccent = accentMap[section.badge_color] || accent;
   const BadgeIcon = iconForBadge(section.badge_text);
   const { addItem, open: openCart } = useCart();
+  const [orderProduct, setOrderProduct] = useState<any | null>(null);
 
   const { data: products } = useQuery({
     queryKey: ["home-section-products", section.id, section.section_type, section.category_value, section.max_items],
@@ -133,7 +136,7 @@ function SectionBlock({ section }: { section: any }) {
                         <Button
                           size="sm"
                           className="glossy-btn-emerald w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
-                          onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.id}?order=1`); }}
+                          onClick={(e) => { e.stopPropagation(); setOrderProduct(p); }}
                         >
                           <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
                         </Button>
@@ -171,6 +174,7 @@ function SectionBlock({ section }: { section: any }) {
           <CarouselNext className="hidden md:flex -right-4" />
         </Carousel>
       </div>
+      <QuickOrderDialog product={orderProduct} open={!!orderProduct} onClose={() => setOrderProduct(null)} />
     </section>
   );
 }
