@@ -200,11 +200,13 @@ const AdminPayments = () => {
       const sp: any = selectedProfile || {};
       const phoneCandidate = sp.phone || sp.whatsapp_no || sp.bkash_number || sp.nagad_number || sp.mobile_number || "";
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
-      if (phoneCandidate) {
-        sendTeamSms({ phone: String(phoneCandidate), message: msg });
-      } else {
-        sendTeamSms({ member_id: selectedMember, message: msg });
-      }
+      try {
+        if (phoneCandidate) {
+          await sendTeamSms({ phone: String(phoneCandidate), message: msg });
+        } else {
+          await sendTeamSms({ member_id: selectedMember, message: msg });
+        }
+      } catch (e) { console.warn("SMS send failed", e); }
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
