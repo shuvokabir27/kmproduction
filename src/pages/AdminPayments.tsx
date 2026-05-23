@@ -29,6 +29,7 @@ const AdminPayments = () => {
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState<string>("");
   const [transactionId, setTransactionId] = useState("");
+  const [smsPhone, setSmsPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
@@ -170,6 +171,17 @@ const AdminPayments = () => {
   };
 
   const selectedProfile = members?.find((m) => m.id === selectedMember);
+
+  // Auto-fill SMS phone when member selected
+  useEffect(() => {
+    if (!selectedMember) { setSmsPhone(""); return; }
+    const sp: any = selectedProfile || {};
+    const raw = String(sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").replace(/\D/g, "");
+    // Strip leading 88 if present so user sees 01XXXXXXXXX
+    const local = raw.startsWith("88") ? raw.slice(2) : raw;
+    setSmsPhone(local.slice(0, 11));
+  }, [selectedMember, selectedProfile]);
+
   const { data: memberBalance } = useMemberBalance(selectedMember || undefined);
 
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">লোড হচ্ছে...</div>;
@@ -198,7 +210,7 @@ const AdminPayments = () => {
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
       const sp: any = selectedProfile || {};
-      const phoneCandidate = sp.phone || sp.whatsapp_no || sp.bkash_number || sp.nagad_number || sp.mobile_number || "";
+      const phoneCandidate = (smsPhone.trim() || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").toString();
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
       try {
         const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms",
@@ -211,7 +223,7 @@ const AdminPayments = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
-      setSelectedMember(""); setAmount(""); setMethod(""); setTransactionId(""); setNotes("");
+      setSelectedMember(""); setAmount(""); setMethod(""); setTransactionId(""); setNotes(""); setSmsPhone("");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -275,9 +287,9 @@ const AdminPayments = () => {
     try {
       const { data: profile } = await (supabase as any)
         .from("profiles")
-        .select("full_name, phone, whatsapp_no, bkash_number, nagad_number, mobile_number")
+        .select("full_name, phone, whatsapp_no, bkash_no, nagad_no")
         .eq("id", payment.member_id).maybeSingle();
-      const phoneCandidate = profile?.phone || profile?.whatsapp_no || profile?.bkash_number || profile?.nagad_number || profile?.mobile_number || "";
+      const phoneCandidate = profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "";
       if (!phoneCandidate) { toast.error("সদস্যের কোনো ফোন নাম্বার নেই"); return; }
       const mName = profile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
@@ -675,6 +687,22 @@ const AdminPayments = () => {
                     />
                   </div>
                 )}
+
+                <div>
+                  <Label className="text-foreground">SMS পাঠানোর নাম্বার</Label>
+                  <div className="flex items-stretch gap-2">
+                    <span className="inline-flex items-center px-3 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground select-none">+88</span>
+                    <Input
+                      value={smsPhone}
+                      onChange={(e) => setSmsPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                      placeholder="01XXXXXXXXX"
+                      inputMode="numeric"
+                      maxLength={11}
+                      className="bg-secondary border-border/50 font-mono tracking-wide"
+                    />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-1">খালি রাখলে সদস্যের প্রোফাইল নাম্বারে যাবে। ০ থেকে ১১ ডিজিট লিখুন।</p>
+                </div>
 
                 <div>
                   <Label className="text-foreground">নোট (ঐচ্ছিক)</Label>
