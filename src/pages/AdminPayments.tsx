@@ -197,10 +197,14 @@ const AdminPayments = () => {
       const prevDue = Number(memberBalance?.balance || 0);
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
-      sendTeamSms({
-        member_id: selectedMember,
-        message: `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`,
-      });
+      const sp: any = selectedProfile || {};
+      const phoneCandidate = sp.phone || sp.whatsapp_no || sp.bkash_number || sp.nagad_number || sp.mobile_number || "";
+      const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
+      if (phoneCandidate) {
+        sendTeamSms({ phone: String(phoneCandidate), message: msg });
+      } else {
+        sendTeamSms({ member_id: selectedMember, message: msg });
+      }
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
