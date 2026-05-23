@@ -90,23 +90,25 @@ function SectionBlock({ section }: { section: any }) {
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px] pointer-events-none`} />
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
           <div>
-            {section.eyebrow && (
-              <span className={`${accent.text} text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2`}>
-                <Sparkles className="h-4 w-4" /> {section.eyebrow}
-              </span>
-            )}
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              {section.badge_text && (
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${badgeAccent.btn} text-white text-xs font-bold shadow`}>
+                  <BadgeIcon className="h-3.5 w-3.5" /> {section.badge_text}
+                </div>
+              )}
+              {section.eyebrow && (
+                <span className={`${accent.text} text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2`}>
+                  <Sparkles className="h-4 w-4" /> {section.eyebrow}
+                </span>
+              )}
+            </div>
             <h2
-              className="font-display font-bold text-3xl md:text-5xl mt-3 tracking-wider"
+              className="font-display font-bold text-3xl md:text-5xl mt-1 tracking-wider"
               style={section.title_color ? { color: section.title_color } : undefined}
             >
               {section.title}
             </h2>
             <div className={`h-1 w-20 bg-gradient-to-r ${accent.from} to-transparent rounded-full mt-4`} />
-            {section.badge_text && (
-              <div className={`inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full ${badgeAccent.btn} text-white text-xs font-bold shadow`}>
-                <BadgeIcon className="h-3.5 w-3.5" /> {section.badge_text}
-              </div>
-            )}
           </div>
           {(section.cta_label || section.cta_link) && (
             <Button onClick={() => navigate(section.cta_link || "/products")} variant="outline" className={`${accent.ring} gap-2`}>
