@@ -25,6 +25,7 @@ interface MemberForm {
   email: string;
   phone: string;
   whatsapp_no: string;
+  sms_mobile: string;
   designation: string;
   designation_en: string;
   bio: string;
@@ -63,7 +64,7 @@ interface MemberForm {
 }
 
 const emptyForm: MemberForm = {
-  full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "",
+  full_name: "", full_name_en: "", email: "", phone: "", whatsapp_no: "", sms_mobile: "",
   designation: "", designation_en: "",
   bio: "", bio_en: "", short_bio: "", short_bio_en: "",
   bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "",
@@ -262,6 +263,7 @@ const AdminMembers = () => {
       email: member.email || "",
       phone: member.phone || "",
       whatsapp_no: (member as any).whatsapp_no || "",
+      sms_mobile: (member as any).sms_mobile || "",
       designation: member.designation || "",
       designation_en: member.designation_en || "",
       bio: member.bio || "",
@@ -321,6 +323,7 @@ const AdminMembers = () => {
           email: form.email || null,
           phone: form.phone || null,
           whatsapp_no: form.whatsapp_no || null,
+          sms_mobile: form.sms_mobile || null,
           designation: form.designation || null,
           designation_en: form.designation_en || null,
           bio: form.bio || null,
@@ -383,6 +386,7 @@ const AdminMembers = () => {
             profile_data: {
               phone: form.phone || null,
               whatsapp_no: form.whatsapp_no || null,
+              sms_mobile: form.sms_mobile || null,
               designation: form.designation || null,
               bio: form.bio || null,
               bank_name: form.bank_name || null,
@@ -557,6 +561,25 @@ const AdminMembers = () => {
                       )}
                     </div>
                   </div>
+                </div>
+                <div>
+                  <Label className="text-foreground flex items-center gap-1">
+                    <MessageCircle className="h-3.5 w-3.5 text-emerald-500" /> SMS মোবাইল নাম্বার
+                  </Label>
+                  <div className="flex items-center gap-1.5">
+                    <span className="px-2 py-2 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground">+88</span>
+                    <Input
+                      value={form.sms_mobile}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                        setField("sms_mobile", digits);
+                      }}
+                      placeholder="01XXXXXXXXX"
+                      className="bg-secondary border-border/50 flex-1"
+                      inputMode="numeric"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">SMS পাঠানোর সময় এই নাম্বার ব্যবহার হবে (+88 অটো যুক্ত হবে)</p>
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <div>

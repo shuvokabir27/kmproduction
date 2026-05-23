@@ -176,7 +176,7 @@ const AdminPayments = () => {
   useEffect(() => {
     if (!selectedMember) { setSmsPhone(""); return; }
     const sp: any = selectedProfile || {};
-    const raw = String(sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").replace(/\D/g, "");
+    const raw = String(sp.sms_mobile || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").replace(/\D/g, "");
     // Strip leading 88 if present so user sees 01XXXXXXXXX
     const local = raw.startsWith("88") ? raw.slice(2) : raw;
     setSmsPhone(local.slice(0, 11));
@@ -210,7 +210,7 @@ const AdminPayments = () => {
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
       const sp: any = selectedProfile || {};
-      const phoneCandidate = (smsPhone.trim() || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").toString();
+      const phoneCandidate = (smsPhone.trim() || sp.sms_mobile || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").toString();
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
       try {
         const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms",
@@ -287,9 +287,9 @@ const AdminPayments = () => {
     try {
       const { data: profile } = await (supabase as any)
         .from("profiles")
-        .select("full_name, phone, whatsapp_no, bkash_no, nagad_no")
+        .select("full_name, phone, whatsapp_no, bkash_no, nagad_no, sms_mobile")
         .eq("id", payment.member_id).maybeSingle();
-      const phoneCandidate = profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "";
+      const phoneCandidate = profile?.sms_mobile || profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "";
       if (!phoneCandidate) { toast.error("সদস্যের কোনো ফোন নাম্বার নেই"); return; }
       const mName = profile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
