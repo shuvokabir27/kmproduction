@@ -176,7 +176,7 @@ const AdminPayments = () => {
   useEffect(() => {
     if (!selectedMember) { setSmsPhone(""); return; }
     const sp: any = selectedProfile || {};
-    const raw = String(sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").replace(/\D/g, "");
+    const raw = String(sp.sms_mobile || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").replace(/\D/g, "");
     // Strip leading 88 if present so user sees 01XXXXXXXXX
     const local = raw.startsWith("88") ? raw.slice(2) : raw;
     setSmsPhone(local.slice(0, 11));
