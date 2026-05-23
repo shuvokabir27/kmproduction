@@ -87,7 +87,7 @@ const ProductDetail = () => {
           .eq("is_active", true);
         if (data && data.length > 0) return data;
       }
-      const q = supabase.from("products").select("*").eq("is_active", true).neq("id", id!).limit(4);
+      const q = supabase.from("products").select("*").eq("is_active", true).neq("id", product!.id).limit(4);
       if (product?.category) q.eq("category", product.category);
       const { data } = await q;
       return data ?? [];
