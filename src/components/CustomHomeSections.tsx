@@ -7,6 +7,8 @@ import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus } fro
 import { motion } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
+import { useState } from "react";
+import QuickOrderDialog from "@/components/QuickOrderDialog";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
