@@ -747,24 +747,30 @@ const AdminPayments = () => {
 
                 {/* SMS Demo Preview */}
                 {smsPreview && smsCost && (
-                  <div className="rounded-lg border border-border/40 bg-secondary/40 p-3 space-y-2">
+                  <div className="rounded-lg border border-border/40 bg-emerald-950/20 p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-medium text-foreground flex items-center gap-1.5">
-                        <MessageCircle className="h-3 w-3 text-primary" /> SMS প্রিভিউ
+                      <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <MessageCircle className="h-3.5 w-3.5 text-emerald-400" /> মেম্বারের কাছে যে SMS যাবে
                       </span>
-                      <span className={`text-[11px] font-bold ${smsCost.segments > 1 ? "text-amber-400" : "text-emerald-400"}`}>
-                        {smsCost.segments} টি SMS × ৳0.35 = ৳{smsCost.cost}
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${smsCost.segments > 1 ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"}`}>
+                        {smsCost.segments} SMS × ৳0.35 = ৳{smsCost.cost}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed break-words font-mono bg-background/60 rounded px-2 py-1.5 border border-border/30">
-                      {smsPreview}
-                    </p>
+                    {/* Message bubble style */}
+                    <div className="relative bg-emerald-600/15 border border-emerald-500/25 rounded-xl rounded-tl-sm px-3.5 py-3">
+                      <p className="text-[12px] text-foreground/90 leading-relaxed break-words font-medium whitespace-pre-wrap">
+                        {smsPreview}
+                      </p>
+                    </div>
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                      <span>{smsCost.len} অক্ষর</span>
+                      <span className="flex items-center gap-1">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        {smsCost.len} অক্ষর
+                      </span>
                       <span>
                         {smsCost.segments > 1
-                          ? `প্রতি SMS ১৫৩ অক্ষর — বেশি অক্ষরের জন্য ${smsCost.segments}টি SMS পাঠাতে হবে`
-                          : "একটি SMS-এ পাঠানো যাবে"}
+                          ? `১টি SMS = ১৫৩ অক্ষর — ${smsCost.segments}টি SMS পাঠাতে হবে`
+                          : "১টি SMS-এ পাঠানো যাবে (সীমা ১৬০ অক্ষর)"}
                       </span>
                     </div>
                   </div>
