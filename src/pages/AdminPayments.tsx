@@ -29,6 +29,7 @@ const AdminPayments = () => {
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState<string>("");
   const [transactionId, setTransactionId] = useState("");
+  const [smsPhone, setSmsPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
