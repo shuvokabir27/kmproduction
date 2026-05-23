@@ -2,12 +2,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import { ShoppingBag, ShoppingCart, Sparkles, Truck, Tag, Star, Gift, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QuickOrderDialog from "@/components/QuickOrderDialog";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
@@ -37,6 +37,20 @@ function SectionBlock({ section }: { section: any }) {
   const BadgeIcon = iconForBadge(section.badge_text);
   const { addItem, open: openCart } = useCart();
   const [orderProduct, setOrderProduct] = useState<any | null>(null);
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  useEffect(() => {
+    if (!api) return;
+    const update = () => {
+      setCanPrev(api.canScrollPrev());
+      setCanNext(api.canScrollNext());
+    };
+    update();
+    api.on("select", update);
+    api.on("reInit", update);
+  }, [api]);
 
   const { data: products } = useQuery({
     queryKey: ["home-section-products", section.id, section.section_type, section.category_value, section.max_items],
@@ -88,36 +102,60 @@ function SectionBlock({ section }: { section: any }) {
         })()}
       >
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px] pointer-events-none`} />
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              {section.badge_text && (
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${badgeAccent.btn} text-white text-xs font-bold shadow`}>
-                  <BadgeIcon className="h-3.5 w-3.5" /> {section.badge_text}
+        <Carousel setApi={setApi} opts={{ align: "start", loop: products.length > 4 }} className="w-full">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                {section.badge_text && (
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${badgeAccent.btn} text-white text-xs font-bold shadow`}>
+                    <BadgeIcon className="h-3.5 w-3.5" /> {section.badge_text}
+                  </div>
+                )}
+                {section.eyebrow && (
+                  <span className={`${accent.text} text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2`}>
+                    <Sparkles className="h-4 w-4" /> {section.eyebrow}
+                  </span>
+                )}
+              </div>
+              <h2
+                className="font-display font-bold text-3xl md:text-5xl mt-1 tracking-wider"
+                style={section.title_color ? { color: section.title_color } : undefined}
+              >
+                {section.title}
+              </h2>
+              <div className={`h-1 w-20 bg-gradient-to-r ${accent.from} to-transparent rounded-full mt-4`} />
+            </div>
+            <div className="flex items-center gap-2">
+              {products.length > 4 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    aria-label="পূর্ববর্তী"
+                    onClick={() => api?.scrollPrev()}
+                    disabled={!canPrev}
+                    className="h-9 w-9 grid place-items-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="পরবর্তী"
+                    onClick={() => api?.scrollNext()}
+                    disabled={!canNext}
+                    className="h-9 w-9 grid place-items-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
                 </div>
               )}
-              {section.eyebrow && (
-                <span className={`${accent.text} text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2`}>
-                  <Sparkles className="h-4 w-4" /> {section.eyebrow}
-                </span>
+              {(section.cta_label || section.cta_link) && (
+                <Button onClick={() => navigate(section.cta_link || "/products")} variant="outline" className={`${accent.ring} gap-2`}>
+                  <ShoppingBag className="h-4 w-4" /> {section.cta_label || "সব দেখুন"}
+                </Button>
               )}
             </div>
-            <h2
-              className="font-display font-bold text-3xl md:text-5xl mt-1 tracking-wider"
-              style={section.title_color ? { color: section.title_color } : undefined}
-            >
-              {section.title}
-            </h2>
-            <div className={`h-1 w-20 bg-gradient-to-r ${accent.from} to-transparent rounded-full mt-4`} />
-          </div>
-          {(section.cta_label || section.cta_link) && (
-            <Button onClick={() => navigate(section.cta_link || "/products")} variant="outline" className={`${accent.ring} gap-2`}>
-              <ShoppingBag className="h-4 w-4" /> {section.cta_label || "সব দেখুন"}
-            </Button>
-          )}
-        </motion.div>
+          </motion.div>
 
-        <Carousel opts={{ align: "start", loop: products.length > 4 }} className="w-full">
           <CarouselContent className={`-ml-3 ${products.length < 5 ? "justify-center" : ""}`}>
             {products.map((p: any) => {
               // section-level discount overrides product discount when set
@@ -199,8 +237,6 @@ function SectionBlock({ section }: { section: any }) {
               );
             })}
           </CarouselContent>
-          <CarouselPrevious className="hidden md:flex -left-4" />
-          <CarouselNext className="hidden md:flex -right-4" />
         </Carousel>
       </div>
       <QuickOrderDialog product={orderProduct} open={!!orderProduct} onClose={() => setOrderProduct(null)} />
