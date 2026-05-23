@@ -27,6 +27,8 @@ type Section = {
   max_items: number;
   sort_order: number;
   is_active: boolean;
+  discount_type: "none" | "percent" | "fixed";
+  discount_value: number;
 };
 
 const COLORS = ["amber", "red", "green", "blue", "rose", "violet"];
@@ -44,6 +46,8 @@ const emptyForm = {
   max_items: 12,
   sort_order: 0,
   is_active: true,
+  discount_type: "none" as "none" | "percent" | "fixed",
+  discount_value: 0,
 };
 
 export default function HomeSectionsManager() {
