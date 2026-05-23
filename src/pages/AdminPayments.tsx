@@ -815,7 +815,7 @@ const AdminPayments = () => {
                   );
                 })}
                 {filteredPayments.length === 0 && (
-                  <tr><td colSpan={7} className="p-4 text-center text-muted-foreground">{searchText.trim() ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট নেই"}</td></tr>
+                  <tr><td colSpan={8} className="p-4 text-center text-muted-foreground">{searchText.trim() ? "কোনো ফলাফল পাওয়া যায়নি" : "কোনো পেমেন্ট নেই"}</td></tr>
                 )}
               </tbody>
             </table>
