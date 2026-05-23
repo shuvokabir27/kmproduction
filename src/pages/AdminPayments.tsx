@@ -191,12 +191,15 @@ const AdminPayments = () => {
       });
       if (error) throw error;
       toast.success("পেমেন্ট সফল! রিসিট দেখতে পেমেন্ট হিস্ট্রি থেকে ক্লিক করুন।");
-      // SMS notification to member
-      const mName = selectedProfile?.full_name || "সদস্য";
-      const mLabel: Record<string, string> = { bank: "ব্যাংক", bkash: "বিকাশ", nagad: "নগদ", cash: "ক্যাশ" };
+      // SMS payment confirmation to member (English-only for BulkSMSBD non-unicode)
+      const mName = selectedProfile?.full_name || "Member";
+      const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
+      const prevDue = Number(memberBalance?.balance || 0);
+      const newDue = Math.max(0, prevDue - Number(amount));
+      const dateStr = format(new Date(), "dd/MM/yyyy");
       sendTeamSms({
         member_id: selectedMember,
-        message: `প্রিয় ${mName}, আপনার পেমেন্ট ৳${toBn(amount)} (${mLabel[method] || method}) সফলভাবে সম্পন্ন হয়েছে। - KM Multimedia`,
+        message: `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`,
       });
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
