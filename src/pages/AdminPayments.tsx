@@ -757,6 +757,24 @@ const AdminPayments = () => {
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
                       <td className="p-3 text-center">
                         <div className="flex items-center justify-center gap-1.5">
+                          {p.sms_sent_at ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30" title={`পাঠানো: ${new Date(p.sms_sent_at).toLocaleString("bn-BD")}`}>
+                              <CheckCircle2 className="h-3 w-3" /> পাঠানো
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground">পাঠানো হয়নি</span>
+                          )}
+                          <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-emerald-500/40 hover:bg-emerald-500/10" onClick={() => sendSmsFromRow(p)} disabled={smsSendingId === p.id} title={p.sms_sent_at ? "আবার SMS পাঠান" : "SMS পাঠান"}>
+                            {smsSendingId === p.id ? (
+                              <span className="h-3 w-3 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Send className="h-3.5 w-3.5 text-emerald-500" />
+                            )}
+                          </Button>
+                        </div>
+                      </td>
+                      <td className="p-3 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
                           <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-primary/30 hover:bg-primary/10" onClick={() => showReceiptForPayment(p)} title="রিসিট দেখুন">
                             <Download className="h-4 w-4 text-primary" />
                           </Button>
