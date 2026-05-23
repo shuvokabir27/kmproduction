@@ -181,14 +181,14 @@ const AdminPayments = () => {
     if (!selectedMember || !amount || !method) return;
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("payments").insert({
+      const { data: inserted, error } = await supabase.from("payments").insert({
         member_id: selectedMember,
         amount: Number(amount),
         payment_method: method as any,
         transaction_id: transactionId || null,
         notes: notes || null,
         paid_by: user!.id,
-      });
+      }).select("id").single();
       if (error) throw error;
       toast.success("পেমেন্ট সফল! রিসিট দেখতে পেমেন্ট হিস্ট্রি থেকে ক্লিক করুন।");
       // SMS payment confirmation to member (English-only for BulkSMSBD non-unicode)
@@ -201,10 +201,11 @@ const AdminPayments = () => {
       const phoneCandidate = sp.phone || sp.whatsapp_no || sp.bkash_number || sp.nagad_number || sp.mobile_number || "";
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
       try {
-        if (phoneCandidate) {
-          await sendTeamSms({ phone: String(phoneCandidate), message: msg });
-        } else {
-          await sendTeamSms({ member_id: selectedMember, message: msg });
+        const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms",
+          phoneCandidate ? { body: { phone: String(phoneCandidate), message: msg } } : { body: { member_id: selectedMember, message: msg } }
+        );
+        if (!smsErr && smsRes && (smsRes.sent ?? 0) > 0 && inserted?.id) {
+          await supabase.from("payments").update({ sms_sent_at: new Date().toISOString() } as any).eq("id", inserted.id);
         }
       } catch (e) { console.warn("SMS send failed", e); }
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
