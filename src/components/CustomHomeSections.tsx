@@ -61,8 +61,9 @@ function SectionBlock({ section }: { section: any }) {
         .in("id", ids)
         .eq("is_active", true);
       // preserve sort order
-      const order = new Map(ids.map((id: string, i: number) => [id, i]));
-      return (prods ?? []).sort((a: any, b: any) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+      const order: Record<string, number> = {};
+      ids.forEach((id: string, i: number) => { order[id] = i; });
+      return (prods ?? []).sort((a: any, b: any) => (order[a.id] ?? 0) - (order[b.id] ?? 0));
     },
   });
 
