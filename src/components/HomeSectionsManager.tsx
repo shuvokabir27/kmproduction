@@ -160,6 +160,9 @@ export default function HomeSectionsManager() {
       is_active: form.is_active,
       discount_type: form.discount_type,
       discount_value: Number(form.discount_value) || 0,
+      order_btn_color: form.order_btn_color.trim() || null,
+      bg_color: form.bg_color.trim() || null,
+      title_color: form.title_color.trim() || null,
     };
 
     let sectionId = editing?.id;
