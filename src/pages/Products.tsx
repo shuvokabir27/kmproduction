@@ -732,6 +732,10 @@ const Products = () => {
       {/* Categories Grid */}
       <ShopCategoryGrid />
 
+      {/* Custom admin-managed home sections */}
+      <CustomHomeSections />
+
+
       {/* Trust Bar */}
       <section className="px-4 pb-2 pt-4">
         <div className="max-w-7xl mx-auto glossy-section-amber p-4 md:p-6">
