@@ -135,7 +135,7 @@ export default function ShopOfferBanner() {
   return (
     <>
     <section
-      className="relative w-full px-4 py-6"
+      className="relative w-full px-4 py-20"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
     >
       <div className="relative max-w-6xl mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800 shadow-xl">
