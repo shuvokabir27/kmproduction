@@ -36,6 +36,12 @@ type Section = {
 
 const COLORS = ["amber", "red", "green", "blue", "rose", "violet"];
 
+const PRESET_HEXES = [
+  "#ef4444", "#f97316", "#f59e0b", "#84cc16", "#22c55e",
+  "#14b8a6", "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6",
+  "#d946ef", "#f43f5e", "#0f172a", "#334155", "#ffffff",
+];
+
 const emptyForm = {
   title: "",
   eyebrow: "",
@@ -51,6 +57,9 @@ const emptyForm = {
   is_active: true,
   discount_type: "none" as "none" | "percent" | "fixed",
   discount_value: 0,
+  order_btn_color: "",
+  bg_color: "",
+  title_color: "",
 };
 
 export default function HomeSectionsManager() {
