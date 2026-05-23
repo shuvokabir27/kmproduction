@@ -19,7 +19,6 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import PaymentReceipt from "@/components/PaymentReceipt";
-import { sendTeamSms, toBn } from "@/lib/sendTeamSms";
 
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -172,6 +171,20 @@ const AdminPayments = () => {
 
   const selectedProfile = members?.find((m) => m.id === selectedMember);
 
+  const normalizeSmsPhone = (value: string) => {
+    const digits = String(value || "").replace(/\D/g, "");
+    if (digits.length === 11 && digits.startsWith("01")) return `88${digits}`;
+    if (digits.length === 10 && digits.startsWith("1")) return `880${digits}`;
+    if (digits.length === 13 && digits.startsWith("8801")) return digits;
+    return "";
+  };
+
+  const getSmsErrorMessage = (result: any) => {
+    const failed = Array.isArray(result?.results) ? result.results.find((r: any) => !r?.ok) : null;
+    const response = failed?.response || result?.results?.[0]?.response || result;
+    return response?.error_message || failed?.error || result?.reason || result?.error || "SMS পাঠানো যায়নি";
+  };
+
   // Auto-fill SMS phone when member selected
   useEffect(() => {
     if (!selectedMember) { setSmsPhone(""); return; }
@@ -210,7 +223,7 @@ const AdminPayments = () => {
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
       const sp: any = selectedProfile || {};
-      const phoneCandidate = (smsPhone.trim() || sp.sms_mobile || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").toString();
+      const phoneCandidate = normalizeSmsPhone((smsPhone.trim() || sp.sms_mobile || sp.phone || sp.whatsapp_no || sp.bkash_no || sp.nagad_no || "").toString());
       const msg = `Dear ${mName}, Payment Tk ${Number(amount).toLocaleString("en-US")} received via ${mLabelEn[method] || method} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
       try {
         const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms",
@@ -218,8 +231,10 @@ const AdminPayments = () => {
         );
         if (!smsErr && smsRes && (smsRes.sent ?? 0) > 0 && inserted?.id) {
           await supabase.from("payments").update({ sms_sent_at: new Date().toISOString() } as any).eq("id", inserted.id);
+        } else {
+          toast.error(getSmsErrorMessage(smsErr || smsRes));
         }
-      } catch (e) { console.warn("SMS send failed", e); }
+      } catch (e: any) { toast.error(e?.message || "SMS পাঠাতে সমস্যা হয়েছে"); }
       queryClient.invalidateQueries({ queryKey: ["admin-all-payments"] });
       queryClient.invalidateQueries({ queryKey: ["member-balance"] });
       setOpen(false);
@@ -289,7 +304,7 @@ const AdminPayments = () => {
         .from("profiles")
         .select("full_name, phone, whatsapp_no, bkash_no, nagad_no, sms_mobile")
         .eq("id", payment.member_id).maybeSingle();
-      const phoneCandidate = profile?.sms_mobile || profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "";
+      const phoneCandidate = normalizeSmsPhone(profile?.sms_mobile || profile?.phone || profile?.whatsapp_no || profile?.bkash_no || profile?.nagad_no || "");
       if (!phoneCandidate) { toast.error("সদস্যের কোনো ফোন নাম্বার নেই"); return; }
       const mName = profile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
@@ -297,7 +312,7 @@ const AdminPayments = () => {
       const msg = `Dear ${mName}, Payment Tk ${Number(payment.amount).toLocaleString("en-US")} received via ${mLabelEn[payment.payment_method] || payment.payment_method} on ${dateStr}.${payment.transaction_id ? ` TrxID: ${payment.transaction_id}.` : ""} Thank you. - KM Multimedia`;
       const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms", { body: { phone: String(phoneCandidate), message: msg } });
       if (smsErr || !smsRes || (smsRes.sent ?? 0) === 0) {
-        toast.error("SMS পাঠানো যায়নি");
+        toast.error(getSmsErrorMessage(smsErr || smsRes));
         return;
       }
       await supabase.from("payments").update({ sms_sent_at: new Date().toISOString() } as any).eq("id", payment.id);
