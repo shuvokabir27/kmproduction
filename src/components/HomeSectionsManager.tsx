@@ -384,6 +384,74 @@ export default function HomeSectionsManager() {
                 এই সেকশনে দেখানো সকল পণ্যের উপর এই ডিসকাউন্ট স্বয়ংক্রিয়ভাবে প্রয়োগ হবে (পণ্যের নিজস্ব ডিসকাউন্ট থাকলে এটি প্রাধান্য পাবে)।
               </p>
             </div>
+            <div className="grid sm:grid-cols-3 gap-3 p-3 border border-dashed border-border/50 rounded-lg bg-muted/20">
+              <div>
+                <Label>অর্ডার বাটন কালার</Label>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {PRESET_HEXES.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => setForm({ ...form, order_btn_color: hex })}
+                      className={`w-6 h-6 rounded-full border-2 ${form.order_btn_color === hex ? "border-foreground" : "border-transparent"}`}
+                      style={{ backgroundColor: hex }}
+                      title={hex}
+                    />
+                  ))}
+                </div>
+                <Input
+                  className="mt-1.5"
+                  placeholder="#22c55e বা লিখুন"
+                  value={form.order_btn_color}
+                  onChange={(e) => setForm({ ...form, order_btn_color: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>সেকশন ব্যাকগ্রাইন্ড কালার</Label>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {PRESET_HEXES.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => setForm({ ...form, bg_color: hex })}
+                      className={`w-6 h-6 rounded-full border-2 ${form.bg_color === hex ? "border-foreground" : "border-transparent"}`}
+                      style={{ backgroundColor: hex }}
+                      title={hex}
+                    />
+                  ))}
+                </div>
+                <Input
+                  className="mt-1.5"
+                  placeholder="#0f172a বা লিখুন"
+                  value={form.bg_color}
+                  onChange={(e) => setForm({ ...form, bg_color: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>সেকশন টাইটেল কালার</Label>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {PRESET_HEXES.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      onClick={() => setForm({ ...form, title_color: hex })}
+                      className={`w-6 h-6 rounded-full border-2 ${form.title_color === hex ? "border-foreground" : "border-transparent"}`}
+                      style={{ backgroundColor: hex }}
+                      title={hex}
+                    />
+                  ))}
+                </div>
+                <Input
+                  className="mt-1.5"
+                  placeholder="#ffffff বা লিখুন"
+                  value={form.title_color}
+                  onChange={(e) => setForm({ ...form, title_color: e.target.value })}
+                />
+              </div>
+              <p className="sm:col-span-3 text-[11px] text-muted-foreground">
+                রঙ নির্বাচন না করলে ডিফল্ট থিম অনুযায়ী দেখাবে। Hex কোড (যেমন #3b82f6) বা লিখতে পারেন।
+              </p>
+            </div>
 
             {form.section_type === "manual" && (
               <div>
