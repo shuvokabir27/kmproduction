@@ -61,232 +61,200 @@ export default function ShopCustomerLogin() {
   };
 
   const inputClass =
-    "w-full h-12 pl-11 pr-4 rounded-xl bg-white/80 backdrop-blur border border-white/60 text-gray-900 placeholder:text-gray-400 outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.9)] focus:border-red-400 focus:ring-2 focus:ring-red-200 transition";
+    "w-full h-12 pl-11 pr-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-gray-600 outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-500/50 transition-all duration-300";
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 overflow-hidden"
-      style={{
-        fontFamily: "'Tiro Bangla', serif",
-        background: `
-          radial-gradient(1200px 700px at 0% 0%, rgba(185,28,28,0.45), transparent 60%),
-          radial-gradient(900px 600px at 100% 100%, rgba(251,191,36,0.18), transparent 60%),
-          radial-gradient(600px 400px at 50% 50%, rgba(76,5,25,0.55), transparent 70%),
-          linear-gradient(135deg, #1a0608 0%, #2a0a10 35%, #0a0203 70%, #000000 100%)
-        `,
-      }}
+      className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 overflow-hidden bg-[#0a0202]"
+      style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', sans-serif" }}
     >
-      {/* premium grain overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")`,
-        }}
-      />
-      {/* gold hairline top */}
-      <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
-      {/* glossy blobs */}
-      <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-red-500/25 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-rose-700/25 blur-[140px]" />
-      <div className="pointer-events-none absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-amber-500/10 blur-[100px]" />
-
+      {/* Dynamic background blobs */}
+      <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-red-900/30 blur-[120px] rounded-full" />
+      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-rose-950/40 blur-[120px] rounded-full" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-red-900/15 blur-[160px]" />
 
       <div className="relative w-full max-w-md">
-        <Link to="/products" className="text-white/80 hover:text-white text-sm flex items-center gap-1 mb-4">
+        <Link to="/products" className="text-white/70 hover:text-white text-sm flex items-center gap-1 mb-4 transition-colors">
           <ArrowLeft className="h-4 w-4" /> দোকানে ফিরুন
         </Link>
 
-        {/* gradient border wrapper */}
-        <div
-          className="rounded-[28px] p-[1.5px] shadow-[0_25px_60px_-20px_rgba(0,0,0,0.6)]"
-          style={{ background: `linear-gradient(140deg, ${BRAND_GOLD}, rgba(255,255,255,0.4) 40%, ${BRAND_GREEN})` }}
-        >
-          <div className="relative rounded-[26px] bg-white/85 backdrop-blur-xl p-6 md:p-8 overflow-hidden">
-            {/* glossy highlight */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/80 to-transparent" />
+        {/* Cinematic glass card */}
+        <div className="relative w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl overflow-hidden">
+          {/* Top decorative light */}
+          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
 
-            <div className="relative text-center mb-6">
-              <div
-                className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-white mb-3 shadow-lg ring-1 ring-white/40"
-                style={{ background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` }}
-              >
-                <ShoppingBag className="h-8 w-8 drop-shadow" />
-              </div>
-              <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: BRAND_DARK }}>
-                কে এম শপ অ্যাকাউন্ট
-              </h1>
-              <p className="text-xs text-gray-500 mt-1.5 inline-flex items-center gap-1">
-                <Sparkles className="h-3 w-3" style={{ color: BRAND_GOLD }} />
-                {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
-                 : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
-                 : "মোবাইল নম্বর দিয়ে নতুন পাসওয়ার্ড সেট করুন"}
-              </p>
+          {/* Brand identity */}
+          <div className="relative text-center mb-6">
+            <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-white mb-4 bg-gradient-to-br from-red-600 to-red-900 shadow-lg shadow-red-900/20 ring-1 ring-white/20">
+              <ShoppingBag className="h-8 w-8 drop-shadow" />
             </div>
+            <h1 className="text-2xl font-bold text-white tracking-wide mb-1">কে এম শপ অ্যাকাউন্ট</h1>
+            <p className="text-xs text-red-400/80 mt-1 inline-flex items-center gap-1 font-medium tracking-wider">
+              <Sparkles className="h-3 w-3" />
+              {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
+               : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
+               : "মোবাইল নম্বর দিয়ে নতুন পাসওয়ার্ড সেট করুন"}
+            </p>
+          </div>
 
-            {/* segmented switch */}
-            <div className="relative grid grid-cols-2 bg-gradient-to-b from-gray-100 to-gray-200/70 rounded-full p-1 mb-5 text-xs md:text-sm font-bold ring-1 ring-black/5 shadow-inner gap-1">
-              <button
-                onClick={() => setMode("login")}
-                className={`py-2.5 rounded-full transition-all ${mode === "login" ? "text-white shadow-md" : "text-gray-500"}`}
-                style={mode === "login" ? { background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` } : {}}
-              >
-                লগইন
-              </button>
-              <button
-                onClick={() => setMode("register")}
-                className={`py-2.5 rounded-full transition-all ${mode === "register" ? "text-white shadow-md" : "text-gray-500"}`}
-                style={mode === "register" ? { background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` } : {}}
-              >
-                রেজিস্টার
-              </button>
-            </div>
-
-            {/* premium notice */}
-            <div
-              className="relative mb-5 rounded-2xl p-[1.2px] shadow-md"
-              style={{ background: "linear-gradient(135deg, #ef4444, #f59e0b, #ef4444)" }}
+          {/* segmented switch */}
+          <div className="relative grid grid-cols-2 bg-black/40 border border-white/10 rounded-full p-1 mb-5 text-xs md:text-sm font-bold gap-1">
+            <button
+              onClick={() => setMode("login")}
+              className={`py-2.5 rounded-full transition-all ${mode === "login" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
-              <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 px-3.5 py-3 text-[12.5px] leading-relaxed text-red-700 font-semibold flex gap-2">
-                <span className="text-base leading-none">⚠️</span>
-                <span>
-                  <span className="font-extrabold text-red-800">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
-                </span>
+              লগইন
+            </button>
+            <button
+              onClick={() => setMode("register")}
+              className={`py-2.5 rounded-full transition-all ${mode === "register" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
+            >
+              রেজিস্টার
+            </button>
+          </div>
+
+          {/* premium notice */}
+          <div className="relative mb-5 rounded-2xl bg-red-500/10 border border-red-500/30 px-3.5 py-3 text-[12.5px] leading-relaxed text-red-200 font-medium flex gap-2">
+            <span className="text-base leading-none">⚠️</span>
+            <span>
+              <span className="font-bold text-red-300">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {mode === "register" && (
+              <div>
+                <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">আপনার নাম</Label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="পূর্ণ নাম" className={inputClass} />
+                </div>
+              </div>
+            )}
+            <div>
+              <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">মোবাইল নম্বর</Label>
+              <div className="relative">
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                  placeholder="01XXXXXXXXX"
+                  className={inputClass}
+                />
               </div>
             </div>
-
-            <div className="space-y-3.5">
-              {mode === "register" && (
-                <div>
-                  <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">আপনার নাম</Label>
-                  <div className="relative mt-1">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="পূর্ণ নাম" className={inputClass} />
-                  </div>
+            <div>
+              <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">
+                {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  inputMode="numeric"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
+                  placeholder="••••••"
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {mode === "login" && (
+                <div className="text-right mt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => { setMode("forgot"); setConfirmPassword(""); setPassword(""); }}
+                    className="text-[12px] font-medium text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    পাসওয়ার্ড ভুলে গেছেন?
+                  </button>
                 </div>
               )}
+            </div>
+
+            {(mode === "register" || mode === "forgot") && (
               <div>
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">মোবাইল নম্বর</Label>
-                <div className="relative mt-1">
-                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">পাসওয়ার্ড নিশ্চিত করুন</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                   <input
-                    type="tel"
+                    type={showConfirmPassword ? "text" : "password"}
                     inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                    placeholder="01XXXXXXXXX"
-                    className={inputClass}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">
-                  {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
-                </Label>
-                <div className="relative mt-1">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    inputMode="numeric"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
                     placeholder="••••••"
                     className={inputClass}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                {mode === "login" && (
-                  <div className="text-right mt-1.5">
-                    <button
-                      type="button"
-                      onClick={() => { setMode("forgot"); setConfirmPassword(""); setPassword(""); }}
-                      className="text-[12px] font-bold text-red-700 hover:text-red-900 underline-offset-2 hover:underline"
-                    >
-                      পাসওয়ার্ড ভুলে গেছেন?
-                    </button>
-                  </div>
+                {confirmPassword.length > 0 && confirmPassword !== password && (
+                  <p className="text-[11px] text-red-400 font-medium mt-1.5 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
+                )}
+                {confirmPassword.length >= 6 && confirmPassword === password && (
+                  <p className="text-[11px] text-green-400 font-medium mt-1.5 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
                 )}
               </div>
+            )}
 
-              {(mode === "register" || mode === "forgot") && (
-                <div>
-                  <Label className="text-[11px] font-bold uppercase tracking-wider text-gray-600 ml-1">পাসওয়ার্ড নিশ্চিত করুন</Label>
-                  <div className="relative mt-1">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      inputMode="numeric"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
-                      placeholder="••••••"
-                      className={inputClass}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                      tabIndex={-1}
-                    >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                  {confirmPassword.length > 0 && confirmPassword !== password && (
-                    <p className="text-[11px] text-red-600 font-semibold mt-1 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
-                  )}
-                  {confirmPassword.length >= 6 && confirmPassword === password && (
-                    <p className="text-[11px] text-green-600 font-semibold mt-1 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
-                  )}
-                </div>
-              )}
+            {mode === "forgot" && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => { setMode("login"); setConfirmPassword(""); setPassword(""); }}
+                  className="text-[12px] font-medium text-gray-400 hover:text-white transition-colors"
+                >
+                  ← লগইনে ফিরে যান
+                </button>
+              </div>
+            )}
 
-              {mode === "forgot" && (
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={() => { setMode("login"); setConfirmPassword(""); setPassword(""); }}
-                    className="text-[12px] font-bold text-gray-600 hover:text-gray-900"
-                  >
-                    ← লগইনে ফিরে যান
-                  </button>
-                </div>
-              )}
-
-
-              {(() => {
-                const mismatch = (mode === "register" || mode === "forgot") && (confirmPassword.length < 6 || confirmPassword !== password);
-                return (
-                  <Button
-                    onClick={submit}
-                    disabled={loading || mismatch}
-                    className="relative w-full h-12 mt-1 font-extrabold rounded-xl text-white text-base shadow-lg overflow-hidden ring-1 ring-white/30 hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100"
-                    style={{ background: `linear-gradient(140deg, ${BRAND_GREEN}, ${BRAND_DARK})` }}
-                  >
-                    <span className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent pointer-events-none" />
-                    <span className="relative">
-                      {loading ? "অপেক্ষা করুন..."
-                       : mode === "login" ? "লগইন করুন"
-                       : mode === "register" ? "অ্যাকাউন্ট তৈরি করুন"
-                       : "পাসওয়ার্ড রিসেট করুন"}
-                    </span>
-                  </Button>
-                );
-              })()}
-            </div>
-
-            <p className="relative text-center text-[11px] text-gray-400 mt-5">
-              🔒 আপনার তথ্য সম্পূর্ণ সুরক্ষিত ও এনক্রিপ্টেড
-            </p>
-
+            {(() => {
+              const mismatch = (mode === "register" || mode === "forgot") && (confirmPassword.length < 6 || confirmPassword !== password);
+              return (
+                <button
+                  type="button"
+                  onClick={submit}
+                  disabled={loading || mismatch}
+                  className="w-full group relative flex items-center justify-center px-8 py-4 mt-2 font-bold text-white transition-all duration-500 bg-red-600 rounded-xl overflow-hidden hover:bg-red-500 hover:shadow-[0_0_20px_rgba(220,38,38,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="relative z-10 text-base">
+                    {loading ? "অপেক্ষা করুন..."
+                     : mode === "login" ? "লগইন করুন"
+                     : mode === "register" ? "অ্যাকাউন্ট তৈরি করুন"
+                     : "পাসওয়ার্ড রিসেট করুন"}
+                  </span>
+                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                </button>
+              );
+            })()}
           </div>
+
+          <p className="relative text-center text-[11px] text-gray-500 mt-5">
+            🔒 আপনার তথ্য সম্পূর্ণ সুরক্ষিত ও এনক্রিপ্টেড
+          </p>
+
+          {/* Bottom accent */}
+          <div className="pointer-events-none absolute bottom-0 right-0 w-16 h-16 bg-red-600/10 blur-xl rounded-full" />
         </div>
       </div>
+
       <MobileShopNav />
     </div>
   );
