@@ -165,6 +165,7 @@ export default function HomeSectionsManager() {
       discount_value: Number(form.discount_value) || 0,
       order_btn_color: form.order_btn_color.trim() || null,
       bg_color: form.bg_color.trim() || null,
+      bg_color_2: form.bg_color_2.trim() || null,
       title_color: form.title_color.trim() || null,
     };
 
