@@ -152,7 +152,8 @@ function SectionBlock({ section }: { section: any }) {
                       <div className="mt-3 grid grid-cols-[1fr_auto] gap-1.5">
                         <Button
                           size="sm"
-                          className="glossy-btn-emerald w-full gap-1 h-9 inline-flex items-center justify-center rounded-md"
+                          className="w-full gap-1 h-9 inline-flex items-center justify-center rounded-md text-white"
+                          style={section.order_btn_color ? { backgroundColor: section.order_btn_color } : undefined}
                           onClick={(e) => { e.stopPropagation(); setOrderProduct({ ...p, discount_price: hasDiscount ? price : p.discount_price }); }}
                         >
                           <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
