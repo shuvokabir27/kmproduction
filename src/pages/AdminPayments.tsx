@@ -689,6 +689,22 @@ const AdminPayments = () => {
                 )}
 
                 <div>
+                  <Label className="text-foreground">SMS পাঠানোর নাম্বার</Label>
+                  <div className="flex items-stretch gap-2">
+                    <span className="inline-flex items-center px-3 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground select-none">+88</span>
+                    <Input
+                      value={smsPhone}
+                      onChange={(e) => setSmsPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                      placeholder="01XXXXXXXXX"
+                      inputMode="numeric"
+                      maxLength={11}
+                      className="bg-secondary border-border/50 font-mono tracking-wide"
+                    />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-1">খালি রাখলে সদস্যের প্রোফাইল নাম্বারে যাবে। ০ থেকে ১১ ডিজিট লিখুন।</p>
+                </div>
+
+                <div>
                   <Label className="text-foreground">নোট (ঐচ্ছিক)</Label>
                   <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="bg-secondary border-border/50" />
                 </div>
