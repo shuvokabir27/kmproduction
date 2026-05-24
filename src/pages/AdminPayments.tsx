@@ -245,7 +245,7 @@ const AdminPayments = () => {
       // SMS payment confirmation to member (English-only for BulkSMSBD non-unicode)
       const mName = selectedProfile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
-      const prevDue = Number(memberBalance?.balance || 0);
+      const prevDue = Number(memberBalance?.kmBalance || 0);
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
       const sp: any = selectedProfile || {};
