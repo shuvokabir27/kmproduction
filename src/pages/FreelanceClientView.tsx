@@ -166,14 +166,6 @@ export default function FreelanceClientView() {
                     ))}
                   </tbody>
                 </table>
-                {/* Financial summary in print */}
-                <div className="p-4 border-t border-border/30 bg-secondary/10">
-                  <div className="flex flex-wrap gap-4 text-sm" style={{ color: "#000" }}>
-                    <span>বাজেট: <strong>৳{Number(project.total_budget).toLocaleString("bn-BD")}</strong></span>
-                    <span>খরচ: <strong>৳{totalCost.toLocaleString("bn-BD")}</strong></span>
-                    <span>লাভ: <strong className={profit >= 0 ? "text-red-600" : "text-red-600"}>৳{profit.toLocaleString("bn-BD")}</strong></span>
-                  </div>
-                </div>
               </div>
             </div>
           </>
