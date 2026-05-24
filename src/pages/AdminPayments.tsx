@@ -207,7 +207,7 @@ const AdminPayments = () => {
     if (!selectedProfile) return null;
     const mName = selectedProfile.full_name || "Member";
     const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
-    const prevDue = Number(memberBalance?.balance || 0);
+    const prevDue = Number(memberBalance?.kmBalance || 0);
     const newDue = Math.max(0, prevDue - Number(amount || 0));
     const dateStr = format(new Date(), "dd/MM/yyyy");
     const msg = `Dear ${mName}, Payment Tk ${Number(amount || 0).toLocaleString("en-US")} received via ${mLabelEn[method] || method || "Cash"} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
