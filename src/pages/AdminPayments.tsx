@@ -446,8 +446,11 @@ const AdminPayments = () => {
         upsert: true,
       });
       if (upErr) throw upErr;
-      const { data: urlData } = supabase.storage.from("receipts").getPublicUrl(fileName);
-      const publicUrl = urlData.publicUrl;
+      // Receipts bucket is private — generate a 24h signed URL for WhatsApp delivery
+      const { data: signed, error: signErr } = await supabase
+        .storage.from("receipts").createSignedUrl(fileName, 60 * 60 * 24);
+      if (signErr || !signed?.signedUrl) throw signErr || new Error("রিসিট লিংক তৈরি ব্যর্থ");
+      const publicUrl = signed.signedUrl;
 
       // 5. Format phone & build message
       let formatted = wno.replace(/[^\d+]/g, "").replace(/^\+/, "");
