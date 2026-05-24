@@ -207,7 +207,7 @@ const AdminPayments = () => {
     if (!selectedProfile) return null;
     const mName = selectedProfile.full_name || "Member";
     const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
-    const prevDue = Number(memberBalance?.balance || 0);
+    const prevDue = Number(memberBalance?.kmBalance || 0);
     const newDue = Math.max(0, prevDue - Number(amount || 0));
     const dateStr = format(new Date(), "dd/MM/yyyy");
     const msg = `Dear ${mName}, Payment Tk ${Number(amount || 0).toLocaleString("en-US")} received via ${mLabelEn[method] || method || "Cash"} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
@@ -245,7 +245,7 @@ const AdminPayments = () => {
       // SMS payment confirmation to member (English-only for BulkSMSBD non-unicode)
       const mName = selectedProfile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
-      const prevDue = Number(memberBalance?.balance || 0);
+      const prevDue = Number(memberBalance?.kmBalance || 0);
       const newDue = Math.max(0, prevDue - Number(amount));
       const dateStr = format(new Date(), "dd/MM/yyyy");
       const sp: any = selectedProfile || {};
@@ -592,32 +592,14 @@ const AdminPayments = () => {
                       <CreditCard className="absolute top-0 right-0 h-5 w-5 text-white/20" />
                     </div>
 
-                    {/* Balance - Big */}
+                    {/* KM Balance - Big (only KM, freelance/client hidden) */}
                     <div className="relative text-center py-2">
                       <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
-                        {(memberBalance?.balance ?? 0) > 0 ? "বকেয়া ব্যালেন্স" : (memberBalance?.balance ?? 0) < 0 ? "অগ্রিম ব্যালেন্স" : "সমন্বয়কৃত"}
+                        KM {(memberBalance?.kmBalance ?? 0) > 0 ? "বকেয়া ব্যালেন্স" : (memberBalance?.kmBalance ?? 0) < 0 ? "অগ্রিম ব্যালেন্স" : "ব্যালেন্স সমন্বয়কৃত"}
                       </p>
-                      <p className={`text-3xl font-black tracking-tight ${(memberBalance?.balance ?? 0) > 0 ? "text-red-300" : (memberBalance?.balance ?? 0) < 0 ? "text-red-300" : "text-cyan-300"}`}>
-                        ৳{Math.abs(memberBalance?.balance ?? 0).toLocaleString()}
+                      <p className={`text-3xl font-black tracking-tight ${(memberBalance?.kmBalance ?? 0) > 0 ? "text-red-300" : (memberBalance?.kmBalance ?? 0) < 0 ? "text-red-300" : "text-cyan-300"}`}>
+                        ৳{Math.abs(memberBalance?.kmBalance ?? 0).toLocaleString()}
                       </p>
-                    </div>
-
-                    {/* Earned / Paid / Freelance row */}
-                    <div className="relative flex items-center justify-between px-2">
-                      <div className="text-center">
-                        <p className="text-[9px] uppercase tracking-wider text-white/35">মোট আয়</p>
-                        <p className="text-xs font-bold text-red-300/90">৳{memberBalance?.totalEarned?.toLocaleString() || "0"}</p>
-                      </div>
-                      <div className="w-px h-6 bg-white/10" />
-                      <div className="text-center">
-                        <p className="text-[9px] uppercase tracking-wider text-white/35">বাইরের আয়</p>
-                        <p className="text-xs font-bold text-red-300/90">৳{memberBalance?.totalFreelance?.toLocaleString() || "0"}</p>
-                      </div>
-                      <div className="w-px h-6 bg-white/10" />
-                      <div className="text-center">
-                        <p className="text-[9px] uppercase tracking-wider text-white/35">মোট প্রদান</p>
-                        <p className="text-xs font-bold text-cyan-300/90">৳{memberBalance?.totalPaid?.toLocaleString() || "0"}</p>
-                      </div>
                     </div>
 
                     {/* Payment info chips */}
