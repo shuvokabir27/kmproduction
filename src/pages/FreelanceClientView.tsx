@@ -25,39 +25,34 @@ export default function FreelanceClientView() {
     queryKey: ["client-project", token],
     enabled: !!token,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("freelance_projects")
-        .select("*")
-        .eq("share_token", token!)
-        .maybeSingle();
+      const { data, error } = await (supabase as any)
+        .rpc("get_shared_freelance_project", { _token: token! });
       if (error) throw error;
-      if (!data) throw new Error("Project not found");
-      return data;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) throw new Error("Project not found");
+      return row;
     },
   });
 
   const { data: assignments = [] } = useQuery({
-    queryKey: ["client-assignments", project?.id],
-    enabled: !!project?.id,
+    queryKey: ["client-assignments", token],
+    enabled: !!token,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("freelance_assignments")
-        .select("*, profiles(full_name)")
-        .eq("project_id", project!.id)
-        .order("created_at");
-      return data || [];
+      const { data } = await (supabase as any)
+        .rpc("get_shared_freelance_assignments", { _token: token! });
+      return (data || []).map((a: any) => ({
+        ...a,
+        profiles: { full_name: a.member_name },
+      }));
     },
   });
 
   const { data: scenes = [] } = useQuery({
-    queryKey: ["client-scenes", project?.id],
-    enabled: !!project?.id,
+    queryKey: ["client-scenes", token],
+    enabled: !!token,
     queryFn: async () => {
       const { data } = await (supabase as any)
-        .from("freelance_scenes")
-        .select("*")
-        .eq("project_id", project!.id)
-        .order("sort_order");
+        .rpc("get_shared_freelance_scenes", { _token: token! });
       return data || [];
     },
   });
