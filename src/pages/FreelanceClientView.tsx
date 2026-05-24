@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Calendar, MapPin, Users, DollarSign, FileText, Download, CheckCircle2, Clock } from "lucide-react";
+import { Briefcase, Calendar, MapPin, Users, FileText, Download } from "lucide-react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
 import { toPng } from "html-to-image";
@@ -77,10 +77,6 @@ export default function FreelanceClientView() {
   if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">লোড হচ্ছে...</div>;
   if (error || !project) return <div className="min-h-screen flex items-center justify-center bg-background text-destructive">প্রজেক্ট পাওয়া যায়নি</div>;
 
-  const memberCost = assignments.reduce((s: number, a: any) => s + Number(a.rate || 0), 0);
-  const totalCost = Number(project.total_expense) + memberCost;
-  const profit = Number(project.total_budget) - totalCost;
-
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
@@ -104,36 +100,6 @@ export default function FreelanceClientView() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {format(new Date(project.project_date), "d MMMM yyyy", { locale: bn })}</span>
               {project.location && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {project.location}</span>}
-              {project.client_phone && <span className="flex items-center gap-1.5">📞 {project.client_phone}</span>}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Financial Summary */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-primary" /> আর্থিক সামারি
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="rounded-lg bg-sky-500/10 p-3 text-center">
-                <div className="text-xs text-muted-foreground">বাজেট</div>
-                <div className="font-bold text-sky-400">৳{Number(project.total_budget).toLocaleString("bn-BD")}</div>
-              </div>
-              <div className="rounded-lg bg-red-500/10 p-3 text-center">
-                <div className="text-xs text-muted-foreground">অন্যান্য খরচ</div>
-                <div className="font-bold text-red-400">৳{Number(project.total_expense).toLocaleString("bn-BD")}</div>
-              </div>
-              <div className="rounded-lg bg-violet-500/10 p-3 text-center">
-                <div className="text-xs text-muted-foreground">সদস্য খরচ</div>
-                <div className="font-bold text-violet-400">৳{memberCost.toLocaleString("bn-BD")}</div>
-              </div>
-              <div className={`rounded-lg p-3 text-center ${profit >= 0 ? "bg-red-500/10" : "bg-red-500/10"}`}>
-                <div className="text-xs text-muted-foreground">লাভ</div>
-                <div className={`font-bold ${profit >= 0 ? "text-red-400" : "text-red-400"}`}>৳{profit.toLocaleString("bn-BD")}</div>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -149,16 +115,8 @@ export default function FreelanceClientView() {
             <CardContent className="space-y-2">
               {assignments.map((a: any) => (
                 <div key={a.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
-                  <div>
-                    <div className="text-sm font-medium text-foreground">{a.profiles?.full_name || "—"}</div>
-                    <div className="text-xs text-muted-foreground">{a.role_label}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-bold text-foreground">৳{Number(a.rate).toLocaleString("bn-BD")}</div>
-                    <div className={`text-[10px] ${a.is_paid ? "text-red-400" : "text-red-400"}`}>
-                      {a.is_paid ? "✅ পেমেন্ট সম্পন্ন" : "⏳ বাকি আছে"}
-                    </div>
-                  </div>
+                  <div className="text-sm font-medium text-foreground">{a.profiles?.full_name || "—"}</div>
+                  <div className="text-xs text-muted-foreground">{a.role_label}</div>
                 </div>
               ))}
             </CardContent>
