@@ -3798,6 +3798,38 @@ export type Database = {
           spotlight_priority: number
         }[]
       }
+      get_shared_freelance_assignments: {
+        Args: { _token: string }
+        Returns: {
+          id: string
+          member_name: string
+          project_id: string
+          role_label: string
+        }[]
+      }
+      get_shared_freelance_project: {
+        Args: { _token: string }
+        Returns: {
+          client_name: string
+          id: string
+          location: string
+          name: string
+          project_date: string
+          status: string
+        }[]
+      }
+      get_shared_freelance_scenes: {
+        Args: { _token: string }
+        Returns: {
+          characters: string
+          description: string
+          id: string
+          location: string
+          project_id: string
+          scene_number: string
+          sort_order: number
+        }[]
+      }
       grant_all_member_achievements: { Args: never; Returns: undefined }
       grant_member_achievements: {
         Args: { _member_id: string }
