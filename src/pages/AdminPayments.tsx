@@ -592,30 +592,37 @@ const AdminPayments = () => {
                       <CreditCard className="absolute top-0 right-0 h-5 w-5 text-white/20" />
                     </div>
 
-                    {/* KM Balance - Big (only KM, freelance/client hidden) */}
-                    <div className="relative text-center py-2">
-                      <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
-                        KM {(memberBalance?.kmBalance ?? 0) > 0 ? "বকেয়া ব্যালেন্স" : (memberBalance?.kmBalance ?? 0) < 0 ? "অগ্রিম ব্যালেন্স" : "ব্যালেন্স সমন্বয়কৃত"}
-                      </p>
-                      <p className={`text-3xl font-black tracking-tight ${(memberBalance?.kmBalance ?? 0) > 0 ? "text-red-300" : (memberBalance?.kmBalance ?? 0) < 0 ? "text-red-300" : "text-cyan-300"}`}>
-                        ৳{Math.abs(memberBalance?.kmBalance ?? 0).toLocaleString()}
-                      </p>
-                    </div>
-
-                    {/* Outside (freelance/client) balance - shown only if admin assigned member to outside work */}
-                    {(memberBalance?.totalFreelance ?? 0) > 0 && (
-                      <div className="relative rounded-xl border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-center">
-                        <p className="text-[10px] uppercase tracking-widest text-amber-200/80 mb-1">
-                          বাইরের কাজের বকেয়া
-                        </p>
-                        <p className="text-xl font-bold text-amber-200">
-                          ৳{Math.abs(memberBalance?.clientBalance ?? 0).toLocaleString()}
-                        </p>
-                        <p className="text-[10px] text-amber-200/60 mt-1">
-                          মোট: ৳{(memberBalance?.totalFreelance ?? 0).toLocaleString()} · পরিশোধিত: ৳{(memberBalance?.totalFreelancePaid ?? 0).toLocaleString()}
-                        </p>
-                      </div>
-                    )}
+                    {/* Total Balance (KM + Outside combined) */}
+                    {(() => {
+                      const km = memberBalance?.kmBalance ?? 0;
+                      const client = memberBalance?.clientBalance ?? 0;
+                      const total = km + client;
+                      const hasOutside = (memberBalance?.totalFreelance ?? 0) > 0;
+                      return (
+                        <>
+                          <div className="relative text-center py-2">
+                            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
+                              মোট {total > 0 ? "বকেয়া ব্যালেন্স" : total < 0 ? "অগ্রিম ব্যালেন্স" : "ব্যালেন্স সমন্বয়কৃত"}
+                            </p>
+                            <p className={`text-3xl font-black tracking-tight ${total !== 0 ? "text-red-300" : "text-cyan-300"}`}>
+                              ৳{Math.abs(total).toLocaleString()}
+                            </p>
+                          </div>
+                          {hasOutside && (
+                            <div className="relative grid grid-cols-2 gap-2">
+                              <div className="rounded-xl border border-white/20 bg-white/[0.06] px-3 py-2 text-center">
+                                <p className="text-[10px] uppercase tracking-widest text-white/50 mb-1">KM</p>
+                                <p className="text-base font-bold text-white">৳{Math.abs(km).toLocaleString()}</p>
+                              </div>
+                              <div className="rounded-xl border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-center">
+                                <p className="text-[10px] uppercase tracking-widest text-amber-200/80 mb-1">বাইরের</p>
+                                <p className="text-base font-bold text-amber-200">৳{Math.abs(client).toLocaleString()}</p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
 
                     {/* Payment info chips */}
                     <div className="relative space-y-1.5 pt-1">
