@@ -729,6 +729,7 @@ const AdminAttendance = () => {
                     disabled={editSaving}
                     onClick={async () => {
                       setEditSaving(true);
+                      const newlyPresent: { member_id: string; name: string; rate: number }[] = [];
                       try {
                         // Update existing records
                         for (const r of group.records) {
@@ -738,6 +739,9 @@ const AdminAttendance = () => {
                               is_present: d.present,
                               daily_rate: Number(d.rate) || 0,
                             }).eq("id", r.id);
+                            if (d.present && !r.is_present && r.profiles?.salary_type !== "monthly") {
+                              newlyPresent.push({ member_id: r.member_id, name: r.profiles?.full_name || "", rate: Number(d.rate) || 0 });
+                            }
                           }
                         }
                         // Insert new members
@@ -750,6 +754,22 @@ const AdminAttendance = () => {
                             daily_rate: Number(d.rate) || 0,
                           }));
                           await supabase.from("attendance").insert(rows);
+                          for (const [memberId, d] of newMembers) {
+                            if (!d.present) continue;
+                            const mem = (members ?? []).find((mm: any) => mm.id === memberId);
+                            if (mem && mem.salary_type !== "monthly") {
+                              newlyPresent.push({ member_id: memberId, name: mem.full_name, rate: Number(d.rate) || 0 });
+                            }
+                          }
+                        }
+                        // Fire SMS for newly-present members
+                        const shootName = group.shooting?.name || "শুটিং";
+                        for (const m of newlyPresent) {
+                          const rateText = m.rate > 0 ? ` (৳${toBn(m.rate)})` : "";
+                          sendTeamSms({
+                            member_id: m.member_id,
+                            message: `প্রিয় ${m.name}, আজকের শুটিং "${shootName}"-এ আপনার হাজিরা${rateText} গ্রহণ করা হয়েছে। ধন্যবাদ। - Kuakata Multimedia`,
+                          });
                         }
                         toast.success("হাজিরা আপডেট হয়েছে!");
                         queryClient.invalidateQueries({ queryKey: ["all-attendance-history"] });
