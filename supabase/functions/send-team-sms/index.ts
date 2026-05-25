@@ -25,7 +25,11 @@ async function sendOne(phone: string, message: string) {
   const apiKey = Deno.env.get("BULK_SMS_API_KEY");
   const senderId = Deno.env.get("BULK_SMS_SENDER_ID");
   if (!apiKey || !senderId) return { ok: false, error: "SMS provider not configured" };
-  const url = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(apiKey)}&type=text&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(senderId)}&message=${encodeURIComponent(message)}`;
+  // Auto-detect: if message has any non-ASCII char (e.g. Bengali), use unicode mode.
+  // Otherwise BulkSMSBD charges but does not deliver the message.
+  const isUnicode = /[^\x00-\x7F]/.test(message);
+  const type = isUnicode ? "unicode" : "text";
+  const url = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(apiKey)}&type=${type}&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(senderId)}&message=${encodeURIComponent(message)}`;
   try {
     const res = await fetch(url);
     const text = await res.text();
@@ -34,7 +38,7 @@ async function sendOne(phone: string, message: string) {
     const providerAccepted = parsed
       ? Number(parsed.response_code) === 202
       : /(^|\D)202($|\D)|submitted|success/i.test(text);
-    return { ok: res.ok && providerAccepted, status: res.status, response: parsed || text };
+    return { ok: res.ok && providerAccepted, status: res.status, type, response: parsed || text };
   } catch (e: any) {
     return { ok: false, error: e.message };
   }
