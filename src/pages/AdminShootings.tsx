@@ -190,13 +190,22 @@ const AdminShootings = () => {
       const { data: existing } = await supabase.from("attendance").select("id").eq("shooting_id", shootingId).limit(1);
       if (existing && existing.length > 0) return;
 
+      const { data: shootingRow } = await (supabase as any).from("shootings").select("name").eq("id", shootingId).maybeSingle();
+      const shootName = shootingRow?.name || "শুটিং";
+
       const { data: participants } = await (supabase as any).from("shooting_participants").select("member_id").eq("shooting_id", shootingId);
       
       if (participants && participants.length > 0) {
         const memberIds = participants.map((p: any) => p.member_id);
-        const { data: profiles } = await (supabase as any).from("profiles").select("id, daily_rate, salary_type").in("id", memberIds);
+        const { data: profiles } = await (supabase as any).from("profiles").select("id, full_name, daily_rate, salary_type").in("id", memberIds);
         const rateMap: Record<string, number> = {};
-        profiles?.forEach((p: any) => { rateMap[p.id] = p.salary_type === "daily" ? Number(p.daily_rate || 0) : 0; });
+        const nameMap: Record<string, string> = {};
+        const typeMap: Record<string, string> = {};
+        profiles?.forEach((p: any) => {
+          rateMap[p.id] = p.salary_type === "daily" ? Number(p.daily_rate || 0) : 0;
+          nameMap[p.id] = p.full_name;
+          typeMap[p.id] = p.salary_type;
+        });
 
         const rows = participants.map((p: any) => ({
           shooting_id: shootingId,
@@ -207,6 +216,16 @@ const AdminShootings = () => {
         }));
         await supabase.from("attendance").insert(rows);
         toast.success(`${rows.length} জন সদস্যের অটো হাজিরা যুক্ত হয়েছে!`);
+        // SMS notify each present (daily) member
+        for (const p of participants) {
+          if (typeMap[p.member_id] === "monthly") continue;
+          const rate = rateMap[p.member_id] || 0;
+          const rateText = rate > 0 ? ` (৳${toBn(rate)})` : "";
+          sendTeamSms({
+            member_id: p.member_id,
+            message: `প্রিয় ${nameMap[p.member_id] || ""}, আজকের শুটিং "${shootName}"-এ আপনার হাজিরা${rateText} গ্রহণ করা হয়েছে। ধন্যবাদ। - Kuakata Multimedia`,
+          });
+        }
       } else {
         const { data: allMembers } = await (supabase as any).from("profiles").select("id, daily_rate, salary_type").eq("is_active", true);
         if (allMembers && allMembers.length > 0) {
