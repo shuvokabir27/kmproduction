@@ -225,7 +225,7 @@ const AdminAttendance = () => {
         const rateText = m.rate > 0 ? ` (৳${toBn(m.rate)})` : "";
         sendTeamSms({
           member_id: m.member_id,
-          message: `প্রিয় ${m.name}, "${shootName}" শুটিং-এ আপনার হাজিরা${rateText} রেকর্ড করা হয়েছে। - KM Multimedia`,
+          message: `প্রিয় ${m.name}, আজকের শুটিং "${shootName}"-এ আপনার হাজিরা${rateText} গ্রহণ করা হয়েছে। ধন্যবাদ। - Kuakata Multimedia`,
         });
       }
       queryClient.invalidateQueries({ queryKey: ["existing-attendance"] });
