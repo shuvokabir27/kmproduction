@@ -1,19 +1,48 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
+type BalanceSource = "km" | "client";
+
+type BalanceEvent = {
+  source: BalanceSource;
+  amount: number;
+  paidAmount: number;
+  date: string;
+  order: number;
+};
+
 export function useMemberBalance(profileId: string | undefined) {
   return useQuery({
     queryKey: ["member-balance", profileId],
     enabled: !!profileId,
     queryFn: async () => {
+      const events: BalanceEvent[] = [];
+      let eventOrder = 0;
+
+      const toDateValue = (value: string | null | undefined) =>
+        value ? new Date(value).getTime() : 0;
+
+      const addEvent = (source: BalanceSource, amount: number, date?: string | null, paidAmount = 0) => {
+        const safeAmount = Number(amount || 0);
+        if (safeAmount <= 0) return;
+        events.push({
+          source,
+          amount: safeAmount,
+          paidAmount: Math.max(0, Number(paidAmount || 0)),
+          date: date || "1970-01-01T00:00:00.000Z",
+          order: eventOrder++,
+        });
+      };
+
       // Total earned from attendance
       const { data: attendance } = await supabase
         .from("attendance")
-        .select("daily_rate")
+        .select("daily_rate, created_at")
         .eq("member_id", profileId!)
         .eq("is_present", true);
 
       const totalEarned = attendance?.reduce((sum, a) => sum + Number(a.daily_rate || 0), 0) ?? 0;
+      attendance?.forEach((a: any) => addEvent("km", Number(a.daily_rate || 0), a.created_at));
 
       // Total paid
       const { data: payments } = await supabase
@@ -26,12 +55,13 @@ export function useMemberBalance(profileId: string | undefined) {
       // Total bonuses (bonus + transport)
       const { data: bonuses } = await (supabase as any)
         .from("bonuses")
-        .select("amount, type")
+        .select("amount, type, bonus_date, created_at")
         .eq("member_id", profileId!);
 
       const totalBonus = bonuses?.filter((b: any) => b.type === "bonus").reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
       const totalTransport = bonuses?.filter((b: any) => b.type === "transport").reduce((sum: number, b: any) => sum + Number(b.amount || 0), 0) ?? 0;
       const totalBonuses = totalBonus + totalTransport;
+      bonuses?.forEach((b: any) => addEvent("km", Number(b.amount || 0), b.bonus_date || b.created_at));
 
       // Get profile info including salary_type_changed_at
       const { data: profile } = await (supabase as any)
@@ -41,6 +71,7 @@ export function useMemberBalance(profileId: string | undefined) {
         .maybeSingle();
 
       const previousBalance = Number(profile?.previous_balance || 0);
+      addEvent("km", previousBalance, "1970-01-01T00:00:00.000Z");
 
       // Monthly salary credits - exclude credits from the month salary type changed (monthly→daily)
       const { data: salaryCredits } = await (supabase as any)
@@ -64,37 +95,53 @@ export function useMemberBalance(profileId: string | undefined) {
           if (excludeFromMonth && s.credit_month >= excludeFromMonth) {
             return sum;
           }
-          return sum + Number(s.amount || 0);
+          const amount = Number(s.amount || 0);
+          addEvent("km", amount, s.credit_month);
+          return sum + amount;
         }, 0);
       }
 
       // Freelance income (assigned external work rates)
       const { data: freelanceData } = await (supabase as any)
         .from("freelance_assignments")
-        .select("rate, paid_amount")
+        .select("rate, paid_amount, created_at")
         .eq("member_id", profileId!);
 
       const totalFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
+      freelanceData?.forEach((f: any) => addEvent("client", Number(f.rate || 0), f.created_at, Number(f.paid_amount || 0)));
 
       // Client-portal artist work — match by profile_id (admin-added) OR artist_name (legacy)
       const fullName = profile?.full_name as string | undefined;
       let totalFromClientArtists = 0;
       let totalPaidFromClientArtists = 0;
       {
-        const orFilter = fullName
-          ? `profile_id.eq.${profileId},artist_name.eq.${fullName}`
-          : `profile_id.eq.${profileId}`;
-        const { data: clientArtistsData } = await (supabase as any)
-          .from("client_project_artists")
-          .select("id, remuneration, paid_amount")
-          .or(orFilter);
-        // Dedup by id (in case OR matches both conditions for same row)
+        const clientArtistQueries = [
+          (supabase as any)
+            .from("client_project_artists")
+            .select("id, remuneration, paid_amount, created_at")
+            .eq("profile_id", profileId!),
+        ];
+
+        if (fullName) {
+          clientArtistQueries.push(
+            (supabase as any)
+              .from("client_project_artists")
+              .select("id, remuneration, paid_amount, created_at")
+              .eq("artist_name", fullName)
+          );
+        }
+
+        const clientArtistResults = await Promise.all(clientArtistQueries);
+        const clientArtistsData = clientArtistResults.flatMap((result: any) => result.data ?? []);
         const seen = new Set<string>();
-        (clientArtistsData ?? []).forEach((c: any) => {
+        clientArtistsData.forEach((c: any) => {
           if (seen.has(c.id)) return;
           seen.add(c.id);
-          totalFromClientArtists += Number(c.remuneration || 0);
-          totalPaidFromClientArtists += Number(c.paid_amount || 0);
+          const remuneration = Number(c.remuneration || 0);
+          const paidAmount = Number(c.paid_amount || 0);
+          totalFromClientArtists += remuneration;
+          totalPaidFromClientArtists += paidAmount;
+          addEvent("client", remuneration, c.created_at, paidAmount);
         });
       }
 
@@ -102,10 +149,28 @@ export function useMemberBalance(profileId: string | undefined) {
       const totalPaidFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
 
       const totalFreelance = totalFromAssignments + totalFromClientArtists;
-      const totalFreelancePaid = totalPaidFromAssignments + totalPaidFromClientArtists;
+      const directFreelancePaid = totalPaidFromAssignments + totalPaidFromClientArtists;
 
-      const kmBalance = totalEarned + totalBonuses + totalSalaryCredits + previousBalance - totalPaid;
-      const clientBalance = totalFreelance - totalFreelancePaid;
+      const allocatedEvents = events
+        .map((event) => ({ ...event, remaining: Math.max(0, event.amount - event.paidAmount) }))
+        .sort((a, b) => toDateValue(a.date) - toDateValue(b.date) || a.order - b.order);
+
+      let remainingPayments = totalPaid;
+      for (const event of allocatedEvents) {
+        if (remainingPayments <= 0) break;
+        if (event.remaining <= 0) continue;
+        const applied = Math.min(event.remaining, remainingPayments);
+        event.remaining -= applied;
+        remainingPayments -= applied;
+      }
+
+      const kmBalance = allocatedEvents
+        .filter((event) => event.source === "km")
+        .reduce((sum, event) => sum + event.remaining, 0);
+      const clientBalance = allocatedEvents
+        .filter((event) => event.source === "client")
+        .reduce((sum, event) => sum + event.remaining, 0);
+      const totalFreelancePaid = Math.max(directFreelancePaid, totalFreelance - clientBalance);
 
       return {
         totalEarned,
