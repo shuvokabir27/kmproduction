@@ -29,6 +29,34 @@ const AdminDashboard = () => {
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
   const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
   const [advanceDialogOpen, setAdvanceDialogOpen] = useState(false);
+  const [sendingSmsId, setSendingSmsId] = useState<string | null>(null);
+
+  const formatNum = (n: number) => Math.round(n).toLocaleString("en-US");
+
+  const buildSummarySms = (m: any) => {
+    const totalIncome = m.earned + m.bonus + m.salary + m.freelance + m.previous;
+    const totalPaid = m.paid + m.freelancePaid;
+    const bal = m.balance;
+    const status = bal > 0 ? `Due: Tk ${formatNum(bal)}` : bal < 0 ? `Advance: Tk ${formatNum(Math.abs(bal))}` : `Balance: Tk 0`;
+    return `Dear ${m.name}, Account Summary:\nIncome: Tk ${formatNum(totalIncome)}\nPaid: Tk ${formatNum(totalPaid)}\n${status}\n- Kuakata Multimedia`;
+  };
+
+  const sendSummarySms = async (m: any) => {
+    setSendingSmsId(m.id);
+    try {
+      const message = buildSummarySms(m);
+      const { data, error } = await supabase.functions.invoke("send-team-sms", {
+        body: { member_id: m.id, message },
+      });
+      if (error) throw error;
+      if ((data as any)?.sent > 0) toast.success(`${m.name}-কে SMS পাঠানো হয়েছে`);
+      else toast.error(`SMS পাঠানো যায়নি (${(data as any)?.reason || "মোবাইল নম্বর নেই"})`);
+    } catch (e: any) {
+      toast.error(e.message || "SMS পাঠাতে ব্যর্থ");
+    } finally {
+      setSendingSmsId(null);
+    }
+  };
 
   const { data: memberCount } = useQuery({
     queryKey: ["admin-member-count"],
