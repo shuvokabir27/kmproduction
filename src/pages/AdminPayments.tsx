@@ -337,7 +337,8 @@ const AdminPayments = () => {
       const mName = profile?.full_name || "Member";
       const mLabelEn: Record<string, string> = { bank: "Bank", bkash: "bKash", nagad: "Nagad", cash: "Cash" };
       const dateStr = format(new Date(payment.payment_date), "dd/MM/yyyy");
-      const msg = `Dear ${mName}, Payment Tk ${Number(payment.amount).toLocaleString("en-US")} received via ${mLabelEn[payment.payment_method] || payment.payment_method} on ${dateStr}.${payment.transaction_id ? ` TrxID: ${payment.transaction_id}.` : ""} Thank you. - KM Multimedia`;
+      const last4 = payment.transaction_id ? String(payment.transaction_id).slice(-4) : "";
+      const msg = `Dear ${mName}, Payment Tk ${Number(payment.amount).toLocaleString("en-US")} received via ${mLabelEn[payment.payment_method] || payment.payment_method} on ${dateStr}.${last4 ? ` Last 4 Digit: ${last4}.` : ""} Thank you. - Kuakata Multimedia`;
       const { data: smsRes, error: smsErr } = await supabase.functions.invoke("send-team-sms", { body: { phone: String(phoneCandidate), message: msg } });
       if (smsErr || !smsRes || (smsRes.sent ?? 0) === 0) {
         toast.error(getSmsErrorMessage(smsErr || smsRes));
