@@ -76,17 +76,26 @@ export function useMemberBalance(profileId: string | undefined) {
 
       const totalFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
 
-      // Client-portal artist work (matched by artist_name = profile full_name)
+      // Client-portal artist work — match by profile_id (admin-added) OR artist_name (legacy)
       const fullName = profile?.full_name as string | undefined;
       let totalFromClientArtists = 0;
       let totalPaidFromClientArtists = 0;
-      if (fullName) {
+      {
+        const orFilter = fullName
+          ? `profile_id.eq.${profileId},artist_name.eq.${fullName}`
+          : `profile_id.eq.${profileId}`;
         const { data: clientArtistsData } = await (supabase as any)
           .from("client_project_artists")
-          .select("remuneration, paid_amount")
-          .eq("artist_name", fullName);
-        totalFromClientArtists = clientArtistsData?.reduce((sum: number, c: any) => sum + Number(c.remuneration || 0), 0) ?? 0;
-        totalPaidFromClientArtists = clientArtistsData?.reduce((sum: number, c: any) => sum + Number(c.paid_amount || 0), 0) ?? 0;
+          .select("id, remuneration, paid_amount")
+          .or(orFilter);
+        // Dedup by id (in case OR matches both conditions for same row)
+        const seen = new Set<string>();
+        (clientArtistsData ?? []).forEach((c: any) => {
+          if (seen.has(c.id)) return;
+          seen.add(c.id);
+          totalFromClientArtists += Number(c.remuneration || 0);
+          totalPaidFromClientArtists += Number(c.paid_amount || 0);
+        });
       }
 
       // Also include paid_amount from freelance_assignments
