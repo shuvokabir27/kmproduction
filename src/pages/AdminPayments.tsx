@@ -210,7 +210,8 @@ const AdminPayments = () => {
     const prevDue = Number(memberBalance?.kmBalance || 0);
     const newDue = Math.max(0, prevDue - Number(amount || 0));
     const dateStr = format(new Date(), "dd/MM/yyyy");
-    const msg = `Dear ${mName}, Payment Tk ${Number(amount || 0).toLocaleString("en-US")} received via ${mLabelEn[method] || method || "Cash"} on ${dateStr}.${transactionId ? ` TrxID: ${transactionId}.` : ""} Due: Tk ${newDue.toLocaleString("en-US")}. Thank you. - KM Multimedia`;
+    const last4 = transactionId ? String(transactionId).slice(-4) : "";
+    const msg = `Dear ${mName}, Payment Tk ${Number(amount || 0).toLocaleString("en-US")} received via ${mLabelEn[method] || method || "Cash"} on ${dateStr}.${last4 ? ` Last 4 Digit: ${last4}.` : ""} Thank you. - Kuakata Multimedia`;
     return msg;
   }, [selectedProfile, amount, method, transactionId, memberBalance]);
 
