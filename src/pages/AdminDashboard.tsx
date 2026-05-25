@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X, List, ArrowUpRight, Crown, Sparkles, HandCoins } from "lucide-react";
+import { Users, Film, CreditCard, TrendingUp, Wallet, CalendarIcon, X, List, ArrowUpRight, Crown, Sparkles, HandCoins, MessageSquare, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
@@ -28,6 +29,34 @@ const AdminDashboard = () => {
   const [dueDialogOpen, setDueDialogOpen] = useState(false);
   const [balanceDialogOpen, setBalanceDialogOpen] = useState(false);
   const [advanceDialogOpen, setAdvanceDialogOpen] = useState(false);
+  const [sendingSmsId, setSendingSmsId] = useState<string | null>(null);
+
+  const formatNum = (n: number) => Math.round(n).toLocaleString("en-US");
+
+  const buildSummarySms = (m: any) => {
+    const totalIncome = m.earned + m.bonus + m.salary + m.freelance + m.previous;
+    const totalPaid = m.paid + m.freelancePaid;
+    const bal = m.balance;
+    const status = bal > 0 ? `Due: Tk ${formatNum(bal)}` : bal < 0 ? `Advance: Tk ${formatNum(Math.abs(bal))}` : `Balance: Tk 0`;
+    return `Dear ${m.name}, Account Summary:\nIncome: Tk ${formatNum(totalIncome)}\nPaid: Tk ${formatNum(totalPaid)}\n${status}\n- Kuakata Multimedia`;
+  };
+
+  const sendSummarySms = async (m: any) => {
+    setSendingSmsId(m.id);
+    try {
+      const message = buildSummarySms(m);
+      const { data, error } = await supabase.functions.invoke("send-team-sms", {
+        body: { member_id: m.id, message },
+      });
+      if (error) throw error;
+      if ((data as any)?.sent > 0) toast.success(`${m.name}-কে SMS পাঠানো হয়েছে`);
+      else toast.error(`SMS পাঠানো যায়নি (${(data as any)?.reason || "মোবাইল নম্বর নেই"})`);
+    } catch (e: any) {
+      toast.error(e.message || "SMS পাঠাতে ব্যর্থ");
+    } finally {
+      setSendingSmsId(null);
+    }
+  };
 
   const { data: memberCount } = useQuery({
     queryKey: ["admin-member-count"],
@@ -184,8 +213,8 @@ const AdminDashboard = () => {
         }
       });
 
-      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
-      members?.forEach((m: any) => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
+      const map = new Map<string, { id: string; name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
+      members?.forEach((m: any) => map.set(m.id, { id: m.id, name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const e = map.get(b.member_id); if (e) e.bonus += Number(b.amount || 0); });
@@ -540,11 +569,27 @@ const AdminDashboard = () => {
                     <p className="text-[10px] text-muted-foreground">{m.designation || "সদস্য"}</p>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <p className={`text-sm font-bold ${m.balance > 0 ? "text-warning" : "text-success"}`}>
-                    {m.balance > 0 ? "বকেয়া" : m.balance < 0 ? "অগ্রিম" : "ব্যালেন্স"}{" "}
-                    ৳{Math.abs(m.balance).toLocaleString("bn-BD")}
-                  </p>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="text-right">
+                    <p className={`text-sm font-bold ${m.balance > 0 ? "text-warning" : "text-success"}`}>
+                      {m.balance > 0 ? "বকেয়া" : m.balance < 0 ? "অগ্রিম" : "ব্যালেন্স"}{" "}
+                      ৳{Math.abs(m.balance).toLocaleString("bn-BD")}
+                    </p>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 rounded-full hover:bg-cyan-500/10"
+                    title="অ্যাকাউন্ট সামারি SMS পাঠান"
+                    disabled={sendingSmsId === m.id}
+                    onClick={() => sendSummarySms(m)}
+                  >
+                    {sendingSmsId === m.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-cyan-400" />
+                    ) : (
+                      <MessageSquare className="h-4 w-4 text-cyan-400" />
+                    )}
+                  </Button>
                 </div>
               </div>
             ))}
