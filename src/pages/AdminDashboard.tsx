@@ -569,11 +569,27 @@ const AdminDashboard = () => {
                     <p className="text-[10px] text-muted-foreground">{m.designation || "সদস্য"}</p>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <p className={`text-sm font-bold ${m.balance > 0 ? "text-warning" : "text-success"}`}>
-                    {m.balance > 0 ? "বকেয়া" : m.balance < 0 ? "অগ্রিম" : "ব্যালেন্স"}{" "}
-                    ৳{Math.abs(m.balance).toLocaleString("bn-BD")}
-                  </p>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="text-right">
+                    <p className={`text-sm font-bold ${m.balance > 0 ? "text-warning" : "text-success"}`}>
+                      {m.balance > 0 ? "বকেয়া" : m.balance < 0 ? "অগ্রিম" : "ব্যালেন্স"}{" "}
+                      ৳{Math.abs(m.balance).toLocaleString("bn-BD")}
+                    </p>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 rounded-full hover:bg-cyan-500/10"
+                    title="অ্যাকাউন্ট সামারি SMS পাঠান"
+                    disabled={sendingSmsId === m.id}
+                    onClick={() => sendSummarySms(m)}
+                  >
+                    {sendingSmsId === m.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-cyan-400" />
+                    ) : (
+                      <MessageSquare className="h-4 w-4 text-cyan-400" />
+                    )}
+                  </Button>
                 </div>
               </div>
             ))}
