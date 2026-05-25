@@ -184,8 +184,8 @@ const AdminDashboard = () => {
         }
       });
 
-      const map = new Map<string, { name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
-      members?.forEach((m: any) => map.set(m.id, { name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
+      const map = new Map<string, { id: string; name: string; memberId: number; photo: string | null; designation: string | null; earned: number; paid: number; bonus: number; salary: number; freelance: number; freelancePaid: number; previous: number }>();
+      members?.forEach((m: any) => map.set(m.id, { id: m.id, name: m.full_name, memberId: m.member_id, photo: m.photo_url, designation: m.designation, earned: 0, paid: 0, bonus: 0, salary: 0, freelance: 0, freelancePaid: 0, previous: Number(m.previous_balance || 0) }));
       attendance?.forEach((a: any) => { const e = map.get(a.member_id); if (e) e.earned += Number(a.daily_rate || 0); });
       payments?.forEach((p: any) => { const e = map.get(p.member_id); if (e) e.paid += Number(p.amount || 0); });
       bonuses?.forEach((b: any) => { const e = map.get(b.member_id); if (e) e.bonus += Number(b.amount || 0); });
