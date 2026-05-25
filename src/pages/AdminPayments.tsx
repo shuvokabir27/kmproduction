@@ -602,6 +602,21 @@ const AdminPayments = () => {
                       </p>
                     </div>
 
+                    {/* Outside (freelance/client) balance - shown only if admin assigned member to outside work */}
+                    {(memberBalance?.totalFreelance ?? 0) > 0 && (
+                      <div className="relative rounded-xl border border-amber-300/30 bg-amber-500/10 px-3 py-2 text-center">
+                        <p className="text-[10px] uppercase tracking-widest text-amber-200/80 mb-1">
+                          বাইরের কাজের বকেয়া
+                        </p>
+                        <p className="text-xl font-bold text-amber-200">
+                          ৳{Math.abs(memberBalance?.clientBalance ?? 0).toLocaleString()}
+                        </p>
+                        <p className="text-[10px] text-amber-200/60 mt-1">
+                          মোট: ৳{(memberBalance?.totalFreelance ?? 0).toLocaleString()} · পরিশোধিত: ৳{(memberBalance?.totalFreelancePaid ?? 0).toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Payment info chips */}
                     <div className="relative space-y-1.5 pt-1">
                       {selectedProfile.bank_name && (
