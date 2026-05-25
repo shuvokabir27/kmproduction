@@ -33,18 +33,22 @@ const AdminDashboard = () => {
 
   const formatNum = (n: number) => Math.round(n).toLocaleString("en-US");
 
-  const buildSummarySms = (m: any) => {
-    const totalIncome = m.earned + m.bonus + m.salary + m.freelance + m.previous;
-    const totalPaid = m.paid + m.freelancePaid;
-    const bal = m.balance;
-    const status = bal > 0 ? `Due: Tk ${formatNum(bal)}` : bal < 0 ? `Advance: Tk ${formatNum(Math.abs(bal))}` : `Balance: Tk 0`;
-    return `Dear ${m.name}, Account Summary:\nIncome: Tk ${formatNum(totalIncome)}\nPaid: Tk ${formatNum(totalPaid)}\n${status}\n- Kuakata Multimedia`;
+  const buildSummarySms = (m: any, lastPaidAmount: number) => {
+    const status = m.balance > 0 ? `AC Balance: Tk ${formatNum(m.balance)}` : m.balance < 0 ? `Advance: Tk ${formatNum(Math.abs(m.balance))}` : `AC Balance: Tk 0`;
+    return `Dear ${m.name}, Account Summary:\n${status}\nLast Paid: ${lastPaidAmount > 0 ? `Tk ${formatNum(lastPaidAmount)}` : "0000"}\n- Kuakata Multimedia`;
   };
 
   const sendSummarySms = async (m: any) => {
     setSendingSmsId(m.id);
     try {
-      const message = buildSummarySms(m);
+      const { data: lastPayments } = await (supabase as any)
+        .from("payments")
+        .select("amount")
+        .eq("member_id", m.id)
+        .order("payment_date", { ascending: false })
+        .limit(1);
+      const lastPaidAmount = lastPayments?.[0] ? Number(lastPayments[0].amount) : 0;
+      const message = buildSummarySms(m, lastPaidAmount);
       const { data, error } = await supabase.functions.invoke("send-team-sms", {
         body: { member_id: m.id, message },
       });
