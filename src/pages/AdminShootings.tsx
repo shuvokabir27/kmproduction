@@ -1124,6 +1124,65 @@ const AdminShootings = () => {
         </DialogContent>
       </Dialog>
 
+      {/* SMS Broadcast Dialog */}
+      <Dialog open={smsDialogOpen} onOpenChange={setSmsDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-emerald-400" />
+              SMS পাঠান — {smsShootingName}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-foreground text-xs mb-1 block">বার্তা *</Label>
+              <Textarea
+                value={smsMessage}
+                onChange={(e) => setSmsMessage(e.target.value)}
+                rows={7}
+                className="bg-secondary border-border/50 text-sm"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">তারিখ, কলটাইম ও লোকেশন স্বয়ংক্রিয় ভাবে যুক্ত হয়েছে — প্রয়োজনে এডিট করুন।</p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="text-foreground text-xs">সদস্য নির্বাচন ({smsSelected.length}/{smsMembers.length})</Label>
+                <div className="flex gap-1">
+                  <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={() => setSmsSelected(smsMembers.map((m: any) => m.id))}>সব</Button>
+                  <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={() => setSmsSelected([])}>কেউ না</Button>
+                </div>
+              </div>
+              <Input
+                placeholder="সদস্য খুঁজুন..."
+                value={smsSearch}
+                onChange={(e) => setSmsSearch(e.target.value)}
+                className="bg-secondary border-border/50 h-8 text-xs mb-2"
+              />
+              <div className="max-h-56 overflow-y-auto border border-border/30 rounded-lg divide-y divide-border/20">
+                {smsMembers.length === 0 && (
+                  <p className="p-3 text-xs text-center text-muted-foreground">কোনো সদস্য নেই</p>
+                )}
+                {smsMembers
+                  .filter((m: any) => !smsSearch || (m.full_name || "").toLowerCase().includes(smsSearch.toLowerCase()) || (m.member_id || "").toLowerCase().includes(smsSearch.toLowerCase()))
+                  .map((m: any) => (
+                    <label key={m.id} className="flex items-center gap-2 p-2 hover:bg-secondary/40 cursor-pointer">
+                      <Checkbox checked={smsSelected.includes(m.id)} onCheckedChange={() => toggleSmsMember(m.id)} />
+                      <span className="text-xs text-foreground flex-1 truncate">{m.full_name}</span>
+                      <span className="text-[10px] text-muted-foreground">#{m.member_id}</span>
+                    </label>
+                  ))}
+              </div>
+            </div>
+
+            <Button onClick={sendShootingSms} disabled={smsSending || smsSelected.length === 0} className="w-full gap-2 bg-emerald-500 hover:bg-emerald-600 text-white">
+              <Send className="h-4 w-4" />
+              {smsSending ? "পাঠানো হচ্ছে..." : `SMS পাঠান (${smsSelected.length} জন)`}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <ShootingSceneTracker
         shootingId={sceneTrackerShootingId}
         shootingName={sceneTrackerShootingName}
