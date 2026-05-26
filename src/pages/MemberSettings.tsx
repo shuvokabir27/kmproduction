@@ -199,23 +199,45 @@ const MemberSettings = () => {
     }
   };
 
-  const handleChangeEmail = async () => {
+  const handleRequestEmailOtp = async () => {
     if (!newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       toast.error("সঠিক ইমেইল দিন"); return;
     }
+    setEmailSendingOtp(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-email-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ action: "request_otp", new_email: newEmail.trim() }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      setEmailMaskedPhone(result.masked_phone || "");
+      setEmailStep("otp");
+      toast.success(`OTP পাঠানো হয়েছে ${result.masked_phone || ""} নম্বরে`);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEmailSendingOtp(false);
+    }
+  };
+
+  const handleChangeEmail = async () => {
+    if (emailOtp.replace(/\D/g, "").length !== 6) { toast.error("৬ ডিজিটের OTP দিন"); return; }
     setEmailSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-member-email`, {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
-        body: JSON.stringify({ user_id: user!.id, new_email: newEmail.trim() }),
+        body: JSON.stringify({ action: "verify_and_change", new_email: newEmail.trim(), otp: emailOtp.trim() }),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
       toast.success("ইমেইল পরিবর্তন হয়েছে!");
       setEmailDialogOpen(false);
-      setNewEmail("");
+      setNewEmail(""); setEmailOtp(""); setEmailStep("email"); setEmailMaskedPhone("");
       queryClient.invalidateQueries({ queryKey: ["auth-user"] });
     } catch (err: any) {
       toast.error(err.message);
