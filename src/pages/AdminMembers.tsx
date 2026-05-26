@@ -848,6 +848,35 @@ const AdminMembers = () => {
                 </Tabs>
                 </>
                 )}
+                {editId && (() => {
+                  const editingMember = (allProfiles || []).find((p: any) => p.id === editId);
+                  if (!editingMember) return null;
+                  return (
+                    <div className="border-t border-border/30 pt-3 mt-2">
+                      <p className="text-xs text-muted-foreground mb-2 font-medium">অ্যাকাউন্ট ও নিরাপত্তা</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="gap-2 justify-start border-border/50"
+                          onClick={() => { setEmailMember(editingMember); setNewEmail(editingMember.email || ""); setEmailOpen(true); }}
+                        >
+                          <Mail className="h-4 w-4 text-primary" />
+                          <span className="text-xs">ইমেইল পরিবর্তন</span>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="gap-2 justify-start border-border/50"
+                          onClick={() => { setPwMember(editingMember); setNewPassword(""); setPwOpen(true); }}
+                        >
+                          <KeyRound className="h-4 w-4 text-warning" />
+                          <span className="text-xs">পাসওয়ার্ড পরিবর্তন</span>
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })()}
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সদস্য যোগ করুন"}
                 </Button>
