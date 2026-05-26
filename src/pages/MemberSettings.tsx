@@ -593,11 +593,61 @@ const MemberSettings = () => {
           <div className="space-y-4">
             <div>
               <Label className="text-muted-foreground text-xs">নতুন ইমেইল</Label>
-              <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="নতুন ইমেইল দিন" />
+              <Input
+                type="email"
+                value={newEmail}
+                onChange={e => setNewEmail(e.target.value)}
+                disabled={emailStep === "otp"}
+                className="bg-secondary/50 border-border/50"
+                placeholder="নতুন ইমেইল দিন"
+              />
             </div>
-            <Button onClick={handleChangeEmail} disabled={emailSaving || !newEmail.trim()} className="w-full gap-2">
-              <Mail className="h-4 w-4" /> {emailSaving ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
-            </Button>
+            {emailStep === "email" && (
+              <>
+                <p className="text-xs text-muted-foreground">
+                  নিরাপত্তার জন্য আপনার মোবাইলে একটি OTP পাঠানো হবে। OTP দিয়ে ইমেইল পরিবর্তন নিশ্চিত করুন।
+                </p>
+                <Button onClick={handleRequestEmailOtp} disabled={emailSendingOtp || !newEmail.trim()} className="w-full gap-2">
+                  <Mail className="h-4 w-4" /> {emailSendingOtp ? "OTP পাঠানো হচ্ছে..." : "OTP পাঠান"}
+                </Button>
+              </>
+            )}
+            {emailStep === "otp" && (
+              <>
+                <div>
+                  <Label className="text-muted-foreground text-xs">OTP ({emailMaskedPhone} নম্বরে পাঠানো হয়েছে)</Label>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={emailOtp}
+                    onChange={e => setEmailOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="bg-secondary/50 border-border/50 tracking-widest text-center text-lg"
+                    placeholder="6 ডিজিট OTP"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => { setEmailStep("email"); setEmailOtp(""); }}
+                    className="flex-1"
+                  >
+                    পিছনে
+                  </Button>
+                  <Button onClick={handleChangeEmail} disabled={emailSaving || emailOtp.length !== 6} className="flex-1 gap-2">
+                    {emailSaving ? "পরিবর্তন হচ্ছে..." : "নিশ্চিত করুন"}
+                  </Button>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRequestEmailOtp}
+                  disabled={emailSendingOtp}
+                  className="text-xs text-primary hover:underline w-full text-center"
+                >
+                  {emailSendingOtp ? "পাঠানো হচ্ছে..." : "OTP আবার পাঠান"}
+                </button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
