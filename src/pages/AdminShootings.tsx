@@ -89,6 +89,10 @@ const AdminShootings = () => {
   const [smsSelected, setSmsSelected] = useState<string[]>([]);
   const [smsSending, setSmsSending] = useState(false);
   const [smsSearch, setSmsSearch] = useState("");
+  const [smsFromDate, setSmsFromDate] = useState("");
+  const [smsToDate, setSmsToDate] = useState("");
+  const [smsCallTime, setSmsCallTime] = useState("");
+  const [smsLocation, setSmsLocation] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -412,31 +416,63 @@ const AdminShootings = () => {
     }
   };
 
-  const openSmsDialog = async (shooting: any) => {
-    setSmsShootingName(shooting?.name || "");
-    setSmsSearch("");
-    const dateStr = shooting?.shoot_date ? new Date(shooting.shoot_date).toLocaleDateString("bn-BD") : "";
-    const callTime = (shooting as any)?.call_time || "";
-    const loc = shooting?.location || "";
+  const buildSmsMessage = (opts: { name?: string; from?: string; to?: string; callTime?: string; location?: string }) => {
+    const fromStr = opts.from ? new Date(opts.from).toLocaleDateString("bn-BD") : "";
+    const toStr = opts.to ? new Date(opts.to).toLocaleDateString("bn-BD") : "";
+    let dateLine = "";
+    if (fromStr && toStr && fromStr !== toStr) dateLine = `📅 তারিখ: ${fromStr} - ${toStr}`;
+    else if (fromStr) dateLine = `📅 তারিখ: ${fromStr}`;
     const parts = [
       `প্রিয় সদস্য,`,
-      `"${shooting?.name || "শুটিং"}" শুটিংয়ের তথ্য:`,
-      dateStr ? `📅 তারিখ: ${dateStr}` : "",
-      callTime ? `⏰ কলটাইম: ${callTime}` : "",
-      loc ? `📍 লোকেশন: ${loc}` : "",
+      opts.name ? `"${opts.name}" শুটিংয়ের তথ্য:` : `শুটিংয়ের তথ্য:`,
+      dateLine,
+      opts.callTime ? `⏰ কলটাইম: ${opts.callTime}` : "",
+      opts.location ? `📍 লোকেশন: ${opts.location}` : "",
       `সময়মতো উপস্থিত থাকুন।`,
       `- Kuakata Multimedia`,
     ].filter(Boolean);
-    setSmsMessage(parts.join("\n"));
+    return parts.join("\n");
+  };
+
+  const regenerateSmsMessage = () => {
+    setSmsMessage(buildSmsMessage({ name: smsShootingName, from: smsFromDate, to: smsToDate, callTime: smsCallTime, location: smsLocation }));
+  };
+
+  const openSmsDialog = async (shooting: any) => {
+    const name = shooting?.name || "";
+    const from = shooting?.shoot_date || "";
+    const to = (shooting as any)?.shoot_end_date || shooting?.shoot_date || "";
+    const callTime = (shooting as any)?.call_time || "";
+    const loc = shooting?.location || "";
+    setSmsShootingName(name);
+    setSmsFromDate(from);
+    setSmsToDate(to);
+    setSmsCallTime(callTime);
+    setSmsLocation(loc);
+    setSmsSearch("");
+    setSmsMessage(buildSmsMessage({ name, from, to, callTime, location: loc }));
 
     const { data: participants } = await (supabase as any)
       .from("shooting_participants").select("member_id").eq("shooting_id", shooting.id);
     const pids: string[] = (participants || []).map((p: any) => p.member_id);
     const mems = (allMembers || []).filter((m: any) => pids.includes(m.id));
-    // Fallback: if no participants set, allow choosing from all members
     const list = mems.length > 0 ? mems : (allMembers || []);
     setSmsMembers(list);
     setSmsSelected(mems.length > 0 ? mems.map((m: any) => m.id) : []);
+    setSmsDialogOpen(true);
+  };
+
+  const openBroadcastSmsDialog = () => {
+    setSmsShootingName("");
+    setSmsFromDate("");
+    setSmsToDate("");
+    setSmsCallTime("");
+    setSmsLocation("");
+    setSmsSearch("");
+    setSmsMessage(buildSmsMessage({}));
+    const list = (allMembers || []);
+    setSmsMembers(list);
+    setSmsSelected([]);
     setSmsDialogOpen(true);
   };
 
@@ -516,10 +552,14 @@ const AdminShootings = () => {
           <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
             <Film className="h-5 w-5 md:h-6 md:w-6 text-primary" /> শুটিং
           </h1>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
-            </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-2 text-xs md:text-sm border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300" onClick={openBroadcastSmsDialog}>
+              <MessageSquare className="h-4 w-4" /> ব্রডকাস্ট SMS
+            </Button>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
+              </DialogTrigger>
             <DialogContent className="bg-card border-border/50">
               <DialogHeader>
                 <DialogTitle className="text-foreground">{editId ? "শুটিং সম্পাদনা" : "নতুন শুটিং যোগ করুন"}</DialogTitle>
@@ -597,7 +637,8 @@ const AdminShootings = () => {
                 </Button>
               </form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
 
         <Tabs defaultValue="all" className="w-full">
@@ -1130,19 +1171,53 @@ const AdminShootings = () => {
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-emerald-400" />
-              SMS পাঠান — {smsShootingName}
+              {smsShootingName ? `SMS পাঠান — ${smsShootingName}` : "ব্রডকাস্ট SMS"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-foreground text-xs mb-1 block">বার্তা *</Label>
+              <Label className="text-foreground text-xs mb-1 block">শুটিং/বিষয়ের নাম</Label>
+              <Input
+                value={smsShootingName}
+                onChange={(e) => setSmsShootingName(e.target.value)}
+                placeholder="যেমন: ঈদ স্পেশাল নাটক"
+                className="bg-secondary border-border/50 h-9 text-sm"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">শুরুর তারিখ</Label>
+                <Input type="date" value={smsFromDate} onChange={(e) => setSmsFromDate(e.target.value)} className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">শেষ তারিখ</Label>
+                <Input type="date" value={smsToDate} onChange={(e) => setSmsToDate(e.target.value)} className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">কলটাইম</Label>
+                <Input value={smsCallTime} onChange={(e) => setSmsCallTime(e.target.value)} placeholder="যেমন: সকাল ৮টা" className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">লোকেশন</Label>
+                <Input value={smsLocation} onChange={(e) => setSmsLocation(e.target.value)} placeholder="যেমন: কুয়াকাটা বিচ" className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="text-foreground text-xs">বার্তা *</Label>
+                <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2 text-primary" onClick={regenerateSmsMessage}>
+                  🔄 বার্তা পুনরায় তৈরি করুন
+                </Button>
+              </div>
               <Textarea
                 value={smsMessage}
                 onChange={(e) => setSmsMessage(e.target.value)}
                 rows={7}
                 className="bg-secondary border-border/50 text-sm"
               />
-              <p className="text-[10px] text-muted-foreground mt-1">তারিখ, কলটাইম ও লোকেশন স্বয়ংক্রিয় ভাবে যুক্ত হয়েছে — প্রয়োজনে এডিট করুন।</p>
+              <p className="text-[10px] text-muted-foreground mt-1">উপরের ফিল্ড পরিবর্তন করে "পুনরায় তৈরি করুন" চাপুন, অথবা সরাসরি এডিট করুন।</p>
             </div>
 
             <div>
