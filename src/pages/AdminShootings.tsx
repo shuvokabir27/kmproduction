@@ -411,6 +411,54 @@ const AdminShootings = () => {
       setOngoingSubmitting(false);
     }
   };
+
+  const openSmsDialog = async (shooting: any) => {
+    setSmsShootingName(shooting?.name || "");
+    setSmsSearch("");
+    const dateStr = shooting?.shoot_date ? new Date(shooting.shoot_date).toLocaleDateString("bn-BD") : "";
+    const callTime = (shooting as any)?.call_time || "";
+    const loc = shooting?.location || "";
+    const parts = [
+      `প্রিয় সদস্য,`,
+      `"${shooting?.name || "শুটিং"}" শুটিংয়ের তথ্য:`,
+      dateStr ? `📅 তারিখ: ${dateStr}` : "",
+      callTime ? `⏰ কলটাইম: ${callTime}` : "",
+      loc ? `📍 লোকেশন: ${loc}` : "",
+      `সময়মতো উপস্থিত থাকুন।`,
+      `- Kuakata Multimedia`,
+    ].filter(Boolean);
+    setSmsMessage(parts.join("\n"));
+
+    const { data: participants } = await (supabase as any)
+      .from("shooting_participants").select("member_id").eq("shooting_id", shooting.id);
+    const pids: string[] = (participants || []).map((p: any) => p.member_id);
+    const mems = (allMembers || []).filter((m: any) => pids.includes(m.id));
+    // Fallback: if no participants set, allow choosing from all members
+    const list = mems.length > 0 ? mems : (allMembers || []);
+    setSmsMembers(list);
+    setSmsSelected(mems.length > 0 ? mems.map((m: any) => m.id) : []);
+    setSmsDialogOpen(true);
+  };
+
+  const toggleSmsMember = (id: string) => {
+    setSmsSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  };
+
+  const sendShootingSms = async () => {
+    if (smsSelected.length === 0) { toast.error("অন্তত একজন সদস্য নির্বাচন করুন"); return; }
+    if (!smsMessage.trim()) { toast.error("বার্তা লিখুন"); return; }
+    setSmsSending(true);
+    try {
+      await sendTeamSms({ member_ids: smsSelected, message: smsMessage.trim() });
+      toast.success(`${smsSelected.length} জন সদস্যকে SMS পাঠানো হয়েছে`);
+      setSmsDialogOpen(false);
+    } catch (e: any) {
+      toast.error(e?.message || "SMS পাঠাতে ব্যর্থ");
+    } finally {
+      setSmsSending(false);
+    }
+  };
+
   const openScriptEditor = (shooting: any) => {
     // If shooting has linked script content from scripts table, use it as initial content
     const linkedScriptContent = shooting.scripts?.content || "";
