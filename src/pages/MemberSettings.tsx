@@ -50,6 +50,10 @@ const MemberSettings = () => {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+  const [emailStep, setEmailStep] = useState<"email" | "otp">("email");
+  const [emailOtp, setEmailOtp] = useState("");
+  const [emailMaskedPhone, setEmailMaskedPhone] = useState("");
+  const [emailSendingOtp, setEmailSendingOtp] = useState(false);
 
   const [bankDialogOpen, setBankDialogOpen] = useState(false);
   const [bankFields, setBankFields] = useState({ bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "" });
@@ -195,23 +199,45 @@ const MemberSettings = () => {
     }
   };
 
-  const handleChangeEmail = async () => {
+  const handleRequestEmailOtp = async () => {
     if (!newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       toast.error("সঠিক ইমেইল দিন"); return;
     }
+    setEmailSendingOtp(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-email-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ action: "request_otp", new_email: newEmail.trim() }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
+      setEmailMaskedPhone(result.masked_phone || "");
+      setEmailStep("otp");
+      toast.success(`OTP পাঠানো হয়েছে ${result.masked_phone || ""} নম্বরে`);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setEmailSendingOtp(false);
+    }
+  };
+
+  const handleChangeEmail = async () => {
+    if (emailOtp.replace(/\D/g, "").length !== 6) { toast.error("৬ ডিজিটের OTP দিন"); return; }
     setEmailSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-member-email`, {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/change-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
-        body: JSON.stringify({ user_id: user!.id, new_email: newEmail.trim() }),
+        body: JSON.stringify({ action: "verify_and_change", new_email: newEmail.trim(), otp: emailOtp.trim() }),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
       toast.success("ইমেইল পরিবর্তন হয়েছে!");
       setEmailDialogOpen(false);
-      setNewEmail("");
+      setNewEmail(""); setEmailOtp(""); setEmailStep("email"); setEmailMaskedPhone("");
       queryClient.invalidateQueries({ queryKey: ["auth-user"] });
     } catch (err: any) {
       toast.error(err.message);
@@ -320,7 +346,7 @@ const MemberSettings = () => {
           </button>
 
           <button
-            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailDialogOpen(true); }}
+            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailOtp(""); setEmailStep("email"); setEmailMaskedPhone(""); setEmailDialogOpen(true); }}
             className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
           >
             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -567,11 +593,61 @@ const MemberSettings = () => {
           <div className="space-y-4">
             <div>
               <Label className="text-muted-foreground text-xs">নতুন ইমেইল</Label>
-              <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="bg-secondary/50 border-border/50" placeholder="নতুন ইমেইল দিন" />
+              <Input
+                type="email"
+                value={newEmail}
+                onChange={e => setNewEmail(e.target.value)}
+                disabled={emailStep === "otp"}
+                className="bg-secondary/50 border-border/50"
+                placeholder="নতুন ইমেইল দিন"
+              />
             </div>
-            <Button onClick={handleChangeEmail} disabled={emailSaving || !newEmail.trim()} className="w-full gap-2">
-              <Mail className="h-4 w-4" /> {emailSaving ? "পরিবর্তন হচ্ছে..." : "ইমেইল পরিবর্তন করুন"}
-            </Button>
+            {emailStep === "email" && (
+              <>
+                <p className="text-xs text-muted-foreground">
+                  নিরাপত্তার জন্য আপনার মোবাইলে একটি OTP পাঠানো হবে। OTP দিয়ে ইমেইল পরিবর্তন নিশ্চিত করুন।
+                </p>
+                <Button onClick={handleRequestEmailOtp} disabled={emailSendingOtp || !newEmail.trim()} className="w-full gap-2">
+                  <Mail className="h-4 w-4" /> {emailSendingOtp ? "OTP পাঠানো হচ্ছে..." : "OTP পাঠান"}
+                </Button>
+              </>
+            )}
+            {emailStep === "otp" && (
+              <>
+                <div>
+                  <Label className="text-muted-foreground text-xs">OTP ({emailMaskedPhone} নম্বরে পাঠানো হয়েছে)</Label>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={emailOtp}
+                    onChange={e => setEmailOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="bg-secondary/50 border-border/50 tracking-widest text-center text-lg"
+                    placeholder="6 ডিজিট OTP"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => { setEmailStep("email"); setEmailOtp(""); }}
+                    className="flex-1"
+                  >
+                    পিছনে
+                  </Button>
+                  <Button onClick={handleChangeEmail} disabled={emailSaving || emailOtp.length !== 6} className="flex-1 gap-2">
+                    {emailSaving ? "পরিবর্তন হচ্ছে..." : "নিশ্চিত করুন"}
+                  </Button>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRequestEmailOtp}
+                  disabled={emailSendingOtp}
+                  className="text-xs text-primary hover:underline w-full text-center"
+                >
+                  {emailSendingOtp ? "পাঠানো হচ্ছে..." : "OTP আবার পাঠান"}
+                </button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
