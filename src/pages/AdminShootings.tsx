@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock, Clapperboard } from "lucide-react";
+import { Film, Plus, FileText, Edit, Trash2, Eye, EyeOff, Video, Users, Check, Lock, Clapperboard, MessageSquare, Send } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useCallback } from "react";
@@ -81,6 +81,14 @@ const AdminShootings = () => {
   const [sceneTrackerOpen, setSceneTrackerOpen] = useState(false);
   const [sceneTrackerShootingId, setSceneTrackerShootingId] = useState("");
   const [sceneTrackerShootingName, setSceneTrackerShootingName] = useState("");
+  // SMS broadcast to shooting participants
+  const [smsDialogOpen, setSmsDialogOpen] = useState(false);
+  const [smsShootingName, setSmsShootingName] = useState("");
+  const [smsMessage, setSmsMessage] = useState("");
+  const [smsMembers, setSmsMembers] = useState<any[]>([]);
+  const [smsSelected, setSmsSelected] = useState<string[]>([]);
+  const [smsSending, setSmsSending] = useState(false);
+  const [smsSearch, setSmsSearch] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
@@ -403,6 +411,54 @@ const AdminShootings = () => {
       setOngoingSubmitting(false);
     }
   };
+
+  const openSmsDialog = async (shooting: any) => {
+    setSmsShootingName(shooting?.name || "");
+    setSmsSearch("");
+    const dateStr = shooting?.shoot_date ? new Date(shooting.shoot_date).toLocaleDateString("bn-BD") : "";
+    const callTime = (shooting as any)?.call_time || "";
+    const loc = shooting?.location || "";
+    const parts = [
+      `প্রিয় সদস্য,`,
+      `"${shooting?.name || "শুটিং"}" শুটিংয়ের তথ্য:`,
+      dateStr ? `📅 তারিখ: ${dateStr}` : "",
+      callTime ? `⏰ কলটাইম: ${callTime}` : "",
+      loc ? `📍 লোকেশন: ${loc}` : "",
+      `সময়মতো উপস্থিত থাকুন।`,
+      `- Kuakata Multimedia`,
+    ].filter(Boolean);
+    setSmsMessage(parts.join("\n"));
+
+    const { data: participants } = await (supabase as any)
+      .from("shooting_participants").select("member_id").eq("shooting_id", shooting.id);
+    const pids: string[] = (participants || []).map((p: any) => p.member_id);
+    const mems = (allMembers || []).filter((m: any) => pids.includes(m.id));
+    // Fallback: if no participants set, allow choosing from all members
+    const list = mems.length > 0 ? mems : (allMembers || []);
+    setSmsMembers(list);
+    setSmsSelected(mems.length > 0 ? mems.map((m: any) => m.id) : []);
+    setSmsDialogOpen(true);
+  };
+
+  const toggleSmsMember = (id: string) => {
+    setSmsSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  };
+
+  const sendShootingSms = async () => {
+    if (smsSelected.length === 0) { toast.error("অন্তত একজন সদস্য নির্বাচন করুন"); return; }
+    if (!smsMessage.trim()) { toast.error("বার্তা লিখুন"); return; }
+    setSmsSending(true);
+    try {
+      await sendTeamSms({ member_ids: smsSelected, message: smsMessage.trim() });
+      toast.success(`${smsSelected.length} জন সদস্যকে SMS পাঠানো হয়েছে`);
+      setSmsDialogOpen(false);
+    } catch (e: any) {
+      toast.error(e?.message || "SMS পাঠাতে ব্যর্থ");
+    } finally {
+      setSmsSending(false);
+    }
+  };
+
   const openScriptEditor = (shooting: any) => {
     // If shooting has linked script content from scripts table, use it as initial content
     const linkedScriptContent = shooting.scripts?.content || "";
@@ -587,6 +643,11 @@ const AdminShootings = () => {
                                  <Users className="h-3.5 w-3.5" />
                                </Button>
                              )}
+                             {(s.status === "calltime" || s.status === "ongoing" || s.status === "upcoming") && (
+                               <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-emerald-400" onClick={() => openSmsDialog(s)} title="সদস্যদের SMS পাঠান">
+                                 <MessageSquare className="h-3.5 w-3.5" />
+                               </Button>
+                             )}
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)} title={(s as any).show_on_public ? "পাবলিক সাইটে দেখাচ্ছে" : "পাবলিক সাইটে লুকানো"}>
                                {(s as any).show_on_public ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                              </Button>
@@ -721,6 +782,12 @@ const AdminShootings = () => {
                                    {(s.status === "calltime" || s.status === "ongoing") && (
                                      <Button variant="ghost" size="sm" className="text-cyan-400 hover:text-cyan-300" onClick={() => openCalltimeDialog(s, true)} title="কলটাইম সম্পাদনা">
                                        <Users className="h-4 w-4" />
+                                     </Button>
+                                   )}
+                                   {(s.status === "calltime" || s.status === "ongoing" || s.status === "upcoming") && (
+                                     <Button variant="ghost" size="sm" className="text-emerald-400 hover:text-emerald-300 gap-1" onClick={() => openSmsDialog(s)} title="সদস্যদের SMS পাঠান">
+                                       <MessageSquare className="h-4 w-4" />
+                                       <span className="text-xs">SMS</span>
                                      </Button>
                                    )}
                                     <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 gap-1" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
@@ -1052,6 +1119,65 @@ const AdminShootings = () => {
             </div>
             <Button onClick={handleRevertWithPassword} disabled={revertVerifying} className="w-full">
               {revertVerifying ? "যাচাই হচ্ছে..." : "নিশ্চিত করুন"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* SMS Broadcast Dialog */}
+      <Dialog open={smsDialogOpen} onOpenChange={setSmsDialogOpen}>
+        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-emerald-400" />
+              SMS পাঠান — {smsShootingName}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-foreground text-xs mb-1 block">বার্তা *</Label>
+              <Textarea
+                value={smsMessage}
+                onChange={(e) => setSmsMessage(e.target.value)}
+                rows={7}
+                className="bg-secondary border-border/50 text-sm"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">তারিখ, কলটাইম ও লোকেশন স্বয়ংক্রিয় ভাবে যুক্ত হয়েছে — প্রয়োজনে এডিট করুন।</p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="text-foreground text-xs">সদস্য নির্বাচন ({smsSelected.length}/{smsMembers.length})</Label>
+                <div className="flex gap-1">
+                  <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={() => setSmsSelected(smsMembers.map((m: any) => m.id))}>সব</Button>
+                  <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={() => setSmsSelected([])}>কেউ না</Button>
+                </div>
+              </div>
+              <Input
+                placeholder="সদস্য খুঁজুন..."
+                value={smsSearch}
+                onChange={(e) => setSmsSearch(e.target.value)}
+                className="bg-secondary border-border/50 h-8 text-xs mb-2"
+              />
+              <div className="max-h-56 overflow-y-auto border border-border/30 rounded-lg divide-y divide-border/20">
+                {smsMembers.length === 0 && (
+                  <p className="p-3 text-xs text-center text-muted-foreground">কোনো সদস্য নেই</p>
+                )}
+                {smsMembers
+                  .filter((m: any) => !smsSearch || (m.full_name || "").toLowerCase().includes(smsSearch.toLowerCase()) || (m.member_id || "").toLowerCase().includes(smsSearch.toLowerCase()))
+                  .map((m: any) => (
+                    <label key={m.id} className="flex items-center gap-2 p-2 hover:bg-secondary/40 cursor-pointer">
+                      <Checkbox checked={smsSelected.includes(m.id)} onCheckedChange={() => toggleSmsMember(m.id)} />
+                      <span className="text-xs text-foreground flex-1 truncate">{m.full_name}</span>
+                      <span className="text-[10px] text-muted-foreground">#{m.member_id}</span>
+                    </label>
+                  ))}
+              </div>
+            </div>
+
+            <Button onClick={sendShootingSms} disabled={smsSending || smsSelected.length === 0} className="w-full gap-2 bg-emerald-500 hover:bg-emerald-600 text-white">
+              <Send className="h-4 w-4" />
+              {smsSending ? "পাঠানো হচ্ছে..." : `SMS পাঠান (${smsSelected.length} জন)`}
             </Button>
           </div>
         </DialogContent>
