@@ -89,6 +89,10 @@ const AdminShootings = () => {
   const [smsSelected, setSmsSelected] = useState<string[]>([]);
   const [smsSending, setSmsSending] = useState(false);
   const [smsSearch, setSmsSearch] = useState("");
+  const [smsFromDate, setSmsFromDate] = useState("");
+  const [smsToDate, setSmsToDate] = useState("");
+  const [smsCallTime, setSmsCallTime] = useState("");
+  const [smsLocation, setSmsLocation] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
