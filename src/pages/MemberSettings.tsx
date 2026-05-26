@@ -332,31 +332,6 @@ const MemberSettings = () => {
             </div>
           </button>
 
-          <button
-            onClick={() => setPwDialogOpen(true)}
-            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
-          >
-            <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center">
-              <KeyRound className="h-5 w-5 text-warning" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">পাসওয়ার্ড পরিবর্তন</p>
-              <p className="text-xs text-muted-foreground">আপনার লগইন পাসওয়ার্ড পরিবর্তন করুন</p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailOtp(""); setEmailStep("email"); setEmailMaskedPhone(""); setEmailDialogOpen(true); }}
-            className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
-          >
-            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Mail className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">ইমেইল পরিবর্তন</p>
-              <p className="text-xs text-muted-foreground">{profile?.email || user?.email || "ইমেইল সেট করুন"}</p>
-            </div>
-          </button>
 
           {/* ব্যাংক তথ্য কার্ড */}
           <div className="rounded-xl bg-card border border-border/50 overflow-hidden">
