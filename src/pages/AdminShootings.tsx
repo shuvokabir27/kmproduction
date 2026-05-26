@@ -81,6 +81,14 @@ const AdminShootings = () => {
   const [sceneTrackerOpen, setSceneTrackerOpen] = useState(false);
   const [sceneTrackerShootingId, setSceneTrackerShootingId] = useState("");
   const [sceneTrackerShootingName, setSceneTrackerShootingName] = useState("");
+  // SMS broadcast to shooting participants
+  const [smsDialogOpen, setSmsDialogOpen] = useState(false);
+  const [smsShootingName, setSmsShootingName] = useState("");
+  const [smsMessage, setSmsMessage] = useState("");
+  const [smsMembers, setSmsMembers] = useState<any[]>([]);
+  const [smsSelected, setSmsSelected] = useState<string[]>([]);
+  const [smsSending, setSmsSending] = useState(false);
+  const [smsSearch, setSmsSearch] = useState("");
 
   const { data: shootings } = useQuery({
     queryKey: ["admin-shootings"],
