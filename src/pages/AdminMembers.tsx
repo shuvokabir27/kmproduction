@@ -517,69 +517,50 @@ const AdminMembers = () => {
                   <Label className="text-foreground">ইমেইল {!editId && "*"}</Label>
                   <Input type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} required={!editId} disabled={!!editId} className="bg-secondary border-border/50" />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-foreground">ফোন</Label>
-                    <Input value={form.phone} onChange={(e) => setField("phone", e.target.value)} className="bg-secondary border-border/50" />
-                  </div>
-                  <div>
-                    <Label className="text-foreground flex items-center gap-1">
-                      <MessageCircle className="h-3.5 w-3.5 text-red-500" /> WhatsApp নাম্বার
-                    </Label>
-                    <div className="flex gap-1.5">
-                      <Input
-                        value={form.whatsapp_no}
-                        onChange={(e) => setField("whatsapp_no", e.target.value)}
-                        placeholder="01XXXXXXXXX"
-                        className="bg-secondary border-border/50 flex-1"
-                      />
-                      {typeof navigator !== "undefined" && "contacts" in navigator && (navigator as any).contacts?.select && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="shrink-0 border-red-500/40 hover:bg-red-500/10"
-                          title="ফোনবুক থেকে বাছাই করুন"
-                          onClick={async () => {
-                            try {
-                              const contacts = await (navigator as any).contacts.select(["tel"], { multiple: false });
-                              if (contacts && contacts.length > 0) {
-                                const tel = contacts[0].tel?.[0];
-                                if (tel) {
-                                  const cleaned = String(tel).replace(/[\s-()]/g, "");
-                                  setField("whatsapp_no", cleaned);
-                                  toast.success("নাম্বার যুক্ত হয়েছে: " + cleaned);
-                                }
-                              }
-                            } catch (err: any) {
-                              toast.error(err?.message || "ফোনবুক অ্যাক্সেস দিন");
-                            }
-                          }}
-                        >
-                          <BookUser className="h-4 w-4 text-red-500" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
                 <div>
                   <Label className="text-foreground flex items-center gap-1">
-                    <MessageCircle className="h-3.5 w-3.5 text-emerald-500" /> SMS মোবাইল নাম্বার
+                    <MessageCircle className="h-3.5 w-3.5 text-primary" /> মোবাইল নাম্বার
                   </Label>
                   <div className="flex items-center gap-1.5">
                     <span className="px-2 py-2 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground">+88</span>
                     <Input
-                      value={form.sms_mobile}
+                      value={form.sms_mobile || form.phone || form.whatsapp_no}
                       onChange={(e) => {
                         const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
-                        setField("sms_mobile", digits);
+                        setForm((f) => ({ ...f, phone: digits, whatsapp_no: digits, sms_mobile: digits }));
                       }}
                       placeholder="01XXXXXXXXX"
                       className="bg-secondary border-border/50 flex-1"
                       inputMode="numeric"
                     />
+                    {typeof navigator !== "undefined" && "contacts" in navigator && (navigator as any).contacts?.select && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 border-border/50"
+                        title="ফোনবুক থেকে বাছাই করুন"
+                        onClick={async () => {
+                          try {
+                            const contacts = await (navigator as any).contacts.select(["tel"], { multiple: false });
+                            if (contacts && contacts.length > 0) {
+                              const tel = contacts[0].tel?.[0];
+                              if (tel) {
+                                const digits = String(tel).replace(/\D/g, "").slice(-11);
+                                setForm((f) => ({ ...f, phone: digits, whatsapp_no: digits, sms_mobile: digits }));
+                                toast.success("নাম্বার যুক্ত হয়েছে: " + digits);
+                              }
+                            }
+                          } catch (err: any) {
+                            toast.error(err?.message || "ফোনবুক অ্যাক্সেস দিন");
+                          }
+                        }}
+                      >
+                        <BookUser className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">SMS পাঠানোর সময় এই নাম্বার ব্যবহার হবে (+88 অটো যুক্ত হবে)</p>
+                  <p className="text-xs text-muted-foreground mt-1">একটি নাম্বার দিয়েই SMS, WhatsApp ও অন্যান্য কাজ হবে (+88 অটো যুক্ত হবে)</p>
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <div>
