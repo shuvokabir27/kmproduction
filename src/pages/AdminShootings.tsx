@@ -552,10 +552,14 @@ const AdminShootings = () => {
           <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
             <Film className="h-5 w-5 md:h-6 md:w-6 text-primary" /> শুটিং
           </h1>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
-            </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-2 text-xs md:text-sm border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300" onClick={openBroadcastSmsDialog}>
+              <MessageSquare className="h-4 w-4" /> ব্রডকাস্ট SMS
+            </Button>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> নতুন শুটিং</Button>
+              </DialogTrigger>
             <DialogContent className="bg-card border-border/50">
               <DialogHeader>
                 <DialogTitle className="text-foreground">{editId ? "শুটিং সম্পাদনা" : "নতুন শুটিং যোগ করুন"}</DialogTitle>
