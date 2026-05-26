@@ -637,7 +637,8 @@ const AdminShootings = () => {
                 </Button>
               </form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
 
         <Tabs defaultValue="all" className="w-full">
