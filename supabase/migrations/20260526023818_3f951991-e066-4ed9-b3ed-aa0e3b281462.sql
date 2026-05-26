@@ -1,0 +1,2 @@
+ALTER TABLE public.password_reset_otps DROP CONSTRAINT IF EXISTS password_reset_otps_scope_check;
+ALTER TABLE public.password_reset_otps ADD CONSTRAINT password_reset_otps_scope_check CHECK (scope = ANY (ARRAY['member'::text, 'client'::text, 'email_change'::text]));
