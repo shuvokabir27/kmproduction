@@ -50,6 +50,10 @@ const MemberSettings = () => {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+  const [emailStep, setEmailStep] = useState<"email" | "otp">("email");
+  const [emailOtp, setEmailOtp] = useState("");
+  const [emailMaskedPhone, setEmailMaskedPhone] = useState("");
+  const [emailSendingOtp, setEmailSendingOtp] = useState(false);
 
   const [bankDialogOpen, setBankDialogOpen] = useState(false);
   const [bankFields, setBankFields] = useState({ bank_name: "", bank_account_no: "", bank_account_holder: "", bkash_no: "", bkash_holder: "", nagad_no: "", nagad_holder: "" });
