@@ -416,31 +416,63 @@ const AdminShootings = () => {
     }
   };
 
-  const openSmsDialog = async (shooting: any) => {
-    setSmsShootingName(shooting?.name || "");
-    setSmsSearch("");
-    const dateStr = shooting?.shoot_date ? new Date(shooting.shoot_date).toLocaleDateString("bn-BD") : "";
-    const callTime = (shooting as any)?.call_time || "";
-    const loc = shooting?.location || "";
+  const buildSmsMessage = (opts: { name?: string; from?: string; to?: string; callTime?: string; location?: string }) => {
+    const fromStr = opts.from ? new Date(opts.from).toLocaleDateString("bn-BD") : "";
+    const toStr = opts.to ? new Date(opts.to).toLocaleDateString("bn-BD") : "";
+    let dateLine = "";
+    if (fromStr && toStr && fromStr !== toStr) dateLine = `📅 তারিখ: ${fromStr} - ${toStr}`;
+    else if (fromStr) dateLine = `📅 তারিখ: ${fromStr}`;
     const parts = [
       `প্রিয় সদস্য,`,
-      `"${shooting?.name || "শুটিং"}" শুটিংয়ের তথ্য:`,
-      dateStr ? `📅 তারিখ: ${dateStr}` : "",
-      callTime ? `⏰ কলটাইম: ${callTime}` : "",
-      loc ? `📍 লোকেশন: ${loc}` : "",
+      opts.name ? `"${opts.name}" শুটিংয়ের তথ্য:` : `শুটিংয়ের তথ্য:`,
+      dateLine,
+      opts.callTime ? `⏰ কলটাইম: ${opts.callTime}` : "",
+      opts.location ? `📍 লোকেশন: ${opts.location}` : "",
       `সময়মতো উপস্থিত থাকুন।`,
       `- Kuakata Multimedia`,
     ].filter(Boolean);
-    setSmsMessage(parts.join("\n"));
+    return parts.join("\n");
+  };
+
+  const regenerateSmsMessage = () => {
+    setSmsMessage(buildSmsMessage({ name: smsShootingName, from: smsFromDate, to: smsToDate, callTime: smsCallTime, location: smsLocation }));
+  };
+
+  const openSmsDialog = async (shooting: any) => {
+    const name = shooting?.name || "";
+    const from = shooting?.shoot_date || "";
+    const to = (shooting as any)?.shoot_end_date || shooting?.shoot_date || "";
+    const callTime = (shooting as any)?.call_time || "";
+    const loc = shooting?.location || "";
+    setSmsShootingName(name);
+    setSmsFromDate(from);
+    setSmsToDate(to);
+    setSmsCallTime(callTime);
+    setSmsLocation(loc);
+    setSmsSearch("");
+    setSmsMessage(buildSmsMessage({ name, from, to, callTime, location: loc }));
 
     const { data: participants } = await (supabase as any)
       .from("shooting_participants").select("member_id").eq("shooting_id", shooting.id);
     const pids: string[] = (participants || []).map((p: any) => p.member_id);
     const mems = (allMembers || []).filter((m: any) => pids.includes(m.id));
-    // Fallback: if no participants set, allow choosing from all members
     const list = mems.length > 0 ? mems : (allMembers || []);
     setSmsMembers(list);
     setSmsSelected(mems.length > 0 ? mems.map((m: any) => m.id) : []);
+    setSmsDialogOpen(true);
+  };
+
+  const openBroadcastSmsDialog = () => {
+    setSmsShootingName("");
+    setSmsFromDate("");
+    setSmsToDate("");
+    setSmsCallTime("");
+    setSmsLocation("");
+    setSmsSearch("");
+    setSmsMessage(buildSmsMessage({}));
+    const list = (allMembers || []);
+    setSmsMembers(list);
+    setSmsSelected([]);
     setSmsDialogOpen(true);
   };
 
