@@ -537,7 +537,18 @@ const AdminMembers = () => {
                           inputMode="numeric"
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">এই নাম্বার দিয়েই SMS, WhatsApp ও অন্যান্য কাজ হবে। বাকি তথ্য পরে এডিট থেকে পূরণ করা যাবে।</p>
+                      <p className="text-xs text-muted-foreground mt-1">এই নাম্বার দিয়েই SMS, WhatsApp, লগইন ও অন্যান্য কাজ হবে। বাকি তথ্য পরে এডিট থেকে পূরণ করা যাবে।</p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground">ইমেইল <span className="text-muted-foreground text-xs">(ঐচ্ছিক)</span></Label>
+                      <Input
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => setField("email", e.target.value)}
+                        placeholder="example@mail.com"
+                        className="bg-secondary border-border/50"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">ইমেইল না দিলে অটো জেনারেট হবে। পরে এডিট থেকেও যোগ করা যাবে।</p>
                     </div>
                   </>
                 )}
