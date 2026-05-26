@@ -307,7 +307,16 @@ const AdminMembers = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.full_name.trim()) { toast.error("নাম দিতে হবে"); return; }
+    if (!editId) {
+      const nameEn = (form.full_name_en || "").trim();
+      const mob = (form.sms_mobile || "").trim();
+      if (!nameEn) { toast.error("English নাম দিতে হবে"); return; }
+      if (!/^01\d{9}$/.test(mob)) { toast.error("সঠিক ১১ ডিজিট মোবাইল নাম্বার দিন"); return; }
+      // Auto-fill required defaults so create flow stays minimal
+      form.full_name = form.full_name || nameEn;
+      form.email = form.email || `m${mob}@km.local`;
+      form.phone = mob; form.whatsapp_no = mob;
+    } else if (!form.full_name.trim()) { toast.error("নাম দিতে হবে"); return; }
     setSubmitting(true);
     try {
       let photoUrl: string | undefined;
