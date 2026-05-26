@@ -848,6 +848,35 @@ const AdminMembers = () => {
                 </Tabs>
                 </>
                 )}
+                {editId && (() => {
+                  const editingMember = (allProfiles || []).find((p: any) => p.id === editId);
+                  if (!editingMember) return null;
+                  return (
+                    <div className="border-t border-border/30 pt-3 mt-2">
+                      <p className="text-xs text-muted-foreground mb-2 font-medium">অ্যাকাউন্ট ও নিরাপত্তা</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="gap-2 justify-start border-border/50"
+                          onClick={() => { setEmailMember(editingMember); setNewEmail(editingMember.email || ""); setEmailOpen(true); }}
+                        >
+                          <Mail className="h-4 w-4 text-primary" />
+                          <span className="text-xs">ইমেইল পরিবর্তন</span>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="gap-2 justify-start border-border/50"
+                          onClick={() => { setPwMember(editingMember); setNewPassword(""); setPwOpen(true); }}
+                        >
+                          <KeyRound className="h-4 w-4 text-warning" />
+                          <span className="text-xs">পাসওয়ার্ড পরিবর্তন</span>
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })()}
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সদস্য যোগ করুন"}
                 </Button>
@@ -908,12 +937,6 @@ const AdminMembers = () => {
                   />
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
                     <Edit className="h-3.5 w-3.5 text-muted-foreground" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
-                    <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}>
-                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
                   <Link to={`/member/${m.member_id}`}>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -1006,8 +1029,6 @@ const AdminMembers = () => {
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => openEdit(m)}><Edit className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}><KeyRound className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}><Mail className="h-4 w-4" /></Button>
                         <Link to={`/member/${m.member_id}`}><Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary"><Eye className="h-4 w-4" /></Button></Link>
                       </div>
                     </td>
@@ -1068,12 +1089,6 @@ const AdminMembers = () => {
                         />
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
                           <Edit className="h-3.5 w-3.5 text-muted-foreground" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
-                          <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}>
-                          <Mail className="h-3.5 w-3.5 text-muted-foreground" />
                         </Button>
                       </div>
                     </div>
