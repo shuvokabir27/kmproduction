@@ -784,6 +784,12 @@ const AdminShootings = () => {
                                        <Users className="h-4 w-4" />
                                      </Button>
                                    )}
+                                   {(s.status === "calltime" || s.status === "ongoing" || s.status === "upcoming") && (
+                                     <Button variant="ghost" size="sm" className="text-emerald-400 hover:text-emerald-300 gap-1" onClick={() => openSmsDialog(s)} title="সদস্যদের SMS পাঠান">
+                                       <MessageSquare className="h-4 w-4" />
+                                       <span className="text-xs">SMS</span>
+                                     </Button>
+                                   )}
                                     <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 gap-1" onClick={() => { setSceneTrackerShootingId(s.id); setSceneTrackerShootingName(s.name); setSceneTrackerOpen(true); }} title="দৃশ্য ট্র্যাকার">
                                       <Clapperboard className="h-4 w-4" />
                                       <span className="text-xs">দৃশ্য</span>
