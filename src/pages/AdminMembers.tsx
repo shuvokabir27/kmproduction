@@ -490,7 +490,7 @@ const AdminMembers = () => {
             <DialogTrigger asChild>
               <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> সদস্য যোগ</Button>
             </DialogTrigger>
-            <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-card border-border/50 max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-foreground">{editId ? "সদস্যের তথ্য সম্পাদনা" : "নতুন সদস্য যোগ করুন"}</DialogTitle>
               </DialogHeader>
