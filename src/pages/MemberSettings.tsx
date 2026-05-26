@@ -346,7 +346,7 @@ const MemberSettings = () => {
           </button>
 
           <button
-            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailDialogOpen(true); }}
+            onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailOtp(""); setEmailStep("email"); setEmailMaskedPhone(""); setEmailDialogOpen(true); }}
             className="w-full flex items-center gap-3 p-4 rounded-xl bg-card border border-border/50 hover:bg-secondary/30 transition-colors text-left"
           >
             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
