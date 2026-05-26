@@ -875,6 +875,8 @@ const AdminMembers = () => {
                     </div>
                   </div>
                 </div>
+                </>
+                )}
                 <Button type="submit" className="w-full" disabled={submitting}>
                   {submitting ? "সেভ হচ্ছে..." : editId ? "আপডেট করুন" : "সদস্য যোগ করুন"}
                 </Button>
