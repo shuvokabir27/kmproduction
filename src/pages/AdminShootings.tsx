@@ -1171,19 +1171,53 @@ const AdminShootings = () => {
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-emerald-400" />
-              SMS পাঠান — {smsShootingName}
+              {smsShootingName ? `SMS পাঠান — ${smsShootingName}` : "ব্রডকাস্ট SMS"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-foreground text-xs mb-1 block">বার্তা *</Label>
+              <Label className="text-foreground text-xs mb-1 block">শুটিং/বিষয়ের নাম</Label>
+              <Input
+                value={smsShootingName}
+                onChange={(e) => setSmsShootingName(e.target.value)}
+                placeholder="যেমন: ঈদ স্পেশাল নাটক"
+                className="bg-secondary border-border/50 h-9 text-sm"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">শুরুর তারিখ</Label>
+                <Input type="date" value={smsFromDate} onChange={(e) => setSmsFromDate(e.target.value)} className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">শেষ তারিখ</Label>
+                <Input type="date" value={smsToDate} onChange={(e) => setSmsToDate(e.target.value)} className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">কলটাইম</Label>
+                <Input value={smsCallTime} onChange={(e) => setSmsCallTime(e.target.value)} placeholder="যেমন: সকাল ৮টা" className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="text-foreground text-xs mb-1 block">লোকেশন</Label>
+                <Input value={smsLocation} onChange={(e) => setSmsLocation(e.target.value)} placeholder="যেমন: কুয়াকাটা বিচ" className="bg-secondary border-border/50 h-9 text-sm" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <Label className="text-foreground text-xs">বার্তা *</Label>
+                <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px] px-2 text-primary" onClick={regenerateSmsMessage}>
+                  🔄 বার্তা পুনরায় তৈরি করুন
+                </Button>
+              </div>
               <Textarea
                 value={smsMessage}
                 onChange={(e) => setSmsMessage(e.target.value)}
                 rows={7}
                 className="bg-secondary border-border/50 text-sm"
               />
-              <p className="text-[10px] text-muted-foreground mt-1">তারিখ, কলটাইম ও লোকেশন স্বয়ংক্রিয় ভাবে যুক্ত হয়েছে — প্রয়োজনে এডিট করুন।</p>
+              <p className="text-[10px] text-muted-foreground mt-1">উপরের ফিল্ড পরিবর্তন করে "পুনরায় তৈরি করুন" চাপুন, অথবা সরাসরি এডিট করুন।</p>
             </div>
 
             <div>
