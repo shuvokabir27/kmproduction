@@ -643,6 +643,11 @@ const AdminShootings = () => {
                                  <Users className="h-3.5 w-3.5" />
                                </Button>
                              )}
+                             {(s.status === "calltime" || s.status === "ongoing" || s.status === "upcoming") && (
+                               <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-emerald-400" onClick={() => openSmsDialog(s)} title="সদস্যদের SMS পাঠান">
+                                 <MessageSquare className="h-3.5 w-3.5" />
+                               </Button>
+                             )}
                              <Button variant="ghost" size="sm" className={`h-7 w-7 p-0 ${(s as any).show_on_public ? "text-primary" : "text-muted-foreground/40"}`} onClick={() => togglePublicVisibility(s.id, (s as any).show_on_public)} title={(s as any).show_on_public ? "পাবলিক সাইটে দেখাচ্ছে" : "পাবলিক সাইটে লুকানো"}>
                                {(s as any).show_on_public ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                              </Button>
