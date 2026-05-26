@@ -512,6 +512,36 @@ const AdminMembers = () => {
                     </div>
                   </div>
                 )}
+                {!editId && (
+                  <>
+                    <div>
+                      <Label className="text-foreground">Full Name (English) *</Label>
+                      <Input value={form.full_name_en} onChange={(e) => setField("full_name_en", e.target.value)} required className="bg-secondary border-border/50" placeholder="English name" />
+                    </div>
+                    <div>
+                      <Label className="text-foreground flex items-center gap-1">
+                        <MessageCircle className="h-3.5 w-3.5 text-primary" /> মোবাইল নাম্বার *
+                      </Label>
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-2 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground">+88</span>
+                        <Input
+                          value={form.sms_mobile}
+                          onChange={(e) => {
+                            const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                            setForm((f) => ({ ...f, phone: digits, whatsapp_no: digits, sms_mobile: digits }));
+                          }}
+                          placeholder="01XXXXXXXXX"
+                          required
+                          className="bg-secondary border-border/50 flex-1"
+                          inputMode="numeric"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">এই নাম্বার দিয়েই SMS, WhatsApp ও অন্যান্য কাজ হবে। বাকি তথ্য পরে এডিট থেকে পূরণ করা যাবে।</p>
+                    </div>
+                  </>
+                )}
+                {editId && (
+                <>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="text-foreground">পূর্ণ নাম *</Label>
@@ -521,6 +551,10 @@ const AdminMembers = () => {
                     <Label className="text-foreground">Full Name (English)</Label>
                     <Input value={form.full_name_en} onChange={(e) => setField("full_name_en", e.target.value)} className="bg-secondary border-border/50" placeholder="English name" />
                   </div>
+                </div>
+                <div>
+                  <Label className="text-foreground">ইমেইল</Label>
+                  <Input type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} disabled className="bg-secondary border-border/50" />
                 </div>
                 <div>
                   <Label className="text-foreground">ইমেইল {!editId && "*"}</Label>
