@@ -531,12 +531,45 @@ const MemberSettings = () => {
               </div>
             </div>
 
+            <div className="border-t border-border/30 pt-3">
+              <p className="text-xs text-muted-foreground mb-2 font-medium">অ্যাকাউন্ট ও নিরাপত্তা</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setNewEmail(profile?.email || user?.email || ""); setEmailOtp(""); setEmailStep("email"); setEmailMaskedPhone(""); setEmailDialogOpen(true); }}
+                  className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors text-left"
+                >
+                  <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                    <Mail className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-foreground">ইমেইল পরিবর্তন</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{profile?.email || user?.email || "সেট করুন"}</p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPwDialogOpen(true)}
+                  className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-border/50 hover:bg-secondary transition-colors text-left"
+                >
+                  <div className="h-8 w-8 rounded-md bg-warning/10 flex items-center justify-center shrink-0">
+                    <KeyRound className="h-4 w-4 text-warning" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-foreground">পাসওয়ার্ড পরিবর্তন</p>
+                    <p className="text-[10px] text-muted-foreground truncate">লগইন পাসওয়ার্ড</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
             <Button onClick={handleSaveProfile} className="w-full gap-2" disabled={saving}>
               <Save className="h-4 w-4" /> {saving ? "সেভ হচ্ছে..." : "সেভ করুন"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
+
 
       {/* Password Change Dialog */}
       <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
