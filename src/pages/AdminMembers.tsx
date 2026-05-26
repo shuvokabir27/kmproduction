@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { KeyRound, Mail, MessageCircle, BookUser } from "lucide-react";
@@ -489,7 +490,7 @@ const AdminMembers = () => {
             <DialogTrigger asChild>
               <Button className="gap-2 text-xs md:text-sm" size="sm" onClick={openAdd}><Plus className="h-4 w-4" /> সদস্য যোগ</Button>
             </DialogTrigger>
-            <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-card border-border/50 max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-foreground">{editId ? "সদস্যের তথ্য সম্পাদনা" : "নতুন সদস্য যোগ করুন"}</DialogTitle>
               </DialogHeader>
@@ -552,172 +553,133 @@ const AdminMembers = () => {
                     <Input value={form.full_name_en} onChange={(e) => setField("full_name_en", e.target.value)} className="bg-secondary border-border/50" placeholder="English name" />
                   </div>
                 </div>
-                <div>
-                  <Label className="text-foreground">ইমেইল</Label>
-                  <Input type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} disabled className="bg-secondary border-border/50" />
-                </div>
-                <div>
-                  <Label className="text-foreground">ইমেইল {!editId && "*"}</Label>
-                  <Input type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} required={!editId} disabled={!!editId} className="bg-secondary border-border/50" />
-                </div>
-                <div>
-                  <Label className="text-foreground flex items-center gap-1">
-                    <MessageCircle className="h-3.5 w-3.5 text-primary" /> মোবাইল নাম্বার
-                  </Label>
-                  <div className="flex items-center gap-1.5">
-                    <span className="px-2 py-2 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground">+88</span>
-                    <Input
-                      value={form.sms_mobile || form.phone || form.whatsapp_no}
-                      onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
-                        setForm((f) => ({ ...f, phone: digits, whatsapp_no: digits, sms_mobile: digits }));
-                      }}
-                      placeholder="01XXXXXXXXX"
-                      className="bg-secondary border-border/50 flex-1"
-                      inputMode="numeric"
-                    />
-                    {typeof navigator !== "undefined" && "contacts" in navigator && (navigator as any).contacts?.select && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="shrink-0 border-border/50"
-                        title="ফোনবুক থেকে বাছাই করুন"
-                        onClick={async () => {
-                          try {
-                            const contacts = await (navigator as any).contacts.select(["tel"], { multiple: false });
-                            if (contacts && contacts.length > 0) {
-                              const tel = contacts[0].tel?.[0];
-                              if (tel) {
-                                const digits = String(tel).replace(/\D/g, "").slice(-11);
-                                setForm((f) => ({ ...f, phone: digits, whatsapp_no: digits, sms_mobile: digits }));
-                                toast.success("নাম্বার যুক্ত হয়েছে: " + digits);
-                              }
-                            }
-                          } catch (err: any) {
-                            toast.error(err?.message || "ফোনবুক অ্যাক্সেস দিন");
-                          }
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-foreground">ইমেইল</Label>
+                    <Input type="email" value={form.email} onChange={(e) => setField("email", e.target.value)} disabled className="bg-secondary border-border/50" />
+                  </div>
+                  <div>
+                    <Label className="text-foreground flex items-center gap-1">
+                      <MessageCircle className="h-3.5 w-3.5 text-primary" /> মোবাইল নাম্বার
+                    </Label>
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2 py-2 rounded-md bg-secondary border border-border/50 text-sm text-muted-foreground">+88</span>
+                      <Input
+                        value={form.sms_mobile || form.phone || form.whatsapp_no}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                          setForm((f) => ({ ...f, phone: digits, whatsapp_no: digits, sms_mobile: digits }));
                         }}
-                      >
-                        <BookUser className="h-4 w-4" />
-                      </Button>
-                    )}
+                        placeholder="01XXXXXXXXX"
+                        className="bg-secondary border-border/50 flex-1"
+                        inputMode="numeric"
+                      />
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">একটি নাম্বার দিয়েই SMS, WhatsApp ও অন্যান্য কাজ হবে (+88 অটো যুক্ত হবে)</p>
-                </div>
-                <div className="grid grid-cols-1 gap-3">
-                  <div>
-                    <Label className="text-foreground">রোল / পদবী (একাধিক নির্বাচন করা যাবে)</Label>
-                    {(() => {
-                      const editingMember = editId ? (allProfiles || []).find((p: any) => p.id === editId) : null;
-                      const isSuperAdminMember = editingMember?.member_id === 20200;
-                      const ROLES = [
-                        { bn: "অভিনেতা", en: "Actor" },
-                        { bn: "অভিনেত্রী", en: "Actress" },
-                        { bn: "রাইটার", en: "Writer" },
-                        { bn: "পরিচালক", en: "Director" },
-                        { bn: "সহঃ পরিচালক", en: "Assistant Director" },
-                        { bn: "প্রডাকশন", en: "Production" },
-                        { bn: "ক্যামেরাম্যান", en: "Cameraman" },
-                        { bn: "ক্লায়েন্ট", en: "Client" },
-                        { bn: "এডিটর", en: "Editor" },
-                      ];
-                      if (isSuperAdminMember) ROLES.push({ bn: "সুপার এডমিন", en: "Super Admin" });
-                      const selected = (form.designation || "").split(",").map((s) => s.trim()).filter(Boolean);
-                      const toggle = (bn: string) => {
-                        const next = selected.includes(bn) ? selected.filter((s) => s !== bn) : [...selected, bn];
-                        const enList = next.map((b) => ROLES.find((r) => r.bn === b)?.en || b);
-                        setForm((f) => ({
-                          ...f,
-                          designation: next.join(", "),
-                          designation_en: enList.join(", "),
-                        }));
-                      };
-                      return (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-2 rounded-md bg-secondary border border-border/50">
-                          {ROLES.map((r) => {
-                            const checked = selected.includes(r.bn);
-                            return (
-                              <label key={r.bn} className={`flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-xs transition-colors ${checked ? "bg-primary/20 text-primary" : "hover:bg-background"}`}>
-                                <input type="checkbox" checked={checked} onChange={() => toggle(r.bn)} className="h-3 w-3 accent-primary" />
-                                <span>{r.bn}</span>
-                              </label>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-foreground">পদবী (English) — স্বয়ংক্রিয়</Label>
-                  <Input value={form.designation_en} onChange={(e) => setField("designation_en", e.target.value)} className="bg-secondary border-border/50" placeholder="Designation in English" />
                 </div>
 
-                {/* জন্ম তারিখ — উপরে আনা হয়েছে যাতে সহজে চোখে পড়ে */}
-                <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
-                      🎂 <span>জন্ম তারিখ</span>
-                      <span className="text-[10px] text-muted-foreground font-normal">(কাউন্টডাউনে দেখাবে)</span>
-                    </Label>
-                    <Input
-                      type="date"
-                      value={form.date_of_birth}
-                      onChange={(e) => setField("date_of_birth", e.target.value)}
-                      className="bg-secondary border-border/50"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
-                      🩸 <span>রক্তের গ্রুপ</span>
-                    </Label>
-                    <Select value={form.blood_group || undefined} onValueChange={(v) => setField("blood_group" as any, v)}>
-                      <SelectTrigger className="bg-secondary border-border/50">
-                        <SelectValue placeholder="রক্তের গ্রুপ নির্বাচন করুন" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
-                          <SelectItem key={bg} value={bg}>{bg}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-foreground">ঠিকানা</Label>
-                    <Input value={form.address} onChange={(e) => setField("address", e.target.value)} className="bg-secondary border-border/50" />
-                  </div>
-                  <div>
-                    <Label className="text-foreground">Address (English)</Label>
-                    <Input value={form.address_en} onChange={(e) => setField("address_en", e.target.value)} className="bg-secondary border-border/50" />
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-foreground">বায়ো</Label>
-                  <Textarea value={form.bio} onChange={(e) => setField("bio", e.target.value)} className="bg-secondary border-border/50" rows={2} />
-                </div>
+                <Tabs defaultValue="role" className="w-full">
+                  <TabsList className="w-full flex flex-wrap h-auto gap-1 bg-secondary p-1">
+                    <TabsTrigger value="role" className="text-xs flex-1 min-w-[80px]">রোল</TabsTrigger>
+                    <TabsTrigger value="dob" className="text-xs flex-1 min-w-[80px]">জন্ম তারিখ</TabsTrigger>
+                    <TabsTrigger value="address" className="text-xs flex-1 min-w-[80px]">ঠিকানা</TabsTrigger>
+                    <TabsTrigger value="education" className="text-xs flex-1 min-w-[80px]">শিক্ষা</TabsTrigger>
+                    <TabsTrigger value="bio" className="text-xs flex-1 min-w-[80px]">বায়োডাটা</TabsTrigger>
+                    <TabsTrigger value="banking" className="text-xs flex-1 min-w-[80px]">ব্যাংকিং</TabsTrigger>
+                    <TabsTrigger value="other" className="text-xs flex-1 min-w-[80px]">অন্যান্য</TabsTrigger>
+                  </TabsList>
 
-                {/* ── পাবলিক প্রোফাইল তথ্য ── */}
-                <div className="border-t border-border/30 pt-3">
-                  <p className="text-xs text-muted-foreground mb-2 font-medium">পাবলিক প্রোফাইল তথ্য</p>
-                  <div className="space-y-3">
+                  {/* রোল */}
+                  <TabsContent value="role" className="space-y-3 mt-4">
                     <div>
-                      <Label className="text-foreground text-xs">Bio (English)</Label>
-                      <Textarea value={form.bio_en} onChange={(e) => setField("bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Full bio in English" />
+                      <Label className="text-foreground">রোল / পদবী (একাধিক নির্বাচন করা যাবে)</Label>
+                      {(() => {
+                        const editingMember = editId ? (allProfiles || []).find((p: any) => p.id === editId) : null;
+                        const isSuperAdminMember = editingMember?.member_id === 20200;
+                        const ROLES = [
+                          { bn: "অভিনেতা", en: "Actor" },
+                          { bn: "অভিনেত্রী", en: "Actress" },
+                          { bn: "রাইটার", en: "Writer" },
+                          { bn: "পরিচালক", en: "Director" },
+                          { bn: "সহঃ পরিচালক", en: "Assistant Director" },
+                          { bn: "প্রডাকশন", en: "Production" },
+                          { bn: "ক্যামেরাম্যান", en: "Cameraman" },
+                          { bn: "ক্লায়েন্ট", en: "Client" },
+                          { bn: "এডিটর", en: "Editor" },
+                        ];
+                        if (isSuperAdminMember) ROLES.push({ bn: "সুপার এডমিন", en: "Super Admin" });
+                        const selected = (form.designation || "").split(",").map((s) => s.trim()).filter(Boolean);
+                        const toggle = (bn: string) => {
+                          const next = selected.includes(bn) ? selected.filter((s) => s !== bn) : [...selected, bn];
+                          const enList = next.map((b) => ROLES.find((r) => r.bn === b)?.en || b);
+                          setForm((f) => ({ ...f, designation: next.join(", "), designation_en: enList.join(", ") }));
+                        };
+                        return (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-2 rounded-md bg-secondary border border-border/50">
+                            {ROLES.map((r) => {
+                              const checked = selected.includes(r.bn);
+                              return (
+                                <label key={r.bn} className={`flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-xs transition-colors ${checked ? "bg-primary/20 text-primary" : "hover:bg-background"}`}>
+                                  <input type="checkbox" checked={checked} onChange={() => toggle(r.bn)} className="h-3 w-3 accent-primary" />
+                                  <span>{r.bn}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground">পদবী (English) — স্বয়ংক্রিয়</Label>
+                      <Input value={form.designation_en} onChange={(e) => setField("designation_en", e.target.value)} className="bg-secondary border-border/50" placeholder="Designation in English" />
+                    </div>
+                  </TabsContent>
+
+                  {/* জন্ম তারিখ */}
+                  <TabsContent value="dob" className="mt-4">
+                    <div className="rounded-lg border-2 border-pink-500/40 bg-gradient-to-br from-pink-500/10 to-purple-500/5 p-3 grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <Label className="text-foreground text-xs">সংক্ষিপ্ত বায়ো</Label>
-                        <Textarea value={form.short_bio} onChange={(e) => setField("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="হিরোতে দেখানো হবে" />
+                        <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                          🎂 <span>জন্ম তারিখ</span>
+                          <span className="text-[10px] text-muted-foreground font-normal">(কাউন্টডাউনে দেখাবে)</span>
+                        </Label>
+                        <Input type="date" value={form.date_of_birth} onChange={(e) => setField("date_of_birth", e.target.value)} className="bg-secondary border-border/50" />
                       </div>
                       <div>
-                        <Label className="text-foreground text-xs">Short Bio (English)</Label>
-                        <Textarea value={form.short_bio_en} onChange={(e) => setField("short_bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
+                        <Label className="text-foreground flex items-center gap-1.5 mb-1.5">
+                          🩸 <span>রক্তের গ্রুপ</span>
+                        </Label>
+                        <Select value={form.blood_group || undefined} onValueChange={(v) => setField("blood_group" as any, v)}>
+                          <SelectTrigger className="bg-secondary border-border/50">
+                            <SelectValue placeholder="রক্তের গ্রুপ নির্বাচন করুন" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
+                              <SelectItem key={bg} value={bg}>{bg}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                  </TabsContent>
+
+                  {/* ঠিকানা */}
+                  <TabsContent value="address" className="space-y-3 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-foreground">ঠিকানা</Label>
+                        <Input value={form.address} onChange={(e) => setField("address", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                      <div>
+                        <Label className="text-foreground">Address (English)</Label>
+                        <Input value={form.address_en} onChange={(e) => setField("address_en", e.target.value)} className="bg-secondary border-border/50" />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* শিক্ষা */}
+                  <TabsContent value="education" className="space-y-3 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <Label className="text-foreground text-xs">শিক্ষা</Label>
                         <Input value={form.education} onChange={(e) => setField("education", e.target.value)} className="bg-secondary border-border/50" />
@@ -726,8 +688,6 @@ const AdminMembers = () => {
                         <Label className="text-foreground text-xs">Education (English)</Label>
                         <Input value={form.education_en} onChange={(e) => setField("education_en", e.target.value)} className="bg-secondary border-border/50" />
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <Label className="text-foreground text-xs">অর্জন</Label>
                         <Textarea value={form.achievements} onChange={(e) => setField("achievements", e.target.value)} className="bg-secondary border-border/50" rows={2} />
@@ -737,144 +697,140 @@ const AdminMembers = () => {
                         <Textarea value={form.achievements_en} onChange={(e) => setField("achievements_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                       </div>
                     </div>
+                  </TabsContent>
 
-                    <p className="text-[11px] text-muted-foreground mt-2 font-medium">প্রিয় তথ্য</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label className="text-foreground text-xs">প্রিয় অভিনেতা</Label>
-                        <Input value={form.favorite_actor} onChange={(e) => setField("favorite_actor", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">Favorite Actor (EN)</Label>
-                        <Input value={form.favorite_actor_en} onChange={(e) => setField("favorite_actor_en", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">প্রিয় অভিনেত্রী</Label>
-                        <Input value={form.favorite_actress} onChange={(e) => setField("favorite_actress", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">Favorite Actress (EN)</Label>
-                        <Input value={form.favorite_actress_en} onChange={(e) => setField("favorite_actress_en", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">প্রিয় রঙ</Label>
-                        <Input value={form.favorite_color} onChange={(e) => setField("favorite_color", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">Favorite Color (EN)</Label>
-                        <Input value={form.favorite_color_en} onChange={(e) => setField("favorite_color_en", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">প্রিয় পোশাক</Label>
-                        <Input value={form.favorite_dress} onChange={(e) => setField("favorite_dress", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">Favorite Dress (EN)</Label>
-                        <Input value={form.favorite_dress_en} onChange={(e) => setField("favorite_dress_en", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">প্রিয় খাবার</Label>
-                        <Input value={form.favorite_food} onChange={(e) => setField("favorite_food", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">Favorite Food (EN)</Label>
-                        <Input value={form.favorite_food_en} onChange={(e) => setField("favorite_food_en", e.target.value)} className="bg-secondary border-border/50" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-t border-border/30 pt-3">
-                  <p className="text-xs text-muted-foreground mb-2 font-medium">বেতন তথ্য</p>
-                  <div className="grid grid-cols-2 gap-3">
+                  {/* বায়োডাটা */}
+                  <TabsContent value="bio" className="space-y-3 mt-4">
                     <div>
-                      <Label className="text-foreground text-xs">বেতনের ধরন</Label>
-                      <Select value={form.salary_type} onValueChange={(v) => setField("salary_type" as any, v)}>
-                        <SelectTrigger className="bg-secondary border-border/50">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-card border-border/50">
-                          <SelectItem value="daily">দৈনিক</SelectItem>
-                          <SelectItem value="monthly">মাসিক</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label className="text-foreground">বায়ো</Label>
+                      <Textarea value={form.bio} onChange={(e) => setField("bio", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                     </div>
-                    {form.salary_type === "monthly" && (
+                    <div>
+                      <Label className="text-foreground text-xs">Bio (English)</Label>
+                      <Textarea value={form.bio_en} onChange={(e) => setField("bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="Full bio in English" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
-                        <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
+                        <Label className="text-foreground text-xs">সংক্ষিপ্ত বায়ো</Label>
+                        <Textarea value={form.short_bio} onChange={(e) => setField("short_bio", e.target.value)} className="bg-secondary border-border/50" rows={2} placeholder="হিরোতে দেখানো হবে" />
                       </div>
-                    )}
-                    {form.salary_type === "daily" && (
                       <div>
-                        <Label className="text-foreground text-xs">দৈনিক রেট (৳)</Label>
-                        <Input type="number" value={form.daily_rate} onChange={(e) => setField("daily_rate" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="ফিক্স দৈনিক বেতন" />
-                        <p className="text-[10px] text-muted-foreground mt-0.5">হাজিরায় স্বয়ংক্রিয়ভাবে যুক্ত হবে</p>
+                        <Label className="text-foreground text-xs">Short Bio (English)</Label>
+                        <Textarea value={form.short_bio_en} onChange={(e) => setField("short_bio_en", e.target.value)} className="bg-secondary border-border/50" rows={2} />
                       </div>
-                    )}
-                  </div>
-                  {editId && (
-                    <div className="mt-2">
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-2 font-medium">প্রিয় তথ্য</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div><Label className="text-foreground text-xs">প্রিয় অভিনেতা</Label><Input value={form.favorite_actor} onChange={(e) => setField("favorite_actor", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">Favorite Actor (EN)</Label><Input value={form.favorite_actor_en} onChange={(e) => setField("favorite_actor_en", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">প্রিয় অভিনেত্রী</Label><Input value={form.favorite_actress} onChange={(e) => setField("favorite_actress", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">Favorite Actress (EN)</Label><Input value={form.favorite_actress_en} onChange={(e) => setField("favorite_actress_en", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">প্রিয় রঙ</Label><Input value={form.favorite_color} onChange={(e) => setField("favorite_color", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">Favorite Color (EN)</Label><Input value={form.favorite_color_en} onChange={(e) => setField("favorite_color_en", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">প্রিয় পোশাক</Label><Input value={form.favorite_dress} onChange={(e) => setField("favorite_dress", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">Favorite Dress (EN)</Label><Input value={form.favorite_dress_en} onChange={(e) => setField("favorite_dress_en", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">প্রিয় খাবার</Label><Input value={form.favorite_food} onChange={(e) => setField("favorite_food", e.target.value)} className="bg-secondary border-border/50" /></div>
+                      <div><Label className="text-foreground text-xs">Favorite Food (EN)</Label><Input value={form.favorite_food_en} onChange={(e) => setField("favorite_food_en", e.target.value)} className="bg-secondary border-border/50" /></div>
+                    </div>
+                  </TabsContent>
+
+                  {/* ব্যাংকিং */}
+                  <TabsContent value="banking" className="space-y-4 mt-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2 font-medium">ব্যাংক তথ্য</p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                          <Label className="text-foreground text-xs">ব্যাংকের নাম</Label>
+                          <BankSelect value={form.bank_name} onChange={(v) => setField("bank_name", v)} className="bg-secondary border-border/50" />
+                        </div>
+                        <div>
+                          <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
+                          <Input value={form.bank_account_holder} onChange={(e) => setField("bank_account_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="একাউন্টধারীর পূর্ণ নাম" />
+                        </div>
+                        <div>
+                          <Label className="text-foreground text-xs">একাউন্ট নম্বর</Label>
+                          <Input value={form.bank_account_no} onChange={(e) => setField("bank_account_no", e.target.value)} className="bg-secondary border-border/50" />
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2 font-medium">মোবাইল ব্যাংকিং তথ্য</p>
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div>
+                            <Label className="text-foreground text-xs">প্রোভাইডার</Label>
+                            <div className="flex items-center h-10 px-3 rounded-md bg-secondary border border-border/50">
+                              <span className="inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: "#E2136E" }}>bKash</span>
+                              <span className="ml-2 text-sm">বিকাশ</span>
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
+                            <Input value={form.bkash_holder} onChange={(e) => setField("bkash_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="বিকাশ একাউন্টধারীর নাম" />
+                          </div>
+                          <div>
+                            <Label className="text-foreground text-xs">নম্বর</Label>
+                            <Input value={form.bkash_no} onChange={(e) => setField("bkash_no", e.target.value)} className="bg-secondary border-border/50" placeholder="01XXXXXXXXX" />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div>
+                            <Label className="text-foreground text-xs">প্রোভাইডার</Label>
+                            <div className="flex items-center h-10 px-3 rounded-md bg-secondary border border-border/50">
+                              <span className="inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: "#EE3124" }}>Nagad</span>
+                              <span className="ml-2 text-sm">নগদ</span>
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
+                            <Input value={form.nagad_holder} onChange={(e) => setField("nagad_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="নগদ একাউন্টধারীর নাম" />
+                          </div>
+                          <div>
+                            <Label className="text-foreground text-xs">নম্বর</Label>
+                            <Input value={form.nagad_no} onChange={(e) => setField("nagad_no", e.target.value)} className="bg-secondary border-border/50" placeholder="01XXXXXXXXX" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* অন্যান্য — বেতন ও পূর্বের বাকি */}
+                  <TabsContent value="other" className="space-y-3 mt-4">
+                    <p className="text-xs text-muted-foreground mb-2 font-medium">বেতন তথ্য</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-foreground text-xs">বেতনের ধরন</Label>
+                        <Select value={form.salary_type} onValueChange={(v) => setField("salary_type" as any, v)}>
+                          <SelectTrigger className="bg-secondary border-border/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-border/50">
+                            <SelectItem value="daily">দৈনিক</SelectItem>
+                            <SelectItem value="monthly">মাসিক</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {form.salary_type === "monthly" && (
+                        <div>
+                          <Label className="text-foreground text-xs">মাসিক বেতন (৳)</Label>
+                          <Input type="number" value={form.monthly_salary} onChange={(e) => setField("monthly_salary" as any, e.target.value)} className="bg-secondary border-border/50" />
+                        </div>
+                      )}
+                      {form.salary_type === "daily" && (
+                        <div>
+                          <Label className="text-foreground text-xs">দৈনিক রেট (৳)</Label>
+                          <Input type="number" value={form.daily_rate} onChange={(e) => setField("daily_rate" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="ফিক্স দৈনিক বেতন" />
+                          <p className="text-[10px] text-muted-foreground mt-0.5">হাজিরায় স্বয়ংক্রিয়ভাবে যুক্ত হবে</p>
+                        </div>
+                      )}
+                    </div>
+                    <div>
                       <Label className="text-foreground text-xs">পূর্বের বাকি (৳)</Label>
                       <Input type="number" value={form.previous_balance} onChange={(e) => setField("previous_balance" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="আগের পাওনা থাকলে লিখুন" />
                       <p className="text-[10px] text-muted-foreground mt-1">সিস্টেম চালু হওয়ার আগের বকেয়া পরিমাণ</p>
                     </div>
-                  )}
-                </div>
-                <div className="border-t border-border/30 pt-3">
-                  <p className="text-xs text-muted-foreground mb-2 font-medium">ব্যাংক তথ্য</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div>
-                      <Label className="text-foreground text-xs">ব্যাংকের নাম</Label>
-                      <BankSelect value={form.bank_name} onChange={(v) => setField("bank_name", v)} className="bg-secondary border-border/50" />
-                    </div>
-                    <div>
-                      <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
-                      <Input value={form.bank_account_holder} onChange={(e) => setField("bank_account_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="একাউন্টধারীর পূর্ণ নাম" />
-                    </div>
-                    <div>
-                      <Label className="text-foreground text-xs">একাউন্ট নম্বর</Label>
-                      <Input value={form.bank_account_no} onChange={(e) => setField("bank_account_no", e.target.value)} className="bg-secondary border-border/50" />
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mt-4 mb-2 font-medium">মোবাইল ব্যাংকিং তথ্য</p>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <div>
-                        <Label className="text-foreground text-xs">প্রোভাইডার</Label>
-                        <div className="flex items-center h-10 px-3 rounded-md bg-secondary border border-border/50">
-                          <span className="inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: "#E2136E" }}>bKash</span>
-                          <span className="ml-2 text-sm">বিকাশ</span>
-                        </div>
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
-                        <Input value={form.bkash_holder} onChange={(e) => setField("bkash_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="বিকাশ একাউন্টধারীর নাম" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">নম্বর</Label>
-                        <Input value={form.bkash_no} onChange={(e) => setField("bkash_no", e.target.value)} className="bg-secondary border-border/50" placeholder="01XXXXXXXXX" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <div>
-                        <Label className="text-foreground text-xs">প্রোভাইডার</Label>
-                        <div className="flex items-center h-10 px-3 rounded-md bg-secondary border border-border/50">
-                          <span className="inline-flex items-center justify-center h-5 px-1.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: "#EE3124" }}>Nagad</span>
-                          <span className="ml-2 text-sm">নগদ</span>
-                        </div>
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">হোল্ডারের নাম</Label>
-                        <Input value={form.nagad_holder} onChange={(e) => setField("nagad_holder" as any, e.target.value)} className="bg-secondary border-border/50" placeholder="নগদ একাউন্টধারীর নাম" />
-                      </div>
-                      <div>
-                        <Label className="text-foreground text-xs">নম্বর</Label>
-                        <Input value={form.nagad_no} onChange={(e) => setField("nagad_no", e.target.value)} className="bg-secondary border-border/50" placeholder="01XXXXXXXXX" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  </TabsContent>
+                </Tabs>
                 </>
                 )}
                 <Button type="submit" className="w-full" disabled={submitting}>
