@@ -938,12 +938,6 @@ const AdminMembers = () => {
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEdit(m)}>
                     <Edit className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setPwMember(m); setNewPassword(""); setPwOpen(true); }}>
-                    <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEmailMember(m); setNewEmail(m.email || ""); setEmailOpen(true); }}>
-                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                  </Button>
                   <Link to={`/member/${m.member_id}`}>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                       <Eye className="h-3.5 w-3.5 text-muted-foreground" />
