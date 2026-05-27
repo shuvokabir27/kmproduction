@@ -48,7 +48,12 @@ export default function MobileShopNav() {
           <Soup className="h-5 w-5" />
           <span>আচার</span>
         </Link>
-        <button onClick={cart.open} className={cn(itemBase, "relative", inactiveText)}>
+        <button
+          onClick={cart.open}
+          data-no-magenta
+          style={{ background: "transparent" }}
+          className={cn(itemBase, "relative bg-transparent", inactiveText)}
+        >
           <div className="relative overflow-visible">
             <ShoppingCart className="h-5 w-5" />
             {cart.count > 0 && (
