@@ -41,6 +41,7 @@ const Products = () => {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
   const [showAllProducts, setShowAllProducts] = useState(false);
+  const [offerMode, setOfferMode] = useState(false);
   const { customer: shopCustomer } = useShopCustomer();
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
