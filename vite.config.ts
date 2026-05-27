@@ -43,4 +43,37 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    target: "es2020",
+    cssCodeSplit: true,
+    sourcemap: false,
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "query-vendor": [
+            "@tanstack/react-query",
+            "@tanstack/react-query-persist-client",
+            "@tanstack/query-sync-storage-persister",
+          ],
+          "supabase-vendor": ["@supabase/supabase-js"],
+          "ui-vendor": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-toast",
+            "@radix-ui/react-tooltip",
+            "lucide-react",
+          ],
+          "charts-vendor": ["recharts"],
+          "motion-vendor": ["framer-motion"],
+          "pdf-vendor": ["jspdf", "jspdf-autotable", "html2canvas", "html-to-image"],
+          "docx-vendor": ["docx", "file-saver"],
+        },
+      },
+    },
+  },
 }));
