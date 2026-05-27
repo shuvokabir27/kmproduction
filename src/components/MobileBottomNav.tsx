@@ -39,7 +39,7 @@ import { useMemo, useState } from "react";
 
 const permissionIconMap: Record<string, { icon: any; color: string; bg: string }> = {
   shooting_expenses: { icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
-  shootings: { icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
+  shootings: { icon: Film, color: "text-red-400", bg: "bg-red-500/10" },
   attendance: { icon: Calendar, color: "text-red-400", bg: "bg-red-500/10" },
 };
 
