@@ -740,3 +740,69 @@
 .member-dash-red * {
   font-family: 'Tiro Bangla', 'Hind Siliguri', serif !important;
 }
+
+/* Sidebar magenta background with white text for readability */
+[data-sidebar] {
+  background-color: #E2136E !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+[data-sidebar] .text-foreground,
+[data-sidebar] span,
+[data-sidebar] .sidebar-group-label,
+[data-sidebar] .sidebar-menu-button,
+[data-sidebar] .sidebar-header,
+[data-sidebar] .sidebar-footer {
+  color: #ffffff !important;
+}
+[data-sidebar] .hover\:bg-\[\#E2136E\]\/10:hover,
+[data-sidebar] .hover\:bg-secondary\/80:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-sidebar] [data-active="true"],
+[data-sidebar] .bg-secondary,
+[data-sidebar] .activeClassName,
+[data-sidebar] .bg-\[\#E2136E\]\/10 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+[data-sidebar] svg,
+[data-sidebar] .lucide {
+  color: #ffffff !important;
+}
+[data-sidebar] .bg-\[\#E2136E\]\/10,
+[data-sidebar] .bg-emerald-500\/10,
+[data-sidebar] .bg-violet-500\/10,
+[data-sidebar] .bg-cyan-500\/10,
+[data-sidebar] .bg-rose-500\/10,
+[data-sidebar] .bg-red-500\/10,
+[data-sidebar] .bg-fuchsia-500\/10,
+[data-sidebar] .bg-pink-500\/10,
+[data-sidebar] .bg-purple-500\/10,
+[data-sidebar] .bg-sky-500\/10,
+[data-sidebar] .bg-orange-500\/10,
+[data-sidebar] .bg-amber-500\/10,
+[data-sidebar] .bg-teal-500\/10,
+[data-sidebar] .bg-lime-500\/10,
+[data-sidebar] .bg-yellow-500\/10,
+[data-sidebar] .bg-green-500\/10,
+[data-sidebar] .bg-indigo-500\/10 {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-sidebar] .text-\[\#E2136E\],
+[data-sidebar] .text-emerald-400,
+[data-sidebar] .text-violet-400,
+[data-sidebar] .text-cyan-400,
+[data-sidebar] .text-rose-400,
+[data-sidebar] .text-red-400,
+[data-sidebar] .text-fuchsia-400,
+[data-sidebar] .text-pink-400,
+[data-sidebar] .text-purple-400,
+[data-sidebar] .text-sky-400,
+[data-sidebar] .text-orange-400,
+[data-sidebar] .text-amber-400,
+[data-sidebar] .text-teal-400,
+[data-sidebar] .text-lime-400,
+[data-sidebar] .text-yellow-400,
+[data-sidebar] .text-green-400,
+[data-sidebar] .text-indigo-400 {
+  color: #ffffff !important;
+}
