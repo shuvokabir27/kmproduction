@@ -122,31 +122,31 @@ Deno.serve(async (req) => {
       const identifier = String(body.identifier || "").trim();
       const otp = String(body.otp || "").replace(/\D/g, "");
       const newPassword = String(body.new_password || "");
-      if (otp.length !== 6) return bad("৬ ডিজিটের OTP দিন");
-      if (newPassword.length < 6) return bad("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
+      if (otp.length !== 6) return bad("Please enter a 6-digit OTP");
+      if (newPassword.length < 6) return bad("New password must be at least 6 characters");
 
       const found = await findUser(scope, identifier);
-      if (!found) return bad("অ্যাকাউন্ট পাওয়া যায়নি", 404);
+      if (!found) return bad("Account not found", 404);
 
       const { data: row } = await supabase.from("password_reset_otps")
         .select("id, otp_hash, expires_at, attempts, used_at")
         .eq("scope", scope).eq("phone", found.phone).is("used_at", null)
         .order("created_at", { ascending: false }).limit(1).maybeSingle();
-      if (!row) return bad("OTP পাওয়া যায়নি, আবার অনুরোধ করুন");
-      if (new Date(row.expires_at) < new Date()) return bad("OTP এর মেয়াদ শেষ, নতুন OTP নিন");
-      if (row.attempts >= 5) return bad("অনেকবার ভুল চেষ্টা হয়েছে, নতুন OTP নিন", 429);
+      if (!row) return bad("OTP not found, please request a new one");
+      if (new Date(row.expires_at) < new Date()) return bad("OTP has expired, please request a new one");
+      if (row.attempts >= 5) return bad("Too many failed attempts, please request a new OTP", 429);
 
       const otpHash = await hash(otp, found.phone);
       if (otpHash !== row.otp_hash) {
         await supabase.from("password_reset_otps").update({ attempts: row.attempts + 1 }).eq("id", row.id);
-        return bad("OTP ভুল");
+        return bad("Invalid OTP");
       }
 
       const { error } = await supabase.auth.admin.updateUserById(found.user_id, { password: newPassword });
       if (error) return bad(error.message, 500);
 
       await supabase.from("password_reset_otps").update({ used_at: new Date().toISOString() }).eq("id", row.id);
-      return ok({ ok: true, message: "পাসওয়ার্ড সফলভাবে রিসেট হয়েছে। এখন লগইন করুন।" });
+      return ok({ ok: true, message: "Password reset successfully. Please log in now." });
     }
 
     return bad("Unknown action");
