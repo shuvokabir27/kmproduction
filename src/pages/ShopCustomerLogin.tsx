@@ -233,7 +233,7 @@ export default function ShopCustomerLogin() {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, "")); setErrorMsg(""); }}
                   placeholder="01XXXXXXXXX"
                   className={inputClass}
                   disabled={mode === "forgot" && forgotStep === "otp"}
