@@ -635,9 +635,9 @@ body * {
 .member-dash-red .bg-card\/95,
 .member-dash-red .bg-card\/50 {
   background: #ffffff !important;
-  border-color: #f8d8e5 !important;
-  box-shadow: 0 2px 8px -2px rgba(226, 19, 110, 0.08) !important;
-  color: #1a1a1a !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+  color: #0f172a !important;
 }
 .member-dash-red .premium-card::before,
 .member-dash-red .premium-card::after {
@@ -645,12 +645,12 @@ body * {
 }
 .member-dash-red header.bg-card\/80,
 .member-dash-red header {
-  background: #FFEDF4 !important;
-  border-color: #f8d8e5 !important;
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 .member-dash-red .text-card-foreground,
 .member-dash-red .text-foreground {
-  color: #1a1a1a !important;
+  color: #0f172a !important;
 }
 
 /* Sidebar: clean light surface with dark text and subtle slate accents */
