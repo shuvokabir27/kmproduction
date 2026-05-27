@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff } from "lucide-react";
+import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import MobileShopNav from "@/components/MobileShopNav";
 
@@ -25,6 +26,7 @@ export default function ShopCustomerLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
 
   const requestOtp = async () => {
@@ -65,7 +67,7 @@ export default function ShopCustomerLogin() {
       });
       setLoading(false);
       if (error || (data as any)?.error) {
-        toast.error((data as any)?.error || error?.message || "রিসেট ব্যর্থ");
+        setErrorMsg(getErrorMessage((data as any)?.error || error));
         return;
       }
       localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
@@ -86,7 +88,7 @@ export default function ShopCustomerLogin() {
           body: { phone: phoneDigits, password },
         });
         if (error || (data as any)?.error) {
-          toast.error((data as any)?.error || error?.message || "লগইন ব্যর্থ");
+          setErrorMsg(getErrorMessage((data as any)?.error || error));
           setLoading(false);
           return;
         }
@@ -121,7 +123,7 @@ export default function ShopCustomerLogin() {
     setLoading(false);
 
     if (error || (data as any)?.error) {
-      toast.error((data as any)?.error || error?.message || "ত্রুটি");
+      setErrorMsg(getErrorMessage((data as any)?.error || error));
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
@@ -135,6 +137,19 @@ export default function ShopCustomerLogin() {
     setPassword("");
     setConfirmPassword("");
     setResendIn(0);
+    setErrorMsg("");
+  };
+
+  const getErrorMessage = (err: any): string => {
+    const msg = err?.message?.toLowerCase?.() || String(err).toLowerCase();
+    if (msg.includes("invalid") || msg.includes("wrong") || msg.includes("incorrect") || msg.includes("does not match"))
+      return "মোবাইল নম্বর অথবা পাসওয়ার্ড ভুল। সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।";
+    if (msg.includes("not found") || msg.includes("no user") || msg.includes("no account"))
+      return "এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি। প্রথমে রেজিস্টার করুন।";
+    if (msg.includes("rate limit") || msg.includes("too many") || msg.includes("try again"))
+      return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
+    if (/[\u0980-\u09FF]/.test(err?.message || String(err))) return err?.message || String(err);
+    return "লগইন করা যায়নি। আবার চেষ্টা করুন।";
   };
 
   const inputClass =
@@ -218,7 +233,7 @@ export default function ShopCustomerLogin() {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, "")); setErrorMsg(""); }}
                   placeholder="01XXXXXXXXX"
                   className={inputClass}
                   disabled={mode === "forgot" && forgotStep === "otp"}
@@ -272,7 +287,7 @@ export default function ShopCustomerLogin() {
                       type={showPassword ? "text" : "password"}
                       inputMode="numeric"
                       value={password}
-                      onChange={(e) => setPassword(phone.replace(/\D/g, "") === "01710147613" ? e.target.value : e.target.value.replace(/\D/g, ""))}
+                      onChange={(e) => { setPassword(phone.replace(/\D/g, "") === "01710147613" ? e.target.value : e.target.value.replace(/\D/g, "")); setErrorMsg(""); }}
                       placeholder="••••••"
                       className={inputClass}
                     />
@@ -342,6 +357,20 @@ export default function ShopCustomerLogin() {
                 </button>
               </div>
             )}
+
+            <AnimatePresence>
+              {errorMsg && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: "auto" }}
+                  exit={{ opacity: 0, y: -8, height: 0 }}
+                  className="flex items-start gap-2.5 p-3 rounded-lg bg-red-500/10 border border-red-500/30"
+                >
+                  <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+                  <p className="text-sm text-red-300 font-medium leading-snug">{errorMsg}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {(() => {
               const mismatch = (mode === "register" || (mode === "forgot" && forgotStep === "otp")) && (confirmPassword.length < 6 || confirmPassword !== password);
