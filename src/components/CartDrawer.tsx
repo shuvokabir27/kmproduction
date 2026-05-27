@@ -11,6 +11,7 @@ import { X, Trash2, Plus, Minus, ShoppingCart, CheckCircle, Truck, Sparkles } fr
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import PaymentMethodPicker, { PaymentMethod } from "@/components/PaymentMethodPicker";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 
 const toBn = (n: number) => Math.round(n).toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#3b82f6";
