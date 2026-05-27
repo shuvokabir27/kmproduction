@@ -289,28 +289,11 @@ const ProductDetail = () => {
 
   return (
     <div
-      className="relative min-h-screen pb-16 md:pb-0 text-foreground"
-      style={{
-        fontFamily: "'Tiro Bangla', serif",
-        backgroundImage: [
-          "radial-gradient(80% 50% at 0% 0%, hsl(0 75% 22% / 0.55), transparent 60%)",
-          "radial-gradient(70% 50% at 100% 10%, hsl(350 70% 28% / 0.5), transparent 60%)",
-          "radial-gradient(90% 60% at 50% 100%, hsl(0 80% 18% / 0.55), transparent 65%)",
-          "linear-gradient(160deg, #f8fafc 0%, #2a0a0e 25%, #ffffff 55%, #2a0a0e 85%, #f8fafc 100%)",
-        ].join(", "),
-      }}
+      className="relative min-h-screen pb-16 md:pb-0 text-slate-900 bg-white"
+      style={{ fontFamily: "'Tiro Bangla', serif" }}
     >
-      {/* ambient blobs + grain */}
-      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-blue-600/20 blur-[120px]" />
-        <div className="absolute bottom-10 -right-24 w-[28rem] h-[28rem] rounded-full bg-slate-100 blur-[140px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full bg-slate-900/15 blur-[160px]" />
-        <div
-          className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
-          style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")" }}
-        />
-      </div>
       <div className="relative z-10">
+
 
       {/* Top Strip */}
       <div className="text-white text-xs md:text-sm py-2 px-4" style={{ backgroundColor: BRAND_GREEN }}>
@@ -363,25 +346,9 @@ const ProductDetail = () => {
 
       {/* Main */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        <div
-          className="relative grid md:grid-cols-2 gap-6 md:gap-10 rounded-[28px] p-4 md:p-6 overflow-hidden ring-1 ring-white/10 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7),inset_0_1px_0_0_rgba(255,255,255,0.08)]"
-          style={{
-            backgroundImage: [
-              "radial-gradient(60% 50% at 0% 0%, hsl(0 70% 22% / 0.55), transparent 60%)",
-              "radial-gradient(60% 50% at 100% 0%, hsl(340 60% 22% / 0.5), transparent 60%)",
-              "radial-gradient(80% 60% at 50% 100%, hsl(0 80% 14% / 0.55), transparent 65%)",
-              "linear-gradient(140deg, rgba(40,8,12,0.85) 0%, rgba(20,4,6,0.9) 45%, rgba(35,6,10,0.85) 100%)",
-            ].join(", "),
-            backdropFilter: "blur(20px)",
-          }}
-        >
-          {/* gold hairline top */}
-          <div className="pointer-events-none absolute top-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-          {/* sheen */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-10%,rgba(255,255,255,0.08),transparent_55%)]" />
-          {/* ambient blobs */}
-          <div className="pointer-events-none absolute -top-20 -left-16 w-72 h-72 rounded-full bg-slate-100 blur-[110px]" />
-          <div className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-slate-900/25 blur-[130px]" />
+        <div className="relative grid md:grid-cols-2 gap-6 md:gap-10 rounded-2xl p-4 md:p-6 bg-white border border-slate-200">
+
+
 
           {/* Image gallery */}
           <div>
