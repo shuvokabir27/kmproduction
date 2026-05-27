@@ -280,15 +280,15 @@ const MemberDashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {grantedPermissions.map((p) => {
               const meta: Record<string, { url: string; icon: any; gradient: string; iconColor: string }> = {
-                shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/20 to-rose-500/10", iconColor: "text-red-400" },
-                shootings: { url: "/admin/shootings", icon: Film, gradient: "from-rose-500/20 to-pink-500/10", iconColor: "text-rose-400" },
+                shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/10 to-card", iconColor: "text-red-400" },
+                shootings: { url: "/admin/shootings", icon: Film, gradient: "from-red-500/10 to-card", iconColor: "text-red-400" },
                 attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400" },
               };
               const m = meta[p];
               if (!m) return null;
               const Icon = m.icon;
               return (
-                <Link key={p} to={m.url} className="premium-card rounded-2xl p-4 relative overflow-hidden hover:ring-1 hover:ring-primary/40 transition-all active:scale-[0.98]">
+                <Link key={p} to={m.url} className="rounded-lg border border-border/70 bg-card p-4 relative overflow-hidden hover:bg-secondary/30 transition-all active:scale-[0.99]">
                   <div className={`absolute inset-0 bg-gradient-to-br ${m.gradient} opacity-70`} />
                   <div className="relative z-10 flex items-center gap-3">
                     <div className="h-11 w-11 rounded-xl bg-background/40 backdrop-blur flex items-center justify-center">
