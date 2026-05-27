@@ -346,18 +346,8 @@ const ProductDetail = () => {
 
       {/* Main */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        <div
-          className="relative grid md:grid-cols-2 gap-6 md:gap-10 rounded-[28px] p-4 md:p-6 overflow-hidden ring-1 ring-white/10 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7),inset_0_1px_0_0_rgba(255,255,255,0.08)]"
-          style={{
-            backgroundImage: [
-              "radial-gradient(60% 50% at 0% 0%, hsl(0 70% 22% / 0.55), transparent 60%)",
-              "radial-gradient(60% 50% at 100% 0%, hsl(340 60% 22% / 0.5), transparent 60%)",
-              "radial-gradient(80% 60% at 50% 100%, hsl(0 80% 14% / 0.55), transparent 65%)",
-              "linear-gradient(140deg, rgba(40,8,12,0.85) 0%, rgba(20,4,6,0.9) 45%, rgba(35,6,10,0.85) 100%)",
-            ].join(", "),
-            backdropFilter: "blur(20px)",
-          }}
-        >
+        <div className="relative grid md:grid-cols-2 gap-6 md:gap-10 rounded-2xl p-4 md:p-6 bg-white border border-slate-200">
+
           {/* gold hairline top */}
           <div className="pointer-events-none absolute top-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
           {/* sheen */}
