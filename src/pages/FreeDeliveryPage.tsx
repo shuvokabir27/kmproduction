@@ -250,7 +250,7 @@ export default function FreeDeliveryPage() {
                     className={`relative text-center p-3 rounded-2xl border transition-all ${
                       reached
                         ? "bg-blue-50 border-blue-300"
-                        : "bg-white/[0.03] border-slate-200"
+                        : "bg-white border-slate-200"
                     }`}
                   >
                     {reached && <Gift className="absolute -top-2 -right-2 h-5 w-5 text-blue-600" />}
@@ -270,7 +270,7 @@ export default function FreeDeliveryPage() {
         </div>
 
         {/* Products */}
-        <div className="rounded-3xl border border-slate-200 bg-white/[0.03] backdrop-blur-xl p-5">
+        <div className="rounded-3xl border border-slate-200 bg-white backdrop-blur-xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <span className="h-6 w-1 rounded-full bg-blue-600" />
             <h2 className="font-extrabold text-slate-900">আপনার পছন্দের প্রডাক্ট বাছাই করুন</h2>
@@ -287,7 +287,7 @@ export default function FreeDeliveryPage() {
                   className={`group relative rounded-2xl p-2.5 transition-all duration-300 ${
                     active
                       ? "bg-blue-50 border border-blue-300"
-                      : "bg-white/[0.03] border border-slate-200 hover:border-slate-300 hover:-translate-y-0.5"
+                      : "bg-white border border-slate-200 hover:border-slate-300 hover:-translate-y-0.5"
                   }`}
                 >
                   {active && (
@@ -326,7 +326,7 @@ export default function FreeDeliveryPage() {
         </div>
 
         {/* Order form */}
-        <div className="rounded-3xl border border-slate-200 bg-white/[0.03] backdrop-blur-xl p-5 space-y-3">
+        <div className="rounded-3xl border border-slate-200 bg-white backdrop-blur-xl p-5 space-y-3">
           <div className="flex items-center gap-2 mb-1">
             <span className="h-6 w-1 rounded-full bg-blue-600" />
             <h2 className="font-extrabold text-slate-900">অর্ডার তথ্য</h2>
@@ -334,7 +334,7 @@ export default function FreeDeliveryPage() {
           <div>
             <Label className="text-slate-600 text-xs font-semibold">নাম *</Label>
             <Input
-              className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-900/30 focus-visible:ring-amber-400/50 focus-visible:border-amber-400/40 h-11 mt-1"
+              className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-blue-500/40 focus-visible:border-blue-400 h-11 mt-1"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="আপনার নাম"
@@ -343,7 +343,7 @@ export default function FreeDeliveryPage() {
           <div>
             <Label className="text-slate-600 text-xs font-semibold">মোবাইল নম্বর *</Label>
             <Input
-              className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-900/30 focus-visible:ring-amber-400/50 focus-visible:border-amber-400/40 h-11 mt-1"
+              className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-blue-500/40 focus-visible:border-blue-400 h-11 mt-1"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").slice(0, 11) })}
               placeholder="01XXXXXXXXX"
@@ -358,7 +358,7 @@ export default function FreeDeliveryPage() {
           <div>
             <Label className="text-slate-600 text-xs font-semibold">ঠিকানা *</Label>
             <Textarea
-              className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-900/30 focus-visible:ring-amber-400/50 focus-visible:border-amber-400/40 mt-1"
+              className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-blue-500/40 focus-visible:border-blue-400 mt-1"
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               placeholder="বিস্তারিত ঠিকানা"
@@ -375,7 +375,7 @@ export default function FreeDeliveryPage() {
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-black/70 border-t border-slate-200">
+      <div className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-white/90 border-t border-slate-200">
         <div className="absolute inset-x-0 top-0 h-px bg-slate-200" />
         <div className="max-w-3xl mx-auto p-3">
           {!reachedTier ? (
@@ -383,7 +383,7 @@ export default function FreeDeliveryPage() {
               আরও {toBn(goal - distinctCount)} টি প্রডাক্ট যোগ করুন
             </Button>
           ) : remainingAllowed <= 0 && form.phone.length === 11 ? (
-            <Button disabled className="w-full h-12 text-base bg-red-900/60 text-slate-900 border border-blue-200">এই মোবাইল দিয়ে অর্ডার সীমা পূরণ</Button>
+            <Button disabled className="w-full h-12 text-base bg-slate-100 text-slate-500 border border-slate-200">এই মোবাইল দিয়ে অর্ডার সীমা পূরণ</Button>
           ) : (
             <Button
               onClick={submit}
