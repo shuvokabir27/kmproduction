@@ -123,7 +123,7 @@ export default function ShopCustomerLogin() {
     setLoading(false);
 
     if (error || (data as any)?.error) {
-      toast.error((data as any)?.error || error?.message || "ত্রুটি");
+      setErrorMsg(getErrorMessage((data as any)?.error || error));
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
