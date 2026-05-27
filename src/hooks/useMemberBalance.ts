@@ -169,19 +169,23 @@ export function useMemberBalance(profileId: string | undefined) {
         .map((event) => ({ ...event, remaining: Math.max(0, event.amount - event.paidAmount) }))
         .sort((a, b) => toDateValue(a.date) - toDateValue(b.date) || a.order - b.order);
 
-      // Payments from public.payments are KM-only — they must NOT reduce client/freelance balance.
-      // Client-side payments are already captured via paid_amount on freelance_assignments
-      // and client_project_artists. Keeping the two streams isolated lets the dashboard show
-      // KM and বাইরের কাজ balances separately.
+      // Payments from public.payments (KM admin payments) first knock out admin-added
+      // বাইরের কাজ (freelance_assignments, marked kmPayable) in date order, then KM dues.
+      // Client-added artist work (client_project_artists) is NOT touched — it only clears
+      // when the client themselves pays.
       let remainingPayments = totalPaid;
-      for (const event of allocatedEvents) {
-        if (remainingPayments <= 0) break;
-        if (event.source !== "km") continue;
-        if (event.remaining <= 0) continue;
-        const applied = Math.min(event.remaining, remainingPayments);
-        event.remaining -= applied;
-        remainingPayments -= applied;
-      }
+      const applyTo = (predicate: (e: typeof allocatedEvents[number]) => boolean) => {
+        for (const event of allocatedEvents) {
+          if (remainingPayments <= 0) break;
+          if (!predicate(event)) continue;
+          if (event.remaining <= 0) continue;
+          const applied = Math.min(event.remaining, remainingPayments);
+          event.remaining -= applied;
+          remainingPayments -= applied;
+        }
+      };
+      applyTo((e) => e.source === "client" && !!e.kmPayable);
+      applyTo((e) => e.source === "km");
 
       const kmBalance = allocatedEvents
         .filter((event) => event.source === "km")
