@@ -286,7 +286,7 @@ const AdminSettings = () => {
 
       {/* Profile Edit Dialog */}
       <Dialog open={profileEditOpen} onOpenChange={setProfileEditOpen}>
-        <DialogContent className="bg-card border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-background border-border/50 max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-foreground">প্রোফাইল তথ্য আপডেট</DialogTitle>
           </DialogHeader>
