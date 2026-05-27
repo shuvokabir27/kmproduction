@@ -824,6 +824,30 @@ const Products = () => {
               );
             };
 
+            if (offerMode) {
+              const discounted = filteredProducts
+                .filter((p: any) => p.discount_price && Number(p.discount_price) < Number(p.price))
+                .map((p: any) => ({
+                  p,
+                  pct: Math.round(((Number(p.price) - Number(p.discount_price)) / Number(p.price)) * 100),
+                }))
+                .sort((a, b) => b.pct - a.pct)
+                .map(x => x.p);
+              if (discounted.length === 0) {
+                return (
+                  <div className="text-center py-16 text-muted-foreground">
+                    <Tag className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                    এই মুহূর্তে কোনো ছাড়যুক্ত পণ্য নেই
+                  </div>
+                );
+              }
+              return (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {discounted.map(renderCard)}
+                </div>
+              );
+            }
+
             if (!showAllProducts) {
               const visible = filteredProducts.slice(0, 5);
               return (
