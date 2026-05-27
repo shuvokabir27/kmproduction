@@ -26,9 +26,9 @@ export default function MobileShopNav() {
   const isAchar = path === "/category/achar";
   const isShutki = path === "/category/shutki";
 
-  const itemBase = "flex flex-col items-center justify-center py-2 gap-0.5 transition-colors";
-  const activeText = "text-blue-600";
-  const inactiveText = "text-slate-500";
+  const itemBase = "flex flex-col items-center justify-center py-2 gap-0.5 transition-colors text-blue-600";
+  const activeText = "text-blue-700 font-semibold";
+  const inactiveText = "text-blue-600";
 
   return (
     <nav
