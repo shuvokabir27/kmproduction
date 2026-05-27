@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wallet, Plus, Clock, CheckCircle2, XCircle, AlertCircle, Sparkles, History, X } from "lucide-react";
+import { Wallet, Plus, Clock, CheckCircle2, XCircle, AlertCircle, History, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -202,7 +202,6 @@ export function AdvanceRequestCard() {
             <span className="relative z-10">
               {blocked ? blockReason : "অ্যাডভান্স রিকোয়েস্ট করুন"}
             </span>
-            {!blocked && <Sparkles className="relative z-10 h-3.5 w-3.5 animate-pulse" />}
           </motion.button>
         </div>
       </motion.div>
