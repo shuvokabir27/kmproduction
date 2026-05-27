@@ -207,7 +207,7 @@ const ProductDetail = () => {
     try {
       const variantLabel = chosenVariant ? String(chosenVariant.label) : null;
       const baseName = product?.name || "প্রডাক্ট";
-      const { error } = await supabase.from("orders").insert({
+      const { data: inserted, error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
@@ -220,8 +220,9 @@ const ProductDetail = () => {
         payment_method: orderForm.payment_method,
         payment_sender_no: orderForm.payment_method !== "cod" ? orderForm.payment_sender_no : null,
         payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
-      } as any);
+      } as any).select("order_number").single();
       if (error) throw error;
+      setOrderNumber((inserted as any)?.order_number ?? null);
       setOrderSuccess(true);
       setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
     } catch {
