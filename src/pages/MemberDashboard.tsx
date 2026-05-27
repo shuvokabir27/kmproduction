@@ -728,13 +728,13 @@ const MemberDashboard = () => {
         <DialogContent className="bg-card border-border/50 max-w-md max-h-[85vh] overflow-auto">
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-rose-400" />
+              <CreditCard className="h-5 w-5 text-red-400" />
               মোট পেমেন্ট বিবরণ
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* Total Summary */}
-            <div className="rounded-xl bg-gradient-to-br from-rose-500/15 to-rose-500/5 p-4 text-center border border-rose-500/10">
+            <div className="rounded-xl bg-red-500/10 p-4 text-center border border-red-500/20">
               <p className="text-xs text-muted-foreground mb-1">সর্বমোট পেমেন্ট পেয়েছেন</p>
               <p className="text-3xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p>
               <p className="text-[10px] text-muted-foreground mt-2">মোট {recentPayments?.length || 0}টি পেমেন্ট</p>
@@ -763,7 +763,7 @@ const MemberDashboard = () => {
                       </p>
                       {p.notes && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{p.notes}</p>}
                     </div>
-                    <div className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-medium">
+                    <div className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 font-medium">
                       {paymentMethodLabel[p.payment_method] || p.payment_method}
                     </div>
                   </div>
@@ -790,10 +790,10 @@ const MemberDashboard = () => {
             }, 0);
             const totalDue = Math.max(0, totalEarning - totalPaid);
             const statusMap: Record<string, { label: string; cls: string }> = {
-              upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+              upcoming: { label: "আসন্ন", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
               ongoing:  { label: "চলছে", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
               completed:{ label: "সম্পন্ন", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
-              paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
+              paid:     { label: "পেইড", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
             };
             return (
               <div className="space-y-4">
@@ -807,9 +807,9 @@ const MemberDashboard = () => {
                     <p className="text-[10px] text-muted-foreground">পেইড</p>
                     <p className="text-sm font-bold text-red-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
                   </div>
-                  <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 text-center">
+                  <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">বাকি</p>
-                    <p className="text-sm font-bold text-rose-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
+                    <p className="text-sm font-bold text-red-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
                   </div>
                 </div>
 
