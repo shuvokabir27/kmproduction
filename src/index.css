@@ -733,3 +733,9 @@
 .member-dash-red .hover\:bg-secondary\/30:hover { background-color: rgba(226, 19, 110, 0.06) !important; }
 
 
+
+/* Force Tiro Bangla across entire Member Dashboard */
+.member-dash-red,
+.member-dash-red * {
+  font-family: 'Tiro Bangla', 'Hind Siliguri', serif !important;
+}
