@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
-import MobileShopNav from "@/components/MobileShopNav";
 
 const BRAND_GREEN = "#2563eb"; // primary red (kept name for minimal diff)
 const BRAND_DARK = "#f8fafc";  // deep black-red
@@ -404,7 +403,6 @@ export default function ShopCustomerLogin() {
         </div>
       </div>
 
-      <MobileShopNav />
     </div>
   );
 }

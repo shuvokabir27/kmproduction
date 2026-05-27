@@ -15,7 +15,6 @@ import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
 import { Truck as TruckIcon } from "lucide-react";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
-import MobileShopNav from "@/components/MobileShopNav";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
 import ShopCategoryGrid from "@/components/ShopCategoryGrid";
 import { CustomHomeSections } from "@/components/CustomHomeSections";
@@ -1187,7 +1186,6 @@ const Products = () => {
         </div>
       )}
 
-      <MobileShopNav />
     </div>
   );
 };
