@@ -767,10 +767,10 @@ body * {
   color: #1a1a1a !important;
 }
 
-/* Sidebar magenta background with white text for readability */
+/* Sidebar dark slate background with white text for readability */
 [data-sidebar] {
-  background-color: #E2136E !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 [data-sidebar],
 [data-sidebar] *,
