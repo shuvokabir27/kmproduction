@@ -92,17 +92,23 @@ const MemberDashboard = () => {
         .eq("member_id", profile!.id)
         .order("created_at", { ascending: false });
 
-      // Source 2: client-portal artist entries matched by name (no member link)
+      // Source 2: client-portal artist entries — admin links via profile_id (primary),
+      // fallback to name match for legacy rows without profile_id.
       const names = [profile?.full_name, (profile as any)?.full_name_en].filter(Boolean) as string[];
-      let clientArtists: any[] = [];
+      const orFilters: string[] = [`profile_id.eq.${profile!.id}`];
       if (names.length > 0) {
-        const { data } = await (supabase as any)
-          .from("client_project_artists")
-          .select("*")
-          .in("artist_name", names)
-          .order("created_at", { ascending: false });
-        clientArtists = data ?? [];
+        const quoted = names.map((n) => `"${n.replace(/"/g, '\\"')}"`).join(",");
+        orFilters.push(`artist_name.in.(${quoted})`);
       }
+      const { data: caData } = await (supabase as any)
+        .from("client_project_artists")
+        .select("*")
+        .or(orFilters.join(","))
+        .order("created_at", { ascending: false });
+      // Dedupe by id
+      const clientArtists = Array.from(
+        new Map((caData ?? []).map((r: any) => [r.id, r])).values()
+      );
 
       const projectIds = Array.from(
         new Set(
