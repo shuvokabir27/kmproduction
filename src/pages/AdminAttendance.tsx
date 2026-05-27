@@ -59,7 +59,7 @@ const AdminAttendance = () => {
     queryFn: async () => {
       const ids = shootings!.map(s => s.id);
       const { data } = await supabase.from("attendance").select("shooting_id").in("shooting_id", ids);
-      return new Set((data ?? []).map(a => a.shooting_id));
+      return (data ?? []).map(a => a.shooting_id) as string[];
     },
   });
 
@@ -802,7 +802,7 @@ const AdminAttendance = () => {
             <div className="space-y-4">
               {/* Existing shootings without attendance */}
               {(() => {
-                const available = (shootings ?? []).filter((s: any) => !shootingsWithAttendance?.has(s.id));
+                const available = (shootings ?? []).filter((s: any) => !(shootingsWithAttendance ?? []).includes(s.id));
                 if (available.length === 0) return null;
                 return (
                   <div className="space-y-2">
