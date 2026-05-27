@@ -358,6 +358,20 @@ export default function ShopCustomerLogin() {
               </div>
             )}
 
+            <AnimatePresence>
+              {errorMsg && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: "auto" }}
+                  exit={{ opacity: 0, y: -8, height: 0 }}
+                  className="flex items-start gap-2.5 p-3 rounded-lg bg-red-500/10 border border-red-500/30"
+                >
+                  <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+                  <p className="text-sm text-red-300 font-medium leading-snug">{errorMsg}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {(() => {
               const mismatch = (mode === "register" || (mode === "forgot" && forgotStep === "otp")) && (confirmPassword.length < 6 || confirmPassword !== password);
               const isOtpStep = mode === "forgot" && forgotStep === "otp";
