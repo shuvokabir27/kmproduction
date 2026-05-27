@@ -9,13 +9,14 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Login = () => {
   const { user, isAdmin, isClient, isProductAdmin, loading } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [resetEmail, setResetEmail] = useState("");
@@ -24,6 +25,7 @@ const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [signupName, setSignupName] = useState("");
   const [signupSubmitting, setSignupSubmitting] = useState(false);
 
@@ -32,6 +34,9 @@ const Login = () => {
   const [resetStep, setResetStep] = useState<"ident" | "otp">("ident");
   const [resetOtp, setResetOtp] = useState("");
   const [resetNewPass, setResetNewPass] = useState("");
+  const [resetConfirmPass, setResetConfirmPass] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetMaskedPhone, setResetMaskedPhone] = useState("");
   const [resetScope, setResetScope] = useState<"member" | "client">("member");
 
@@ -192,16 +197,26 @@ const Login = () => {
                 <Label htmlFor="password" className="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wider">
                   পাসওয়ার্ড
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setErrorMsg(""); }}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 h-12 text-white placeholder:text-gray-600 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setErrorMsg(""); }}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pr-12 h-12 text-white placeholder:text-gray-600 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
 
               <AnimatePresence>
@@ -244,7 +259,8 @@ const Login = () => {
                 setResetOpen(open);
                 if (!open) {
                   setResetStep("ident"); setResetIdent(""); setResetOtp("");
-                  setResetNewPass(""); setResetMaskedPhone(""); setResetEmail("");
+                  setResetNewPass(""); setResetConfirmPass(""); setResetEmail("");
+                  setShowResetPassword(false); setShowResetConfirm(false);
                 }
               }}>
                 <DialogTrigger asChild>
@@ -323,18 +339,53 @@ const Login = () => {
                         onChange={(e) => setResetOtp(e.target.value.replace(/\D/g, ""))}
                         className="bg-secondary border-border/30 h-10 text-sm tracking-widest text-center"
                       />
-                      <Input
-                        type="password"
-                        placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
-                        value={resetNewPass}
-                        onChange={(e) => setResetNewPass(e.target.value)}
-                        minLength={6}
-                        className="bg-secondary border-border/30 h-10 text-sm"
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showResetPassword ? "text" : "password"}
+                          placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+                          value={resetNewPass}
+                          onChange={(e) => setResetNewPass(e.target.value)}
+                          minLength={6}
+                          className="bg-secondary border-border/30 h-10 text-sm pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowResetPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          tabIndex={-1}
+                        >
+                          {showResetPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <Input
+                          type={showResetConfirm ? "text" : "password"}
+                          placeholder="পাসওয়ার্ড নিশ্চিত করুন"
+                          value={resetConfirmPass}
+                          onChange={(e) => setResetConfirmPass(e.target.value)}
+                          minLength={6}
+                          className="bg-secondary border-border/30 h-10 text-sm pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowResetConfirm((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          tabIndex={-1}
+                        >
+                          {showResetConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      {resetNewPass && resetConfirmPass && resetNewPass !== resetConfirmPass && (
+                        <p className="text-xs text-destructive">পাসওয়ার্ড মিলছে না</p>
+                      )}
                       <Button
                         className="w-full h-10 text-sm"
-                        disabled={resetSending || resetOtp.length !== 6 || resetNewPass.length < 6}
+                        disabled={resetSending || resetOtp.length !== 6 || resetNewPass.length < 6 || resetNewPass !== resetConfirmPass}
                         onClick={async () => {
+                          if (resetNewPass !== resetConfirmPass) {
+                            toast.error("পাসওয়ার্ড মিলছে না!");
+                            return;
+                          }
                           setResetSending(true);
                           try {
                             const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/password-reset-otp`, {
@@ -363,7 +414,7 @@ const Login = () => {
                       </Button>
                       <button
                         type="button"
-                        onClick={() => { setResetStep("ident"); setResetOtp(""); setResetNewPass(""); }}
+                        onClick={() => { setResetStep("ident"); setResetOtp(""); setResetNewPass(""); setResetConfirmPass(""); setShowResetPassword(false); setShowResetConfirm(false); }}
                         className="block w-full text-[11px] text-muted-foreground hover:text-foreground"
                       >
                         ← পিছনে যান
@@ -407,14 +458,24 @@ const Login = () => {
                 </div>
                 <div>
                   <Label className="text-xs">পাসওয়ার্ড</Label>
-                  <Input
-                    type="password"
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    placeholder="কমপক্ষে ৬ অক্ষর"
-                    minLength={6}
-                    className="bg-secondary border-border/30 h-10 text-sm"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showSignupPassword ? "text" : "password"}
+                      value={signupPassword}
+                      onChange={(e) => setSignupPassword(e.target.value)}
+                      placeholder="কমপক্ষে ৬ অক্ষর"
+                      minLength={6}
+                      className="bg-secondary border-border/30 h-10 text-sm pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      tabIndex={-1}
+                    >
+                      {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
                 <Button
                   className="w-full h-10 text-sm"
