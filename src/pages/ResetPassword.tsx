@@ -77,31 +77,54 @@ const ResetPassword = () => {
             <form onSubmit={handleReset} className="space-y-4">
               <div>
                 <Label htmlFor="new-password" className="text-foreground text-xs">নতুন পাসওয়ার্ড</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className="bg-secondary border-border/30 h-11 text-base"
-                />
+                <div className="relative">
+                  <Input
+                    id="new-password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className="bg-secondary border-border/30 h-11 text-base pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <div>
                 <Label htmlFor="confirm-password" className="text-foreground text-xs">পাসওয়ার্ড নিশ্চিত করুন</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className="bg-secondary border-border/30 h-11 text-base"
-                />
+                <div className="relative">
+                  <Input
+                    id="confirm-password"
+                    type={showConfirm ? "text" : "password"}
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className="bg-secondary border-border/30 h-11 text-base pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
-              <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting}>
+              {password && confirm && password !== confirm && (
+                <p className="text-xs text-destructive">পাসওয়ার্ড মিলছে না</p>
+              )}
+              <Button type="submit" className="w-full h-11 text-sm font-semibold" disabled={submitting || password !== confirm}>
                 {submitting ? (
                   <span className="flex items-center gap-2">
                     <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
