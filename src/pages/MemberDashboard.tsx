@@ -259,7 +259,7 @@ const MemberDashboard = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="member-dash-red max-w-5xl mx-auto space-y-6">
         {isClient && (
           <div className="flex items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
             <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
