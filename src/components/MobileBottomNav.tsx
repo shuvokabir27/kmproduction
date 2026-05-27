@@ -188,6 +188,7 @@ export function MobileBottomNav() {
                 <div className="relative z-10 mb-2 flex items-center justify-between border-b border-border/20 px-2 pb-2">
                   <span className="text-xs font-bold tracking-wide text-foreground">✨ আরো অপশন</span>
                   <button
+                    data-no-magenta
                     onClick={() => setMoreOpen(false)}
                     className="flex h-7 w-7 items-center justify-center rounded-full border border-border/30 bg-secondary/80 transition-transform active:scale-90"
                   >
@@ -232,6 +233,8 @@ export function MobileBottomNav() {
 
                             return (
                               <motion.button
+                                data-no-magenta
+                                data-active={active ? "true" : undefined}
                                 key={item.path}
                                 initial={{ opacity: 0, scale: 0.85 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -251,7 +254,7 @@ export function MobileBottomNav() {
                                     ? "border-destructive/20 bg-destructive/5"
                                     : active
                                       ? "border-[#E2136E]/20 bg-[#E2136E]/10"
-                                      : "border-transparent hover:bg-[#E2136E]/10"
+                                      : "border-transparent"
                                 }`}
                               >
                                 <div
@@ -279,7 +282,7 @@ export function MobileBottomNav() {
       </AnimatePresence>
 
       <nav className="mobile-bottom-nav fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe-bottom">
-        <div className="absolute inset-x-0 bottom-0 top-3 bg-card/95 backdrop-blur-xl border-t border-border/20" />
+        <div className="mobile-bottom-nav-surface absolute inset-x-0 bottom-0 top-0 bg-card/95 backdrop-blur-xl border-t border-border/20" />
 
         <div className="relative flex items-end justify-around px-1 pt-3">
           {tabs.map((tab) => {
@@ -287,7 +290,9 @@ export function MobileBottomNav() {
             const isMore = tab.path === "__more__";
             const isPressed = pressedTab === tab.path;
             return (
-              <motion.button
+                <motion.button
+                  data-no-magenta
+                  data-active={active ? "true" : undefined}
                 key={tab.path}
                 onTouchStart={() => setPressedTab(tab.path)}
                 onTouchEnd={() => setPressedTab(null)}
@@ -316,7 +321,7 @@ export function MobileBottomNav() {
                     <svg viewBox="0 0 80 56" className="h-full w-full" preserveAspectRatio="none">
                       <path
                         d="M0,15 Q0,15 8,15 Q20,15 22,5 Q26,-2 40,-2 Q54,-2 58,5 Q60,15 72,15 Q80,15 80,15 L80,56 L0,56 Z"
-                        fill="#FFEDF4"
+                        fill="#ffffff"
                         opacity="1"
                       />
                     </svg>
@@ -332,7 +337,7 @@ export function MobileBottomNav() {
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   className={`relative z-10 flex items-center justify-center rounded-full transition-colors ${
                     active
-                      ? `h-12 w-12 bg-[#E2136E] shadow-lg ring-2 ring-[#FFEDF4]`
+                      ? `h-12 w-12 bg-[#E2136E] shadow-lg ring-2 ring-white`
                       : tab.path === "/admin/payments"
                         ? "h-9 w-9 bg-gradient-to-br from-[#E2136E]/25 to-[#E2136E]/60/10 ring-2 ring-[#E2136E]/40 shadow-md shadow-[#E2136E]/20"
                         : "h-9 w-9"

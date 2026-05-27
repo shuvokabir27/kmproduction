@@ -874,16 +874,21 @@ button:not([data-sidebar] button):not([data-no-magenta]):hover {
   border-color: inherit !important;
 }
 
-/* Mobile bottom nav: white background, magenta icons/labels */
+/* Mobile bottom nav: clean white surface, magenta inactive icons/labels */
+.mobile-bottom-nav,
+.mobile-bottom-nav .mobile-bottom-nav-surface,
 .mobile-bottom-nav .bg-card\/95,
 .member-dash-red .mobile-bottom-nav,
 .member-dash-red .mobile-bottom-nav .bg-card\/95 {
   background-color: #ffffff !important;
   border-color: #f8d8e5 !important;
 }
-.mobile-bottom-nav button,
-.mobile-bottom-nav button *,
-.mobile-bottom-nav button svg {
+.mobile-bottom-nav button:not([data-active="true"]),
+.mobile-bottom-nav button:not([data-active="true"]) *,
+.mobile-bottom-nav button:not([data-active="true"]) svg {
   color: #E2136E !important;
+}
+.mobile-bottom-nav button[data-active="true"] svg {
+  color: #ffffff !important;
 }
 
