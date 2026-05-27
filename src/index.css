@@ -935,3 +935,9 @@ button:not([data-sidebar] button):not(.public-header button):not([data-no-magent
   color: #ffffff !important;
 }
 
+
+/* Desktop custom cursor: hide native cursor everywhere when active */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
