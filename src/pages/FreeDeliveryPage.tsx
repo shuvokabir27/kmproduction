@@ -12,21 +12,9 @@ import { useShopCustomer } from "@/hooks/useShopCustomer";
 
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-// Reusable premium dotted black background layer
+// Minimal light background
 const DotBg = () => (
-  <>
-    <div
-      className="pointer-events-none fixed inset-0 -z-10"
-      style={{
-        backgroundColor: "#070707",
-        backgroundImage:
-          "radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), radial-gradient(rgba(220,38,38,0.05) 1px, transparent 1px)",
-        backgroundSize: "22px 22px, 44px 44px",
-        backgroundPosition: "0 0, 11px 11px",
-      }}
-    />
-    <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.18),transparent_55%),radial-gradient(ellipse_at_bottom,rgba(245,158,11,0.10),transparent_55%)]" />
-  </>
+  <div className="pointer-events-none fixed inset-0 -z-10 bg-slate-50" />
 );
 
 export default function FreeDeliveryPage() {
@@ -197,10 +185,10 @@ export default function FreeDeliveryPage() {
           <div className="absolute inset-0 bg-red-500/40 blur-3xl rounded-full" />
           <CheckCircle2 className="relative h-24 w-24 text-red-400" />
         </div>
-        <h1 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-amber-300 via-red-300 to-amber-300 bg-clip-text text-transparent">অর্ডার সফল হয়েছে! 🎉</h1>
+        <h1 className="text-3xl font-extrabold mb-2 text-blue-600">অর্ডার সফল হয়েছে! 🎉</h1>
         <p className="text-white/70 mb-1">ফ্রি ডেলিভারি অফারে আপনার অর্ডার গৃহীত হয়েছে</p>
         <p className="text-white/50 text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব</p>
-        <Button onClick={() => navigate("/products")} className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-[0_10px_40px_-10px_rgba(220,38,38,0.7)]">আরও কেনাকাটা করুন</Button>
+        <Button onClick={() => navigate("/products")} className="bg-blue-600 hover:bg-blue-700 text-white">আরও কেনাকাটা করুন</Button>
       </div>
     );
   }
@@ -211,7 +199,7 @@ export default function FreeDeliveryPage() {
 
       {/* Header */}
       <header className="sticky top-0 z-20 backdrop-blur-xl bg-black/60 border-b border-white/10">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-slate-200" />
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="h-10 w-10 grid place-items-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition">
             <ArrowLeft className="h-5 w-5" />
@@ -221,7 +209,7 @@ export default function FreeDeliveryPage() {
               <span className="relative">
                 <Truck className="h-5 w-5 text-amber-300" />
               </span>
-              <span className="bg-gradient-to-r from-amber-200 via-slate-100 to-amber-200 bg-clip-text text-transparent">{campaign.campaign.title}</span>
+              <span className="text-blue-600">{campaign.campaign.title}</span>
             </h1>
             {campaign.campaign.description && <p className="text-xs text-white/60 truncate">{campaign.campaign.description}</p>}
           </div>
@@ -233,7 +221,7 @@ export default function FreeDeliveryPage() {
 
       <div className="max-w-3xl mx-auto px-4 pt-5 space-y-5">
         {/* Hero / Progress */}
-        <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent backdrop-blur-xl shadow-[0_30px_80px_-30px_rgba(220,38,38,0.5)]">
+        <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-white">
           <div className="absolute -top-24 -right-16 w-64 h-64 bg-red-500/20 blur-3xl rounded-full" />
           <div className="absolute -bottom-24 -left-10 w-64 h-64 bg-amber-400/10 blur-3xl rounded-full" />
           <div className="relative p-5">
@@ -241,11 +229,11 @@ export default function FreeDeliveryPage() {
               <span className="flex items-center gap-2 font-semibold text-white/90">
                 <Sparkles className="h-4 w-4 text-amber-300" /> অগ্রগতি: <span className="text-white">{toBn(distinctCount)} / {toBn(goal)}</span> টি প্রডাক্ট
               </span>
-              <span className="font-extrabold text-base bg-gradient-to-r from-amber-300 to-red-300 bg-clip-text text-transparent">{toBn(progress)}%</span>
+              <span className="font-extrabold text-base text-blue-600">{toBn(progress)}%</span>
             </div>
             <div className="relative h-3 bg-white/10 rounded-full overflow-hidden ring-1 ring-white/10">
               <div
-                className="h-full bg-gradient-to-r from-red-500 via-slate-100 to-amber-400 transition-all duration-700 relative"
+                className="h-full bg-blue-600 transition-all duration-700 relative"
                 style={{ width: `${progress}%` }}
               >
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] animate-[shimmer_2s_infinite]" />
@@ -261,7 +249,7 @@ export default function FreeDeliveryPage() {
                     key={t.id}
                     className={`relative text-center p-3 rounded-2xl border transition-all ${
                       reached
-                        ? "bg-gradient-to-b from-red-500/20 to-amber-400/10 border-amber-300/40 shadow-[0_8px_24px_-12px_rgba(245,158,11,0.6)]"
+                        ? "bg-blue-50 border-blue-300"
                         : "bg-white/[0.03] border-white/10"
                     }`}
                   >
@@ -274,7 +262,7 @@ export default function FreeDeliveryPage() {
               })}
             </div>
             {reachedTier && (
-              <div className="mt-4 relative overflow-hidden rounded-xl bg-gradient-to-r from-red-600/20 via-amber-400/15 to-red-600/20 border border-amber-300/30 px-4 py-2.5 text-center text-sm font-semibold text-amber-100">
+              <div className="mt-4 relative overflow-hidden rounded-xl bg-blue-50 border border-blue-200 px-4 py-2.5 text-center text-sm font-semibold text-blue-700">
                 🎉 আপনি পেয়েছেন: <span className="text-white font-bold">{reachedTier.reward_text}</span>
               </div>
             )}
@@ -284,7 +272,7 @@ export default function FreeDeliveryPage() {
         {/* Products */}
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <span className="h-6 w-1 rounded-full bg-gradient-to-b from-amber-300 to-red-500" />
+            <span className="h-6 w-1 rounded-full bg-blue-600" />
             <h2 className="font-extrabold text-white">আপনার পছন্দের প্রডাক্ট বাছাই করুন</h2>
           </div>
           {campaign.products.length === 0 && <p className="text-sm text-white/50">কোনো প্রডাক্ট যোগ করা হয়নি</p>}
@@ -298,7 +286,7 @@ export default function FreeDeliveryPage() {
                   key={p.id}
                   className={`group relative rounded-2xl p-2.5 transition-all duration-300 ${
                     active
-                      ? "bg-gradient-to-b from-red-500/15 to-transparent border border-amber-300/40 shadow-[0_18px_40px_-18px_rgba(245,158,11,0.5)]"
+                      ? "bg-blue-50 border border-blue-300"
                       : "bg-white/[0.03] border border-white/10 hover:border-white/25 hover:-translate-y-0.5"
                   }`}
                 >
@@ -315,11 +303,11 @@ export default function FreeDeliveryPage() {
                     )}
                   </div>
                   <p className="text-xs font-bold line-clamp-2 min-h-[2.5rem] text-white/95">{p.name}</p>
-                  <p className="text-sm font-extrabold mt-0.5 bg-gradient-to-r from-amber-300 to-red-300 bg-clip-text text-transparent">৳{toBn(price)}</p>
+                  <p className="text-sm font-extrabold mt-0.5 text-blue-600">৳{toBn(price)}</p>
                   {q === 0 ? (
                     <Button
                       size="sm"
-                      className="w-full mt-2 h-8 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white border border-red-400/30 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.6)]"
+                      className="w-full mt-2 h-8 bg-blue-600 hover:bg-blue-700 text-white border border-red-400/30 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.6)]"
                       onClick={() => setQty(p.id, 1)}
                     >
                       <Plus className="h-3.5 w-3.5 mr-1" /> যোগ করুন
@@ -340,7 +328,7 @@ export default function FreeDeliveryPage() {
         {/* Order form */}
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="h-6 w-1 rounded-full bg-gradient-to-b from-amber-300 to-red-500" />
+            <span className="h-6 w-1 rounded-full bg-blue-600" />
             <h2 className="font-extrabold text-white">অর্ডার তথ্য</h2>
           </div>
           <div>
@@ -377,9 +365,9 @@ export default function FreeDeliveryPage() {
               rows={2}
             />
           </div>
-          <div className="flex items-center justify-between rounded-2xl px-4 py-3 bg-gradient-to-r from-red-600/15 via-amber-400/10 to-red-600/15 border border-amber-300/20">
+          <div className="flex items-center justify-between rounded-2xl px-4 py-3 bg-blue-50 border border-blue-200">
             <span className="text-sm text-white/80">মোট</span>
-            <span className="font-extrabold text-lg bg-gradient-to-r from-amber-300 to-red-300 bg-clip-text text-transparent">
+            <span className="font-extrabold text-lg text-blue-600">
               ৳{toBn(totalAmount)} <span className="text-xs font-normal text-amber-200/80">(ডেলিভারি ফ্রি)</span>
             </span>
           </div>
@@ -388,7 +376,7 @@ export default function FreeDeliveryPage() {
 
       {/* Sticky CTA */}
       <div className="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-black/70 border-t border-white/10">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-slate-200" />
         <div className="max-w-3xl mx-auto p-3">
           {!reachedTier ? (
             <Button disabled className="w-full h-12 text-base bg-white/10 text-white/60 border border-white/10">
@@ -400,7 +388,7 @@ export default function FreeDeliveryPage() {
             <Button
               onClick={submit}
               disabled={submitting || !canOrder}
-              className="w-full h-12 text-base font-extrabold text-white bg-gradient-to-r from-red-600 via-slate-100 to-red-700 hover:from-red-500 hover:to-red-600 border border-amber-300/30 shadow-[0_15px_40px_-12px_rgba(220,38,38,0.7)]"
+              className="w-full h-12 text-base font-extrabold text-white bg-blue-600 hover:bg-blue-700 text-white"
             >
               {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন (৳${toBn(totalAmount)})`}
             </Button>
