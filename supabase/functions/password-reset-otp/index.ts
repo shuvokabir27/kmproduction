@@ -73,10 +73,10 @@ Deno.serve(async (req) => {
 
     if (action === "request_otp") {
       const identifier = String(body.identifier || "").trim();
-      if (!identifier) return bad("আইডি / মোবাইল নম্বর দিন");
+      if (!identifier) return bad("Please enter your ID / mobile number");
 
       const found = await findUser(scope, identifier);
-      if (!found) return bad("এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি বা ফোন নম্বর সেট করা নেই", 404);
+      if (!found) return bad("No account found with this information or phone number not set", 404);
 
       const phone = found.phone;
 
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
       const { count } = await supabase.from("password_reset_otps")
         .select("id", { count: "exact", head: true })
         .eq("scope", scope).eq("phone", phone).gte("created_at", tenMinAgo);
-      if ((count || 0) >= 3) return bad("অনেকবার চেষ্টা করেছেন, ১০ মিনিট পর আবার চেষ্টা করুন", 429);
+      if ((count || 0) >= 3) return bad("Too many attempts, please try again after 10 minutes", 429);
 
       const otp = String(Math.floor(100000 + Math.random() * 900000));
       const otp_hash = await hash(otp, phone);
@@ -94,9 +94,9 @@ Deno.serve(async (req) => {
 
       const SMS_API_KEY = Deno.env.get("BULK_SMS_API_KEY");
       const SENDER_ID = Deno.env.get("BULK_SMS_SENDER_ID");
-      if (!SMS_API_KEY || !SENDER_ID) return bad("SMS সার্ভিস কনফিগার করা নেই", 500);
+      if (!SMS_API_KEY || !SENDER_ID) return bad("SMS service not configured", 500);
 
-      const message = `Apnar KM Production password reset OTP: ${otp}\n5 minute er moddhe babohar korun. Karo sathe share korben na.`;
+      const message = `Your KM Production password reset OTP is: ${otp}\nValid for 5 minutes. Do not share with anyone.`;
       const smsUrl = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(SMS_API_KEY)}&type=text&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(SENDER_ID)}&message=${encodeURIComponent(message)}`;
 
       try {
@@ -106,16 +106,16 @@ Deno.serve(async (req) => {
         let parsed: any = null;
         try { parsed = JSON.parse(t); } catch { /* */ }
         if (parsed && parsed.response_code && parsed.response_code !== 202) {
-          return bad(`SMS পাঠানো যায়নি: ${parsed.error_message || t}`, 500);
+          return bad(`Failed to send SMS: ${parsed.error_message || t}`, 500);
         }
       } catch (e: any) {
         console.error("SMS error", e);
-        return bad("SMS পাঠাতে সমস্যা: " + (e?.message || ""), 500);
+        return bad("Problem sending SMS: " + (e?.message || ""), 500);
       }
 
       // Mask the phone in response: 01XXX***XXXX
       const masked = phone.slice(0, 5) + "***" + phone.slice(-3);
-      return ok({ ok: true, message: "OTP পাঠানো হয়েছে", masked_phone: masked, expires_in: 300 });
+      return ok({ ok: true, message: "OTP sent successfully", masked_phone: masked, expires_in: 300 });
     }
 
     if (action === "reset_with_otp") {
