@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import MobileShopNav from "@/components/MobileShopNav";
 
-const BRAND_GREEN = "#b91c1c"; // primary red (kept name for minimal diff)
+const BRAND_GREEN = "#2563eb"; // primary red (kept name for minimal diff)
 const BRAND_DARK = "#1a0608";  // deep black-red
 const BRAND_GOLD = "#fbbf24";
 
@@ -153,7 +153,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputClass =
-    "w-full h-12 pl-11 pr-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-gray-600 outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-500/50 transition-all duration-300";
+    "w-full h-12 pl-11 pr-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-gray-600 outline-none focus:border-blue-600/50 focus:ring-2 focus:ring-blue-600/50 transition-all duration-300";
 
   return (
     <div
@@ -161,9 +161,9 @@ export default function ShopCustomerLogin() {
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', sans-serif" }}
     >
       {/* Dynamic background blobs */}
-      <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-red-900/30 blur-[120px] rounded-full" />
+      <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-slate-900/30 blur-[120px] rounded-full" />
       <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-rose-950/40 blur-[120px] rounded-full" />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-red-900/15 blur-[160px]" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-slate-900/15 blur-[160px]" />
 
       <div className="relative w-full max-w-md">
         <Link to="/products" className="text-white/70 hover:text-white text-sm flex items-center gap-1 mb-4 transition-colors">
@@ -173,15 +173,15 @@ export default function ShopCustomerLogin() {
         {/* Cinematic glass card */}
         <div className="relative w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl overflow-hidden">
           {/* Top decorative light */}
-          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-blue-600/50 to-transparent" />
 
           {/* Brand identity */}
           <div className="relative text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-white mb-4 bg-gradient-to-br from-red-600 to-red-900 shadow-lg shadow-red-900/20 ring-1 ring-white/20">
+            <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-white mb-4 bg-gradient-to-br from-blue-600 to-slate-900 shadow-lg shadow-slate-900/20 ring-1 ring-white/20">
               <ShoppingBag className="h-8 w-8 drop-shadow" />
             </div>
             <h1 className="text-2xl font-bold text-white tracking-wide mb-1">কে এম শপ অ্যাকাউন্ট</h1>
-            <p className="text-xs text-red-400/80 mt-1 inline-flex items-center gap-1 font-medium tracking-wider">
+            <p className="text-xs text-blue-500/80 mt-1 inline-flex items-center gap-1 font-medium tracking-wider">
               <Sparkles className="h-3 w-3" />
               {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
                : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
@@ -194,23 +194,23 @@ export default function ShopCustomerLogin() {
           <div className="relative grid grid-cols-2 bg-black/40 border border-white/10 rounded-full p-1 mb-5 text-xs md:text-sm font-bold gap-1">
             <button
               onClick={() => { setMode("login"); resetForgot(); }}
-              className={`py-2.5 rounded-full transition-all ${mode === "login" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
+              className={`py-2.5 rounded-full transition-all ${mode === "login" ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
               লগইন
             </button>
             <button
               onClick={() => { setMode("register"); resetForgot(); }}
-              className={`py-2.5 rounded-full transition-all ${mode === "register" ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
+              className={`py-2.5 rounded-full transition-all ${mode === "register" ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
             >
               রেজিস্টার
             </button>
           </div>
 
           {/* premium notice */}
-          <div className="relative mb-5 rounded-2xl bg-red-500/10 border border-red-500/30 px-3.5 py-3 text-[12.5px] leading-relaxed text-red-200 font-medium flex gap-2">
+          <div className="relative mb-5 rounded-2xl bg-blue-600/10 border border-blue-600/30 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-200 font-medium flex gap-2">
             <span className="text-base leading-none">⚠️</span>
             <span>
-              <span className="font-bold text-red-300">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
+              <span className="font-bold text-slate-300">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
             </span>
           </div>
 
@@ -264,7 +264,7 @@ export default function ShopCustomerLogin() {
                     type="button"
                     onClick={requestOtp}
                     disabled={resendIn > 0 || loading}
-                    className="text-[11px] font-bold text-red-400 hover:text-red-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+                    className="text-[11px] font-bold text-blue-500 hover:text-slate-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
                   >
                     {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
                   </button>
@@ -305,7 +305,7 @@ export default function ShopCustomerLogin() {
                       <button
                         type="button"
                         onClick={() => { setMode("forgot"); resetForgot(); }}
-                        className="text-[12px] font-medium text-red-400 hover:text-red-300 transition-colors"
+                        className="text-[12px] font-medium text-blue-500 hover:text-slate-300 transition-colors"
                       >
                         পাসওয়ার্ড ভুলে গেছেন?
                       </button>
@@ -336,7 +336,7 @@ export default function ShopCustomerLogin() {
                       </button>
                     </div>
                     {confirmPassword.length > 0 && confirmPassword !== password && (
-                      <p className="text-[11px] text-red-400 font-medium mt-1.5 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
+                      <p className="text-[11px] text-blue-500 font-medium mt-1.5 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
                     )}
                     {confirmPassword.length >= 6 && confirmPassword === password && (
                       <p className="text-[11px] text-green-400 font-medium mt-1.5 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
@@ -364,10 +364,10 @@ export default function ShopCustomerLogin() {
                   initial={{ opacity: 0, y: -8, height: 0 }}
                   animate={{ opacity: 1, y: 0, height: "auto" }}
                   exit={{ opacity: 0, y: -8, height: 0 }}
-                  className="flex items-start gap-2.5 p-3 rounded-lg bg-red-500/10 border border-red-500/30"
+                  className="flex items-start gap-2.5 p-3 rounded-lg bg-blue-600/10 border border-blue-600/30"
                 >
-                  <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
-                  <p className="text-sm text-red-300 font-medium leading-snug">{errorMsg}</p>
+                  <AlertCircle className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                  <p className="text-sm text-slate-300 font-medium leading-snug">{errorMsg}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -380,7 +380,7 @@ export default function ShopCustomerLogin() {
                   type="button"
                   onClick={submit}
                   disabled={loading || mismatch}
-                  className="w-full group relative flex items-center justify-center px-8 py-4 mt-2 font-bold text-white transition-all duration-500 bg-red-600 rounded-xl overflow-hidden hover:bg-red-500 hover:shadow-[0_0_20px_rgba(220,38,38,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full group relative flex items-center justify-center px-8 py-4 mt-2 font-bold text-white transition-all duration-500 bg-blue-600 rounded-xl overflow-hidden hover:bg-blue-600 hover:shadow-[0_0_20px_rgba(220,38,38,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="relative z-10 text-base">
                     {loading ? "অপেক্ষা করুন..."
@@ -400,7 +400,7 @@ export default function ShopCustomerLogin() {
           </p>
 
           {/* Bottom accent */}
-          <div className="pointer-events-none absolute bottom-0 right-0 w-16 h-16 bg-red-600/10 blur-xl rounded-full" />
+          <div className="pointer-events-none absolute bottom-0 right-0 w-16 h-16 bg-blue-600/10 blur-xl rounded-full" />
         </div>
       </div>
 

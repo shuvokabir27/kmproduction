@@ -39,7 +39,7 @@ export default function AllCategories() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-b from-red-50/40 via-white to-white"
+      className="min-h-screen bg-gradient-to-b from-slate-50/40 via-white to-white"
       style={{ fontFamily: "'Tiro Bangla', serif" }}
     >
       {/* Header */}
@@ -47,7 +47,7 @@ export default function AllCategories() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link
             to="/products"
-            className="h-10 w-10 grid place-items-center rounded-full bg-red-50 hover:bg-red-100 text-red-700 transition"
+            className="h-10 w-10 grid place-items-center rounded-full bg-slate-50 hover:bg-slate-100 text-blue-700 transition"
             aria-label="ফিরে যান"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -62,7 +62,7 @@ export default function AllCategories() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="ক্যাটাগরি খুঁজুন..."
-              className="pl-9 pr-4 py-2 w-56 md:w-72 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-400"
+              className="pl-9 pr-4 py-2 w-56 md:w-72 rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/40 focus:border-blue-500"
             />
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function AllCategories() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="ক্যাটাগরি খুঁজুন..."
-              className="pl-9 pr-4 py-2 w-full rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-400"
+              className="pl-9 pr-4 py-2 w-full rounded-full border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/40 focus:border-blue-500"
             />
           </div>
         </div>
@@ -82,16 +82,16 @@ export default function AllCategories() {
 
       {/* Hero strip */}
       <section className="max-w-7xl mx-auto px-4 pt-6">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white p-6 md:p-10 shadow-xl">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white p-6 md:p-10 shadow-xl">
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -left-10 -bottom-10 h-44 w-44 rounded-full bg-red-300/20 blur-2xl" />
-          <div className="relative flex items-center gap-2 text-red-200 text-xs font-bold tracking-widest uppercase">
+          <div className="absolute -left-10 -bottom-10 h-44 w-44 rounded-full bg-slate-300/20 blur-2xl" />
+          <div className="relative flex items-center gap-2 text-slate-200 text-xs font-bold tracking-widest uppercase">
             <Sparkles className="h-4 w-4" /> Premium Collection
           </div>
           <h2 className="relative mt-2 text-2xl md:text-4xl font-bold leading-tight">
             বিশেষভাবে নির্বাচিত পণ্যের সমাহার
           </h2>
-          <p className="relative mt-2 text-red-50/90 text-sm md:text-base max-w-xl">
+          <p className="relative mt-2 text-slate-50/90 text-sm md:text-base max-w-xl">
             প্রতিটি ক্যাটাগরিতে রয়েছে আমাদের সেরা মানের পণ্য। নিচ থেকে আপনার পছন্দের ক্যাটাগরি বেছে নিন।
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function AllCategories() {
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/95 text-red-700 text-[11px] font-bold shadow">
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/95 text-blue-700 text-[11px] font-bold shadow">
                         {m.children.length > 0 ? `${m.children.length} টি সাব-ক্যাটাগরি` : "ব্রাউজ করুন"}
                       </div>
                       <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
@@ -138,7 +138,7 @@ export default function AllCategories() {
                             {m.label}
                           </h3>
                         </div>
-                        <span className="h-10 w-10 grid place-items-center rounded-full bg-white text-red-700 shadow-lg group-hover:translate-x-1 transition-transform">
+                        <span className="h-10 w-10 grid place-items-center rounded-full bg-white text-blue-700 shadow-lg group-hover:translate-x-1 transition-transform">
                           <ChevronRight className="h-5 w-5" />
                         </span>
                       </div>
@@ -153,9 +153,9 @@ export default function AllCategories() {
                           <button
                             key={s.id}
                             onClick={() => goToShop(s.value)}
-                            className="group/chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-red-50/70 hover:bg-red-600 text-red-800 hover:text-white text-sm font-semibold border border-red-100 hover:border-red-600 transition-colors"
+                            className="group/chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-50/70 hover:bg-blue-600 text-slate-900 hover:text-white text-sm font-semibold border border-slate-100 hover:border-blue-600 transition-colors"
                           >
-                            <span className="h-1.5 w-1.5 rounded-full bg-red-500 group-hover/chip:bg-white" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 group-hover/chip:bg-white" />
                             {s.label}
                           </button>
                         ))}

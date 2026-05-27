@@ -62,7 +62,7 @@ export function FeaturedProductsSection() {
                         <Star className="h-3 w-3" /> ফিচার্ড
                       </div>
                       {hasDiscount && (
-                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
                           -{toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}%
                         </div>
                       )}

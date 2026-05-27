@@ -24,7 +24,7 @@ import FloatingCartButton from "@/components/FloatingCartButton";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const BRAND_GREEN = "#dc2626";
+const BRAND_GREEN = "#3b82f6";
 const BRAND_DARK = "#991b1b";
 const ACCENT_RED = "#d6302c";
 
@@ -227,7 +227,7 @@ const Products = () => {
         <div
           className="relative overflow-hidden text-white text-xs md:text-sm py-2"
           style={{
-            backgroundImage: "linear-gradient(90deg, #4a0a0a 0%, #b91c1c 25%, #e11d48 50%, #b91c1c 75%, #4a0a0a 100%)",
+            backgroundImage: "linear-gradient(90deg, #4a0a0a 0%, #2563eb 25%, #e11d48 50%, #2563eb 75%, #4a0a0a 100%)",
           }}
         >
           <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
@@ -286,13 +286,13 @@ const Products = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
             <div className="relative">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-red-500/60 via-rose-500/40 to-red-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
-              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-red-500 via-rose-600 to-red-800 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-600/60 via-rose-500/40 to-blue-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-blue-600 via-rose-600 to-slate-900 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
                 KM
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-red-300 via-rose-200 to-red-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
+              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
               <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">KM Shop · কুয়াকাটা</div>
             </div>
           </Link>
@@ -370,7 +370,7 @@ const Products = () => {
             </div>
           </nav>
 
-          <div className="hidden lg:flex items-center bg-white/[0.04] hover:bg-white/[0.07] focus-within:bg-white/[0.07] border border-white/10 hover:border-white/20 focus-within:border-red-400/40 transition-all rounded-full px-4 h-10 w-72 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.05)]">
+          <div className="hidden lg:flex items-center bg-white/[0.04] hover:bg-white/[0.07] focus-within:bg-white/[0.07] border border-white/10 hover:border-white/20 focus-within:border-blue-500/40 transition-all rounded-full px-4 h-10 w-72 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.05)]">
             <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
             <input
               value={search}
@@ -514,7 +514,7 @@ const Products = () => {
               <li>
                 <a href="#shop" className="flex items-center gap-1 px-3 py-3 hover:text-white hover:bg-[--g] transition-colors whitespace-nowrap" style={{ ['--g' as any]: BRAND_GREEN }}>
                   বেস্ট সেলার
-                  <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full">HOT</span>
+                  <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.5 rounded-full">HOT</span>
                 </a>
               </li>
               <li>
@@ -767,7 +767,7 @@ const Products = () => {
                       </div>
                     )}
                     {hasDiscount && (
-                      <div className="absolute top-2 left-2 bg-card shadow text-red-600 font-bold text-xs px-2 py-1 rounded">
+                      <div className="absolute top-2 left-2 bg-card shadow text-blue-600 font-bold text-xs px-2 py-1 rounded">
                         -{toBn(discountPct)}%
                       </div>
                     )}
@@ -922,7 +922,7 @@ const Products = () => {
           <div className="flex flex-wrap gap-3 justify-center">
             {contactPhone && (
               <a href={`tel:${contactPhone}`}>
-                <Button className="bg-red-400 hover:bg-red-500 text-red-900 font-bold rounded-full px-6 h-12 gap-2">
+                <Button className="bg-blue-500 hover:bg-blue-600 text-slate-900 font-bold rounded-full px-6 h-12 gap-2">
                   <Phone className="h-4 w-4" /> {contactPhone}
                 </Button>
               </a>
@@ -954,14 +954,14 @@ const Products = () => {
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
         {/* ambient blobs */}
         <div className="pointer-events-none absolute -top-20 -left-16 w-80 h-80 rounded-full bg-rose-600/25 blur-[120px]" />
-        <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-red-800/30 blur-[140px]" />
+        <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-slate-900/30 blur-[140px]" />
 
         <div className="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
               <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-rose-400/50 to-red-700/60 blur-md opacity-80" />
-                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-red-500 via-rose-600 to-red-800 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-rose-400/50 to-blue-700/60 blur-md opacity-80" />
+                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 via-rose-600 to-slate-900 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
               </div>
               <div className="font-extrabold text-lg bg-gradient-to-r from-amber-200 via-rose-100 to-amber-200 bg-clip-text text-transparent">
                 {siteSettings?.shop_name || "কে এম শপ"}
@@ -970,7 +970,7 @@ const Products = () => {
             <p className="text-white/75 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
             <Link
               to="/media"
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-rose-500 to-red-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-rose-500 to-blue-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
             >
               <Star className="h-4 w-4 fill-white text-white" />
               KM Production ভিজিট করুন
@@ -1074,7 +1074,7 @@ const Products = () => {
                       {variants.length > 0 && (
                         <div>
                           <Label className="text-foreground font-bold text-sm mb-2 block">
-                            {p.unit_type === "kg" ? "ওজন বাছাই করুন" : p.unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"} <span className="text-red-500">*</span>
+                            {p.unit_type === "kg" ? "ওজন বাছাই করুন" : p.unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"} <span className="text-blue-600">*</span>
                           </Label>
                           <div className="grid grid-cols-2 gap-2">
                             {variants.map((v: any, i: number) => {
@@ -1085,7 +1085,7 @@ const Products = () => {
                                   key={i}
                                   type="button"
                                   onClick={() => setSelectedVariantIdx(i)}
-                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-600 bg-red-50" : "border-border bg-card hover:border-border"}`}
+                                  className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-blue-600 bg-slate-50" : "border-border bg-card hover:border-border"}`}
                                 >
                                   <div className="font-bold text-sm text-foreground">{v.label}</div>
                                   <div className="text-xs">
@@ -1122,8 +1122,8 @@ const Products = () => {
                                 onClick={() => setQuantity(n)}
                                 className={`px-4 h-9 rounded-full border-2 text-xs font-bold transition ${
                                   quantity === n
-                                    ? "bg-red-600 text-white border-red-600"
-                                    : "bg-card text-foreground/80 border-border hover:border-red-400"
+                                    ? "bg-blue-600 text-white border-blue-600"
+                                    : "bg-card text-foreground/80 border-border hover:border-blue-500"
                                 }`}
                               >
                                 {toBn(n)} {unitLabel}
@@ -1138,16 +1138,16 @@ const Products = () => {
 
                 <div className="p-5 space-y-4">
                   <div>
-                    <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                    <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-blue-600">*</span></Label>
                     <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="আপনার পুরো নাম" className="h-12 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground" />
                   </div>
                   <div>
-                    <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
-                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? 'border-red-300' : 'border-border'}`} />
-                    {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
+                    <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-blue-600">*</span></Label>
+                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? 'border-slate-300' : 'border-border'}`} />
+                    {phoneError && <p className="text-blue-600 text-xs mt-1.5">{phoneError}</p>}
                   </div>
                   <div>
-                    <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                    <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-blue-600">*</span></Label>
                     <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="আপনার সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground resize-none" />
                   </div>
                   <PaymentMethodPicker
@@ -1174,27 +1174,27 @@ const Products = () => {
                     const dlv = calculateDelivery(total, totalWeight, deliverySettings);
                     const grand = total + dlv.charge;
                     return (
-                      <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-red-300 via-red-400 to-red-500 shadow-lg">
-                        <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 p-3.5 space-y-2 text-sm">
+                      <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-slate-300 via-blue-500 to-blue-600 shadow-lg">
+                        <div className="rounded-[14px] bg-gradient-to-br from-slate-50 via-white to-slate-50 p-3.5 space-y-2 text-sm">
                           <div className="flex items-center justify-between">
                             <span className="text-foreground/80 flex items-center gap-2 font-medium">
-                              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-sm">
+                              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
                                 <TruckIcon className="h-3.5 w-3.5 text-white" />
                               </span>
                               ডেলিভারি চার্জ
                             </span>
                             {dlv.isFree ? (
-                              <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow">🎉 ফ্রি</span>
+                              <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow">🎉 ফ্রি</span>
                             ) : (
                               <span className="font-extrabold text-foreground">৳{toBn(dlv.charge)}</span>
                             )}
                           </div>
                           {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
-                            <div className="text-[11px] text-red-800 bg-red-100/70 border border-red-200 rounded-lg px-2.5 py-1.5">
+                            <div className="text-[11px] text-slate-900 bg-slate-100/70 border border-slate-200 rounded-lg px-2.5 py-1.5">
                               🚚 আর মাত্র <span className="font-extrabold">৳{toBn(dlv.amountToFree)}</span> অর্ডার করলেই <span className="font-extrabold">ফ্রি ডেলিভারি!</span>
                             </div>
                           )}
-                          <div className="flex items-center justify-between pt-2 border-t border-dashed border-red-300">
+                          <div className="flex items-center justify-between pt-2 border-t border-dashed border-slate-300">
                             <span className="font-bold text-foreground text-base">মোট পেমেন্ট</span>
                             <span
                               className="font-extrabold text-2xl bg-clip-text text-transparent"

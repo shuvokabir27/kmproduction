@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import PaymentMethodPicker, { PaymentMethod } from "@/components/PaymentMethodPicker";
 
 const toBn = (n: number) => Math.round(n).toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
-const BRAND_GREEN = "#dc2626";
+const BRAND_GREEN = "#3b82f6";
 const BRAND_DARK = "#991b1b";
 
 export const CartDrawer = () => {
@@ -147,14 +147,14 @@ export const CartDrawer = () => {
             {!offer && settings.free_delivery_enabled && (
               <div className="mx-4 mt-4">
                 {delivery.isFree ? (
-                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-2">
+                  <div className="bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-2">
                     <Sparkles className="h-4 w-4" /> অভিনন্দন! আপনি ফ্রি ডেলিভারি পাচ্ছেন 🎉
                   </div>
                 ) : (
-                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl px-3 py-2 text-xs">
+                  <div className="bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2 text-xs">
                     আর মাত্র <span className="font-extrabold">৳{toBn(delivery.amountToFree)}</span> এর বাজার করলেই ফ্রি ডেলিভারি!
-                    <div className="h-1.5 mt-1.5 bg-red-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-red-500" style={{ width: `${Math.min(100, (total / settings.free_delivery_threshold) * 100)}%` }} />
+                    <div className="h-1.5 mt-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600" style={{ width: `${Math.min(100, (total / settings.free_delivery_threshold) * 100)}%` }} />
                     </div>
                   </div>
                 )}
@@ -174,7 +174,7 @@ export const CartDrawer = () => {
                         <p className="font-bold text-sm text-foreground line-clamp-1">{it.product_name}</p>
                         {it.variant_label && <p className="text-[11px] text-muted-foreground">{it.variant_label}</p>}
                       </div>
-                      <button onClick={() => removeItem(it.id)} className="text-muted-foreground hover:text-red-500 shrink-0">
+                      <button onClick={() => removeItem(it.id)} className="text-muted-foreground hover:text-blue-600 shrink-0">
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -198,7 +198,7 @@ export const CartDrawer = () => {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> ডেলিভারি চার্জ</span>
                 {delivery.isFree ? (
-                  <span className="font-bold text-red-700">ফ্রি</span>
+                  <span className="font-bold text-blue-700">ফ্রি</span>
                 ) : (
                   <span className="font-bold text-foreground">৳{toBn(delivery.charge)}</span>
                 )}
@@ -223,7 +223,7 @@ export const CartDrawer = () => {
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground flex items-center gap-1"><Truck className="h-3 w-3" /> ডেলিভারি চার্জ {totalWeightGrams > 0 && !delivery.isFree ? `(${toBn(totalWeightGrams / 1000)} কেজি)` : ""}</span>
                   {delivery.isFree
-                    ? <span className="font-bold text-red-700">ফ্রি</span>
+                    ? <span className="font-bold text-blue-700">ফ্রি</span>
                     : <span className="font-bold text-foreground">৳{toBn(delivery.charge)}</span>}
                 </div>
                 <div className="flex items-center justify-between border-t border-[#fecaca] pt-1.5">
@@ -253,7 +253,7 @@ export const CartDrawer = () => {
                               {it.variant_label ? `${it.variant_label} • ` : ""}৳{toBn(it.unit_price)} / {unitLabel}
                             </p>
                           </div>
-                          <button onClick={() => removeItem(it.id)} className="text-muted-foreground hover:text-red-500 shrink-0">
+                          <button onClick={() => removeItem(it.id)} className="text-muted-foreground hover:text-blue-600 shrink-0">
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         </div>
@@ -274,8 +274,8 @@ export const CartDrawer = () => {
                                 onClick={() => updateQty(it.id, n)}
                                 className={`px-2.5 h-6 rounded-full border text-[10px] font-bold transition ${
                                   it.quantity === n
-                                    ? "bg-red-600 text-white border-red-600"
-                                    : "bg-card text-foreground/80 border-border hover:border-red-400"
+                                    ? "bg-blue-600 text-white border-blue-600"
+                                    : "bg-card text-foreground/80 border-border hover:border-blue-500"
                                 }`}
                               >
                                 {toBn(n)} {unitLabel}
@@ -284,7 +284,7 @@ export const CartDrawer = () => {
                             <button
                               type="button"
                               onClick={() => updateQty(it.id, it.quantity + 1)}
-                              className="px-2.5 h-6 rounded-full border border-dashed border-red-400 text-[10px] font-bold text-red-700 bg-red-50"
+                              className="px-2.5 h-6 rounded-full border border-dashed border-blue-500 text-[10px] font-bold text-blue-700 bg-slate-50"
                             >
                               + আরও
                             </button>
@@ -297,16 +297,16 @@ export const CartDrawer = () => {
               </div>
 
               <div>
-                <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-blue-600">*</span></Label>
                 <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-border" />
               </div>
               <div>
-                <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-red-500">*</span></Label>
-                <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={form.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 ${phoneError ? 'border-red-300' : 'border-border'}`} />
-                {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
+                <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল নম্বর <span className="text-blue-600">*</span></Label>
+                <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={form.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 ${phoneError ? 'border-slate-300' : 'border-border'}`} />
+                {phoneError && <p className="text-blue-600 text-xs mt-1.5">{phoneError}</p>}
               </div>
               <div>
-                <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-blue-600">*</span></Label>
                 <Textarea value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-border resize-none" />
               <PaymentMethodPicker
                 settings={siteSettings}
