@@ -458,14 +458,24 @@ const Login = () => {
                 </div>
                 <div>
                   <Label className="text-xs">পাসওয়ার্ড</Label>
-                  <Input
-                    type="password"
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    placeholder="কমপক্ষে ৬ অক্ষর"
-                    minLength={6}
-                    className="bg-secondary border-border/30 h-10 text-sm"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showSignupPassword ? "text" : "password"}
+                      value={signupPassword}
+                      onChange={(e) => setSignupPassword(e.target.value)}
+                      placeholder="কমপক্ষে ৬ অক্ষর"
+                      minLength={6}
+                      className="bg-secondary border-border/30 h-10 text-sm pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      tabIndex={-1}
+                    >
+                      {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
                 <Button
                   className="w-full h-10 text-sm"
