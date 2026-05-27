@@ -259,7 +259,8 @@ const Login = () => {
                 setResetOpen(open);
                 if (!open) {
                   setResetStep("ident"); setResetIdent(""); setResetOtp("");
-                  setResetNewPass(""); setResetMaskedPhone(""); setResetEmail("");
+                  setResetNewPass(""); setResetConfirmPass(""); setResetEmail("");
+                  setShowResetPassword(false); setShowResetConfirm(false);
                 }
               }}>
                 <DialogTrigger asChild>
