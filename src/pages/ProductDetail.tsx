@@ -499,6 +499,7 @@ const ProductDetail = () => {
             {/* CTAs */}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <Button
+                variant="ghost"
                 onClick={() => {
                   if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
                   cart.setOffer(null);
@@ -515,16 +516,17 @@ const ProductDetail = () => {
                   toast.success("কার্টে যুক্ত হয়েছে");
                   cart.open();
                 }}
-                className="h-12 rounded-full font-bold gap-2 inline-flex items-center justify-center px-6 bg-amber-500 hover:bg-amber-600 text-white shadow-md"
+                className="h-12 rounded-full font-bold gap-2 inline-flex items-center justify-center px-6 !bg-amber-500 hover:!bg-amber-600 !text-white shadow-md"
               >
                 <ShoppingCart className="h-4 w-4" /> কার্টে যোগ করুন
               </Button>
               <Button
+                variant="ghost"
                 onClick={() => {
                   if (variants.length > 0 && !chosenVariant) { toast.error("একটি অপশন বাছাই করুন"); return; }
                   openOrder();
                 }}
-                className="h-12 rounded-full font-bold gap-2 bg-rose-600 hover:bg-rose-700 text-white shadow-md"
+                className="h-12 rounded-full font-bold gap-2 !bg-rose-600 hover:!bg-rose-700 !text-white shadow-md"
               >
                 এখনই কিনুন
               </Button>
@@ -534,18 +536,19 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 gap-3 mt-3">
               {contactPhone && (
                 <a href={`tel:${contactPhone}`}>
-                  <Button className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full gap-2 shadow-md">
+                  <Button variant="ghost" className="w-full h-11 !bg-blue-600 hover:!bg-blue-700 !text-white font-bold rounded-full gap-2 shadow-md">
                     <Phone className="h-4 w-4" /> কল করুন
                   </Button>
                 </a>
               )}
               {whatsappNo && (
                 <a href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                  <Button className="w-full h-11 bg-[#25D366] hover:bg-[#1ebe57] text-white font-bold rounded-full gap-2 shadow-md">
+                  <Button variant="ghost" className="w-full h-11 !bg-[#25D366] hover:!bg-[#1ebe57] !text-white font-bold rounded-full gap-2 shadow-md">
                     <MessageCircle className="h-4 w-4" /> WhatsApp
                   </Button>
                 </a>
               )}
+
             </div>
 
             {/* Trust */}
