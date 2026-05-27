@@ -705,7 +705,6 @@ const ProductDetail = () => {
                             weight_grams: p.weight_grams ?? 0,
                           });
                           toast.success("কার্টে যুক্ত হয়েছে");
-                          cart.open();
                         }}
                         className="w-full h-9 rounded-full font-bold gap-1.5 text-xs"
                         style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})`, color: "#fff" }}
