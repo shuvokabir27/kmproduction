@@ -38,56 +38,56 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMemo, useState } from "react";
 
 const permissionIconMap: Record<string, { icon: any; color: string; bg: string }> = {
-  shooting_expenses: { icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
-  shootings: { icon: Film, color: "text-red-400", bg: "bg-red-500/10" },
-  attendance: { icon: Calendar, color: "text-red-400", bg: "bg-red-500/10" },
+  shooting_expenses: { icon: Receipt, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  shootings: { icon: Film, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  attendance: { icon: Calendar, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
 };
 
 const adminTabs = [
-  { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-violet-400", bg: "bg-violet-500/15" },
-  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance", color: "text-cyan-400", bg: "bg-cyan-500/15" },
-  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-amber-400", bg: "bg-amber-500/15" },
-  { icon: Film, label: "শুটিং", path: "/admin/shootings", color: "text-rose-400", bg: "bg-rose-500/15" },
-  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-sky-400", bg: "bg-sky-500/15" },
+  { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
+  { icon: Calendar, label: "হাজিরা", path: "/admin/attendance", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
+  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
+  { icon: Film, label: "শুটিং", path: "/admin/shootings", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
+  { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
 ];
 
 const moreItems = [
   { icon: null, label: "— টিম ও কাজ —", path: "__divider__", color: "", bg: "" },
-  { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
-  { icon: Mic, label: "ভয়েস নোট", path: "/admin/voice-notes", color: "text-pink-400", bg: "bg-pink-500/10" },
-  { icon: ListTodo, label: "টাস্ক", path: "/tasks", color: "text-purple-400", bg: "bg-purple-500/10" },
-  { icon: Receipt, label: "শুটিং খরচ", path: "/admin/shooting-expenses", color: "text-red-400", bg: "bg-red-500/10" },
-  { icon: Briefcase, label: "বাইরের কাজ", path: "/admin/freelance", color: "text-orange-400", bg: "bg-orange-500/10" },
-  { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-orange-400", bg: "bg-orange-500/10" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/10" },
-  { icon: ShieldCheck, label: "রোল ম্যানেজমেন্ট", path: "/admin/role-management", color: "text-cyan-400", bg: "bg-cyan-500/10" },
-  { icon: ShieldCheck, label: "ফিচার টগল", path: "/admin/feature-toggles", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { icon: Smartphone, label: "অ্যাপ ভার্সন", path: "/admin/app-versions", color: "text-green-400", bg: "bg-green-500/10" },
+  { icon: Users, label: "সদস্য", path: "/admin/members", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: FileText, label: "স্ক্রিপ্ট", path: "/admin/scripts", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Mic, label: "ভয়েস নোট", path: "/admin/voice-notes", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: ListTodo, label: "টাস্ক", path: "/tasks", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Receipt, label: "শুটিং খরচ", path: "/admin/shooting-expenses", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Briefcase, label: "বাইরের কাজ", path: "/admin/freelance", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Megaphone, label: "নোটিশ", path: "/admin/notices", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: ShieldCheck, label: "রোল ম্যানেজমেন্ট", path: "/admin/role-management", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: ShieldCheck, label: "ফিচার টগল", path: "/admin/feature-toggles", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Smartphone, label: "অ্যাপ ভার্সন", path: "/admin/app-versions", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
   { icon: null, label: "— একাউন্ট ও পেমেন্ট —", path: "__divider_acc__", color: "", bg: "" },
-  { icon: Wallet, label: "বেতন আপডেট", path: "/admin/salary-updates", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-green-400", bg: "bg-green-500/10" },
-  { icon: Calculator, label: "একাউন্ট চেকিং", path: "/admin/account-checking", color: "text-indigo-400", bg: "bg-indigo-500/10" },
+  { icon: Wallet, label: "বেতন আপডেট", path: "/admin/salary-updates", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Gift, label: "বোনাস", path: "/admin/bonuses", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Calculator, label: "একাউন্ট চেকিং", path: "/admin/account-checking", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
   { icon: null, label: "— পাবলিক সাইট —", path: "__divider2__", color: "", bg: "" },
-  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" },
-  { icon: Globe, label: "পাবলিক প্রোফাইল", path: "/admin/public-profiles", color: "text-cyan-400", bg: "bg-cyan-500/10" },
-  { icon: Film, label: "অভিনেতা পোর্টফোলিও", path: "/admin/actor-editor", color: "text-fuchsia-400", bg: "bg-fuchsia-500/10" },
-  { icon: Newspaper, label: "নিউজ", path: "/admin/news", color: "text-red-400", bg: "bg-red-500/10" },
-  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services", color: "text-yellow-400", bg: "bg-yellow-500/10" },
-  { icon: ClipboardList, label: "বুকিং", path: "/admin/bookings", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { icon: Tv, label: "চ্যানেল", path: "/admin/channels", color: "text-lime-400", bg: "bg-lime-500/10" },
-  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos", color: "text-pink-400", bg: "bg-pink-500/10" },
-  { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery", color: "text-indigo-400", bg: "bg-indigo-500/10" },
-  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-purple-400", bg: "bg-purple-500/10" },
+  { icon: Home, label: "সাইট দেখুন", path: "/", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Globe, label: "পাবলিক প্রোফাইল", path: "/admin/public-profiles", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Film, label: "অভিনেতা পোর্টফোলিও", path: "/admin/actor-editor", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Newspaper, label: "নিউজ", path: "/admin/news", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Sparkles, label: "সেবা / প্যাকেজ", path: "/admin/services", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: ClipboardList, label: "বুকিং", path: "/admin/bookings", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Tv, label: "চ্যানেল", path: "/admin/channels", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Play, label: "জনপ্রিয় কাজ", path: "/admin/popular-videos", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: ImageIcon, label: "ছবি গ্যালারী", path: "/admin/gallery", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { icon: Phone, label: "যোগাযোগ সেটিংস", path: "/admin/contact-settings", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
   { icon: null, label: "— অন্যান্য —", path: "__divider3__", color: "", bg: "" },
-  { icon: Settings, label: "সেটিংস", path: "/admin/settings", color: "text-amber-400", bg: "bg-amber-500/10" },
+  { icon: Settings, label: "সেটিংস", path: "/admin/settings", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
   { icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" },
 ];
 
 const memberTabsBase = [
-  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-red-400", bg: "bg-red-500/15" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-red-400", bg: "bg-red-500/15" },
-  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-red-400", bg: "bg-red-500/15" },
+  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
 ];
 
 export function MobileBottomNav() {
@@ -115,8 +115,8 @@ export function MobileBottomNav() {
         }
       });
     }
-    items.push({ icon: Home, label: "সাইট দেখুন", path: "/", color: "text-red-400", bg: "bg-red-500/10" });
-    items.push({ icon: Settings, label: "সেটিংস", path: "/settings", color: "text-red-400", bg: "bg-red-500/10" });
+    items.push({ icon: Home, label: "সাইট দেখুন", path: "/", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" });
+    items.push({ icon: Settings, label: "সেটিংস", path: "/settings", color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" });
     items.push({ icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" });
     return items;
   }, [permissions]);
@@ -133,7 +133,7 @@ export function MobileBottomNav() {
         bg: mapped.bg,
       };
     }).filter(Boolean) as { icon: any; label: string; path: string; color: string; bg: string }[];
-    return [...memberTabsBase, ...permTabs, { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-red-400", bg: "bg-red-500/15" }];
+    return [...memberTabsBase, ...permTabs, { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" }];
   }, [permissions]);
 
   const tabs = isAdmin ? adminTabs : memberTabs;
@@ -173,7 +173,7 @@ export function MobileBottomNav() {
               className="relative z-[61] mx-auto w-full max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative max-h-[calc(100vh-100px)] overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-card via-card/95 to-secondary/30 p-2 shadow-2xl shadow-primary/10 backdrop-blur-xl">
+              <div className="relative max-h-[calc(100vh-100px)] overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-white via-white/95 to-[#E2136E]/5 p-2 shadow-2xl shadow-primary/10 backdrop-blur-xl">
                 <div
                   className="absolute inset-0 opacity-[0.06]"
                   style={{
@@ -250,8 +250,8 @@ export function MobileBottomNav() {
                                   isLogout
                                     ? "border-destructive/20 bg-destructive/5"
                                     : active
-                                      ? "border-border/40 bg-secondary/60"
-                                      : "border-transparent hover:bg-secondary/30"
+                                      ? "border-[#E2136E]/20 bg-[#E2136E]/10"
+                                      : "border-transparent hover:bg-[#E2136E]/10"
                                 }`}
                               >
                                 <div
@@ -334,7 +334,7 @@ export function MobileBottomNav() {
                     active
                       ? `h-12 w-12 ${tab.bg} shadow-lg ring-2 ring-card`
                       : tab.path === "/admin/payments"
-                        ? "h-9 w-9 bg-gradient-to-br from-amber-500/25 to-amber-600/10 ring-2 ring-amber-400/40 shadow-md shadow-amber-500/20"
+                        ? "h-9 w-9 bg-gradient-to-br from-[#E2136E]/25 to-[#E2136E]/60/10 ring-2 ring-[#E2136E]/40 shadow-md shadow-[#E2136E]/20"
                         : "h-9 w-9"
                   }`}
                   style={
