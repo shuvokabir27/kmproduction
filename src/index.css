@@ -424,7 +424,7 @@
     position: relative;
     border-radius: inherit;
   }
-  /* Highlighted gradient border (always on, gentle) */
+  /* Subtle neutral border highlight */
   .card-glow::before {
     content: '';
     position: absolute;
@@ -433,10 +433,9 @@
     padding: 1px;
     background: linear-gradient(
       135deg,
-      hsl(0 0% 100% / 0.18),
-      hsl(0 85% 55% / 0.35) 35%,
-      hsl(0 0% 100% / 0.08) 60%,
-      hsl(35 95% 60% / 0.30) 100%
+      hsl(214 32% 91%),
+      hsl(217 91% 60% / 0.25) 50%,
+      hsl(214 32% 91%) 100%
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
