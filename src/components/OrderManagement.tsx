@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -135,8 +136,15 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
         if (error) throw error;
         toast.success("অর্ডার আপডেট হয়েছে");
       } else {
-        const { error } = await supabase.from("orders").insert(payload);
+        const { data: inserted, error } = await supabase.from("orders").insert(payload).select("order_number").single();
         if (error) throw error;
+        const oNum = (inserted as any)?.order_number ?? null;
+        if (oNum && payload.customer_phone) {
+          sendTeamSms({
+            phone: payload.customer_phone,
+            message: `Dhonnobad! Apnar order #${oNum} grohon kora hoyeche. Amader protinidi sigroi call diye confirm korben. - Kuakata Multimedia`,
+          });
+        }
         toast.success("অর্ডার যোগ হয়েছে");
       }
       queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
