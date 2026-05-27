@@ -50,54 +50,54 @@ import { usePermissions } from "@/hooks/usePermissions";
 
 
 const teamWorkItems = [
-  { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "সদস্য", url: "/admin/members", icon: Users, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "ভয়েস নোট", url: "/admin/voice-notes", icon: Mic, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "বাইরের কাজ", url: "/admin/freelance", icon: Briefcase, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "সেটিংস", url: "/admin/settings", icon: Settings, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "রোল ম্যানেজমেন্ট", url: "/admin/role-management", icon: ShieldCheck, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "ফিচার টগল", url: "/admin/feature-toggles", icon: ShieldCheck, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "অ্যাপ ভার্সন", url: "/admin/app-versions", icon: Smartphone, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "সদস্য", url: "/admin/members", icon: Users, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "স্ক্রিপ্ট", url: "/admin/scripts", icon: FileText, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "ভয়েস নোট", url: "/admin/voice-notes", icon: Mic, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "নোটিশ", url: "/admin/notices", icon: Megaphone, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "বাইরের কাজ", url: "/admin/freelance", icon: Briefcase, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "সেটিংস", url: "/admin/settings", icon: Settings, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "রোল ম্যানেজমেন্ট", url: "/admin/role-management", icon: ShieldCheck, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "ফিচার টগল", url: "/admin/feature-toggles", icon: ShieldCheck, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "অ্যাপ ভার্সন", url: "/admin/app-versions", icon: Smartphone, color: "text-indigo-600", bg: "bg-indigo-50" },
 ];
 
 const accountItems = [
-  { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "বেতন আপডেট", url: "/admin/salary-updates", icon: Wallet, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "একাউন্ট চেকিং", url: "/admin/account-checking", icon: Calculator, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { title: "পেমেন্ট", url: "/admin/payments", icon: CreditCard, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "বেতন আপডেট", url: "/admin/salary-updates", icon: Wallet, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "বোনাস", url: "/admin/bonuses", icon: Gift, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "একাউন্ট চেকিং", url: "/admin/account-checking", icon: Calculator, color: "text-indigo-600", bg: "bg-indigo-50" },
 ];
 
 const publicSiteItems = [
-  { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "অভিনেতা পোর্টফোলিও", url: "/admin/actor-editor", icon: Film, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "নিউজ", url: "/admin/news", icon: Newspaper, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { title: "পাবলিক প্রোফাইল", url: "/admin/public-profiles", icon: Globe, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "অভিনেতা পোর্টফোলিও", url: "/admin/actor-editor", icon: Film, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "নিউজ", url: "/admin/news", icon: Newspaper, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "জনপ্রিয় কাজ", url: "/admin/popular-videos", icon: Play, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "সেবা / প্যাকেজ", url: "/admin/services", icon: Sparkles, color: "text-indigo-600", bg: "bg-indigo-50" },
   
-  { title: "বুকিং", url: "/admin/bookings", icon: ClipboardList, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "চ্যানেল", url: "/admin/channels", icon: Tv, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "যোগাযোগ সেটিংস", url: "/admin/contact-settings", icon: Phone, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { title: "বুকিং", url: "/admin/bookings", icon: ClipboardList, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "ছবি গ্যালারী", url: "/admin/gallery", icon: ImageIcon, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "চ্যানেল", url: "/admin/channels", icon: Tv, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "যোগাযোগ সেটিংস", url: "/admin/contact-settings", icon: Phone, color: "text-indigo-600", bg: "bg-indigo-50" },
 ];
 
 const memberItems = [
-  { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-indigo-600", bg: "bg-indigo-50" },
+  { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-indigo-600", bg: "bg-indigo-50" },
 ];
 
 const permissionMenuMap: Record<string, { title: string; url: string; icon: any; color: string; bg: string }> = {
-  shooting_expenses: { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  shootings: { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
-  attendance: { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+  shooting_expenses: { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-indigo-600", bg: "bg-indigo-50" },
+  shootings: { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-indigo-600", bg: "bg-indigo-50" },
+  attendance: { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-indigo-600", bg: "bg-indigo-50" },
 };
 
 export function AppSidebar() {
@@ -125,12 +125,12 @@ export function AppSidebar() {
                 end={item.url === "/admin"}
                 className={
                   isPayments
-                    ? "bg-gradient-to-r from-[#E2136E]/15 via-[#E2136E]/10 to-transparent border-l-2 border-[#E2136E] hover:from-[#E2136E]/25 hover:via-[#E2136E]/15 transition-colors shadow-sm shadow-[#E2136E]/10"
-                    : "hover:bg-[#E2136E]/10 transition-colors"
+                    ? "bg-gradient-to-r from-indigo-50 via-indigo-50/60 to-transparent border-l-2 border-indigo-500 hover:from-indigo-100 hover:via-indigo-50 transition-colors shadow-sm shadow-indigo-200/40"
+                    : "hover:bg-indigo-50 transition-colors"
                 }
                 activeClassName={
                   isPayments
-                    ? "from-[#E2136E]/30 via-[#E2136E]/20 font-bold ring-1 ring-[#E2136E]/40"
+                    ? "from-indigo-100 via-indigo-50 font-bold ring-1 ring-indigo-400/50"
                     : "bg-secondary font-medium"
                 }
               >
@@ -170,12 +170,12 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               {renderItems([
-                { title: "প্রডাক্ট", url: "/admin/products", icon: ShoppingBag, color: "text-[#E2136E]", bg: "bg-[#E2136E]/10" },
+                { title: "প্রডাক্ট", url: "/admin/products", icon: ShoppingBag, color: "text-indigo-600", bg: "bg-indigo-50" },
               ])}
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <NavLink to="/" className="hover:bg-[#E2136E]/10 transition-colors" activeClassName="">
+                    <NavLink to="/" className="hover:bg-indigo-50 transition-colors" activeClassName="">
                       <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center mr-2 shrink-0">
                         <Home className="h-3.5 w-3.5 text-emerald-400" />
                       </div>
@@ -217,7 +217,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <NavLink to="/" className="hover:bg-[#E2136E]/10 transition-colors" activeClassName="">
+                      <NavLink to="/" className="hover:bg-indigo-50 transition-colors" activeClassName="">
                         <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center mr-2 shrink-0">
                           <Home className="h-3.5 w-3.5 text-emerald-400" />
                         </div>
