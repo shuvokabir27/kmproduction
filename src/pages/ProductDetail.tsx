@@ -663,19 +663,48 @@ const ProductDetail = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {related.map((p: any) => {
                 const hd = p.discount_price && p.discount_price < p.price;
+                const rPrice = hd ? p.discount_price : p.price;
                 return (
-                  <Link key={p.id} to={`/products/${p.slug || p.id}`} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border">
-                    <div className="aspect-square bg-muted overflow-hidden">
-                      {p.image_url ? <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-10 w-10 text-gray-300" /></div>}
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-bold text-sm text-foreground line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-base font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(hd ? p.discount_price : p.price)}</span>
-                        {hd && <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>}
+                  <div key={p.id} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-border flex flex-col">
+                    <Link to={`/products/${p.slug || p.id}`} className="block">
+                      <div className="aspect-square bg-muted overflow-hidden">
+                        {p.image_url ? <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-10 w-10 text-gray-300" /></div>}
                       </div>
+                      <div className="p-3 pb-2">
+                        <h3 className="font-bold text-sm text-foreground line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-base font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(rPrice)}</span>
+                          {hd && <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>}
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="px-3 pb-3 mt-auto">
+                      <Button
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          cart.setOffer(null);
+                          cart.addItem({
+                            product_id: p.id,
+                            product_name: p.name,
+                            image_url: p.image_url,
+                            variant_label: null,
+                            unit_price: rPrice,
+                            quantity: 1,
+                            unit_type: p.unit_type ?? null,
+                            weight_grams: p.weight_grams ?? 0,
+                          });
+                          toast.success("কার্টে যুক্ত হয়েছে");
+                          cart.open();
+                        }}
+                        className="w-full h-9 rounded-full font-bold gap-1.5 text-xs"
+                        style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})`, color: "#fff" }}
+                      >
+                        <ShoppingCart className="h-3.5 w-3.5" /> কার্টে যোগ করুন
+                      </Button>
                     </div>
-                  </Link>
+                  </div>
                 );
               })}
             </div>
