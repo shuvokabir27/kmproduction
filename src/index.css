@@ -695,6 +695,7 @@
 .member-dash-red { color: #1a1a1a; background-color: #FFEDF4; }
 .member-dash-red .text-foreground { color: #1a1a1a !important; }
 .member-dash-red .text-muted-foreground { color: #6b7280 !important; }
+.member-dash-red .bg-background { background-color: #FFEDF4 !important; }
 
 /* Section / card surfaces: light pink FFEDF4 base */
 .member-dash-red .bg-card {
