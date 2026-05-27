@@ -206,16 +206,16 @@ export function AdvanceRequestCard() {
             whileTap={{ scale: 0.98 }}
             animate={!blocked ? {
               boxShadow: [
-                "0 0 0 0 rgba(16,185,129,0.6)",
-                "0 0 0 10px rgba(16,185,129,0)",
-                "0 0 0 0 rgba(16,185,129,0)",
+                "0 0 0 0 rgba(239,68,68,0.6)",
+                "0 0 0 10px rgba(239,68,68,0)",
+                "0 0 0 0 rgba(239,68,68,0)",
               ],
             } : {}}
             transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             className={`relative w-full overflow-hidden inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-extrabold text-sm transition-colors ${
               blocked
                 ? "bg-muted/40 text-muted-foreground cursor-not-allowed"
-                : "bg-gradient-to-r from-red-500 via-red-500 to-cyan-500 text-white"
+                : "bg-red-500 hover:bg-red-600 text-white"
             }`}
           >
             {!blocked && (
