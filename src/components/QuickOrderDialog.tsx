@@ -11,6 +11,7 @@ import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#3b82f6";
