@@ -6,62 +6,63 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3%;
-    --foreground: 0 0% 96%;
+    /* bKash-inspired palette: white background, magenta primary */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
 
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 96%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 0 85% 48%;
+    --primary: 332 84% 48%;          /* #E2136E bKash magenta */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 5% 10%;
-    --secondary-foreground: 0 0% 80%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 0 3% 9%;
-    --muted-foreground: 0 0% 48%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 0 85% 48%;
+    --accent: 332 84% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 5% 14%;
-    --input: 0 5% 14%;
-    --ring: 0 85% 48%;
+    --border: 0 0% 90%;
+    --input: 0 0% 92%;
+    --ring: 332 84% 48%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 3%;
-    --sidebar-foreground: 0 0% 55%;
-    --sidebar-primary: 0 85% 48%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 30%;
+    --sidebar-primary: 332 84% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 5% 9%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 5% 11%;
-    --sidebar-ring: 0 85% 48%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 332 84% 35%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 332 84% 48%;
 
-    --success: 142 72% 50%;
-    --warning: 38 92% 56%;
-    --info: 210 80% 56%;
+    --success: 142 72% 42%;
+    --warning: 38 92% 50%;
+    --info: 210 80% 50%;
 
-    /* Premium gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(0 85% 48%), hsl(0 95% 32%));
-    --gradient-hero: linear-gradient(180deg, hsl(0 85% 48% / 0.12), transparent 60%);
-    --gradient-surface: linear-gradient(180deg, hsl(0 0% 7%), hsl(0 0% 3%));
-    --gradient-premium: linear-gradient(135deg, hsl(0 85% 48%), hsl(15 90% 45%), hsl(0 85% 35%));
-    --gradient-dark: linear-gradient(180deg, hsl(0 5% 8%), hsl(0 0% 3%));
-    --gradient-card: linear-gradient(145deg, hsl(0 5% 8%), hsl(0 3% 5%));
+    /* Premium gradients — bKash magenta */
+    --gradient-primary: linear-gradient(135deg, hsl(332 84% 48%), hsl(335 79% 35%));
+    --gradient-hero: linear-gradient(180deg, hsl(332 84% 48% / 0.08), transparent 60%);
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-premium: linear-gradient(135deg, hsl(332 84% 48%), hsl(345 88% 50%), hsl(335 79% 35%));
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 96%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(0 0% 97%));
 
     /* Premium shadows */
-    --shadow-glow: 0 0 30px hsl(0 85% 48% / 0.2);
-    --shadow-glow-strong: 0 0 60px hsl(0 85% 48% / 0.35);
-    --shadow-elevated: 0 8px 32px hsl(0 0% 0% / 0.5), 0 2px 8px hsl(0 0% 0% / 0.3);
-    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.4), 0 0 1px hsl(0 85% 48% / 0.1);
+    --shadow-glow: 0 0 30px hsl(332 84% 48% / 0.18);
+    --shadow-glow-strong: 0 0 60px hsl(332 84% 48% / 0.3);
+    --shadow-elevated: 0 8px 32px hsl(0 0% 0% / 0.08), 0 2px 8px hsl(0 0% 0% / 0.04);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.06), 0 0 1px hsl(332 84% 48% / 0.12);
   }
 }
 
