@@ -591,51 +591,50 @@ const Products = () => {
 
             <div className="relative grid md:grid-cols-2 gap-8 items-center p-7 md:p-14" style={{ fontFamily: "'Tiro Bangla', serif" }}>
               <div className="text-slate-900 text-center md:text-left order-2 md:order-1">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-white/25 bg-white/10 backdrop-blur-xl shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-slate-200 bg-slate-50" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-60 animate-ping" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-200" />
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-60 animate-ping" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
                   </span>
-                  <span className="font-semibold text-white/95">কুয়াকাটার অথেনটিক পণ্য</span>
+                  <span className="font-semibold text-slate-700">কুয়াকাটার অথেনটিক পণ্য</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5 drop-shadow-[0_2px_20px_rgba(0,0,0,0.35)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5 text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   প্রতিদিনের সুস্থতায় হোক
                   <br />
-                  <span className="bg-gradient-to-r from-amber-200 via-slate-100 to-amber-300 bg-clip-text text-transparent">
-                    খাঁটি পণ্য
-                  </span>
+                  <span className="text-blue-600">খাঁটি পণ্য</span>
                 </h1>
-                <div className="h-px w-24 mx-auto md:mx-0 mb-5 bg-gradient-to-r from-transparent via-amber-200/70 to-transparent" />
-                <p className="text-white/85 text-sm md:text-base mb-7 max-w-md mx-auto md:mx-0 leading-relaxed" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                <div className="h-px w-24 mx-auto md:mx-0 mb-5 bg-slate-200" />
+                <p className="text-slate-600 text-sm md:text-base mb-7 max-w-md mx-auto md:mx-0 leading-relaxed" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   সরাসরি কুয়াকাটার সমুদ্র সৈকত ও স্থানীয় কৃষক থেকে সংগ্রহ করা ১০০% খাঁটি ও তাজা পণ্য — শুঁটকি, মধু, তালের গুড়, হস্তশিল্প আরও অনেক কিছু।
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start items-center" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <a href="#shop">
-                    <Button className="h-12 rounded-full px-7 gap-2 font-bold">
+                    <Button className="h-12 rounded-full px-7 gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white">
                       <ShoppingBag className="h-4 w-4" /> এখনই কিনুন
                     </Button>
                   </a>
                   {whatsappNo && (
                     <a href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="h-12 rounded-full px-7 gap-2 font-bold">
+                      <Button variant="outline" className="h-12 rounded-full px-7 gap-2 font-bold border-slate-300 text-slate-700">
                         <Phone className="h-4 w-4" /> অর্ডার করুন
                       </Button>
                     </a>
                   )}
-                  <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-white/20">
+                  <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-slate-200">
                     <div className="flex -space-x-2">
                       {[0,1,2].map(i => (
-                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white/30 bg-gradient-to-br from-amber-300 to-slate-100" />
+                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white bg-slate-200" />
                       ))}
                     </div>
-                    <div className="text-[11px] leading-tight text-white/90">
+                    <div className="text-[11px] leading-tight text-slate-700">
                       <div className="flex items-center gap-0.5">
-                        {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-amber-300 text-amber-300" />)}
+                        {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}
                       </div>
-                      <span className="text-white/70">১০,০০০+ খুশি গ্রাহক</span>
+                      <span className="text-slate-500">১০,০০০+ খুশি গ্রাহক</span>
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
 
               <div className="relative block mt-4 md:mt-0 order-1 md:order-2">
