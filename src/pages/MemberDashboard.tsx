@@ -323,15 +323,12 @@ const MemberDashboard = () => {
           })()}
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             <span
-              className="bg-clip-text text-transparent bg-[linear-gradient(120deg,hsl(0_85%_60%),hsl(0_0%_100%),hsl(0_85%_45%),hsl(0_0%_100%),hsl(0_85%_60%))] bg-[length:300%_100%] animate-[name-gradient_6s_linear_infinite]"
-              style={{
-                filter: "drop-shadow(0 0 12px hsl(0 85% 55% / 0.45))",
-              }}
+              className="text-foreground"
             >
               {profile?.full_name}
             </span>
             {profile?.is_verified && (
-              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-red-500 text-white align-middle ml-1.5 shadow-[0_0_14px_hsl(0_85%_55%/0.7)]">
+              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-primary text-primary-foreground align-middle ml-1.5">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
                   <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
@@ -341,7 +338,7 @@ const MemberDashboard = () => {
           {profile?.is_verified && (
             <p className="text-red-400 text-[11px] md:text-xs font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
           )}
-          <div className="inline-flex items-center gap-1.5 mt-0.5 px-3 py-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/15 shadow-[0_0_18px_-6px_hsl(var(--primary)/0.6)] backdrop-blur-sm">
+          <div className="inline-flex items-center gap-1.5 mt-0.5 px-3 py-1 rounded-full border border-primary/30 bg-primary/10">
             <span className="text-[10px] uppercase tracking-wider text-primary/80 font-semibold">আইডি</span>
             <span className="text-foreground text-xs font-bold tracking-wide">{profile?.member_id}</span>
           </div>
