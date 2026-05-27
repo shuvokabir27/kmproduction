@@ -414,7 +414,7 @@ const Login = () => {
                       </Button>
                       <button
                         type="button"
-                        onClick={() => { setResetStep("ident"); setResetOtp(""); setResetNewPass(""); }}
+                        onClick={() => { setResetStep("ident"); setResetOtp(""); setResetNewPass(""); setResetConfirmPass(""); setShowResetPassword(false); setShowResetConfirm(false); }}
                         className="block w-full text-[11px] text-muted-foreground hover:text-foreground"
                       >
                         ← পিছনে যান
