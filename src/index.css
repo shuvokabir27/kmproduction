@@ -822,8 +822,15 @@ button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-ma
   color: #ffffff !important;
   border-color: #E2136E !important;
 }
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) svg {
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) svg,
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) * {
   color: #ffffff !important;
+  border-color: rgba(255,255,255,0.35) !important;
+}
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-primary"],
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-card"],
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-secondary"] {
+  background-color: rgba(255,255,255,0.18) !important;
 }
 button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]):hover {
   background-color: #c01060 !important;
