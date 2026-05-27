@@ -823,7 +823,7 @@ const AdminPayments = () => {
             )}
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[900px]">
               <thead>
                 <tr className="border-b border-border/30 bg-secondary/30">
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
