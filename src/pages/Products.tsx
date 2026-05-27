@@ -41,6 +41,7 @@ const Products = () => {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
   const [showAllProducts, setShowAllProducts] = useState(false);
+  const [offerMode, setOfferMode] = useState(false);
   const { customer: shopCustomer } = useShopCustomer();
   const { data: categoryData } = useProductCategories();
   const categoryTree = categoryData?.tree ?? [];
@@ -345,7 +346,11 @@ const Products = () => {
 
 
             <button
-              onClick={() => featured[0] && openOrderDialog(featured[0])}
+              onClick={() => {
+                setOfferMode(true);
+                setShowAllProducts(false);
+                setTimeout(() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }), 50);
+              }}
               className="font-semibold text-xs px-4 h-9 rounded-full inline-flex items-center gap-1.5 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
               অফার
@@ -741,12 +746,20 @@ const Products = () => {
         <div className="max-w-7xl mx-auto glossy-section-violet p-6 md:p-10">
           <div className="text-center mb-8">
             <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>
-              {showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
+              {offerMode ? "TOP DISCOUNTS" : showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2">
-              {showAllProducts ? "ক্যাটাগরি অনুযায়ী সকল পণ্য" : "আমাদের সেরা পণ্য সমূহ"}
+              {offerMode ? "সর্বোচ্চ ছাড়ে পণ্য সমূহ" : showAllProducts ? "ক্যাটাগরি অনুযায়ী সকল পণ্য" : "আমাদের সেরা পণ্য সমূহ"}
             </h2>
             <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ backgroundColor: BRAND_GREEN }} />
+            {offerMode && (
+              <button
+                onClick={() => setOfferMode(false)}
+                className="mt-3 text-xs font-semibold text-blue-600 hover:underline"
+              >
+                সব পণ্য দেখুন
+              </button>
+            )}
           </div>
 
           {filteredProducts.length === 0 ? (
@@ -810,6 +823,30 @@ const Products = () => {
                 </div>
               );
             };
+
+            if (offerMode) {
+              const discounted = filteredProducts
+                .filter((p: any) => p.discount_price && Number(p.discount_price) < Number(p.price))
+                .map((p: any) => ({
+                  p,
+                  pct: Math.round(((Number(p.price) - Number(p.discount_price)) / Number(p.price)) * 100),
+                }))
+                .sort((a, b) => b.pct - a.pct)
+                .map(x => x.p);
+              if (discounted.length === 0) {
+                return (
+                  <div className="text-center py-16 text-muted-foreground">
+                    <Tag className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                    এই মুহূর্তে কোনো ছাড়যুক্ত পণ্য নেই
+                  </div>
+                );
+              }
+              return (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {discounted.map(renderCard)}
+                </div>
+              );
+            }
 
             if (!showAllProducts) {
               const visible = filteredProducts.slice(0, 5);
