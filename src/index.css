@@ -914,19 +914,22 @@ button:not([data-sidebar] button):not(.public-header button):not([data-no-magent
   border-color: inherit !important;
 }
 
-/* Mobile bottom nav: clean white surface, magenta inactive icons/labels */
+/* Mobile bottom nav: magenta surface, white icons/labels */
 .mobile-bottom-nav,
 .mobile-bottom-nav .mobile-bottom-nav-surface,
 .mobile-bottom-nav .bg-card\/95,
 .member-dash-red .mobile-bottom-nav,
 .member-dash-red .mobile-bottom-nav .bg-card\/95 {
-  background-color: #ffffff !important;
-  border-color: #f8d8e5 !important;
+  background-color: #E2136E !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
-.mobile-bottom-nav button:not([data-active="true"]),
-.mobile-bottom-nav button:not([data-active="true"]) *,
-.mobile-bottom-nav button:not([data-active="true"]) svg {
-  color: #E2136E !important;
+.mobile-bottom-nav button,
+.mobile-bottom-nav button *,
+.mobile-bottom-nav button svg {
+  color: #ffffff !important;
+}
+.mobile-bottom-nav button[data-active="true"] {
+  background-color: rgba(255, 255, 255, 0.18) !important;
 }
 .mobile-bottom-nav button[data-active="true"] svg {
   color: #ffffff !important;
