@@ -706,7 +706,7 @@
 .member-dash-red .bg-secondary\/30 { background-color: #FFF5F9 !important; }
 .member-dash-red .border-border\/70,
 .member-dash-red .border-border\/30,
-.member-dash-red .border-border { border-color: #ececec !important; }
+.member-dash-red .border-border { border-color: #f8d8e5 !important; }
 
 /* Text colors inside cards stay dark on light surfaces */
 .member-dash-red .bg-card .text-foreground { color: #1a1a1a !important; }
