@@ -746,12 +746,20 @@ const Products = () => {
         <div className="max-w-7xl mx-auto glossy-section-violet p-6 md:p-10">
           <div className="text-center mb-8">
             <span className="text-xs font-bold tracking-widest uppercase" style={{ color: BRAND_GREEN }}>
-              {showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
+              {offerMode ? "TOP DISCOUNTS" : showAllProducts ? "ALL PRODUCTS" : "FEATURED PRODUCTS"}
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-2">
-              {showAllProducts ? "ক্যাটাগরি অনুযায়ী সকল পণ্য" : "আমাদের সেরা পণ্য সমূহ"}
+              {offerMode ? "সর্বোচ্চ ছাড়ে পণ্য সমূহ" : showAllProducts ? "ক্যাটাগরি অনুযায়ী সকল পণ্য" : "আমাদের সেরা পণ্য সমূহ"}
             </h2>
             <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ backgroundColor: BRAND_GREEN }} />
+            {offerMode && (
+              <button
+                onClick={() => setOfferMode(false)}
+                className="mt-3 text-xs font-semibold text-blue-600 hover:underline"
+              >
+                সব পণ্য দেখুন
+              </button>
+            )}
           </div>
 
           {filteredProducts.length === 0 ? (
