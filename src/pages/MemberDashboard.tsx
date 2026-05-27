@@ -860,9 +860,9 @@ const MemberDashboard = () => {
                               <p className="text-[9px] text-muted-foreground">পেইড</p>
                               <p className="text-xs font-bold text-red-400">৳{paid.toLocaleString("bn-BD")}</p>
                             </div>
-                            <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2 py-1.5 text-center">
+                            <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-2 py-1.5 text-center">
                               <p className="text-[9px] text-muted-foreground">বাকি</p>
-                              <p className="text-xs font-bold text-rose-400">৳{due.toLocaleString("bn-BD")}</p>
+                              <p className="text-xs font-bold text-red-400">৳{due.toLocaleString("bn-BD")}</p>
                             </div>
                           </div>
                         </div>
@@ -897,9 +897,9 @@ const MemberDashboard = () => {
 
             return (
               <div className="space-y-4 mt-2">
-                <div className={`rounded-xl p-4 border ${internalDue > 0 ? "bg-red-500/10 border-red-500/30" : internalDue < 0 ? "bg-red-500/10 border-red-500/30" : "bg-blue-500/10 border-blue-500/30"}`}>
+                <div className="rounded-xl p-4 border bg-red-500/10 border-red-500/30">
                   <p className="text-xs text-muted-foreground">{internalDue > 0 ? "KM Production থেকে বকেয়া" : internalDue < 0 ? "KM Production-এ অগ্রিম" : "সমন্বয়কৃত"}</p>
-                  <p className={`text-2xl font-bold ${internalDue > 0 ? "text-red-400" : internalDue < 0 ? "text-red-400" : "text-blue-400"}`}>
+                  <p className="text-2xl font-bold text-red-400">
                     ৳{Math.abs(internalDue).toLocaleString("bn-BD")}
                   </p>
                 </div>
@@ -926,7 +926,7 @@ const MemberDashboard = () => {
                   )}
                   <div className="flex items-center justify-between text-xs pt-2 border-t border-border/30">
                     <span className="text-muted-foreground">প্রাপ্ত পেমেন্ট</span>
-                    <span className="font-semibold text-rose-400">- ৳{totalPaid.toLocaleString("bn-BD")}</span>
+                    <span className="font-semibold text-red-400">- ৳{totalPaid.toLocaleString("bn-BD")}</span>
                   </div>
                 </div>
 
