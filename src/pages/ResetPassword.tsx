@@ -12,6 +12,8 @@ import { Lock, CheckCircle, Eye, EyeOff } from "lucide-react";
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const navigate = useNavigate();
