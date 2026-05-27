@@ -644,8 +644,8 @@ const Products = () => {
                   return (
                     <>
                       {/* premium gradient frame */}
-                      <div className="relative rounded-[26px] p-[1.5px] bg-gradient-to-br from-amber-300/70 via-white/10 to-slate-100/60 shadow-[0_30px_60px_-20px_hsl(0_70%_15%/0.6)]">
-                        <div className="aspect-square rounded-[24px] overflow-hidden relative bg-black/30 backdrop-blur-xl border border-white/10">
+                      <div className="relative rounded-[26px] p-[1.5px] bg-slate-100 shadow-sm">
+                        <div className="aspect-square rounded-[24px] overflow-hidden relative bg-slate-50 border border-slate-200">
                           {current ? (
                             <Link to={`/products/${current.slug || current.id}`} className="block w-full h-full group">
                               {slides.map((p: any, i: number) => (
