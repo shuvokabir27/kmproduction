@@ -82,7 +82,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <Globe className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">সাইট দেখুন</span>
               </Link>
-              {(isAdmin || isEnabled("weather_widget")) && <WeatherWidget />}
               <NotificationBell />
               <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
                 {profile?.photo_url ? (
@@ -96,10 +95,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          {/* Combined: clock + news + birthday inside one bordered section */}
-          <div className="px-3 md:px-4 pt-3">
-            <HomeTopSection />
-          </div>
 
 
           {/* Main content */}
