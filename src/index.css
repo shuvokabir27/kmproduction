@@ -747,13 +747,20 @@ body * {
   background-color: #E2136E !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
+[data-sidebar],
+[data-sidebar] *,
 [data-sidebar] .text-foreground,
+[data-sidebar] .text-muted-foreground,
 [data-sidebar] span,
+[data-sidebar] a,
+[data-sidebar] p,
+[data-sidebar] div,
 [data-sidebar] .sidebar-group-label,
 [data-sidebar] .sidebar-menu-button,
 [data-sidebar] .sidebar-header,
 [data-sidebar] .sidebar-footer {
   color: #ffffff !important;
+  opacity: 1 !important;
 }
 [data-sidebar] .hover\:bg-\[\#E2136E\]\/10:hover,
 [data-sidebar] .hover\:bg-secondary\/80:hover {
