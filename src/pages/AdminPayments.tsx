@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemberBalance } from "@/hooks/useMemberBalance";
-import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown, MessageCircle, Send, CheckCircle2 } from "lucide-react";
+import { CreditCard, Plus, Wallet, Building, Smartphone, Download, Trash2, Copy, Search, FileDown, MessageCircle, Send, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { format } from "date-fns";
 import { bn } from "date-fns/locale";
@@ -23,6 +23,7 @@ import PaymentReceipt from "@/components/PaymentReceipt";
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<string>("");
   const [amount, setAmount] = useState("");
@@ -822,8 +823,26 @@ const AdminPayments = () => {
               <p className="text-xs text-muted-foreground">{filteredPayments.length} টি রেকর্ড পাওয়া গেছে • মোট: ৳{filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0).toLocaleString("bn-BD")}</p>
             )}
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[900px]">
+          <div className="relative">
+            <div
+              ref={scrollRef}
+              className="overflow-x-auto cursor-grab active:cursor-grabbing select-none scroll-smooth"
+              onMouseDown={(e) => {
+                const el = e.currentTarget;
+                const startX = e.pageX - el.offsetLeft;
+                const startScroll = el.scrollLeft;
+                const onMove = (ev: MouseEvent) => {
+                  el.scrollLeft = startScroll - ((ev.pageX - el.offsetLeft) - startX);
+                };
+                const onUp = () => {
+                  window.removeEventListener("mousemove", onMove);
+                  window.removeEventListener("mouseup", onUp);
+                };
+                window.addEventListener("mousemove", onMove);
+                window.addEventListener("mouseup", onUp);
+              }}
+            >
+              <table className="w-full text-sm min-w-[900px]">
               <thead>
                 <tr className="border-b border-border/30 bg-secondary/30">
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
@@ -911,6 +930,24 @@ const AdminPayments = () => {
                 )}
               </tbody>
             </table>
+            </div>
+            {/* Drag/scroll buttons */}
+            <button
+              type="button"
+              aria-label="বাঁয়ে স্ক্রল"
+              onClick={() => scrollRef.current?.scrollBy({ left: -240, behavior: "smooth" })}
+              className="absolute left-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-[#E2136E] text-white shadow-lg flex items-center justify-center md:hidden active:scale-95"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="ডানে স্ক্রল"
+              onClick={() => scrollRef.current?.scrollBy({ left: 240, behavior: "smooth" })}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-[#E2136E] text-white shadow-lg flex items-center justify-center md:hidden active:scale-95"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </Card>
 
