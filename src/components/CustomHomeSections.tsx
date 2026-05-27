@@ -91,39 +91,26 @@ function SectionBlock({ section }: { section: any }) {
 
   return (
     <section className="px-4 py-6 relative">
-      <div
-        className="max-w-7xl mx-auto relative z-10 rounded-2xl px-5 py-7 md:p-7 overflow-hidden"
-        style={(() => {
-          if (section.bg_color && section.bg_color_2) {
-            return { background: `linear-gradient(135deg, ${section.bg_color}, ${section.bg_color_2})` };
-          }
-          if (section.bg_color) return { backgroundColor: section.bg_color };
-          return undefined;
-        })()}
-      >
-        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] ${accent.glow} rounded-full blur-[140px] pointer-events-none`} />
+      <div className="max-w-7xl mx-auto relative z-10 rounded-2xl px-5 py-7 md:p-7 overflow-hidden bg-white border border-slate-200">
         <Carousel setApi={setApi} opts={{ align: "start", loop: products.length > 4 }} className="w-full">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 {section.badge_text && (
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${badgeAccent.btn} text-white text-xs font-bold shadow`}>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-xs font-semibold">
                     <BadgeIcon className="h-3.5 w-3.5" /> {section.badge_text}
                   </div>
                 )}
                 {section.eyebrow && (
-                  <span className={`${accent.text} text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2`}>
+                  <span className="text-blue-600 text-xs font-semibold tracking-[0.3em] uppercase flex items-center gap-2">
                     <Sparkles className="h-4 w-4" /> {section.eyebrow}
                   </span>
                 )}
               </div>
-              <h2
-                className="font-display font-bold text-3xl md:text-5xl mt-1 tracking-wider"
-                style={section.title_color ? { color: section.title_color } : undefined}
-              >
+              <h2 className="font-display font-bold text-3xl md:text-5xl mt-1 tracking-wider text-slate-900">
                 {section.title}
               </h2>
-              <div className={`h-1 w-20 bg-gradient-to-r ${accent.from} to-transparent rounded-full mt-4`} />
+              <div className="h-1 w-20 bg-blue-600 rounded-full mt-4" />
             </div>
             <div className="flex items-center gap-2">
               {products.length > 4 && (
@@ -133,7 +120,7 @@ function SectionBlock({ section }: { section: any }) {
                     aria-label="পূর্ববর্তী"
                     onClick={() => api?.scrollPrev()}
                     disabled={!canPrev}
-                    className="h-9 w-9 grid place-items-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur"
+                    className="h-9 w-9 grid place-items-center rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -142,14 +129,14 @@ function SectionBlock({ section }: { section: any }) {
                     aria-label="পরবর্তী"
                     onClick={() => api?.scrollNext()}
                     disabled={!canNext}
-                    className="h-9 w-9 grid place-items-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur"
+                    className="h-9 w-9 grid place-items-center rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               )}
               {(section.cta_label || section.cta_link) && (
-                <Button onClick={() => navigate(section.cta_link || "/products")} variant="outline" className={`${accent.ring} gap-2`}>
+                <Button onClick={() => navigate(section.cta_link || "/products")} variant="outline" className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50">
                   <ShoppingBag className="h-4 w-4" /> {section.cta_label || "সব দেখুন"}
                 </Button>
               )}
