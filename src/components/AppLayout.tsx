@@ -24,6 +24,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, user, isAdmin } = useAuth();
   const isMobile = useIsMobile();
   const location = useLocation();
+  const isMemberDashboard = location.pathname === "/dashboard";
   const queryClient = useQueryClient();
   const isOnChat = location.pathname === "/chat";
   const { data: unreadCount } = useUnreadMessages();
@@ -52,7 +53,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
-      <div className="min-h-screen flex w-full bg-background noise-bg">
+      <div className={`min-h-screen flex w-full bg-background ${isMemberDashboard ? "" : "noise-bg"}`}>
         {/* Desktop sidebar — hidden on mobile */}
         <div className="hidden md:block">
           <AppSidebar />
