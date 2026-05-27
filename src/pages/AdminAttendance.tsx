@@ -59,7 +59,7 @@ const AdminAttendance = () => {
     queryFn: async () => {
       const ids = shootings!.map(s => s.id);
       const { data } = await supabase.from("attendance").select("shooting_id").in("shooting_id", ids);
-      return new Set((data ?? []).map(a => a.shooting_id));
+      return (data ?? []).map(a => a.shooting_id) as string[];
     },
   });
 
