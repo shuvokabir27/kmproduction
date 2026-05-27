@@ -696,14 +696,14 @@
 .member-dash-red .text-foreground { color: #1a1a1a !important; }
 .member-dash-red .text-muted-foreground { color: #6b7280 !important; }
 
-/* Section / card surfaces: clean light neutral (not magenta) */
+/* Section / card surfaces: light pink FFEDF4 base */
 .member-dash-red .bg-card {
-  background-color: #ffffff !important;
-  border-color: #ececec !important;
+  background-color: #FFEDF4 !important;
+  border-color: #f8d8e5 !important;
   color: #1a1a1a !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
-.member-dash-red .bg-secondary\/30 { background-color: #f7f7f8 !important; }
+.member-dash-red .bg-secondary\/30 { background-color: #FFF5F9 !important; }
 .member-dash-red .border-border\/70,
 .member-dash-red .border-border\/30,
 .member-dash-red .border-border { border-color: #ececec !important; }
