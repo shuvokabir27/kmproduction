@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingBag, ShoppingCart, MessageCircle, Soup } from "lucide-react";
+import { Home, ShoppingCart, MessageCircle, Soup, Fish } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,8 +23,8 @@ export default function MobileShopNav() {
   const whatsappNo = siteSettings?.whatsapp_no || siteSettings?.contact_phone || "";
 
   const isHome = path === "/products" && !hash;
-  const isShop = path === "/products" && hash === "#shop";
   const isAchar = path === "/category/achar";
+  const isShutki = path === "/category/shutki";
 
   const itemBase = "flex flex-col items-center justify-center py-2 gap-0.5 transition-colors";
   const activeText = "text-blue-600";
@@ -40,9 +40,9 @@ export default function MobileShopNav() {
           <Home className="h-5 w-5" />
           <span>হোম</span>
         </Link>
-        <Link to="/products#shop" className={cn(itemBase, isShop ? activeText : inactiveText)}>
-          <ShoppingBag className="h-5 w-5" />
-          <span>শপ</span>
+        <Link to="/category/shutki" className={cn(itemBase, isShutki ? activeText : inactiveText)}>
+          <Fish className="h-5 w-5" />
+          <span>শুটকী</span>
         </Link>
         <Link to="/category/achar" className={cn(itemBase, isAchar ? activeText : inactiveText)}>
           <Soup className="h-5 w-5" />
