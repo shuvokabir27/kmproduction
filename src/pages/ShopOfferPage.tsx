@@ -238,9 +238,9 @@ export default function ShopOfferPage() {
   };
 
   const TimeBox = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center bg-white/15 backdrop-blur rounded-xl px-3 py-2 min-w-[60px] border border-white/30">
-      <span className="text-2xl md:text-3xl font-extrabold text-white font-mono leading-none">{toBn(value.toString().padStart(2, "0"))}</span>
-      <span className="text-[10px] text-white/80 mt-1 font-semibold">{label}</span>
+    <div className="flex flex-col items-center bg-slate-50 rounded-xl px-3 py-2 min-w-[60px] border border-slate-200">
+      <span className="text-2xl md:text-3xl font-extrabold text-slate-900 font-mono leading-none">{toBn(value.toString().padStart(2, "0"))}</span>
+      <span className="text-[10px] text-slate-500 mt-1 font-semibold">{label}</span>
     </div>
   );
 
@@ -260,22 +260,22 @@ export default function ShopOfferPage() {
 
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-4 pt-4">
-       <div className="relative bg-gradient-to-br from-blue-600 via-blue-600 to-blue-600 text-white rounded-3xl shadow-xl overflow-hidden">
+       <div className="relative bg-white border border-slate-200 text-slate-900 rounded-3xl shadow-sm overflow-hidden">
         <div className="px-4 py-4 space-y-3">
           {heroImage && (
-            <div className="w-full rounded-2xl overflow-hidden ring-2 ring-white/40 shadow-2xl bg-black/20 flex items-center justify-center">
+            <div className="w-full rounded-2xl overflow-hidden ring-1 ring-slate-200 shadow-sm bg-slate-50 flex items-center justify-center">
               <img src={heroImage} alt={offer.title} className="w-full h-auto max-h-[42vh] md:max-h-[50vh] object-contain" />
             </div>
           )}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1 rounded-full text-xs font-bold">
-              <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+              <Sparkles className="h-3.5 w-3.5" />
               {offer.badge_text || "বিশেষ অফার"}
             </div>
-            <h2 className="text-xl md:text-2xl font-extrabold drop-shadow leading-tight">{offer.title}</h2>
-            {offer.description && <p className="text-white/90 text-xs md:text-sm line-clamp-2">{offer.description}</p>}
+            <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 leading-tight">{offer.title}</h2>
+            {offer.description && <p className="text-slate-600 text-xs md:text-sm line-clamp-2">{offer.description}</p>}
 
-            <div className="inline-flex items-center gap-2 bg-white text-blue-700 font-extrabold text-lg px-4 py-1.5 rounded-full shadow-xl">
+            <div className="inline-flex items-center gap-2 bg-blue-600 text-white font-extrabold text-lg px-4 py-1.5 rounded-full shadow-sm">
               {isFree ? <Truck className="h-5 w-5" /> : isCombo ? <Package className="h-5 w-5" /> : <Tag className="h-5 w-5" />}
               {isFree ? "ফ্রি ডেলিভারি"
                 : isCombo ? (comboPrice ? `৳${toBn(comboPrice)} মাত্র` : "কম্বো অফার")
