@@ -459,15 +459,15 @@ const PublicHome = () => {
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
                       
                       <div className="relative z-10">
-                        <div className="h-[4.5rem] w-[4.5rem] rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-4 border-2 border-border/40 group-hover:border-primary/50 transition-all duration-300 overflow-hidden">
+                        <div className="h-[4.5rem] w-[4.5rem] rounded-full bg-white/15 flex items-center justify-center mx-auto mb-4 border-2 border-white/40 group-hover:border-white/70 transition-all duration-300 overflow-hidden">
                           {member.photo_url ? (
                             <img src={member.photo_url} alt={member.full_name} className="h-full w-full rounded-full object-cover" />
                           ) : (
-                            <span className="text-primary font-bold text-2xl">{member.full_name.charAt(0)}</span>
+                            <span className="text-white font-bold text-2xl">{member.full_name.charAt(0)}</span>
                           )}
                         </div>
                         <div className="flex items-center justify-center gap-1">
-                          <h3 className="text-sm font-semibold text-foreground truncate">
+                          <h3 className="text-sm font-semibold text-white truncate">
                             {lang === "en" && (member as any).full_name_en ? (member as any).full_name_en : member.full_name}
                           </h3>
                           {(member as any).is_verified && (
@@ -477,7 +477,7 @@ const PublicHome = () => {
                             </svg>
                           )}
                         </div>
-                        <p className="text-[11px] text-muted-foreground truncate mt-1">
+                        <p className="text-[11px] text-white/80 truncate mt-1">
                           {lang === "en" && (member as any).designation_en ? (member as any).designation_en : (member.designation || L.member)}
                         </p>
                       </div>
