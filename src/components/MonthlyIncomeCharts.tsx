@@ -247,7 +247,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
           <button
             type="button"
             onClick={onClientClick}
-            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
+            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
             <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
