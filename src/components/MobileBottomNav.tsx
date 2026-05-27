@@ -234,6 +234,7 @@ export function MobileBottomNav() {
                             return (
                               <motion.button
                                 data-no-magenta
+                                data-active={active ? "true" : undefined}
                                 key={item.path}
                                 initial={{ opacity: 0, scale: 0.85 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -291,6 +292,7 @@ export function MobileBottomNav() {
             return (
                 <motion.button
                   data-no-magenta
+                  data-active={active ? "true" : undefined}
                 key={tab.path}
                 onTouchStart={() => setPressedTab(tab.path)}
                 onTouchEnd={() => setPressedTab(null)}
