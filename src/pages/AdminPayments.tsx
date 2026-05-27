@@ -822,24 +822,26 @@ const AdminPayments = () => {
               <p className="text-xs text-muted-foreground">{filteredPayments.length} টি রেকর্ড পাওয়া গেছে • মোট: ৳{filteredPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0).toLocaleString("bn-BD")}</p>
             )}
           </div>
-          <div
-            className="overflow-x-auto cursor-grab active:cursor-grabbing select-none"
-            onMouseDown={(e) => {
-              const el = e.currentTarget;
-              const startX = e.pageX - el.offsetLeft;
-              const startScroll = el.scrollLeft;
-              const onMove = (ev: MouseEvent) => {
-                el.scrollLeft = startScroll - ((ev.pageX - el.offsetLeft) - startX);
-              };
-              const onUp = () => {
-                window.removeEventListener("mousemove", onMove);
-                window.removeEventListener("mouseup", onUp);
-              };
-              window.addEventListener("mousemove", onMove);
-              window.addEventListener("mouseup", onUp);
-            }}
-          >
-            <table className="w-full text-sm min-w-[900px]">
+          <div className="relative">
+            <div
+              ref={scrollRef}
+              className="overflow-x-auto cursor-grab active:cursor-grabbing select-none scroll-smooth"
+              onMouseDown={(e) => {
+                const el = e.currentTarget;
+                const startX = e.pageX - el.offsetLeft;
+                const startScroll = el.scrollLeft;
+                const onMove = (ev: MouseEvent) => {
+                  el.scrollLeft = startScroll - ((ev.pageX - el.offsetLeft) - startX);
+                };
+                const onUp = () => {
+                  window.removeEventListener("mousemove", onMove);
+                  window.removeEventListener("mouseup", onUp);
+                };
+                window.addEventListener("mousemove", onMove);
+                window.addEventListener("mouseup", onUp);
+              }}
+            >
+              <table className="w-full text-sm min-w-[900px]">
               <thead>
                 <tr className="border-b border-border/30 bg-secondary/30">
                   <th className="text-left p-3 text-cyan-400 font-medium text-xs">সদস্য</th>
