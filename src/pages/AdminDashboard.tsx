@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { BirthdayCountdownBar } from "@/components/BirthdayCountdownBar";
 import { cn } from "@/lib/utils";
 import MonthlyExpenseChart from "@/components/MonthlyExpenseChart";
-import { OnlineUsersBar } from "@/components/OnlineUsersBar";
+
 import { AdminAdvanceRequestsCard } from "@/components/AdminAdvanceRequestsCard";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
@@ -350,10 +350,6 @@ const AdminDashboard = () => {
         {/* Pending advance requests */}
         <AdminAdvanceRequestsCard />
 
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="w-full">
-          <OnlineUsersBar variant="inline" />
-        </motion.div>
 
         {/* Stats Grid - Compact Glossy */}
         <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 md:gap-3" variants={container} initial="hidden" animate="show">
