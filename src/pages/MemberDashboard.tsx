@@ -282,7 +282,7 @@ const MemberDashboard = () => {
               const meta: Record<string, { url: string; icon: any; gradient: string; iconColor: string }> = {
                 shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/20 to-rose-500/10", iconColor: "text-red-400" },
                 shootings: { url: "/admin/shootings", icon: Film, gradient: "from-rose-500/20 to-pink-500/10", iconColor: "text-rose-400" },
-                attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-cyan-500/20 to-sky-500/10", iconColor: "text-cyan-400" },
+                attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400" },
               };
               const m = meta[p];
               if (!m) return null;
