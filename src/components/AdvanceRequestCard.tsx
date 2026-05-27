@@ -123,7 +123,7 @@ export function AdvanceRequestCard() {
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
-            background: "radial-gradient(circle at 20% 50%, #10b981 0%, transparent 50%), radial-gradient(circle at 80% 50%, #06b6d4 0%, transparent 50%)",
+            background: "radial-gradient(circle at 20% 50%, #ef4444 0%, transparent 50%), radial-gradient(circle at 80% 50%, #ffffff 0%, transparent 50%)",
             backgroundSize: "200% 200%",
           }}
         />
