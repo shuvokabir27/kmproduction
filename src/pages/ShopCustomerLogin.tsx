@@ -88,7 +88,7 @@ export default function ShopCustomerLogin() {
           body: { phone: phoneDigits, password },
         });
         if (error || (data as any)?.error) {
-          toast.error((data as any)?.error || error?.message || "লগইন ব্যর্থ");
+          setErrorMsg(getErrorMessage((data as any)?.error || error));
           setLoading(false);
           return;
         }
