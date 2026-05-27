@@ -67,13 +67,11 @@ export const CartDrawer = () => {
     }
     setSubmitting(true);
     try {
-      // Get one shared order number for all items in this cart
+      // Always get a shared order number so we can display it
       let sharedNumber: number | null = null;
-      if (items.length > 1) {
-        const { data: numData, error: numErr } = await supabase.rpc("next_order_number" as any);
-        if (numErr) throw numErr;
-        sharedNumber = numData as number;
-      }
+      const { data: numData, error: numErr } = await supabase.rpc("next_order_number" as any);
+      if (numErr) throw numErr;
+      sharedNumber = numData as number;
       const rows = items.map((it, idx) => ({
         customer_name: form.name.trim(),
         customer_phone: form.phone,
@@ -89,10 +87,11 @@ export const CartDrawer = () => {
         payment_method: paymentMethod,
         payment_sender_no: paymentMethod !== "cod" ? paymentSenderNo : null,
         payment_trx_id: paymentMethod !== "cod" ? paymentTrxId : null,
-        ...(sharedNumber ? { order_number: sharedNumber } : {}),
+        order_number: sharedNumber,
       }));
       const { error } = await supabase.from("orders").insert(rows as any);
       if (error) throw error;
+      setOrderNumber(sharedNumber);
       setSuccess(true);
       clear();
     } catch (err) {
