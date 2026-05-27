@@ -122,7 +122,22 @@ export const CartDrawer = () => {
             <h3 className="font-bold text-lg">আপনার কার্ট</h3>
             <span className="bg-card/20 text-xs font-bold px-2 py-0.5 rounded-full">{toBn(count)}</span>
           </div>
-          <button onClick={closeAll} className="w-8 h-8 rounded-full bg-card/15 flex items-center justify-center hover:bg-card/25"><X className="h-4 w-4" /></button>
+          <div className="flex items-center gap-2">
+            {items.length > 0 && !checkout && !success && (
+              <button
+                onClick={() => {
+                  if (confirm("কার্ট থেকে সব পণ্য সরিয়ে ফেলবেন?")) {
+                    clear();
+                    toast.success("কার্ট খালি করা হয়েছে");
+                  }
+                }}
+                className="text-[11px] font-bold px-3 h-8 rounded-full bg-card/15 hover:bg-card/25 flex items-center gap-1"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> সব মুছুন
+              </button>
+            )}
+            <button onClick={closeAll} className="w-8 h-8 rounded-full bg-card/15 flex items-center justify-center hover:bg-card/25"><X className="h-4 w-4" /></button>
+          </div>
         </div>
 
         {success ? (
