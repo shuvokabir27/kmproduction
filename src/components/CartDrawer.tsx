@@ -340,6 +340,46 @@ export const CartDrawer = () => {
           </>
         )}
       </div>
+
+      {/* Custom clear-cart confirmation */}
+      {confirmClear && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={(e) => { e.stopPropagation(); setConfirmClear(false); }}
+          style={{ fontFamily: "'Tiro Bangla', serif" }}
+        >
+          <div
+            className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                <Trash2 className="h-7 w-7 text-red-500" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-1.5">কার্ট খালি করবেন?</h3>
+              <p className="text-sm text-slate-500">কার্ট থেকে সব পণ্য সরিয়ে ফেলা হবে। এটি undo করা যাবে না।</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 px-6 pb-6">
+              <button
+                onClick={() => setConfirmClear(false)}
+                className="h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm transition-colors shadow-sm"
+              >
+                বাতিল
+              </button>
+              <button
+                onClick={() => {
+                  clear();
+                  setConfirmClear(false);
+                  toast.success("কার্ট খালি করা হয়েছে");
+                }}
+                className="h-11 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-bold text-sm transition-colors shadow-sm"
+              >
+                হ্যাঁ, মুছুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
