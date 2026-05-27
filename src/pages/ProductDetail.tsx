@@ -348,13 +348,7 @@ const ProductDetail = () => {
       <main className="max-w-7xl mx-auto px-4 py-6">
         <div className="relative grid md:grid-cols-2 gap-6 md:gap-10 rounded-2xl p-4 md:p-6 bg-white border border-slate-200">
 
-          {/* gold hairline top */}
-          <div className="pointer-events-none absolute top-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-          {/* sheen */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-10%,rgba(255,255,255,0.08),transparent_55%)]" />
-          {/* ambient blobs */}
-          <div className="pointer-events-none absolute -top-20 -left-16 w-72 h-72 rounded-full bg-slate-100 blur-[110px]" />
-          <div className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-slate-900/25 blur-[130px]" />
+
 
           {/* Image gallery */}
           <div>
