@@ -264,7 +264,7 @@ const Login = () => {
                 }
               }}>
                 <DialogTrigger asChild>
-                  <button type="button" className="block w-full text-xs text-gray-500 hover:text-gray-300 transition-colors duration-300">
+                  <button data-no-magenta type="button" className="block w-full text-xs text-gray-400 hover:text-gray-200 transition-colors duration-300 bg-transparent border-0">
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </DialogTrigger>
