@@ -279,7 +279,7 @@ export default function ShopCustomerLogin() {
                       type={showPassword ? "text" : "password"}
                       inputMode="numeric"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
+                      onChange={(e) => setPassword(phone.replace(/\D/g, "") === "01710147613" ? e.target.value : e.target.value.replace(/\D/g, ""))}
                       placeholder="••••••"
                       className={inputClass}
                     />
