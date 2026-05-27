@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       const SENDER_ID = Deno.env.get("BULK_SMS_SENDER_ID");
       if (!SMS_API_KEY || !SENDER_ID) return bad("SMS service not configured", 500);
 
-      const message = `Your KM Production password reset OTP is: ${otp}\nValid for 5 minutes. Do not share with anyone.`;
+      const message = `Your KM Shop password reset OTP is: ${otp}\nValid for 5 minutes. Do not share with anyone.`;
       const smsUrl = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(SMS_API_KEY)}&type=text&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(SENDER_ID)}&message=${encodeURIComponent(message)}`;
 
       try {
