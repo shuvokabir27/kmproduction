@@ -75,7 +75,7 @@ export function NoticeBoard() {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  const hasOngoingShooting = ongoingShootings && ongoingShootings.length > 0;
+  const hasOngoingShooting = false; // hidden by request
 
   // Fetch my participation in ongoing shootings
   const { data: myParticipation } = useQuery({
