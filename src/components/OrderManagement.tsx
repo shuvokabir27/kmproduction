@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
