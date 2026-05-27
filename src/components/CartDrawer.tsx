@@ -105,6 +105,7 @@ export const CartDrawer = () => {
   const closeAll = () => {
     setCheckout(false);
     setSuccess(false);
+    setOrderNumber(null);
     close();
   };
 
