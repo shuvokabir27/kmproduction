@@ -679,14 +679,13 @@ body * {
 }
 [data-sidebar] [data-active="true"],
 [data-sidebar] .bg-secondary {
-  background-color: #eef2ff !important;
-  color: #1e293b !important;
+  background-color: #eff6ff !important;
+  color: #0f172a !important;
 }
 [data-sidebar] [data-active="true"] *,
 [data-sidebar] .bg-secondary * {
-  color: #1e293b !important;
+  color: #0f172a !important;
 }
-/* Icon chip: soft slate background, dark icon for clarity */
 [data-sidebar] [class*="bg-"][class*="-50"],
 [data-sidebar] [class*="bg-"][class*="/10"],
 [data-sidebar] [class*="bg-"][class*="/15"],
@@ -698,7 +697,7 @@ body * {
   color: #475569 !important;
 }
 [data-sidebar] [data-active="true"] svg {
-  color: #4f46e5 !important;
+  color: #3b82f6 !important;
 }
 
 /* Global button styling: white text on blue background.
