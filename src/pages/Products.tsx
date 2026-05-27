@@ -275,14 +275,11 @@ const Products = () => {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="relative">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-600/60 via-slate-100/40 to-blue-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
-              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-blue-600 via-slate-100 to-slate-900 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
-                KM
-              </div>
+            <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-blue-600 shadow-sm">
+              KM
             </div>
             <div className="hidden sm:block">
-              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-slate-300 via-slate-100 to-slate-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
+              <div className="font-extrabold text-base md:text-lg leading-tight text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
               <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">KM Shop · কুয়াকাটা</div>
             </div>
           </Link>
