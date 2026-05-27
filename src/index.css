@@ -6,63 +6,63 @@
 
 @layer base {
   :root {
-    /* bKash-inspired palette: white background, magenta primary */
+    /* Clean Slate — white surface, slate text, single blue accent */
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --foreground: 222 47% 11%;          /* slate-900 */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 332 84% 48%;          /* #E2136E bKash magenta */
+    --primary: 217 91% 60%;             /* blue-500 #3b82f6 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 15%;
+    --secondary: 210 40% 96%;           /* slate-100 */
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;    /* slate-500 */
 
-    --accent: 332 84% 48%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 92%;
-    --ring: 332 84% 48%;
+    --border: 214 32% 91%;              /* slate-200 */
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 30%;
-    --sidebar-primary: 332 84% 48%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 332 84% 35%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 332 84% 48%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 217 91% 60%;
 
-    --success: 142 72% 42%;
+    --success: 142 71% 45%;
     --warning: 38 92% 50%;
-    --info: 210 80% 50%;
+    --info: 217 91% 60%;
 
-    /* Premium gradients — bKash magenta */
-    --gradient-primary: linear-gradient(135deg, hsl(332 84% 48%), hsl(335 79% 35%));
-    --gradient-hero: linear-gradient(180deg, hsl(332 84% 48% / 0.08), transparent 60%);
-    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
-    --gradient-premium: linear-gradient(135deg, hsl(332 84% 48%), hsl(345 88% 50%), hsl(335 79% 35%));
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 96%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(0 0% 97%));
+    /* Calm gradients — blue accent, mostly neutral */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(221 83% 53%));
+    --gradient-hero: linear-gradient(180deg, hsl(217 91% 60% / 0.06), transparent 60%);
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60%), hsl(221 83% 53%));
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 96%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 40% 98%));
 
-    /* Premium shadows */
-    --shadow-glow: 0 0 30px hsl(332 84% 48% / 0.18);
-    --shadow-glow-strong: 0 0 60px hsl(332 84% 48% / 0.3);
-    --shadow-elevated: 0 8px 32px hsl(0 0% 0% / 0.08), 0 2px 8px hsl(0 0% 0% / 0.04);
-    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.06), 0 0 1px hsl(332 84% 48% / 0.12);
+    /* Soft neutral shadows */
+    --shadow-glow: 0 0 24px hsl(217 91% 60% / 0.12);
+    --shadow-glow-strong: 0 0 40px hsl(217 91% 60% / 0.20);
+    --shadow-elevated: 0 8px 24px hsl(222 47% 11% / 0.06), 0 2px 6px hsl(222 47% 11% / 0.04);
+    --shadow-card: 0 1px 3px hsl(222 47% 11% / 0.05), 0 1px 2px hsl(222 47% 11% / 0.03);
   }
 }
 
@@ -143,77 +143,35 @@
     border: 1px solid hsl(0 5% 15% / 0.5);
   }
   /* Glossy, transparent, colorful surfaces */
+  /* Clean primary button — flat blue, subtle lift */
   .glossy-btn {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
     color: hsl(0 0% 100%);
-    background:
-      linear-gradient(180deg, hsl(0 0% 100% / 0.22) 0%, hsl(0 0% 100% / 0.04) 45%, hsl(0 0% 0% / 0.15) 100%),
-      linear-gradient(135deg, hsl(0 85% 55%) 0%, hsl(355 90% 48%) 55%, hsl(0 75% 35%) 100%);
-    border: 1px solid hsl(0 0% 100% / 0.25);
-    backdrop-filter: blur(10px) saturate(1.3);
-    box-shadow:
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.35),
-      inset 0 -1px 0 0 hsl(0 0% 0% / 0.25),
-      0 8px 24px -8px hsl(0 85% 48% / 0.55);
-    transition: transform 0.3s cubic-bezier(.23,1,.32,1), box-shadow 0.3s ease, filter 0.3s ease;
-  }
-  .glossy-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, hsl(0 0% 100% / 0.45) 0%, hsl(0 0% 100% / 0) 50%);
-    border-radius: inherit;
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-  .glossy-btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(115deg, transparent 0%, hsl(0 0% 100% / 0.35) 50%, transparent 100%);
-    transform: skewX(-20deg);
-    pointer-events: none;
-    transition: left 0.7s ease;
+    background: hsl(217 91% 60%);
+    border: 1px solid hsl(217 91% 55%);
+    box-shadow: 0 1px 2px hsl(222 47% 11% / 0.08);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   }
   .glossy-btn:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.08) saturate(1.15);
-    box-shadow:
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.4),
-      inset 0 -1px 0 0 hsl(0 0% 0% / 0.3),
-      0 12px 32px -8px hsl(0 85% 48% / 0.75),
-      0 0 24px hsl(0 85% 55% / 0.35);
+    background: hsl(221 83% 53%);
+    box-shadow: 0 2px 8px hsl(217 91% 60% / 0.25);
   }
-  .glossy-btn:hover::after { left: 120%; }
+  .glossy-btn:active { transform: translateY(0.5px); }
+
+  /* Ghost / secondary button — neutral surface */
   .glossy-btn-ghost {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
-    color: hsl(0 0% 100%);
-    background:
-      linear-gradient(180deg, hsl(0 0% 100% / 0.10) 0%, hsl(0 0% 100% / 0.02) 100%),
-      hsl(0 30% 12% / 0.45);
-    border: 1px solid hsl(0 60% 60% / 0.35);
-    backdrop-filter: blur(14px) saturate(1.4);
-    box-shadow:
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.18),
-      0 8px 24px -10px hsl(0 0% 0% / 0.6);
-    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    color: hsl(222 47% 11%);
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214 32% 91%);
+    box-shadow: 0 1px 2px hsl(222 47% 11% / 0.04);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
   .glossy-btn-ghost:hover {
-    transform: translateY(-1px);
-    border-color: hsl(0 85% 60% / 0.65);
-    background:
-      linear-gradient(180deg, hsl(0 0% 100% / 0.18) 0%, hsl(0 0% 100% / 0.04) 100%),
-      hsl(0 50% 18% / 0.55);
-    box-shadow:
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.25),
-      0 12px 28px -10px hsl(0 85% 48% / 0.45);
+    background: hsl(210 40% 96%);
+    border-color: hsl(214 32% 85%);
   }
   .glossy-section {
     position: relative;
@@ -432,75 +390,27 @@
     font-family: 'Playfair Display', serif;
   }
   .text-shadow-glow {
-    text-shadow: 0 0 40px hsl(0 85% 48% / 0.5), 0 0 80px hsl(0 85% 48% / 0.2);
+    text-shadow: 0 0 24px hsl(217 91% 60% / 0.35);
   }
   .card-3d {
-    transform: perspective(1000px) rotateX(2deg);
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
   }
   .card-3d:hover {
-    transform: perspective(1000px) rotateX(0deg) translateY(-8px);
-    box-shadow: 0 20px 40px hsl(0 85% 48% / 0.15), 0 0 20px hsl(0 85% 48% / 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px hsl(222 47% 11% / 0.10);
   }
   .premium-card {
     position: relative;
-    background: var(--gradient-card);
-    border: 1px solid hsl(0 5% 16% / 0.7);
-    box-shadow:
-      var(--shadow-card),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.06),
-      inset 0 -1px 0 0 hsl(0 0% 0% / 0.4);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214 32% 91%);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     overflow: hidden;
-    isolation: isolate;
-  }
-  .premium-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(120% 60% at 50% -20%, hsl(0 0% 100% / 0.10), transparent 60%),
-      linear-gradient(180deg, hsl(0 0% 100% / 0.04) 0%, transparent 35%);
-    pointer-events: none;
-    z-index: 1;
-  }
-  .premium-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-      115deg,
-      transparent 0%,
-      hsl(0 0% 100% / 0.06) 45%,
-      hsl(0 0% 100% / 0.18) 50%,
-      hsl(0 0% 100% / 0.06) 55%,
-      transparent 100%
-    );
-    transform: skewX(-18deg);
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0;
-    transition: opacity 0.4s ease;
   }
   .premium-card:hover {
-    border-color: hsl(0 85% 48% / 0.35);
-    box-shadow:
-      var(--shadow-card),
-      0 0 24px hsl(0 85% 48% / 0.12),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.10),
-      inset 0 -1px 0 0 hsl(0 0% 0% / 0.4);
-    transform: translateY(-2px);
-  }
-  .premium-card:hover::after {
-    opacity: 1;
-    animation: card-shine 1.1s ease forwards;
-  }
-  .premium-card > * {
-    position: relative;
-    z-index: 3;
+    border-color: hsl(217 91% 60% / 0.35);
+    box-shadow: 0 4px 16px hsl(222 47% 11% / 0.06);
+    transform: translateY(-1px);
   }
 
   /* ============ Unified card highlight + soft light sweep ============
@@ -514,7 +424,7 @@
     position: relative;
     border-radius: inherit;
   }
-  /* Highlighted gradient border (always on, gentle) */
+  /* Subtle neutral border highlight */
   .card-glow::before {
     content: '';
     position: absolute;
@@ -523,10 +433,9 @@
     padding: 1px;
     background: linear-gradient(
       135deg,
-      hsl(0 0% 100% / 0.18),
-      hsl(0 85% 55% / 0.35) 35%,
-      hsl(0 0% 100% / 0.08) 60%,
-      hsl(35 95% 60% / 0.30) 100%
+      hsl(214 32% 91%),
+      hsl(217 91% 60% / 0.25) 50%,
+      hsl(214 32% 91%) 100%
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -586,30 +495,10 @@
   }
   .noise-bg {
     position: relative;
+    background-color: hsl(210 40% 98%);
   }
-  .noise-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      radial-gradient(circle, hsl(0 85% 48% / 0.12) 1.2px, transparent 1.2px),
-      radial-gradient(circle, hsl(0 0% 100% / 0.07) 1px, transparent 1px);
-    background-size: 28px 28px, 28px 28px;
-    background-position: 0 0, 14px 14px;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .noise-bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(135deg, hsl(0 85% 48% / 0.04) 1px, transparent 1px),
-      linear-gradient(225deg, hsl(0 85% 48% / 0.03) 1px, transparent 1px);
-    background-size: 60px 60px, 80px 80px;
-    pointer-events: none;
-    z-index: 0;
-  }
+  .noise-bg::before,
+  .noise-bg::after { display: none; }
 
   /* News Ticker Animation */
   .ticker-scroll {
@@ -692,47 +581,44 @@
   animation: catCardEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Member Dashboard — bKash-inspired: magenta only for buttons/highlights, light pink sections */
-.member-dash-red { color: #1a1a1a; background-color: #FFEDF4; }
-.member-dash-red .text-foreground { color: #1a1a1a !important; }
-.member-dash-red .text-muted-foreground { color: #6b7280 !important; }
-.member-dash-red .bg-background { background-color: #FFEDF4 !important; }
+/* Member Dashboard — clean slate surface with subtle blue accents */
+.member-dash-red { color: #0f172a; background-color: #f8fafc; }
+.member-dash-red .text-foreground { color: #0f172a !important; }
+.member-dash-red .text-muted-foreground { color: #64748b !important; }
+.member-dash-red .bg-background { background-color: #f8fafc !important; }
 
-/* Section / card surfaces: light pink FFEDF4 base */
 .member-dash-red .bg-card {
-  background-color: #FFEDF4 !important;
-  border-color: #f8d8e5 !important;
-  color: #1a1a1a !important;
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
-.member-dash-red .bg-secondary\/30 { background-color: #FFF5F9 !important; }
+.member-dash-red .bg-secondary\/30 { background-color: #f1f5f9 !important; }
 .member-dash-red .border-border\/70,
 .member-dash-red .border-border\/30,
-.member-dash-red .border-border { border-color: #f8d8e5 !important; }
+.member-dash-red .border-border { border-color: #e2e8f0 !important; }
 
-/* Text colors inside cards stay dark on light surfaces */
-.member-dash-red .bg-card .text-foreground { color: #1a1a1a !important; }
-.member-dash-red .bg-card .text-muted-foreground { color: #6b7280 !important; }
+.member-dash-red .bg-card .text-foreground { color: #0f172a !important; }
+.member-dash-red .bg-card .text-muted-foreground { color: #64748b !important; }
 
-/* Highlights / accents → bKash magenta */
+/* Accents → soft blue */
 .member-dash-red .text-red-400,
 .member-dash-red .text-red-500,
 .member-dash-red .text-primary,
-.member-dash-red .text-primary\/80 { color: #e2136e !important; }
+.member-dash-red .text-primary\/80 { color: #3b82f6 !important; }
 
 .member-dash-red .bg-primary,
 .member-dash-red .bg-red-500,
-.member-dash-red .bg-red-600 { background-color: #e2136e !important; color: #ffffff !important; }
+.member-dash-red .bg-red-600 { background-color: #3b82f6 !important; color: #ffffff !important; }
 
 .member-dash-red .bg-primary\/10,
-.member-dash-red .bg-red-500\/10 { background-color: rgba(226, 19, 110, 0.10) !important; }
+.member-dash-red .bg-red-500\/10 { background-color: rgba(59, 130, 246, 0.10) !important; }
 
 .member-dash-red .border-primary\/30,
 .member-dash-red .border-primary\/25,
-.member-dash-red .border-red-500\/30 { border-color: rgba(226, 19, 110, 0.35) !important; }
+.member-dash-red .border-red-500\/30 { border-color: rgba(59, 130, 246, 0.30) !important; }
 
-/* Hover surface stays subtle */
-.member-dash-red .hover\:bg-secondary\/30:hover { background-color: rgba(226, 19, 110, 0.06) !important; }
+.member-dash-red .hover\:bg-secondary\/30:hover { background-color: #f1f5f9 !important; }
 
 
 
@@ -749,9 +635,9 @@ body * {
 .member-dash-red .bg-card\/95,
 .member-dash-red .bg-card\/50 {
   background: #ffffff !important;
-  border-color: #f8d8e5 !important;
-  box-shadow: 0 2px 8px -2px rgba(226, 19, 110, 0.08) !important;
-  color: #1a1a1a !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+  color: #0f172a !important;
 }
 .member-dash-red .premium-card::before,
 .member-dash-red .premium-card::after {
@@ -759,12 +645,12 @@ body * {
 }
 .member-dash-red header.bg-card\/80,
 .member-dash-red header {
-  background: #FFEDF4 !important;
-  border-color: #f8d8e5 !important;
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 .member-dash-red .text-card-foreground,
 .member-dash-red .text-foreground {
-  color: #1a1a1a !important;
+  color: #0f172a !important;
 }
 
 /* Sidebar: clean light surface with dark text and subtle slate accents */
@@ -793,14 +679,13 @@ body * {
 }
 [data-sidebar] [data-active="true"],
 [data-sidebar] .bg-secondary {
-  background-color: #eef2ff !important;
-  color: #1e293b !important;
+  background-color: #eff6ff !important;
+  color: #0f172a !important;
 }
 [data-sidebar] [data-active="true"] *,
 [data-sidebar] .bg-secondary * {
-  color: #1e293b !important;
+  color: #0f172a !important;
 }
-/* Icon chip: soft slate background, dark icon for clarity */
 [data-sidebar] [class*="bg-"][class*="-50"],
 [data-sidebar] [class*="bg-"][class*="/10"],
 [data-sidebar] [class*="bg-"][class*="/15"],
@@ -812,56 +697,55 @@ body * {
   color: #475569 !important;
 }
 [data-sidebar] [data-active="true"] svg {
-  color: #4f46e5 !important;
+  color: #3b82f6 !important;
 }
 
-/* Global button styling: white text on #E2136E background.
-   Excludes sidebar, mobile bottom nav, public header, icon-only ghost buttons, and unstyled toggles. */
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) {
-  background-color: #E2136E !important;
+/* Global button styling: white text on blue background.
+   Excludes sidebar, mobile bottom nav, public header, and unstyled toggles. */
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) {
+  background-color: #3b82f6 !important;
   color: #ffffff !important;
-  border-color: #E2136E !important;
+  border-color: #3b82f6 !important;
 }
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) svg,
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) * {
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) svg,
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) * {
   color: #ffffff !important;
   border-color: rgba(255,255,255,0.35) !important;
 }
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) [class*="bg-primary"],
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) [class*="bg-card"],
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) [class*="bg-secondary"] {
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-primary"],
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-card"],
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-secondary"] {
   background-color: rgba(255,255,255,0.18) !important;
 }
-button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]):hover {
-  background-color: #c01060 !important;
-  border-color: #c01060 !important;
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):hover {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
 }
 
-/* Public header: clean white surface, dark text, magenta CTA only on login/dashboard */
+/* Public header: clean white surface, slate text, blue CTA only for auth */
 .public-header nav button,
 .public-header nav a button {
   background: transparent !important;
   border: none !important;
-  color: #1f1f1f !important;
+  color: #0f172a !important;
   padding: 0.5rem 0.85rem !important;
   border-radius: 9999px !important;
   font-weight: 500 !important;
   transition: background-color 0.2s, color 0.2s !important;
 }
 .public-header nav button:hover {
-  background: rgba(226, 19, 110, 0.08) !important;
-  color: #E2136E !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
 }
 .public-header nav button svg {
-  color: #E2136E !important;
+  color: #3b82f6 !important;
 }
-/* Login / Dashboard CTA stays magenta */
 .public-header a[href="/login"] button,
 .public-header a[href="/dashboard"] button,
 .public-header a[href="/admin"] button {
-  background-color: #E2136E !important;
+  background-color: #3b82f6 !important;
   color: #ffffff !important;
-  border-color: #E2136E !important;
+  border-color: #3b82f6 !important;
   padding: 0.4rem 1rem !important;
 }
 .public-header a[href="/login"] button svg,
@@ -869,43 +753,34 @@ button:not([data-sidebar] button):not(.public-header button):not([data-no-magent
 .public-header a[href="/admin"] button svg {
   color: #ffffff !important;
 }
-/* Mobile pill nav inside public header */
 .public-header .md\:hidden button {
-  background: rgba(226, 19, 110, 0.08) !important;
-  color: #E2136E !important;
-  border: 1px solid rgba(226, 19, 110, 0.25) !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+  color: #3b82f6 !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
 }
 
-/* Reset all magenta button styling inside mobile bottom nav and its More drawer */
-.mobile-bottom-nav button,
-.mobile-bottom-nav button:hover {
-  background-color: transparent !important;
-  border-color: transparent !important;
-  color: inherit !important;
-  box-shadow: none !important;
-}
-.mobile-bottom-nav button * {
-  color: inherit !important;
-  border-color: inherit !important;
-}
-
-/* Mobile bottom nav: magenta surface, white icons/labels */
+/* Mobile bottom nav: clean white surface with blue active state */
 .mobile-bottom-nav,
 .mobile-bottom-nav .mobile-bottom-nav-surface,
 .mobile-bottom-nav .bg-card\/95,
 .member-dash-red .mobile-bottom-nav,
 .member-dash-red .mobile-bottom-nav .bg-card\/95 {
-  background-color: #E2136E !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+.mobile-bottom-nav button,
+.mobile-bottom-nav button:hover {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 .mobile-bottom-nav button,
 .mobile-bottom-nav button *,
 .mobile-bottom-nav button svg {
-  color: #ffffff !important;
+  color: #64748b !important;
 }
-.mobile-bottom-nav button[data-active="true"] {
-  background-color: transparent !important;
-}
+.mobile-bottom-nav button[data-active="true"],
+.mobile-bottom-nav button[data-active="true"] *,
 .mobile-bottom-nav button[data-active="true"] svg {
-  color: #ffffff !important;
+  color: #3b82f6 !important;
 }
