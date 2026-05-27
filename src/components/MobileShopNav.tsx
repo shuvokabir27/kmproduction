@@ -24,7 +24,7 @@ export default function MobileShopNav() {
 
   const isHome = path === "/products" && !hash;
   const isShop = path === "/products" && hash === "#shop";
-  const isAchar = path === "/products" && hash === "#achar";
+  const isAchar = path === "/category/achar";
 
   const itemBase = "flex flex-col items-center justify-center py-2 gap-0.5 transition-colors";
   const activeText = "text-blue-600";
@@ -44,7 +44,7 @@ export default function MobileShopNav() {
           <ShoppingBag className="h-5 w-5" />
           <span>শপ</span>
         </Link>
-        <Link to="/products#achar" className={cn(itemBase, isAchar ? activeText : inactiveText)}>
+        <Link to="/category/achar" className={cn(itemBase, isAchar ? activeText : inactiveText)}>
           <Soup className="h-5 w-5" />
           <span>আচার</span>
         </Link>
