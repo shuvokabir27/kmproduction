@@ -23,6 +23,7 @@ import PaymentReceipt from "@/components/PaymentReceipt";
 const AdminPayments = () => {
   const { user, isAdmin, loading } = useAuth();
   const queryClient = useQueryClient();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<string>("");
   const [amount, setAmount] = useState("");
