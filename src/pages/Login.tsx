@@ -137,11 +137,11 @@ const Login = () => {
   const placeholderHint = currentType === "member" ? "সদস্য আইডি" : currentType === "client" ? "মোবাইল নম্বর" : "ইমেইল";
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col overflow-hidden bg-[#0a0202]">
-      {/* Dynamic background blobs */}
-      <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-red-900/30 blur-[120px] rounded-full" />
-      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-rose-950/40 blur-[120px] rounded-full" />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-red-900/15 blur-[160px]" />
+    <div className="relative min-h-screen w-full flex flex-col overflow-hidden bg-white">
+      {/* Soft background blobs */}
+      <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-red-100/60 blur-[120px] rounded-full" />
+      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-rose-100/60 blur-[120px] rounded-full" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-red-50 blur-[160px]" />
 
       <div className="h-safe-top" />
       <div className="relative flex-1 flex flex-col items-center justify-center p-4">
@@ -151,8 +151,8 @@ const Login = () => {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          {/* Main Login Card — cinematic glass */}
-          <div className="relative w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl overflow-hidden">
+          {/* Main Login Card — light glass */}
+          <div className="relative w-full bg-white/80 backdrop-blur-2xl border border-gray-200 rounded-3xl p-8 shadow-xl overflow-hidden">
             {/* Top decorative light */}
             <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
 
@@ -163,18 +163,18 @@ const Login = () => {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center mb-4 shadow-lg shadow-red-900/20 ring-1 ring-white/20"
+                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center mb-4 shadow-lg shadow-red-900/20 ring-1 ring-white/40"
                 >
                   <img src="/favicon.png" alt="KM" className="h-10 w-10 rounded-lg object-contain drop-shadow" />
                 </motion.div>
               </Link>
-              <h1 className="text-3xl font-bold text-white tracking-wide mb-1">স্বাগতম</h1>
-              <p className="text-red-400/80 text-xs font-medium tracking-widest uppercase">KM Production House</p>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-wide mb-1">স্বাগতম</h1>
+              <p className="text-red-600 text-xs font-medium tracking-widest uppercase">KM Production House</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
-                <Label htmlFor="identifier" className="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wider">
+                <Label htmlFor="identifier" className="block text-xs font-semibold text-gray-600 mb-2 ml-1 uppercase tracking-wider">
                   আইডি / মোবাইল / ইমেইল
                 </Label>
                 <Input
@@ -184,17 +184,17 @@ const Login = () => {
                   onChange={(e) => { setIdentifier(e.target.value); setErrorMsg(""); }}
                   placeholder="সদস্য আইডি, মোবাইল নম্বর বা ইমেইল"
                   required
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 h-12 text-white placeholder:text-gray-600 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 h-12 text-gray-900 placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
                 />
                 {identifier.trim() && (
                   <p className="text-[10px] text-gray-500 mt-1.5 ml-1">
-                    সনাক্ত হয়েছে: <span className="text-red-400 font-medium">{placeholderHint}</span>
+                    সনাক্ত হয়েছে: <span className="text-red-600 font-medium">{placeholderHint}</span>
                   </p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="password" className="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wider">
+                <Label htmlFor="password" className="block text-xs font-semibold text-gray-600 mb-2 ml-1 uppercase tracking-wider">
                   পাসওয়ার্ড
                 </Label>
                 <div className="relative">
@@ -206,12 +206,12 @@ const Login = () => {
                     placeholder="••••••••"
                     required
                     minLength={6}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pr-12 h-12 text-white placeholder:text-gray-600 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 pr-12 h-12 text-gray-900 placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -225,10 +225,10 @@ const Login = () => {
                     initial={{ opacity: 0, y: -8, height: 0 }}
                     animate={{ opacity: 1, y: 0, height: "auto" }}
                     exit={{ opacity: 0, y: -8, height: 0 }}
-                    className="flex items-start gap-2.5 p-3 rounded-lg bg-red-500/10 border border-red-500/30"
+                    className="flex items-start gap-2.5 p-3 rounded-lg bg-red-50 border border-red-200"
                   >
-                    <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
-                    <p className="text-sm text-red-300 font-medium leading-snug">{errorMsg}</p>
+                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+                    <p className="text-sm text-red-700 font-medium leading-snug">{errorMsg}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -236,7 +236,8 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full group relative flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-500 bg-red-600 rounded-xl overflow-hidden hover:bg-red-500 hover:shadow-[0_0_20px_rgba(220,38,38,0.5)] disabled:opacity-70"
+                data-no-magenta
+                className="w-full group relative flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-500 bg-red-600 rounded-xl overflow-hidden hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] disabled:opacity-70"
               >
                 <span className="relative z-10 text-base">
                   {submitting ? (
@@ -251,10 +252,10 @@ const Login = () => {
             </form>
 
             <div className="mt-8 space-y-3 text-center">
-              <button data-no-magenta type="button" onClick={() => setIsSignup(true)} className="block w-full text-sm text-red-400 hover:text-red-300 transition-colors duration-300 font-medium bg-transparent border-0">
+              <button data-no-magenta type="button" onClick={() => setIsSignup(true)} className="block w-full text-sm text-red-600 hover:text-red-700 transition-colors duration-300 font-medium bg-transparent border-0">
                 নতুন অ্যাকাউন্ট তৈরি করুন
               </button>
-              <div className="w-8 h-px bg-white/10 mx-auto" />
+              <div className="w-8 h-px bg-gray-200 mx-auto" />
               <Dialog open={resetOpen} onOpenChange={(open) => {
                 setResetOpen(open);
                 if (!open) {
@@ -264,7 +265,7 @@ const Login = () => {
                 }
               }}>
                 <DialogTrigger asChild>
-                  <button data-no-magenta type="button" className="block w-full text-xs text-gray-400 hover:text-gray-200 transition-colors duration-300 bg-transparent border-0">
+                  <button data-no-magenta type="button" className="block w-full text-xs text-gray-500 hover:text-gray-700 transition-colors duration-300 bg-transparent border-0">
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </DialogTrigger>
