@@ -935,16 +935,16 @@ const Products = () => {
             </Link>
           </div>
           <div>
-            <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
-            <ul className="space-y-2 text-white/75">
-              <li><a href="#shop" className="hover:text-amber-200 transition-colors">শপ</a></li>
-              <li><a href="#about" className="hover:text-amber-200 transition-colors">আমাদের সম্পর্কে</a></li>
-              <li><a href="#contact" className="hover:text-amber-200 transition-colors">যোগাযোগ</a></li>
+            <h4 className="font-extrabold mb-3 text-slate-900 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
+            <ul className="space-y-2 text-slate-600">
+              <li><a href="#shop" className="hover:text-blue-600 transition-colors">শপ</a></li>
+              <li><a href="#about" className="hover:text-blue-600 transition-colors">আমাদের সম্পর্কে</a></li>
+              <li><a href="#contact" className="hover:text-blue-600 transition-colors">যোগাযোগ</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">যোগাযোগ</h4>
-            <ul className="space-y-2 text-white/75">
+            <h4 className="font-extrabold mb-3 text-slate-900 tracking-wide uppercase text-xs">যোগাযোগ</h4>
+            <ul className="space-y-2 text-slate-600">
               {contactPhone && <li>📞 {contactPhone}</li>}
               {whatsappNo && <li>💬 WhatsApp: +{whatsappNo}</li>}
               {(siteSettings as any)?.shop_email && <li>✉️ {(siteSettings as any).shop_email}</li>}
@@ -952,8 +952,8 @@ const Products = () => {
             </ul>
           </div>
         </div>
-        <div className="relative max-w-7xl mx-auto mt-10 pt-4 text-center text-xs text-white/60">
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
+        <div className="relative max-w-7xl mx-auto mt-10 pt-4 text-center text-xs text-slate-500">
+          <div className="absolute top-0 inset-x-0 h-px bg-slate-200" />
           © {toBn(new Date().getFullYear())} {(siteSettings as any)?.shop_copyright || "কে এম শপ। সর্বস্বত্ব সংরক্ষিত।"}
         </div>
       </footer>
