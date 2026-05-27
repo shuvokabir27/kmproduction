@@ -14,7 +14,7 @@ import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#3b82f6";
-const BRAND_DARK = "#991b1b";
+const BRAND_DARK = "#3b82f6";
 
 interface Props {
   product: any | null;
@@ -175,7 +175,7 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
             </div>
 
             <div className="mx-5 mt-4">
-              <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
+              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-4 flex items-center gap-3">
                 {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
                 <div className="flex-1">
                   <p className="text-xs text-muted-foreground">পণ্যের মূল্য</p>

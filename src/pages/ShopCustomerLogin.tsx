@@ -10,7 +10,7 @@ import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import MobileShopNav from "@/components/MobileShopNav";
 
 const BRAND_GREEN = "#2563eb"; // primary red (kept name for minimal diff)
-const BRAND_DARK = "#1a0608";  // deep black-red
+const BRAND_DARK = "#f8fafc";  // deep black-red
 const BRAND_GOLD = "#fbbf24";
 
 export default function ShopCustomerLogin() {
@@ -162,7 +162,7 @@ export default function ShopCustomerLogin() {
     >
       {/* Dynamic background blobs */}
       <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-slate-900/30 blur-[120px] rounded-full" />
-      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-rose-950/40 blur-[120px] rounded-full" />
+      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-slate-100 blur-[120px] rounded-full" />
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-slate-900/15 blur-[160px]" />
 
       <div className="relative w-full max-w-md">

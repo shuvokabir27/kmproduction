@@ -340,7 +340,7 @@ export default function ShopOfferPage() {
                 </div>
               )}
               {savings > 0 && (
-                <div className="flex justify-between text-sm bg-slate-50 dark:bg-red-950/30 rounded-lg p-2">
+                <div className="flex justify-between text-sm bg-slate-50 dark:bg-slate-900 rounded-lg p-2">
                   <span className="text-blue-700 dark:text-blue-500 font-bold">আপনার সাশ্রয়:</span>
                   <span className="text-blue-700 dark:text-blue-500 font-extrabold">৳{toBn(savings)} ({toBn(savingsPct)}%)</span>
                 </div>

@@ -25,7 +25,7 @@ import FloatingCartButton from "@/components/FloatingCartButton";
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const BRAND_GREEN = "#3b82f6";
-const BRAND_DARK = "#991b1b";
+const BRAND_DARK = "#3b82f6";
 const ACCENT_RED = "#d6302c";
 
 const Products = () => {
@@ -227,7 +227,7 @@ const Products = () => {
         <div
           className="relative overflow-hidden text-white text-xs md:text-sm py-2"
           style={{
-            backgroundImage: "linear-gradient(90deg, #4a0a0a 0%, #2563eb 25%, #e11d48 50%, #2563eb 75%, #4a0a0a 100%)",
+            backgroundImage: "linear-gradient(90deg, #f8fafc 0%, #2563eb 25%, #3b82f6 50%, #2563eb 75%, #f8fafc 100%)",
           }}
         >
           <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
@@ -275,24 +275,24 @@ const Products = () => {
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[linear-gradient(115deg,hsl(0_70%_8%/0.92)_0%,hsl(340_60%_10%/0.9)_35%,hsl(260_50%_10%/0.88)_70%,hsl(210_60%_10%/0.92)_100%)] backdrop-blur-2xl shadow-[0_10px_40px_-12px_hsl(0_0%_0%/0.7),inset_0_-1px_0_0_hsl(40_90%_55%/0.18)]">
         {/* ambient color blooms */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-24 -left-10 w-72 h-40 bg-rose-500/20 blur-3xl rounded-full" />
+          <div className="absolute -top-24 -left-10 w-72 h-40 bg-slate-100 blur-3xl rounded-full" />
           <div className="absolute -top-20 left-1/3 w-72 h-40 bg-fuchsia-500/15 blur-3xl rounded-full" />
           <div className="absolute -top-24 right-10 w-72 h-40 bg-amber-400/15 blur-3xl rounded-full" />
           <div className="absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-20%,rgba(255,255,255,0.06),transparent_60%)]" />
         </div>
         {/* top hairline accent — gold→rose→indigo */}
         <div className="relative h-px w-full bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-rose-500/0 via-rose-400/60 to-indigo-400/0" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-slate-100/0 via-slate-100/60 to-indigo-400/0" />
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
             <div className="relative">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-600/60 via-rose-500/40 to-blue-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
-              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-blue-600 via-rose-600 to-slate-900 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-600/60 via-slate-100/40 to-blue-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-blue-600 via-slate-100 to-slate-900 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
                 KM
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
+              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-slate-300 via-slate-100 to-slate-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
               <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">KM Shop · কুয়াকাটা</div>
             </div>
           </Link>
@@ -609,7 +609,7 @@ const Products = () => {
             <div className="absolute inset-0 rounded-[28px] shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25),inset_0_-1px_0_0_hsl(0_0%_0%/0.4),0_30px_80px_-20px_hsl(0_85%_30%/0.6)] pointer-events-none" />
             {/* soft floating orbs */}
             <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-amber-300/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-rose-400/20 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-slate-100 blur-3xl pointer-events-none" />
 
             <div className="relative grid md:grid-cols-2 gap-8 items-center p-7 md:p-14" style={{ fontFamily: "'Tiro Bangla', serif" }}>
               <div className="text-white text-center md:text-left order-2 md:order-1">
@@ -623,7 +623,7 @@ const Products = () => {
                 <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5 drop-shadow-[0_2px_20px_rgba(0,0,0,0.35)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   প্রতিদিনের সুস্থতায় হোক
                   <br />
-                  <span className="bg-gradient-to-r from-amber-200 via-rose-100 to-amber-300 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-amber-200 via-slate-100 to-amber-300 bg-clip-text text-transparent">
                     খাঁটি পণ্য
                   </span>
                 </h1>
@@ -647,7 +647,7 @@ const Products = () => {
                   <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-white/20">
                     <div className="flex -space-x-2">
                       {[0,1,2].map(i => (
-                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white/30 bg-gradient-to-br from-amber-300 to-rose-400" />
+                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white/30 bg-gradient-to-br from-amber-300 to-slate-100" />
                       ))}
                     </div>
                     <div className="text-[11px] leading-tight text-white/90">
@@ -667,7 +667,7 @@ const Products = () => {
                   return (
                     <>
                       {/* premium gradient frame */}
-                      <div className="relative rounded-[26px] p-[1.5px] bg-gradient-to-br from-amber-300/70 via-white/10 to-rose-400/60 shadow-[0_30px_60px_-20px_hsl(0_70%_15%/0.6)]">
+                      <div className="relative rounded-[26px] p-[1.5px] bg-gradient-to-br from-amber-300/70 via-white/10 to-slate-100/60 shadow-[0_30px_60px_-20px_hsl(0_70%_15%/0.6)]">
                         <div className="aspect-square rounded-[24px] overflow-hidden relative bg-black/30 backdrop-blur-xl border border-white/10">
                           {current ? (
                             <Link to={`/products/${current.slug || current.id}`} className="block w-full h-full group">
@@ -703,7 +703,7 @@ const Products = () => {
                               key={i}
                               onClick={() => setHeroSlide(i)}
                               aria-label={`slide ${i + 1}`}
-                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-gradient-to-r from-amber-200 to-rose-200' : 'w-1.5 bg-white/40'}`}
+                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-gradient-to-r from-amber-200 to-slate-100' : 'w-1.5 bg-white/40'}`}
                             />
                           ))}
                         </div>
@@ -946,31 +946,31 @@ const Products = () => {
             "radial-gradient(60% 50% at 10% 0%, hsl(0 80% 30% / 0.55), transparent 60%)",
             "radial-gradient(50% 50% at 90% 10%, hsl(340 70% 35% / 0.45), transparent 60%)",
             "radial-gradient(80% 60% at 50% 100%, hsl(0 75% 20% / 0.6), transparent 65%)",
-            "linear-gradient(160deg, #1a0608 0%, #2a0a10 35%, #0d0405 70%, #2a0a10 100%)",
+            "linear-gradient(160deg, #f8fafc 0%, #f1f5f9 35%, #ffffff 70%, #f1f5f9 100%)",
           ].join(", "),
         }}
       >
         {/* gold hairline */}
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
         {/* ambient blobs */}
-        <div className="pointer-events-none absolute -top-20 -left-16 w-80 h-80 rounded-full bg-rose-600/25 blur-[120px]" />
+        <div className="pointer-events-none absolute -top-20 -left-16 w-80 h-80 rounded-full bg-slate-100 blur-[120px]" />
         <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-slate-900/30 blur-[140px]" />
 
         <div className="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
               <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-rose-400/50 to-blue-700/60 blur-md opacity-80" />
-                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 via-rose-600 to-slate-900 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-slate-100/50 to-blue-700/60 blur-md opacity-80" />
+                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 via-slate-100 to-slate-900 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
               </div>
-              <div className="font-extrabold text-lg bg-gradient-to-r from-amber-200 via-rose-100 to-amber-200 bg-clip-text text-transparent">
+              <div className="font-extrabold text-lg bg-gradient-to-r from-amber-200 via-slate-100 to-amber-200 bg-clip-text text-transparent">
                 {siteSettings?.shop_name || "কে এম শপ"}
               </div>
             </div>
             <p className="text-white/75 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
             <Link
               to="/media"
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-rose-500 to-blue-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-slate-100 to-blue-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
             >
               <Star className="h-4 w-4 fill-white text-white" />
               KM Production ভিজিট করুন
@@ -1059,7 +1059,7 @@ const Products = () => {
                   const grand = total + dlv.charge;
                   return (
                     <div className="mx-5 mt-4 space-y-3">
-                      <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
+                      <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-4 flex items-center gap-3">
                         {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
                         <div className="flex-1">
                           <p className="text-xs text-muted-foreground">পণ্যের মূল্য</p>
