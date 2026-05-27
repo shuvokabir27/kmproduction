@@ -114,7 +114,7 @@ export function AdvanceRequestCard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-cyan-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
+        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-black backdrop-blur-xl shadow-lg overflow-hidden"
       >
         {/* Decorative background */}
         <motion.div
