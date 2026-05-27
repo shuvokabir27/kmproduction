@@ -361,18 +361,22 @@ export const CartDrawer = () => {
             </div>
             <div className="grid grid-cols-2 gap-3 px-6 pb-6">
               <button
+                data-no-magenta
                 onClick={() => setConfirmClear(false)}
-                className="h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm transition-colors shadow-sm"
+                style={{ backgroundColor: "#10b981", color: "#fff" }}
+                className="h-11 rounded-2xl font-bold text-sm shadow-sm hover:opacity-90 transition-opacity"
               >
                 বাতিল
               </button>
               <button
+                data-no-magenta
                 onClick={() => {
                   clear();
                   setConfirmClear(false);
                   toast.success("কার্ট খালি করা হয়েছে");
                 }}
-                className="h-11 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-bold text-sm transition-colors shadow-sm"
+                style={{ backgroundColor: "#ef4444", color: "#fff" }}
+                className="h-11 rounded-2xl font-bold text-sm shadow-sm hover:opacity-90 transition-opacity"
               >
                 হ্যাঁ, মুছুন
               </button>
