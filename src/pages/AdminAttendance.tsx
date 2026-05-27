@@ -802,7 +802,7 @@ const AdminAttendance = () => {
             <div className="space-y-4">
               {/* Existing shootings without attendance */}
               {(() => {
-                const available = (shootings ?? []).filter((s: any) => !shootingsWithAttendance?.has(s.id));
+                const available = (shootings ?? []).filter((s: any) => !(shootingsWithAttendance ?? []).includes(s.id));
                 if (available.length === 0) return null;
                 return (
                   <div className="space-y-2">
