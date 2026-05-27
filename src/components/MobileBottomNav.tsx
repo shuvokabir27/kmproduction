@@ -311,18 +311,18 @@ export function MobileBottomNav() {
                 transition={{ type: "spring", stiffness: 600, damping: 20 }}
                 className="relative flex min-w-[60px] flex-1 flex-col items-center pb-1.5"
               >
-                {/* Curved cutout behind active icon */}
+                {/* Active icon lift without white cutout */}
                 {active && (
                   <motion.div
                     layoutId="mobile-tab-cutout"
                     transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 h-14 w-20 pointer-events-none"
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 h-14 w-20 pointer-events-none opacity-0"
                   >
                     <svg viewBox="0 0 80 56" className="h-full w-full" preserveAspectRatio="none">
                       <path
                         d="M0,15 Q0,15 8,15 Q20,15 22,5 Q26,-2 40,-2 Q54,-2 58,5 Q60,15 72,15 Q80,15 80,15 L80,56 L0,56 Z"
-                        fill="#ffffff"
-                        opacity="1"
+                        fill="transparent"
+                        opacity="0"
                       />
                     </svg>
                   </motion.div>

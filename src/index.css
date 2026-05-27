@@ -929,7 +929,7 @@ button:not([data-sidebar] button):not(.public-header button):not([data-no-magent
   color: #ffffff !important;
 }
 .mobile-bottom-nav button[data-active="true"] {
-  background-color: rgba(255, 255, 255, 0.18) !important;
+  background-color: transparent !important;
 }
 .mobile-bottom-nav button[data-active="true"] svg {
   color: #ffffff !important;
