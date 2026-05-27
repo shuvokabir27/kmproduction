@@ -318,7 +318,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
       </div>
 
       {showClient && (
-      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.25)]">
+      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
         <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/20 blur-3xl" />
         <div className="relative flex items-center gap-2 mb-2">
