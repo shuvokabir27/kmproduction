@@ -14,9 +14,9 @@ import { CartProvider } from "@/hooks/useCart";
 import { CartDrawer } from "@/components/CartDrawer";
 
 
-// Eager: landing page (most common first hit) for instant paint
-import PublicHome from "./pages/PublicHome";
-import NotFound from "./pages/NotFound";
+// Lazy: landing page also lazy so admin/member routes don't pay for it
+const PublicHome = lazy(() => import("./pages/PublicHome"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy-loaded routes — each becomes its own chunk so the initial bundle stays small
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
