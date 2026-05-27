@@ -316,8 +316,8 @@ export function MobileBottomNav() {
                     <svg viewBox="0 0 80 56" className="h-full w-full" preserveAspectRatio="none">
                       <path
                         d="M0,15 Q0,15 8,15 Q20,15 22,5 Q26,-2 40,-2 Q54,-2 58,5 Q60,15 72,15 Q80,15 80,15 L80,56 L0,56 Z"
-                        fill="hsl(var(--card))"
-                        opacity="0.95"
+                        fill="#FFEDF4"
+                        opacity="1"
                       />
                     </svg>
                   </motion.div>
@@ -332,7 +332,7 @@ export function MobileBottomNav() {
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   className={`relative z-10 flex items-center justify-center rounded-full transition-colors ${
                     active
-                      ? `h-12 w-12 ${tab.bg} shadow-lg ring-2 ring-card`
+                      ? `h-12 w-12 bg-[#E2136E] shadow-lg ring-2 ring-[#FFEDF4]`
                       : tab.path === "/admin/payments"
                         ? "h-9 w-9 bg-gradient-to-br from-[#E2136E]/25 to-[#E2136E]/60/10 ring-2 ring-[#E2136E]/40 shadow-md shadow-[#E2136E]/20"
                         : "h-9 w-9"
@@ -344,7 +344,7 @@ export function MobileBottomNav() {
                   }
                 >
                   <tab.icon
-                    className={`transition-all duration-200 ${tab.color} ${
+                    className={`transition-all duration-200 ${active ? "text-white" : tab.color} ${
                       active ? "h-6 w-6" : "h-[22px] w-[22px]"
                     }`}
                   />
