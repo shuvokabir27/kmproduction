@@ -288,7 +288,7 @@ export function AdvanceRequestCard() {
               <Button
                 onClick={() => createMut.mutate()}
                 disabled={createMut.isPending || !amount}
-                className="flex-1 bg-gradient-to-r from-red-500 to-cyan-500 hover:from-red-600 hover:to-cyan-600 text-white font-bold"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold"
               >
                 {createMut.isPending ? "পাঠানো হচ্ছে..." : "রিকোয়েস্ট পাঠান"}
               </Button>
