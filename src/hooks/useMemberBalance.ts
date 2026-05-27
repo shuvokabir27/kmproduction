@@ -23,7 +23,7 @@ export function useMemberBalance(profileId: string | undefined) {
       const toDateValue = (value: string | null | undefined) =>
         value ? new Date(value).getTime() : 0;
 
-      const addEvent = (source: BalanceSource, amount: number, date?: string | null, paidAmount = 0) => {
+      const addEvent = (source: BalanceSource, amount: number, date?: string | null, paidAmount = 0, kmPayable = false) => {
         const safeAmount = Number(amount || 0);
         if (safeAmount <= 0) return;
         events.push({
@@ -32,6 +32,7 @@ export function useMemberBalance(profileId: string | undefined) {
           paidAmount: Math.max(0, Number(paidAmount || 0)),
           date: date || "1970-01-01T00:00:00.000Z",
           order: eventOrder++,
+          kmPayable,
         });
       };
 
