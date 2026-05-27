@@ -12,6 +12,7 @@ import { RouteGuard } from "@/components/RouteGuard";
 import { PermissionGuard } from "@/components/PermissionGuard";
 import { CartProvider } from "@/hooks/useCart";
 import { CartDrawer } from "@/components/CartDrawer";
+import CustomCursor from "@/components/CustomCursor";
 
 // Eager: landing page (most common first hit) for instant paint
 import PublicHome from "./pages/PublicHome";
@@ -116,6 +117,7 @@ const App = () => (
       <CartProvider>
       <TooltipProvider>
         <Toaster />
+        <CustomCursor />
         <Sonner />
         <CartDrawer />
         <BrowserRouter>
