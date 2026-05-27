@@ -291,16 +291,16 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
   };
 
   const tabs = [
-    { key: "pending", label: "পেন্ডিং", count: stats.pending },
-    { key: "confirmed", label: "কনফার্মড", count: orders?.filter((o: any) => o.status === "confirmed").length || 0 },
-    { key: "processing", label: "প্রসেসিং", count: orders?.filter((o: any) => o.status === "processing").length || 0 },
-    { key: "shipped", label: "শিপড", count: orders?.filter((o: any) => o.status === "shipped").length || 0 },
-    { key: "delivered", label: "ডেলিভারড", count: stats.delivered },
-    { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0 },
-    { key: "returned", label: "🔄 রিটার্নড", count: stats.returned },
-    { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0 },
-    { key: "payment_verify", label: "💳 পেমেন্ট চেক", count: mobilePaymentOrders.length },
-    { key: "all", label: "সকল", count: stats.total },
+    { key: "pending", label: "পেন্ডিং", count: stats.pending, active: "bg-amber-500 text-white border-amber-500", idle: "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100" },
+    { key: "confirmed", label: "কনফার্মড", count: orders?.filter((o: any) => o.status === "confirmed").length || 0, active: "bg-blue-600 text-white border-blue-600", idle: "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100" },
+    { key: "processing", label: "প্রসেসিং", count: orders?.filter((o: any) => o.status === "processing").length || 0, active: "bg-purple-600 text-white border-purple-600", idle: "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100" },
+    { key: "shipped", label: "শিপড", count: orders?.filter((o: any) => o.status === "shipped").length || 0, active: "bg-indigo-600 text-white border-indigo-600", idle: "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100" },
+    { key: "delivered", label: "ডেলিভারড", count: stats.delivered, active: "bg-green-600 text-white border-green-600", idle: "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" },
+    { key: "cancelled", label: "ক্যান্সেলড", count: orders?.filter((o: any) => o.status === "cancelled").length || 0, active: "bg-red-600 text-white border-red-600", idle: "bg-red-50 text-red-700 border-red-200 hover:bg-red-100" },
+    { key: "returned", label: "🔄 রিটার্নড", count: stats.returned, active: "bg-rose-600 text-white border-rose-600", idle: "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100" },
+    { key: "abandoned", label: "অসম্পূর্ণ", count: orders?.filter((o: any) => o.status === "abandoned").length || 0, active: "bg-orange-600 text-white border-orange-600", idle: "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100" },
+    { key: "payment_verify", label: "💳 পেমেন্ট চেক", count: mobilePaymentOrders.length, active: "bg-teal-600 text-white border-teal-600", idle: "bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100" },
+    { key: "all", label: "সকল", count: stats.total, active: "bg-slate-800 text-white border-slate-800", idle: "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200" },
   ];
 
   return (
