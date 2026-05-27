@@ -284,7 +284,7 @@ const Products = () => {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-slate-700">
-            <Link to="/products" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-1.5"><Home className="h-4 w-4" /> হোম</Link>
+            <Link to="/products" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">হোম</Link>
             <a href="#shop" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">শপ</a>
             <Link to="/categories" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">ক্যাটাগরি</Link>
             
@@ -478,7 +478,7 @@ const Products = () => {
                 className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground"
               />
             </div>
-            <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Home className="h-4 w-4" style={{ color: BRAND_GREEN }} /> হোম</Link>
+            <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted">হোম</Link>
             <a href="#shop" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><ShoppingBag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> শপ</a>
             <Link to="/categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</Link>
             
