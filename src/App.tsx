@@ -117,6 +117,7 @@ const App = () => (
       <CartProvider>
       <TooltipProvider>
         <Toaster />
+        <CustomCursor />
         <Sonner />
         <CartDrawer />
         <BrowserRouter>
