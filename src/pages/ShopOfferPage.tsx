@@ -238,9 +238,9 @@ export default function ShopOfferPage() {
   };
 
   const TimeBox = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center bg-white/15 backdrop-blur rounded-xl px-3 py-2 min-w-[60px] border border-white/30">
-      <span className="text-2xl md:text-3xl font-extrabold text-white font-mono leading-none">{toBn(value.toString().padStart(2, "0"))}</span>
-      <span className="text-[10px] text-white/80 mt-1 font-semibold">{label}</span>
+    <div className="flex flex-col items-center bg-slate-50 rounded-xl px-3 py-2 min-w-[60px] border border-slate-200">
+      <span className="text-2xl md:text-3xl font-extrabold text-slate-900 font-mono leading-none">{toBn(value.toString().padStart(2, "0"))}</span>
+      <span className="text-[10px] text-slate-500 mt-1 font-semibold">{label}</span>
     </div>
   );
 
