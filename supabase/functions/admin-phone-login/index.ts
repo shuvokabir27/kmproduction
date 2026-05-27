@@ -82,6 +82,7 @@ Deno.serve(async (req) => {
       JSON.stringify({
         access_token: authData.session?.access_token,
         refresh_token: authData.session?.refresh_token,
+        is_product_admin: isProductAdmin,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
