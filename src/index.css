@@ -401,63 +401,16 @@
   }
   .premium-card {
     position: relative;
-    background: var(--gradient-card);
-    border: 1px solid hsl(0 5% 16% / 0.7);
-    box-shadow:
-      var(--shadow-card),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.06),
-      inset 0 -1px 0 0 hsl(0 0% 0% / 0.4);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214 32% 91%);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     overflow: hidden;
-    isolation: isolate;
-  }
-  .premium-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(120% 60% at 50% -20%, hsl(0 0% 100% / 0.10), transparent 60%),
-      linear-gradient(180deg, hsl(0 0% 100% / 0.04) 0%, transparent 35%);
-    pointer-events: none;
-    z-index: 1;
-  }
-  .premium-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-      115deg,
-      transparent 0%,
-      hsl(0 0% 100% / 0.06) 45%,
-      hsl(0 0% 100% / 0.18) 50%,
-      hsl(0 0% 100% / 0.06) 55%,
-      transparent 100%
-    );
-    transform: skewX(-18deg);
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0;
-    transition: opacity 0.4s ease;
   }
   .premium-card:hover {
-    border-color: hsl(0 85% 48% / 0.35);
-    box-shadow:
-      var(--shadow-card),
-      0 0 24px hsl(0 85% 48% / 0.12),
-      inset 0 1px 0 0 hsl(0 0% 100% / 0.10),
-      inset 0 -1px 0 0 hsl(0 0% 0% / 0.4);
-    transform: translateY(-2px);
-  }
-  .premium-card:hover::after {
-    opacity: 1;
-    animation: card-shine 1.1s ease forwards;
-  }
-  .premium-card > * {
-    position: relative;
-    z-index: 3;
+    border-color: hsl(217 91% 60% / 0.35);
+    box-shadow: 0 4px 16px hsl(222 47% 11% / 0.06);
+    transform: translateY(-1px);
   }
 
   /* ============ Unified card highlight + soft light sweep ============
