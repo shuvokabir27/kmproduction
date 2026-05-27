@@ -735,10 +735,11 @@
 
 
 
-/* Force Tiro Bangla across entire Member Dashboard */
-.member-dash-red,
-.member-dash-red * {
-  font-family: 'Tiro Bangla', 'Hind Siliguri', serif !important;
+/* Force Tiro Bangla across entire app for Bangla text */
+html,
+body,
+body * {
+  font-family: 'Tiro Bangla', 'Hind Siliguri', 'Inter', system-ui, sans-serif !important;
 }
 
 /* Sidebar magenta background with white text for readability */
