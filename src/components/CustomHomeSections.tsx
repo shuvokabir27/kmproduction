@@ -211,7 +211,6 @@ function SectionBlock({ section }: { section: any }) {
                               weight_grams: p.weight_grams,
                             });
                             toast.success("কার্টে যোগ হয়েছে");
-                            openCart();
                           }}
                         >
                           <Plus className="h-4 w-4" />
