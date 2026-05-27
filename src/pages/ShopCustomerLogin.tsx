@@ -137,6 +137,19 @@ export default function ShopCustomerLogin() {
     setPassword("");
     setConfirmPassword("");
     setResendIn(0);
+    setErrorMsg("");
+  };
+
+  const getErrorMessage = (err: any): string => {
+    const msg = err?.message?.toLowerCase?.() || String(err).toLowerCase();
+    if (msg.includes("invalid") || msg.includes("wrong") || msg.includes("incorrect") || msg.includes("does not match"))
+      return "মোবাইল নম্বর অথবা পাসওয়ার্ড ভুল। সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।";
+    if (msg.includes("not found") || msg.includes("no user") || msg.includes("no account"))
+      return "এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি। প্রথমে রেজিস্টার করুন।";
+    if (msg.includes("rate limit") || msg.includes("too many") || msg.includes("try again"))
+      return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
+    if (/[\u0980-\u09FF]/.test(err?.message || String(err))) return err?.message || String(err);
+    return "লগইন করা যায়নি। আবার চেষ্টা করুন।";
   };
 
   const inputClass =
