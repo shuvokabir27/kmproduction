@@ -27,6 +27,7 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
   const { settings: deliverySettings } = useDeliverySettings();
   const [qty, setQty] = useState(1);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
