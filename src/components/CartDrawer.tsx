@@ -94,6 +94,12 @@ export const CartDrawer = () => {
       if (error) throw error;
       setOrderNumber(sharedNumber);
       setSuccess(true);
+      if (sharedNumber) {
+        sendTeamSms({
+          phone: form.phone,
+          message: `Dhonnobad! Apnar order #${sharedNumber} grohon kora hoyeche. Amader protinidi sigroi call diye confirm korben. - Kuakata Multimedia`,
+        });
+      }
       clear();
     } catch (err) {
       console.error("Order submit error:", err);
