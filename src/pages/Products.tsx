@@ -346,7 +346,11 @@ const Products = () => {
 
 
             <button
-              onClick={() => featured[0] && openOrderDialog(featured[0])}
+              onClick={() => {
+                setOfferMode(true);
+                setShowAllProducts(false);
+                setTimeout(() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }), 50);
+              }}
               className="font-semibold text-xs px-4 h-9 rounded-full inline-flex items-center gap-1.5 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
               অফার
