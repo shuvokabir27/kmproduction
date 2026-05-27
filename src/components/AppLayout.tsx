@@ -14,7 +14,7 @@ import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Globe } from "lucide-react";
-import { OnlineUsersBar } from "@/components/OnlineUsersBar";
+import { OnlineUsersButton } from "@/components/OnlineUsersButton";
 import { WeatherWidget } from "@/components/WeatherWidget";
 import { HomeTopSection } from "@/components/HomeTopSection";
 import { UpdateNoticeMarquee } from "@/components/UpdateNoticeMarquee";
