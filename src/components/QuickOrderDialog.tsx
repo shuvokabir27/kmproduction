@@ -165,8 +165,11 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
                 <span className="text-lg font-extrabold tracking-wider">#{toBn(orderNumber)}</span>
               </div>
             )}
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-5 text-sm text-amber-800 leading-relaxed">
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-3 text-sm text-amber-800 leading-relaxed">
               📞 আমাদের প্রতিনিধি শীঘ্রই আপনাকে কল দিয়ে অর্ডার <span className="font-extrabold">কনফার্ম</span> করবেন।
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3 mb-5 text-sm text-blue-800 leading-relaxed text-left">
+              📦 অর্ডার কনফার্ম হওয়ার পর আপনি আরেকটি মেসেজ পাবেন, যেখানে একটি <span className="font-extrabold">ট্র্যাকিং লিংক</span> থাকবে। লিংকে ক্লিক করলে আপনার পণ্যের <span className="font-extrabold">বর্তমান লোকেশন</span> দেখতে পারবেন।
             </div>
             <p className="text-xs font-bold mb-5" style={{ color: BRAND_DARK }}>— Kuakata Multimedia</p>
             <Button onClick={onClose} className="w-full text-white font-bold py-4 rounded-2xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>ঠিক আছে</Button>
