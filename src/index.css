@@ -841,25 +841,64 @@ body * {
 }
 
 /* Global button styling: white text on #E2136E background.
-   Excludes sidebar, mobile bottom nav, icon-only ghost buttons, and unstyled toggles. */
-button:not([data-sidebar] button):not([data-no-magenta]) {
+   Excludes sidebar, mobile bottom nav, public header, icon-only ghost buttons, and unstyled toggles. */
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) {
   background-color: #E2136E !important;
   color: #ffffff !important;
   border-color: #E2136E !important;
 }
-button:not([data-sidebar] button):not([data-no-magenta]) svg,
-button:not([data-sidebar] button):not([data-no-magenta]) * {
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) svg,
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) * {
   color: #ffffff !important;
   border-color: rgba(255,255,255,0.35) !important;
 }
-button:not([data-sidebar] button):not([data-no-magenta]) [class*="bg-primary"],
-button:not([data-sidebar] button):not([data-no-magenta]) [class*="bg-card"],
-button:not([data-sidebar] button):not([data-no-magenta]) [class*="bg-secondary"] {
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) [class*="bg-primary"],
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) [class*="bg-card"],
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]) [class*="bg-secondary"] {
   background-color: rgba(255,255,255,0.18) !important;
 }
-button:not([data-sidebar] button):not([data-no-magenta]):hover {
+button:not([data-sidebar] button):not(.public-header button):not([data-no-magenta]):hover {
   background-color: #c01060 !important;
   border-color: #c01060 !important;
+}
+
+/* Public header: clean white surface, dark text, magenta CTA only on login/dashboard */
+.public-header nav button,
+.public-header nav a button {
+  background: transparent !important;
+  border: none !important;
+  color: #1f1f1f !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 9999px !important;
+  font-weight: 500 !important;
+  transition: background-color 0.2s, color 0.2s !important;
+}
+.public-header nav button:hover {
+  background: rgba(226, 19, 110, 0.08) !important;
+  color: #E2136E !important;
+}
+.public-header nav button svg {
+  color: #E2136E !important;
+}
+/* Login / Dashboard CTA stays magenta */
+.public-header a[href="/login"] button,
+.public-header a[href="/dashboard"] button,
+.public-header a[href="/admin"] button {
+  background-color: #E2136E !important;
+  color: #ffffff !important;
+  border-color: #E2136E !important;
+  padding: 0.4rem 1rem !important;
+}
+.public-header a[href="/login"] button svg,
+.public-header a[href="/dashboard"] button svg,
+.public-header a[href="/admin"] button svg {
+  color: #ffffff !important;
+}
+/* Mobile pill nav inside public header */
+.public-header .md\:hidden button {
+  background: rgba(226, 19, 110, 0.08) !important;
+  color: #E2136E !important;
+  border: 1px solid rgba(226, 19, 110, 0.25) !important;
 }
 
 /* Reset all magenta button styling inside mobile bottom nav and its More drawer */
