@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff } from "lucide-react";
+import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 import MobileShopNav from "@/components/MobileShopNav";
 
