@@ -27,6 +27,7 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
   const { settings: deliverySettings } = useDeliverySettings();
   const [qty, setQty] = useState(1);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(-1);
@@ -100,7 +101,7 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
     try {
       const variantLabel = chosenVariant ? String(chosenVariant.label) : null;
       const baseName = product.name || "প্রডাক্ট";
-      const { error } = await supabase.from("orders").insert({
+      const { data: inserted, error } = await supabase.from("orders").insert({
         customer_name: orderForm.name.trim(),
         customer_phone: orderForm.phone,
         customer_address: orderForm.address.trim(),
@@ -113,8 +114,9 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
         payment_method: orderForm.payment_method,
         payment_sender_no: orderForm.payment_method !== "cod" ? orderForm.payment_sender_no : null,
         payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
-      } as any);
+      } as any).select("order_number").single();
       if (error) throw error;
+      setOrderNumber((inserted as any)?.order_number ?? null);
       setOrderSuccess(true);
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে");
@@ -148,15 +150,25 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={handleClose}>
       <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {orderSuccess ? (
-          <div className="p-8 text-center">
+          <div className="p-8 text-center" style={{ fontFamily: "'Tiro Bangla', serif" }}>
             <div className="relative w-20 h-20 mx-auto mb-5">
               <div className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: `${BRAND_GREEN}33` }} />
               <div className="relative w-20 h-20 rounded-full flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                 <CheckCircle className="h-10 w-10 text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">অর্ডার সফল! 🎉</h3>
-            <p className="text-muted-foreground text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
+            <h3 className="text-2xl font-extrabold text-foreground mb-1">ধন্যবাদ! অর্ডার সফল হয়েছে 🎉</h3>
+            <p className="text-muted-foreground text-sm mb-4">আপনার অর্ডারটি গ্রহণ করা হয়েছে।</p>
+            {orderNumber != null && (
+              <div className="mx-auto mb-4 inline-flex items-center gap-2 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-2xl px-4 py-2.5">
+                <span className="text-xs font-bold">অর্ডার নম্বর</span>
+                <span className="text-lg font-extrabold tracking-wider">#{toBn(orderNumber)}</span>
+              </div>
+            )}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-5 text-sm text-amber-800 leading-relaxed">
+              📞 আমাদের প্রতিনিধি শীঘ্রই আপনাকে কল দিয়ে অর্ডার <span className="font-extrabold">কনফার্ম</span> করবেন।
+            </div>
+            <p className="text-xs font-bold mb-5" style={{ color: BRAND_DARK }}>— Kuakata Multimedia</p>
             <Button onClick={onClose} className="w-full text-white font-bold py-4 rounded-2xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>ঠিক আছে</Button>
           </div>
         ) : (
