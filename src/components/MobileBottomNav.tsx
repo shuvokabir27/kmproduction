@@ -173,7 +173,7 @@ export function MobileBottomNav() {
               className="relative z-[61] mx-auto w-full max-w-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="mobile-bottom-nav relative max-h-[calc(100vh-100px)] overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-white via-white/95 to-[#E2136E]/5 p-2 shadow-2xl shadow-primary/10 backdrop-blur-xl">
+              <div className="mobile-bottom-nav relative max-h-[calc(100vh-100px)] overflow-hidden rounded-2xl border border-[#E2136E]/20 bg-white p-2 shadow-2xl shadow-[#E2136E]/20 backdrop-blur-xl">
                 <div
                   className="absolute inset-0 opacity-[0.06]"
                   style={{
@@ -258,13 +258,13 @@ export function MobileBottomNav() {
                                 }`}
                               >
                                 <div
-                                  className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                                    isLogout ? "bg-destructive/10" : item.bg
+                                  className={`flex h-9 w-9 items-center justify-center rounded-lg shadow-sm ${
+                                    isLogout ? "bg-destructive" : "bg-[#E2136E]"
                                   }`}
                                 >
-                                  {item.icon && <item.icon className={`h-4 w-4 ${item.color}`} />}
+                                  {item.icon && <item.icon className="h-4 w-4 text-white" />}
                                 </div>
-                                <span className={`text-center text-[10px] font-semibold leading-tight ${item.color}`}>
+                                <span className={`text-center text-[10px] font-semibold leading-tight ${isLogout ? "text-destructive" : "text-[#8a0a45]"}`}>
                                   {item.label}
                                 </span>
                               </motion.button>
