@@ -411,10 +411,10 @@ const MemberDashboard = () => {
         )}
 
         {/* Shootings */}
-        <div className="premium-card rounded-2xl overflow-hidden">
+        <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-rose-500/10 flex items-center justify-center">
-              <Film className="h-4 w-4 text-rose-400" />
+            <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
+              <Film className="h-4 w-4 text-red-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">শুটিং তালিকা</h2>
           </div>
@@ -423,13 +423,13 @@ const MemberDashboard = () => {
             {shootings?.map((s: any) => {
               const statusMap: Record<string, { label: string; color: string }> = {
                 plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
-                upcoming: { label: "আসন্ন", color: "bg-warning/10 text-warning" },
+                upcoming: { label: "আসন্ন", color: "bg-red-500/10 text-red-400" },
                 calltime: { label: "কলটাইম", color: "bg-red-500/10 text-red-400" },
-                ongoing: { label: "চলছে", color: "bg-primary/10 text-primary" },
-                completed: { label: "শুটিং শেষ", color: "bg-success/10 text-success" },
-                editing: { label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
-                editing_done: { label: "এডিটিং শেষ", color: "bg-success/15 text-success" },
-                published: { label: "পাবলিশ হয়েছে", color: "bg-success/10 text-success" },
+                ongoing: { label: "চলছে", color: "bg-red-500/10 text-red-400" },
+                completed: { label: "শুটিং শেষ", color: "bg-red-500/10 text-red-400" },
+                editing: { label: "এডিটিং চলছে", color: "bg-secondary text-foreground" },
+                editing_done: { label: "এডিটিং শেষ", color: "bg-red-500/10 text-red-400" },
+                published: { label: "পাবলিশ হয়েছে", color: "bg-red-500/10 text-red-400" },
               };
               const info = statusMap[s.status] || statusMap.upcoming;
               return (
@@ -439,8 +439,8 @@ const MemberDashboard = () => {
                     <p className="text-xs text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}{s.location && ` • ${s.location}`}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {s.script_content && <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-primary hover:text-primary/80"><FileText className="h-3.5 w-3.5" /></button>}
-                    {s.script_url && <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80"><ExternalLink className="h-3.5 w-3.5" /></a>}
+                    {s.script_content && <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-red-400 hover:text-red-300"><FileText className="h-3.5 w-3.5" /></button>}
+                    {s.script_url && <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-red-400 hover:text-red-300"><ExternalLink className="h-3.5 w-3.5" /></a>}
                     <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
                   </div>
                 </div>
