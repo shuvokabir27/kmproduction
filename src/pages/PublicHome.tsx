@@ -288,14 +288,9 @@ const PublicHome = () => {
         <PublicBirthdaySection />
       </div>
 
-      {/* Featured Products (admin-managed) */}
-      <FeaturedProductsSection />
-
       {/* Custom admin-managed home sections */}
       <CustomHomeSections />
 
-      {/* Best Sellers */}
-      <BestSellersSection />
 
       {/* Hero Section */}
       <section className="relative min-h-[95vh] flex items-center justify-center px-4">
