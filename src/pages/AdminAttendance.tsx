@@ -62,6 +62,7 @@ const AdminAttendance = () => {
       return (data ?? []).map(a => a.shooting_id) as string[];
     },
   });
+  const attendedShootingIds = Array.isArray(shootingsWithAttendance) ? shootingsWithAttendance : [];
 
   const { data: members } = useQuery({
     queryKey: ["admin-members-list"],
@@ -802,7 +803,7 @@ const AdminAttendance = () => {
             <div className="space-y-4">
               {/* Existing shootings without attendance */}
               {(() => {
-                const available = (shootings ?? []).filter((s: any) => !(shootingsWithAttendance ?? []).includes(s.id));
+                const available = (shootings ?? []).filter((s: any) => !attendedShootingIds.includes(s.id));
                 if (available.length === 0) return null;
                 return (
                   <div className="space-y-2">
