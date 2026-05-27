@@ -114,24 +114,12 @@ export function AdvanceRequestCard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-black backdrop-blur-xl shadow-lg overflow-hidden"
+        className="relative rounded-lg border border-border/70 bg-card overflow-hidden"
       >
-        {/* Decorative background */}
-        <motion.div
-          aria-hidden
-          animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 opacity-20 pointer-events-none"
-          style={{
-            background: "radial-gradient(circle at 20% 50%, #ef4444 0%, transparent 50%), radial-gradient(circle at 80% 50%, #ffffff 0%, transparent 50%)",
-            backgroundSize: "200% 200%",
-          }}
-        />
-
         <div className="relative p-4 md:p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center">
                 <Wallet className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -198,35 +186,18 @@ export function AdvanceRequestCard() {
             </div>
           )}
 
-          {/* CTA Button — animated, attention-grabbing */}
+          {/* CTA Button */}
           <motion.button
             onClick={() => setCreateOpen(true)}
             disabled={blocked}
-            whileHover={{ scale: blocked ? 1 : 1.02 }}
+            whileHover={{ scale: blocked ? 1 : 1.01 }}
             whileTap={{ scale: 0.98 }}
-            animate={!blocked ? {
-              boxShadow: [
-                "0 0 0 0 rgba(239,68,68,0.6)",
-                "0 0 0 10px rgba(239,68,68,0)",
-                "0 0 0 0 rgba(239,68,68,0)",
-              ],
-            } : {}}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             className={`relative w-full overflow-hidden inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-extrabold text-sm transition-colors ${
               blocked
                 ? "bg-muted/40 text-muted-foreground cursor-not-allowed"
                 : "bg-red-500 hover:bg-red-600 text-white"
             }`}
           >
-            {!blocked && (
-              <motion.span
-                aria-hidden
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                animate={{ x: ["-150%", "150%"] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-                style={{ width: "60%" }}
-              />
-            )}
             <Plus className="relative z-10 h-4 w-4" />
             <span className="relative z-10">
               {blocked ? blockReason : "অ্যাডভান্স রিকোয়েস্ট করুন"}
