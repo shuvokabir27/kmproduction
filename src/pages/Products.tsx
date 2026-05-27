@@ -226,7 +226,7 @@ const Products = () => {
         <div
           className="relative overflow-hidden text-white text-xs md:text-sm py-2"
           style={{
-            backgroundImage: "linear-gradient(90deg, #f8fafc 0%, #2563eb 25%, #3b82f6 50%, #2563eb 75%, #f8fafc 100%)",
+            backgroundImage: "linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #2563eb 100%)",
           }}
         >
           <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
