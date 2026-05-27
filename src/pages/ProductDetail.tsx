@@ -737,8 +737,18 @@ const ProductDetail = () => {
                     <CheckCircle className="h-10 w-10 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">অর্ডার সফল! 🎉</h3>
-                <p className="text-muted-foreground text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
+                <h3 className="text-2xl font-extrabold text-foreground mb-1">ধন্যবাদ! অর্ডার সফল হয়েছে 🎉</h3>
+                <p className="text-muted-foreground text-sm mb-4">আপনার অর্ডারটি গ্রহণ করা হয়েছে।</p>
+                {orderNumber != null && (
+                  <div className="mx-auto mb-4 inline-flex items-center gap-2 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-2xl px-4 py-2.5">
+                    <span className="text-xs font-bold">অর্ডার নম্বর</span>
+                    <span className="text-lg font-extrabold tracking-wider">#{toBn(orderNumber)}</span>
+                  </div>
+                )}
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-5 text-sm text-amber-800 leading-relaxed">
+                  📞 আমাদের প্রতিনিধি শীঘ্রই আপনাকে কল দিয়ে অর্ডার <span className="font-extrabold">কনফার্ম</span> করবেন।
+                </div>
+                <p className="text-xs font-bold mb-5" style={{ color: BRAND_DARK }}>— Kuakata Multimedia</p>
                 <Button onClick={() => setOrderOpen(false)} className="w-full text-white font-bold py-4 rounded-2xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>ঠিক আছে</Button>
               </div>
             ) : (
