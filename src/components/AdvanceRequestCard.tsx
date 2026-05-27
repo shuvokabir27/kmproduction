@@ -238,7 +238,7 @@ export function AdvanceRequestCard() {
 
       {/* Create Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-w-md bg-gradient-to-br from-red-500/5 via-card to-cyan-500/5 border-red-500/30">
+        <DialogContent className="max-w-md bg-gradient-to-br from-red-500/5 via-card to-black border-red-500/30">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
               <Wallet className="h-4 w-4 text-red-400" />
