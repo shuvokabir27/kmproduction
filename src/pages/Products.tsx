@@ -584,22 +584,13 @@ const Products = () => {
       {/* Hero Banner — Premium */}
       <section className="px-4 py-6 md:py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="relative rounded-[28px] overflow-hidden">
-            {/* layered premium background */}
-            <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_20%,hsl(0_90%_55%/0.95),transparent_60%),radial-gradient(70%_70%_at_85%_90%,hsl(355_85%_38%/0.95),transparent_65%),linear-gradient(135deg,hsl(0_85%_42%)_0%,hsl(355_80%_30%)_60%,hsl(0_60%_18%)_100%)]" />
-            {/* fine grain noise */}
-            <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22><filter id=%22n%22><feTurbulence baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.6%22/></svg>')]" />
-            {/* top sheen */}
-            <div className="absolute inset-x-0 top-0 h-1/2 bg-[linear-gradient(180deg,hsl(0_0%_100%/0.18)_0%,transparent_80%)] pointer-events-none" />
-            {/* gold hairline ring */}
-            <div className="absolute inset-0 rounded-[28px] ring-1 ring-inset ring-white/15 pointer-events-none" />
-            <div className="absolute inset-0 rounded-[28px] shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25),inset_0_-1px_0_0_hsl(0_0%_0%/0.4),0_30px_80px_-20px_hsl(0_85%_30%/0.6)] pointer-events-none" />
-            {/* soft floating orbs */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-amber-300/20 blur-3xl pointer-events-none" />
+          <div className="relative rounded-[28px] overflow-hidden border border-slate-200 bg-white shadow-sm">
+            {/* subtle accent orbs */}
+            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
             <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-slate-100 blur-3xl pointer-events-none" />
 
             <div className="relative grid md:grid-cols-2 gap-8 items-center p-7 md:p-14" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-              <div className="text-white text-center md:text-left order-2 md:order-1">
+              <div className="text-slate-900 text-center md:text-left order-2 md:order-1">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-white/25 bg-white/10 backdrop-blur-xl shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-60 animate-ping" />
