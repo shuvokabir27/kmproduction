@@ -11,16 +11,12 @@ export default function FloatingCartButton() {
     <button
       onClick={cart.open}
       aria-label="cart"
-      className="flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center justify-center gap-1 w-[64px] md:w-[78px] py-3 md:py-4 rounded-l-2xl text-white shadow-[-6px_8px_24px_-6px_rgba(0,0,0,0.4)] ring-1 ring-white/15 hover:w-[72px] md:hover:w-[86px] transition-all duration-300 group"
-      style={{
-        background:
-          "linear-gradient(160deg, #f59e0b 0%, #3b82f6 55%, #2563eb 100%)",
-      }}
+      className="flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center justify-center gap-1 w-[64px] md:w-[78px] py-3 md:py-4 rounded-l-2xl text-white bg-blue-600 hover:bg-blue-700 shadow-lg hover:w-[72px] md:hover:w-[86px] transition-all duration-300 group"
     >
       <div className="relative">
-        <ShoppingBag className="h-6 w-6 drop-shadow" />
+        <ShoppingBag className="h-6 w-6" />
         {cart.count > 0 && (
-          <span className="absolute -top-2 -right-2 bg-white text-blue-600 text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-amber-500 shadow">
+          <span className="absolute -top-2 -right-2 bg-white text-blue-600 text-[10px] font-extrabold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center ring-2 ring-blue-600 shadow">
             {toBn(cart.count)}
           </span>
         )}
