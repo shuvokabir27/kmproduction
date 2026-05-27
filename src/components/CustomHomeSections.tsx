@@ -14,7 +14,7 @@ const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪�
 
 const accentMap: Record<string, { text: string; from: string; glow: string; ring: string; btn: string }> = {
   amber:   { text: "text-amber-400",   from: "from-amber-500",   glow: "bg-amber-500/8",   ring: "border-amber-500/30 hover:bg-amber-500/10",   btn: "bg-amber-500" },
-  red:     { text: "text-red-400",     from: "from-red-500",     glow: "bg-red-500/8",     ring: "border-red-500/30 hover:bg-red-500/10",       btn: "bg-red-500" },
+  red:     { text: "text-blue-500",     from: "from-blue-600",     glow: "bg-blue-600/8",     ring: "border-blue-600/30 hover:bg-blue-600/10",       btn: "bg-blue-600" },
   green:   { text: "text-emerald-400", from: "from-emerald-500", glow: "bg-emerald-500/8", ring: "border-emerald-500/30 hover:bg-emerald-500/10", btn: "bg-emerald-500" },
   blue:    { text: "text-sky-400",     from: "from-sky-500",     glow: "bg-sky-500/8",     ring: "border-sky-500/30 hover:bg-sky-500/10",       btn: "bg-sky-500" },
   rose:    { text: "text-rose-400",    from: "from-rose-500",    glow: "bg-rose-500/8",    ring: "border-rose-500/30 hover:bg-rose-500/10",     btn: "bg-rose-500" },
@@ -187,7 +187,7 @@ function SectionBlock({ section }: { section: any }) {
                         </div>
                       )}
                       {hasDiscount && (
-                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
                           -{toBn(Math.round(((p.price - price) / p.price) * 100))}%
                         </div>
                       )}

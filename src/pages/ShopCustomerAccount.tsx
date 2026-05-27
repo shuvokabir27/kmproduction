@@ -17,11 +17,11 @@ const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => "০১২�
 
 const statusLabel = (s: string) => {
   const m: Record<string, { t: string; cls: string }> = {
-    pending: { t: "অপেক্ষমান", cls: "bg-red-100 text-red-800" },
+    pending: { t: "অপেক্ষমান", cls: "bg-slate-100 text-slate-900" },
     confirmed: { t: "নিশ্চিত", cls: "bg-blue-100 text-blue-800" },
     shipped: { t: "পাঠানো হয়েছে", cls: "bg-indigo-100 text-indigo-800" },
-    delivered: { t: "ডেলিভারড", cls: "bg-red-100 text-red-800" },
-    cancelled: { t: "বাতিল", cls: "bg-red-100 text-red-800" },
+    delivered: { t: "ডেলিভারড", cls: "bg-slate-100 text-slate-900" },
+    cancelled: { t: "বাতিল", cls: "bg-slate-100 text-slate-900" },
     returned: { t: "ফেরত", cls: "bg-gray-200 text-gray-800" },
     abandoned: { t: "অসম্পূর্ণ", cls: "bg-gray-100 text-gray-600" },
   };
@@ -135,7 +135,7 @@ export default function ShopCustomerAccount() {
             <ArrowLeft className="h-4 w-4" /> দোকান
           </Link>
           <div className="font-bold" style={{ color: BRAND_GREEN }}>আমার অ্যাকাউন্ট</div>
-          <Button variant="ghost" size="sm" onClick={logout} className="text-red-600 gap-1">
+          <Button variant="ghost" size="sm" onClick={logout} className="text-blue-600 gap-1">
             <LogOut className="h-4 w-4" /> লগআউট
           </Button>
         </div>
@@ -285,7 +285,7 @@ export default function ShopCustomerAccount() {
                             </Button>
                           )}
                           {o.status === "delivered" && outOfStock && (
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl flex-1 justify-center">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-slate-50 px-3 py-2 rounded-xl flex-1 justify-center">
                               <XCircle className="h-3.5 w-3.5" /> Out of stock
                             </div>
                           )}
@@ -307,7 +307,7 @@ export default function ShopCustomerAccount() {
                               <span className="font-extrabold tracking-wide px-2 py-0.5 rounded-md text-white text-xs" style={{ backgroundColor: BRAND_GREEN }}>
                                 #{toBn(head.order_number)}
                               </span>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-900">
                                 {toBn(groupOrders.length)}টি প্রোডাক্ট
                               </span>
                             </div>
@@ -405,7 +405,7 @@ export default function ShopCustomerAccount() {
                 {/* Premium gradient header */}
                 <div className="relative px-6 pt-6 pb-8 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, #0d3a1d 0%, ${BRAND_GREEN} 60%, #2da159 100%)` }}>
                   <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-                  <div className="absolute -bottom-12 -left-8 w-32 h-32 rounded-full bg-red-300/20 blur-2xl" />
+                  <div className="absolute -bottom-12 -left-8 w-32 h-32 rounded-full bg-slate-300/20 blur-2xl" />
                   <div className="relative flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
@@ -424,7 +424,7 @@ export default function ShopCustomerAccount() {
                     <div className="text-[15px] font-bold leading-snug">{trackOrder.product_name}</div>
                     <div className="flex items-center justify-between mt-1.5 text-xs text-white/80">
                       <span>অর্ডার #{toBn(trackOrder.order_number)}</span>
-                      <span className="font-bold text-red-200 text-sm">৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</span>
+                      <span className="font-bold text-slate-200 text-sm">৳{toBn(Number(trackOrder.total_amount).toFixed(0))}</span>
                     </div>
                   </div>
                 </div>
@@ -432,10 +432,10 @@ export default function ShopCustomerAccount() {
                 <div className="bg-white px-6 py-6">
                   {cancelled ? (
                     <div className="flex flex-col items-center text-center py-6">
-                      <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-3">
-                        <X className="h-8 w-8 text-red-600" />
+                      <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                        <X className="h-8 w-8 text-blue-600" />
                       </div>
-                      <div className="font-bold text-lg text-red-700">{statusLabel(trackOrder.status).t}</div>
+                      <div className="font-bold text-lg text-blue-700">{statusLabel(trackOrder.status).t}</div>
                       <div className="text-xs text-gray-500 mt-1">এই অর্ডারটি আর সক্রিয় নেই</div>
                     </div>
                   ) : (

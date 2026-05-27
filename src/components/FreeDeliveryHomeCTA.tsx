@@ -25,8 +25,8 @@ export default function FreeDeliveryHomeCTA() {
       <div className="max-w-7xl mx-auto">
         <Link to="/free-delivery" className="block group">
           {/* Outer gradient ring — premium gold→rose→crimson */}
-          <div className="relative rounded-[28px] p-[1.5px] bg-[conic-gradient(from_140deg_at_50%_50%,#fde68a_0%,#fb7185_25%,#dc2626_50%,#fb7185_75%,#fde68a_100%)] shadow-[0_20px_60px_-20px_hsl(0_85%_45%/0.55)] hover:shadow-[0_28px_70px_-18px_hsl(0_90%_50%/0.7)] transition-shadow duration-500">
-            <div className="relative overflow-hidden rounded-[26px] bg-[linear-gradient(115deg,#7f1d1d_0%,#b91c1c_35%,#e11d48_70%,#9f1239_100%)] p-4 md:p-5">
+          <div className="relative rounded-[28px] p-[1.5px] bg-[conic-gradient(from_140deg_at_50%_50%,#fde68a_0%,#fb7185_25%,#3b82f6_50%,#fb7185_75%,#fde68a_100%)] shadow-[0_20px_60px_-20px_hsl(0_85%_45%/0.55)] hover:shadow-[0_28px_70px_-18px_hsl(0_90%_50%/0.7)] transition-shadow duration-500">
+            <div className="relative overflow-hidden rounded-[26px] bg-[linear-gradient(115deg,#7f1d1d_0%,#2563eb_35%,#e11d48_70%,#9f1239_100%)] p-4 md:p-5">
               {/* Ambient glows */}
               <div className="pointer-events-none absolute -top-16 -left-10 w-56 h-56 rounded-full bg-amber-300/25 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-20 -right-10 w-64 h-64 rounded-full bg-rose-400/30 blur-3xl animate-pulse" />
@@ -44,7 +44,7 @@ export default function FreeDeliveryHomeCTA() {
               <div className="relative flex items-center gap-3 md:gap-4">
                 {/* Icon tile */}
                 <div className="relative shrink-0">
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-amber-300/60 via-rose-300/40 to-red-500/60 blur-md opacity-80" />
+                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-amber-300/60 via-rose-300/40 to-blue-600/60 blur-md opacity-80" />
                   <div className="relative bg-white/15 backdrop-blur-xl p-3 rounded-2xl ring-1 ring-white/30 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.45),inset_0_-1px_0_0_rgba(0,0,0,0.25)]">
                     <Truck className="h-7 w-7 md:h-9 md:w-9 text-white drop-shadow" />
                   </div>
@@ -66,9 +66,9 @@ export default function FreeDeliveryHomeCTA() {
                 {/* Premium CTA pill */}
                 <div className="relative shrink-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <div className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-amber-300 via-white to-rose-200 opacity-70 blur-[6px] group-hover:opacity-100 transition-opacity" />
-                  <div className="relative inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all bg-gradient-to-b from-white to-amber-50 text-red-700 font-extrabold rounded-full pl-3 md:pl-5 pr-3 md:pr-4 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap ring-1 ring-amber-200/80 shadow-[0_10px_24px_-10px_rgba(220,38,38,0.65),inset_0_1px_0_0_rgba(255,255,255,0.9)]">
-                    <span className="bg-gradient-to-r from-red-700 via-rose-600 to-red-700 bg-clip-text text-transparent">Get Free Delivery</span>
-                    <span className="grid place-items-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-gradient-to-br from-red-600 to-rose-600 text-white shadow-inner">
+                  <div className="relative inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all bg-gradient-to-b from-white to-amber-50 text-blue-700 font-extrabold rounded-full pl-3 md:pl-5 pr-3 md:pr-4 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap ring-1 ring-amber-200/80 shadow-[0_10px_24px_-10px_rgba(220,38,38,0.65),inset_0_1px_0_0_rgba(255,255,255,0.9)]">
+                    <span className="bg-gradient-to-r from-blue-700 via-rose-600 to-blue-700 bg-clip-text text-transparent">Get Free Delivery</span>
+                    <span className="grid place-items-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-gradient-to-br from-blue-600 to-rose-600 text-white shadow-inner">
                       <ArrowRight className="h-3 w-3 md:h-3.5 md:w-3.5" />
                     </span>
                   </div>

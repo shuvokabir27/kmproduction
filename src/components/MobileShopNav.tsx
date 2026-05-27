@@ -4,7 +4,7 @@ import { useCart } from "@/hooks/useCart";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const BRAND_GREEN = "#dc2626";
+const BRAND_GREEN = "#3b82f6";
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 export default function MobileShopNav() {
@@ -36,7 +36,7 @@ export default function MobileShopNav() {
           <div className="relative overflow-visible">
             <ShoppingCart className="h-5 w-5" style={{ color: BRAND_GREEN }} />
             {cart.count > 0 && (
-              <span className="absolute -top-2.5 -right-3 z-20 bg-red-500 text-white text-[10px] leading-none font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center ring-2 ring-card shadow-lg">
+              <span className="absolute -top-2.5 -right-3 z-20 bg-blue-600 text-white text-[10px] leading-none font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center ring-2 ring-card shadow-lg">
                 {toBn(cart.count)}
               </span>
             )}
@@ -50,7 +50,7 @@ export default function MobileShopNav() {
             rel="noopener noreferrer"
             className="flex flex-col items-center justify-center py-2 gap-0.5 active:bg-muted"
           >
-            <MessageCircle className="h-5 w-5 text-red-600" />
+            <MessageCircle className="h-5 w-5 text-blue-600" />
             <span>WhatsApp</span>
           </a>
         ) : (

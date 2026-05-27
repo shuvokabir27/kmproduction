@@ -47,17 +47,17 @@ export function BestSellersSection() {
 
   return (
     <section className="py-20 px-4 relative" id="best-sellers">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-red-500/8 rounded-full blur-[140px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-600/8 rounded-full blur-[140px]" />
       <div className="container max-w-6xl mx-auto relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 flex items-end justify-between flex-wrap gap-4">
           <div>
-            <span className="text-red-400 text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2">
+            <span className="text-blue-500 text-xs font-bold tracking-[0.3em] uppercase flex items-center gap-2">
               <Flame className="h-4 w-4" /> Best Sellers
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-foreground mt-3 tracking-wider">সর্বাধিক বিক্রিত পণ্য</h2>
-            <div className="h-1 w-20 bg-gradient-to-r from-red-500 to-red-500/30 rounded-full mt-4" />
+            <div className="h-1 w-20 bg-gradient-to-r from-blue-600 to-blue-600/30 rounded-full mt-4" />
           </div>
-          <Button onClick={() => navigate("/products")} variant="outline" className="border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 gap-2">
+          <Button onClick={() => navigate("/products")} variant="outline" className="border-blue-600/30 hover:bg-blue-600/10 hover:border-blue-600/50 gap-2">
             <ShoppingBag className="h-4 w-4" /> সব প্রডাক্ট দেখুন
           </Button>
         </motion.div>
@@ -76,11 +76,11 @@ export function BestSellersSection() {
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ShoppingBag className="h-10 w-10" /></div>
                       )}
-                      <div className="absolute top-2 left-2 px-2 py-1 rounded-full bg-red-500/95 text-white text-[10px] font-bold flex items-center gap-1 backdrop-blur">
+                      <div className="absolute top-2 left-2 px-2 py-1 rounded-full bg-blue-600/95 text-white text-[10px] font-bold flex items-center gap-1 backdrop-blur">
                         <Flame className="h-3 w-3" /> {toBn(p.sold)} বিক্রি
                       </div>
                       {hasDiscount && (
-                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
                           -{toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}%
                         </div>
                       )}

@@ -63,7 +63,7 @@ export default function CategoryProducts() {
     const price = hasDiscount ? p.discount_price : p.price;
     return (
       <div
-        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/[0.04] border border-white/10 hover:border-red-400/40 hover:shadow-[0_18px_36px_-14px_rgba(220,38,38,0.6)] transition-all flex flex-col"
+        className="group cursor-pointer rounded-2xl overflow-hidden bg-white/[0.04] border border-white/10 hover:border-blue-500/40 hover:shadow-[0_18px_36px_-14px_rgba(220,38,38,0.6)] transition-all flex flex-col"
         onClick={() => navigate(`/products/${p.slug || p.id}`)}
       >
         <div className="relative aspect-square overflow-hidden bg-muted">
@@ -78,7 +78,7 @@ export default function CategoryProducts() {
             </div>
           )}
           {hasDiscount && (
-            <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold">
+            <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
               -{toBn(Math.round(((p.price - p.discount_price) / p.price) * 100))}%
             </div>
           )}
@@ -86,12 +86,12 @@ export default function CategoryProducts() {
         <div className="p-3 flex-1 flex flex-col">
           <h3 className="font-bold text-foreground text-sm line-clamp-2 min-h-[2.5rem]">{p.name}</h3>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-base font-bold text-red-400">৳{toBn(price)}</span>
+            <span className="text-base font-bold text-blue-500">৳{toBn(price)}</span>
             {hasDiscount && <span className="text-xs line-through text-muted-foreground">৳{toBn(p.price)}</span>}
           </div>
           <Button
             size="sm"
-            className="mt-3 w-full gap-1 h-9 bg-red-600 hover:bg-red-700 text-white"
+            className="mt-3 w-full gap-1 h-9 bg-blue-600 hover:bg-blue-700 text-white"
             onClick={(e) => { e.stopPropagation(); navigate(`/products/${p.slug || p.id}?order=1`); }}
           >
             <ShoppingCart className="h-3.5 w-3.5" /> অর্ডার করুন
@@ -128,7 +128,7 @@ export default function CategoryProducts() {
 
       <section className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex items-end justify-between mb-5 gap-3">
-          <div className="flex items-center gap-2 text-red-400 text-xs font-bold tracking-[0.3em] uppercase">
+          <div className="flex items-center gap-2 text-blue-500 text-xs font-bold tracking-[0.3em] uppercase">
             <Sparkles className="h-4 w-4" /> এই ক্যাটাগরির পণ্য
           </div>
           <span className="text-sm text-muted-foreground">{toBn(products?.length ?? 0)} টি পণ্য</span>

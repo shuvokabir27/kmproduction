@@ -138,7 +138,7 @@ export default function ShopOfferBanner() {
       className="relative w-full px-4 py-2"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
     >
-      <div className="relative max-w-7xl mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-red-500 via-red-600 to-red-600 dark:from-red-700 dark:via-red-800 dark:to-red-800 shadow-xl pt-0">
+      <div className="relative max-w-7xl mx-auto rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-blue-600 to-blue-600 dark:from-blue-700 dark:via-slate-900 dark:to-slate-900 shadow-xl pt-0">
         {/* sparkle bg */}
         <div className="absolute inset-0 pointer-events-none opacity-20 select-none">
           <div className="absolute top-4 left-[10%] text-3xl animate-pulse">✨</div>
@@ -167,7 +167,7 @@ export default function ShopOfferBanner() {
                 <p className="text-white/90 text-sm md:text-base">{offer.description}</p>
               )}
 
-              <div className="inline-flex items-center gap-2 bg-white text-red-700 font-extrabold text-lg md:text-2xl px-5 py-2 rounded-full shadow-xl">
+              <div className="inline-flex items-center gap-2 bg-white text-blue-700 font-extrabold text-lg md:text-2xl px-5 py-2 rounded-full shadow-xl">
                 {isFree ? <Truck className="h-5 w-5" /> : isCombo ? <Package className="h-5 w-5" /> : <Tag className="h-5 w-5" />}
                 {discountText}
               </div>
@@ -190,7 +190,7 @@ export default function ShopOfferBanner() {
                           {p.image_url && (
                             <div className="relative w-full aspect-square rounded-xl overflow-hidden ring-2 ring-white/40 shadow-lg">
                               <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
-                              <div className="absolute top-1 right-1 bg-white/90 text-red-700 text-[10px] font-extrabold rounded-full px-1.5 py-0.5">×{toBn(c.quantity || 1)}</div>
+                              <div className="absolute top-1 right-1 bg-white/90 text-blue-700 text-[10px] font-extrabold rounded-full px-1.5 py-0.5">×{toBn(c.quantity || 1)}</div>
                             </div>
                           )}
                           <span className="text-[11px] md:text-xs font-bold text-white text-center line-clamp-2 leading-tight">{p.name}</span>
@@ -200,7 +200,7 @@ export default function ShopOfferBanner() {
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                     {offer.combo_price && comboOriginalTotal > Number(offer.combo_price) && (
-                      <div className="inline-flex items-center gap-1.5 bg-red-500 rounded-full px-3 py-1 text-xs font-bold">
+                      <div className="inline-flex items-center gap-1.5 bg-blue-600 rounded-full px-3 py-1 text-xs font-bold">
                         <span className="line-through opacity-80">৳{toBn(comboOriginalTotal)}</span>
                         <span>{toBn(Math.round(((comboOriginalTotal - Number(offer.combo_price)) / comboOriginalTotal) * 100))}% সাশ্রয়</span>
                       </div>
@@ -231,7 +231,7 @@ export default function ShopOfferBanner() {
               <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
                 <Link
                   to={offer.slug ? `/o/${offer.slug}` : `/offer/${offer.id}`}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-slate-900 text-white font-extrabold px-7 py-3 rounded-2xl shadow-2xl hover:scale-105 transition-all"
                 >
                   <ShoppingBag className="h-5 w-5" />
                   অফার দেখুন ও অর্ডার করুন
@@ -281,20 +281,20 @@ export default function ShopOfferBanner() {
             <div className="flex items-center gap-3">
               <div className="flex-1">
                 <p className="text-xs text-gray-500">নিয়মিত মূল্য</p>
-                <p className="text-2xl font-extrabold text-red-600">
+                <p className="text-2xl font-extrabold text-blue-600">
                   ৳{toBn(Number(previewProduct.discount_price ?? previewProduct.price ?? 0))}
                   {previewProduct.discount_price && previewProduct.discount_price < previewProduct.price && (
                     <span className="text-sm text-gray-400 line-through ml-2 font-semibold">৳{toBn(Number(previewProduct.price))}</span>
                   )}
                 </p>
               </div>
-              <div className="bg-red-100 text-red-700 font-bold px-3 py-1.5 rounded-xl text-sm">
+              <div className="bg-slate-100 text-blue-700 font-bold px-3 py-1.5 rounded-xl text-sm">
                 কম্বোতে × {toBn(previewProduct.qty)}
               </div>
             </div>
             <button
               onClick={() => setPreviewProduct(null)}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 rounded-2xl"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 rounded-2xl"
             >
               বন্ধ করুন
             </button>

@@ -13,7 +13,7 @@ import { useShopCustomer } from "@/hooks/useShopCustomer";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
-const BRAND_GREEN = "#dc2626";
+const BRAND_GREEN = "#3b82f6";
 const BRAND_DARK = "#991b1b";
 
 interface Props {
@@ -193,7 +193,7 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
             <div className="p-5 space-y-4">
               {variants.length > 0 && (
                 <div>
-                  <Label className="text-foreground font-bold text-sm mb-2 block">অপশন বাছাই করুন <span className="text-red-500">*</span></Label>
+                  <Label className="text-foreground font-bold text-sm mb-2 block">অপশন বাছাই করুন <span className="text-blue-600">*</span></Label>
                   <div className="flex flex-wrap gap-2">
                     {variants.map((v, i) => (
                       <button
@@ -201,7 +201,7 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
                         type="button"
                         onClick={() => setSelectedVariantIdx(i)}
                         className={`px-3 py-2 rounded-xl border-2 text-sm font-medium ${
-                          selectedVariantIdx === i ? "border-red-500 bg-red-50 text-red-700" : "border-border bg-card text-foreground"
+                          selectedVariantIdx === i ? "border-blue-600 bg-slate-50 text-blue-700" : "border-border bg-card text-foreground"
                         }`}
                       >
                         {v.label} — ৳{toBn(Number(v.discount_price ?? v.price ?? 0))}
@@ -225,16 +225,16 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
               </div>
 
               <div>
-                <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-blue-600">*</span></Label>
                 <Input value={orderForm.name} onChange={(e) => setOrderForm((f) => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground" />
               </div>
               <div>
-                <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল <span className="text-red-500">*</span></Label>
-                <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={(e) => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? "border-red-300" : "border-border"}`} />
-                {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
+                <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল <span className="text-blue-600">*</span></Label>
+                <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={(e) => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? "border-slate-300" : "border-border"}`} />
+                {phoneError && <p className="text-blue-600 text-xs mt-1.5">{phoneError}</p>}
               </div>
               <div>
-                <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-blue-600">*</span></Label>
                 <Textarea value={orderForm.address} onChange={(e) => setOrderForm((f) => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground resize-none" />
               </div>
               <PaymentMethodPicker
@@ -247,27 +247,27 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
                 onTrxIdChange={(v) => setOrderForm((f) => ({ ...f, payment_trx_id: v }))}
               />
 
-              <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-red-300 via-red-400 to-red-500 shadow-lg">
-                <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 p-3.5 space-y-2 text-sm">
+              <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-slate-300 via-blue-500 to-blue-600 shadow-lg">
+                <div className="rounded-[14px] bg-gradient-to-br from-slate-50 via-white to-slate-50 p-3.5 space-y-2 text-sm">
                   <div className="flex items-center justify-between">
                     <span className="text-foreground/80 flex items-center gap-2 font-medium">
-                      <span className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-sm">
+                      <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
                         <TruckIcon className="h-3.5 w-3.5 text-white" />
                       </span>
                       ডেলিভারি চার্জ
                     </span>
                     {dlv.isFree ? (
-                      <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow">🎉 ফ্রি</span>
+                      <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow">🎉 ফ্রি</span>
                     ) : (
                       <span className="font-extrabold text-foreground">৳{toBn(dlv.charge)}</span>
                     )}
                   </div>
                   {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
-                    <div className="text-[11px] text-red-800 bg-red-100/70 border border-red-200 rounded-lg px-2.5 py-1.5">
+                    <div className="text-[11px] text-slate-900 bg-slate-100/70 border border-slate-200 rounded-lg px-2.5 py-1.5">
                       🚚 আর মাত্র <span className="font-extrabold">৳{toBn(dlv.amountToFree)}</span> অর্ডার করলেই <span className="font-extrabold">ফ্রি ডেলিভারি!</span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between pt-2 border-t border-dashed border-red-300">
+                  <div className="flex items-center justify-between pt-2 border-t border-dashed border-slate-300">
                     <span className="font-bold text-foreground text-base">মোট পেমেন্ট</span>
                     <span className="font-extrabold text-2xl bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                       ৳{toBn(grandTotal)}

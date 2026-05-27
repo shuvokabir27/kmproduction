@@ -21,7 +21,7 @@ import WatermarkedImage from "@/components/WatermarkedImage";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
-const BRAND_GREEN = "#dc2626";
+const BRAND_GREEN = "#3b82f6";
 const BRAND_DARK = "#991b1b";
 const ACCENT_RED = "#d6302c";
 
@@ -302,9 +302,9 @@ const ProductDetail = () => {
     >
       {/* ambient blobs + grain */}
       <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-red-600/20 blur-[120px]" />
+        <div className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-blue-600/20 blur-[120px]" />
         <div className="absolute bottom-10 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-700/20 blur-[140px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full bg-red-900/15 blur-[160px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full bg-slate-900/15 blur-[160px]" />
         <div
           className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
           style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")" }}
@@ -381,7 +381,7 @@ const ProductDetail = () => {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-10%,rgba(255,255,255,0.08),transparent_55%)]" />
           {/* ambient blobs */}
           <div className="pointer-events-none absolute -top-20 -left-16 w-72 h-72 rounded-full bg-rose-600/20 blur-[110px]" />
-          <div className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-red-800/25 blur-[130px]" />
+          <div className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-slate-900/25 blur-[130px]" />
 
           {/* Image gallery */}
           <div>
@@ -392,7 +392,7 @@ const ProductDetail = () => {
                 <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="h-20 w-20 text-gray-300" /></div>
               )}
               {hasDiscount && (
-                <div className="absolute top-3 left-3 bg-card shadow text-red-600 font-bold text-sm px-3 py-1.5 rounded">
+                <div className="absolute top-3 left-3 bg-card shadow text-blue-600 font-bold text-sm px-3 py-1.5 rounded">
                   -{toBn(discountPct)}%
                 </div>
               )}
@@ -412,7 +412,7 @@ const ProductDetail = () => {
             {images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {images.map((im, i) => (
-                  <button key={i} onClick={() => setActiveImg(i)} className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImg === i ? 'border-[#dc2626]' : 'border-transparent opacity-70 hover:opacity-100'}`}>
+                  <button key={i} onClick={() => setActiveImg(i)} className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${activeImg === i ? 'border-[#3b82f6]' : 'border-transparent opacity-70 hover:opacity-100'}`}>
                     {im ? <img src={im} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-muted" />}
                   </button>
                 ))}
@@ -428,7 +428,7 @@ const ProductDetail = () => {
               {hasDiscount && <span className="text-lg text-muted-foreground line-through">৳{toBn(origPrice)}</span>}
               <span className="text-3xl font-extrabold" style={{ color: BRAND_GREEN }}>৳{toBn(unitPrice)}</span>
               {hasDiscount && (
-                <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
+                <span className="text-xs font-bold text-blue-600 bg-slate-50 px-2 py-0.5 rounded">
                   সাশ্রয় ৳{toBn(origPrice - unitPrice)}
                 </span>
               )}
@@ -454,8 +454,8 @@ const ProductDetail = () => {
 
             {/* Stock */}
             <div className="flex items-center gap-2 mt-4 text-xs">
-              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-semibold ${product.stock_status === 'out_of_stock' ? 'bg-red-50 text-red-600' : 'bg-red-50 text-red-700'}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${product.stock_status === 'out_of_stock' ? 'bg-red-500' : 'bg-red-500'}`} />
+              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-semibold ${product.stock_status === 'out_of_stock' ? 'bg-slate-50 text-blue-600' : 'bg-slate-50 text-blue-700'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${product.stock_status === 'out_of_stock' ? 'bg-blue-600' : 'bg-blue-600'}`} />
                 {product.stock_status === 'out_of_stock' ? 'স্টক শেষ' : 'স্টকে আছে'}
               </span>
               {product.category && <span className="text-muted-foreground">ক্যাটাগরি: <span className="text-foreground font-medium">{categoryLabel}</span></span>}
@@ -466,7 +466,7 @@ const ProductDetail = () => {
               <div className="mt-6">
                 <Label className="text-sm font-semibold text-foreground block mb-2">
                   {(product as any).unit_type === "kg" ? "ওজন বাছাই করুন" : (product as any).unit_type === "size" ? "সাইজ বাছাই করুন" : "অপশন বাছাই করুন"}
-                  <span className="text-red-500"> *</span>
+                  <span className="text-blue-600"> *</span>
                 </Label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {variants.map((v: any, i: number) => {
@@ -478,7 +478,7 @@ const ProductDetail = () => {
                         key={i}
                         type="button"
                         onClick={() => setSelectedVariantIdx(i)}
-                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-red-500 bg-gradient-to-br from-red-950/80 via-red-900/60 to-rose-900/50 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.55)]" : "border-border bg-card hover:border-red-500/40"}`}
+                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-blue-600 bg-gradient-to-br from-red-950/80 via-slate-900/60 to-rose-900/50 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.55)]" : "border-border bg-card hover:border-blue-600/40"}`}
                       >
                         <div className="font-bold text-sm text-foreground">{v.label}</div>
                         <div className="text-xs">
@@ -589,7 +589,7 @@ const ProductDetail = () => {
         <div className="bg-card rounded-2xl mt-6 border border-border shadow-sm overflow-hidden">
           <div className="flex border-b">
             {[{k:"desc",l:"DESCRIPTION"},{k:"reviews",l:`REVIEWS (${toBn(reviews.length)})`}].map(t => (
-              <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#dc2626] text-[#dc2626]' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+              <button key={t.k} onClick={() => setTab(t.k as any)} className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors ${tab === t.k ? 'border-[#3b82f6] text-[#3b82f6]' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                 {t.l}
               </button>
             ))}
@@ -623,7 +623,7 @@ const ProductDetail = () => {
                     {reviews.map((r: any) => {
                       const name = (r.customer_name || "গ্রাহক").trim();
                       const initial = name.charAt(0).toUpperCase();
-                      const colors = ["#dc2626","#7c3aed","#0891b2","#ea580c","#16a34a","#db2777","#2563eb","#ca8a04"];
+                      const colors = ["#3b82f6","#7c3aed","#0891b2","#ea580c","#3b82f6","#db2777","#2563eb","#ca8a04"];
                       const hue = colors[(name.charCodeAt(0) || 0) % colors.length];
                       return (
                         <div key={r.id} className="border border-border rounded-xl p-4 bg-background/40">
@@ -642,7 +642,7 @@ const ProductDetail = () => {
                               </div>
                               <div className="flex gap-0.5 mt-1">
                                 {[1,2,3,4,5].map(n => (
-                                  <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? 'fill-[#dc2626] text-[#dc2626]' : 'text-muted-foreground/40'}`} />
+                                  <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? 'fill-[#3b82f6] text-[#3b82f6]' : 'text-muted-foreground/40'}`} />
                                 ))}
                               </div>
                             </div>
@@ -658,7 +658,7 @@ const ProductDetail = () => {
                   {!shopCustomer ? (
                     <div className="text-center py-4">
                       <p className="text-muted-foreground text-sm mb-3">রিভিউ দিতে হলে লগইন করুন</p>
-                      <Link to="/shop/login" className="inline-flex items-center px-5 py-2 rounded-lg bg-[#dc2626] text-white text-sm font-semibold hover:brightness-110">লগইন</Link>
+                      <Link to="/shop/login" className="inline-flex items-center px-5 py-2 rounded-lg bg-[#3b82f6] text-white text-sm font-semibold hover:brightness-110">লগইন</Link>
                     </div>
                   ) : !hasPurchased ? (
                     <p className="text-center text-muted-foreground text-sm py-4">শুধুমাত্র যারা এই পণ্যটি কিনেছেন তারাই রিভিউ দিতে পারবেন।</p>
@@ -668,7 +668,7 @@ const ProductDetail = () => {
                       <div className="flex items-center gap-1">
                         {[1,2,3,4,5].map(n => (
                           <button key={n} type="button" onClick={() => setReviewRating(n)} className="p-1">
-                            <Star className={`h-6 w-6 transition ${n <= reviewRating ? 'fill-[#dc2626] text-[#dc2626]' : 'text-muted-foreground/40'}`} />
+                            <Star className={`h-6 w-6 transition ${n <= reviewRating ? 'fill-[#3b82f6] text-[#3b82f6]' : 'text-muted-foreground/40'}`} />
                           </button>
                         ))}
                       </div>
@@ -678,7 +678,7 @@ const ProductDetail = () => {
                         onChange={(e) => setReviewComment(e.target.value)}
                         rows={3}
                       />
-                      <Button onClick={submitReview} disabled={submittingReview} className="bg-[#dc2626] hover:bg-[#b91c1c] text-white">
+                      <Button onClick={submitReview} disabled={submittingReview} className="bg-[#3b82f6] hover:bg-[#2563eb] text-white">
                         {submittingReview ? "জমা হচ্ছে..." : myReview ? "আপডেট করুন" : "জমা দিন"}
                       </Button>
                     </div>
@@ -771,16 +771,16 @@ const ProductDetail = () => {
 
                 <div className="p-5 space-y-4">
                   <div>
-                    <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-red-500">*</span></Label>
+                    <Label className="text-foreground font-bold text-sm mb-2 block">আপনার নাম <span className="text-blue-600">*</span></Label>
                     <Input value={orderForm.name} onChange={e => setOrderForm(f => ({ ...f, name: e.target.value }))} placeholder="পুরো নাম" className="h-12 rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground" />
                   </div>
                   <div>
-                    <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল <span className="text-red-500">*</span></Label>
-                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? 'border-red-300' : 'border-border'}`} />
-                    {phoneError && <p className="text-red-500 text-xs mt-1.5">{phoneError}</p>}
+                    <Label className="text-foreground font-bold text-sm mb-2 block">মোবাইল <span className="text-blue-600">*</span></Label>
+                    <Input type="tel" inputMode="numeric" pattern="[0-9]*" value={orderForm.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="01XXXXXXXXX" maxLength={11} className={`h-12 rounded-2xl border-2 bg-card text-foreground placeholder:text-muted-foreground ${phoneError ? 'border-slate-300' : 'border-border'}`} />
+                    {phoneError && <p className="text-blue-600 text-xs mt-1.5">{phoneError}</p>}
                   </div>
                   <div>
-                    <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-red-500">*</span></Label>
+                    <Label className="text-foreground font-bold text-sm mb-2 block">ঠিকানা <span className="text-blue-600">*</span></Label>
                     <Textarea value={orderForm.address} onChange={e => setOrderForm(f => ({ ...f, address: e.target.value }))} placeholder="সম্পূর্ণ ঠিকানা" rows={3} className="rounded-2xl border-2 border-border bg-card text-foreground placeholder:text-muted-foreground resize-none" />
                   </div>
                   <PaymentMethodPicker
@@ -793,27 +793,27 @@ const ProductDetail = () => {
                     onTrxIdChange={(v) => setOrderForm(f => ({ ...f, payment_trx_id: v }))}
                   />
 
-                  <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-red-300 via-red-400 to-red-500 shadow-lg">
-                    <div className="rounded-[14px] bg-gradient-to-br from-red-50 via-white to-red-50 p-3.5 space-y-2 text-sm">
+                  <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-slate-300 via-blue-500 to-blue-600 shadow-lg">
+                    <div className="rounded-[14px] bg-gradient-to-br from-slate-50 via-white to-slate-50 p-3.5 space-y-2 text-sm">
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80 flex items-center gap-2 font-medium">
-                          <span className="w-7 h-7 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-sm">
+                          <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
                             <TruckIcon className="h-3.5 w-3.5 text-white" />
                           </span>
                           ডেলিভারি চার্জ
                         </span>
                         {dlv.isFree ? (
-                          <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow">🎉 ফ্রি</span>
+                          <span className="font-extrabold text-xs px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow">🎉 ফ্রি</span>
                         ) : (
                           <span className="font-extrabold text-foreground">৳{toBn(dlv.charge)}</span>
                         )}
                       </div>
                       {!dlv.isFree && deliverySettings.free_delivery_enabled && dlv.amountToFree > 0 && (
-                        <div className="text-[11px] text-red-800 bg-red-100/70 border border-red-200 rounded-lg px-2.5 py-1.5">
+                        <div className="text-[11px] text-slate-900 bg-slate-100/70 border border-slate-200 rounded-lg px-2.5 py-1.5">
                           🚚 আর মাত্র <span className="font-extrabold">৳{toBn(dlv.amountToFree)}</span> অর্ডার করলেই <span className="font-extrabold">ফ্রি ডেলিভারি!</span>
                         </div>
                       )}
-                      <div className="flex items-center justify-between pt-2 border-t border-dashed border-red-300">
+                      <div className="flex items-center justify-between pt-2 border-t border-dashed border-slate-300">
                         <span className="font-bold text-foreground text-base">মোট পেমেন্ট</span>
                         <span className="font-extrabold text-2xl bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
                           ৳{toBn(grandTotal)}
