@@ -565,8 +565,8 @@ const MemberDashboard = () => {
                             {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
                           </p>
                         </div>
-                        <div className={`h-7 w-7 shrink-0 rounded-lg ${isPaid ? "bg-success/10" : "bg-warning/10"} flex items-center justify-center`}>
-                          {isPaid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+                        <div className="h-7 w-7 shrink-0 rounded-lg bg-red-500/10 flex items-center justify-center">
+                          {isPaid ? <CheckCircle2 className="h-4 w-4 text-red-400" /> : <Clock className="h-4 w-4 text-red-400" />}
                         </div>
                       </div>
 
@@ -587,9 +587,9 @@ const MemberDashboard = () => {
                           <p className="text-[9px] text-muted-foreground">পেইড</p>
                           <p className="text-xs font-bold text-red-400">৳{paid.toLocaleString("bn-BD")}</p>
                         </div>
-                        <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2.5 py-1.5">
+                        <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-2.5 py-1.5">
                           <p className="text-[9px] text-muted-foreground">বাকি</p>
-                          <p className="text-xs font-bold text-rose-400">৳{due.toLocaleString("bn-BD")}</p>
+                          <p className="text-xs font-bold text-red-400">৳{due.toLocaleString("bn-BD")}</p>
                         </div>
                       </div>
 
@@ -607,9 +607,9 @@ const MemberDashboard = () => {
 
         {!isZeroBalance && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                 <CreditCard className="h-4 w-4 text-red-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">পেমেন্ট হিস্ট্রি</h2>
@@ -628,9 +628,9 @@ const MemberDashboard = () => {
             </div>
           </div>
 
-          <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                 <Calendar className="h-4 w-4 text-red-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">হাজিরা হিস্ট্রি</h2>
@@ -644,7 +644,7 @@ const MemberDashboard = () => {
                     <p className="text-xs text-muted-foreground">{a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : ""}</p>
                   </div>
                   <div className="text-right">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>{a.is_present ? "উপস্থিত" : "অনুপস্থিত"}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-red-500/10 text-red-400" : "bg-destructive/10 text-destructive"}`}>{a.is_present ? "উপস্থিত" : "অনুপস্থিত"}</span>
                     {a.daily_rate > 0 && <p className="text-xs text-muted-foreground mt-0.5">৳{Number(a.daily_rate).toLocaleString("bn-BD")}</p>}
                   </div>
                 </div>
