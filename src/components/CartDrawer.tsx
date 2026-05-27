@@ -34,6 +34,7 @@ export const CartDrawer = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
   const [paymentSenderNo, setPaymentSenderNo] = useState("");
   const [paymentTrxId, setPaymentTrxId] = useState("");
+  const [confirmClear, setConfirmClear] = useState(false);
 
   useEffect(() => {
     supabase.from("site_settings").select("*").single().then(({ data }) => setSiteSettings(data));
