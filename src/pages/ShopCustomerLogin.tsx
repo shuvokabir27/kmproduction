@@ -260,15 +260,8 @@ export default function ShopCustomerLogin() {
             {/* Password fields — only on login/register or forgot step 2 */}
             {(mode !== "forgot" || forgotStep === "otp") && (
               <>
-                {mode === "register" && (
-                  <div>
-                    <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">আপনার নাম</Label>
-                    <div className="relative">
-                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                      <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="পূর্ণ নাম" className={inputClass} />
-                    </div>
-                  </div>
-                )}
+                {/* Name field moved to top */}
+
                 <div>
                   <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">
                     {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
