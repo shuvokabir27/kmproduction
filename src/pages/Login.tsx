@@ -16,6 +16,7 @@ const Login = () => {
   const { user, isAdmin, isClient, isProductAdmin, loading } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [resetEmail, setResetEmail] = useState("");
@@ -24,6 +25,7 @@ const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [signupName, setSignupName] = useState("");
   const [signupSubmitting, setSignupSubmitting] = useState(false);
 
@@ -32,6 +34,9 @@ const Login = () => {
   const [resetStep, setResetStep] = useState<"ident" | "otp">("ident");
   const [resetOtp, setResetOtp] = useState("");
   const [resetNewPass, setResetNewPass] = useState("");
+  const [resetConfirmPass, setResetConfirmPass] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetMaskedPhone, setResetMaskedPhone] = useState("");
   const [resetScope, setResetScope] = useState<"member" | "client">("member");
 
