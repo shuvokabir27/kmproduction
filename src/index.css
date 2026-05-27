@@ -691,8 +691,8 @@
   animation: catCardEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Member Dashboard — bKash-inspired: magenta only for buttons/highlights, light neutral sections */
-.member-dash-red { color: #1a1a1a; }
+/* Member Dashboard — bKash-inspired: magenta only for buttons/highlights, light pink sections */
+.member-dash-red { color: #1a1a1a; background-color: #FFEDF4; }
 .member-dash-red .text-foreground { color: #1a1a1a !important; }
 .member-dash-red .text-muted-foreground { color: #6b7280 !important; }
 
