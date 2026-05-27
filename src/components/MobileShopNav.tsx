@@ -44,7 +44,7 @@ export default function MobileShopNav() {
           <ShoppingBag className="h-5 w-5" />
           <span>শপ</span>
         </Link>
-        <Link to="/products#achar" className={cn(itemBase, isAchar ? activeText : inactiveText)}>
+        <Link to="/category/achar" className={cn(itemBase, isAchar ? activeText : inactiveText)}>
           <Soup className="h-5 w-5" />
           <span>আচার</span>
         </Link>
