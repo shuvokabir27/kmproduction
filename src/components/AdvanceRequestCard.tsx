@@ -114,7 +114,7 @@ export function AdvanceRequestCard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-cyan-500/5 backdrop-blur-xl shadow-lg overflow-hidden"
+        className="relative rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-500/10 via-card to-black backdrop-blur-xl shadow-lg overflow-hidden"
       >
         {/* Decorative background */}
         <motion.div
@@ -123,7 +123,7 @@ export function AdvanceRequestCard() {
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
-            background: "radial-gradient(circle at 20% 50%, #10b981 0%, transparent 50%), radial-gradient(circle at 80% 50%, #06b6d4 0%, transparent 50%)",
+            background: "radial-gradient(circle at 20% 50%, #ef4444 0%, transparent 50%), radial-gradient(circle at 80% 50%, #ffffff 0%, transparent 50%)",
             backgroundSize: "200% 200%",
           }}
         />
@@ -131,7 +131,7 @@ export function AdvanceRequestCard() {
         <div className="relative p-4 md:p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-red-500/30">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30">
                 <Wallet className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -206,16 +206,16 @@ export function AdvanceRequestCard() {
             whileTap={{ scale: 0.98 }}
             animate={!blocked ? {
               boxShadow: [
-                "0 0 0 0 rgba(16,185,129,0.6)",
-                "0 0 0 10px rgba(16,185,129,0)",
-                "0 0 0 0 rgba(16,185,129,0)",
+                "0 0 0 0 rgba(239,68,68,0.6)",
+                "0 0 0 10px rgba(239,68,68,0)",
+                "0 0 0 0 rgba(239,68,68,0)",
               ],
             } : {}}
             transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             className={`relative w-full overflow-hidden inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-extrabold text-sm transition-colors ${
               blocked
                 ? "bg-muted/40 text-muted-foreground cursor-not-allowed"
-                : "bg-gradient-to-r from-red-500 via-red-500 to-cyan-500 text-white"
+                : "bg-red-500 hover:bg-red-600 text-white"
             }`}
           >
             {!blocked && (
@@ -238,7 +238,7 @@ export function AdvanceRequestCard() {
 
       {/* Create Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-w-md bg-gradient-to-br from-red-500/5 via-card to-cyan-500/5 border-red-500/30">
+        <DialogContent className="max-w-md bg-gradient-to-br from-red-500/5 via-card to-black border-red-500/30">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
               <Wallet className="h-4 w-4 text-red-400" />
@@ -288,7 +288,7 @@ export function AdvanceRequestCard() {
               <Button
                 onClick={() => createMut.mutate()}
                 disabled={createMut.isPending || !amount}
-                className="flex-1 bg-gradient-to-r from-red-500 to-cyan-500 hover:from-red-600 hover:to-cyan-600 text-white font-bold"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold"
               >
                 {createMut.isPending ? "পাঠানো হচ্ছে..." : "রিকোয়েস্ট পাঠান"}
               </Button>

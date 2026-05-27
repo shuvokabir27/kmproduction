@@ -192,12 +192,12 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
 
   const { kmSeries, clientSeries, clientNames, kmTotal, clientTotal } = data;
   const palette = [
-    { from: "#ef4444", to: "#b91c1c" },
-    { from: "#f59e0b", to: "#b45309" },
-    { from: "#10b981", to: "#047857" },
-    { from: "#8b5cf6", to: "#6d28d9" },
-    { from: "#ec4899", to: "#be185d" },
-    { from: "#06b6d4", to: "#0e7490" },
+    { from: "#ef4444", to: "#7f1d1d" },
+    { from: "#ffffff", to: "#a3a3a3" },
+    { from: "#f87171", to: "#991b1b" },
+    { from: "#e5e5e5", to: "#525252" },
+    { from: "#dc2626", to: "#450a0a" },
+    { from: "#fca5a5", to: "#b91c1c" },
   ];
   const hasKm = kmSeries.some((d) => d.income > 0);
   const hasClient = clientNames.length > 0 && clientSeries.some((d) => clientNames.some((n) => Number(d[n]) > 0));
@@ -247,7 +247,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
           <button
             type="button"
             onClick={onClientClick}
-            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
+            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
             <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
@@ -318,7 +318,7 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
       </div>
 
       {showClient && (
-      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(249,115,22,0.25)]">
+      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
         <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/20 blur-3xl" />
         <div className="relative flex items-center gap-2 mb-2">

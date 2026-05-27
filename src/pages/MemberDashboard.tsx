@@ -282,7 +282,7 @@ const MemberDashboard = () => {
               const meta: Record<string, { url: string; icon: any; gradient: string; iconColor: string }> = {
                 shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/20 to-rose-500/10", iconColor: "text-red-400" },
                 shootings: { url: "/admin/shootings", icon: Film, gradient: "from-rose-500/20 to-pink-500/10", iconColor: "text-rose-400" },
-                attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-cyan-500/20 to-sky-500/10", iconColor: "text-cyan-400" },
+                attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400" },
               };
               const m = meta[p];
               if (!m) return null;
@@ -318,24 +318,20 @@ const MemberDashboard = () => {
               h < 16 ? "শুভ দুপুর" :
               h < 18 ? "শুভ বিকাল" :
               h < 21 ? "শুভ সন্ধ্যা" : "শুভ রাত্রি";
-            const greetColor =
-              h < 5 || h >= 21 ? "text-indigo-400" :
-              h < 12 ? "text-red-400" :
-              h < 16 ? "text-red-400" :
-              h < 18 ? "text-pink-400" : "text-purple-400";
+            const greetColor = "text-red-400";
             return <p className={`${greetColor} text-sm md:text-base font-semibold`}>{greeting} 👋</p>;
           })()}
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             <span
-              className="bg-clip-text text-transparent bg-[linear-gradient(120deg,hsl(0_85%_60%),hsl(35_95%_60%),hsl(280_85%_65%),hsl(195_95%_60%),hsl(0_85%_60%))] bg-[length:300%_100%] animate-[name-gradient_6s_linear_infinite]"
+              className="bg-clip-text text-transparent bg-[linear-gradient(120deg,hsl(0_85%_60%),hsl(0_0%_100%),hsl(0_85%_45%),hsl(0_0%_100%),hsl(0_85%_60%))] bg-[length:300%_100%] animate-[name-gradient_6s_linear_infinite]"
               style={{
-                filter: "drop-shadow(0 0 12px hsl(0 85% 55% / 0.45)) drop-shadow(0 0 24px hsl(280 85% 60% / 0.25))",
+                filter: "drop-shadow(0 0 12px hsl(0 85% 55% / 0.45))",
               }}
             >
               {profile?.full_name}
             </span>
             {profile?.is_verified && (
-              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-blue-500 text-white align-middle ml-1.5 shadow-[0_0_14px_hsl(210_85%_55%/0.7)]">
+              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-red-500 text-white align-middle ml-1.5 shadow-[0_0_14px_hsl(0_85%_55%/0.7)]">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
                   <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
@@ -343,7 +339,7 @@ const MemberDashboard = () => {
             )}
           </h1>
           {profile?.is_verified && (
-            <p className="text-blue-400 text-[11px] md:text-xs font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
+            <p className="text-red-400 text-[11px] md:text-xs font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
           )}
           <div className="inline-flex items-center gap-1.5 mt-0.5 px-3 py-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/15 shadow-[0_0_18px_-6px_hsl(var(--primary)/0.6)] backdrop-blur-sm">
             <span className="text-[10px] uppercase tracking-wider text-primary/80 font-semibold">আইডি</span>
@@ -637,8 +633,8 @@ const MemberDashboard = () => {
 
           <div className="premium-card rounded-2xl overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-cyan-400" />
+              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-red-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">হাজিরা হিস্ট্রি</h2>
             </div>
