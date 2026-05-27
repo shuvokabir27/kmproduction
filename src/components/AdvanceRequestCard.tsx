@@ -131,7 +131,7 @@ export function AdvanceRequestCard() {
         <div className="relative p-4 md:p-5">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-red-500/30">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30">
                 <Wallet className="h-5 w-5 text-white" />
               </div>
               <div>
