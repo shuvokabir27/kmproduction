@@ -453,7 +453,7 @@ const PublicHome = () => {
               <motion.div key={member.id} variants={item}>
                 <Link to={`/member/${member.member_id}`}>
                   <div className="group">
-                    <div className="premium-card rounded-2xl p-5 text-center relative overflow-hidden">
+                    <div className="premium-card rounded-2xl p-5 text-center relative overflow-hidden border border-white/10" style={{ background: "linear-gradient(135deg, #dc2626 0%, #E2136E 100%)" }}>
                       {/* Hover glow */}
                       <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
