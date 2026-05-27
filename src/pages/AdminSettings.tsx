@@ -286,7 +286,7 @@ const AdminSettings = () => {
 
       {/* Profile Edit Dialog */}
       <Dialog open={profileEditOpen} onOpenChange={setProfileEditOpen}>
-        <DialogContent className="bg-white border-border/50 max-w-lg max-h-[90vh] overflow-y-auto [&_*]:text-foreground">
+        <DialogContent className="bg-white border-gray-200 max-w-lg max-h-[90vh] overflow-y-auto text-gray-900 [&_*]:!text-gray-900 [&_input]:!bg-gray-50 [&_input]:!border-gray-300 [&_textarea]:!bg-gray-50 [&_textarea]:!border-gray-300 [&_.text-muted-foreground]:!text-gray-500 [&_input::placeholder]:!text-gray-400 [&_textarea::placeholder]:!text-gray-400">
           <DialogHeader>
             <DialogTitle className="text-foreground">প্রোফাইল তথ্য আপডেট</DialogTitle>
           </DialogHeader>
