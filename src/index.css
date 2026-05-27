@@ -590,6 +590,34 @@ button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-
   border-color: #2563eb !important;
 }
 
+.product-cta-cart {
+  background-color: hsl(38 92% 50%) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(38 92% 45%) !important;
+}
+.product-cta-cart:hover { background-color: hsl(32 95% 44%) !important; }
+
+.product-cta-buy {
+  background-color: hsl(346 77% 50%) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(346 77% 45%) !important;
+}
+.product-cta-buy:hover { background-color: hsl(346 84% 44%) !important; }
+
+.product-cta-call {
+  background-color: hsl(217 91% 60%) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(217 91% 55%) !important;
+}
+.product-cta-call:hover { background-color: hsl(221 83% 53%) !important; }
+
+.product-cta-whatsapp {
+  background-color: hsl(142 70% 49%) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(142 70% 44%) !important;
+}
+.product-cta-whatsapp:hover { background-color: hsl(142 72% 40%) !important; }
+
 /* Public header: clean white surface, slate text, blue CTA only for auth */
 .public-header nav button,
 .public-header nav a button {
