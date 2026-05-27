@@ -251,7 +251,7 @@ const Login = () => {
             </form>
 
             <div className="mt-8 space-y-3 text-center">
-              <button type="button" onClick={() => setIsSignup(true)} className="block w-full text-sm text-red-400 hover:text-red-300 transition-colors duration-300 font-medium">
+              <button data-no-magenta type="button" onClick={() => setIsSignup(true)} className="block w-full text-sm text-red-400 hover:text-red-300 transition-colors duration-300 font-medium bg-transparent border-0">
                 নতুন অ্যাকাউন্ট তৈরি করুন
               </button>
               <div className="w-8 h-px bg-white/10 mx-auto" />
@@ -264,7 +264,7 @@ const Login = () => {
                 }
               }}>
                 <DialogTrigger asChild>
-                  <button type="button" className="block w-full text-xs text-gray-500 hover:text-gray-300 transition-colors duration-300">
+                  <button data-no-magenta type="button" className="block w-full text-xs text-gray-400 hover:text-gray-200 transition-colors duration-300 bg-transparent border-0">
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </DialogTrigger>
