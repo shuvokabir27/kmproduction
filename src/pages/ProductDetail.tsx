@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import WatermarkedImage from "@/components/WatermarkedImage";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
