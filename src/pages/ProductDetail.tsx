@@ -389,7 +389,16 @@ const ProductDetail = () => {
 
           {/* Info */}
           <div className="flex flex-col">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">{product.name}</h1>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">{product.name}</h1>
+              <button
+                onClick={handleShare}
+                className="shrink-0 mt-1 w-9 h-9 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] flex items-center justify-center hover:bg-[#3b82f6]/20 transition-colors"
+                aria-label="শেয়ার করুন"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+            </div>
 
             <div className="flex items-baseline gap-3 mt-4 pb-4 border-b">
               {hasDiscount && <span className="text-lg text-muted-foreground line-through">৳{toBn(origPrice)}</span>}
