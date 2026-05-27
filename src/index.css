@@ -652,3 +652,14 @@ button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-
 .mobile-bottom-nav button[data-active="true"] svg {
   color: #3b82f6 !important;
 }
+
+/* Force slate text in product rich descriptions (overrides legacy white inline styles) */
+.rich-desc,
+.rich-desc * {
+  color: hsl(222 47% 11%) !important;
+  background-color: transparent !important;
+}
+.rich-desc a,
+.rich-desc a * {
+  color: hsl(217 91% 60%) !important;
+}
