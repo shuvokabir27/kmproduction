@@ -759,10 +759,10 @@ const Products = () => {
                         <span className="text-xs text-muted-foreground line-through">৳{toBn(p.price)}</span>
                       )}
                     </div>
-                    <div className="mt-3 flex flex-col gap-2">
+                    <div className="mt-3 flex flex-col gap-1.5">
                       <Button
                         onClick={() => openOrderDialog(p)}
-                        className="w-full font-bold tracking-wide text-sm h-10 rounded-md"
+                        className="w-full font-semibold tracking-wide text-xs h-8 rounded-md px-2"
                       >
                         এখনই কিনুন
                       </Button>
@@ -771,9 +771,9 @@ const Products = () => {
                           const variants = Array.isArray(p.variants) ? p.variants : [];
                           addProductToCart(p, 1, variants.length > 0 ? 0 : -1);
                         }}
-                        className="glossy-btn-amber w-full font-bold tracking-wide text-sm h-10 rounded-md gap-1.5 inline-flex items-center justify-center"
+                        className="glossy-btn-amber w-full font-semibold tracking-wide text-xs h-8 rounded-md gap-1 px-2 inline-flex items-center justify-center"
                       >
-                        <ShoppingCart className="h-3.5 w-3.5" /> কার্টে যোগ করুন
+                        <ShoppingCart className="h-3 w-3" /> কার্টে যোগ করুন
                       </Button>
                     </div>
 
