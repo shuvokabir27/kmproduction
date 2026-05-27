@@ -221,7 +221,7 @@ export default function FreeDeliveryPage() {
               <span className="relative">
                 <Truck className="h-5 w-5 text-amber-300" />
               </span>
-              <span className="bg-gradient-to-r from-amber-200 via-rose-200 to-amber-200 bg-clip-text text-transparent">{campaign.campaign.title}</span>
+              <span className="bg-gradient-to-r from-amber-200 via-slate-100 to-amber-200 bg-clip-text text-transparent">{campaign.campaign.title}</span>
             </h1>
             {campaign.campaign.description && <p className="text-xs text-white/60 truncate">{campaign.campaign.description}</p>}
           </div>
@@ -245,7 +245,7 @@ export default function FreeDeliveryPage() {
             </div>
             <div className="relative h-3 bg-white/10 rounded-full overflow-hidden ring-1 ring-white/10">
               <div
-                className="h-full bg-gradient-to-r from-red-500 via-rose-400 to-amber-400 transition-all duration-700 relative"
+                className="h-full bg-gradient-to-r from-red-500 via-slate-100 to-amber-400 transition-all duration-700 relative"
                 style={{ width: `${progress}%` }}
               >
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] animate-[shimmer_2s_infinite]" />
@@ -400,7 +400,7 @@ export default function FreeDeliveryPage() {
             <Button
               onClick={submit}
               disabled={submitting || !canOrder}
-              className="w-full h-12 text-base font-extrabold text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-red-600 border border-amber-300/30 shadow-[0_15px_40px_-12px_rgba(220,38,38,0.7)]"
+              className="w-full h-12 text-base font-extrabold text-white bg-gradient-to-r from-red-600 via-slate-100 to-red-700 hover:from-red-500 hover:to-red-600 border border-amber-300/30 shadow-[0_15px_40px_-12px_rgba(220,38,38,0.7)]"
             >
               {submitting ? "অর্ডার হচ্ছে..." : `অর্ডার কনফার্ম করুন (৳${toBn(totalAmount)})`}
             </Button>

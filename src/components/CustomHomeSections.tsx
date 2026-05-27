@@ -17,7 +17,7 @@ const accentMap: Record<string, { text: string; from: string; glow: string; ring
   red:     { text: "text-blue-500",     from: "from-blue-600",     glow: "bg-blue-600/8",     ring: "border-blue-600/30 hover:bg-blue-600/10",       btn: "bg-blue-600" },
   green:   { text: "text-emerald-400", from: "from-emerald-500", glow: "bg-emerald-500/8", ring: "border-emerald-500/30 hover:bg-emerald-500/10", btn: "bg-emerald-500" },
   blue:    { text: "text-sky-400",     from: "from-sky-500",     glow: "bg-sky-500/8",     ring: "border-sky-500/30 hover:bg-sky-500/10",       btn: "bg-sky-500" },
-  rose:    { text: "text-rose-400",    from: "from-rose-500",    glow: "bg-rose-500/8",    ring: "border-rose-500/30 hover:bg-rose-500/10",     btn: "bg-rose-500" },
+  rose:    { text: "text-blue-600",    from: "from-slate-100",    glow: "bg-slate-100",    ring: "border-slate-200/30 hover:bg-slate-100",     btn: "bg-slate-100" },
   violet:  { text: "text-violet-400",  from: "from-violet-500",  glow: "bg-violet-500/8",  ring: "border-violet-500/30 hover:bg-violet-500/10", btn: "bg-violet-500" },
 };
 

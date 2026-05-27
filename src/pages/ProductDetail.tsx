@@ -22,7 +22,7 @@ import WatermarkedImage from "@/components/WatermarkedImage";
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const BRAND_GREEN = "#3b82f6";
-const BRAND_DARK = "#991b1b";
+const BRAND_DARK = "#3b82f6";
 const ACCENT_RED = "#d6302c";
 
 const ProductDetail = () => {
@@ -296,14 +296,14 @@ const ProductDetail = () => {
           "radial-gradient(80% 50% at 0% 0%, hsl(0 75% 22% / 0.55), transparent 60%)",
           "radial-gradient(70% 50% at 100% 10%, hsl(350 70% 28% / 0.5), transparent 60%)",
           "radial-gradient(90% 60% at 50% 100%, hsl(0 80% 18% / 0.55), transparent 65%)",
-          "linear-gradient(160deg, #1a0608 0%, #2a0a0e 25%, #0d0405 55%, #2a0a0e 85%, #1a0608 100%)",
+          "linear-gradient(160deg, #f8fafc 0%, #2a0a0e 25%, #ffffff 55%, #2a0a0e 85%, #f8fafc 100%)",
         ].join(", "),
       }}
     >
       {/* ambient blobs + grain */}
       <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
         <div className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-blue-600/20 blur-[120px]" />
-        <div className="absolute bottom-10 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-700/20 blur-[140px]" />
+        <div className="absolute bottom-10 -right-24 w-[28rem] h-[28rem] rounded-full bg-slate-100 blur-[140px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full bg-slate-900/15 blur-[160px]" />
         <div
           className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
@@ -380,7 +380,7 @@ const ProductDetail = () => {
           {/* sheen */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-10%,rgba(255,255,255,0.08),transparent_55%)]" />
           {/* ambient blobs */}
-          <div className="pointer-events-none absolute -top-20 -left-16 w-72 h-72 rounded-full bg-rose-600/20 blur-[110px]" />
+          <div className="pointer-events-none absolute -top-20 -left-16 w-72 h-72 rounded-full bg-slate-100 blur-[110px]" />
           <div className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-slate-900/25 blur-[130px]" />
 
           {/* Image gallery */}
@@ -478,7 +478,7 @@ const ProductDetail = () => {
                         key={i}
                         type="button"
                         onClick={() => setSelectedVariantIdx(i)}
-                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-blue-600 bg-gradient-to-br from-red-950/80 via-slate-900/60 to-rose-900/50 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.55)]" : "border-border bg-card hover:border-blue-600/40"}`}
+                        className={`text-left border-2 rounded-xl px-3 py-2 transition-all ${active ? "border-blue-600 bg-gradient-to-br from-red-950/80 via-slate-900/60 to-slate-100/50 shadow-[0_8px_20px_-8px_rgba(220,38,38,0.55)]" : "border-border bg-card hover:border-blue-600/40"}`}
                       >
                         <div className="font-bold text-sm text-foreground">{v.label}</div>
                         <div className="text-xs">
@@ -752,7 +752,7 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="mx-5 mt-4 space-y-3">
-                  <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
+                  <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-4 flex items-center gap-3">
                     {product.image_url && <img src={product.image_url} alt="" className="w-14 h-14 rounded-xl object-cover" />}
                     <div className="flex-1">
                       <p className="text-xs text-muted-foreground">পণ্যের মূল্য</p>

@@ -14,7 +14,7 @@ import PaymentMethodPicker, { PaymentMethod } from "@/components/PaymentMethodPi
 
 const toBn = (n: number) => Math.round(n).toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#3b82f6";
-const BRAND_DARK = "#991b1b";
+const BRAND_DARK = "#3b82f6";
 
 export const CartDrawer = () => {
   const { items, count, total, totalWeightGrams, offer, isOpen, close, updateQty, removeItem, clear } = useCart();
@@ -215,7 +215,7 @@ export const CartDrawer = () => {
         ) : (
           <>
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
-              <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 space-y-1.5">
+              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-4 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{toBn(count)} টি পণ্য (সাবটোটাল)</span>
                   <span className="font-bold text-foreground">৳{toBn(total)}</span>
@@ -226,7 +226,7 @@ export const CartDrawer = () => {
                     ? <span className="font-bold text-blue-700">ফ্রি</span>
                     : <span className="font-bold text-foreground">৳{toBn(delivery.charge)}</span>}
                 </div>
-                <div className="flex items-center justify-between border-t border-[#fecaca] pt-1.5">
+                <div className="flex items-center justify-between border-t border-[#e2e8f0] pt-1.5">
                   <span className="text-sm font-bold text-foreground/80">মোট পরিশোধ</span>
                   <span className="text-xl font-extrabold" style={{ color: BRAND_DARK }}>৳{toBn(grandTotal)}</span>
                 </div>

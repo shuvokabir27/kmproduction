@@ -143,7 +143,7 @@ export default function ShopOfferPopup() {
       onClick={dismiss}
     >
       <div
-        className="relative w-full max-w-md bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-red-950 dark:via-slate-900 dark:to-red-950 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', serif" }}
       >

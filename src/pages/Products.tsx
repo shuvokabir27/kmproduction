@@ -25,7 +25,7 @@ import FloatingCartButton from "@/components/FloatingCartButton";
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
 const BRAND_GREEN = "#3b82f6";
-const BRAND_DARK = "#991b1b";
+const BRAND_DARK = "#3b82f6";
 const ACCENT_RED = "#d6302c";
 
 const Products = () => {
@@ -227,7 +227,7 @@ const Products = () => {
         <div
           className="relative overflow-hidden text-white text-xs md:text-sm py-2"
           style={{
-            backgroundImage: "linear-gradient(90deg, #4a0a0a 0%, #2563eb 25%, #e11d48 50%, #2563eb 75%, #4a0a0a 100%)",
+            backgroundImage: "linear-gradient(90deg, #f8fafc 0%, #2563eb 25%, #3b82f6 50%, #2563eb 75%, #f8fafc 100%)",
           }}
         >
           <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
@@ -272,27 +272,14 @@ const Products = () => {
       )}
 
       {/* Header — Premium */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-[linear-gradient(115deg,hsl(0_70%_8%/0.92)_0%,hsl(340_60%_10%/0.9)_35%,hsl(260_50%_10%/0.88)_70%,hsl(210_60%_10%/0.92)_100%)] backdrop-blur-2xl shadow-[0_10px_40px_-12px_hsl(0_0%_0%/0.7),inset_0_-1px_0_0_hsl(40_90%_55%/0.18)]">
-        {/* ambient color blooms */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-24 -left-10 w-72 h-40 bg-rose-500/20 blur-3xl rounded-full" />
-          <div className="absolute -top-20 left-1/3 w-72 h-40 bg-fuchsia-500/15 blur-3xl rounded-full" />
-          <div className="absolute -top-24 right-10 w-72 h-40 bg-amber-400/15 blur-3xl rounded-full" />
-          <div className="absolute inset-0 bg-[radial-gradient(120%_60%_at_50%_-20%,rgba(255,255,255,0.06),transparent_60%)]" />
-        </div>
-        {/* top hairline accent — gold→rose→indigo */}
-        <div className="relative h-px w-full bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-rose-500/0 via-rose-400/60 to-indigo-400/0" />
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="relative">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-600/60 via-rose-500/40 to-blue-700/60 blur-md opacity-70 group-hover:opacity-100 transition-opacity" />
-              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-gradient-to-br from-blue-600 via-rose-600 to-slate-900 ring-1 ring-white/20 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.35),inset_0_-1px_0_0_hsl(0_0%_0%/0.35)]">
-                KM
-              </div>
+            <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-blue-600 shadow-sm">
+              KM
             </div>
             <div className="hidden sm:block">
-              <div className="font-extrabold text-base md:text-lg leading-tight bg-gradient-to-r from-slate-300 via-rose-200 to-slate-300 bg-clip-text text-transparent" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
+              <div className="font-extrabold text-base md:text-lg leading-tight text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
               <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">KM Shop · কুয়াকাটা</div>
             </div>
           </Link>
@@ -597,68 +584,58 @@ const Products = () => {
       {/* Hero Banner — Premium */}
       <section className="px-4 py-6 md:py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="relative rounded-[28px] overflow-hidden">
-            {/* layered premium background */}
-            <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_20%,hsl(0_90%_55%/0.95),transparent_60%),radial-gradient(70%_70%_at_85%_90%,hsl(355_85%_38%/0.95),transparent_65%),linear-gradient(135deg,hsl(0_85%_42%)_0%,hsl(355_80%_30%)_60%,hsl(0_60%_18%)_100%)]" />
-            {/* fine grain noise */}
-            <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22><filter id=%22n%22><feTurbulence baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.6%22/></svg>')]" />
-            {/* top sheen */}
-            <div className="absolute inset-x-0 top-0 h-1/2 bg-[linear-gradient(180deg,hsl(0_0%_100%/0.18)_0%,transparent_80%)] pointer-events-none" />
-            {/* gold hairline ring */}
-            <div className="absolute inset-0 rounded-[28px] ring-1 ring-inset ring-white/15 pointer-events-none" />
-            <div className="absolute inset-0 rounded-[28px] shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25),inset_0_-1px_0_0_hsl(0_0%_0%/0.4),0_30px_80px_-20px_hsl(0_85%_30%/0.6)] pointer-events-none" />
-            {/* soft floating orbs */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-amber-300/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-rose-400/20 blur-3xl pointer-events-none" />
+          <div className="relative rounded-[28px] overflow-hidden border border-slate-200 bg-white shadow-sm">
+            {/* subtle accent orbs */}
+            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-slate-100 blur-3xl pointer-events-none" />
 
             <div className="relative grid md:grid-cols-2 gap-8 items-center p-7 md:p-14" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-              <div className="text-white text-center md:text-left order-2 md:order-1">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-white/25 bg-white/10 backdrop-blur-xl shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.25)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+              <div className="text-slate-900 text-center md:text-left order-2 md:order-1">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-slate-200 bg-slate-50" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-60 animate-ping" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-200" />
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-60 animate-ping" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
                   </span>
-                  <span className="font-semibold text-white/95">কুয়াকাটার অথেনটিক পণ্য</span>
+                  <span className="font-semibold text-slate-700">কুয়াকাটার অথেনটিক পণ্য</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5 drop-shadow-[0_2px_20px_rgba(0,0,0,0.35)]" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5 text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   প্রতিদিনের সুস্থতায় হোক
                   <br />
-                  <span className="bg-gradient-to-r from-amber-200 via-rose-100 to-amber-300 bg-clip-text text-transparent">
-                    খাঁটি পণ্য
-                  </span>
+                  <span className="text-blue-600">খাঁটি পণ্য</span>
                 </h1>
-                <div className="h-px w-24 mx-auto md:mx-0 mb-5 bg-gradient-to-r from-transparent via-amber-200/70 to-transparent" />
-                <p className="text-white/85 text-sm md:text-base mb-7 max-w-md mx-auto md:mx-0 leading-relaxed" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                <div className="h-px w-24 mx-auto md:mx-0 mb-5 bg-slate-200" />
+                <p className="text-slate-600 text-sm md:text-base mb-7 max-w-md mx-auto md:mx-0 leading-relaxed" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   সরাসরি কুয়াকাটার সমুদ্র সৈকত ও স্থানীয় কৃষক থেকে সংগ্রহ করা ১০০% খাঁটি ও তাজা পণ্য — শুঁটকি, মধু, তালের গুড়, হস্তশিল্প আরও অনেক কিছু।
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start items-center" style={{ fontFamily: "'Tiro Bangla', serif" }}>
                   <a href="#shop">
-                    <Button className="h-12 rounded-full px-7 gap-2 font-bold">
+                    <Button className="h-12 rounded-full px-7 gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white">
                       <ShoppingBag className="h-4 w-4" /> এখনই কিনুন
                     </Button>
                   </a>
                   {whatsappNo && (
                     <a href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="h-12 rounded-full px-7 gap-2 font-bold">
+                      <Button variant="outline" className="h-12 rounded-full px-7 gap-2 font-bold border-slate-300 text-slate-700">
                         <Phone className="h-4 w-4" /> অর্ডার করুন
                       </Button>
                     </a>
                   )}
-                  <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-white/20">
+                  <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-slate-200">
                     <div className="flex -space-x-2">
                       {[0,1,2].map(i => (
-                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white/30 bg-gradient-to-br from-amber-300 to-rose-400" />
+                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white bg-slate-200" />
                       ))}
                     </div>
-                    <div className="text-[11px] leading-tight text-white/90">
+                    <div className="text-[11px] leading-tight text-slate-700">
                       <div className="flex items-center gap-0.5">
-                        {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-amber-300 text-amber-300" />)}
+                        {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}
                       </div>
-                      <span className="text-white/70">১০,০০০+ খুশি গ্রাহক</span>
+                      <span className="text-slate-500">১০,০০০+ খুশি গ্রাহক</span>
                     </div>
                   </div>
                 </div>
               </div>
+
 
               <div className="relative block mt-4 md:mt-0 order-1 md:order-2">
                 {(() => {
@@ -667,8 +644,8 @@ const Products = () => {
                   return (
                     <>
                       {/* premium gradient frame */}
-                      <div className="relative rounded-[26px] p-[1.5px] bg-gradient-to-br from-amber-300/70 via-white/10 to-rose-400/60 shadow-[0_30px_60px_-20px_hsl(0_70%_15%/0.6)]">
-                        <div className="aspect-square rounded-[24px] overflow-hidden relative bg-black/30 backdrop-blur-xl border border-white/10">
+                      <div className="relative rounded-[26px] p-[1.5px] bg-slate-100 shadow-sm">
+                        <div className="aspect-square rounded-[24px] overflow-hidden relative bg-slate-50 border border-slate-200">
                           {current ? (
                             <Link to={`/products/${current.slug || current.id}`} className="block w-full h-full group">
                               {slides.map((p: any, i: number) => (
@@ -703,7 +680,7 @@ const Products = () => {
                               key={i}
                               onClick={() => setHeroSlide(i)}
                               aria-label={`slide ${i + 1}`}
-                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-gradient-to-r from-amber-200 to-rose-200' : 'w-1.5 bg-white/40'}`}
+                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-gradient-to-r from-amber-200 to-slate-100' : 'w-1.5 bg-white/40'}`}
                             />
                           ))}
                         </div>
@@ -939,54 +916,35 @@ const Products = () => {
       </section>
 
       {/* Footer — Premium */}
-      <footer
-        className="relative text-white pt-14 pb-6 px-4 overflow-hidden border-t border-white/10"
-        style={{
-          backgroundImage: [
-            "radial-gradient(60% 50% at 10% 0%, hsl(0 80% 30% / 0.55), transparent 60%)",
-            "radial-gradient(50% 50% at 90% 10%, hsl(340 70% 35% / 0.45), transparent 60%)",
-            "radial-gradient(80% 60% at 50% 100%, hsl(0 75% 20% / 0.6), transparent 65%)",
-            "linear-gradient(160deg, #1a0608 0%, #2a0a10 35%, #0d0405 70%, #2a0a10 100%)",
-          ].join(", "),
-        }}
-      >
-        {/* gold hairline */}
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-        {/* ambient blobs */}
-        <div className="pointer-events-none absolute -top-20 -left-16 w-80 h-80 rounded-full bg-rose-600/25 blur-[120px]" />
-        <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-slate-900/30 blur-[140px]" />
-
+      <footer className="relative text-slate-700 pt-14 pb-6 px-4 overflow-hidden border-t border-slate-200 bg-slate-50">
         <div className="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-rose-400/50 to-blue-700/60 blur-md opacity-80" />
-                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 via-rose-600 to-slate-900 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
-              </div>
-              <div className="font-extrabold text-lg bg-gradient-to-r from-amber-200 via-rose-100 to-amber-200 bg-clip-text text-transparent">
+              <div className="relative w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold shadow-sm">KM</div>
+              <div className="font-extrabold text-lg text-slate-900">
                 {siteSettings?.shop_name || "কে এম শপ"}
               </div>
             </div>
-            <p className="text-white/75 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
+            <p className="text-slate-600 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
             <Link
               to="/media"
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-rose-500 to-blue-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
               <Star className="h-4 w-4 fill-white text-white" />
               KM Production ভিজিট করুন
             </Link>
           </div>
           <div>
-            <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
-            <ul className="space-y-2 text-white/75">
-              <li><a href="#shop" className="hover:text-amber-200 transition-colors">শপ</a></li>
-              <li><a href="#about" className="hover:text-amber-200 transition-colors">আমাদের সম্পর্কে</a></li>
-              <li><a href="#contact" className="hover:text-amber-200 transition-colors">যোগাযোগ</a></li>
+            <h4 className="font-extrabold mb-3 text-slate-900 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
+            <ul className="space-y-2 text-slate-600">
+              <li><a href="#shop" className="hover:text-blue-600 transition-colors">শপ</a></li>
+              <li><a href="#about" className="hover:text-blue-600 transition-colors">আমাদের সম্পর্কে</a></li>
+              <li><a href="#contact" className="hover:text-blue-600 transition-colors">যোগাযোগ</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-extrabold mb-3 text-amber-200/95 tracking-wide uppercase text-xs">যোগাযোগ</h4>
-            <ul className="space-y-2 text-white/75">
+            <h4 className="font-extrabold mb-3 text-slate-900 tracking-wide uppercase text-xs">যোগাযোগ</h4>
+            <ul className="space-y-2 text-slate-600">
               {contactPhone && <li>📞 {contactPhone}</li>}
               {whatsappNo && <li>💬 WhatsApp: +{whatsappNo}</li>}
               {(siteSettings as any)?.shop_email && <li>✉️ {(siteSettings as any).shop_email}</li>}
@@ -994,8 +952,8 @@ const Products = () => {
             </ul>
           </div>
         </div>
-        <div className="relative max-w-7xl mx-auto mt-10 pt-4 text-center text-xs text-white/60">
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent" />
+        <div className="relative max-w-7xl mx-auto mt-10 pt-4 text-center text-xs text-slate-500">
+          <div className="absolute top-0 inset-x-0 h-px bg-slate-200" />
           © {toBn(new Date().getFullYear())} {(siteSettings as any)?.shop_copyright || "কে এম শপ। সর্বস্বত্ব সংরক্ষিত।"}
         </div>
       </footer>
@@ -1059,7 +1017,7 @@ const Products = () => {
                   const grand = total + dlv.charge;
                   return (
                     <div className="mx-5 mt-4 space-y-3">
-                      <div className="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex items-center gap-3">
+                      <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-4 flex items-center gap-3">
                         {p.image_url && <img src={p.image_url} alt={p.name} className="w-14 h-14 rounded-xl object-cover" />}
                         <div className="flex-1">
                           <p className="text-xs text-muted-foreground">পণ্যের মূল্য</p>
