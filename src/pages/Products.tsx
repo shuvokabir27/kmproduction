@@ -916,38 +916,19 @@ const Products = () => {
       </section>
 
       {/* Footer — Premium */}
-      <footer
-        className="relative text-white pt-14 pb-6 px-4 overflow-hidden border-t border-white/10"
-        style={{
-          backgroundImage: [
-            "radial-gradient(60% 50% at 10% 0%, hsl(0 80% 30% / 0.55), transparent 60%)",
-            "radial-gradient(50% 50% at 90% 10%, hsl(340 70% 35% / 0.45), transparent 60%)",
-            "radial-gradient(80% 60% at 50% 100%, hsl(0 75% 20% / 0.6), transparent 65%)",
-            "linear-gradient(160deg, #f8fafc 0%, #f1f5f9 35%, #ffffff 70%, #f1f5f9 100%)",
-          ].join(", "),
-        }}
-      >
-        {/* gold hairline */}
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-        {/* ambient blobs */}
-        <div className="pointer-events-none absolute -top-20 -left-16 w-80 h-80 rounded-full bg-slate-100 blur-[120px]" />
-        <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-slate-900/30 blur-[140px]" />
-
+      <footer className="relative text-slate-700 pt-14 pb-6 px-4 overflow-hidden border-t border-slate-200 bg-slate-50">
         <div className="relative max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-300/60 via-slate-100/50 to-blue-700/60 blur-md opacity-80" />
-                <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-blue-600 via-slate-100 to-slate-900 ring-1 ring-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),inset_0_-1px_0_0_rgba(0,0,0,0.35)] flex items-center justify-center font-extrabold">KM</div>
-              </div>
-              <div className="font-extrabold text-lg bg-gradient-to-r from-amber-200 via-slate-100 to-amber-200 bg-clip-text text-transparent">
+              <div className="relative w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold shadow-sm">KM</div>
+              <div className="font-extrabold text-lg text-slate-900">
                 {siteSettings?.shop_name || "কে এম শপ"}
               </div>
             </div>
-            <p className="text-white/75 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
+            <p className="text-slate-600 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
             <Link
               to="/media"
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-amber-500 via-slate-100 to-blue-600 ring-1 ring-amber-200/40 shadow-[0_8px_20px_-6px_rgba(244,63,94,0.55),inset_0_1px_0_0_rgba(255,255,255,0.35)] hover:shadow-[0_12px_28px_-8px_rgba(244,63,94,0.7),inset_0_1px_0_0_rgba(255,255,255,0.4)] hover:-translate-y-0.5 transition-all"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
               <Star className="h-4 w-4 fill-white text-white" />
               KM Production ভিজিট করুন
