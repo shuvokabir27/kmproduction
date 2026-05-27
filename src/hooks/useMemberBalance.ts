@@ -118,7 +118,7 @@ export function useMemberBalance(profileId: string | undefined) {
       const totalFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
       freelanceData?.forEach((f: any) => {
         const rate = Number(f.rate || 0);
-        addEvent("client", rate, f.created_at, getEffectivePaidAmount(rate, Number(f.paid_amount || 0), f.is_paid));
+        addEvent("client", rate, f.created_at, getEffectivePaidAmount(rate, Number(f.paid_amount || 0), f.is_paid), true);
       });
 
       // Client-portal artist work — match by profile_id (admin-added) OR artist_name (legacy)
