@@ -11,6 +11,7 @@ import { useDeliverySettings } from "@/hooks/useDeliverySettings";
 import { calculateDelivery } from "@/lib/delivery";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 const BRAND_GREEN = "#3b82f6";
@@ -116,8 +117,15 @@ export default function QuickOrderDialog({ product, open, onClose }: Props) {
         payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
       } as any).select("order_number").single();
       if (error) throw error;
-      setOrderNumber((inserted as any)?.order_number ?? null);
+      const oNum = (inserted as any)?.order_number ?? null;
+      setOrderNumber(oNum);
       setOrderSuccess(true);
+      if (oNum) {
+        sendTeamSms({
+          phone: orderForm.phone,
+          message: `Dhonnobad! Apnar order #${oNum} grohon kora hoyeche. Amader protinidi sigroi call diye confirm korben. - Kuakata Multimedia`,
+        });
+      }
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে");
     } finally {

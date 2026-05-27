@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useCart } from "@/hooks/useCart";
 import { useShopCustomer } from "@/hooks/useShopCustomer";
 import WatermarkedImage from "@/components/WatermarkedImage";
+import { sendTeamSms } from "@/lib/sendTeamSms";
 
 const toBn = (n: number) => n.toString().replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
 
@@ -222,8 +223,15 @@ const ProductDetail = () => {
         payment_trx_id: orderForm.payment_method !== "cod" ? orderForm.payment_trx_id.trim() : null,
       } as any).select("order_number").single();
       if (error) throw error;
-      setOrderNumber((inserted as any)?.order_number ?? null);
+      const oNum = (inserted as any)?.order_number ?? null;
+      setOrderNumber(oNum);
       setOrderSuccess(true);
+      if (oNum) {
+        sendTeamSms({
+          phone: orderForm.phone,
+          message: `Dhonnobad! Apnar order #${oNum} grohon kora hoyeche. Amader protinidi sigroi call diye confirm korben. - Kuakata Multimedia`,
+        });
+      }
       setOrderForm({ name: "", phone: "", address: "", payment_method: "cod", payment_sender_no: "", payment_trx_id: "" });
     } catch {
       toast.error("অর্ডার করতে সমস্যা হয়েছে");
