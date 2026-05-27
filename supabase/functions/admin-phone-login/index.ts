@@ -44,19 +44,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Confirm role
-    const { data: roleRow } = await admin
+    // Confirm role (admin OR product_admin)
+    const { data: roleRows } = await admin
       .from("user_roles")
       .select("role")
       .eq("user_id", row.user_id)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (!roleRow) {
+      .in("role", ["admin", "product_admin"]);
+    if (!roleRows || roleRows.length === 0) {
       return new Response(JSON.stringify({ error: "এই ইউজার এডমিন নয়" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const isProductAdmin = roleRows.some((r: any) => r.role === "product_admin");
 
     const { data: userRes, error: userErr } = await admin.auth.admin.getUserById(row.user_id);
     if (userErr || !userRes?.user?.email) {
@@ -82,6 +82,7 @@ Deno.serve(async (req) => {
       JSON.stringify({
         access_token: authData.session?.access_token,
         refresh_token: authData.session?.refresh_token,
+        is_product_admin: isProductAdmin,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

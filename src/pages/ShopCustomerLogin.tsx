@@ -74,6 +74,35 @@ export default function ShopCustomerLogin() {
       return;
     }
 
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    // Special: KM Shop admin phone → route to Supabase admin auth
+    if (mode === "login" && phoneDigits === "01710147613") {
+      setLoading(true);
+      try {
+        // First call setup once (idempotent) to ensure admin user exists
+        await supabase.functions.invoke("setup-shop-admin", { body: {} });
+        const { data, error } = await supabase.functions.invoke("admin-phone-login", {
+          body: { phone: phoneDigits, password },
+        });
+        if (error || (data as any)?.error) {
+          toast.error((data as any)?.error || error?.message || "লগইন ব্যর্থ");
+          setLoading(false);
+          return;
+        }
+        const { access_token, refresh_token } = data as any;
+        const { error: setErr } = await supabase.auth.setSession({ access_token, refresh_token });
+        if (setErr) { toast.error(setErr.message); setLoading(false); return; }
+        toast.success("অ্যাডমিন লগইন সফল");
+        nav("/admin/products");
+      } catch (e: any) {
+        toast.error(e?.message || "লগইন ব্যর্থ");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
     if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
     if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
@@ -250,7 +279,7 @@ export default function ShopCustomerLogin() {
                       type={showPassword ? "text" : "password"}
                       inputMode="numeric"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value.replace(/\D/g, ""))}
+                      onChange={(e) => setPassword(phone.replace(/\D/g, "") === "01710147613" ? e.target.value : e.target.value.replace(/\D/g, ""))}
                       placeholder="••••••"
                       className={inputClass}
                     />
