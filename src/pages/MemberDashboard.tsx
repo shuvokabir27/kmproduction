@@ -508,15 +508,15 @@ const MemberDashboard = () => {
           }, 0);
           const totalDue = Math.max(0, totalEarning - totalPaid);
           const statusMap: Record<string, { label: string; cls: string }> = {
-            upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+            upcoming: { label: "আসন্ন", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
             ongoing:  { label: "চলছে", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
             completed:{ label: "সম্পন্ন", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
-            paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
+            paid:     { label: "পেইড", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
           };
           return (
-            <div className="premium-card rounded-2xl overflow-hidden">
+            <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
               <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                   <Briefcase className="h-4 w-4 text-red-400" />
                 </div>
                 <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ (Outsourcing)</h2>
@@ -533,9 +533,9 @@ const MemberDashboard = () => {
                   <p className="text-[10px] text-muted-foreground">পেইড</p>
                   <p className="text-sm md:text-base font-bold text-red-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
                 </div>
-                <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3">
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3">
                   <p className="text-[10px] text-muted-foreground">বাকি</p>
-                  <p className="text-sm md:text-base font-bold text-rose-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
+                  <p className="text-sm md:text-base font-bold text-red-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
                 </div>
               </div>
 
