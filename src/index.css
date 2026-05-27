@@ -690,3 +690,36 @@
 .cat-card-enter {
   animation: catCardEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* Member Dashboard minimal red/black/white theme overrides */
+.member-dash-red { color: #0a0a0a; }
+.member-dash-red .text-foreground { color: #0a0a0a !important; }
+.member-dash-red .text-muted-foreground { color: #525252 !important; }
+.member-dash-red .text-red-400,
+.member-dash-red .text-red-500 { color: #dc2626 !important; }
+.member-dash-red .border-border\/70,
+.member-dash-red .border-border\/30,
+.member-dash-red .border-border { border-color: #e5e5e5 !important; }
+
+/* Convert all dark "card" surfaces into red cards */
+.member-dash-red .bg-card,
+.member-dash-red .bg-secondary\/30 {
+  background-color: #dc2626 !important;
+  border-color: #991b1b !important;
+  color: #ffffff !important;
+}
+.member-dash-red .bg-card .text-foreground,
+.member-dash-red .bg-card .text-red-400,
+.member-dash-red .bg-card .text-red-500,
+.member-dash-red .bg-card h1,
+.member-dash-red .bg-card h2,
+.member-dash-red .bg-card h3,
+.member-dash-red .bg-card p,
+.member-dash-red .bg-card span,
+.member-dash-red .bg-card button { color: #ffffff !important; }
+.member-dash-red .bg-card .text-muted-foreground { color: rgba(255,255,255,0.85) !important; }
+.member-dash-red .bg-card .border-border\/70,
+.member-dash-red .bg-card .border-primary\/25,
+.member-dash-red .bg-card .border-primary\/30 { border-color: rgba(255,255,255,0.35) !important; }
+.member-dash-red .bg-card .bg-primary\/10,
+.member-dash-red .bg-card .bg-background\/40 { background-color: rgba(255,255,255,0.15) !important; }
