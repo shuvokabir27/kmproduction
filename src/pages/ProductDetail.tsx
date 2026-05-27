@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
-import MobileShopNav from "@/components/MobileShopNav";
 import FloatingCartButton from "@/components/FloatingCartButton";
 import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
@@ -865,7 +864,6 @@ const ProductDetail = () => {
           </div>
         </div>
       )}
-      <MobileShopNav />
       <FloatingCartButton />
       </div>
     </div>

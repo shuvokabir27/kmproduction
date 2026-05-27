@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { ShoppingBag, LogOut, Phone, Package, ArrowLeft, Calendar, MapPin, User, Save, Pencil, RefreshCw, XCircle, Truck, CheckCircle2, Clock, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import MobileShopNav from "@/components/MobileShopNav";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -376,7 +375,6 @@ export default function ShopCustomerAccount() {
         </div>
 
       </main>
-      <MobileShopNav />
 
       <Dialog open={!!trackOrder} onOpenChange={(o) => !o && setTrackOrder(null)}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-0 rounded-3xl" style={{ fontFamily: "'Tiro Bangla', serif" }}>

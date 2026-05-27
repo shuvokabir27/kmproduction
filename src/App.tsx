@@ -12,6 +12,7 @@ import { RouteGuard } from "@/components/RouteGuard";
 import { PermissionGuard } from "@/components/PermissionGuard";
 import { CartProvider } from "@/hooks/useCart";
 import { CartDrawer } from "@/components/CartDrawer";
+import MobileShopNav from "@/components/MobileShopNav";
 
 
 // Lazy: landing page also lazy so admin/member routes don't pay for it
@@ -210,6 +211,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
+          <MobileShopNav />
         </BrowserRouter>
       </TooltipProvider>
       </CartProvider>
