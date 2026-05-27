@@ -121,9 +121,17 @@ const App = () => (
         <BrowserRouter>
           <Suspense fallback={<PageFallback />}>
           <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Products />} />
+            {/* Public routes — host-based: km.* shows Production, main domain shows Shop */}
+            <Route
+              path="/"
+              element={
+                typeof window !== "undefined" && /^km\./i.test(window.location.hostname)
+                  ? <PublicHome />
+                  : <Products />
+              }
+            />
             <Route path="/media" element={<PublicHome />} />
+            <Route path="/shop" element={<Products />} />
             <Route path="/member/:memberId" element={<PublicProfile />} />
             <Route path="/actor/:id" element={<ActorPortfolio />} />
             <Route path="/login" element={<Login />} />
