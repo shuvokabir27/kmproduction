@@ -126,12 +126,7 @@ export const CartDrawer = () => {
           <div className="flex items-center gap-2">
             {items.length > 0 && !checkout && !success && (
               <button
-                onClick={() => {
-                  if (confirm("কার্ট থেকে সব পণ্য সরিয়ে ফেলবেন?")) {
-                    clear();
-                    toast.success("কার্ট খালি করা হয়েছে");
-                  }
-                }}
+                onClick={() => setConfirmClear(true)}
                 className="text-[11px] font-bold px-3 h-8 rounded-full bg-card/15 hover:bg-card/25 flex items-center gap-1"
               >
                 <Trash2 className="h-3.5 w-3.5" /> সব মুছুন
