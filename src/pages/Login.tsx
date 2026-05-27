@@ -339,18 +339,53 @@ const Login = () => {
                         onChange={(e) => setResetOtp(e.target.value.replace(/\D/g, ""))}
                         className="bg-secondary border-border/30 h-10 text-sm tracking-widest text-center"
                       />
-                      <Input
-                        type="password"
-                        placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
-                        value={resetNewPass}
-                        onChange={(e) => setResetNewPass(e.target.value)}
-                        minLength={6}
-                        className="bg-secondary border-border/30 h-10 text-sm"
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showResetPassword ? "text" : "password"}
+                          placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)"
+                          value={resetNewPass}
+                          onChange={(e) => setResetNewPass(e.target.value)}
+                          minLength={6}
+                          className="bg-secondary border-border/30 h-10 text-sm pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowResetPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          tabIndex={-1}
+                        >
+                          {showResetPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <Input
+                          type={showResetConfirm ? "text" : "password"}
+                          placeholder="পাসওয়ার্ড নিশ্চিত করুন"
+                          value={resetConfirmPass}
+                          onChange={(e) => setResetConfirmPass(e.target.value)}
+                          minLength={6}
+                          className="bg-secondary border-border/30 h-10 text-sm pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowResetConfirm((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          tabIndex={-1}
+                        >
+                          {showResetConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      {resetNewPass && resetConfirmPass && resetNewPass !== resetConfirmPass && (
+                        <p className="text-xs text-destructive">পাসওয়ার্ড মিলছে না</p>
+                      )}
                       <Button
                         className="w-full h-10 text-sm"
-                        disabled={resetSending || resetOtp.length !== 6 || resetNewPass.length < 6}
+                        disabled={resetSending || resetOtp.length !== 6 || resetNewPass.length < 6 || resetNewPass !== resetConfirmPass}
                         onClick={async () => {
+                          if (resetNewPass !== resetConfirmPass) {
+                            toast.error("পাসওয়ার্ড মিলছে না!");
+                            return;
+                          }
                           setResetSending(true);
                           try {
                             const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/password-reset-otp`, {
