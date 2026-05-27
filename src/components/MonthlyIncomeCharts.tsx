@@ -179,12 +179,12 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
     return (
       <div className="space-y-2.5 md:space-y-3">
         <div className="grid grid-cols-2 gap-2.5 md:gap-3">
-          <div className="premium-card rounded-2xl h-20 animate-pulse" />
-          <div className="premium-card rounded-2xl h-20 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-20 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-20 animate-pulse" />
         </div>
         <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
-          <div className="premium-card rounded-2xl h-56 animate-pulse" />
-          <div className="premium-card rounded-2xl h-56 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-56 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-56 animate-pulse" />
         </div>
       </div>
     );
