@@ -896,14 +896,14 @@ const Products = () => {
           <div className="flex flex-wrap gap-3 justify-center">
             {contactPhone && (
               <a href={`tel:${contactPhone}`}>
-                <Button className="bg-blue-500 hover:bg-blue-600 text-slate-900 font-bold rounded-full px-6 h-12 gap-2">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full px-6 h-12 gap-2 shadow-md">
                   <Phone className="h-4 w-4" /> {contactPhone}
                 </Button>
               </a>
             )}
             {whatsappNo && (
               <a href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                <Button className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold rounded-full px-6 h-12 gap-2">
+                <Button className="bg-[#25D366] hover:bg-[#1ebe57] text-white font-bold rounded-full px-6 h-12 gap-2 shadow-md">
                   <MessageCircle className="h-4 w-4" /> WhatsApp
                 </Button>
               </a>
