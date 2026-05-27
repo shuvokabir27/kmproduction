@@ -197,16 +197,26 @@ const Login = () => {
                 <Label htmlFor="password" className="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wider">
                   পাসওয়ার্ড
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setErrorMsg(""); }}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 h-12 text-white placeholder:text-gray-600 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setErrorMsg(""); }}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 pr-12 h-12 text-white placeholder:text-gray-600 focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all duration-300"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
 
               <AnimatePresence>
