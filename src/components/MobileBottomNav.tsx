@@ -316,8 +316,8 @@ export function MobileBottomNav() {
                     <svg viewBox="0 0 80 56" className="h-full w-full" preserveAspectRatio="none">
                       <path
                         d="M0,15 Q0,15 8,15 Q20,15 22,5 Q26,-2 40,-2 Q54,-2 58,5 Q60,15 72,15 Q80,15 80,15 L80,56 L0,56 Z"
-                        fill="hsl(var(--card))"
-                        opacity="0.95"
+                        fill="#FFEDF4"
+                        opacity="1"
                       />
                     </svg>
                   </motion.div>
