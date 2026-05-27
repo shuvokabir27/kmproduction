@@ -344,7 +344,7 @@ export function MobileBottomNav() {
                   }
                 >
                   <tab.icon
-                    className={`transition-all duration-200 ${tab.color} ${
+                    className={`transition-all duration-200 ${active ? "text-white" : tab.color} ${
                       active ? "h-6 w-6" : "h-[22px] w-[22px]"
                     }`}
                   />
