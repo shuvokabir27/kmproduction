@@ -192,12 +192,12 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
 
   const { kmSeries, clientSeries, clientNames, kmTotal, clientTotal } = data;
   const palette = [
-    { from: "#ef4444", to: "#b91c1c" },
-    { from: "#f59e0b", to: "#b45309" },
-    { from: "#10b981", to: "#047857" },
-    { from: "#8b5cf6", to: "#6d28d9" },
-    { from: "#ec4899", to: "#be185d" },
-    { from: "#06b6d4", to: "#0e7490" },
+    { from: "#ef4444", to: "#7f1d1d" },
+    { from: "#ffffff", to: "#a3a3a3" },
+    { from: "#f87171", to: "#991b1b" },
+    { from: "#e5e5e5", to: "#525252" },
+    { from: "#dc2626", to: "#450a0a" },
+    { from: "#fca5a5", to: "#b91c1c" },
   ];
   const hasKm = kmSeries.some((d) => d.income > 0);
   const hasClient = clientNames.length > 0 && clientSeries.some((d) => clientNames.some((n) => Number(d[n]) > 0));
