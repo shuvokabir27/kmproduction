@@ -403,14 +403,12 @@ const OrderManagement = ({ initialTab }: { initialTab?: string } = {}) => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`whitespace-nowrap md:whitespace-normal px-3 md:px-5 py-1.5 md:py-3.5 rounded-full md:rounded-xl text-xs md:text-base font-medium md:font-semibold transition-all md:flex md:items-center md:justify-between md:gap-3 md:border ${
-                activeTab === tab.key
-                  ? "bg-primary text-primary-foreground md:border-primary md:shadow-[0_0_18px_-4px_hsl(var(--primary)/0.6)]"
-                  : "bg-secondary text-muted-foreground hover:bg-secondary/80 md:border-border/50 md:hover:border-primary/40"
+              className={`whitespace-nowrap md:whitespace-normal px-3 md:px-5 py-1.5 md:py-3.5 rounded-full md:rounded-xl text-xs md:text-base font-medium md:font-semibold transition-all md:flex md:items-center md:justify-between md:gap-3 border ${
+                activeTab === tab.key ? `${tab.active} md:shadow-md` : tab.idle
               }`}
             >
               <span>{tab.label}</span>
-              <span className={`md:ml-auto md:inline-flex md:items-center md:justify-center md:min-w-[28px] md:h-6 md:px-2 md:rounded-full md:text-xs md:font-bold ${activeTab === tab.key ? "md:bg-primary-foreground/20" : "md:bg-background/60"}`}>
+              <span className={`md:ml-auto md:inline-flex md:items-center md:justify-center md:min-w-[28px] md:h-6 md:px-2 md:rounded-full md:text-xs md:font-bold ${activeTab === tab.key ? "md:bg-white/25" : "md:bg-white/70"}`}>
                 {" "}({toBn(tab.count)})
               </span>
             </button>
