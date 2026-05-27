@@ -841,22 +841,36 @@ body * {
 
 /* Global button styling: white text on #E2136E background.
    Excludes sidebar, mobile bottom nav, icon-only ghost buttons, and unstyled toggles. */
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) {
+button:not([data-sidebar] button):not([data-no-magenta]) {
   background-color: #E2136E !important;
   color: #ffffff !important;
   border-color: #E2136E !important;
 }
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) svg,
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) * {
+button:not([data-sidebar] button):not([data-no-magenta]) svg,
+button:not([data-sidebar] button):not([data-no-magenta]) * {
   color: #ffffff !important;
   border-color: rgba(255,255,255,0.35) !important;
 }
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-primary"],
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-card"],
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-secondary"] {
+button:not([data-sidebar] button):not([data-no-magenta]) [class*="bg-primary"],
+button:not([data-sidebar] button):not([data-no-magenta]) [class*="bg-card"],
+button:not([data-sidebar] button):not([data-no-magenta]) [class*="bg-secondary"] {
   background-color: rgba(255,255,255,0.18) !important;
 }
-button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]):hover {
+button:not([data-sidebar] button):not([data-no-magenta]):hover {
   background-color: #c01060 !important;
   border-color: #c01060 !important;
 }
+
+/* Reset all magenta button styling inside mobile bottom nav and its More drawer */
+.mobile-bottom-nav button,
+.mobile-bottom-nav button:hover {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
+.mobile-bottom-nav button * {
+  color: inherit !important;
+  border-color: inherit !important;
+}
+
