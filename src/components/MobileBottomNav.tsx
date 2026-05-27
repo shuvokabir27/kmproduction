@@ -39,8 +39,8 @@ import { useMemo, useState } from "react";
 
 const permissionIconMap: Record<string, { icon: any; color: string; bg: string }> = {
   shooting_expenses: { icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
-  shootings: { icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
-  attendance: { icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+  shootings: { icon: Film, color: "text-red-400", bg: "bg-red-500/10" },
+  attendance: { icon: Calendar, color: "text-red-400", bg: "bg-red-500/10" },
 };
 
 const adminTabs = [
@@ -85,9 +85,9 @@ const moreItems = [
 ];
 
 const memberTabsBase = [
-  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-violet-400", bg: "bg-violet-500/15" },
-  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-sky-400", bg: "bg-sky-500/15" },
-  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-fuchsia-400", bg: "bg-fuchsia-500/15" },
+  { icon: LayoutDashboard, label: "ড্যাশবোর্ড", path: "/dashboard", color: "text-red-400", bg: "bg-red-500/15" },
+  { icon: MessageCircle, label: "চ্যাট", path: "/chat", color: "text-red-400", bg: "bg-red-500/15" },
+  { icon: ScrollText, label: "স্ক্রিপ্ট", path: "/scripts", color: "text-red-400", bg: "bg-red-500/15" },
 ];
 
 export function MobileBottomNav() {
@@ -115,8 +115,8 @@ export function MobileBottomNav() {
         }
       });
     }
-    items.push({ icon: Home, label: "সাইট দেখুন", path: "/", color: "text-teal-400", bg: "bg-teal-500/10" });
-    items.push({ icon: Settings, label: "সেটিংস", path: "/settings", color: "text-amber-400", bg: "bg-amber-500/10" });
+    items.push({ icon: Home, label: "সাইট দেখুন", path: "/", color: "text-red-400", bg: "bg-red-500/10" });
+    items.push({ icon: Settings, label: "সেটিংস", path: "/settings", color: "text-red-400", bg: "bg-red-500/10" });
     items.push({ icon: LogOut, label: "লগআউট", path: "__logout__", color: "text-destructive", bg: "bg-destructive/10" });
     return items;
   }, [permissions]);
@@ -133,7 +133,7 @@ export function MobileBottomNav() {
         bg: mapped.bg,
       };
     }).filter(Boolean) as { icon: any; label: string; path: string; color: string; bg: string }[];
-    return [...memberTabsBase, ...permTabs, { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-amber-400", bg: "bg-amber-500/15" }];
+    return [...memberTabsBase, ...permTabs, { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-red-400", bg: "bg-red-500/15" }];
   }, [permissions]);
 
   const tabs = isAdmin ? adminTabs : memberTabs;

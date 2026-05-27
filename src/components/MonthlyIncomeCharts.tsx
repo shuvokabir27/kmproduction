@@ -179,12 +179,12 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
     return (
       <div className="space-y-2.5 md:space-y-3">
         <div className="grid grid-cols-2 gap-2.5 md:gap-3">
-          <div className="premium-card rounded-2xl h-20 animate-pulse" />
-          <div className="premium-card rounded-2xl h-20 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-20 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-20 animate-pulse" />
         </div>
         <div className="grid md:grid-cols-2 gap-2.5 md:gap-3">
-          <div className="premium-card rounded-2xl h-56 animate-pulse" />
-          <div className="premium-card rounded-2xl h-56 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-56 animate-pulse" />
+          <div className="rounded-lg border border-border/70 bg-card h-56 animate-pulse" />
         </div>
       </div>
     );
@@ -217,16 +217,14 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2.5 md:space-y-3">
       {/* Income summary cards */}
       <div className={`grid ${showClient ? "grid-cols-2" : "grid-cols-1"} gap-2.5 md:gap-3`}>
-        <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "0s" }}>
+        <div className="rounded-lg border border-border/70 bg-card">
           <button
             type="button"
             onClick={onKmClick}
-            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
+            className="relative w-full text-left rounded-lg p-3 md:p-4 bg-card hover:bg-secondary/30 active:scale-[0.99] transition-all"
           >
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-            <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">
-              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/40 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
+              <div className="h-7 w-7 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                 <TrendingUp className="h-3.5 w-3.5 text-red-400" />
               </div>
               <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">KM Production</p>
@@ -243,16 +241,14 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
           </button>
         </div>
         {showClient && (
-        <div className="card-glow rounded-2xl" style={{ ["--glow-delay" as any]: "2.3s" }}>
+        <div className="rounded-lg border border-border/70 bg-card">
           <button
             type="button"
             onClick={onClientClick}
-            className="card-glow-inner relative w-full text-left rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/20 via-red-500/5 to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.35)] hover:ring-1 hover:ring-red-500/40 active:scale-[0.98] transition-all"
+            className="relative w-full text-left rounded-lg p-3 md:p-4 bg-card hover:bg-secondary/30 active:scale-[0.99] transition-all"
           >
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-            <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-red-500/25 blur-3xl" />
             <div className="relative flex items-center gap-2 mb-1.5">
-              <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/40 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner shrink-0">
+              <div className="h-7 w-7 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center shrink-0">
                 <Briefcase className="h-3.5 w-3.5 text-red-400" />
               </div>
               <p className="text-[10px] uppercase tracking-wider text-red-400/90 font-semibold truncate">
@@ -275,11 +271,9 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
 
       <div className={`grid ${showClient ? "md:grid-cols-2" : "md:grid-cols-1"} gap-2.5 md:gap-3`}>
       {/* KM Production */}
-      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-        <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/20 blur-3xl" />
+      <div className="relative overflow-hidden rounded-lg p-3 md:p-4 border border-border/70 bg-card">
         <div className="relative flex items-center gap-2 mb-2">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/30 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
+          <div className="h-7 w-7 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
             <TrendingUp className="h-3.5 w-3.5 text-red-400" />
           </div>
           <div className="min-w-0">
@@ -318,11 +312,9 @@ export function MonthlyIncomeCharts({ profileId, fullName, fullNameEn, onKmClick
       </div>
 
       {showClient && (
-      <div className="relative overflow-hidden rounded-2xl p-3 md:p-4 border border-white/10 bg-gradient-to-br from-red-500/10 via-card to-card shadow-[0_8px_30px_-12px_rgba(239,68,68,0.25)]">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-        <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/20 blur-3xl" />
+      <div className="relative overflow-hidden rounded-lg p-3 md:p-4 border border-border/70 bg-card">
         <div className="relative flex items-center gap-2 mb-2">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-red-500/30 to-red-600/10 border border-red-500/30 flex items-center justify-center shadow-inner">
+          <div className="h-7 w-7 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
             <Briefcase className="h-3.5 w-3.5 text-red-400" />
           </div>
           <div className="min-w-0">

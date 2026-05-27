@@ -88,16 +88,16 @@ const publicSiteItems = [
 ];
 
 const memberItems = [
-  { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard, color: "text-violet-400", bg: "bg-violet-500/10" },
-  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-purple-400", bg: "bg-purple-500/10" },
-  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-sky-400", bg: "bg-sky-500/10" },
-  { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-amber-400", bg: "bg-amber-500/10" },
+  { title: "আমার ড্যাশবোর্ড", url: "/dashboard", icon: LayoutDashboard, color: "text-red-400", bg: "bg-red-500/10" },
+  { title: "টাস্ক", url: "/tasks", icon: ListTodo, color: "text-red-400", bg: "bg-red-500/10" },
+  { title: "চ্যাট", url: "/chat", icon: MessageCircle, color: "text-red-400", bg: "bg-red-500/10" },
+  { title: "সেটিংস", url: "/settings", icon: Settings, color: "text-red-400", bg: "bg-red-500/10" },
 ];
 
 const permissionMenuMap: Record<string, { title: string; url: string; icon: any; color: string; bg: string }> = {
   shooting_expenses: { title: "শুটিং খরচ", url: "/admin/shooting-expenses", icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
   shootings: { title: "শুটিং", url: "/admin/shootings", icon: Film, color: "text-rose-400", bg: "bg-rose-500/10" },
-  attendance: { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-cyan-400", bg: "bg-cyan-500/10" },
+  attendance: { title: "হাজিরা", url: "/admin/attendance", icon: Calendar, color: "text-red-400", bg: "bg-red-500/10" },
 };
 
 export function AppSidebar() {

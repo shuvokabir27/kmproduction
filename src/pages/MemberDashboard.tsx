@@ -280,15 +280,15 @@ const MemberDashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {grantedPermissions.map((p) => {
               const meta: Record<string, { url: string; icon: any; gradient: string; iconColor: string }> = {
-                shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/20 to-rose-500/10", iconColor: "text-red-400" },
-                shootings: { url: "/admin/shootings", icon: Film, gradient: "from-rose-500/20 to-pink-500/10", iconColor: "text-rose-400" },
+                shooting_expenses: { url: "/admin/shooting-expenses", icon: Receipt, gradient: "from-red-500/10 to-card", iconColor: "text-red-400" },
+                shootings: { url: "/admin/shootings", icon: Film, gradient: "from-red-500/10 to-card", iconColor: "text-red-400" },
                 attendance: { url: "/admin/attendance", icon: Calendar, gradient: "from-red-500/20 to-red-500/5", iconColor: "text-red-400" },
               };
               const m = meta[p];
               if (!m) return null;
               const Icon = m.icon;
               return (
-                <Link key={p} to={m.url} className="premium-card rounded-2xl p-4 relative overflow-hidden hover:ring-1 hover:ring-primary/40 transition-all active:scale-[0.98]">
+                <Link key={p} to={m.url} className="rounded-lg border border-border/70 bg-card p-4 relative overflow-hidden hover:bg-secondary/30 transition-all active:scale-[0.99]">
                   <div className={`absolute inset-0 bg-gradient-to-br ${m.gradient} opacity-70`} />
                   <div className="relative z-10 flex items-center gap-3">
                     <div className="h-11 w-11 rounded-xl bg-background/40 backdrop-blur flex items-center justify-center">
@@ -323,15 +323,12 @@ const MemberDashboard = () => {
           })()}
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             <span
-              className="bg-clip-text text-transparent bg-[linear-gradient(120deg,hsl(0_85%_60%),hsl(0_0%_100%),hsl(0_85%_45%),hsl(0_0%_100%),hsl(0_85%_60%))] bg-[length:300%_100%] animate-[name-gradient_6s_linear_infinite]"
-              style={{
-                filter: "drop-shadow(0 0 12px hsl(0 85% 55% / 0.45))",
-              }}
+              className="text-foreground"
             >
               {profile?.full_name}
             </span>
             {profile?.is_verified && (
-              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-red-500 text-white align-middle ml-1.5 shadow-[0_0_14px_hsl(0_85%_55%/0.7)]">
+              <span title="ভেরিফাইড" className="inline-flex items-center justify-center h-5 w-5 md:h-6 md:w-6 rounded-full bg-primary text-primary-foreground align-middle ml-1.5">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 md:h-3.5 md:w-3.5">
                   <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
@@ -341,7 +338,7 @@ const MemberDashboard = () => {
           {profile?.is_verified && (
             <p className="text-red-400 text-[11px] md:text-xs font-medium">কুয়াকাটা মাল্টিমিডিয়া ভেরিফাইড মেম্বার</p>
           )}
-          <div className="inline-flex items-center gap-1.5 mt-0.5 px-3 py-1 rounded-full border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/15 shadow-[0_0_18px_-6px_hsl(var(--primary)/0.6)] backdrop-blur-sm">
+          <div className="inline-flex items-center gap-1.5 mt-0.5 px-3 py-1 rounded-full border border-primary/30 bg-primary/10">
             <span className="text-[10px] uppercase tracking-wider text-primary/80 font-semibold">আইডি</span>
             <span className="text-foreground text-xs font-bold tracking-wide">{profile?.member_id}</span>
           </div>
@@ -414,10 +411,10 @@ const MemberDashboard = () => {
         )}
 
         {/* Shootings */}
-        <div className="premium-card rounded-2xl overflow-hidden">
+        <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-rose-500/10 flex items-center justify-center">
-              <Film className="h-4 w-4 text-rose-400" />
+            <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
+              <Film className="h-4 w-4 text-red-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">শুটিং তালিকা</h2>
           </div>
@@ -426,13 +423,13 @@ const MemberDashboard = () => {
             {shootings?.map((s: any) => {
               const statusMap: Record<string, { label: string; color: string }> = {
                 plan: { label: "প্লান", color: "bg-muted/50 text-muted-foreground" },
-                upcoming: { label: "আসন্ন", color: "bg-warning/10 text-warning" },
+                upcoming: { label: "আসন্ন", color: "bg-red-500/10 text-red-400" },
                 calltime: { label: "কলটাইম", color: "bg-red-500/10 text-red-400" },
-                ongoing: { label: "চলছে", color: "bg-primary/10 text-primary" },
-                completed: { label: "শুটিং শেষ", color: "bg-success/10 text-success" },
-                editing: { label: "এডিটিং চলছে", color: "bg-accent/50 text-accent-foreground" },
-                editing_done: { label: "এডিটিং শেষ", color: "bg-success/15 text-success" },
-                published: { label: "পাবলিশ হয়েছে", color: "bg-success/10 text-success" },
+                ongoing: { label: "চলছে", color: "bg-red-500/10 text-red-400" },
+                completed: { label: "শুটিং শেষ", color: "bg-red-500/10 text-red-400" },
+                editing: { label: "এডিটিং চলছে", color: "bg-secondary text-foreground" },
+                editing_done: { label: "এডিটিং শেষ", color: "bg-red-500/10 text-red-400" },
+                published: { label: "পাবলিশ হয়েছে", color: "bg-red-500/10 text-red-400" },
               };
               const info = statusMap[s.status] || statusMap.upcoming;
               return (
@@ -442,8 +439,8 @@ const MemberDashboard = () => {
                     <p className="text-xs text-muted-foreground">{new Date(s.shoot_date).toLocaleDateString("bn-BD")}{s.location && ` • ${s.location}`}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {s.script_content && <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-primary hover:text-primary/80"><FileText className="h-3.5 w-3.5" /></button>}
-                    {s.script_url && <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80"><ExternalLink className="h-3.5 w-3.5" /></a>}
+                    {s.script_content && <button onClick={() => { setViewShooting(s); setViewScriptOpen(true); }} className="text-red-400 hover:text-red-300"><FileText className="h-3.5 w-3.5" /></button>}
+                    {s.script_url && <a href={s.script_url} target="_blank" rel="noopener noreferrer" className="text-red-400 hover:text-red-300"><ExternalLink className="h-3.5 w-3.5" /></a>}
                     <span className={`text-xs px-2 py-0.5 rounded-full ${info.color}`}>{info.label}</span>
                   </div>
                 </div>
@@ -453,10 +450,10 @@ const MemberDashboard = () => {
         </div>
 
         {/* Scripts */}
-        <div className="premium-card rounded-2xl overflow-hidden">
+        <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-fuchsia-500/10 flex items-center justify-center">
-              <ScrollText className="h-4 w-4 text-fuchsia-400" />
+            <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
+              <ScrollText className="h-4 w-4 text-red-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">স্ক্রিপ্ট সমূহ</h2>
           </div>
@@ -476,9 +473,9 @@ const MemberDashboard = () => {
 
         {/* Bonus & Transport */}
         {!isZeroBalance && (
-        <div className="premium-card rounded-2xl overflow-hidden">
+        <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
           <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
               <Gift className="h-4 w-4 text-red-400" />
             </div>
             <h2 className="font-semibold text-foreground text-sm md:text-base">বোনাস ও গাড়ি ভাড়া</h2>
@@ -488,8 +485,8 @@ const MemberDashboard = () => {
             {myBonuses?.map((b: any) => (
               <div key={b.id} className="p-3.5 flex items-center justify-between hover:bg-secondary/15 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={`h-8 w-8 rounded-lg ${b.type === "bonus" ? "bg-success/10" : "bg-primary/10"} flex items-center justify-center`}>
-                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-success" /> : <Car className="h-4 w-4 text-primary" />}
+                  <div className="h-8 w-8 rounded-md bg-red-500/10 flex items-center justify-center">
+                    {b.type === "bonus" ? <Gift className="h-4 w-4 text-red-400" /> : <Car className="h-4 w-4 text-red-400" />}
                   </div>
                   <div>
                     <p className="text-sm text-foreground font-medium">{b.type === "bonus" ? "বোনাস" : "গাড়ি ভাড়া"}</p>
@@ -511,15 +508,15 @@ const MemberDashboard = () => {
           }, 0);
           const totalDue = Math.max(0, totalEarning - totalPaid);
           const statusMap: Record<string, { label: string; cls: string }> = {
-            upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+            upcoming: { label: "আসন্ন", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
             ongoing:  { label: "চলছে", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
             completed:{ label: "সম্পন্ন", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
-            paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
+            paid:     { label: "পেইড", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
           };
           return (
-            <div className="premium-card rounded-2xl overflow-hidden">
+            <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
               <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                   <Briefcase className="h-4 w-4 text-red-400" />
                 </div>
                 <h2 className="font-semibold text-foreground text-sm md:text-base">বাইরের কাজ (Outsourcing)</h2>
@@ -536,9 +533,9 @@ const MemberDashboard = () => {
                   <p className="text-[10px] text-muted-foreground">পেইড</p>
                   <p className="text-sm md:text-base font-bold text-red-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
                 </div>
-                <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3">
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3">
                   <p className="text-[10px] text-muted-foreground">বাকি</p>
-                  <p className="text-sm md:text-base font-bold text-rose-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
+                  <p className="text-sm md:text-base font-bold text-red-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
                 </div>
               </div>
 
@@ -568,8 +565,8 @@ const MemberDashboard = () => {
                             {project?.project_date && <> • {new Date(project.project_date).toLocaleDateString("bn-BD")}</>}
                           </p>
                         </div>
-                        <div className={`h-7 w-7 shrink-0 rounded-lg ${isPaid ? "bg-success/10" : "bg-warning/10"} flex items-center justify-center`}>
-                          {isPaid ? <CheckCircle2 className="h-4 w-4 text-success" /> : <Clock className="h-4 w-4 text-warning" />}
+                        <div className="h-7 w-7 shrink-0 rounded-lg bg-red-500/10 flex items-center justify-center">
+                          {isPaid ? <CheckCircle2 className="h-4 w-4 text-red-400" /> : <Clock className="h-4 w-4 text-red-400" />}
                         </div>
                       </div>
 
@@ -590,9 +587,9 @@ const MemberDashboard = () => {
                           <p className="text-[9px] text-muted-foreground">পেইড</p>
                           <p className="text-xs font-bold text-red-400">৳{paid.toLocaleString("bn-BD")}</p>
                         </div>
-                        <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2.5 py-1.5">
+                        <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-2.5 py-1.5">
                           <p className="text-[9px] text-muted-foreground">বাকি</p>
-                          <p className="text-xs font-bold text-rose-400">৳{due.toLocaleString("bn-BD")}</p>
+                          <p className="text-xs font-bold text-red-400">৳{due.toLocaleString("bn-BD")}</p>
                         </div>
                       </div>
 
@@ -610,9 +607,9 @@ const MemberDashboard = () => {
 
         {!isZeroBalance && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                 <CreditCard className="h-4 w-4 text-red-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">পেমেন্ট হিস্ট্রি</h2>
@@ -631,9 +628,9 @@ const MemberDashboard = () => {
             </div>
           </div>
 
-          <div className="premium-card rounded-2xl overflow-hidden">
+          <div className="rounded-lg border border-border/70 bg-card overflow-hidden">
             <div className="p-4 md:p-5 border-b border-border/15 flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-md bg-primary/10 border border-primary/25 flex items-center justify-center">
                 <Calendar className="h-4 w-4 text-red-400" />
               </div>
               <h2 className="font-semibold text-foreground text-sm md:text-base">হাজিরা হিস্ট্রি</h2>
@@ -647,7 +644,7 @@ const MemberDashboard = () => {
                     <p className="text-xs text-muted-foreground">{a.shootings?.shoot_date ? new Date(a.shootings.shoot_date).toLocaleDateString("bn-BD") : ""}</p>
                   </div>
                   <div className="text-right">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>{a.is_present ? "উপস্থিত" : "অনুপস্থিত"}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${a.is_present ? "bg-red-500/10 text-red-400" : "bg-destructive/10 text-destructive"}`}>{a.is_present ? "উপস্থিত" : "অনুপস্থিত"}</span>
                     {a.daily_rate > 0 && <p className="text-xs text-muted-foreground mt-0.5">৳{Number(a.daily_rate).toLocaleString("bn-BD")}</p>}
                   </div>
                 </div>
@@ -731,13 +728,13 @@ const MemberDashboard = () => {
         <DialogContent className="bg-card border-border/50 max-w-md max-h-[85vh] overflow-auto">
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-rose-400" />
+              <CreditCard className="h-5 w-5 text-red-400" />
               মোট পেমেন্ট বিবরণ
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* Total Summary */}
-            <div className="rounded-xl bg-gradient-to-br from-rose-500/15 to-rose-500/5 p-4 text-center border border-rose-500/10">
+            <div className="rounded-xl bg-red-500/10 p-4 text-center border border-red-500/20">
               <p className="text-xs text-muted-foreground mb-1">সর্বমোট পেমেন্ট পেয়েছেন</p>
               <p className="text-3xl font-bold text-foreground">৳{balance?.totalPaid?.toLocaleString("bn-BD") || "০"}</p>
               <p className="text-[10px] text-muted-foreground mt-2">মোট {recentPayments?.length || 0}টি পেমেন্ট</p>
@@ -766,7 +763,7 @@ const MemberDashboard = () => {
                       </p>
                       {p.notes && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{p.notes}</p>}
                     </div>
-                    <div className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-medium">
+                    <div className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 font-medium">
                       {paymentMethodLabel[p.payment_method] || p.payment_method}
                     </div>
                   </div>
@@ -793,10 +790,10 @@ const MemberDashboard = () => {
             }, 0);
             const totalDue = Math.max(0, totalEarning - totalPaid);
             const statusMap: Record<string, { label: string; cls: string }> = {
-              upcoming: { label: "আসন্ন", cls: "bg-sky-500/15 text-sky-400 border-sky-500/30" },
+              upcoming: { label: "আসন্ন", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
               ongoing:  { label: "চলছে", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
               completed:{ label: "সম্পন্ন", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
-              paid:     { label: "পেইড", cls: "bg-violet-500/15 text-violet-400 border-violet-500/30" },
+              paid:     { label: "পেইড", cls: "bg-red-500/10 text-red-400 border-red-500/30" },
             };
             return (
               <div className="space-y-4">
@@ -810,9 +807,9 @@ const MemberDashboard = () => {
                     <p className="text-[10px] text-muted-foreground">পেইড</p>
                     <p className="text-sm font-bold text-red-400 mt-0.5">৳{totalPaid.toLocaleString("bn-BD")}</p>
                   </div>
-                  <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 text-center">
+                  <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-center">
                     <p className="text-[10px] text-muted-foreground">বাকি</p>
-                    <p className="text-sm font-bold text-rose-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
+                    <p className="text-sm font-bold text-red-400 mt-0.5">৳{totalDue.toLocaleString("bn-BD")}</p>
                   </div>
                 </div>
 
@@ -863,9 +860,9 @@ const MemberDashboard = () => {
                               <p className="text-[9px] text-muted-foreground">পেইড</p>
                               <p className="text-xs font-bold text-red-400">৳{paid.toLocaleString("bn-BD")}</p>
                             </div>
-                            <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 px-2 py-1.5 text-center">
+                            <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-2 py-1.5 text-center">
                               <p className="text-[9px] text-muted-foreground">বাকি</p>
-                              <p className="text-xs font-bold text-rose-400">৳{due.toLocaleString("bn-BD")}</p>
+                              <p className="text-xs font-bold text-red-400">৳{due.toLocaleString("bn-BD")}</p>
                             </div>
                           </div>
                         </div>
@@ -900,9 +897,9 @@ const MemberDashboard = () => {
 
             return (
               <div className="space-y-4 mt-2">
-                <div className={`rounded-xl p-4 border ${internalDue > 0 ? "bg-red-500/10 border-red-500/30" : internalDue < 0 ? "bg-red-500/10 border-red-500/30" : "bg-blue-500/10 border-blue-500/30"}`}>
+                <div className="rounded-xl p-4 border bg-red-500/10 border-red-500/30">
                   <p className="text-xs text-muted-foreground">{internalDue > 0 ? "KM Production থেকে বকেয়া" : internalDue < 0 ? "KM Production-এ অগ্রিম" : "সমন্বয়কৃত"}</p>
-                  <p className={`text-2xl font-bold ${internalDue > 0 ? "text-red-400" : internalDue < 0 ? "text-red-400" : "text-blue-400"}`}>
+                  <p className="text-2xl font-bold text-red-400">
                     ৳{Math.abs(internalDue).toLocaleString("bn-BD")}
                   </p>
                 </div>
@@ -929,7 +926,7 @@ const MemberDashboard = () => {
                   )}
                   <div className="flex items-center justify-between text-xs pt-2 border-t border-border/30">
                     <span className="text-muted-foreground">প্রাপ্ত পেমেন্ট</span>
-                    <span className="font-semibold text-rose-400">- ৳{totalPaid.toLocaleString("bn-BD")}</span>
+                    <span className="font-semibold text-red-400">- ৳{totalPaid.toLocaleString("bn-BD")}</span>
                   </div>
                 </div>
 
