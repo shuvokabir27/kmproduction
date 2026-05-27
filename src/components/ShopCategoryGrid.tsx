@@ -69,13 +69,13 @@ const ShopCategoryGrid = () => {
 
   return (
     <section className="px-4 py-6">
-      <div className="max-w-7xl mx-auto glossy-section-indigo p-5 md:p-7">
+      <div className="max-w-7xl mx-auto rounded-2xl border border-slate-200 bg-white p-5 md:p-7">
         {/* Header */}
-        <div className="flex items-end justify-between mb-5 relative z-10">
+        <div className="flex items-end justify-between mb-5">
           <div className="flex items-center gap-3">
-            <span className="h-8 w-1 rounded-full bg-gradient-to-b from-indigo-400 via-fuchsia-400 to-pink-400 shadow-[0_0_12px_hsl(280_80%_60%/0.6)]" />
+            <span className="h-6 w-1 rounded-full bg-blue-600" />
             <h2
-              className="text-xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-200 via-fuchsia-200 to-pink-200 bg-clip-text text-transparent"
+              className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900"
               style={{ fontFamily: "'Tiro Bangla', serif" }}
             >
               ফিচার্ড ক্যাটাগরি
@@ -87,7 +87,7 @@ const ShopCategoryGrid = () => {
               aria-label="পূর্ববর্তী"
               onClick={() => scrollBy(-1)}
               disabled={!canLeft}
-              className="h-9 w-9 grid place-items-center rounded-full bg-white/10 border border-white/20 text-fuchsia-100 hover:bg-fuchsia-500/30 hover:border-fuchsia-300/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur"
+              className="h-9 w-9 grid place-items-center rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -96,7 +96,7 @@ const ShopCategoryGrid = () => {
               aria-label="পরবর্তী"
               onClick={() => scrollBy(1)}
               disabled={!canRight}
-              className="h-9 w-9 grid place-items-center rounded-full bg-white/10 border border-white/20 text-fuchsia-100 hover:bg-fuchsia-500/30 hover:border-fuchsia-300/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed backdrop-blur"
+              className="h-9 w-9 grid place-items-center rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -104,18 +104,14 @@ const ShopCategoryGrid = () => {
         </div>
 
         {/* Horizontal scroller */}
-        <div className="relative z-10">
-          {/* edge fade */}
-          <div className="pointer-events-none absolute left-0 top-0 bottom-3 w-8 bg-gradient-to-r from-[#1a0b2e]/80 to-transparent z-10" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-3 w-8 bg-gradient-to-l from-[#1a0b2e]/80 to-transparent z-10" />
-
+        <div className="relative">
           <div
             ref={scrollerRef}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onTouchStart={() => setPaused(true)}
             onTouchEnd={() => setPaused(false)}
-            className="flex gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-3 md:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {cats.map((c, i) => {
               const img = c.image_url || DEMO_IMAGES[i % DEMO_IMAGES.length];
@@ -127,24 +123,18 @@ const ShopCategoryGrid = () => {
                     e.preventDefault();
                     navigate(`/category/${encodeURIComponent(c.value)}`);
                   }}
-                  style={{ animationDelay: `${i * 60}ms` }}
-                  className="group cat-card-enter snap-start shrink-0 w-[120px] sm:w-[140px] md:w-[160px] flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-fuchsia-300/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_18px_36px_-14px_hsl(290_85%_55%/0.7)]"
+                  className="group snap-start shrink-0 w-[120px] sm:w-[140px] md:w-[160px] flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:shadow-sm transition-all"
                 >
-                  <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl p-[2px] bg-gradient-to-br from-indigo-400/70 via-fuchsia-400/60 to-pink-400/70 shadow-[0_8px_24px_-10px_hsl(280_80%_50%/0.6)] group-hover:shadow-[0_14px_32px_-10px_hsl(290_85%_55%/0.95)] transition-all">
-                    <div className="relative w-full h-full rounded-[14px] overflow-hidden bg-black/40 backdrop-blur">
-                      <img
-                        src={img}
-                        alt={c.label}
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-125 group-hover:rotate-3"
-                      />
-                      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,hsl(0_0%_100%/0.18)_0%,transparent_45%)]" />
-                      <div className="pointer-events-none absolute -inset-y-full -left-1/2 w-1/3 rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:translate-x-[400%] transition-transform duration-700 ease-out" />
-                      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[radial-gradient(circle_at_50%_50%,hsl(290_85%_60%/0.35),transparent_70%)]" />
-                    </div>
+                  <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
+                    <img
+                      src={img}
+                      alt={c.label}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
                   </div>
                   <span
-                    className="text-xs md:text-sm font-bold text-foreground/90 text-center leading-tight line-clamp-2 group-hover:text-fuchsia-200 transition-colors"
+                    className="text-xs md:text-sm font-bold text-slate-700 text-center leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors"
                     style={{ fontFamily: "'Tiro Bangla', serif" }}
                   >
                     {c.label}
