@@ -287,7 +287,7 @@ const Products = () => {
             <Link to="/products" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-1.5"><Home className="h-4 w-4" /> হোম</Link>
             <a href="#shop" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">শপ</a>
             <Link to="/categories" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">ক্যাটাগরি</Link>
-            <a href="#about" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">আমাদের সম্পর্কে</a>
+            
             <a href="#contact" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">যোগাযোগ</a>
 
             {whatsappNo && (
@@ -481,7 +481,7 @@ const Products = () => {
             <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Home className="h-4 w-4" style={{ color: BRAND_GREEN }} /> হোম</Link>
             <a href="#shop" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><ShoppingBag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> শপ</a>
             <Link to="/categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</Link>
-            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><ShieldCheck className="h-4 w-4" style={{ color: BRAND_GREEN }} /> আমাদের সম্পর্কে</a>
+            
             <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Phone className="h-4 w-4" style={{ color: BRAND_GREEN }} /> যোগাযোগ</a>
             {shopCustomer ? (
               <Link to="/shop/account" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><User className="h-4 w-4" style={{ color: BRAND_GREEN }} /> অ্যাকাউন্ট</Link>
@@ -935,7 +935,7 @@ const Products = () => {
             <h4 className="font-extrabold mb-3 text-slate-900 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
             <ul className="space-y-2 text-slate-600">
               <li><a href="#shop" className="hover:text-blue-600 transition-colors">শপ</a></li>
-              <li><a href="#about" className="hover:text-blue-600 transition-colors">আমাদের সম্পর্কে</a></li>
+              
               <li><a href="#contact" className="hover:text-blue-600 transition-colors">যোগাযোগ</a></li>
             </ul>
           </div>
