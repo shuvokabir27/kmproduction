@@ -857,13 +857,13 @@ const AdminPayments = () => {
                          </div>
                        </td>
                       <td className="p-3 text-foreground font-medium">৳{Number(p.amount).toLocaleString()}</td>
-                      <td className="p-3 hidden sm:table-cell">
+                      <td className="p-3">
                         <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground inline-flex items-center gap-1">
                           <MIcon className="h-3 w-3" />
                           {methodLabel[p.payment_method] || p.payment_method}
                         </span>
                       </td>
-                      <td className="p-3 text-muted-foreground text-xs hidden md:table-cell">{p.transaction_id || "—"}</td>
+                      <td className="p-3 text-muted-foreground text-xs">{p.transaction_id || "—"}</td>
                       <td className="p-3 text-muted-foreground text-xs">{new Date(p.payment_date).toLocaleDateString("bn-BD")}</td>
                       <td className="p-3 text-center">
                         <div className="flex items-center justify-center gap-1.5">
