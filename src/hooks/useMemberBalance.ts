@@ -34,6 +34,12 @@ export function useMemberBalance(profileId: string | undefined) {
         });
       };
 
+      const getEffectivePaidAmount = (amount: number, paidAmount: number, isPaid?: boolean | null) => {
+        const safeAmount = Math.max(0, Number(amount || 0));
+        const safePaid = Math.max(0, Number(paidAmount || 0));
+        return Math.min(safeAmount, isPaid ? Math.max(safePaid, safeAmount) : safePaid);
+      };
+
       // Total earned from attendance
       const { data: attendance } = await supabase
         .from("attendance")
@@ -104,11 +110,14 @@ export function useMemberBalance(profileId: string | undefined) {
       // Freelance income (assigned external work rates)
       const { data: freelanceData } = await (supabase as any)
         .from("freelance_assignments")
-        .select("rate, paid_amount, created_at")
+        .select("rate, paid_amount, is_paid, created_at")
         .eq("member_id", profileId!);
 
       const totalFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.rate || 0), 0) ?? 0;
-      freelanceData?.forEach((f: any) => addEvent("client", Number(f.rate || 0), f.created_at, Number(f.paid_amount || 0)));
+      freelanceData?.forEach((f: any) => {
+        const rate = Number(f.rate || 0);
+        addEvent("client", rate, f.created_at, getEffectivePaidAmount(rate, Number(f.paid_amount || 0), f.is_paid));
+      });
 
       // Client-portal artist work — match by profile_id (admin-added) OR artist_name (legacy)
       const fullName = profile?.full_name as string | undefined;
@@ -118,7 +127,7 @@ export function useMemberBalance(profileId: string | undefined) {
         const clientArtistQueries = [
           (supabase as any)
             .from("client_project_artists")
-            .select("id, remuneration, paid_amount, created_at")
+            .select("id, remuneration, paid_amount, is_paid, created_at")
             .eq("profile_id", profileId!),
         ];
 
@@ -126,7 +135,7 @@ export function useMemberBalance(profileId: string | undefined) {
           clientArtistQueries.push(
             (supabase as any)
               .from("client_project_artists")
-              .select("id, remuneration, paid_amount, created_at")
+              .select("id, remuneration, paid_amount, is_paid, created_at")
               .eq("artist_name", fullName)
           );
         }
@@ -138,7 +147,7 @@ export function useMemberBalance(profileId: string | undefined) {
           if (seen.has(c.id)) return;
           seen.add(c.id);
           const remuneration = Number(c.remuneration || 0);
-          const paidAmount = Number(c.paid_amount || 0);
+          const paidAmount = getEffectivePaidAmount(remuneration, Number(c.paid_amount || 0), c.is_paid);
           totalFromClientArtists += remuneration;
           totalPaidFromClientArtists += paidAmount;
           addEvent("client", remuneration, c.created_at, paidAmount);
@@ -146,7 +155,10 @@ export function useMemberBalance(profileId: string | undefined) {
       }
 
       // Also include paid_amount from freelance_assignments
-      const totalPaidFromAssignments = freelanceData?.reduce((sum: number, f: any) => sum + Number(f.paid_amount || 0), 0) ?? 0;
+      const totalPaidFromAssignments = freelanceData?.reduce((sum: number, f: any) => {
+        const rate = Number(f.rate || 0);
+        return sum + getEffectivePaidAmount(rate, Number(f.paid_amount || 0), f.is_paid);
+      }, 0) ?? 0;
 
       const totalFreelance = totalFromAssignments + totalFromClientArtists;
       const directFreelancePaid = totalPaidFromAssignments + totalPaidFromClientArtists;
