@@ -286,7 +286,33 @@ const Products = () => {
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-slate-700">
             <Link to="/products" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">হোম</Link>
             
-            <Link to="/categories" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">ক্যাটাগরি</Link>
+            <div className="relative group">
+              <Link to="/categories" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors inline-flex items-center gap-1">
+                ক্যাটাগরি
+                <svg className="h-3 w-3 opacity-60" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"/></svg>
+              </Link>
+              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 absolute top-full left-0 pt-2 z-50 min-w-[240px]">
+                <div className="bg-white border border-slate-200 rounded-lg shadow-lg py-2 max-h-[70vh] overflow-y-auto">
+                  <Link
+                    to="/categories"
+                    className="block px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-slate-50 border-b border-slate-100"
+                  >
+                    সকল ক্যাটাগরি দেখুন
+                  </Link>
+                  {categoryTree.map((c) => (
+                    <Link
+                      key={c.id}
+                      to={`/category/${encodeURIComponent(c.value)}`}
+                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                    >
+                      {c.icon ? <span className="mr-2">{c.icon}</span> : null}
+                      {c.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             
             <a href="#contact" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">যোগাযোগ</a>
 
