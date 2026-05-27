@@ -24,7 +24,7 @@ export default function MobileShopNav() {
 
   const isHome = path === "/products" && !hash;
   const isShop = path === "/products" && hash === "#shop";
-  const isAchar = path === "/products" && hash === "#achar";
+  const isAchar = path === "/category/achar";
 
   const itemBase = "flex flex-col items-center justify-center py-2 gap-0.5 transition-colors";
   const activeText = "text-blue-600";
