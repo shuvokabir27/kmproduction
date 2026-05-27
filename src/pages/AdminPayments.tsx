@@ -929,6 +929,24 @@ const AdminPayments = () => {
                 )}
               </tbody>
             </table>
+            </div>
+            {/* Drag/scroll buttons */}
+            <button
+              type="button"
+              aria-label="বাঁয়ে স্ক্রল"
+              onClick={() => scrollRef.current?.scrollBy({ left: -240, behavior: "smooth" })}
+              className="absolute left-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-[#E2136E] text-white shadow-lg flex items-center justify-center md:hidden active:scale-95"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="ডানে স্ক্রল"
+              onClick={() => scrollRef.current?.scrollBy({ left: 240, behavior: "smooth" })}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-[#E2136E] text-white shadow-lg flex items-center justify-center md:hidden active:scale-95"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </Card>
 
