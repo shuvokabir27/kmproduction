@@ -691,22 +691,23 @@
   animation: catCardEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Member Dashboard — bKash-inspired: magenta only for buttons/highlights, light neutral sections */
-.member-dash-red { color: #1a1a1a; }
+/* Member Dashboard — bKash-inspired: magenta only for buttons/highlights, light pink sections */
+.member-dash-red { color: #1a1a1a; background-color: #FFEDF4; }
 .member-dash-red .text-foreground { color: #1a1a1a !important; }
 .member-dash-red .text-muted-foreground { color: #6b7280 !important; }
+.member-dash-red .bg-background { background-color: #FFEDF4 !important; }
 
-/* Section / card surfaces: clean light neutral (not magenta) */
+/* Section / card surfaces: light pink FFEDF4 base */
 .member-dash-red .bg-card {
-  background-color: #ffffff !important;
-  border-color: #ececec !important;
+  background-color: #FFEDF4 !important;
+  border-color: #f8d8e5 !important;
   color: #1a1a1a !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
-.member-dash-red .bg-secondary\/30 { background-color: #f7f7f8 !important; }
+.member-dash-red .bg-secondary\/30 { background-color: #FFF5F9 !important; }
 .member-dash-red .border-border\/70,
 .member-dash-red .border-border\/30,
-.member-dash-red .border-border { border-color: #ececec !important; }
+.member-dash-red .border-border { border-color: #f8d8e5 !important; }
 
 /* Text colors inside cards stay dark on light surfaces */
 .member-dash-red .bg-card .text-foreground { color: #1a1a1a !important; }
