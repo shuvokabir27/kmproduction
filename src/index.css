@@ -691,49 +691,45 @@
   animation: catCardEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Member Dashboard — bKash-inspired theme (magenta #E2136E + white + dark text) */
+/* Member Dashboard — bKash-inspired: magenta only for buttons/highlights, light neutral sections */
 .member-dash-red { color: #1a1a1a; }
 .member-dash-red .text-foreground { color: #1a1a1a !important; }
 .member-dash-red .text-muted-foreground { color: #6b7280 !important; }
-.member-dash-red .text-red-400,
-.member-dash-red .text-red-500 { color: #e2136e !important; }
+
+/* Section / card surfaces: clean light neutral (not magenta) */
+.member-dash-red .bg-card {
+  background-color: #ffffff !important;
+  border-color: #ececec !important;
+  color: #1a1a1a !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.member-dash-red .bg-secondary\/30 { background-color: #f7f7f8 !important; }
 .member-dash-red .border-border\/70,
 .member-dash-red .border-border\/30,
-.member-dash-red .border-border { border-color: #f3d3e1 !important; }
+.member-dash-red .border-border { border-color: #ececec !important; }
 
-/* Card surfaces -> bKash magenta */
-.member-dash-red .bg-card,
-.member-dash-red .bg-secondary\/30 {
-  background-color: #e2136e !important;
-  border-color: #b30f59 !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 20px -10px rgba(226, 19, 110, 0.45);
-}
-.member-dash-red .bg-card .text-foreground,
-.member-dash-red .bg-card .text-red-400,
-.member-dash-red .bg-card .text-red-500,
-.member-dash-red .bg-card h1,
-.member-dash-red .bg-card h2,
-.member-dash-red .bg-card h3,
-.member-dash-red .bg-card p,
-.member-dash-red .bg-card span,
-.member-dash-red .bg-card button { color: #ffffff !important; }
-.member-dash-red .bg-card .text-muted-foreground { color: rgba(255,255,255,0.85) !important; }
-.member-dash-red .bg-card .border-border\/70,
-.member-dash-red .bg-card .border-primary\/25,
-.member-dash-red .bg-card .border-primary\/30 { border-color: rgba(255,255,255,0.35) !important; }
-.member-dash-red .bg-card .bg-primary\/10,
-.member-dash-red .bg-card .bg-background\/40 { background-color: rgba(255,255,255,0.18) !important; }
+/* Text colors inside cards stay dark on light surfaces */
+.member-dash-red .bg-card .text-foreground { color: #1a1a1a !important; }
+.member-dash-red .bg-card .text-muted-foreground { color: #6b7280 !important; }
 
-/* Primary buttons / accents (advance request button, badges) */
+/* Highlights / accents → bKash magenta */
+.member-dash-red .text-red-400,
+.member-dash-red .text-red-500,
+.member-dash-red .text-primary,
+.member-dash-red .text-primary\/80 { color: #e2136e !important; }
+
 .member-dash-red .bg-primary,
 .member-dash-red .bg-red-500,
-.member-dash-red .bg-red-600 { background-color: #e2136e !important; color: #fff !important; }
+.member-dash-red .bg-red-600 { background-color: #e2136e !important; color: #ffffff !important; }
+
 .member-dash-red .bg-primary\/10,
 .member-dash-red .bg-red-500\/10 { background-color: rgba(226, 19, 110, 0.10) !important; }
+
 .member-dash-red .border-primary\/30,
 .member-dash-red .border-primary\/25,
 .member-dash-red .border-red-500\/30 { border-color: rgba(226, 19, 110, 0.35) !important; }
-.member-dash-red .text-primary,
-.member-dash-red .text-primary\/80 { color: #e2136e !important; }
+
+/* Hover surface stays subtle */
+.member-dash-red .hover\:bg-secondary\/30:hover { background-color: rgba(226, 19, 110, 0.06) !important; }
+
 
