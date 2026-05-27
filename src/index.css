@@ -807,3 +807,18 @@ body * {
 [data-sidebar] .text-indigo-400 {
   color: #ffffff !important;
 }
+
+/* Global button styling: white text on #E2136E background.
+   Excludes sidebar, mobile bottom nav, icon-only ghost buttons, and unstyled toggles. */
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) {
+  background-color: #E2136E !important;
+  color: #ffffff !important;
+  border-color: #E2136E !important;
+}
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]) svg {
+  color: #ffffff !important;
+}
+button:not([data-sidebar] button):not(.mobile-bottom-nav button):not([data-no-magenta]):hover {
+  background-color: #c01060 !important;
+  border-color: #c01060 !important;
+}
