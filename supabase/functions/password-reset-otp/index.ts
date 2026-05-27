@@ -54,6 +54,12 @@ async function findUser(scope: "member" | "client", identifier: string) {
     .eq("phone", phone).maybeSingle();
   if (client?.user_id) return { user_id: client.user_id, phone, name: client.name || "" };
 
+  // Admin (phone-based login, e.g. KM Shop admin)
+  const { data: adminRow } = await supabase.from("admin_phone_logins")
+    .select("user_id, phone")
+    .eq("phone", phone).maybeSingle();
+  if (adminRow?.user_id) return { user_id: adminRow.user_id, phone, name: "Admin" };
+
   // Fallback: phone may belong to a member. Try both 11-digit and +880 forms.
   const { data: member } = await supabase.from("profiles")
     .select("user_id, phone, full_name")
