@@ -73,10 +73,10 @@ Deno.serve(async (req) => {
 
     if (action === "request_otp") {
       const identifier = String(body.identifier || "").trim();
-      if (!identifier) return bad("আইডি / মোবাইল নম্বর দিন");
+      if (!identifier) return bad("Please enter your ID / mobile number");
 
       const found = await findUser(scope, identifier);
-      if (!found) return bad("এই তথ্যে কোনো অ্যাকাউন্ট পাওয়া যায়নি বা ফোন নম্বর সেট করা নেই", 404);
+      if (!found) return bad("No account found with this information or phone number not set", 404);
 
       const phone = found.phone;
 
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
       const { count } = await supabase.from("password_reset_otps")
         .select("id", { count: "exact", head: true })
         .eq("scope", scope).eq("phone", phone).gte("created_at", tenMinAgo);
-      if ((count || 0) >= 3) return bad("অনেকবার চেষ্টা করেছেন, ১০ মিনিট পর আবার চেষ্টা করুন", 429);
+      if ((count || 0) >= 3) return bad("Too many attempts, please try again after 10 minutes", 429);
 
       const otp = String(Math.floor(100000 + Math.random() * 900000));
       const otp_hash = await hash(otp, phone);
@@ -94,9 +94,9 @@ Deno.serve(async (req) => {
 
       const SMS_API_KEY = Deno.env.get("BULK_SMS_API_KEY");
       const SENDER_ID = Deno.env.get("BULK_SMS_SENDER_ID");
-      if (!SMS_API_KEY || !SENDER_ID) return bad("SMS সার্ভিস কনফিগার করা নেই", 500);
+      if (!SMS_API_KEY || !SENDER_ID) return bad("SMS service not configured", 500);
 
-      const message = `Apnar KM Production password reset OTP: ${otp}\n5 minute er moddhe babohar korun. Karo sathe share korben na.`;
+      const message = `Your KM Production password reset OTP is: ${otp}\nValid for 5 minutes. Do not share with anyone.`;
       const smsUrl = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(SMS_API_KEY)}&type=text&number=${encodeURIComponent(phone)}&senderid=${encodeURIComponent(SENDER_ID)}&message=${encodeURIComponent(message)}`;
 
       try {
@@ -106,47 +106,47 @@ Deno.serve(async (req) => {
         let parsed: any = null;
         try { parsed = JSON.parse(t); } catch { /* */ }
         if (parsed && parsed.response_code && parsed.response_code !== 202) {
-          return bad(`SMS পাঠানো যায়নি: ${parsed.error_message || t}`, 500);
+          return bad(`Failed to send SMS: ${parsed.error_message || t}`, 500);
         }
       } catch (e: any) {
         console.error("SMS error", e);
-        return bad("SMS পাঠাতে সমস্যা: " + (e?.message || ""), 500);
+        return bad("Problem sending SMS: " + (e?.message || ""), 500);
       }
 
       // Mask the phone in response: 01XXX***XXXX
       const masked = phone.slice(0, 5) + "***" + phone.slice(-3);
-      return ok({ ok: true, message: "OTP পাঠানো হয়েছে", masked_phone: masked, expires_in: 300 });
+      return ok({ ok: true, message: "OTP sent successfully", masked_phone: masked, expires_in: 300 });
     }
 
     if (action === "reset_with_otp") {
       const identifier = String(body.identifier || "").trim();
       const otp = String(body.otp || "").replace(/\D/g, "");
       const newPassword = String(body.new_password || "");
-      if (otp.length !== 6) return bad("৬ ডিজিটের OTP দিন");
-      if (newPassword.length < 6) return bad("নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
+      if (otp.length !== 6) return bad("Please enter a 6-digit OTP");
+      if (newPassword.length < 6) return bad("New password must be at least 6 characters");
 
       const found = await findUser(scope, identifier);
-      if (!found) return bad("অ্যাকাউন্ট পাওয়া যায়নি", 404);
+      if (!found) return bad("Account not found", 404);
 
       const { data: row } = await supabase.from("password_reset_otps")
         .select("id, otp_hash, expires_at, attempts, used_at")
         .eq("scope", scope).eq("phone", found.phone).is("used_at", null)
         .order("created_at", { ascending: false }).limit(1).maybeSingle();
-      if (!row) return bad("OTP পাওয়া যায়নি, আবার অনুরোধ করুন");
-      if (new Date(row.expires_at) < new Date()) return bad("OTP এর মেয়াদ শেষ, নতুন OTP নিন");
-      if (row.attempts >= 5) return bad("অনেকবার ভুল চেষ্টা হয়েছে, নতুন OTP নিন", 429);
+      if (!row) return bad("OTP not found, please request a new one");
+      if (new Date(row.expires_at) < new Date()) return bad("OTP has expired, please request a new one");
+      if (row.attempts >= 5) return bad("Too many failed attempts, please request a new OTP", 429);
 
       const otpHash = await hash(otp, found.phone);
       if (otpHash !== row.otp_hash) {
         await supabase.from("password_reset_otps").update({ attempts: row.attempts + 1 }).eq("id", row.id);
-        return bad("OTP ভুল");
+        return bad("Invalid OTP");
       }
 
       const { error } = await supabase.auth.admin.updateUserById(found.user_id, { password: newPassword });
       if (error) return bad(error.message, 500);
 
       await supabase.from("password_reset_otps").update({ used_at: new Date().toISOString() }).eq("id", row.id);
-      return ok({ ok: true, message: "পাসওয়ার্ড সফলভাবে রিসেট হয়েছে। এখন লগইন করুন।" });
+      return ok({ ok: true, message: "Password reset successfully. Please log in now." });
     }
 
     return bad("Unknown action");
