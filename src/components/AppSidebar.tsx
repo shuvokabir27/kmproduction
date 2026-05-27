@@ -125,12 +125,12 @@ export function AppSidebar() {
                 end={item.url === "/admin"}
                 className={
                   isPayments
-                    ? "bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border-l-2 border-amber-400 hover:from-amber-500/25 hover:via-amber-500/15 transition-colors shadow-sm shadow-amber-500/10"
-                    : "hover:bg-secondary/80 transition-colors"
+                    ? "bg-gradient-to-r from-[#E2136E]/15 via-[#E2136E]/10 to-transparent border-l-2 border-[#E2136E] hover:from-[#E2136E]/25 hover:via-[#E2136E]/15 transition-colors shadow-sm shadow-[#E2136E]/10"
+                    : "hover:bg-[#E2136E]/10 transition-colors"
                 }
                 activeClassName={
                   isPayments
-                    ? "from-amber-500/30 via-amber-500/20 font-bold ring-1 ring-amber-400/40"
+                    ? "from-[#E2136E]/30 via-[#E2136E]/20 font-bold ring-1 ring-[#E2136E]/40"
                     : "bg-secondary font-medium"
                 }
               >
@@ -175,7 +175,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <NavLink to="/" className="hover:bg-secondary/80 transition-colors" activeClassName="">
+                    <NavLink to="/" className="hover:bg-[#E2136E]/10 transition-colors" activeClassName="">
                       <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center mr-2 shrink-0">
                         <Home className="h-3.5 w-3.5 text-emerald-400" />
                       </div>
@@ -217,7 +217,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <NavLink to="/" className="hover:bg-secondary/80 transition-colors" activeClassName="">
+                      <NavLink to="/" className="hover:bg-[#E2136E]/10 transition-colors" activeClassName="">
                         <div className="h-6 w-6 rounded-md bg-emerald-500/10 flex items-center justify-center mr-2 shrink-0">
                           <Home className="h-3.5 w-3.5 text-emerald-400" />
                         </div>

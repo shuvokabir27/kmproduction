@@ -46,7 +46,7 @@ const permissionIconMap: Record<string, { icon: any; color: string; bg: string }
 const adminTabs = [
   { icon: LayoutDashboard, label: "হোম", path: "/admin", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
   { icon: Calendar, label: "হাজিরা", path: "/admin/attendance", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
-  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-[#E2136E]", bg: "bg-amber-500/15" },
+  { icon: CreditCard, label: "পেমেন্ট", path: "/admin/payments", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
   { icon: Film, label: "শুটিং", path: "/admin/shootings", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
   { icon: MoreHorizontal, label: "আরো", path: "__more__", color: "text-[#E2136E]", bg: "bg-[#E2136E]/15" },
 ];
@@ -334,7 +334,7 @@ export function MobileBottomNav() {
                     active
                       ? `h-12 w-12 ${tab.bg} shadow-lg ring-2 ring-card`
                       : tab.path === "/admin/payments"
-                        ? "h-9 w-9 bg-gradient-to-br from-amber-500/25 to-amber-600/10 ring-2 ring-amber-400/40 shadow-md shadow-amber-500/20"
+                        ? "h-9 w-9 bg-gradient-to-br from-[#E2136E]/25 to-[#E2136E]/60/10 ring-2 ring-[#E2136E]/40 shadow-md shadow-[#E2136E]/20"
                         : "h-9 w-9"
                   }`}
                   style={
