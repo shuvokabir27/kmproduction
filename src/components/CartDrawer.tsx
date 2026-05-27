@@ -27,6 +27,7 @@ export const CartDrawer = () => {
   const grandTotal = total + delivery.charge;
   const [checkout, setCheckout] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", address: "" });
   const [phoneError, setPhoneError] = useState("");
