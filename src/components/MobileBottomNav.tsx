@@ -332,7 +332,7 @@ export function MobileBottomNav() {
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   className={`relative z-10 flex items-center justify-center rounded-full transition-colors ${
                     active
-                      ? `h-12 w-12 ${tab.bg} shadow-lg ring-2 ring-card`
+                      ? `h-12 w-12 bg-[#E2136E] shadow-lg ring-2 ring-[#FFEDF4]`
                       : tab.path === "/admin/payments"
                         ? "h-9 w-9 bg-gradient-to-br from-[#E2136E]/25 to-[#E2136E]/60/10 ring-2 ring-[#E2136E]/40 shadow-md shadow-[#E2136E]/20"
                         : "h-9 w-9"
