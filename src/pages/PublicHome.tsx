@@ -288,8 +288,8 @@ const PublicHome = () => {
         <PublicBirthdaySection />
       </div>
 
-      {/* Custom admin-managed home sections */}
-      <CustomHomeSections />
+      {/* Custom home sections removed from Production site — products live on KM Shop only */}
+
 
 
       {/* Hero Section */}
