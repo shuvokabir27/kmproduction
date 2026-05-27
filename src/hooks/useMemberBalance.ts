@@ -9,6 +9,7 @@ type BalanceEvent = {
   paidAmount: number;
   date: string;
   order: number;
+  kmPayable?: boolean;
 };
 
 export function useMemberBalance(profileId: string | undefined) {
