@@ -138,11 +138,24 @@ export const CartDrawer = () => {
 
         {success ? (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-            <div className="w-20 h-20 rounded-full flex items-center justify-center mb-5 shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
-              <CheckCircle className="h-10 w-10 text-white" />
+            <div className="relative w-20 h-20 mb-5">
+              <div className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: `${BRAND_GREEN}33` }} />
+              <div className="relative w-20 h-20 rounded-full flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
+                <CheckCircle className="h-10 w-10 text-white" />
+              </div>
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">অর্ডার সফল! 🎉</h3>
-            <p className="text-muted-foreground text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
+            <h3 className="text-2xl font-extrabold text-foreground mb-1">ধন্যবাদ! অর্ডার সফল হয়েছে 🎉</h3>
+            <p className="text-muted-foreground text-sm mb-4">আপনার অর্ডারটি গ্রহণ করা হয়েছে।</p>
+            {orderNumber != null && (
+              <div className="mb-4 inline-flex items-center gap-2 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-2xl px-4 py-2.5">
+                <span className="text-xs font-bold">অর্ডার নম্বর</span>
+                <span className="text-lg font-extrabold tracking-wider">#{toBn(orderNumber)}</span>
+              </div>
+            )}
+            <div className="w-full bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-5 text-sm text-amber-800 leading-relaxed">
+              📞 আমাদের প্রতিনিধি শীঘ্রই আপনাকে কল দিয়ে অর্ডার <span className="font-extrabold">কনফার্ম</span> করবেন।
+            </div>
+            <p className="text-xs font-bold mb-5" style={{ color: BRAND_DARK }}>— Kuakata Multimedia</p>
             <Button onClick={closeAll} className="w-full text-white font-bold py-4 rounded-2xl" style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND_GREEN})` }}>
               ঠিক আছে
             </Button>
