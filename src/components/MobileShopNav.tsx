@@ -13,6 +13,19 @@ export default function MobileShopNav() {
   const hash = location.hash;
   const path = location.pathname;
 
+  // Only show on shop-related public routes
+  const isShopRoute =
+    path === "/" ||
+    path === "/products" ||
+    path.startsWith("/product/") ||
+    path.startsWith("/category/") ||
+    path.startsWith("/categories") ||
+    path.startsWith("/shop") ||
+    path.startsWith("/offer") ||
+    path.startsWith("/free-delivery") ||
+    path.startsWith("/order");
+  if (!isShopRoute) return null;
+
   const { data: siteSettings } = useQuery({
     queryKey: ["site-settings-mobilenav"],
     queryFn: async () => {
