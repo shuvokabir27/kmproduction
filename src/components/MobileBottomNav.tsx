@@ -258,11 +258,11 @@ export function MobileBottomNav() {
                                 }`}
                               >
                                 <div
-                                  className={`flex h-9 w-9 items-center justify-center rounded-lg shadow-sm ${
-                                    isLogout ? "bg-destructive" : "bg-[#3b82f6]"
+                                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                                    isLogout ? "bg-destructive/10" : item.bg
                                   }`}
                                 >
-                                  {item.icon && <item.icon className="h-4 w-4 text-white" />}
+                                  {item.icon && <item.icon className={`h-4 w-4 ${isLogout ? "text-destructive" : item.color}`} />}
                                 </div>
                                 <span className={`text-center text-[10px] font-semibold leading-tight ${isLogout ? "text-destructive" : "text-slate-700"}`}>
                                   {item.label}
