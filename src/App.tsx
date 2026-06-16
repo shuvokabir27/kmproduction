@@ -97,11 +97,35 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
 
-                {/* Admin routes — product_admin only */}
-                <Route path="/admin" element={<RouteGuard><AdminProducts /></RouteGuard>} />
-                <Route path="/admin/products" element={<RouteGuard><AdminProducts /></RouteGuard>} />
-                <Route path="/products/admin" element={<RouteGuard><AdminProducts /></RouteGuard>} />
-                <Route path="/admin/delivery-settings" element={<RouteGuard><AdminDeliverySettings /></RouteGuard>} />
+                {/* Admin routes */}
+                <Route path="/admin" element={<RouteGuard><AdminDashboard /></RouteGuard>} />
+
+                {/* Order management - product_admin + order_manager */}
+                <Route path="/admin/orders" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminOrders /></RouteGuard>} />
+                <Route path="/admin/orders/customers" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminCustomers /></RouteGuard>} />
+                <Route path="/admin/orders/reports" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminReports /></RouteGuard>} />
+                <Route path="/admin/orders/delivery" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminDeliverySettings /></RouteGuard>} />
+
+                {/* Site customization - product_admin + site_manager */}
+                <Route path="/admin/site/products" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
+                <Route path="/admin/site/categories" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteCategories /></RouteGuard>} />
+                <Route path="/admin/site/pricing" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSitePricing /></RouteGuard>} />
+                <Route path="/admin/site/videos" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteVideos /></RouteGuard>} />
+                <Route path="/admin/site/home-sections" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteHomeSections /></RouteGuard>} />
+                <Route path="/admin/site/offers" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteOffers /></RouteGuard>} />
+                <Route path="/admin/site/free-delivery" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteFreeDelivery /></RouteGuard>} />
+                <Route path="/admin/site/scrolling" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteScrolling /></RouteGuard>} />
+                <Route path="/admin/site/footer" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteFooter /></RouteGuard>} />
+
+                {/* User mgmt - super admin only */}
+                <Route path="/admin/users" element={<RouteGuard allowedRoles={["product_admin"]}><AdminUsers /></RouteGuard>} />
+                <Route path="/admin/users/customers" element={<RouteGuard allowedRoles={["product_admin"]}><AdminShopCustomers /></RouteGuard>} />
+
+                {/* Legacy redirects */}
+                <Route path="/admin/products" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
+                <Route path="/products/admin" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
+                <Route path="/admin/delivery-settings" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminDeliverySettings /></RouteGuard>} />
+
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
