@@ -2,10 +2,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState, createContext, useContext } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 
+export type StaffRole = "product_admin" | "order_manager" | "site_manager";
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  roles: StaffRole[];
   isProductAdmin: boolean;
+  isOrderManager: boolean;
+  isSiteManager: boolean;
+  isStaff: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -13,7 +19,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
+  roles: [],
   isProductAdmin: false,
+  isOrderManager: false,
+  isSiteManager: false,
+  isStaff: false,
   loading: true,
   signOut: async () => {},
 });
@@ -23,7 +33,7 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isProductAdmin, setIsProductAdmin] = useState(false);
+  const [roles, setRoles] = useState<StaffRole[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
 
       if (!session?.user) {
-        setIsProductAdmin(false);
+        setRoles([]);
         setLoading(false);
         return;
       }
@@ -46,7 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq("user_id", session.user.id);
 
       if (!isMounted) return;
-      setIsProductAdmin((data ?? []).some((r: any) => r.role === "product_admin"));
+      const r = ((data ?? []) as any[])
+        .map((x) => x.role as StaffRole)
+        .filter((x) => x === "product_admin" || x === "order_manager" || x === "site_manager");
+      setRoles(r);
       setLoading(false);
     };
 
@@ -80,11 +93,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {}
     setSession(null);
     setUser(null);
-    setIsProductAdmin(false);
+    setRoles([]);
   };
 
+  const isProductAdmin = roles.includes("product_admin");
+  const isOrderManager = roles.includes("order_manager");
+  const isSiteManager = roles.includes("site_manager");
+  const isStaff = isProductAdmin || isOrderManager || isSiteManager;
+
   return (
-    <AuthContext.Provider value={{ user, session, isProductAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, roles, isProductAdmin, isOrderManager, isSiteManager, isStaff, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
