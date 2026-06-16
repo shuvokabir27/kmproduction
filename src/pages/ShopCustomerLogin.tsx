@@ -280,7 +280,7 @@ export default function ShopCustomerLogin() {
         {/* Split card */}
         <div className="relative w-full bg-white rounded-[28px] shadow-xl overflow-hidden grid md:grid-cols-2">
           {/* LEFT — green welcome panel with curved cutout */}
-          <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 text-white p-8 md:p-10 min-h-[220px] md:min-h-[560px] flex flex-col">
+          <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 text-white p-8 md:p-10 min-h-[260px] md:min-h-[560px] flex flex-col">
             {/* curved white cutout (desktop right edge, mobile bottom) */}
             <div className="hidden md:block absolute -right-24 top-1/2 -translate-y-1/2 w-64 h-[140%] bg-white rounded-full" />
             <div className="md:hidden absolute -bottom-24 left-1/2 -translate-x-1/2 w-[140%] h-48 bg-white rounded-[50%]" />
