@@ -591,6 +591,7 @@ export default function ShopCustomerLogin() {
                     setMode("register");
                     resetForgot();
                   }}
+                  data-no-magenta
                   className="w-full h-11 border-2 border-green-700 text-green-700 font-semibold hover:bg-green-50 transition-colors rounded-full"
                 >
                   রেজিস্টার করুন
