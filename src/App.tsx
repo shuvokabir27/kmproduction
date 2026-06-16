@@ -19,13 +19,29 @@ const Products = lazy(() => import("./pages/Products"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const ShopCustomerLogin = lazy(() => import("./pages/ShopCustomerLogin"));
 const ShopCustomerAccount = lazy(() => import("./pages/ShopCustomerAccount"));
-const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminDeliverySettings = lazy(() => import("./pages/AdminDeliverySettings"));
 const ShopOfferPage = lazy(() => import("./pages/ShopOfferPage"));
 const FreeDeliveryPage = lazy(() => import("./pages/FreeDeliveryPage"));
 const AllCategories = lazy(() => import("./pages/AllCategories"));
 const CategoryProducts = lazy(() => import("./pages/CategoryProducts"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
+
+// Admin pages (WP-style)
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+const AdminSiteProducts = lazy(() => import("./pages/admin/AdminSiteProducts"));
+const AdminSiteCategories = lazy(() => import("./pages/admin/AdminSiteCategories"));
+const AdminSitePricing = lazy(() => import("./pages/admin/AdminSitePricing"));
+const AdminSiteVideos = lazy(() => import("./pages/admin/AdminSiteVideos"));
+const AdminSiteHomeSections = lazy(() => import("./pages/admin/AdminSiteHomeSections"));
+const AdminSiteOffers = lazy(() => import("./pages/admin/AdminSiteOffers"));
+const AdminSiteFreeDelivery = lazy(() => import("./pages/admin/AdminSiteFreeDelivery"));
+const AdminSiteScrolling = lazy(() => import("./pages/admin/AdminSiteScrolling"));
+const AdminSiteFooter = lazy(() => import("./pages/admin/AdminSiteFooter"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminShopCustomers = lazy(() => import("./pages/admin/AdminShopCustomers"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -81,11 +97,35 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
 
-                {/* Admin routes — product_admin only */}
-                <Route path="/admin" element={<RouteGuard><AdminProducts /></RouteGuard>} />
-                <Route path="/admin/products" element={<RouteGuard><AdminProducts /></RouteGuard>} />
-                <Route path="/products/admin" element={<RouteGuard><AdminProducts /></RouteGuard>} />
-                <Route path="/admin/delivery-settings" element={<RouteGuard><AdminDeliverySettings /></RouteGuard>} />
+                {/* Admin routes */}
+                <Route path="/admin" element={<RouteGuard><AdminDashboard /></RouteGuard>} />
+
+                {/* Order management - product_admin + order_manager */}
+                <Route path="/admin/orders" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminOrders /></RouteGuard>} />
+                <Route path="/admin/orders/customers" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminCustomers /></RouteGuard>} />
+                <Route path="/admin/orders/reports" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminReports /></RouteGuard>} />
+                <Route path="/admin/orders/delivery" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminDeliverySettings /></RouteGuard>} />
+
+                {/* Site customization - product_admin + site_manager */}
+                <Route path="/admin/site/products" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
+                <Route path="/admin/site/categories" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteCategories /></RouteGuard>} />
+                <Route path="/admin/site/pricing" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSitePricing /></RouteGuard>} />
+                <Route path="/admin/site/videos" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteVideos /></RouteGuard>} />
+                <Route path="/admin/site/home-sections" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteHomeSections /></RouteGuard>} />
+                <Route path="/admin/site/offers" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteOffers /></RouteGuard>} />
+                <Route path="/admin/site/free-delivery" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteFreeDelivery /></RouteGuard>} />
+                <Route path="/admin/site/scrolling" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteScrolling /></RouteGuard>} />
+                <Route path="/admin/site/footer" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteFooter /></RouteGuard>} />
+
+                {/* User mgmt - super admin only */}
+                <Route path="/admin/users" element={<RouteGuard allowedRoles={["product_admin"]}><AdminUsers /></RouteGuard>} />
+                <Route path="/admin/users/customers" element={<RouteGuard allowedRoles={["product_admin"]}><AdminShopCustomers /></RouteGuard>} />
+
+                {/* Legacy redirects */}
+                <Route path="/admin/products" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
+                <Route path="/products/admin" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
+                <Route path="/admin/delivery-settings" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminDeliverySettings /></RouteGuard>} />
+
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

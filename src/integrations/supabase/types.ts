@@ -980,6 +980,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
       next_order_number: { Args: never; Returns: number }
       slugify: { Args: { input: string }; Returns: string }
       submit_product_review: {
@@ -1010,7 +1011,11 @@ export type Database = {
     Enums: {
       advance_status: "pending" | "approved" | "rejected" | "cancelled"
       app_platform: "android" | "ios"
-      app_role: "product_admin" | "super_admin"
+      app_role:
+        | "product_admin"
+        | "super_admin"
+        | "order_manager"
+        | "site_manager"
       bonus_type: "bonus" | "transport"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "audio" | "video"
@@ -1163,7 +1168,12 @@ export const Constants = {
     Enums: {
       advance_status: ["pending", "approved", "rejected", "cancelled"],
       app_platform: ["android", "ios"],
-      app_role: ["product_admin", "super_admin"],
+      app_role: [
+        "product_admin",
+        "super_admin",
+        "order_manager",
+        "site_manager",
+      ],
       bonus_type: ["bonus", "transport"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
       call_type: ["audio", "video"],
