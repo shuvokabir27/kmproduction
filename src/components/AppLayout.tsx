@@ -18,9 +18,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col bg-background">
       <header className="h-14 flex items-center justify-between border-b border-border/30 px-4 bg-card/80 backdrop-blur sticky top-0 z-30">
         <Link to="/admin/products" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <ShoppingBag className="h-4 w-4 text-primary" />
-          </div>
+          <img src={logoAsset.url} alt="Kuakata Multimedia" className="h-8 w-auto" />
           <span className="font-semibold text-sm">KM Shop Admin</span>
         </Link>
         <nav className="hidden md:flex items-center gap-1">
