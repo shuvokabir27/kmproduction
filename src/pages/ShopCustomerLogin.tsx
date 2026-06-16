@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  ShoppingBag,
   Lock,
   Phone,
   ArrowLeft,
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
+import logoAsset from "@/assets/kuakata-multimedia-logo.png.asset.json";
 
 const ADMIN_PHONE = "01710147613";
 const ADMIN_EMAIL = "01710147613@kmshop.local";
