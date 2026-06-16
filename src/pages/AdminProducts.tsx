@@ -36,7 +36,8 @@ import { useProductCategories } from "@/hooks/useProductCategories";
 import { RichTextEditor } from "@/components/RichTextEditor";
 
 const AdminProducts = () => {
-  const { user, isProductAdmin, isAdmin, loading, signOut } = useAuth();
+  const { user, isProductAdmin, loading, signOut } = useAuth();
+  const isAdmin = false;
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);

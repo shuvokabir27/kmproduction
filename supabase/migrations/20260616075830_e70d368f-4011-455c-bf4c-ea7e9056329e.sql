@@ -1,0 +1,10 @@
+
+ALTER TABLE public.site_settings
+  ADD COLUMN IF NOT EXISTS shop_name TEXT DEFAULT 'KM Shop',
+  ADD COLUMN IF NOT EXISTS shop_tagline TEXT,
+  ADD COLUMN IF NOT EXISTS top_strip_enabled BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS top_strip_text TEXT,
+  ADD COLUMN IF NOT EXISTS top_strip_speed INTEGER DEFAULT 30,
+  ADD COLUMN IF NOT EXISTS released_at TIMESTAMPTZ;
+ALTER TABLE public.app_versions
+  ADD COLUMN IF NOT EXISTS released_at TIMESTAMPTZ DEFAULT now();
