@@ -11,6 +11,7 @@ import { RouteGuard } from "@/components/RouteGuard";
 import { CartProvider } from "@/hooks/useCart";
 import { CartDrawer } from "@/components/CartDrawer";
 import MobileShopNav from "@/components/MobileShopNav";
+import SiteIdentityApplier from "@/components/SiteIdentityApplier";
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Login = lazy(() => import("./pages/Login"));
@@ -40,6 +41,7 @@ const AdminSiteOffers = lazy(() => import("./pages/admin/AdminSiteOffers"));
 const AdminSiteFreeDelivery = lazy(() => import("./pages/admin/AdminSiteFreeDelivery"));
 const AdminSiteScrolling = lazy(() => import("./pages/admin/AdminSiteScrolling"));
 const AdminSiteFooter = lazy(() => import("./pages/admin/AdminSiteFooter"));
+const AdminSiteIdentity = lazy(() => import("./pages/admin/AdminSiteIdentity"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminShopCustomers = lazy(() => import("./pages/admin/AdminShopCustomers"));
 
@@ -74,6 +76,7 @@ const App = () => (
     <AuthProvider>
       <CartProvider>
         <TooltipProvider>
+          <SiteIdentityApplier />
           <Toaster />
           <Sonner />
           <CartDrawer />
@@ -107,6 +110,7 @@ const App = () => (
                 <Route path="/admin/orders/delivery" element={<RouteGuard allowedRoles={["product_admin","order_manager"]}><AdminDeliverySettings /></RouteGuard>} />
 
                 {/* Site customization - product_admin + site_manager */}
+                <Route path="/admin/site/identity" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteIdentity /></RouteGuard>} />
                 <Route path="/admin/site/products" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
                 <Route path="/admin/site/categories" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteCategories /></RouteGuard>} />
                 <Route path="/admin/site/pricing" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSitePricing /></RouteGuard>} />

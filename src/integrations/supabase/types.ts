@@ -873,6 +873,7 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           facebook_url: string | null
+          favicon_url: string | null
           footer_about: string | null
           footer_copyright: string | null
           free_delivery: boolean | null
@@ -896,6 +897,7 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           facebook_url?: string | null
+          favicon_url?: string | null
           footer_about?: string | null
           footer_copyright?: string | null
           free_delivery?: boolean | null
@@ -919,6 +921,7 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           facebook_url?: string | null
+          favicon_url?: string | null
           footer_about?: string | null
           footer_copyright?: string | null
           free_delivery?: boolean | null
