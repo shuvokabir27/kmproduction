@@ -472,20 +472,6 @@ export default function ShopCustomerLogin() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  {mode === "login" && (
-                    <div className="text-right mt-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMode("forgot");
-                          resetForgot();
-                        }}
-                        className="text-[12px] font-medium text-slate-500 hover:text-slate-800 bg-transparent"
-                      >
-                        পাসওয়ার্ড ভুলে গেছেন?
-                      </button>
-                    </div>
-                  )}
                 </div>
 
                 {(mode === "register" || mode === "forgot") && (
