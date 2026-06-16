@@ -289,7 +289,7 @@ export default function ShopCustomerLogin() {
               <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-6 ring-1 ring-white/30">
                 <ShoppingBag className="h-7 w-7 text-white" />
               </div>
-              <div className="text-[11px] font-bold tracking-[0.2em] uppercase opacity-80 mb-2">কে এম শপ</div>
+              <div className="text-[11px] font-bold tracking-[0.2em] uppercase opacity-80 mb-2">কুয়াকাটা মাল্টিমিডিয়া গ্রুপ এর প্রতিষ্ঠান</div>
               <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
                 আবার স্বাগতম!
               </h2>
