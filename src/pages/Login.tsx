@@ -73,9 +73,7 @@ const Login = () => {
       <div className="w-full max-w-md">
         <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
           <div className="flex flex-col items-center mb-6">
-            <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-3">
-              <ShoppingBag className="h-7 w-7 text-primary" />
-            </div>
+            <img src={logoAsset.url} alt="Kuakata Multimedia" className="h-14 w-auto mb-3" />
             <h1 className="text-xl font-bold">KM Shop Admin</h1>
             <p className="text-xs text-muted-foreground mt-1">শপ ম্যানেজ করতে লগইন করুন</p>
           </div>
