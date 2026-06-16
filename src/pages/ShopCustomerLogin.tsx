@@ -239,7 +239,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputBase =
-    "w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-600 focus:bg-white transition-all";
+    "w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all duration-300";
 
   const loginIdentifierIsEmail = isEmail(identifier);
   const loginIdentifierIsAdmin =
@@ -247,13 +247,13 @@ export default function ShopCustomerLogin() {
 
   const headerTitle =
     mode === "login"
-      ? "স্বাগতম"
+      ? "লগইন করুন"
       : mode === "register"
       ? "নতুন অ্যাকাউন্ট"
       : "পাসওয়ার্ড রিসেট";
   const headerSub =
     mode === "login"
-      ? "আপনার অ্যাকাউন্টে লগইন করে চালিয়ে যান"
+      ? "আপনার অ্যাকাউন্টের তথ্যাদি দিয়ে প্রবেশ করুন"
       : mode === "register"
       ? "কয়েক সেকেন্ডে অ্যাকাউন্ট তৈরি করুন"
       : forgotStep === "phone"
@@ -262,334 +262,365 @@ export default function ShopCustomerLogin() {
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center px-4 py-8 bg-slate-100"
+      className="relative min-h-screen flex items-center justify-center px-4 py-8 bg-slate-50"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', sans-serif" }}
     >
       <div className="relative w-full max-w-4xl">
         <Link
           to="/"
-          className="text-slate-600 hover:text-slate-900 text-sm inline-flex items-center gap-1 mb-4 transition-colors"
+          className="text-slate-500 hover:text-slate-900 text-sm inline-flex items-center gap-1 mb-4 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> দোকানে ফিরুন
         </Link>
 
         {/* Split card */}
-        <div className="relative w-full bg-white rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] overflow-hidden grid md:grid-cols-2">
-          {/* LEFT — green welcome panel with curved cutout */}
-          <div className="relative bg-gradient-to-br from-green-700 to-green-900 text-white p-8 md:p-10 min-h-[260px] md:min-h-[560px] flex flex-col">
-            {/* curved white cutout (desktop right edge, mobile bottom) */}
-            <div className="hidden md:block absolute -right-24 top-1/2 -translate-y-1/2 w-64 h-[140%] bg-white rounded-full" />
-            <div className="md:hidden absolute -bottom-32 left-1/2 -translate-x-1/2 w-[140%] h-40 bg-white rounded-[50%]" />
+        <div className="relative w-full bg-white rounded-3xl shadow-[0_20px_50px_rgba(59,130,246,0.12)] overflow-hidden flex border border-slate-100">
+          {/* LEFT — blue welcome panel with glassmorphic accents */}
+          <div className="hidden md:flex w-1/2 bg-blue-600 relative overflow-hidden items-center justify-center p-12">
+            {/* decorative glass orbs */}
+            <div className="absolute top-0 left-0 w-full h-full opacity-20">
+              <div className="absolute -top-24 -left-24 w-64 h-64 bg-white rounded-full blur-3xl" />
+              <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-400 rounded-full blur-3xl" />
+            </div>
 
-            <div className="relative z-10 flex flex-col h-full items-center justify-center text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-6 ring-1 ring-white/30 overflow-hidden">
-                <img src={logoAsset.url} alt="Kuakata Multimedia" className="h-full w-full object-contain" />
+            <div className="relative z-10 text-center">
+              <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-8 border border-white/30 overflow-hidden">
+                <img src={logoAsset.url} alt="Kuakata Multimedia" className="h-16 w-16 object-contain" />
               </div>
-              <div className="text-[11px] font-bold tracking-[0.2em] uppercase opacity-80 mb-2">কুয়াকাটা মাল্টিমিডিয়া গ্রুপ এর প্রতিষ্ঠান</div>
-              <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
-                আবার স্বাগতম!
-              </h2>
-              <p className="text-[13.5px] leading-relaxed text-green-50/90 max-w-[260px]">
-                আমাদের সাথে যুক্ত থাকতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।
+              <h2 className="text-3xl font-bold text-white mb-4">কে এম শপ-এ স্বাগতম</h2>
+              <p className="text-blue-100 text-lg leading-relaxed">
+                সেরা পণ্য ও দ্রুত ডেলিভারির অভিজ্ঞতায় আপনাকে স্বাগতম। আপনার পছন্দের সব কেনাকাটা এখন এক জায়গায়।
               </p>
-
-              <div className="mt-auto hidden md:flex items-center gap-2 text-[11.5px] text-green-50/80 pt-8">
-                <ShieldCheck className="h-3.5 w-3.5" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
+              <div className="mt-12 flex justify-center gap-2">
+                <div className="w-12 h-1 bg-white/40 rounded-full" />
+                <div className="w-4 h-1 bg-white/20 rounded-full" />
+                <div className="w-4 h-1 bg-white/20 rounded-full" />
               </div>
             </div>
           </div>
 
           {/* RIGHT — form panel */}
-          <div className="relative p-8 md:p-14 flex flex-col justify-center bg-white">
+          <div className="w-full md:w-1/2 p-8 md:p-14 flex flex-col justify-center">
             <div className="max-w-md mx-auto w-full">
               <div className="mb-10">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">
-                  {headerTitle}
-                </h1>
-                <p className="text-slate-500 font-medium">{headerSub}</p>
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">{headerTitle}</h1>
+                <p className="text-slate-500">{headerSub}</p>
               </div>
 
-          {/* Mode indicator */}
-          {mode !== "login" && (
-            <button
-              onClick={() => {
-                setMode("login");
-                resetForgot();
-              }}
-              className="mb-4 text-[12px] font-medium text-slate-500 hover:text-slate-900 inline-flex items-center gap-1 transition-colors"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> লগইনে ফিরে যান
-            </button>
-          )}
-
-
-          {/* Notice */}
-          {mode !== "login" && (
-            <div className="mb-5 rounded-xl bg-green-50 border border-green-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
-              <Info className="h-4 w-4 text-green-700 mt-0.5 shrink-0" />
-              <span>
-                <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
-              </span>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            {mode === "register" && (
-              <div>
-                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
-                  আপনার নাম
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <input
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="পূর্ণ নাম"
-                    className={inputBase}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Login identifier — email OR mobile */}
-            {mode === "login" ? (
-              <div>
-                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
-                  মোবাইল নম্বর অথবা ইমেইল
-                </Label>
-                <div className="relative">
-                  {loginIdentifierIsEmail ? (
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  ) : (
-                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  )}
-                  <input
-                    type="text"
-                    value={identifier}
-                    onChange={(e) => {
-                      setIdentifier(e.target.value);
-                      setErrorMsg("");
-                    }}
-                    placeholder="01XXXXXXXXX অথবা email@example.com"
-                    className={inputBase}
-                    autoComplete="username"
-                  />
-                </div>
-                {loginIdentifierIsAdmin && (
-                  <p className="text-[11px] text-green-800 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
-                    <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div>
-                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
-                  মোবাইল নম্বর
-                </Label>
-                <div className="relative">
-                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={phone}
-                    onChange={(e) => {
-                      setPhone(e.target.value.replace(/\D/g, ""));
-                      setErrorMsg("");
-                    }}
-                    placeholder="01XXXXXXXXX"
-                    className={inputBase}
-                    disabled={mode === "forgot" && forgotStep === "otp"}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* OTP */}
-            {mode === "forgot" && forgotStep === "otp" && (
-              <div>
-                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
-                  ৬-ডিজিট OTP কোড
-                </Label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="● ● ● ● ● ●"
-                  className="w-full h-14 px-4 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-900 outline-none focus:border-green-600 focus:bg-white transition-all tracking-[0.5em] text-center font-bold text-lg"
-                  autoFocus
-                />
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-[11px] text-slate-500">SMS এ পাঠানো কোড দিন</p>
-                  <button
-                    type="button"
-                    onClick={requestOtp}
-                    disabled={resendIn > 0 || loading}
-                    className="text-[11px] font-semibold text-green-700 hover:text-green-800 disabled:text-slate-400 disabled:cursor-not-allowed"
-                  >
-                    {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Password */}
-            {(mode !== "forgot" || forgotStep === "otp") && (
-              <>
-                <div>
-                  <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
-                    {mode === "forgot" ? "নতুন পাসওয়ার্ড" : "পাসওয়ার্ড"}
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => {
-                        // For admin login allow any chars; customer mode digits only
-                        if (mode === "login" && loginIdentifierIsAdmin) {
-                          setPassword(e.target.value);
-                        } else {
-                          setPassword(e.target.value.replace(/\D/g, ""));
-                        }
-                        setErrorMsg("");
-                      }}
-                      placeholder="••••••"
-                      className={inputBase}
-                      autoComplete={mode === "login" ? "current-password" : "new-password"}
-                    />
-                  </div>
-                  {mode === "login" && (
-                    <div className="text-right mt-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMode("forgot");
-                          setIdentifier("");
-                          setPassword("");
-                          setErrorMsg("");
-                        }}
-                        className="text-xs font-bold text-green-700 hover:text-green-800 transition-colors"
-                      >
-                        পাসওয়ার্ড ভুলে গেছেন?
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {(mode === "register" || mode === "forgot") && (
-                  <div>
-                    <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
-                      পাসওয়ার্ড নিশ্চিত করুন
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                      <input
-                        type="password"
-                        inputMode="numeric"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
-                        placeholder="••••••"
-                        className={inputBase}
-                      />
-                    </div>
-                    {confirmPassword.length > 0 && confirmPassword !== password && (
-                      <p className="text-[11px] text-red-600 font-medium mt-1.5 ml-0.5">
-                        পাসওয়ার্ড মিলছে না
-                      </p>
-                    )}
-                    {confirmPassword.length >= 6 && confirmPassword === password && (
-                      <p className="text-[11px] text-green-600 font-medium mt-1.5 ml-0.5">
-                        ✓ পাসওয়ার্ড মিলেছে
-                      </p>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-
-            {mode === "forgot" && (
-              <div className="text-center">
+              {/* Mode indicator */}
+              {mode !== "login" && (
                 <button
-                  type="button"
                   onClick={() => {
                     setMode("login");
                     resetForgot();
                   }}
-                  className="text-[12px] font-medium text-slate-500 hover:text-slate-900"
+                  className="mb-4 text-[12px] font-medium text-slate-500 hover:text-slate-900 inline-flex items-center gap-1 transition-colors"
                 >
-                  ← লগইনে ফিরে যান
+                  <ArrowLeft className="h-3.5 w-3.5" /> লগইনে ফিরে যান
                 </button>
-              </div>
-            )}
-
-            <AnimatePresence>
-              {errorMsg && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: "auto" }}
-                  exit={{ opacity: 0, y: -8, height: 0 }}
-                  className="flex items-start gap-2.5 p-3 rounded-lg bg-red-50 border border-red-200"
-                >
-                  <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
-                  <p className="text-sm text-red-700 font-medium leading-snug">{errorMsg}</p>
-                </motion.div>
               )}
-            </AnimatePresence>
 
-            {(() => {
-              const mismatch =
-                (mode === "register" || (mode === "forgot" && forgotStep === "otp")) &&
-                (confirmPassword.length < 6 || confirmPassword !== password);
-              const isOtpStep = mode === "forgot" && forgotStep === "otp";
-              return (
-                <button
-                  type="button"
-                  onClick={submit}
-                  disabled={loading || mismatch}
-                  data-no-magenta
-                  className="w-full flex items-center justify-center h-14 font-bold text-white bg-green-700 hover:bg-green-800 rounded-2xl shadow-[0_12px_24px_-8px_rgba(21,128,61,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading
-                    ? "অপেক্ষা করুন..."
-                    : mode === "login"
-                    ? "লগইন করুন"
-                    : mode === "register"
-                    ? "অ্যাকাউন্ট তৈরি করুন"
-                    : isOtpStep
-                    ? "পাসওয়ার্ড রিসেট করুন"
-                    : "OTP পাঠান"}
-                </button>
-              );
-            })()}
+              {/* Notice */}
+              {mode !== "login" && (
+                <div className="mb-5 rounded-xl bg-blue-50 border border-blue-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
+                  <Info className="h-4 w-4 text-blue-700 mt-0.5 shrink-0" />
+                  <span>
+                    <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
+                  </span>
+                </div>
+              )}
 
-            {mode === "login" && (
-              <div className="text-center pt-2">
-                <p className="text-[13px] text-slate-500">
-                  নতুন অ্যাকাউন্ট?{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("register");
-                      setIdentifier("");
-                      setPassword("");
-                      setErrorMsg("");
-                    }}
-                    className="font-bold text-green-700 hover:text-green-800 hover:underline decoration-2 underline-offset-4 transition-colors"
-                  >
-                    রেজিস্টার করুন
-                  </button>
-                </p>
+              <div className="space-y-5">
+                {mode === "register" && (
+                  <div className="space-y-1.5">
+                    <Label className="block text-sm font-semibold text-slate-700 ml-1">
+                      আপনার নাম
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <input
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="পূর্ণ নাম"
+                        className={inputBase}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Login identifier — email OR mobile */}
+                {mode === "login" ? (
+                  <div className="space-y-1.5">
+                    <Label className="block text-sm font-semibold text-slate-700 ml-1">
+                      মোবাইল নম্বর অথবা ইমেইল
+                    </Label>
+                    <div className="relative">
+                      {loginIdentifierIsEmail ? (
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      ) : (
+                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      )}
+                      <input
+                        type="text"
+                        value={identifier}
+                        onChange={(e) => {
+                          setIdentifier(e.target.value);
+                          setErrorMsg("");
+                        }}
+                        placeholder="01XXXXXXXXX অথবা email@example.com"
+                        className={inputBase}
+                        autoComplete="username"
+                      />
+                    </div>
+                    {loginIdentifierIsAdmin && (
+                      <p className="text-[11px] text-blue-800 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <Label className="block text-sm font-semibold text-slate-700 ml-1">
+                      মোবাইল নম্বর
+                    </Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <input
+                        type="tel"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        value={phone}
+                        onChange={(e) => {
+                          setPhone(e.target.value.replace(/\D/g, ""));
+                          setErrorMsg("");
+                        }}
+                        placeholder="01XXXXXXXXX"
+                        className={inputBase}
+                        disabled={mode === "forgot" && forgotStep === "otp"}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* OTP */}
+                {mode === "forgot" && forgotStep === "otp" && (
+                  <div className="space-y-1.5">
+                    <Label className="block text-sm font-semibold text-slate-700 ml-1">
+                      ৬-ডিজিট OTP কোড
+                    </Label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      placeholder="● ● ● ● ● ●"
+                      className="w-full h-14 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all duration-300 tracking-[0.5em] text-center font-bold text-lg"
+                      autoFocus
+                    />
+                    <div className="flex items-center justify-between mt-2">
+                      <p className="text-[11px] text-slate-500">SMS এ পাঠানো কোড দিন</p>
+                      <button
+                        type="button"
+                        onClick={requestOtp}
+                        disabled={resendIn > 0 || loading}
+                        className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 disabled:text-slate-400 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Password */}
+                {(mode !== "forgot" || forgotStep === "otp") && (
+                  <>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between items-center">
+                        <Label className="block text-sm font-semibold text-slate-700 ml-1">
+                          {mode === "forgot" ? "নতুন পাসওয়ার্ড" : "পাসওয়ার্ড"}
+                        </Label>
+                        {mode === "login" && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMode("forgot");
+                              setIdentifier("");
+                              setPassword("");
+                              setErrorMsg("");
+                            }}
+                            className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                          >
+                            ভুলে গেছেন?
+                          </button>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => {
+                            // For admin login allow any chars; customer mode digits only
+                            if (mode === "login" && loginIdentifierIsAdmin) {
+                              setPassword(e.target.value);
+                            } else {
+                              setPassword(e.target.value.replace(/\D/g, ""));
+                            }
+                            setErrorMsg("");
+                          }}
+                          placeholder="••••••"
+                          className={inputBase}
+                          autoComplete={mode === "login" ? "current-password" : "new-password"}
+                        />
+                      </div>
+                    </div>
+
+                    {(mode === "register" || mode === "forgot") && (
+                      <div className="space-y-1.5">
+                        <Label className="block text-sm font-semibold text-slate-700 ml-1">
+                          পাসওয়ার্ড নিশ্চিত করুন
+                        </Label>
+                        <div className="relative">
+                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <input
+                            type="password"
+                            inputMode="numeric"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
+                            placeholder="••••••"
+                            className={inputBase}
+                          />
+                        </div>
+                        {confirmPassword.length > 0 && confirmPassword !== password && (
+                          <p className="text-[11px] text-red-600 font-medium mt-1.5 ml-0.5">
+                            পাসওয়ার্ড মিলছে না
+                          </p>
+                        )}
+                        {confirmPassword.length >= 6 && confirmPassword === password && (
+                          <p className="text-[11px] text-green-600 font-medium mt-1.5 ml-0.5">
+                            ✓ পাসওয়ার্ড মিলেছে
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {mode === "forgot" && (
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMode("login");
+                        resetForgot();
+                      }}
+                      className="text-[12px] font-medium text-slate-500 hover:text-slate-900 transition-colors"
+                    >
+                      ← লগইনে ফিরে যান
+                    </button>
+                  </div>
+                )}
+
+                <AnimatePresence>
+                  {errorMsg && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, height: 0 }}
+                      animate={{ opacity: 1, y: 0, height: "auto" }}
+                      exit={{ opacity: 0, y: -8, height: 0 }}
+                      className="flex items-start gap-2.5 p-3 rounded-lg bg-red-50 border border-red-200"
+                    >
+                      <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+                      <p className="text-sm text-red-700 font-medium leading-snug">{errorMsg}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {(() => {
+                  const mismatch =
+                    (mode === "register" || (mode === "forgot" && forgotStep === "otp")) &&
+                    (confirmPassword.length < 6 || confirmPassword !== password);
+                  const isOtpStep = mode === "forgot" && forgotStep === "otp";
+                  return (
+                    <button
+                      type="button"
+                      onClick={submit}
+                      disabled={loading || mismatch}
+                      className="w-full flex items-center justify-center py-4 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-2xl shadow-lg shadow-blue-500/30 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading
+                        ? "অপেক্ষা করুন..."
+                        : mode === "login"
+                        ? "লগইন করুন"
+                        : mode === "register"
+                        ? "অ্যাকাউন্ট তৈরি করুন"
+                        : isOtpStep
+                        ? "পাসওয়ার্ড রিসেট করুন"
+                        : "OTP পাঠান"}
+                    </button>
+                  );
+                })()}
+
+                {mode === "login" && (
+                  <>
+                    {/* Social login divider */}
+                    <div className="relative flex items-center my-6">
+                      <div className="flex-grow border-t border-slate-200" />
+                      <span className="px-4 text-sm text-slate-400">অথবা সোশ্যাল মিডিয়া দিয়ে</span>
+                      <div className="flex-grow border-t border-slate-200" />
+                    </div>
+
+                    {/* Social buttons */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => toast.info("শীঘ্রই আসছে")}
+                        className="flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors font-medium text-slate-700"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                        </svg>
+                        গুগল
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toast.info("শীঘ্রই আসছে")}
+                        className="flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors font-medium text-slate-700"
+                      >
+                        <svg className="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        ফেসবুক
+                      </button>
+                    </div>
+
+                    <div className="text-center pt-2">
+                      <p className="text-[13px] text-slate-500">
+                        অ্যাকাউন্ট নেই?{" "}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMode("register");
+                            setIdentifier("");
+                            setPassword("");
+                            setErrorMsg("");
+                          }}
+                          className="font-bold text-blue-600 hover:text-blue-700 hover:underline decoration-2 underline-offset-4 transition-colors"
+                        >
+                          রেজিস্টার করুন
+                        </button>
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
-            )}
 
-          </div>
-
-          <p className="md:hidden text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
-            <ShieldCheck className="h-3 w-3" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
-          </p>
+              <p className="md:hidden text-center text-[11px] text-slate-500 mt-6 inline-flex w-full items-center justify-center gap-1">
+                <ShieldCheck className="h-3 w-3" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
+              </p>
             </div>
           </div>
         </div>
