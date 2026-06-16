@@ -450,7 +450,7 @@ export default function ShopCustomerLogin() {
                           setMode("forgot");
                           resetForgot();
                         }}
-                        className="text-[12px] font-medium text-blue-600 hover:text-blue-700"
+                        className="text-[12px] font-medium text-slate-500 hover:text-slate-800 bg-transparent"
                       >
                         পাসওয়ার্ড ভুলে গেছেন?
                       </button>
