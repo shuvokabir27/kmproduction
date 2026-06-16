@@ -418,7 +418,7 @@ export default function ShopCustomerLogin() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder="● ● ● ● ● ●"
-                  className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-slate-900 outline-none focus:border-green-700 focus:ring-4 focus:ring-green-700/10 transition-all tracking-[0.5em] text-center font-bold text-lg"
+                  className="w-full h-14 px-4 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-900 outline-none focus:border-green-600 focus:bg-white transition-all tracking-[0.5em] text-center font-bold text-lg"
                   autoFocus
                 />
                 <div className="flex items-center justify-between mt-2">
@@ -471,7 +471,7 @@ export default function ShopCustomerLogin() {
                           setPassword("");
                           setErrorMsg("");
                         }}
-                        className="text-[12px] font-medium text-green-700 hover:text-green-800 transition-colors"
+                        className="text-xs font-bold text-green-700 hover:text-green-800 transition-colors"
                       >
                         পাসওয়ার্ড ভুলে গেছেন?
                       </button>
@@ -550,7 +550,7 @@ export default function ShopCustomerLogin() {
                   onClick={submit}
                   disabled={loading || mismatch}
                   data-no-magenta
-                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-green-700 hover:bg-green-800 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center h-14 font-bold text-white bg-green-700 hover:bg-green-800 rounded-2xl shadow-[0_12px_24px_-8px_rgba(21,128,61,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "অপেক্ষা করুন..."
@@ -577,7 +577,7 @@ export default function ShopCustomerLogin() {
                       setPassword("");
                       setErrorMsg("");
                     }}
-                    className="font-semibold text-green-700 hover:text-green-800 transition-colors"
+                    className="font-bold text-green-700 hover:text-green-800 hover:underline decoration-2 underline-offset-4 transition-colors"
                   >
                     রেজিস্টার করুন
                   </button>
