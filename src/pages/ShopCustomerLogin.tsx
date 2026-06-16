@@ -297,7 +297,7 @@ export default function ShopCustomerLogin() {
                 আমাদের সাথে যুক্ত থাকতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।
               </p>
 
-              <div className="mt-auto hidden md:flex items-center gap-2 text-[11.5px] text-emerald-50/80 pt-8">
+              <div className="mt-auto hidden md:flex items-center gap-2 text-[11.5px] text-blue-50/80 pt-8">
                 <ShieldCheck className="h-3.5 w-3.5" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
               </div>
             </div>
