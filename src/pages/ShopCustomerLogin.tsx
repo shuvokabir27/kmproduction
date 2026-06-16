@@ -564,6 +564,26 @@ export default function ShopCustomerLogin() {
               );
             })()}
 
+            {mode === "login" && (
+              <div className="text-center pt-2">
+                <p className="text-[13px] text-slate-500">
+                  নতুন অ্যাকাউন্ট?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("register");
+                      setIdentifier("");
+                      setPassword("");
+                      setErrorMsg("");
+                    }}
+                    className="font-semibold text-green-700 hover:text-green-800 transition-colors"
+                  >
+                    রেজিস্টার করুন
+                  </button>
+                </p>
+              </div>
+            )}
+
           </div>
 
           <p className="md:hidden text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
