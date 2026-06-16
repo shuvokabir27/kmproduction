@@ -13,44 +13,57 @@ Deno.serve(async (req) => {
     const EMAIL = "01710147613@kmshop.local";
     const PASSWORD = "01778908877@Sk";
 
+    // Super admin (owner) account — demo password, user will change from panel
+    const SUPER_EMAIL = "shuvokuakata27@gmail.com";
+    const SUPER_PASSWORD = "Admin@1234";
+
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // 1) find or create auth user
-    let userId: string | null = null;
-    const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-    const existing = list?.users?.find((u) => u.email === EMAIL);
-    if (existing) {
-      userId = existing.id;
-      // ensure password is set
-      await admin.auth.admin.updateUserById(userId, { password: PASSWORD, email_confirm: true });
-    } else {
+    const ensureUser = async (email: string, password: string, fullName: string) => {
+      const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
+      const existing = list?.users?.find((u) => u.email === email);
+      if (existing) {
+        // Do NOT overwrite password if user already exists (so owner-changed password sticks).
+        return existing.id;
+      }
       const { data: created, error: cErr } = await admin.auth.admin.createUser({
-        email: EMAIL,
-        password: PASSWORD,
+        email,
+        password,
         email_confirm: true,
-        user_metadata: { full_name: "KM Shop Admin" },
+        user_metadata: { full_name: fullName },
       });
       if (cErr || !created.user) throw new Error(cErr?.message || "create user failed");
-      userId = created.user.id;
-    }
+      return created.user.id;
+    };
 
-    // 2) ensure product_admin role
+    // 1) product admin (existing phone-based admin)
+    const adminId = await ensureUser(EMAIL, PASSWORD, "KM Shop Admin");
     await admin.from("user_roles").upsert(
-      { user_id: userId, role: "product_admin" },
+      { user_id: adminId, role: "product_admin" },
       { onConflict: "user_id,role" }
     );
-
-    // 3) ensure phone mapping
     await admin.from("admin_phone_logins").upsert(
-      { user_id: userId, phone: PHONE },
+      { user_id: adminId, phone: PHONE },
       { onConflict: "phone" }
     );
 
+    // 2) super admin (owner gmail)
+    const superId = await ensureUser(SUPER_EMAIL, SUPER_PASSWORD, "Super Admin");
+    await admin.from("user_roles").upsert(
+      { user_id: superId, role: "super_admin" },
+      { onConflict: "user_id,role" }
+    );
+    // also give product_admin so existing admin panels work
+    await admin.from("user_roles").upsert(
+      { user_id: superId, role: "product_admin" },
+      { onConflict: "user_id,role" }
+    );
+
     return new Response(
-      JSON.stringify({ ok: true, user_id: userId, email: EMAIL }),
+      JSON.stringify({ ok: true, admin_id: adminId, super_id: superId }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
