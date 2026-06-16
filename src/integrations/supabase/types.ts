@@ -1010,7 +1010,7 @@ export type Database = {
     Enums: {
       advance_status: "pending" | "approved" | "rejected" | "cancelled"
       app_platform: "android" | "ios"
-      app_role: "product_admin"
+      app_role: "product_admin" | "super_admin"
       bonus_type: "bonus" | "transport"
       call_status: "ringing" | "active" | "ended" | "missed" | "declined"
       call_type: "audio" | "video"
@@ -1163,7 +1163,7 @@ export const Constants = {
     Enums: {
       advance_status: ["pending", "approved", "rejected", "cancelled"],
       app_platform: ["android", "ios"],
-      app_role: ["product_admin"],
+      app_role: ["product_admin", "super_admin"],
       bonus_type: ["bonus", "transport"],
       call_status: ["ringing", "active", "ended", "missed", "declined"],
       call_type: ["audio", "video"],
