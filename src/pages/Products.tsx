@@ -275,12 +275,20 @@ const Products = () => {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-blue-600 shadow-sm">
-              KM
+            <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-blue-600 shadow-sm overflow-hidden">
+              {siteSettings?.logo_url ? (
+                <img src={siteSettings.logo_url} alt={siteSettings?.site_name || "Logo"} className="h-full w-full object-cover" />
+              ) : (
+                "KM"
+              )}
             </div>
             <div className="hidden sm:block">
-              <div className="font-extrabold text-base md:text-lg leading-tight text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>কে এম শপ</div>
-              <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">KM Shop · কুয়াকাটা</div>
+              <div className="font-extrabold text-base md:text-lg leading-tight text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>
+                {siteSettings?.site_name || siteSettings?.shop_name || "কে এম শপ"}
+              </div>
+              <div className="text-[10px] md:text-xs text-muted-foreground tracking-wide">
+                {siteSettings?.shop_tagline || `${siteSettings?.shop_name || "KM Shop"} · কুয়াকাটা`}
+              </div>
             </div>
           </Link>
 
