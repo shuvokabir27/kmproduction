@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Globe, LogOut, ShoppingBag } from "lucide-react";
+import { Globe, LogOut } from "lucide-react";
+import logoAsset from "@/assets/kuakata-multimedia-logo.png.asset.json";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut } = useAuth();
