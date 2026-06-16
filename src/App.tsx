@@ -42,6 +42,7 @@ const AdminSiteFreeDelivery = lazy(() => import("./pages/admin/AdminSiteFreeDeli
 const AdminSiteScrolling = lazy(() => import("./pages/admin/AdminSiteScrolling"));
 const AdminSiteFooter = lazy(() => import("./pages/admin/AdminSiteFooter"));
 const AdminSiteIdentity = lazy(() => import("./pages/admin/AdminSiteIdentity"));
+const AdminSiteHero = lazy(() => import("./pages/admin/AdminSiteHero"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminShopCustomers = lazy(() => import("./pages/admin/AdminShopCustomers"));
 
