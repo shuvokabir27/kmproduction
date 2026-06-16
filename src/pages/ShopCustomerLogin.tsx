@@ -590,7 +590,7 @@ export default function ShopCustomerLogin() {
                     setMode("register");
                     resetForgot();
                   }}
-                  className="w-full h-11 rounded-md border-2 border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors rounded-full"
+                  className="w-full h-11 border-2 border-blue-500 text-blue-600 font-semibold hover:bg-blue-50 transition-colors rounded-full"
                 >
                   রেজিস্টার করুন
                 </button>
