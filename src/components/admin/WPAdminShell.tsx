@@ -44,6 +44,7 @@ const groups: Group[] = [
     items: [
       { to: "/admin/site/identity", label: "সাইট আইডেন্টিটি", icon: Settings },
       { to: "/admin/site/hero", label: "হিরো ব্যানার", icon: Sparkles },
+      { to: "/admin/site/sliders", label: "প্রডাক্ট স্লাইডার", icon: Layers },
       { to: "/admin/site/products", label: "প্রডাক্ট", icon: Package },
       { to: "/admin/site/categories", label: "ক্যাটাগরি", icon: FolderTree },
       { to: "/admin/site/pricing", label: "প্রাইসিং", icon: Weight },

@@ -641,6 +641,42 @@ export type Database = {
           },
         ]
       }
+      product_sliders: {
+        Row: {
+          autoplay: boolean
+          created_at: string
+          id: string
+          is_active: boolean
+          product_ids: string[]
+          sort_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          autoplay?: boolean
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          product_ids?: string[]
+          sort_order?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          autoplay?: boolean
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          product_ids?: string[]
+          sort_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_weight_prices: {
         Row: {
           created_at: string
