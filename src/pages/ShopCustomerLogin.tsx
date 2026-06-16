@@ -293,7 +293,7 @@ export default function ShopCustomerLogin() {
               <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
                 আবার স্বাগতম!
               </h2>
-              <p className="text-[13.5px] leading-relaxed text-emerald-50/90 max-w-[260px]">
+              <p className="text-[13.5px] leading-relaxed text-blue-50/90 max-w-[260px]">
                 আমাদের সাথে যুক্ত থাকতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।
               </p>
 
