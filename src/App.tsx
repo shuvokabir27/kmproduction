@@ -19,13 +19,29 @@ const Products = lazy(() => import("./pages/Products"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const ShopCustomerLogin = lazy(() => import("./pages/ShopCustomerLogin"));
 const ShopCustomerAccount = lazy(() => import("./pages/ShopCustomerAccount"));
-const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminDeliverySettings = lazy(() => import("./pages/AdminDeliverySettings"));
 const ShopOfferPage = lazy(() => import("./pages/ShopOfferPage"));
 const FreeDeliveryPage = lazy(() => import("./pages/FreeDeliveryPage"));
 const AllCategories = lazy(() => import("./pages/AllCategories"));
 const CategoryProducts = lazy(() => import("./pages/CategoryProducts"));
 const DownloadApp = lazy(() => import("./pages/DownloadApp"));
+
+// Admin pages (WP-style)
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+const AdminSiteProducts = lazy(() => import("./pages/admin/AdminSiteProducts"));
+const AdminSiteCategories = lazy(() => import("./pages/admin/AdminSiteCategories"));
+const AdminSitePricing = lazy(() => import("./pages/admin/AdminSitePricing"));
+const AdminSiteVideos = lazy(() => import("./pages/admin/AdminSiteVideos"));
+const AdminSiteHomeSections = lazy(() => import("./pages/admin/AdminSiteHomeSections"));
+const AdminSiteOffers = lazy(() => import("./pages/admin/AdminSiteOffers"));
+const AdminSiteFreeDelivery = lazy(() => import("./pages/admin/AdminSiteFreeDelivery"));
+const AdminSiteScrolling = lazy(() => import("./pages/admin/AdminSiteScrolling"));
+const AdminSiteFooter = lazy(() => import("./pages/admin/AdminSiteFooter"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminShopCustomers = lazy(() => import("./pages/admin/AdminShopCustomers"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
