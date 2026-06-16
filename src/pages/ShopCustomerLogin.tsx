@@ -285,7 +285,7 @@ export default function ShopCustomerLogin() {
             <div className="hidden md:block absolute -right-24 top-1/2 -translate-y-1/2 w-64 h-[140%] bg-white rounded-full" />
             <div className="md:hidden absolute -bottom-32 left-1/2 -translate-x-1/2 w-[140%] h-40 bg-white rounded-[50%]" />
 
-            <div className="relative z-10 flex flex-col h-full items-center text-center">
+            <div className="relative z-10 flex flex-col h-full items-center justify-center text-center">
               <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-6 ring-1 ring-white/30 overflow-hidden">
                 <img src={logoAsset.url} alt="Kuakata Multimedia" className="h-full w-full object-contain" />
               </div>
