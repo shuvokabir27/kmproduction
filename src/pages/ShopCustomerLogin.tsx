@@ -300,13 +300,14 @@ export default function ShopCustomerLogin() {
           </div>
 
           {/* RIGHT — form panel */}
-          <div className="relative p-6 md:p-10">
-          <div className="text-center md:text-left mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-              {headerTitle}
-            </h1>
-            <p className="text-[13px] text-slate-500 mt-1">{headerSub}</p>
-          </div>
+          <div className="relative p-8 md:p-14 flex flex-col justify-center bg-white">
+            <div className="max-w-md mx-auto w-full">
+              <div className="mb-10">
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                  {headerTitle}
+                </h1>
+                <p className="text-slate-500 font-medium">{headerSub}</p>
+              </div>
 
           {/* Mode indicator */}
           {mode !== "login" && (
