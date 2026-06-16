@@ -243,18 +243,33 @@ export default function ShopCustomerLogin() {
   };
 
   const inputBase =
-    "w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all";
+    "w-full h-12 pl-11 pr-4 rounded-full bg-emerald-50/60 border border-emerald-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 transition-all";
 
   const loginIdentifierIsEmail = isEmail(identifier);
   const loginIdentifierIsAdmin =
     loginIdentifierIsEmail || isAdminPhone(identifier);
 
+  const headerTitle =
+    mode === "login"
+      ? "স্বাগতম"
+      : mode === "register"
+      ? "নতুন অ্যাকাউন্ট"
+      : "পাসওয়ার্ড রিসেট";
+  const headerSub =
+    mode === "login"
+      ? "আপনার অ্যাকাউন্টে লগইন করে চালিয়ে যান"
+      : mode === "register"
+      ? "কয়েক সেকেন্ডে অ্যাকাউন্ট তৈরি করুন"
+      : forgotStep === "phone"
+      ? "মোবাইল নম্বর দিন, OTP পাঠাবো"
+      : "OTP ও নতুন পাসওয়ার্ড দিন";
+
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 bg-slate-50"
+      className="relative min-h-screen flex items-center justify-center px-4 py-8 bg-slate-100"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', sans-serif" }}
     >
-      <div className="relative w-full max-w-md">
+      <div className="relative w-full max-w-4xl">
         <Link
           to="/"
           className="text-slate-600 hover:text-slate-900 text-sm inline-flex items-center gap-1 mb-4 transition-colors"
@@ -262,25 +277,39 @@ export default function ShopCustomerLogin() {
           <ArrowLeft className="h-4 w-4" /> দোকানে ফিরুন
         </Link>
 
-        {/* Card */}
-        <div className="relative w-full bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
-          {/* Brand */}
-          <div className="text-center mb-6">
-            <div className="w-14 h-14 rounded-xl mx-auto flex items-center justify-center text-white mb-4 bg-blue-600">
-              <ShoppingBag className="h-7 w-7" />
+        {/* Split card */}
+        <div className="relative w-full bg-white rounded-[28px] shadow-xl overflow-hidden grid md:grid-cols-2">
+          {/* LEFT — green welcome panel with curved cutout */}
+          <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 text-white p-8 md:p-10 min-h-[220px] md:min-h-[560px] flex flex-col">
+            {/* curved white cutout (desktop right edge, mobile bottom) */}
+            <div className="hidden md:block absolute -right-24 top-1/2 -translate-y-1/2 w-64 h-[140%] bg-white rounded-full" />
+            <div className="md:hidden absolute -bottom-24 left-1/2 -translate-x-1/2 w-[140%] h-48 bg-white rounded-[50%]" />
+
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-6 ring-1 ring-white/30">
+                <ShoppingBag className="h-7 w-7 text-white" />
+              </div>
+              <div className="text-[11px] font-bold tracking-[0.2em] uppercase opacity-80 mb-2">কে এম শপ</div>
+              <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
+                আবার স্বাগতম!
+              </h2>
+              <p className="text-[13.5px] leading-relaxed text-emerald-50/90 max-w-[260px]">
+                আমাদের সাথে যুক্ত থাকতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।
+              </p>
+
+              <div className="mt-auto hidden md:flex items-center gap-2 text-[11.5px] text-emerald-50/80 pt-8">
+                <ShieldCheck className="h-3.5 w-3.5" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
+              </div>
             </div>
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-              কে এম শপ অ্যাকাউন্ট
+          </div>
+
+          {/* RIGHT — form panel */}
+          <div className="relative p-6 md:p-10">
+          <div className="text-center md:text-left mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+              {headerTitle}
             </h1>
-            <p className="text-[13px] text-slate-500 mt-1">
-              {mode === "login"
-                ? "মোবাইল অথবা ইমেইল দিয়ে লগইন করুন"
-                : mode === "register"
-                ? "নতুন অ্যাকাউন্ট তৈরি করুন"
-                : forgotStep === "phone"
-                ? "OTP পাঠাবো আপনার মোবাইলে"
-                : "OTP ও নতুন পাসওয়ার্ড দিন"}
-            </p>
+            <p className="text-[13px] text-slate-500 mt-1">{headerSub}</p>
           </div>
 
           {/* Mode indicator */}
@@ -296,10 +325,11 @@ export default function ShopCustomerLogin() {
             </button>
           )}
 
+
           {/* Notice */}
           {mode !== "login" && (
-            <div className="mb-5 rounded-xl bg-blue-50 border border-blue-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
-              <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+            <div className="mb-5 rounded-xl bg-emerald-50 border border-emerald-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
+              <Info className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
               <span>
                 <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
               </span>
@@ -349,7 +379,7 @@ export default function ShopCustomerLogin() {
                   />
                 </div>
                 {loginIdentifierIsAdmin && (
-                  <p className="text-[11px] text-blue-600 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
                     <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
                   </p>
                 )}
@@ -400,7 +430,7 @@ export default function ShopCustomerLogin() {
                     type="button"
                     onClick={requestOtp}
                     disabled={resendIn > 0 || loading}
-                    className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+                    className="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 disabled:text-slate-400 disabled:cursor-not-allowed"
                   >
                     {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
                   </button>
@@ -536,7 +566,7 @@ export default function ShopCustomerLogin() {
                   type="button"
                   onClick={submit}
                   disabled={loading || mismatch}
-                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "অপেক্ষা করুন..."
@@ -560,7 +590,7 @@ export default function ShopCustomerLogin() {
                     setMode("register");
                     resetForgot();
                   }}
-                  className="w-full h-11 rounded-md border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition-colors"
+                  className="w-full h-11 rounded-md border-2 border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors rounded-full"
                 >
                   রেজিস্টার করুন
                 </button>
@@ -568,9 +598,10 @@ export default function ShopCustomerLogin() {
             )}
           </div>
 
-          <p className="text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
+          <p className="md:hidden text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
             <ShieldCheck className="h-3 w-3" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
           </p>
+          </div>
         </div>
       </div>
     </div>
