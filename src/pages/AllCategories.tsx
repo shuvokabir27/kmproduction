@@ -46,7 +46,7 @@ export default function AllCategories() {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
           <Link
-            to="/products"
+            to="/"
             className="h-9 w-9 grid place-items-center rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
             aria-label="ফিরে যান"
           >

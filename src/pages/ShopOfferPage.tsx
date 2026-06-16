@@ -380,7 +380,7 @@ export default function ShopOfferPage() {
               <h3 className="text-2xl font-extrabold text-blue-700">অর্ডার সফল! 🎉</h3>
               <p className="text-muted-foreground text-sm">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।</p>
               <button
-                onClick={() => navigate("/products")}
+                onClick={() => navigate("/")}
                 className="mt-2 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl"
               >
                 আরও কেনাকাটা করুন

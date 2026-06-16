@@ -135,7 +135,7 @@ export default function ShopOfferPopup() {
     cart.open();
   };
 
-  const ctaLink = offer.product_id ? `/products/${offer.product_id}` : "/products";
+  const ctaLink = offer.product_id ? `/products/${offer.product_id}` : "/";
 
   return (
     <div

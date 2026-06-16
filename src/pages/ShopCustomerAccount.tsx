@@ -130,7 +130,7 @@ export default function ShopCustomerAccount() {
     <div className="min-h-screen bg-[#f7f5ee] pb-16 md:pb-0" style={{ fontFamily: "'Tiro Bangla', serif" }}>
       <header className="bg-white shadow-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/products" className="flex items-center gap-2 text-sm text-gray-600">
+          <Link to="/" className="flex items-center gap-2 text-sm text-gray-600">
             <ArrowLeft className="h-4 w-4" /> দোকান
           </Link>
           <div className="font-bold" style={{ color: BRAND_GREEN }}>আমার অ্যাকাউন্ট</div>
@@ -221,7 +221,7 @@ export default function ShopCustomerAccount() {
               <ShoppingBag className="h-10 w-10 mx-auto mb-2 text-gray-300" />
               আপনার কোনো অর্ডার নেই
               <div className="mt-3">
-                <Link to="/products">
+                <Link to="/">
                   <Button className="text-white" style={{ backgroundColor: BRAND_GREEN }}>কেনাকাটা শুরু করুন</Button>
                 </Link>
               </div>

@@ -39,7 +39,7 @@ export function FeaturedProductsSection() {
             <h2 className="font-display text-4xl md:text-5xl text-foreground mt-3 tracking-wider">বাছাইকৃত পণ্য</h2>
             <div className="h-1 w-20 bg-gradient-to-r from-amber-500 to-amber-500/30 rounded-full mt-4" />
           </div>
-          <Button onClick={() => navigate("/products")} variant="outline" className="border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500/50 gap-2">
+          <Button onClick={() => navigate("/")} variant="outline" className="border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500/50 gap-2">
             <ShoppingBag className="h-4 w-4" /> সব প্রডাক্ট দেখুন
           </Button>
         </motion.div>

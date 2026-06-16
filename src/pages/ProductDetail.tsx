@@ -289,7 +289,7 @@ const ProductDetail = () => {
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 p-4">
         <ShoppingBag className="h-16 w-16 text-gray-300" />
         <p className="text-muted-foreground">পণ্য পাওয়া যায়নি</p>
-        <Button onClick={() => navigate("/products")} style={{ backgroundColor: BRAND_GREEN }} className="text-white rounded-full">
+        <Button onClick={() => navigate("/")} style={{ backgroundColor: BRAND_GREEN }} className="text-white rounded-full">
           শপে ফিরে যান
         </Button>
       </div>
@@ -320,7 +320,7 @@ const ProductDetail = () => {
       {/* Header */}
       <header className="bg-card shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/products" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: BRAND_GREEN }}>KM</div>
             <div>
               <div className="font-bold text-base" style={{ color: BRAND_GREEN }}>কে এম শপ</div>
@@ -336,7 +336,7 @@ const ProductDetail = () => {
                 </span>
               )}
             </button>
-            <Link to="/products">
+            <Link to="/">
               <Button variant="outline" size="sm" className="rounded-full text-xs gap-1">
                 <ChevronLeft className="h-3 w-3" /> শপে ফিরুন
               </Button>
@@ -347,7 +347,7 @@ const ProductDetail = () => {
 
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 pt-4 text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
-        <Link to="/products" className="hover:text-foreground flex items-center gap-1"><Home className="h-3 w-3" /> হোম</Link>
+        <Link to="/" className="hover:text-foreground flex items-center gap-1"><Home className="h-3 w-3" /> হোম</Link>
         <span>/</span>
         {product.category && <><span className="hover:text-foreground">{categoryLabel}</span><span>/</span></>}
         <span className="text-foreground font-medium line-clamp-1">{product.name}</span>

@@ -256,7 +256,7 @@ export default function ShopCustomerLogin() {
     >
       <div className="relative w-full max-w-md">
         <Link
-          to="/products"
+          to="/"
           className="text-slate-600 hover:text-slate-900 text-sm inline-flex items-center gap-1 mb-4 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> দোকানে ফিরুন

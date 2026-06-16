@@ -122,7 +122,7 @@ export default function ShopOfferBanner() {
     cart.open();
   };
 
-  const ctaLink = offer.product_id ? `/products/${offer.product_id}` : "/products";
+  const ctaLink = offer.product_id ? `/products/${offer.product_id}` : "/";
   const heroImage = offer.image_url || product?.image_url || comboProducts?.[0]?.image_url;
 
   const TimeBox = ({ value, label }: { value: number; label: string }) => (

@@ -172,7 +172,7 @@ export default function FreeDeliveryPage() {
         <DotBg />
         <Truck className="h-16 w-16 text-slate-300 mb-3" />
         <h1 className="text-xl font-bold mb-4">কোনো ফ্রি ডেলিভারি অফার চলছে না</h1>
-        <Button onClick={() => navigate("/products")} className="bg-blue-600 hover:bg-blue-700">হোমে ফিরুন</Button>
+        <Button onClick={() => navigate("/")} className="bg-blue-600 hover:bg-blue-700">হোমে ফিরুন</Button>
       </div>
     );
   }
@@ -188,7 +188,7 @@ export default function FreeDeliveryPage() {
         <h1 className="text-3xl font-extrabold mb-2 text-blue-600">অর্ডার সফল হয়েছে! 🎉</h1>
         <p className="text-slate-600 mb-1">ফ্রি ডেলিভারি অফারে আপনার অর্ডার গৃহীত হয়েছে</p>
         <p className="text-slate-500 text-sm mb-6">আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব</p>
-        <Button onClick={() => navigate("/products")} className="bg-blue-600 hover:bg-blue-700 text-slate-900">আরও কেনাকাটা করুন</Button>
+        <Button onClick={() => navigate("/")} className="bg-blue-600 hover:bg-blue-700 text-slate-900">আরও কেনাকাটা করুন</Button>
       </div>
     );
   }
