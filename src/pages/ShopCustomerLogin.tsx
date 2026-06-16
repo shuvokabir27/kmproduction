@@ -328,8 +328,8 @@ export default function ShopCustomerLogin() {
 
           {/* Notice */}
           {mode !== "login" && (
-            <div className="mb-5 rounded-xl bg-emerald-50 border border-emerald-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
-              <Info className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
+            <div className="mb-5 rounded-xl bg-blue-50 border border-blue-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
+              <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
               <span>
                 <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
               </span>
