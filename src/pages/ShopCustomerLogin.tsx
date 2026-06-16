@@ -328,8 +328,8 @@ export default function ShopCustomerLogin() {
 
           {/* Notice */}
           {mode !== "login" && (
-            <div className="mb-5 rounded-xl bg-blue-50 border border-blue-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
-              <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+            <div className="mb-5 rounded-xl bg-emerald-50 border border-emerald-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
+              <Info className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
               <span>
                 <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
               </span>
@@ -379,7 +379,7 @@ export default function ShopCustomerLogin() {
                   />
                 </div>
                 {loginIdentifierIsAdmin && (
-                  <p className="text-[11px] text-blue-600 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
                     <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
                   </p>
                 )}
@@ -430,7 +430,7 @@ export default function ShopCustomerLogin() {
                     type="button"
                     onClick={requestOtp}
                     disabled={resendIn > 0 || loading}
-                    className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+                    className="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 disabled:text-slate-400 disabled:cursor-not-allowed"
                   >
                     {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
                   </button>
@@ -566,7 +566,7 @@ export default function ShopCustomerLogin() {
                   type="button"
                   onClick={submit}
                   disabled={loading || mismatch}
-                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "অপেক্ষা করুন..."
@@ -590,7 +590,7 @@ export default function ShopCustomerLogin() {
                     setMode("register");
                     resetForgot();
                   }}
-                  className="w-full h-11 rounded-md border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition-colors"
+                  className="w-full h-11 rounded-md border-2 border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50 transition-colors rounded-full"
                 >
                   রেজিস্টার করুন
                 </button>
