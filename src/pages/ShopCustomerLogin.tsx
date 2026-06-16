@@ -239,7 +239,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputBase =
-    "w-full h-12 pl-11 pr-4 rounded-full bg-green-50/60 border border-green-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-700 focus:ring-4 focus:ring-green-700/15 transition-all";
+    "w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-600 focus:bg-white transition-all";
 
   const loginIdentifierIsEmail = isEmail(identifier);
   const loginIdentifierIsAdmin =
@@ -274,7 +274,7 @@ export default function ShopCustomerLogin() {
         </Link>
 
         {/* Split card */}
-        <div className="relative w-full bg-white rounded-[28px] shadow-xl overflow-hidden grid md:grid-cols-2">
+        <div className="relative w-full bg-white rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] overflow-hidden grid md:grid-cols-2">
           {/* LEFT — green welcome panel with curved cutout */}
           <div className="relative bg-gradient-to-br from-green-700 to-green-900 text-white p-8 md:p-10 min-h-[260px] md:min-h-[560px] flex flex-col">
             {/* curved white cutout (desktop right edge, mobile bottom) */}
@@ -300,13 +300,14 @@ export default function ShopCustomerLogin() {
           </div>
 
           {/* RIGHT — form panel */}
-          <div className="relative p-6 md:p-10">
-          <div className="text-center md:text-left mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-              {headerTitle}
-            </h1>
-            <p className="text-[13px] text-slate-500 mt-1">{headerSub}</p>
-          </div>
+          <div className="relative p-8 md:p-14 flex flex-col justify-center bg-white">
+            <div className="max-w-md mx-auto w-full">
+              <div className="mb-10">
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                  {headerTitle}
+                </h1>
+                <p className="text-slate-500 font-medium">{headerSub}</p>
+              </div>
 
           {/* Mode indicator */}
           {mode !== "login" && (
@@ -417,7 +418,7 @@ export default function ShopCustomerLogin() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder="● ● ● ● ● ●"
-                  className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-slate-900 outline-none focus:border-green-700 focus:ring-4 focus:ring-green-700/10 transition-all tracking-[0.5em] text-center font-bold text-lg"
+                  className="w-full h-14 px-4 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-900 outline-none focus:border-green-600 focus:bg-white transition-all tracking-[0.5em] text-center font-bold text-lg"
                   autoFocus
                 />
                 <div className="flex items-center justify-between mt-2">
@@ -470,7 +471,7 @@ export default function ShopCustomerLogin() {
                           setPassword("");
                           setErrorMsg("");
                         }}
-                        className="text-[12px] font-medium text-green-700 hover:text-green-800 transition-colors"
+                        className="text-xs font-bold text-green-700 hover:text-green-800 transition-colors"
                       >
                         পাসওয়ার্ড ভুলে গেছেন?
                       </button>
@@ -549,7 +550,7 @@ export default function ShopCustomerLogin() {
                   onClick={submit}
                   disabled={loading || mismatch}
                   data-no-magenta
-                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-green-700 hover:bg-green-800 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center h-14 font-bold text-white bg-green-700 hover:bg-green-800 rounded-2xl shadow-[0_12px_24px_-8px_rgba(21,128,61,0.35)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "অপেক্ষা করুন..."
@@ -576,7 +577,7 @@ export default function ShopCustomerLogin() {
                       setPassword("");
                       setErrorMsg("");
                     }}
-                    className="font-semibold text-green-700 hover:text-green-800 transition-colors"
+                    className="font-bold text-green-700 hover:text-green-800 hover:underline decoration-2 underline-offset-4 transition-colors"
                   >
                     রেজিস্টার করুন
                   </button>
@@ -589,6 +590,7 @@ export default function ShopCustomerLogin() {
           <p className="md:hidden text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
             <ShieldCheck className="h-3 w-3" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
           </p>
+            </div>
           </div>
         </div>
       </div>
