@@ -552,20 +552,18 @@ export default function ShopCustomerLogin() {
             })()}
 
             {mode === "login" && (
-              <div className="text-center pt-1">
-                <p className="text-[13px] text-slate-500">
-                  নতুন অ্যাকাউন্ট?{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("register");
-                      resetForgot();
-                    }}
-                    className="font-semibold text-slate-500 hover:text-slate-800 bg-transparent transition-colors"
-                  >
-                    রেজিস্টার করুন
-                  </button>
-                </p>
+              <div className="pt-1 space-y-2">
+                <p className="text-center text-[13px] text-slate-500">নতুন অ্যাকাউন্ট?</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("register");
+                    resetForgot();
+                  }}
+                  className="w-full h-11 rounded-md border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition-colors"
+                >
+                  রেজিস্টার করুন
+                </button>
               </div>
             )}
           </div>
