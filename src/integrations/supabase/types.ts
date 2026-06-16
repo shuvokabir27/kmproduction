@@ -877,6 +877,12 @@ export type Database = {
           footer_about: string | null
           footer_copyright: string | null
           free_delivery: boolean | null
+          hero_badge: string | null
+          hero_cta_label: string | null
+          hero_cta_link: string | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
           id: string
           instagram_url: string | null
           logo_url: string | null
@@ -901,6 +907,12 @@ export type Database = {
           footer_about?: string | null
           footer_copyright?: string | null
           free_delivery?: boolean | null
+          hero_badge?: string | null
+          hero_cta_label?: string | null
+          hero_cta_link?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
@@ -925,6 +937,12 @@ export type Database = {
           footer_about?: string | null
           footer_copyright?: string | null
           free_delivery?: boolean | null
+          hero_badge?: string | null
+          hero_cta_label?: string | null
+          hero_cta_link?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           id?: string
           instagram_url?: string | null
           logo_url?: string | null

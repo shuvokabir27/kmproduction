@@ -16,7 +16,8 @@ import { calculateDelivery } from "@/lib/delivery";
 import { Truck as TruckIcon } from "lucide-react";
 import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
-import ShopCategoryGrid from "@/components/ShopCategoryGrid";
+import OrganicHomeHero from "@/components/OrganicHomeHero";
+import OrganicCategoryCircles from "@/components/OrganicCategoryCircles";
 import { CustomHomeSections } from "@/components/CustomHomeSections";
 import FreeDeliveryHomeCTA from "@/components/FreeDeliveryHomeCTA";
 import FloatingCartButton from "@/components/FloatingCartButton";
@@ -619,133 +620,14 @@ const Products = () => {
 
       <ShopOfferBanner />
 
-      {/* Hero Banner — Premium */}
-      <section className="px-4 py-6 md:py-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative rounded-[28px] overflow-hidden border border-slate-200 bg-white shadow-sm">
-            {/* subtle accent orbs */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-32 right-1/4 w-80 h-80 rounded-full bg-slate-100 blur-3xl pointer-events-none" />
-
-            <div className="relative grid md:grid-cols-2 gap-8 items-center p-7 md:p-14" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-              <div className="text-slate-900 text-center md:text-left order-2 md:order-1">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] tracking-wide mb-5 border border-slate-200 bg-slate-50" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-60 animate-ping" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
-                  </span>
-                  <span className="font-semibold text-slate-700">কুয়াকাটার অথেনটিক পণ্য</span>
-                </div>
-                <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5 text-slate-900" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-                  প্রতিদিনের সুস্থতায় হোক
-                  <br />
-                  <span className="text-blue-600">খাঁটি পণ্য</span>
-                </h1>
-                <div className="h-px w-24 mx-auto md:mx-0 mb-5 bg-slate-200" />
-                <p className="text-slate-600 text-sm md:text-base mb-7 max-w-md mx-auto md:mx-0 leading-relaxed" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-                  সরাসরি কুয়াকাটার সমুদ্র সৈকত ও স্থানীয় কৃষক থেকে সংগ্রহ করা ১০০% খাঁটি ও তাজা পণ্য — শুঁটকি, মধু, তালের গুড়, হস্তশিল্প আরও অনেক কিছু।
-                </p>
-                <div className="flex flex-wrap gap-3 justify-center md:justify-start items-center" style={{ fontFamily: "'Tiro Bangla', serif" }}>
-                  <a href="#shop">
-                    <Button className="h-12 rounded-full px-7 gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white">
-                      <ShoppingBag className="h-4 w-4" /> এখনই কিনুন
-                    </Button>
-                  </a>
-                  {whatsappNo && (
-                    <a href={`https://wa.me/${whatsappNo.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" className="h-12 rounded-full px-7 gap-2 font-bold border-slate-300 text-slate-700">
-                        <Phone className="h-4 w-4" /> অর্ডার করুন
-                      </Button>
-                    </a>
-                  )}
-                  <div className="hidden md:flex items-center gap-3 pl-3 ml-1 border-l border-slate-200">
-                    <div className="flex -space-x-2">
-                      {[0,1,2].map(i => (
-                        <div key={i} className="w-8 h-8 rounded-full ring-2 ring-white bg-slate-200" />
-                      ))}
-                    </div>
-                    <div className="text-[11px] leading-tight text-slate-700">
-                      <div className="flex items-center gap-0.5">
-                        {[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}
-                      </div>
-                      <span className="text-slate-500">১০,০০০+ খুশি গ্রাহক</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-              <div className="relative block mt-4 md:mt-0 order-1 md:order-2">
-                {(() => {
-                  const slides = (products || []).filter((p: any) => p.image_url).slice(0, 8);
-                  const current = slides[heroSlide % (slides.length || 1)];
-                  return (
-                    <>
-                      {/* premium gradient frame */}
-                      <div className="relative rounded-[26px] p-[1.5px] bg-slate-100 shadow-sm">
-                        <div className="aspect-square rounded-[24px] overflow-hidden relative bg-slate-50 border border-slate-200">
-                          {current ? (
-                            <Link to={`/products/${current.slug || current.id}`} className="block w-full h-full group">
-                              {slides.map((p: any, i: number) => (
-                                <img
-                                  key={p.id}
-                                  src={p.image_url}
-                                  alt={p.name}
-                                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1200ms] ${i === (heroSlide % slides.length) ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
-                                />
-                              ))}
-                              {/* glossy sheen */}
-                              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,hsl(0_0%_100%/0.15)_0%,transparent_40%)]" />
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5 text-white">
-                                <p className="font-bold text-lg line-clamp-1 drop-shadow">{current.name}</p>
-                                <p className="text-amber-200 font-extrabold text-2xl mt-0.5">
-                                  ৳{toBn(Number(current.discount_price ?? current.price ?? 0))}
-                                  {current.discount_price && current.discount_price < current.price && (
-                                    <span className="text-xs line-through text-white/55 ml-2 font-medium">৳{toBn(Number(current.price))}</span>
-                                  )}
-                                </p>
-                              </div>
-                            </Link>
-                          ) : (
-                            <ShoppingBag className="h-32 w-32 text-white/30 m-auto" />
-                          )}
-                        </div>
-                      </div>
-                      {slides.length > 1 && (
-                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/30 backdrop-blur px-3 py-1.5 rounded-full border border-white/15">
-                          {slides.map((_: any, i: number) => (
-                            <button
-                              key={i}
-                              onClick={() => setHeroSlide(i)}
-                              aria-label={`slide ${i + 1}`}
-                              className={`h-1.5 rounded-full transition-all ${i === (heroSlide % slides.length) ? 'w-6 bg-gradient-to-r from-amber-200 to-slate-100' : 'w-1.5 bg-white/40'}`}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  );
-                })()}
-                {/* premium badges */}
-                <div className="absolute -bottom-4 -left-4 px-4 py-2 rounded-2xl text-sm font-bold text-amber-950 shadow-xl bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 ring-1 ring-amber-100/60 shadow-[inset_0_1px_0_0_hsl(45_100%_95%/0.8),0_10px_24px_-8px_hsl(38_90%_40%/0.6)]">
-                  ১০০% খাঁটি
-                </div>
-                <div className="absolute -top-4 -right-4 px-4 py-2 rounded-2xl text-sm font-extrabold text-slate-900 bg-white/95 backdrop-blur shadow-[inset_0_1px_0_0_hsl(0_0%_100%),0_10px_24px_-8px_hsl(0_0%_0%/0.45)] ring-1 ring-black/5 flex items-center gap-1.5">
-                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" /> <span>৪.৯</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
+      {/* Organic-style Hero with side banners */}
+      <OrganicHomeHero />
 
       {/* Free Delivery CTA */}
       <FreeDeliveryHomeCTA />
 
-      {/* Categories Grid */}
-      <ShopCategoryGrid />
+      {/* Circle Categories */}
+      <OrganicCategoryCircles />
 
 
 
