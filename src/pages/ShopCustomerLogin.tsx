@@ -460,6 +460,22 @@ export default function ShopCustomerLogin() {
                       autoComplete={mode === "login" ? "current-password" : "new-password"}
                     />
                   </div>
+                  {mode === "login" && (
+                    <div className="text-right mt-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode("forgot");
+                          setIdentifier("");
+                          setPassword("");
+                          setErrorMsg("");
+                        }}
+                        className="text-[12px] font-medium text-green-700 hover:text-green-800 transition-colors"
+                      >
+                        পাসওয়ার্ড ভুলে গেছেন?
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {(mode === "register" || mode === "forgot") && (
@@ -547,6 +563,26 @@ export default function ShopCustomerLogin() {
                 </button>
               );
             })()}
+
+            {mode === "login" && (
+              <div className="text-center pt-2">
+                <p className="text-[13px] text-slate-500">
+                  নতুন অ্যাকাউন্ট?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("register");
+                      setIdentifier("");
+                      setPassword("");
+                      setErrorMsg("");
+                    }}
+                    className="font-semibold text-green-700 hover:text-green-800 transition-colors"
+                  >
+                    রেজিস্টার করুন
+                  </button>
+                </p>
+              </div>
+            )}
 
           </div>
 
