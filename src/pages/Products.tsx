@@ -988,13 +988,6 @@ const Products = () => {
               </div>
             </div>
             <p className="text-slate-600 leading-relaxed">{siteSettings?.shop_tagline || "কুয়াকাটার সেরা পণ্য সম্ভার, সরাসরি আপনার দোরগোড়ায় পৌঁছে দিচ্ছি।"}</p>
-            <Link
-              to="/media"
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-            >
-              <Star className="h-4 w-4 fill-white text-white" />
-              KM Production ভিজিট করুন
-            </Link>
           </div>
           <div>
             <h4 className="font-extrabold mb-3 text-slate-900 tracking-wide uppercase text-xs">দ্রুত লিংক</h4>
