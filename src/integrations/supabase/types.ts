@@ -42,6 +42,7 @@ export type Database = {
           is_active: boolean
           platform: string
           release_notes: string | null
+          released_at: string | null
           updated_at: string
           version: string
         }
@@ -54,6 +55,7 @@ export type Database = {
           is_active?: boolean
           platform?: string
           release_notes?: string | null
+          released_at?: string | null
           updated_at?: string
           version: string
         }
@@ -66,6 +68,7 @@ export type Database = {
           is_active?: boolean
           platform?: string
           release_notes?: string | null
+          released_at?: string | null
           updated_at?: string
           version?: string
         }
@@ -876,7 +879,13 @@ export type Database = {
           id: string
           instagram_url: string | null
           logo_url: string | null
+          released_at: string | null
+          shop_name: string | null
+          shop_tagline: string | null
           site_name: string | null
+          top_strip_enabled: boolean | null
+          top_strip_speed: number | null
+          top_strip_text: string | null
           updated_at: string
           whatsapp_no: string | null
           youtube_url: string | null
@@ -893,7 +902,13 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
+          released_at?: string | null
+          shop_name?: string | null
+          shop_tagline?: string | null
           site_name?: string | null
+          top_strip_enabled?: boolean | null
+          top_strip_speed?: number | null
+          top_strip_text?: string | null
           updated_at?: string
           whatsapp_no?: string | null
           youtube_url?: string | null
@@ -910,7 +925,13 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
+          released_at?: string | null
+          shop_name?: string | null
+          shop_tagline?: string | null
           site_name?: string | null
+          top_strip_enabled?: boolean | null
+          top_strip_speed?: number | null
+          top_strip_text?: string | null
           updated_at?: string
           whatsapp_no?: string | null
           youtube_url?: string | null
