@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ShoppingBag, Lock, Phone, ArrowLeft, User, Sparkles, Eye, EyeOff, AlertCircle } from "lucide-react";
+import {
+  ShoppingBag,
+  Lock,
+  Phone,
+  ArrowLeft,
+  User,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  Mail,
+  ShieldCheck,
+  Info,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
 
-const BRAND_GREEN = "#2563eb"; // primary red (kept name for minimal diff)
-const BRAND_DARK = "#f8fafc";  // deep black-red
-const BRAND_GOLD = "#fbbf24";
+const ADMIN_PHONE = "01710147613";
+const ADMIN_EMAIL = "01710147613@kmshop.local";
 
 export default function ShopCustomerLogin() {
   const nav = useNavigate();
@@ -18,7 +28,11 @@ export default function ShopCustomerLogin() {
   const [forgotStep, setForgotStep] = useState<"phone" | "otp">("phone");
   const [otp, setOtp] = useState("");
   const [resendIn, setResendIn] = useState(0);
-  const [phone, setPhone] = useState("");
+
+  // identifier can be phone OR email (login only)
+  const [identifier, setIdentifier] = useState("");
+  const [phone, setPhone] = useState(""); // used for register/forgot (mobile only)
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -27,9 +41,34 @@ export default function ShopCustomerLogin() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+  const isAdminPhone = (s: string) => s.replace(/\D/g, "") === ADMIN_PHONE;
+
+  const adminLogin = async (email: string, pwd: string) => {
+    setLoading(true);
+    try {
+      // ensure admin user exists (idempotent)
+      await supabase.functions.invoke("setup-shop-admin", { body: {} });
+      const { error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+      if (error) {
+        setErrorMsg("ইমেইল/মোবাইল অথবা পাসওয়ার্ড ভুল।");
+        setLoading(false);
+        return;
+      }
+      toast.success("অ্যাডমিন লগইন সফল");
+      nav("/admin/products");
+    } catch (e: any) {
+      toast.error(e?.message || "লগইন ব্যর্থ");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const requestOtp = async () => {
-    if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+    if (phone.replace(/\D/g, "").length !== 11) {
+      toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
       body: { action: "request_otp", phone: phone.replace(/\D/g, "") },
@@ -44,25 +83,95 @@ export default function ShopCustomerLogin() {
     setResendIn(60);
     const timer = setInterval(() => {
       setResendIn((s) => {
-        if (s <= 1) { clearInterval(timer); return 0; }
+        if (s <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
         return s - 1;
       });
     }, 1000);
   };
 
   const submit = async () => {
-    if (phone.replace(/\D/g, "").length !== 11) { toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+    setErrorMsg("");
 
-    // forgot password — step 1 = send OTP, step 2 = verify + reset
-    if (mode === "forgot") {
-      if (forgotStep === "phone") { await requestOtp(); return; }
-      if (otp.length !== 6) { toast.error("৬ ডিজিটের OTP দিন"); return; }
-      if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
-      if (password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
+    // LOGIN — accept email OR mobile (admin via either)
+    if (mode === "login") {
+      const id = identifier.trim();
+      if (!id) {
+        toast.error("মোবাইল নম্বর বা ইমেইল দিন");
+        return;
+      }
+      if (!password) {
+        toast.error("পাসওয়ার্ড দিন");
+        return;
+      }
 
+      // Admin email login
+      if (isEmail(id)) {
+        await adminLogin(id, password);
+        return;
+      }
+
+      const digits = id.replace(/\D/g, "");
+      if (digits.length !== 11) {
+        toast.error("সঠিক মোবাইল নম্বর অথবা ইমেইল দিন");
+        return;
+      }
+
+      // Admin phone login → route to admin email
+      if (digits === ADMIN_PHONE) {
+        await adminLogin(ADMIN_EMAIL, password);
+        return;
+      }
+
+      // Customer phone login
       setLoading(true);
       const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
-        body: { action: "reset_with_otp", phone: phone.replace(/\D/g, ""), otp, new_password: password },
+        body: { action: "login", phone: digits, password },
+      });
+      setLoading(false);
+      if (error || (data as any)?.error) {
+        setErrorMsg(getErrorMessage((data as any)?.error || error));
+        return;
+      }
+      localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
+      toast.success("সফলভাবে লগইন হয়েছে");
+      nav("/shop/account");
+      return;
+    }
+
+    // REGISTER / FORGOT — mobile only
+    if (phone.replace(/\D/g, "").length !== 11) {
+      toast.error("সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন");
+      return;
+    }
+
+    if (mode === "forgot") {
+      if (forgotStep === "phone") {
+        await requestOtp();
+        return;
+      }
+      if (otp.length !== 6) {
+        toast.error("৬ ডিজিটের OTP দিন");
+        return;
+      }
+      if (!/^\d{6,}$/.test(password)) {
+        toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("পাসওয়ার্ড মিলছে না");
+        return;
+      }
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
+        body: {
+          action: "reset_with_otp",
+          phone: phone.replace(/\D/g, ""),
+          otp,
+          new_password: password,
+        },
       });
       setLoading(false);
       if (error || (data as any)?.error) {
@@ -75,58 +184,35 @@ export default function ShopCustomerLogin() {
       return;
     }
 
-    const phoneDigits = phone.replace(/\D/g, "");
-
-    // Special: KM Shop admin phone → route to Supabase admin auth
-    if (mode === "login" && phoneDigits === "01710147613") {
-      setLoading(true);
-      try {
-        // First call setup once (idempotent) to ensure admin user exists
-        await supabase.functions.invoke("setup-shop-admin", { body: {} });
-        const { data, error } = await supabase.functions.invoke("admin-phone-login", {
-          body: { phone: phoneDigits, password },
-        });
-        if (error || (data as any)?.error) {
-          setErrorMsg(getErrorMessage((data as any)?.error || error));
-          setLoading(false);
-          return;
-        }
-        const { access_token, refresh_token } = data as any;
-        const { error: setErr } = await supabase.auth.setSession({ access_token, refresh_token });
-        if (setErr) { toast.error(setErr.message); setLoading(false); return; }
-        toast.success("অ্যাডমিন লগইন সফল");
-        nav("/admin/products");
-      } catch (e: any) {
-        toast.error(e?.message || "লগইন ব্যর্থ");
-      } finally {
-        setLoading(false);
-      }
+    // register
+    if (!/^\d{6,}$/.test(password)) {
+      toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে");
       return;
     }
-
-    if (!/^\d{6,}$/.test(password)) { toast.error("পাসওয়ার্ড কমপক্ষে ৬ ডিজিটের সংখ্যা হতে হবে"); return; }
-    if (mode === "register" && !fullName.trim()) { toast.error("আপনার নাম দিন"); return; }
-    if (mode === "register" && password !== confirmPassword) { toast.error("পাসওয়ার্ড মিলছে না, আবার চেক করুন"); return; }
-
+    if (!fullName.trim()) {
+      toast.error("আপনার নাম দিন");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("পাসওয়ার্ড মিলছে না");
+      return;
+    }
     setLoading(true);
-    const payload: Record<string, unknown> = {
-      action: mode,
-      phone: phone.replace(/\D/g, ""),
-      password,
-      full_name: fullName.trim(),
-    };
-
     const { data, error } = await supabase.functions.invoke("shop-customer-auth", {
-      body: payload,
+      body: {
+        action: "register",
+        phone: phone.replace(/\D/g, ""),
+        password,
+        full_name: fullName.trim(),
+      },
     });
     setLoading(false);
-
     if (error || (data as any)?.error) {
       setErrorMsg(getErrorMessage((data as any)?.error || error));
       return;
     }
     localStorage.setItem(SHOP_TOKEN_KEY, (data as any).token);
-    toast.success(mode === "login" ? "সফলভাবে লগইন হয়েছে" : "অ্যাকাউন্ট তৈরি হয়েছে");
+    toast.success("অ্যাকাউন্ট তৈরি হয়েছে");
     nav("/shop/account");
   };
 
@@ -141,129 +227,197 @@ export default function ShopCustomerLogin() {
 
   const getErrorMessage = (err: any): string => {
     const msg = err?.message?.toLowerCase?.() || String(err).toLowerCase();
-    if (msg.includes("invalid") || msg.includes("wrong") || msg.includes("incorrect") || msg.includes("does not match"))
-      return "মোবাইল নম্বর অথবা পাসওয়ার্ড ভুল। সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।";
+    if (
+      msg.includes("invalid") ||
+      msg.includes("wrong") ||
+      msg.includes("incorrect") ||
+      msg.includes("does not match")
+    )
+      return "মোবাইল/ইমেইল অথবা পাসওয়ার্ড ভুল। সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।";
     if (msg.includes("not found") || msg.includes("no user") || msg.includes("no account"))
-      return "এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি। প্রথমে রেজিস্টার করুন।";
+      return "এই অ্যাকাউন্ট পাওয়া যায়নি। প্রথমে রেজিস্টার করুন।";
     if (msg.includes("rate limit") || msg.includes("too many") || msg.includes("try again"))
       return "অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।";
     if (/[\u0980-\u09FF]/.test(err?.message || String(err))) return err?.message || String(err);
     return "লগইন করা যায়নি। আবার চেষ্টা করুন।";
   };
 
-  const inputClass =
-    "w-full h-12 pl-11 pr-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-gray-600 outline-none focus:border-blue-600/50 focus:ring-2 focus:ring-blue-600/50 transition-all duration-300";
+  const inputBase =
+    "w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all";
+
+  const loginIdentifierIsEmail = isEmail(identifier);
+  const loginIdentifierIsAdmin =
+    loginIdentifierIsEmail || isAdminPhone(identifier);
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 overflow-hidden bg-[#0a0202]"
+      className="relative min-h-screen flex items-center justify-center px-4 py-10 pb-24 md:pb-10 bg-slate-50"
       style={{ fontFamily: "'Hind Siliguri', 'Tiro Bangla', sans-serif" }}
     >
-      {/* Dynamic background blobs */}
-      <div className="pointer-events-none absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-slate-900/30 blur-[120px] rounded-full" />
-      <div className="pointer-events-none absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-slate-100 blur-[120px] rounded-full" />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[36rem] w-[36rem] rounded-full bg-slate-900/15 blur-[160px]" />
-
       <div className="relative w-full max-w-md">
-        <Link to="/products" className="text-white/70 hover:text-white text-sm flex items-center gap-1 mb-4 transition-colors">
+        <Link
+          to="/products"
+          className="text-slate-600 hover:text-slate-900 text-sm inline-flex items-center gap-1 mb-4 transition-colors"
+        >
           <ArrowLeft className="h-4 w-4" /> দোকানে ফিরুন
         </Link>
 
-        {/* Cinematic glass card */}
-        <div className="relative w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl overflow-hidden">
-          {/* Top decorative light */}
-          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-blue-600/50 to-transparent" />
-
-          {/* Brand identity */}
-          <div className="relative text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-white mb-4 bg-gradient-to-br from-blue-600 to-slate-900 shadow-lg shadow-slate-900/20 ring-1 ring-white/20">
-              <ShoppingBag className="h-8 w-8 drop-shadow" />
+        {/* Card */}
+        <div className="relative w-full bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+          {/* Brand */}
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 rounded-xl mx-auto flex items-center justify-center text-white mb-4 bg-blue-600">
+              <ShoppingBag className="h-7 w-7" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-wide mb-1">কে এম শপ অ্যাকাউন্ট</h1>
-            <p className="text-xs text-blue-500/80 mt-1 inline-flex items-center gap-1 font-medium tracking-wider">
-              <Sparkles className="h-3 w-3" />
-              {mode === "login" ? "মোবাইল ও পাসওয়ার্ড দিয়ে লগইন করুন"
-               : mode === "register" ? "নতুন প্রিমিয়াম অ্যাকাউন্ট তৈরি করুন"
-               : forgotStep === "phone" ? "OTP পাঠাবো আপনার মোবাইলে"
-               : "OTP ও নতুন পাসওয়ার্ড দিন"}
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+              কে এম শপ অ্যাকাউন্ট
+            </h1>
+            <p className="text-[13px] text-slate-500 mt-1">
+              {mode === "login"
+                ? "মোবাইল অথবা ইমেইল দিয়ে লগইন করুন"
+                : mode === "register"
+                ? "নতুন অ্যাকাউন্ট তৈরি করুন"
+                : forgotStep === "phone"
+                ? "OTP পাঠাবো আপনার মোবাইলে"
+                : "OTP ও নতুন পাসওয়ার্ড দিন"}
             </p>
           </div>
 
-          {/* segmented switch */}
-          <div className="relative grid grid-cols-2 bg-black/40 border border-white/10 rounded-full p-1 mb-5 text-xs md:text-sm font-bold gap-1">
+          {/* Tab switch */}
+          <div className="grid grid-cols-2 bg-slate-100 rounded-lg p-1 mb-5 text-sm font-semibold">
             <button
-              onClick={() => { setMode("login"); resetForgot(); }}
-              className={`py-2.5 rounded-full transition-all ${mode === "login" ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
+              onClick={() => {
+                setMode("login");
+                resetForgot();
+              }}
+              className={`py-2.5 rounded-md transition-all ${
+                mode === "login"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
             >
               লগইন
             </button>
             <button
-              onClick={() => { setMode("register"); resetForgot(); }}
-              className={`py-2.5 rounded-full transition-all ${mode === "register" ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-gray-400 hover:text-white"}`}
+              onClick={() => {
+                setMode("register");
+                resetForgot();
+              }}
+              className={`py-2.5 rounded-md transition-all ${
+                mode === "register"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
             >
               রেজিস্টার
             </button>
           </div>
 
-          {/* premium notice */}
-          <div className="relative mb-5 rounded-2xl bg-blue-600/10 border border-blue-600/30 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-200 font-medium flex gap-2">
-            <span className="text-base leading-none">⚠️</span>
-            <span>
-              <span className="font-bold text-slate-300">গুরুত্বপূর্ণ:</span> আপনার পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন বা লগইন করুন। এতে আপনি আগের সব অর্ডারের বিস্তারিত দেখতে পাবেন এবং খুব সহজেই নতুন অর্ডার করতে পারবেন।
-            </span>
-          </div>
+          {/* Notice */}
+          {mode !== "login" && (
+            <div className="mb-5 rounded-xl bg-blue-50 border border-blue-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
+              <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+              <span>
+                <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
+              </span>
+            </div>
+          )}
 
           <div className="space-y-4">
             {mode === "register" && (
               <div>
-                <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">আপনার নাম</Label>
+                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
+                  আপনার নাম
+                </Label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="পূর্ণ নাম" className={inputClass} />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="পূর্ণ নাম"
+                    className={inputBase}
+                  />
                 </div>
               </div>
             )}
-            <div>
-              <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">মোবাইল নম্বর</Label>
-              <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={phone}
-                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, "")); setErrorMsg(""); }}
-                  placeholder="01XXXXXXXXX"
-                  className={inputClass}
-                  disabled={mode === "forgot" && forgotStep === "otp"}
-                />
-              </div>
-            </div>
 
-            {/* OTP step input */}
-            {mode === "forgot" && forgotStep === "otp" && (
+            {/* Login identifier — email OR mobile */}
+            {mode === "login" ? (
               <div>
-                <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">৬-ডিজিট OTP কোড</Label>
+                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
+                  মোবাইল নম্বর অথবা ইমেইল
+                </Label>
                 <div className="relative">
-                  <Sparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-400" />
+                  {loginIdentifierIsEmail ? (
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  ) : (
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  )}
                   <input
                     type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="● ● ● ● ● ●"
-                    className={inputClass + " tracking-[0.5em] text-center font-bold text-lg"}
-                    autoFocus
+                    value={identifier}
+                    onChange={(e) => {
+                      setIdentifier(e.target.value);
+                      setErrorMsg("");
+                    }}
+                    placeholder="01XXXXXXXXX অথবা email@example.com"
+                    className={inputBase}
+                    autoComplete="username"
                   />
                 </div>
+                {loginIdentifierIsAdmin && (
+                  <p className="text-[11px] text-blue-600 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
+                    <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
+                  মোবাইল নম্বর
+                </Label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={phone}
+                    onChange={(e) => {
+                      setPhone(e.target.value.replace(/\D/g, ""));
+                      setErrorMsg("");
+                    }}
+                    placeholder="01XXXXXXXXX"
+                    className={inputBase}
+                    disabled={mode === "forgot" && forgotStep === "otp"}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* OTP */}
+            {mode === "forgot" && forgotStep === "otp" && (
+              <div>
+                <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
+                  ৬-ডিজিট OTP কোড
+                </Label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="● ● ● ● ● ●"
+                  className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all tracking-[0.5em] text-center font-bold text-lg"
+                  autoFocus
+                />
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-[11px] text-gray-500">SMS এ পাঠানো ৬-ডিজিট কোড দিন (৫ মিনিটে মেয়াদ শেষ)</p>
+                  <p className="text-[11px] text-slate-500">SMS এ পাঠানো কোড দিন</p>
                   <button
                     type="button"
                     onClick={requestOtp}
                     disabled={resendIn > 0 || loading}
-                    className="text-[11px] font-bold text-blue-500 hover:text-slate-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+                    className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 disabled:text-slate-400 disabled:cursor-not-allowed"
                   >
                     {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
                   </button>
@@ -271,29 +425,35 @@ export default function ShopCustomerLogin() {
               </div>
             )}
 
-            {/* Password fields — only on login/register or forgot step 2 */}
+            {/* Password */}
             {(mode !== "forgot" || forgotStep === "otp") && (
               <>
-                {/* Name field moved to top */}
-
                 <div>
-                  <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">
-                    {mode === "forgot" ? "নতুন পাসওয়ার্ড (কমপক্ষে ৬-ডিজিট)" : "কমপক্ষে ৬-ডিজিট পাসওয়ার্ড"}
+                  <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
+                    {mode === "forgot" ? "নতুন পাসওয়ার্ড" : "পাসওয়ার্ড"}
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
                       type={showPassword ? "text" : "password"}
-                      inputMode="numeric"
                       value={password}
-                      onChange={(e) => { setPassword(phone.replace(/\D/g, "") === "01710147613" ? e.target.value : e.target.value.replace(/\D/g, "")); setErrorMsg(""); }}
+                      onChange={(e) => {
+                        // For admin login allow any chars; customer mode digits only
+                        if (mode === "login" && loginIdentifierIsAdmin) {
+                          setPassword(e.target.value);
+                        } else {
+                          setPassword(e.target.value.replace(/\D/g, ""));
+                        }
+                        setErrorMsg("");
+                      }}
                       placeholder="••••••"
-                      className={inputClass}
+                      className={inputBase}
+                      autoComplete={mode === "login" ? "current-password" : "new-password"}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -303,8 +463,11 @@ export default function ShopCustomerLogin() {
                     <div className="text-right mt-1.5">
                       <button
                         type="button"
-                        onClick={() => { setMode("forgot"); resetForgot(); }}
-                        className="text-[12px] font-medium text-blue-500 hover:text-slate-300 transition-colors"
+                        onClick={() => {
+                          setMode("forgot");
+                          resetForgot();
+                        }}
+                        className="text-[12px] font-medium text-blue-600 hover:text-blue-700"
                       >
                         পাসওয়ার্ড ভুলে গেছেন?
                       </button>
@@ -314,31 +477,37 @@ export default function ShopCustomerLogin() {
 
                 {(mode === "register" || mode === "forgot") && (
                   <div>
-                    <Label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-400 ml-1 mb-2">পাসওয়ার্ড নিশ্চিত করুন</Label>
+                    <Label className="block text-[12px] font-semibold text-slate-700 ml-0.5 mb-1.5">
+                      পাসওয়ার্ড নিশ্চিত করুন
+                    </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         inputMode="numeric"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
                         placeholder="••••••"
-                        className={inputClass}
+                        className={inputBase}
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                         tabIndex={-1}
                       >
                         {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                     {confirmPassword.length > 0 && confirmPassword !== password && (
-                      <p className="text-[11px] text-blue-500 font-medium mt-1.5 ml-1">⚠️ পাসওয়ার্ড মিলছে না</p>
+                      <p className="text-[11px] text-red-600 font-medium mt-1.5 ml-0.5">
+                        পাসওয়ার্ড মিলছে না
+                      </p>
                     )}
                     {confirmPassword.length >= 6 && confirmPassword === password && (
-                      <p className="text-[11px] text-green-400 font-medium mt-1.5 ml-1">✓ পাসওয়ার্ড মিলেছে</p>
+                      <p className="text-[11px] text-green-600 font-medium mt-1.5 ml-0.5">
+                        ✓ পাসওয়ার্ড মিলেছে
+                      </p>
                     )}
                   </div>
                 )}
@@ -349,8 +518,11 @@ export default function ShopCustomerLogin() {
               <div className="text-center">
                 <button
                   type="button"
-                  onClick={() => { setMode("login"); resetForgot(); }}
-                  className="text-[12px] font-medium text-gray-400 hover:text-white transition-colors"
+                  onClick={() => {
+                    setMode("login");
+                    resetForgot();
+                  }}
+                  className="text-[12px] font-medium text-slate-500 hover:text-slate-900"
                 >
                   ← লগইনে ফিরে যান
                 </button>
@@ -363,46 +535,45 @@ export default function ShopCustomerLogin() {
                   initial={{ opacity: 0, y: -8, height: 0 }}
                   animate={{ opacity: 1, y: 0, height: "auto" }}
                   exit={{ opacity: 0, y: -8, height: 0 }}
-                  className="flex items-start gap-2.5 p-3 rounded-lg bg-blue-600/10 border border-blue-600/30"
+                  className="flex items-start gap-2.5 p-3 rounded-lg bg-red-50 border border-red-200"
                 >
-                  <AlertCircle className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                  <p className="text-sm text-slate-300 font-medium leading-snug">{errorMsg}</p>
+                  <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+                  <p className="text-sm text-red-700 font-medium leading-snug">{errorMsg}</p>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {(() => {
-              const mismatch = (mode === "register" || (mode === "forgot" && forgotStep === "otp")) && (confirmPassword.length < 6 || confirmPassword !== password);
+              const mismatch =
+                (mode === "register" || (mode === "forgot" && forgotStep === "otp")) &&
+                (confirmPassword.length < 6 || confirmPassword !== password);
               const isOtpStep = mode === "forgot" && forgotStep === "otp";
               return (
                 <button
                   type="button"
                   onClick={submit}
                   disabled={loading || mismatch}
-                  className="w-full group relative flex items-center justify-center px-8 py-4 mt-2 font-bold text-white transition-all duration-500 bg-blue-600 rounded-xl overflow-hidden hover:bg-blue-600 hover:shadow-[0_0_20px_rgba(220,38,38,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="relative z-10 text-base">
-                    {loading ? "অপেক্ষা করুন..."
-                     : mode === "login" ? "লগইন করুন"
-                     : mode === "register" ? "অ্যাকাউন্ট তৈরি করুন"
-                     : isOtpStep ? "পাসওয়ার্ড রিসেট করুন"
-                     : "OTP পাঠান"}
-                  </span>
-                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                  {loading
+                    ? "অপেক্ষা করুন..."
+                    : mode === "login"
+                    ? "লগইন করুন"
+                    : mode === "register"
+                    ? "অ্যাকাউন্ট তৈরি করুন"
+                    : isOtpStep
+                    ? "পাসওয়ার্ড রিসেট করুন"
+                    : "OTP পাঠান"}
                 </button>
               );
             })()}
           </div>
 
-          <p className="relative text-center text-[11px] text-gray-500 mt-5">
-            🔒 আপনার তথ্য সম্পূর্ণ সুরক্ষিত ও এনক্রিপ্টেড
+          <p className="text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
+            <ShieldCheck className="h-3 w-3" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
           </p>
-
-          {/* Bottom accent */}
-          <div className="pointer-events-none absolute bottom-0 right-0 w-16 h-16 bg-blue-600/10 blur-xl rounded-full" />
         </div>
       </div>
-
     </div>
   );
 }
