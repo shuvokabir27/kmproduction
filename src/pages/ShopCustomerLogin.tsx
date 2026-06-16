@@ -243,7 +243,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputBase =
-    "w-full h-12 pl-11 pr-4 rounded-full bg-blue-50/60 border border-blue-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 transition-all";
+    "w-full h-12 pl-11 pr-4 rounded-full bg-green-50/60 border border-green-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-700 focus:ring-4 focus:ring-green-700/15 transition-all";
 
   const loginIdentifierIsEmail = isEmail(identifier);
   const loginIdentifierIsAdmin =
@@ -280,7 +280,7 @@ export default function ShopCustomerLogin() {
         {/* Split card */}
         <div className="relative w-full bg-white rounded-[28px] shadow-xl overflow-hidden grid md:grid-cols-2">
           {/* LEFT — green welcome panel with curved cutout */}
-          <div className="relative bg-gradient-to-br from-blue-500 to-blue-600 text-white p-8 md:p-10 min-h-[260px] md:min-h-[560px] flex flex-col">
+          <div className="relative bg-gradient-to-br from-green-700 to-green-900 text-white p-8 md:p-10 min-h-[260px] md:min-h-[560px] flex flex-col">
             {/* curved white cutout (desktop right edge, mobile bottom) */}
             <div className="hidden md:block absolute -right-24 top-1/2 -translate-y-1/2 w-64 h-[140%] bg-white rounded-full" />
             <div className="md:hidden absolute -bottom-32 left-1/2 -translate-x-1/2 w-[140%] h-40 bg-white rounded-[50%]" />
@@ -293,11 +293,11 @@ export default function ShopCustomerLogin() {
               <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
                 আবার স্বাগতম!
               </h2>
-              <p className="text-[13.5px] leading-relaxed text-blue-50/90 max-w-[260px]">
+              <p className="text-[13.5px] leading-relaxed text-green-50/90 max-w-[260px]">
                 আমাদের সাথে যুক্ত থাকতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।
               </p>
 
-              <div className="mt-auto hidden md:flex items-center gap-2 text-[11.5px] text-blue-50/80 pt-8">
+              <div className="mt-auto hidden md:flex items-center gap-2 text-[11.5px] text-green-50/80 pt-8">
                 <ShieldCheck className="h-3.5 w-3.5" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
               </div>
             </div>
@@ -328,8 +328,8 @@ export default function ShopCustomerLogin() {
 
           {/* Notice */}
           {mode !== "login" && (
-            <div className="mb-5 rounded-xl bg-blue-50 border border-blue-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
-              <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+            <div className="mb-5 rounded-xl bg-green-50 border border-green-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-slate-700 flex gap-2.5">
+              <Info className="h-4 w-4 text-green-700 mt-0.5 shrink-0" />
               <span>
                 <span className="font-semibold text-slate-900">গুরুত্বপূর্ণ:</span> পূর্বের অর্ডার করা মোবাইল নম্বরটি দিয়ে রেজিস্ট্রেশন করুন — আগের সব অর্ডার এক জায়গায় দেখতে পাবেন।
               </span>
@@ -379,7 +379,7 @@ export default function ShopCustomerLogin() {
                   />
                 </div>
                 {loginIdentifierIsAdmin && (
-                  <p className="text-[11px] text-blue-700 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
+                  <p className="text-[11px] text-green-800 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
                     <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
                   </p>
                 )}
@@ -421,7 +421,7 @@ export default function ShopCustomerLogin() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder="● ● ● ● ● ●"
-                  className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all tracking-[0.5em] text-center font-bold text-lg"
+                  className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-slate-900 outline-none focus:border-green-700 focus:ring-4 focus:ring-green-700/10 transition-all tracking-[0.5em] text-center font-bold text-lg"
                   autoFocus
                 />
                 <div className="flex items-center justify-between mt-2">
@@ -430,7 +430,7 @@ export default function ShopCustomerLogin() {
                     type="button"
                     onClick={requestOtp}
                     disabled={resendIn > 0 || loading}
-                    className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 disabled:text-slate-400 disabled:cursor-not-allowed"
+                    className="text-[11px] font-semibold text-green-700 hover:text-green-800 disabled:text-slate-400 disabled:cursor-not-allowed"
                   >
                     {resendIn > 0 ? `পুনরায় (${resendIn}s)` : "পুনরায় পাঠান"}
                   </button>
@@ -566,7 +566,7 @@ export default function ShopCustomerLogin() {
                   type="button"
                   onClick={submit}
                   disabled={loading || mismatch}
-                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-green-700 hover:bg-green-800 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "অপেক্ষা করুন..."
@@ -590,7 +590,7 @@ export default function ShopCustomerLogin() {
                     setMode("register");
                     resetForgot();
                   }}
-                  className="w-full h-11 border-2 border-blue-500 text-blue-600 font-semibold hover:bg-blue-50 transition-colors rounded-full"
+                  className="w-full h-11 border-2 border-green-700 text-green-700 font-semibold hover:bg-green-50 transition-colors rounded-full"
                 >
                   রেজিস্টার করুন
                 </button>
