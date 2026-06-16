@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { AlertCircle, Eye, EyeOff, ShoppingBag } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import logoAsset from "@/assets/kuakata-multimedia-logo.png.asset.json";
 
 const Login = () => {
   const { user, isProductAdmin, loading } = useAuth();
