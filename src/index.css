@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Softer text selection so highlighted links don't look like solid blue chips */
+::selection {
+  background-color: hsl(217 91% 60% / 0.18);
+  color: hsl(222 47% 11%);
+}
+::-moz-selection {
+  background-color: hsl(217 91% 60% / 0.18);
+  color: hsl(222 47% 11%);
+}
+
 @layer base {
   :root {
     /* Clean Slate — white surface, slate text, single blue accent */
