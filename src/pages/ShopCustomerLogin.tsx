@@ -283,35 +283,18 @@ export default function ShopCustomerLogin() {
             </p>
           </div>
 
-          {/* Tab switch */}
-          <div className="grid grid-cols-2 bg-slate-100 rounded-lg p-1 mb-5 text-sm font-semibold">
+          {/* Mode indicator */}
+          {mode !== "login" && (
             <button
               onClick={() => {
                 setMode("login");
                 resetForgot();
               }}
-              className={`py-2.5 rounded-md transition-all ${
-                mode === "login"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
+              className="mb-4 text-[12px] font-medium text-slate-500 hover:text-slate-900 inline-flex items-center gap-1 transition-colors"
             >
-              লগইন
+              <ArrowLeft className="h-3.5 w-3.5" /> লগইনে ফিরে যান
             </button>
-            <button
-              onClick={() => {
-                setMode("register");
-                resetForgot();
-              }}
-              className={`py-2.5 rounded-md transition-all ${
-                mode === "register"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              রেজিস্টার
-            </button>
-          </div>
+          )}
 
           {/* Notice */}
           {mode !== "login" && (
@@ -567,6 +550,24 @@ export default function ShopCustomerLogin() {
                 </button>
               );
             })()}
+
+            {mode === "login" && (
+              <div className="text-center pt-1">
+                <p className="text-[13px] text-slate-500">
+                  নতুন অ্যাকাউন্ট?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("register");
+                      resetForgot();
+                    }}
+                    className="font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    রেজিস্টার করুন
+                  </button>
+                </p>
+              </div>
+            )}
           </div>
 
           <p className="text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
