@@ -8,8 +8,6 @@ import {
   Phone,
   ArrowLeft,
   User,
-  Eye,
-  EyeOff,
   AlertCircle,
   Mail,
   ShieldCheck,
@@ -36,8 +34,6 @@ export default function ShopCustomerLogin() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -448,7 +444,7 @@ export default function ShopCustomerLogin() {
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type="password"
                       value={password}
                       onChange={(e) => {
                         // For admin login allow any chars; customer mode digits only
@@ -463,14 +459,6 @@ export default function ShopCustomerLogin() {
                       className={inputBase}
                       autoComplete={mode === "login" ? "current-password" : "new-password"}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
                   </div>
                 </div>
 
@@ -482,21 +470,13 @@ export default function ShopCustomerLogin() {
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                       <input
-                        type={showConfirmPassword ? "text" : "password"}
+                        type="password"
                         inputMode="numeric"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, ""))}
                         placeholder="••••••"
                         className={inputBase}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-                        tabIndex={-1}
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
                     </div>
                     {confirmPassword.length > 0 && confirmPassword !== password && (
                       <p className="text-[11px] text-red-600 font-medium mt-1.5 ml-0.5">
