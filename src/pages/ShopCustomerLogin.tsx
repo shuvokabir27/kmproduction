@@ -460,6 +460,22 @@ export default function ShopCustomerLogin() {
                       autoComplete={mode === "login" ? "current-password" : "new-password"}
                     />
                   </div>
+                  {mode === "login" && (
+                    <div className="text-right mt-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode("forgot");
+                          setIdentifier("");
+                          setPassword("");
+                          setErrorMsg("");
+                        }}
+                        className="text-[12px] font-medium text-green-700 hover:text-green-800 transition-colors"
+                      >
+                        পাসওয়ার্ড ভুলে গেছেন?
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {(mode === "register" || mode === "forgot") && (
