@@ -590,6 +590,7 @@ export default function ShopCustomerLogin() {
           <p className="md:hidden text-center text-[11px] text-slate-500 mt-5 inline-flex w-full items-center justify-center gap-1">
             <ShieldCheck className="h-3 w-3" /> আপনার তথ্য সুরক্ষিত ও এনক্রিপ্টেড
           </p>
+            </div>
           </div>
         </div>
       </div>
