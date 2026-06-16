@@ -379,7 +379,7 @@ export default function ShopCustomerLogin() {
                   />
                 </div>
                 {loginIdentifierIsAdmin && (
-                  <p className="text-[11px] text-emerald-700 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
+                  <p className="text-[11px] text-blue-700 font-medium mt-1.5 ml-0.5 inline-flex items-center gap-1">
                     <ShieldCheck className="h-3 w-3" /> অ্যাডমিন লগইন সনাক্ত হয়েছে
                   </p>
                 )}
