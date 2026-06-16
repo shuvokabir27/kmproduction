@@ -239,7 +239,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputBase =
-    "w-full h-12 pl-11 pr-4 rounded-full bg-green-50/60 border border-green-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-700 focus:ring-4 focus:ring-green-700/15 transition-all";
+    "w-full pl-12 pr-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:border-green-600 focus:bg-white transition-all";
 
   const loginIdentifierIsEmail = isEmail(identifier);
   const loginIdentifierIsAdmin =
@@ -274,7 +274,7 @@ export default function ShopCustomerLogin() {
         </Link>
 
         {/* Split card */}
-        <div className="relative w-full bg-white rounded-[28px] shadow-xl overflow-hidden grid md:grid-cols-2">
+        <div className="relative w-full bg-white rounded-[2.5rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] overflow-hidden grid md:grid-cols-2">
           {/* LEFT — green welcome panel with curved cutout */}
           <div className="relative bg-gradient-to-br from-green-700 to-green-900 text-white p-8 md:p-10 min-h-[260px] md:min-h-[560px] flex flex-col">
             {/* curved white cutout (desktop right edge, mobile bottom) */}
