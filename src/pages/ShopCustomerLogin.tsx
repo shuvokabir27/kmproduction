@@ -566,6 +566,7 @@ export default function ShopCustomerLogin() {
                   type="button"
                   onClick={submit}
                   disabled={loading || mismatch}
+                  data-no-magenta
                   className="w-full flex items-center justify-center px-8 h-12 mt-2 font-bold text-white bg-green-700 hover:bg-green-800 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
