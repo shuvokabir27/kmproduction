@@ -66,7 +66,6 @@ const App = () => (
               <Routes>
                 {/* Public shop */}
                 <Route path="/" element={<Products />} />
-                <Route path="/products" element={<Products />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/offer/:id" element={<ShopOfferPage />} />
                 <Route path="/o/:slug" element={<ShopOfferPage />} />

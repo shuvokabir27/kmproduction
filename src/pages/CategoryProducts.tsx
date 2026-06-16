@@ -114,7 +114,7 @@ export default function CategoryProducts() {
           </button>
           <div className="flex-1 min-w-0">
             <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <Link to="/products" className="hover:text-foreground inline-flex items-center gap-1"><Home className="h-3 w-3" /> হোম</Link>
+              <Link to="/" className="hover:text-foreground inline-flex items-center gap-1"><Home className="h-3 w-3" /> হোম</Link>
               <span>/</span>
               <Link to="/categories" className="hover:text-foreground">ক্যাটাগরি</Link>
             </div>
@@ -161,7 +161,7 @@ export default function CategoryProducts() {
               </div>
               <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mt-1">সম্পর্কিত অন্যান্য পণ্য</h2>
             </div>
-            <Button variant="outline" onClick={() => navigate("/products")} className="border-white/15 hover:bg-white/5">
+            <Button variant="outline" onClick={() => navigate("/")} className="border-white/15 hover:bg-white/5">
               সব দেখুন
             </Button>
           </div>

@@ -57,7 +57,7 @@ export function BestSellersSection() {
             <h2 className="font-display text-4xl md:text-5xl text-foreground mt-3 tracking-wider">সর্বাধিক বিক্রিত পণ্য</h2>
             <div className="h-1 w-20 bg-gradient-to-r from-blue-600 to-blue-600/30 rounded-full mt-4" />
           </div>
-          <Button onClick={() => navigate("/products")} variant="outline" className="border-blue-600/30 hover:bg-blue-600/10 hover:border-blue-600/50 gap-2">
+          <Button onClick={() => navigate("/")} variant="outline" className="border-blue-600/30 hover:bg-blue-600/10 hover:border-blue-600/50 gap-2">
             <ShoppingBag className="h-4 w-4" /> সব প্রডাক্ট দেখুন
           </Button>
         </motion.div>

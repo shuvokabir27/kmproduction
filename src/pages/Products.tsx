@@ -274,7 +274,7 @@ const Products = () => {
       {/* Header — Premium */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <Link to="/products" className="flex items-center gap-2.5 shrink-0 group">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
             <div className="relative w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-white font-extrabold text-sm bg-blue-600 shadow-sm">
               KM
             </div>
@@ -285,7 +285,7 @@ const Products = () => {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-slate-700">
-            <Link to="/products" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">হোম</Link>
+            <Link to="/" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors">হোম</Link>
             
             <div className="relative group">
               <Link to="/categories" className="px-3 py-2 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors inline-flex items-center gap-1">
@@ -511,7 +511,7 @@ const Products = () => {
                 className="bg-transparent flex-1 text-sm outline-none text-foreground placeholder:text-muted-foreground"
               />
             </div>
-            <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted">হোম</Link>
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted">হোম</Link>
             
             <Link to="/categories" onClick={() => setMobileMenuOpen(false)} className="py-2.5 px-2 rounded-lg text-sm font-semibold text-foreground hover:bg-muted flex items-center gap-2"><Tag className="h-4 w-4" style={{ color: BRAND_GREEN }} /> ক্যাটাগরি</Link>
             

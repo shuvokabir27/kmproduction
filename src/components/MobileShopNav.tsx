@@ -16,7 +16,7 @@ export default function MobileShopNav() {
   // Only show on shop-related public routes
   const isShopRoute =
     path === "/" ||
-    path === "/products" ||
+    path === "/" ||
     path.startsWith("/product/") ||
     path.startsWith("/category/") ||
     path.startsWith("/categories") ||
@@ -35,7 +35,7 @@ export default function MobileShopNav() {
   });
   const whatsappNo = siteSettings?.whatsapp_no || siteSettings?.contact_phone || "";
 
-  const isHome = path === "/products" && !hash;
+  const isHome = path === "/" && !hash;
   const isAchar = path === "/category/achar";
   const isShutki = path === "/category/shutki";
 
@@ -49,7 +49,7 @@ export default function MobileShopNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)", fontFamily: "'Tiro Bangla', serif" }}
     >
       <div className="grid grid-cols-5 text-[11px] font-medium">
-        <Link to="/products" className={cn(itemBase, isHome ? activeText : inactiveText)}>
+        <Link to="/" className={cn(itemBase, isHome ? activeText : inactiveText)}>
           <Home className="h-5 w-5" />
           <span>হোম</span>
         </Link>

@@ -52,7 +52,7 @@ const emptyForm = {
   badge_color: "amber",
   accent_color: "amber",
   cta_label: "",
-  cta_link: "/products",
+  cta_link: "/",
   max_items: 12,
   sort_order: 0,
   is_active: true,
@@ -342,7 +342,7 @@ export default function HomeSectionsManager() {
               </div>
               <div>
                 <Label>CTA লিংক</Label>
-                <Input value={form.cta_link} onChange={(e) => setForm({ ...form, cta_link: e.target.value })} placeholder="/products" />
+                <Input value={form.cta_link} onChange={(e) => setForm({ ...form, cta_link: e.target.value })} placeholder="/" />
               </div>
             </div>
 
