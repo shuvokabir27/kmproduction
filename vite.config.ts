@@ -4,6 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig({
   server: {
     host: "::",
@@ -37,6 +39,7 @@ export default defineConfig({
         ],
       },
     }),
+    cloudflare()
   ],
   resolve: {
     alias: {
