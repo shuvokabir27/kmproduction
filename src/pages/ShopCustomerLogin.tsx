@@ -450,7 +450,7 @@ export default function ShopCustomerLogin() {
                           setMode("forgot");
                           resetForgot();
                         }}
-                        className="text-[12px] font-medium text-blue-600 hover:text-blue-700"
+                        className="text-[12px] font-medium text-slate-500 hover:text-slate-800 bg-transparent"
                       >
                         পাসওয়ার্ড ভুলে গেছেন?
                       </button>
@@ -561,7 +561,7 @@ export default function ShopCustomerLogin() {
                       setMode("register");
                       resetForgot();
                     }}
-                    className="font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                    className="font-semibold text-slate-500 hover:text-slate-800 bg-transparent transition-colors"
                   >
                     রেজিস্টার করুন
                   </button>
