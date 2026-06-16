@@ -243,7 +243,7 @@ export default function ShopCustomerLogin() {
   };
 
   const inputBase =
-    "w-full h-12 pl-11 pr-4 rounded-full bg-emerald-50/60 border border-emerald-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 transition-all";
+    "w-full h-12 pl-11 pr-4 rounded-full bg-blue-50/60 border border-blue-100 text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 transition-all";
 
   const loginIdentifierIsEmail = isEmail(identifier);
   const loginIdentifierIsAdmin =
