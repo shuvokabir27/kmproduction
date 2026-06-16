@@ -32,6 +32,45 @@ export type Database = {
         }
         Relationships: []
       }
+      app_versions: {
+        Row: {
+          created_at: string
+          file_path: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean
+          platform: string
+          release_notes: string | null
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+          platform?: string
+          release_notes?: string | null
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+          platform?: string
+          release_notes?: string | null
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       customer_password_otps: {
         Row: {
           attempts: number
@@ -821,6 +860,60 @@ export type Database = {
           starts_at?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          facebook_url: string | null
+          footer_about: string | null
+          footer_copyright: string | null
+          free_delivery: boolean | null
+          id: string
+          instagram_url: string | null
+          logo_url: string | null
+          site_name: string | null
+          updated_at: string
+          whatsapp_no: string | null
+          youtube_url: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          facebook_url?: string | null
+          footer_about?: string | null
+          footer_copyright?: string | null
+          free_delivery?: boolean | null
+          id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          site_name?: string | null
+          updated_at?: string
+          whatsapp_no?: string | null
+          youtube_url?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          facebook_url?: string | null
+          footer_about?: string | null
+          footer_copyright?: string | null
+          free_delivery?: boolean | null
+          id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          site_name?: string | null
+          updated_at?: string
+          whatsapp_no?: string | null
+          youtube_url?: string | null
         }
         Relationships: []
       }
