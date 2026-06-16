@@ -579,23 +579,23 @@ body * {
 }
 
 /* Global button styling: white text on blue background.
-   Excludes sidebar, mobile bottom nav, public header, and unstyled toggles. */
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) {
+   Excludes sidebar, mobile bottom nav, public header, unstyled toggles, and green-theme pages. */
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]) {
   background-color: #3b82f6 !important;
   color: #ffffff !important;
   border-color: #3b82f6 !important;
 }
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) svg,
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) * {
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]) svg,
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]) * {
   color: #ffffff !important;
   border-color: rgba(255,255,255,0.35) !important;
 }
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-primary"],
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-card"],
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]) [class*="bg-secondary"] {
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]) [class*="bg-primary"],
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]) [class*="bg-card"],
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]) [class*="bg ubg-secondary"] {
   background-color: rgba(255,255,255,0.18) !important;
 }
-button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):hover {
+button:not([data-sidebar] button):not(.public-header button):not(.mobile-bottom-nav button):not([data-no-magenta]):not([data-green-btn]):hover {
   background-color: #2563eb !important;
   border-color: #2563eb !important;
 }
