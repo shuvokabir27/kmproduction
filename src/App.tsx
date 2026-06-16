@@ -43,6 +43,7 @@ const AdminSiteScrolling = lazy(() => import("./pages/admin/AdminSiteScrolling")
 const AdminSiteFooter = lazy(() => import("./pages/admin/AdminSiteFooter"));
 const AdminSiteIdentity = lazy(() => import("./pages/admin/AdminSiteIdentity"));
 const AdminSiteHero = lazy(() => import("./pages/admin/AdminSiteHero"));
+const AdminSiteSliders = lazy(() => import("./pages/admin/AdminSiteSliders"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminShopCustomers = lazy(() => import("./pages/admin/AdminShopCustomers"));
 
@@ -113,6 +114,7 @@ const App = () => (
                 {/* Site customization - product_admin + site_manager */}
                 <Route path="/admin/site/identity" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteIdentity /></RouteGuard>} />
                 <Route path="/admin/site/hero" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteHero /></RouteGuard>} />
+                <Route path="/admin/site/sliders" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteSliders /></RouteGuard>} />
                 <Route path="/admin/site/products" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteProducts /></RouteGuard>} />
                 <Route path="/admin/site/categories" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSiteCategories /></RouteGuard>} />
                 <Route path="/admin/site/pricing" element={<RouteGuard allowedRoles={["product_admin","site_manager"]}><AdminSitePricing /></RouteGuard>} />

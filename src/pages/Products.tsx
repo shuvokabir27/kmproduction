@@ -18,6 +18,7 @@ import PaymentMethodPicker from "@/components/PaymentMethodPicker";
 import ShopOfferBanner from "@/components/ShopOfferBanner";
 import OrganicHomeHero from "@/components/OrganicHomeHero";
 import OrganicCategoryCircles from "@/components/OrganicCategoryCircles";
+import ProductSlidersSection from "@/components/ProductSlidersSection";
 import { CustomHomeSections } from "@/components/CustomHomeSections";
 import FreeDeliveryHomeCTA from "@/components/FreeDeliveryHomeCTA";
 import FloatingCartButton from "@/components/FloatingCartButton";
@@ -628,6 +629,11 @@ const Products = () => {
 
       {/* Circle Categories */}
       <OrganicCategoryCircles />
+
+      {/* Admin-managed product sliders */}
+      <ProductSlidersSection />
+
+
 
 
 
