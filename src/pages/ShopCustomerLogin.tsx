@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  ShoppingBag,
   Lock,
   Phone,
   ArrowLeft,
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SHOP_TOKEN_KEY } from "@/hooks/useShopCustomer";
+import logoAsset from "@/assets/kuakata-multimedia-logo.png.asset.json";
 
 const ADMIN_PHONE = "01710147613";
 const ADMIN_EMAIL = "01710147613@kmshop.local";
@@ -286,8 +286,8 @@ export default function ShopCustomerLogin() {
             <div className="md:hidden absolute -bottom-32 left-1/2 -translate-x-1/2 w-[140%] h-40 bg-white rounded-[50%]" />
 
             <div className="relative z-10 flex flex-col h-full">
-              <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-6 ring-1 ring-white/30">
-                <ShoppingBag className="h-7 w-7 text-white" />
+              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-6 ring-1 ring-white/30 overflow-hidden">
+                <img src={logoAsset.url} alt="Kuakata Multimedia" className="h-full w-full object-contain" />
               </div>
               <div className="text-[11px] font-bold tracking-[0.2em] uppercase opacity-80 mb-2">কুয়াকাটা মাল্টিমিডিয়া গ্রুপ এর প্রতিষ্ঠান</div>
               <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-3">
